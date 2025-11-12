@@ -42,4 +42,34 @@ class Pengumuman extends Model
     {
         return encryptId($this->getKey());
     }
+    
+    /**
+     * Get cover image with thumbnail fallback.
+     */
+    public function getCoverImageAttribute()
+    {
+        $coverMedia = $this->getFirstMediaByCollection('info_cover');
+        if (!$coverMedia) {
+            return [
+                'original' => null,
+                'thumbnail' => null,
+                'url' => asset('assets-guest/img/person/person-m-10.webp'), // Default image
+            ];
+        }
+        
+        $thumbnail = $coverMedia->getThumbnail();
+        return [
+            'original' => $coverMedia,
+            'thumbnail' => $thumbnail,
+            'url' => asset('storage/' . ($thumbnail ? $thumbnail->file_path : $coverMedia->file_path)),
+        ];
+    }
+    
+    /**
+     * Get all attachment files.
+     */
+    public function getAttachmentsAttribute()
+    {
+        return $this->getMediaByCollection('info_attachment');
+    }
 }

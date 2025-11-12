@@ -59,7 +59,7 @@
                             @enderror
                         </div>
 
-                        <input type="hidden" name="type" value="{{ $type }}">
+                        <input type="hidden" name="jenis" value="{{ $type }}">
 
                         <div class="d-flex justify-content-start gap-2">
                             <button type="submit" class="btn btn-primary">

@@ -33,11 +33,11 @@ if (!function_exists('uploadMedia')) {
      *
      * @param mixed $file The uploaded file
      * @param string $collectionName The media collection name (e.g., 'cover_image', 'attachments')
+     * @param string $modelType The model type for folder structure (e.g., 'pengumuman', 'user')
      * @param string $disk The storage disk to use (default: 'public')
-     * @param string $directory The directory to store the file in (default: 'uploads')
      * @return \App\Models\Media|null
      */
-    function uploadMedia($file, string $collectionName, string $disk = 'public', string $directory = 'uploads')
+    function uploadMedia($file, string $collectionName, string $modelType = 'general', string $disk = 'public')
     {
         if (!$file) {
             return null;
@@ -47,10 +47,15 @@ if (!function_exists('uploadMedia')) {
         $extension = $file->getClientOriginalExtension();
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
-
-        // Create unique filename
-        $uniqueFileName = time() . '_' . uniqid() . '.' . $extension;
-        $path = $file->storeAs($directory, $uniqueFileName, $disk);
+        
+        // Create folder structure: uploads/{modelType}/{year}/{collectionName}
+        $year = date('Y');
+        $folderPath = "uploads/{$modelType}/{$year}/{$collectionName}";
+        
+        // Create unique filename with type prefix
+        $filePrefix = str_replace('_', '-', $collectionName);
+        $uniqueFileName = $filePrefix . '_' . time() . '_' . uniqid() . '.' . $extension;
+        $path = $file->storeAs($folderPath, $uniqueFileName, $disk);
 
         return \App\Models\Media::create([
             'file_name' => $originalName,

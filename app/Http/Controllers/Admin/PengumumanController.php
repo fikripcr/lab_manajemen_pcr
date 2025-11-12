@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Admin\PengumumanRequest;
-use App\Models\Pengumuman;
 use App\Models\User;
+use App\Models\Pengumuman;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Yajra\DataTables\DataTables;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Admin\PengumumanRequest;
 
 class PengumumanController extends Controller
 {
@@ -138,6 +139,18 @@ class PengumumanController extends Controller
         }
 
         if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $attachment) {
+                $pengumuman->addMedia($attachment, 'info_attachment');
+            }
+        }
+
+        // Handle cover image upload if present
+        if ($request->hasFile('cover_image')) {
+            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
+        }
+
+        // Handle attachment uploads if present
+        if ($request->hasFile('attachments')) {
             $pengumuman->addMultipleMedia($request->file('attachments'), 'info_attachment');
         }
 
@@ -212,6 +225,19 @@ class PengumumanController extends Controller
             $pengumuman->addMultipleMedia($request->file('attachments'), 'info_attachment');
         }
 
+        // Handle cover image upload if present
+        if ($request->hasFile('cover_image')) {
+            $pengumuman->clearMediaCollection('info_cover'); // Remove old cover
+            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
+        }
+
+        // Handle attachment uploads if present
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $attachment) {
+                $pengumuman->addMedia($attachment, 'info_attachment');
+            }
+        }
+
         $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
 
         return redirect()->route($redirectRoute)
@@ -247,12 +273,31 @@ class PengumumanController extends Controller
         $routeName = $request->route()->getName();
         $type = $routeName === 'berita.data' ? 'berita' : 'pengumuman';
 
-        $data = Pengumuman::with('penulis')->where('jenis', $type);
+        $data = Pengumuman::with(['penulis', 'media'])->where('jenis', $type);
 
         return DataTables::of($data)
             ->addIndexColumn()
             ->editColumn('judul', function ($item) {
                 return '<strong>' . e($item->judul) . '</strong>';
+            })
+            ->addColumn('cover_image', function ($item) {
+                $coverMedia = $item->getFirstMediaByCollection('info_cover');
+                if ($coverMedia) {
+                    $customProperties = json_decode($coverMedia->custom_properties, true);
+                    $thumbnailId = $customProperties['thumbnail_id'] ?? null;
+                    $thumbnail = $thumbnailId ? $item->media()->find($thumbnailId) : null;
+
+                    return [
+                        'original' => $coverMedia,
+                        'thumbnail' => $thumbnail,
+                        'url' => asset('storage/' . ($thumbnail ? $thumbnail->file_path : $coverMedia->file_path)),
+                    ];
+                }
+                return [
+                    'original' => null,
+                    'thumbnail' => null,
+                    'url' => asset('assets-guest/img/person/person-m-10.webp'),
+                ];
             })
             ->editColumn('is_published', function ($item) {
                 $status = $item->is_published ? 'Published' : 'Draft';

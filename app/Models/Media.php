@@ -32,4 +32,46 @@ class Media extends Model
     {
         return $this->morphTo();
     }
+    
+    /**
+     * Get thumbnail path for this image.
+     */
+    public function getThumbnail()
+    {
+        if (empty($this->custom_properties)) {
+            return null;
+        }
+        
+        $properties = json_decode($this->custom_properties, true);
+        if (!isset($properties['thumbnail_path'])) {
+            return null;
+        }
+        
+        return $properties['thumbnail_path'];
+    }
+    
+    /**
+     * Get medium size path for this image.
+     */
+    public function getMedium()
+    {
+        if (empty($this->custom_properties)) {
+            return null;
+        }
+        
+        $properties = json_decode($this->custom_properties, true);
+        if (!isset($properties['medium_path'])) {
+            return null;
+        }
+        
+        return $properties['medium_path'];
+    }
+    
+    /**
+     * Check if media is an image.
+     */
+    public function isImage()
+    {
+        return strpos($this->mime_type, 'image/') === 0;
+    }
 }

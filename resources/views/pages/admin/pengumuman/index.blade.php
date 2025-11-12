@@ -32,6 +32,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Cover</th>
                             <th>Title</th>
                             <th>Status</th>
                             <th>Author</th>
@@ -54,6 +55,17 @@
                 ajax: '{{ $type === "pengumuman" ? route("pengumuman.data") : route("berita.data") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    {
+                        data: null,
+                        name: 'cover_image',
+                        render: function(data, type, row) {
+                            var coverInfo = row.cover_image || {};
+                            var imageUrl = coverInfo.url || "{{ asset('assets-guest/img/person/person-m-10.webp') }}";
+                            return '<img src="' + imageUrl + '" alt="Cover" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">';
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
                     {
                         data: 'judul',
                         name: 'judul',

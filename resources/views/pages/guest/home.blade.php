@@ -1136,14 +1136,23 @@
                     <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="#">{{ ucfirst($news->jenis) }}</a></li>
                   </ul>
                 </div>
-                <div class="d-flex flex-column">
-                  <h3 class="post-title">{{ e($news->judul) }}</h3>
-                  <div class="post-content">
-                    <p>{!! Str::limit(strip_tags($news->isi), 120, '...') !!}</p>
-                    <a href="{{ route('guest.news.show', $news) }}" class="readmore stretched-link">
-                      <span>Read More</span>
-                      <i class="bi bi-arrow-right"></i>
-                    </a>
+                <div class="d-flex align-items-start">
+                  <div class="flex-shrink-0 me-3">
+                    <img src="{{ $news->cover_image['url'] }}" 
+                         class="img-fluid rounded" 
+                         alt="{{ e($news->judul) }}" 
+                         style="width: 80px; height: 80px; object-fit: cover;" 
+                         onerror="this.onerror=null; this.src='{{ asset('assets-guest/img/person/person-m-10.webp') }}';">
+                  </div>
+                  <div class="flex-grow-1">
+                    <h3 class="post-title">{{ e($news->judul) }}</h3>
+                    <div class="post-content">
+                      <p>{!! Str::limit(strip_tags($news->isi), 120, '...') !!}</p>
+                      <a href="{{ route('guest.news.show', $news) }}" class="readmore stretched-link">
+                        <span>Read More</span>
+                        <i class="bi bi-arrow-right"></i>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
