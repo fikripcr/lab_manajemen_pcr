@@ -1,119 +1,147 @@
 @extends('layouts.admin.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
-            <div class="flex items-center">
-                <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <h2 class="text-2xl font-bold text-gray-800">Edit User</h2>
-                    <p class="mt-1 text-sm text-gray-600">Update user information and role</p>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Edit User</h4>
+
+    <div class="row">
+        <div class="col-xxl">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form action="{{ route('users.update', $user) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="name">Full Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                       id="name" name="name" value="{{ old('name', $user->name) }}"
+                                       placeholder="John Doe" required>
+                                @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="email">Email</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                       id="email" name="email" value="{{ old('email', $user->email) }}"
+                                       placeholder="john@example.com" required>
+                                @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="password">New Password (Optional)</label>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-merge">
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                           id="password" name="password"
+                                           placeholder="••••••••">
+                                    <span class="input-group-text cursor-pointer" id="togglePassword"><i class="bx bx-hide"></i></span>
+                                </div>
+                                <div class="form-text">Leave blank to keep current password</div>
+                                @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="password_confirmation">Confirm New Password</label>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-merge">
+                                    <input type="password" class="form-control"
+                                           id="password_confirmation" name="password_confirmation"
+                                           placeholder="••••••••">
+                                    <span class="input-group-text cursor-pointer" id="togglePasswordConfirmation"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="role">Role</label>
+                            <div class="col-sm-10">
+                                <select class="form-select @error('role') is-invalid @enderror"
+                                        id="role" name="role" required>
+                                    @foreach($roles as $role)
+                                    <option value="{{ $role->name }}" {{ old('role', $user->roles->first()?->name) == $role->name ? 'selected' : '' }}>
+                                        {{ ucfirst($role->name) }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('role')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="npm">NPM (Optional)</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control @error('npm') is-invalid @enderror"
+                                       id="npm" name="npm" value="{{ old('npm', $user->npm) }}"
+                                       placeholder="e.g., 1234567890">
+                                @error('npm')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="nip">NIP (Optional)</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control @error('nip') is-invalid @enderror"
+                                       id="nip" name="nip" value="{{ old('nip', $user->nip) }}"
+                                       placeholder="e.g., 1234567890">
+                                @error('nip')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-end">
+                            <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bx bx-save me-1"></i> Update User
+                                </button>
+                                <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                                    <i class="bx bx-arrow-back me-1"></i> Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <div class="p-6">
-            <form action="{{ route('users.update', $user) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
-                    </div>
-
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}"
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('name') border-red-500 @enderror"
-                               placeholder="John Doe" required>
-                        @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                        <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}"
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-500 @enderror"
-                               placeholder="john@example.com" required>
-                        @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">New Password (Optional)</label>
-                        <input type="password" name="password" id="password"
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('password') border-red-500 @enderror"
-                               placeholder="••••••••">
-                        <p class="mt-1 text-sm text-gray-500">Leave blank to keep current password</p>
-                        @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation"
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                               placeholder="••••••••">
-                    </div>
-
-                    <div>
-                        <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                        <select name="role" id="role"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('role') border-red-500 @enderror"
-                                required>
-                            @foreach($roles as $role)
-                            <option value="{{ $role->name }}" {{ old('role', $user->roles->first()?->name) == $role->name ? 'selected' : '' }}>
-                                {{ ucfirst($role->name) }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('role')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="npm" class="block text-sm font-medium text-gray-700 mb-1">NPM (Optional)</label>
-                        <input type="text" name="npm" id="npm" value="{{ old('npm', $user->npm) }}"
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('npm') border-red-500 @enderror"
-                               placeholder="e.g., 1234567890">
-                        @error('npm')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">NIP (Optional)</label>
-                        <input type="text" name="nip" id="nip" value="{{ old('nip', $user->nip) }}"
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('nip') border-red-500 @enderror"
-                               placeholder="e.g., 1234567890">
-                        @error('nip')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="mt-8 flex justify-end space-x-3">
-                    <a href="{{ route('users.index') }}"
-                       class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                        Cancel
-                    </a>
-                    <button type="submit"
-                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Update User
-                    </button>
-                </div>
-            </form>
-        </div>
     </div>
-</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmationInput = document.getElementById('password_confirmation');
+    const togglePassword = document.getElementById('togglePassword');
+    const togglePasswordConfirmation = document.getElementById('togglePasswordConfirmation');
+
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="bx bx-hide"></i>' : '<i class="bx bx-show"></i>';
+        });
+    }
+
+    if (togglePasswordConfirmation) {
+        togglePasswordConfirmation.addEventListener('click', function() {
+            const type = passwordConfirmationInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordConfirmationInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="bx bx-hide"></i>' : '<i class="bx bx-show"></i>';
+        });
+    }
+});
+</script>
 @endsection

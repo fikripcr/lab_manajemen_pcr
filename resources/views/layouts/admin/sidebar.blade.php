@@ -53,11 +53,20 @@
                 <div data-i18n="Analytics">Dashboard</div>
             </a>
         </li>
-
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Master Data</span>
+        </li>
         <li class="menu-item {{request()->routeIs('users.*')? 'active' : ''}}">
             <a href="{{route('users.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user"></i>
                 <div data-i18n="Documentation">Data User</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{request()->routeIs('labs.*')? 'active' : ''}}">
+            <a href="{{route('labs.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-alt"></i>
+                <div data-i18n="Documentation">Data Lab</div>
             </a>
         </li>
 

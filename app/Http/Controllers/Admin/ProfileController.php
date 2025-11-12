@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,11 +14,11 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
-     * Display the user's pages.admin.profile.
+     * Display the user's profile.
      */
     public function show(Request $request): View
     {
-        return view('pages.pages.admin.profile.show', [
+        return view('pages.admin.profile.show', [
             'user' => $request->user(),
         ]);
     }
@@ -27,7 +28,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('pages.pages.admin.profile.edit', [
+        return view('pages.admin.profile.edit', [
             'user' => $request->user(),
         ]);
     }
@@ -45,7 +46,19 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('pages.admin.profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Update the user's password.
+     */
+    public function passwordUpdate(PasswordUpdateRequest $request): RedirectResponse
+    {
+        $request->user()->update([
+            'password' => $request->validated()['password'],
+        ]);
+
+        return Redirect::route('profile.edit')->with('status', 'password-updated');
     }
 
     /**

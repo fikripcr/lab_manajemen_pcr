@@ -1,121 +1,170 @@
 @extends('layouts.admin.app')
 
 @section('content')
-<div class="container mx-auto">
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Profile</h2>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Account Settings /</span> Profile</h4>
 
-        @if (session('status') === 'profile-updated')
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">Profile updated successfully.</span>
-            </div>
-        @endif
+    <div class="row">
+        <div class="col-md-12">
+            @if (session('status') === 'profile-updated')
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Profile updated successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
 
-        <div class="grid grid-cols-1 gap-6">
-            <div class="bg-white p-6 shadow rounded-lg">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Update Profile Information</h3>
-                <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-                    @csrf
-                    @method('patch')
+            @if (session('status') === 'password-updated')
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Password updated successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
 
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input id="name" name="name" type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="{{ old('name', $user->name) }}" required>
-                        @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+            <ul class="nav nav-pills nav-fill mb-4">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#nav-profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#nav-password">Password</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#nav-security">Security</a>
+                </li>
+            </ul>
+
+            <div class="tab-content p-0">
+                <div class="tab-pane fade show active" id="nav-profile">
+                    <div class="card mb-4">
+                        <h5 class="card-header">Profile Information</h5>
+                        <div class="card-body">
+                            <form method="post" action="{{ route('profile.update') }}">
+                                @csrf
+                                @method('patch')
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label" for="name">Full Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                               id="name" name="name" value="{{ old('name', $user->name) }}" 
+                                               required>
+                                        @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label" for="email">Email</label>
+                                    <div class="col-sm-10">
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                               id="email" name="email" value="{{ old('email', $user->email) }}" 
+                                               required>
+                                        @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row justify-content-end">
+                                    <div class="col-sm-10">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class='bx bx-save me-1'></i> Update Profile
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+                </div>
 
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                        <input id="email" name="email" type="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="{{ old('email', $user->email) }}" required>
-                        @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                <div class="tab-pane fade" id="nav-password">
+                    <div class="card mb-4">
+                        <h5 class="card-header">Change Password</h5>
+                        <div class="card-body">
+                            <form method="post" action="{{ route('password.update') }}">
+                                @csrf
+                                @method('put')
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label" for="current_password">Current Password</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control @error('current_password') is-invalid @enderror" 
+                                               id="current_password" name="current_password" 
+                                               autocomplete="current-password">
+                                        @error('current_password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label" for="password">New Password</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                               id="password" name="password" 
+                                               autocomplete="new-password">
+                                        @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label" for="password_confirmation">Confirm New Password</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control" 
+                                               id="password_confirmation" name="password_confirmation" 
+                                               autocomplete="new-password">
+                                    </div>
+                                </div>
+
+                                <div class="row justify-content-end">
+                                    <div class="col-sm-10">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class='bx bx-lock-alt me-1'></i> Change Password
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="flex items-center gap-4">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Save
-                        </button>
+                <div class="tab-pane fade" id="nav-security">
+                    <div class="card mb-4">
+                        <h5 class="card-header">Delete Account</h5>
+                        <div class="card-body">
+                            <div class="mb-3 col-12 col-md-12 mb-4">
+                                <h5>Are you sure you want to delete your account?</h5>
+                                <p class="text-muted">Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.</p>
+                            </div>
+                            <form id="delete-user-form" method="post" action="{{ route('profile.destroy') }}">
+                                @csrf
+                                @method('delete')
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label" for="delete-password">Password</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                               id="delete-password" name="password" 
+                                               placeholder="Enter your password">
+                                        @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row justify-content-end">
+                                    <div class="col-sm-10">
+                                        <button class="btn btn-danger" type="submit">
+                                            <i class='bx bx-trash me-1'></i> Delete Account
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </form>
-            </div>
-
-            <div class="bg-white p-6 shadow rounded-lg">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Update Password</h3>
-                <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
-                    @csrf
-                    @method('put')
-
-                    <div>
-                        <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
-                        <input id="current_password" name="current_password" type="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" autocomplete="current-password">
-                        @error('current_password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">New Password</label>
-                        <input id="password" name="password" type="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" autocomplete="new-password">
-                        @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                        <input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" autocomplete="new-password">
-                        @error('password_confirmation')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="flex items-center gap-4">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Update Password
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="bg-white p-6 shadow rounded-lg">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Delete Account</h3>
-                <p class="text-sm text-gray-600 mb-4">Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.</p>
-
-                <button type="button"
-                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                        onclick="document.getElementById('delete-user-form').classList.remove('hidden')">
-                    Delete Account
-                </button>
-
-                <form id="delete-user-form" method="post" action="{{ route('profile.destroy') }}" class="hidden mt-4 p-4 bg-red-50 rounded">
-                    @csrf
-                    @method('delete')
-
-                    <h4 class="text-md font-medium text-red-600 mb-2">Are you sure you want to delete your account?</h4>
-                    <p class="text-sm text-gray-600 mb-4">Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.</p>
-
-                    <div class="mb-4">
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <input id="password" name="password" type="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Password" required>
-                        @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="flex items-center gap-4">
-                        <button type="button"
-                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                                onclick="document.getElementById('delete-user-form').classList.add('hidden')">
-                            Cancel
-                        </button>
-                        <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" type="submit">
-                            Delete Account
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
@@ -16,8 +17,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', User::class);
-
         $search = $request->input('search');
 
         $users = User::with('roles')->when($search, function ($query, $search) {
@@ -34,8 +33,6 @@ class UserController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', User::class);
-
         $roles = Role::all();
         return view('pages.admin.users.create', compact('roles'));
     }
@@ -43,29 +40,20 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $this->authorize('create', User::class);
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|exists:roles,name',
-            'npm' => 'nullable|string|unique:users,npm',
-            'nip' => 'nullable|string|unique:users,nip',
-        ]);
-
+        $validated = $request->validated();
+        
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'npm' => $request->npm,
-            'nip' => $request->nip,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'npm' => $validated['npm'] ?? null,
+            'nip' => $validated['nip'] ?? null,
         ]);
 
         // Assign the selected role to the user
-        $user->assignRole($request->role);
+        $user->assignRole($validated['role']);
 
         return redirect()->route('users.index')
             ->with('success', 'User created successfully.');
@@ -76,8 +64,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $this->authorize('view', $user);
-
         return view('pages.admin.users.show', compact('user'));
     }
 
@@ -86,8 +72,6 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $this->authorize('update', $user);
-
         $roles = Role::all();
         return view('pages.admin.users.edit', compact('user', 'roles'));
     }
@@ -95,32 +79,23 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $this->authorize('update', $user);
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|exists:roles,name',
-            'npm' => 'nullable|string|unique:users,npm,' . $user->id,
-            'nip' => 'nullable|string|unique:users,nip,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
-
+        $validated = $request->validated();
+        
         $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'npm' => $request->npm,
-            'nip' => $request->nip,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'npm' => $validated['npm'] ?? null,
+            'nip' => $validated['nip'] ?? null,
         ]);
 
         // Update the user's role
-        $user->syncRoles([$request->role]);
+        $user->syncRoles([$validated['role']]);
 
-        if ($request->filled('password')) {
+        if (isset($validated['password'])) {
             $user->update([
-                'password' => Hash::make($request->password),
+                'password' => Hash::make($validated['password']),
             ]);
         }
 
@@ -133,8 +108,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $this->authorize('delete', $user);
-
         $user->delete();
 
         return redirect()->route('users.index')

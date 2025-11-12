@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> User Management</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Lab Management</h4>
 
     <div class="card">
         <div class="card-body">
@@ -10,7 +10,7 @@
                     <div class="col-sm-12 col-md-6">
                         <div class="dt-length mb-3">
                             <label class="form-label">Show
-                                <select name="users-table_length" aria-controls="users-table" class="form-select form-select-sm">
+                                <select name="labs-table_length" aria-controls="labs-table" class="form-select form-select-sm">
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -20,16 +20,16 @@
                     </div>
                     <div class="col-sm-12 col-md-6 d-flex justify-content-md-end">
                         <div class="dt-search">
-                            <form method="GET" action="{{ route('users.index') }}" class="d-flex">
+                            <form method="GET" action="{{ route('labs.index') }}" class="d-flex">
                                 <input type="text" name="search" value="{{ request('search') }}"
-                                       placeholder="Search users by name or email..."
+                                       placeholder="Search labs by name, location or description..."
                                        class="form-control form-control-sm"
-                                       aria-controls="users-table">
+                                       aria-controls="labs-table">
                                 <button type="submit" class="btn btn-sm btn-primary ms-2">
                                     <i class="bx bx-search"></i> Search
                                 </button>
-                                <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary ms-2">
-                                    <i class="bx bx-plus"></i> Add New User
+                                <a href="{{ route('labs.create') }}" class="btn btn-sm btn-primary ms-2">
+                                    <i class="bx bx-plus"></i> Add New Lab
                                 </a>
                             </form>
                         </div>
@@ -41,48 +41,37 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>ID</th>
+                                <th>Location</th>
+                                <th>Capacity</th>
+                                <th>Description</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody class="table-border-bottom-0">
-                            @forelse ($users as $user)
+                            @forelse ($labs as $lab)
                             <tr>
+                                <td><span class="fw-medium">{{ $lab->name }}</span></td>
+                                <td>{{ $lab->location }}</td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar flex-shrink-0 me-3">
-                                            <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=7F9CF5&background=EBF4FF' }}"
-                                                 alt="{{ $user->name }}" class="rounded-circle w-px-40 h-40">
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <span class="text-nowrap">{{ $user->name }}</span>
-                                            <small class="text-muted">{{ $user->created_at->format('M Y') }}</small>
-                                        </div>
-                                    </div>
+                                    <span class="badge bg-label-info me-1">{{ $lab->capacity }} Seats</span>
                                 </td>
-                                <td>{{ $user->email }}</td>
-                                <td>
-                                    <span class="badge bg-label-primary me-1">{{ $user->roles->first()?->name ?? 'No Role' }}</span>
-                                </td>
-                                <td>{{ $user->npm ?? $user->nip ?? '-' }}</td>
+                                <td>{{ Str::limit($lab->description, 50) }}</td>
                                 <td>
                                     <div class="d-flex">
-                                        <a href="{{ route('users.show', $user) }}"
+                                        <a href="{{ route('labs.show', $lab) }}"
                                            class="text-primary dropdown-item">
                                             <i class="bx bx-show me-1"></i> View
                                         </a>
-                                        <a href="{{ route('users.edit', $user) }}"
+                                        <a href="{{ route('labs.edit', $lab) }}"
                                            class="text-primary dropdown-item">
                                             <i class="bx bx-edit me-1"></i> Edit
                                         </a>
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('labs.destroy', $lab) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
                                                     class="text-danger dropdown-item"
-                                                    onclick="return confirm('Are you sure you want to delete this user? All their data will be permanently removed.')">
+                                                    onclick="return confirm('Are you sure you want to delete this lab? All related data will be affected.')">
                                                 <i class="bx bx-trash me-1"></i> Delete
                                             </button>
                                         </form>
@@ -93,11 +82,11 @@
                             <tr>
                                 <td colspan="5" class="text-center">
                                     <div class="d-flex flex-column align-items-center justify-content-center py-5">
-                                        <i class="bx bx-user bx-lg text-muted mb-3"></i>
-                                        <h5 class="mb-1">No users found</h5>
-                                        <p class="text-muted">Get started by creating a new user.</p>
-                                        <a href="{{ route('users.create') }}" class="btn btn-primary mt-2">
-                                            <i class="bx bx-plus me-1"></i> Add New User
+                                        <i class="bx bx-home bx-lg text-muted mb-3"></i>
+                                        <h5 class="mb-1">No labs found</h5>
+                                        <p class="text-muted">Get started by creating a new lab.</p>
+                                        <a href="{{ route('labs.create') }}" class="btn btn-primary mt-2">
+                                            <i class="bx bx-plus me-1"></i> Add New Lab
                                         </a>
                                     </div>
                                 </td>
@@ -111,13 +100,13 @@
                 <div class="row">
                     <div class="col-sm-12 col-md-5">
                         <div class="dataTables_info">
-                            Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} entries
+                            Showing {{ $labs->firstItem() }} to {{ $labs->lastItem() }} of {{ $labs->total() }} entries
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-7 d-flex justify-content-md-end">
                         <nav aria-label="Page navigation">
                             <ul class="pagination">
-                                @if ($users->onFirstPage())
+                                @if ($labs->onFirstPage())
                                     <li class="page-item first">
                                         <a class="page-link" href="javascript:void(0);"
                                           ><i class="tf-icon bx bx-chevrons-left"></i
@@ -130,19 +119,19 @@
                                     </li>
                                 @else
                                     <li class="page-item first">
-                                        <a class="page-link" href="{{ $users->url(1) }}"
+                                        <a class="page-link" href="{{ $labs->url(1) }}"
                                           ><i class="tf-icon bx bx-chevrons-left"></i
                                         ></a>
                                     </li>
                                     <li class="page-item prev">
-                                        <a class="page-link" href="{{ $users->previousPageUrl() }}"
+                                        <a class="page-link" href="{{ $labs->previousPageUrl() }}"
                                           ><i class="tf-icon bx bx-chevron-left"></i
                                         ></a>
                                     </li>
                                 @endif
 
-                                @foreach ($users->getUrlRange(max(1, $users->currentPage() - 2), min($users->lastPage(), $users->currentPage() + 2)) as $page => $url)
-                                    @if ($page == $users->currentPage())
+                                @foreach ($labs->getUrlRange(max(1, $labs->currentPage() - 2), min($labs->lastPage(), $labs->currentPage() + 2)) as $page => $url)
+                                    @if ($page == $labs->currentPage())
                                         <li class="page-item active">
                                             <a class="page-link" href="javascript:void(0);">{{ $page }}</a>
                                         </li>
@@ -153,14 +142,14 @@
                                     @endif
                                 @endforeach
 
-                                @if ($users->hasMorePages())
+                                @if ($labs->hasMorePages())
                                     <li class="page-item next">
-                                        <a class="page-link" href="{{ $users->nextPageUrl() }}"
+                                        <a class="page-link" href="{{ $labs->nextPageUrl() }}"
                                           ><i class="tf-icon bx bx-chevron-right"></i
                                         ></a>
                                     </li>
                                     <li class="page-item last">
-                                        <a class="page-link" href="{{ $users->url($users->lastPage()) }}"
+                                        <a class="page-link" href="{{ $labs->url($labs->lastPage()) }}"
                                           ><i class="tf-icon bx bx-chevrons-right"></i
                                         ></a>
                                     </li>
