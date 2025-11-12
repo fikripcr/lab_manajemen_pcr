@@ -27,18 +27,21 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                <a href="{{ route('inventories.create') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0">
+                <a href="{{ route('inventories.create') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0 me-2">
                     <i class="bx bx-plus"></i> Add New Inventory
                 </a>
+                <button type="button" class="btn btn-success btn-sm mb-2 mb-sm-0" id="exportBtn">
+                    <i class="bx bx-export"></i> Export Excel
+                </button>
             </div>
         </div>
         <div class="card-body">
             @include('components.flash-message')
             <div class="table-responsive">
-                <table id="inventaris-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="inventaris-table" class="table table-striped table-sm table-bordered " style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>#</th>
                             <th>Equipment Name</th>
                             <th>Type</th>
                             <th>Condition</th>
@@ -54,7 +57,6 @@
 @endsection
 
 @push('scripts')
-
     <script>
         $(document).ready(function() {
             var table = $('#inventaris-table').DataTable({
@@ -66,8 +68,13 @@
                         d.condition = $('#conditionFilter').val();
                     }
                 },
-                columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
                     {
                         data: 'nama_alat',
                         name: 'nama_alat',
@@ -82,7 +89,10 @@
                             return '<span class="badge bg-label-info me-1">' + data + '</span>';
                         }
                     },
-                    { data: 'kondisi_terakhir', name: 'kondisi_terakhir' },
+                    {
+                        data: 'kondisi_terakhir',
+                        name: 'kondisi_terakhir'
+                    },
                     {
                         data: null,
                         name: 'lab.name',
@@ -104,7 +114,9 @@
                         searchable: false
                     }
                 ],
-                order: [[0, 'desc']],
+                order: [
+                    [0, 'desc']
+                ],
                 pageLength: 10,
                 responsive: true,
                 dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs
@@ -124,6 +136,25 @@
             $('#pageLength').on('change', function() {
                 var pageLength = parseInt($(this).val());
                 table.page.len(pageLength).draw();
+            });
+
+            // Handle export button click
+            $('#exportBtn').on('click', function() {
+                // Get current search and filter values
+                var searchValue = $('#searchInput').val();
+                var conditionValue = $('#conditionFilter').val();
+
+                // Build query parameters
+                var params = new URLSearchParams();
+                if(searchValue) {
+                    params.append('search', searchValue);
+                }
+                if(conditionValue) {
+                    params.append('condition', conditionValue);
+                }
+
+                // Redirect to export URL with parameters
+                window.location.href = '{{ route('inventories.export') }}?' + params.toString();
             });
         });
     </script>

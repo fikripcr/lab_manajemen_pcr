@@ -34,6 +34,14 @@ class Pengumuman extends Model
     {
         return $this->belongsTo(User::class, 'penulis_id');
     }
+
+    /**
+     * Relationship: Announcement has many media
+     */
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'model');
+    }
     
     /**
      * Get the value of the model's route key.
@@ -57,12 +65,45 @@ class Pengumuman extends Model
             ];
         }
         
-        $thumbnail = $coverMedia->getThumbnail();
+        $thumbnailPath = $coverMedia->getThumbnail();
         return [
             'original' => $coverMedia,
-            'thumbnail' => $thumbnail,
-            'url' => asset('storage/' . ($thumbnail ? $thumbnail->file_path : $coverMedia->file_path)),
+            'thumbnail' => $thumbnailPath,
+            'url' => asset('storage/' . ($thumbnailPath ?: $coverMedia->file_path)),
         ];
+    }
+
+    /**
+     * Get first media by collection name.
+     */
+    public function getFirstMediaByCollection(string $collectionName)
+    {
+        return $this->media()->where('collection_name', $collectionName)->first();
+    }
+    
+    /**
+     * Get media by collection name.
+     */
+    public function getMediaByCollection(string $collectionName)
+    {
+        return $this->media()->where('collection_name', $collectionName)->get();
+    }
+    
+    /**
+     * Get media by collection with thumbnail info.
+     */
+    public function getMediaByCollectionWithThumbnails(string $collectionName)
+    {
+        $mediaItems = $this->media()->where('collection_name', $collectionName)->get();
+        
+        return $mediaItems->map(function ($media) {
+            $customProperties = json_decode($media->custom_properties, true);
+            if ($customProperties && isset($customProperties['thumbnail_path'])) {
+                $media->thumbnail_url = asset('storage/' . $customProperties['thumbnail_path']);
+                $media->medium_url = asset('storage/' . $customProperties['medium_path']);
+            }
+            return $media;
+        });
     }
     
     /**

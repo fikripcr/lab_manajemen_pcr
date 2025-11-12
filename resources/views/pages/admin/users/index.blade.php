@@ -26,10 +26,10 @@
         <div class="card-body">
             @include('components.flash-message')
             <div class="table-responsive">
-                <table id="users-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="users-table" class="table table-striped table-sm table-bordered" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>#</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Role</th>
@@ -44,15 +44,19 @@
 @endsection
 
 @push('scripts')
-
     <script>
         $(document).ready(function() {
             var table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('users.data') }}',
-                columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
                     {
                         data: 'name',
                         name: 'name',
@@ -60,7 +64,7 @@
                             return `
                                 <div class="d-flex align-items-center">
                                     <div class="avatar flex-shrink-0 me-3">
-                                        <img src="` + (row.avatar || 'https://ui-avatars.com/api/?name='+encodeURIComponent(row.name)+'&color=7F9CF5&background=EBF4FF') + `"
+                                        <img src="` + (row.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(row.name) + '&color=7F9CF5&background=EBF4FF') + `"
                                              alt="` + row.name + `" class="rounded-circle w-px-40 h-40">
                                     </div>
                                     <div class="d-flex flex-column">
@@ -71,7 +75,10 @@
                             `;
                         }
                     },
-                    { data: 'email', name: 'email' },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
                     {
                         data: 'roles',
                         name: 'roles'
@@ -90,7 +97,9 @@
                         searchable: false
                     }
                 ],
-                order: [[0, 'desc']],
+                order: [
+                    [0, 'desc']
+                ],
                 pageLength: 10,
                 responsive: true,
                 dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs

@@ -458,135 +458,6 @@
 
     </section><!-- /Featured Properties Section -->
 
-    <!-- Featured Services Section -->
-    <section id="featured-services" class="featured-services section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Featured Services</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="row g-4 justify-content-center">
-
-          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="bi bi-search"></i>
-                </div>
-                <div class="service-number">01</div>
-              </div>
-              <div class="service-content">
-                <h3><a href="service-details.html">Property Search</a></h3>
-                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed eiusmod tempor incididunt labore dolore magna</p>
-                <ul class="service-features">
-                  <li><i class="bi bi-check2"></i> Advanced Search Filters</li>
-                  <li><i class="bi bi-check2"></i> 360° Virtual Tours</li>
-                  <li><i class="bi bi-check2"></i> Real-time Updates</li>
-                </ul>
-              </div>
-              <div class="service-action">
-                <a href="service-details.html" class="service-btn">
-                  <span>Explore Properties</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
-            <div class="service-card featured">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="bi bi-graph-up"></i>
-                </div>
-                <div class="service-number">02</div>
-              </div>
-              <div class="service-content">
-                <h3><a href="service-details.html">Market Analysis</a></h3>
-                <p>Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip commodo consequat duis aute</p>
-                <ul class="service-features">
-                  <li><i class="bi bi-check2"></i> Price Trend Reports</li>
-                  <li><i class="bi bi-check2"></i> Investment Insights</li>
-                  <li><i class="bi bi-check2"></i> Market Forecasting</li>
-                </ul>
-              </div>
-              <div class="service-action">
-                <a href="service-details.html" class="service-btn">
-                  <span>Get Analysis</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="bi bi-key"></i>
-                </div>
-                <div class="service-number">03</div>
-              </div>
-              <div class="service-content">
-                <h3><a href="service-details.html">Property Management</a></h3>
-                <p>Excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim laborum sed</p>
-                <ul class="service-features">
-                  <li><i class="bi bi-check2"></i> Tenant Screening</li>
-                  <li><i class="bi bi-check2"></i> Rental Collection</li>
-                  <li><i class="bi bi-check2"></i> Maintenance Services</li>
-                </ul>
-              </div>
-              <div class="service-action">
-                <a href="service-details.html" class="service-btn">
-                  <span>Manage Now</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="500">
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="bi bi-shield-check"></i>
-                </div>
-                <div class="service-number">04</div>
-              </div>
-              <div class="service-content">
-                <h3><a href="service-details.html">Legal Support</a></h3>
-                <p>Sed ut perspiciatis unde omnis iste natus error voluptatem accusantium doloremque laudantium totam rem aperiam</p>
-                <ul class="service-features">
-                  <li><i class="bi bi-check2"></i> Contract Review</li>
-                  <li><i class="bi bi-check2"></i> Title Verification</li>
-                  <li><i class="bi bi-check2"></i> Legal Documentation</li>
-                </ul>
-              </div>
-              <div class="service-action">
-                <a href="service-details.html" class="service-btn">
-                  <span>Learn More</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-        </div>
-
-        <div class="text-center" data-aos="fade-up" data-aos-delay="600">
-          <a href="services.html" class="btn-all-services">
-            <span>Discover All Our Services</span>
-            <i class="bi bi-arrow-up-right"></i>
-          </a>
-        </div>
-
-      </div>
-
-    </section><!-- /Featured Services Section -->
 
     <!-- Featured Agents Section -->
     <section id="featured-agents" class="featured-agents section">
@@ -757,162 +628,6 @@
       </div>
 
     </section><!-- /Featured Agents Section -->
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials section light-background">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Testimonials</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="testimonials-slider swiper init-swiper">
-          <script type="application/json" class="swiper-config">
-            {
-              "slidesPerView": 1,
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "navigation": {
-                "nextEl": ".swiper-button-next",
-                "prevEl": ".swiper-button-prev"
-              }
-            }
-          </script>
-
-          <div class="swiper-wrapper">
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row">
-                  <div class="col-lg-8">
-                    <h2>Sed ut perspiciatis unde omnis</h2>
-                    <p>
-                      Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.
-                    </p>
-                    <p>
-                      Beatae magnam dolore quia ipsum. Voluptatem totam et qui dolore dignissimos. Amet quia sapiente laudantium nihil illo et assumenda sit cupiditate. Nam perspiciatis perferendis minus consequatur. Enim ut eos quo.
-                    </p>
-                    <div class="profile d-flex align-items-center">
-                      <img src="{{asset('assets-guest')}}/img/person/person-m-7.webp" class="profile-img" alt="">
-                      <div class="profile-info">
-                        <h3>Saul Goodman</h3>
-                        <span>Client</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 d-none d-lg-block">
-                    <div class="featured-img-wrapper">
-                      <img src="{{asset('assets-guest')}}/img/person/person-m-7.webp" class="featured-img" alt="">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row">
-                  <div class="col-lg-8">
-                    <h2>Nemo enim ipsam voluptatem</h2>
-                    <p>
-                      Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.
-                    </p>
-                    <p>
-                      Dolorem excepturi esse qui amet maxime quibusdam aut repellendus voluptatum. Corrupti enim a repellat cumque est laborum fuga consequuntur. Dolorem nostrum deleniti quas voluptatem iure dolorum rerum. Repudiandae doloribus ut repellat harum vero aut. Modi aut velit aperiam aspernatur odit ut vitae.
-                    </p>
-                    <div class="profile d-flex align-items-center">
-                      <img src="{{asset('assets-guest')}}/img/person/person-f-8.webp" class="profile-img" alt="">
-                      <div class="profile-info">
-                        <h3>Sara Wilsson</h3>
-                        <span>Designer</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 d-none d-lg-block">
-                    <div class="featured-img-wrapper">
-                      <img src="{{asset('assets-guest')}}/img/person/person-f-8.webp" class="featured-img" alt="">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row">
-                  <div class="col-lg-8">
-                    <h2>
-                      Labore nostrum eos impedit
-                    </h2>
-                    <p>
-                      Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.
-                    </p>
-                    <p>
-                      Itaque ut explicabo vero occaecati est quam rerum sed. Numquam tempora aut aut quaerat quia illum. Nobis quia autem odit ipsam numquam. Doloribus sit sint corporis eius totam fuga. Hic nostrum suscipit corrupti nam expedita adipisci aut optio.
-                    </p>
-                    <div class="profile d-flex align-items-center">
-                      <img src="{{asset('assets-guest')}}/img/person/person-m-9.webp" class="profile-img" alt="">
-                      <div class="profile-info">
-                        <h3>Matt Brandon</h3>
-                        <span>Freelancer</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 d-none d-lg-block">
-                    <div class="featured-img-wrapper">
-                      <img src="{{asset('assets-guest')}}/img/person/person-m-9.webp" class="featured-img" alt="">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row">
-                  <div class="col-lg-8">
-                    <h2>Impedit dolor facilis nulla</h2>
-                    <p>
-                      Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.
-                    </p>
-                    <p>
-                      Omnis aspernatur accusantium qui delectus praesentium repellendus. Facilis sint odio aspernatur voluptas commodi qui qui qui pariatur. Corrupti deleniti itaque quaerat ipsum deleniti culpa tempora tempore. Et consequatur exercitationem hic aspernatur nobis est voluptatibus architecto laborum.
-                    </p>
-                    <div class="profile d-flex align-items-center">
-                      <img src="{{asset('assets-guest')}}/img/person/person-f-10.webp" class="profile-img" alt="">
-                      <div class="profile-info">
-                        <h3>Jena Karlis</h3>
-                        <span>Store Owner</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 d-none d-lg-block">
-                    <div class="featured-img-wrapper">
-                      <img src="{{asset('assets-guest')}}/img/person/person-f-10.webp" class="featured-img" alt="">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Item -->
-
-          </div>
-
-          <div class="swiper-navigation w-100 d-flex align-items-center justify-content-center">
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section><!-- /Testimonials Section -->
 
     <!-- Why Us Section -->
     <section id="why-us" class="why-us section">
@@ -1114,7 +829,7 @@
     </section><!-- /Recent Blog Posts Section -->
 
     <!-- Recent News and Announcements Section -->
-    <section id="recent-news" class="recent-news section">
+    <section id="recent-blog-posts" class="recent-blog-posts section">
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Recent News & Announcements</h2>
@@ -1138,10 +853,10 @@
                 </div>
                 <div class="d-flex align-items-start">
                   <div class="flex-shrink-0 me-3">
-                    <img src="{{ $news->cover_image['url'] }}" 
-                         class="img-fluid rounded" 
-                         alt="{{ e($news->judul) }}" 
-                         style="width: 80px; height: 80px; object-fit: cover;" 
+                    <img src="{{ $news->cover_image['url'] }}"
+                         class="img-fluid rounded"
+                         alt="{{ e($news->judul) }}"
+                         style="width: 80px; height: 80px; object-fit: cover;"
                          onerror="this.onerror=null; this.src='{{ asset('assets-guest/img/person/person-m-10.webp') }}';">
                   </div>
                   <div class="flex-grow-1">

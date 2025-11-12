@@ -2,7 +2,7 @@
 
 @section('content')
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Lab Management</h4>
-        @include('components.flash-message')
+    @include('components.flash-message')
 
     <div class="card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center py-2">
@@ -26,10 +26,10 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="labs-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="labs-table" class="table table-striped table-sm table-bordered" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>#</th>
                             <th>Name</th>
                             <th>Location</th>
                             <th>Capacity</th>
@@ -44,18 +44,27 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function() {
             var table = $('#labs-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('labs.data') }}',
-                columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'location', name: 'location' },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'location',
+                        name: 'location'
+                    },
                     {
                         data: null,
                         name: 'capacity',
@@ -77,7 +86,9 @@
                         searchable: false
                     }
                 ],
-                order: [[0, 'desc']],
+                order: [
+                    [0, 'desc']
+                ],
                 pageLength: 10,
                 responsive: true,
                 dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs

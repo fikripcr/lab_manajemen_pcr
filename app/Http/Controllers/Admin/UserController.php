@@ -45,16 +45,16 @@ class UserController extends Controller
                 $encryptedId = encryptId($user->id);
                 return '
                     <div class="d-flex">
-                        <a href="' . route('users.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route('users.show', $encryptedId) . '" class="btn-info btn btn-sm me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route('users.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route('users.edit', $encryptedId) . '" class="btn-primary btn btn-sm me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <form action="' . route('users.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
-                            <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
+                            <button type="submit" class="btn-danger btn btn-sm" title="Delete" onclick="return confirm(\'Are you sure?\')">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </form>

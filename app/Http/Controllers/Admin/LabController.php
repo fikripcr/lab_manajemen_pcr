@@ -32,16 +32,16 @@ class LabController extends Controller
                 $encryptedId = encryptId($lab->lab_id);
                 return '
                     <div class="d-flex">
-                        <a href="' . route('labs.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route('labs.show', $encryptedId) . '" class="btn btn-info btn-sm me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route('labs.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route('labs.edit', $encryptedId) . '" class="btn btn-primary btn-sm me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <form action="' . route('labs.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
-                            <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
+                            <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm(\'Are you sure?\')">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </form>

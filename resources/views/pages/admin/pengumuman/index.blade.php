@@ -20,7 +20,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                <a href="{{ route($type.'.create') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0">
+                <a href="{{ route($type . '.create') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0">
                     <i class="bx bx-plus"></i> Add New {{ ucfirst($type) }}
                 </a>
             </div>
@@ -28,10 +28,10 @@
         <div class="card-body">
             @include('components.flash-message')
             <div class="table-responsive">
-                <table id="{{ $type }}-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="{{ $type }}-table" class="table table-striped  table-sm table-bordered" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>#</th>
                             <th>Cover</th>
                             <th>Title</th>
                             <th>Status</th>
@@ -52,9 +52,14 @@
             var table = $('#{{ $type }}-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ $type === "pengumuman" ? route("pengumuman.data") : route("berita.data") }}',
-                columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                ajax: '{{ $type === 'pengumuman' ? route('pengumuman.data') : route('berita.data') }}',
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
                     {
                         data: null,
                         name: 'cover_image',
@@ -98,7 +103,9 @@
                         searchable: false
                     }
                 ],
-                order: [[0, 'desc']],
+                order: [
+                    [0, 'desc']
+                ],
                 pageLength: 10,
                 responsive: true,
                 dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs

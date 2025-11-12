@@ -37,16 +37,16 @@ class PengumumanController extends Controller
                     $encryptedId = encryptId($pengumuman->id);
                     return '
                         <div class="d-flex">
-                            <a href="' . route('pengumuman.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
+                            <a href="' . route('pengumuman.show', $encryptedId) . '" class="btn btn-sm btn-info me-1" title="View">
                                 <i class="bx bx-show"></i>
                             </a>
-                            <a href="' . route('pengumuman.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
+                            <a href="' . route('pengumuman.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
                             <form action="' . route('pengumuman.destroy', $encryptedId) . '" method="POST" class="d-inline">
                                 ' . csrf_field() . '
                                 ' . method_field('DELETE') . '
-                                <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm(\'Are you sure?\')">
                                     <i class="bx bx-trash"></i>
                                 </button>
                             </form>
@@ -84,16 +84,16 @@ class PengumumanController extends Controller
                     $encryptedId = encryptId($berita->id);
                     return '
                         <div class="d-flex">
-                            <a href="' . route('berita.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
+                            <a href="' . route('berita.show', $encryptedId) . '" class="btn btn-sm btn-info me-1" title="View">
                                 <i class="bx bx-show"></i>
                             </a>
-                            <a href="' . route('berita.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
+                            <a href="' . route('berita.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
                             <form action="' . route('berita.destroy', $encryptedId) . '" method="POST" class="d-inline">
                                 ' . csrf_field() . '
                                 ' . method_field('DELETE') . '
-                                <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm(\'Are you sure?\')">
                                     <i class="bx bx-trash"></i>
                                 </button>
                             </form>
@@ -314,22 +314,22 @@ class PengumumanController extends Controller
 
                 return '
                     <div class="d-flex">
-                        <a href="' . route($routePrefix . '.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route($routePrefix . '.show', $encryptedId) . '" class="btn btn-sm btn-info me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route($routePrefix . '.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route($routePrefix . '.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <form action="' . route($routePrefix . '.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
-                            <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm(\'Are you sure?\')">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </form>
                     </div>';
             })
-            ->rawColumns(['judul', 'is_published', 'action'])
+            ->rawColumns(['judul', 'is_published', 'cover_image', 'action'])
             ->make(true);
     }
 }

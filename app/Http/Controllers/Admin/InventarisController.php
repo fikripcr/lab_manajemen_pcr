@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\Admin\InventarisRequest;
 use App\Models\Inventaris;
 use App\Models\Lab;
+use App\Exports\InventarisExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class InventarisController extends Controller
@@ -73,16 +75,16 @@ class InventarisController extends Controller
                 $encryptedId = encryptId($item->id);
                 return '
                     <div class="d-flex">
-                        <a href="' . route('inventories.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route('inventories.show', $encryptedId) . '" class="btn btn-info btn-sm me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route('inventories.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route('inventories.edit', $encryptedId) . '" class="btn btn-primary btn-sm me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <form action="' . route('inventories.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
-                            <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
+                            <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm(\'Are you sure?\')">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </form>
@@ -173,5 +175,24 @@ class InventarisController extends Controller
 
         return redirect()->route('inventories.index')
             ->with('success', 'Inventaris deleted successfully.');
+    }
+
+    /**
+     * Export inventories to Excel
+     */
+    public function export(Request $request)
+    {
+        // Extract filters from request (matching the DataTables filters)
+        $filters = [
+            'search' => $request->get('search'),
+            'condition' => $request->get('condition'),
+            'lab_id' => $request->get('lab_id'),
+        ];
+
+        $columns = $request->get('columns', ['id', 'nama_alat', 'jenis_alat', 'kondisi_terakhir', 'tanggal_pengecekan', 'lab_name']);
+
+        $export = new InventarisExport($filters, $columns);
+
+        return Excel::download($export, 'inventory_' . date('Y-m-d_H-i-s') . '.xlsx');
     }
 }

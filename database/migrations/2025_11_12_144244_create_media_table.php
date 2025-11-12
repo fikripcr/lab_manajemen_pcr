@@ -20,7 +20,8 @@ return new class extends Migration
                 $table->string('mime_type');
                 $table->unsignedBigInteger('file_size');
                 $table->string('collection_name'); // e.g., 'info_cover', 'info_attachment'
-                $table->morphs('model'); // Allows association with any model
+                $table->string('model_type')->nullable(); // Allows association with any model
+                $table->unsignedBigInteger('model_id')->nullable(); // Allows association with any model
                 $table->json('custom_properties')->nullable();
                 $table->timestamps();
             });
