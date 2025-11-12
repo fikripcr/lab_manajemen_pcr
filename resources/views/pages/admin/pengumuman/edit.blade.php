@@ -14,7 +14,7 @@
                 <div class="card-body">
                     @include('components.flash-message')
 
-                    <form action="{{ route($type.'.update', $pengumuman) }}" method="POST">
+                    <form action="{{ route($type.'.update', $pengumuman) }}" method="POST"  enctype="multipart/form-data" >
                         @csrf
                         @method('PUT')
 
@@ -29,9 +29,9 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="isi">Content</label>
-                            <x-tinymce.editor 
+                            <x-tinymce.editor
                                 id="isi"
-                                name="isi" 
+                                name="isi"
                                 :value="old('isi', $pengumuman->isi)"
                                 height="400"
                                 required
@@ -41,56 +41,24 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="jenis">Type</label>
-                            <select class="form-select @error('jenis') is-invalid @enderror"
-                                    id="jenis" name="jenis" required>
-                                <option value="pengumuman" {{ old('jenis', $pengumuman->jenis) == 'pengumuman' ? 'selected' : '' }}>
-                                    Pengumuman
-                                </option>
-                                <option value="berita" {{ old('jenis', $pengumuman->jenis) == 'berita' ? 'selected' : '' }}>
-                                    Berita
-                                </option>
-                            </select>
-                            @error('jenis')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="penulis_id">Author</label>
-                            <select class="form-select @error('penulis_id') is-invalid @enderror"
-                                    id="penulis_id" name="penulis_id" required>
-                                <option value="">Select Author</option>
-                                @foreach($penulisOptions as $penulis)
-                                    <option value="{{ $penulis->id }}" {{ old('penulis_id', $pengumuman->penulis_id) == $penulis->id ? 'selected' : '' }}>
-                                        {{ $penulis->name }} ({{ $penulis->email }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('penulis_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <!-- Cover Image Section -->
                         <div class="mb-3">
                             <label class="form-label" for="cover_image">Cover Image</label>
-                            <input type="file" class="form-control @error('cover_image') is-invalid @enderror" 
+                            <input type="file" class="form-control @error('cover_image') is-invalid @enderror"
                                    id="cover_image" name="cover_image" accept="image/*">
                             @error('cover_image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <div class="form-text">Upload a new cover image (current will be replaced if a file is selected).</div>
-                            
+
                             @if($pengumuman->getFirstMediaByCollection('info_cover'))
                                 <div class="mt-2">
                                     <p>Current Cover Image:</p>
-                                    <img src="{{ asset('storage/' . $pengumuman->getFirstMediaByCollection('info_cover')->file_path) }}" 
+                                    <img src="{{ asset('storage/' . $pengumuman->getFirstMediaByCollection('info_cover')->file_path) }}"
                                          alt="Current Cover Image" class="img-thumbnail" style="max-height: 200px;">
                                     <p class="mt-1">
                                         <small class="text-muted">
-                                            {{ $pengumuman->getFirstMediaByCollection('info_cover')->file_name }} 
+                                            {{ $pengumuman->getFirstMediaByCollection('info_cover')->file_name }}
                                             ({{ number_format($pengumuman->getFirstMediaByCollection('info_cover')->file_size / 1024, 2) }} KB)
                                         </small>
                                     </p>
@@ -101,13 +69,13 @@
                         <!-- Attachments Section -->
                         <div class="mb-3">
                             <label class="form-label" for="attachments">Attachments</label>
-                            <input type="file" class="form-control @error('attachments') is-invalid @enderror" 
+                            <input type="file" class="form-control @error('attachments') is-invalid @enderror"
                                    id="attachments" name="attachments[]" multiple accept="*/*">
                             @error('attachments')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <div class="form-text">Upload additional attachment files.</div>
-                            
+
                             @if($pengumuman->getMediaByCollection('info_attachment')->count() > 0)
                                 <div class="mt-2">
                                     <p>Current Attachments:</p>
@@ -137,6 +105,8 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <input type="hidden" name="jenis" value="{{ $type }}">
 
                         <div class="d-flex justify-content-start gap-2">
                             <button type="submit" class="btn btn-primary">

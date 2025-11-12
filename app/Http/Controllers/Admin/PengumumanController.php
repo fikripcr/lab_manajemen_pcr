@@ -127,7 +127,7 @@ class PengumumanController extends Controller
             'judul' => $validated['judul'],
             'isi' => $validated['isi'],
             'jenis' => $validated['jenis'],
-            'penulis_id' => $validated['penulis_id'],
+            'penulis_id' => Auth::id(),
             'is_published' => $isPublished,
             'published_at' => $isPublished ? now() : null,
         ]);
@@ -195,8 +195,6 @@ class PengumumanController extends Controller
         $pengumuman->update([
             'judul' => $validated['judul'],
             'isi' => $validated['isi'],
-            'jenis' => $validated['jenis'],
-            'penulis_id' => $validated['penulis_id'],
             'is_published' => $isPublished,
             'published_at' => $isPublished ? now() : $pengumuman->published_at, // Keep original published_at if not changing status
         ]);
@@ -248,7 +246,7 @@ class PengumumanController extends Controller
         // Determine the type based on the route name
         $routeName = $request->route()->getName();
         $type = $routeName === 'berita.data' ? 'berita' : 'pengumuman';
-        
+
         $data = Pengumuman::with('penulis')->where('jenis', $type);
 
         return DataTables::of($data)
@@ -268,7 +266,7 @@ class PengumumanController extends Controller
                 $encryptedId = encryptId($item->id);
                 // Use the appropriate route based on jenis
                 $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
-                
+
                 return '
                     <div class="d-flex">
                         <a href="' . route($routePrefix . '.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">

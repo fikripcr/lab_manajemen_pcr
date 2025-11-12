@@ -25,7 +25,6 @@ class PengumumanRequest extends FormRequest
             'judul' => ['required', 'string', 'max:255'],
             'isi' => ['required', 'string'],
             'jenis' => ['required', 'in:pengumuman,berita'],
-            'penulis_id' => ['required', 'exists:users,id'],
             'is_published' => ['boolean'],
         ];
     }

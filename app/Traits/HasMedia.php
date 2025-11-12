@@ -103,10 +103,10 @@ trait HasMedia
     public function removeMedia(int $mediaId)
     {
         $media = $this->media()->where('id', $mediaId)->firstOrFail();
-        
+
         // Delete the physical file
         Storage::disk('public')->delete($media->file_path);
-        
+
         $media->delete();
     }
 

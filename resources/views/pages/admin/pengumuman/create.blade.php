@@ -14,13 +14,12 @@
                 <div class="card-body">
                     @include('components.flash-message')
 
-                    <form action="{{ route($type.'.store') }}" method="POST">
+                    <form action="{{ route($type . '.store') }}" method="POST"  enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
                             <label class="form-label" for="judul">Title</label>
-                            <input type="text" class="form-control @error('judul') is-invalid @enderror"
-                                   id="judul" name="judul" value="{{ old('judul') }}" required>
+                            <input type="text" class="form-control @error('judul') is-invalid @enderror" id="judul" name="judul" value="{{ old('judul') }}" required>
                             @error('judul')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -28,54 +27,15 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="isi">Content</label>
-                            <x-tinymce.editor 
-                                id="isi"
-                                name="isi" 
-                                :value="old('isi')"
-                                height="400"
-                                required
-                            />
+                            <x-tinymce.editor id="isi" name="isi" :value="old('isi')" height="400" required />
                             @error('isi')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="jenis">Type</label>
-                            <select class="form-select @error('jenis') is-invalid @enderror"
-                                    id="jenis" name="jenis" required>
-                                <option value="pengumuman" {{ old('jenis', $type) == 'pengumuman' ? 'selected' : '' }}>
-                                    Pengumuman
-                                </option>
-                                <option value="berita" {{ old('jenis', $type) == 'berita' ? 'selected' : '' }}>
-                                    Berita
-                                </option>
-                            </select>
-                            @error('jenis')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="penulis_id">Author</label>
-                            <select class="form-select @error('penulis_id') is-invalid @enderror"
-                                    id="penulis_id" name="penulis_id" required>
-                                <option value="">Select Author</option>
-                                @foreach($penulisOptions as $penulis)
-                                    <option value="{{ $penulis->id }}" {{ old('penulis_id') == $penulis->id ? 'selected' : '' }}>
-                                        {{ $penulis->name }} ({{ $penulis->email }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('penulis_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
                             <label class="form-label" for="cover_image">Cover Image</label>
-                            <input type="file" class="form-control @error('cover_image') is-invalid @enderror" 
-                                   id="cover_image" name="cover_image" accept="image/*">
+                            <input type="file" class="form-control @error('cover_image') is-invalid @enderror" id="cover_image" name="cover_image" accept="image/*">
                             @error('cover_image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -84,8 +44,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="attachments">Attachments</label>
-                            <input type="file" class="form-control @error('attachments') is-invalid @enderror" 
-                                   id="attachments" name="attachments[]" multiple accept="*/*">
+                            <input type="file" class="form-control @error('attachments') is-invalid @enderror" id="attachments" name="attachments[]" multiple accept="*/*">
                             @error('attachments')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -93,19 +52,20 @@
                         </div>
 
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input @error('is_published') is-invalid @enderror"
-                                   id="is_published" name="is_published" value="1" {{ old('is_published') ? 'checked' : '' }}>
+                            <input type="checkbox" class="form-check-input @error('is_published') is-invalid @enderror" id="is_published" name="is_published" value="1" {{ old('is_published') ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_published">Publish {{ ucfirst($type) }}</label>
                             @error('is_published')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
+                        <input type="hidden" name="type" value="{{ $type }}">
+
                         <div class="d-flex justify-content-start gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bx bx-save me-1"></i> Create {{ ucfirst($type) }}
                             </button>
-                            <a href="{{ route($type.'.index') }}" class="btn btn-secondary">
+                            <a href="{{ route($type . '.index') }}" class="btn btn-secondary">
                                 <i class="bx bx-arrow-back me-1"></i> Back
                             </a>
                         </div>
@@ -115,5 +75,3 @@
         </div>
     </div>
 @endsection
-
-
