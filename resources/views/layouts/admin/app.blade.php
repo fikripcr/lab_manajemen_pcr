@@ -26,9 +26,7 @@
     @include('layouts.admin.css')
 
     <script src="{{ asset('assets-admin') }}/vendor/js/helpers.js"></script>
-    <head>
-        <script src="{{ asset('assets-admin') }}/js/config.js"></script>
-    </head>
+    <script src="{{ asset('assets-admin') }}/js/config.js"></script>
 
 <body>
     <div class="layout-wrapper layout-content-navbar">
@@ -56,6 +54,10 @@
         </div>
 
         @include('layouts.admin.js')
-</body>
+        
+        <!-- Additional scripts pushed from views -->
+        @stack('scripts')
+    </body>
+</html>
 
 </html>

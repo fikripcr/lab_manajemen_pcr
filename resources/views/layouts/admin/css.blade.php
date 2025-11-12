@@ -20,7 +20,9 @@
 
     <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apex-charts.css" />
 
-        <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/css/pages/page-auth.css" />
+    <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/css/pages/page-auth.css" />
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
 
     <!-- Page CSS -->

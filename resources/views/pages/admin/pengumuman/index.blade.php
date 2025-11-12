@@ -1,15 +1,16 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Lab Management</h4>
-        @include('components.flash-message')
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Tables /</span> {{ ucfirst($type) }} Management
+    </h4>
 
     <div class="card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center py-2">
-            <h5 class="mb-2 mb-sm-0">Lab List</h5>
+            <h5 class="mb-2 mb-sm-0">{{ ucfirst($type) }} List</h5>
             <div class="d-flex flex-wrap gap-2">
                 <div class="me-3 mb-2 mb-sm-0">
-                    <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search labs...">
+                    <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search {{ $type }}...">
                 </div>
                 <div class="me-3 mb-2 mb-sm-0">
                     <select id="pageLength" class="form-select form-select-sm">
@@ -19,21 +20,22 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                <a href="{{ route('labs.create') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0">
-                    <i class="bx bx-plus"></i> Add New Lab
+                <a href="{{ route($type.'.create') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0">
+                    <i class="bx bx-plus"></i> Add New {{ ucfirst($type) }}
                 </a>
             </div>
         </div>
         <div class="card-body">
+            @include('components.flash-message')
             <div class="table-responsive">
-                <table id="labs-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="{{ $type }}-table" class="table table-striped table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Name</th>
-                            <th>Location</th>
-                            <th>Capacity</th>
-                            <th>Description</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Author</th>
+                            <th>Created Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -48,33 +50,42 @@
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function() {
-            var table = $('#labs-table').DataTable({
+            var table = $('#{{ $type }}-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('labs.dataTable') }}',
+                ajax: '{{ $type === "pengumuman" ? route("pengumuman.dataTable") : route("berita.dataTable") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'location', name: 'location' },
-                    {
-                        data: null,
-                        name: 'capacity',
-                        render: function(data, type, row) {
-                            return '<span class="badge bg-label-info me-1">' + row.capacity + ' Seats</span>';
-                        }
+                    { 
+                        data: 'judul', 
+                        name: 'judul',
+                        orderable: true,
+                        searchable: true
                     },
-                    {
-                        data: 'description',
-                        name: 'description',
-                        render: function(data, type, row) {
-                            return data && data.length > 50 ? data.substring(0, 50) + '...' : data;
-                        }
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
+                    { 
+                        data: 'is_published', 
+                        name: 'is_published',
+                        orderable: true,
                         searchable: false
+                    },
+                    { 
+                        data: null,
+                        name: 'penulis.name',
+                        render: function(data, type, row) {
+                            return row.penulis ? row.penulis.name : 'System';
+                        }
+                    },
+                    { 
+                        data: 'created_at', 
+                        name: 'created_at',
+                        orderable: true,
+                        searchable: false
+                    },
+                    { 
+                        data: 'action', 
+                        name: 'action', 
+                        orderable: false, 
+                        searchable: false 
                     }
                 ],
                 order: [[0, 'desc']],
@@ -87,7 +98,7 @@
             $('#searchInput').on('keyup', function() {
                 table.search(this.value).draw();
             });
-
+            
             // Handle page length change
             $('#pageLength').on('change', function() {
                 var pageLength = parseInt($(this).val());

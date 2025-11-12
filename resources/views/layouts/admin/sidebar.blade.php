@@ -39,8 +39,27 @@
         <li class="menu-item {{request()->routeIs('inventories.*')? 'active' : ''}}">
             <a href="{{route('inventories.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-package"></i>
-                <div data-i18n="Documentation">Data Inventory</div>
+                <div data-i18n="Documentation">Data Inventaris</div>
             </a>
+        </li>
+
+        <li class="menu-item {{request()->routeIs('pengumuman.*') || request()->routeIs('berita.*') ? 'active' : ''}}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-bell"></i>
+                <div data-i18n="Pengumuman">Pengumuman & Berita</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{request()->routeIs('pengumuman.*') ? (request()->routeIs('pengumuman.create') || request()->routeIs('pengumuman.edit') ? '' : 'active') : ''}}">
+                    <a href="{{route('pengumuman.index')}}" class="menu-link">
+                        <div>Pengumuman</div>
+                    </a>
+                </li>
+                <li class="menu-item {{request()->routeIs('berita.*') ? (request()->routeIs('berita.create') || request()->routeIs('berita.edit') ? '' : 'active') : ''}}">
+                    <a href="{{route('berita.index')}}" class="menu-link">
+                        <div>Berita</div>
+                    </a>
+                </li>
+            </ul>
         </li>
 
         <!-- Layouts -->

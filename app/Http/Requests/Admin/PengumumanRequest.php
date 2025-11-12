@@ -4,12 +4,10 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InventoryRequest extends FormRequest
+class PengumumanRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -24,11 +22,11 @@ class InventoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lab_id' => ['required', 'exists:labs,lab_id'],
-            'nama_alat' => ['required', 'string', 'max:255'],
-            'jenis_alat' => ['required', 'string', 'max:255'],
-            'kondisi_terakhir' => ['required', 'string', 'max:255'],
-            'tanggal_pengecekan' => ['required', 'date'],
+            'judul' => ['required', 'string', 'max:255'],
+            'isi' => ['required', 'string'],
+            'jenis' => ['required', 'in:pengumuman,berita'],
+            'penulis_id' => ['required', 'exists:users,id'],
+            'is_published' => ['boolean'],
         ];
     }
 }

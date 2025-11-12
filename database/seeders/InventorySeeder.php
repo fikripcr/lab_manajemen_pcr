@@ -14,18 +14,18 @@ class InventorySeeder extends Seeder
     public function run(): void
     {
         $equipmentTypes = [
-            'Laptop', 'Desktop Computer', 'Microscope', 'Projector', 
+            'Laptop', 'Desktop Computer', 'Microscope', 'Projector',
             'Whiteboard', 'Printer', 'Scanner', 'Camera', 'Audio System',
             'Table', 'Chair', 'Monitor', 'Keyboard', 'Mouse', 'Speakers',
-            'Router', 'Switch', 'Server', 'Network Cable', 'UPS', 
+            'Router', 'Switch', 'Server', 'Network Cable', 'UPS',
             'Extension Cord', 'Power Strip', 'Headphones', 'Microphone',
-            'TV', 'Smart Board', 'Document Camera', 'Laser Pointer', 
+            'TV', 'Smart Board', 'Document Camera', 'Laser Pointer',
             'Computer Mouse Pad', 'Webcam', 'Calculator', 'Notebook',
             'Desk Lamp', 'Clock', 'Calendar', 'Stapler', 'Paper Shredder'
         ];
 
         $conditions = ['Baik', 'Rusak Ringan', 'Rusak Berat', 'Tidak Dapat Digunakan'];
-        
+
         // Get all available lab IDs
         $labIds = Lab::pluck('lab_id')->toArray();
 
@@ -40,13 +40,13 @@ class InventorySeeder extends Seeder
             $equipmentType = $equipmentTypes[array_rand($equipmentTypes)];
             $equipmentName = $equipmentType . ' ' . rand(1, 1000);
             $equipmentTypeDetail = $equipmentTypes[array_rand($equipmentTypes)];
-            
+
             Inventaris::create([
                 'lab_id' => $labIds[array_rand($labIds)],
                 'nama_alat' => $equipmentName,
                 'jenis_alat' => $equipmentTypeDetail,
                 'kondisi_terakhir' => $conditions[array_rand($conditions)],
-                'tanggal_pengecekan' => fake()->dateBetween('-6 months', '+1 month'),
+                'tanggal_pengecekan' => fake()->dateTimeBetween('-6 months', '+1 month'),
             ]);
         }
 

@@ -1113,6 +1113,55 @@
 
     </section><!-- /Recent Blog Posts Section -->
 
+    <!-- Recent News and Announcements Section -->
+    <section id="recent-news" class="recent-news section">
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Recent News & Announcements</h2>
+        <p>Stay updated with the latest news and announcements from our laboratory</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row g-4">
+          @if($recentNews && $recentNews->count() > 0)
+            @foreach($recentNews as $news)
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+              <div class="post-box">
+                <div class="post-img">
+                  <img src="{{ asset('assets-guest/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($news->judul) }}">
+                </div>
+                <div class="meta">
+                  <ul>
+                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <time datetime="{{ $news->created_at->format('Y-m-d') }}">{{ $news->created_at->format('M d, Y') }}</time></li>
+                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="#">{{ ucfirst($news->jenis) }}</a></li>
+                  </ul>
+                </div>
+                <div class="d-flex flex-column">
+                  <h3 class="post-title">{{ e($news->judul) }}</h3>
+                  <div class="post-content">
+                    <p>{!! Str::limit(strip_tags($news->isi), 120, '...') !!}</p>
+                    <a href="{{ route('guest.news.show', $news) }}" class="readmore stretched-link">
+                      <span>Read More</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            @endforeach
+          @else
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-bell icon-lg mb-3"></i>
+                <h4>No announcements or news available</h4>
+                <p>Please check back later for updates.</p>
+              </div>
+            </div>
+          @endif
+        </div>
+      </div>
+    </section><!-- /Recent News and Announcements Section -->
+
     <!-- Call To Action Section -->
     <section class="call-to-action-2 call-to-action section light-background" id="call-to-action">
       <div class="container" data-aos="fade-up" data-aos-delay="100">

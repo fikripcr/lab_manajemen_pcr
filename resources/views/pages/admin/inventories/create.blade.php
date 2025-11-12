@@ -1,7 +1,6 @@
 @extends('layouts.admin.app')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Create New Inventory</h4>
 
     <div class="row">
@@ -9,14 +8,14 @@
             <div class="card mb-4">
                 <div class="card-body">
                     @include('components.flash-message')
-                    
+
                     <form action="{{ route('inventories.store') }}" method="POST">
                         @csrf
-                        
+
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="lab_id">Lab</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('lab_id') is-invalid @enderror" 
+                                <select class="form-select @error('lab_id') is-invalid @enderror"
                                         id="lab_id" name="lab_id" required>
                                     <option value="">Select Lab</option>
                                     @foreach($labs as $lab)
@@ -30,35 +29,35 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="nama_alat">Equipment Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('nama_alat') is-invalid @enderror" 
-                                       id="nama_alat" name="nama_alat" value="{{ old('nama_alat') }}" 
+                                <input type="text" class="form-control @error('nama_alat') is-invalid @enderror"
+                                       id="nama_alat" name="nama_alat" value="{{ old('nama_alat') }}"
                                        placeholder="e.g., Laptop, Microscope, etc." required>
                                 @error('nama_alat')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="jenis_alat">Type</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('jenis_alat') is-invalid @enderror" 
-                                       id="jenis_alat" name="jenis_alat" value="{{ old('jenis_alat') }}" 
+                                <input type="text" class="form-control @error('jenis_alat') is-invalid @enderror"
+                                       id="jenis_alat" name="jenis_alat" value="{{ old('jenis_alat') }}"
                                        placeholder="e.g., Electronic, Chemical, Equipment" required>
                                 @error('jenis_alat')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="kondisi_terakhir">Condition</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('kondisi_terakhir') is-invalid @enderror" 
+                                <select class="form-select @error('kondisi_terakhir') is-invalid @enderror"
                                         id="kondisi_terakhir" name="kondisi_terakhir" required>
                                     <option value="">Select Condition</option>
                                     <option value="Baik" {{ old('kondisi_terakhir') == 'Baik' ? 'selected' : '' }}>Good</option>
@@ -71,19 +70,19 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="tanggal_pengecekan">Last Check Date</label>
                             <div class="col-sm-10">
-                                <input type="date" class="form-control @error('tanggal_pengecekan') is-invalid @enderror" 
-                                       id="tanggal_pengecekan" name="tanggal_pengecekan" 
+                                <input type="date" class="form-control @error('tanggal_pengecekan') is-invalid @enderror"
+                                       id="tanggal_pengecekan" name="tanggal_pengecekan"
                                        value="{{ old('tanggal_pengecekan') ?? date('Y-m-d') }}" required>
                                 @error('tanggal_pengecekan')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="row justify-content-end">
                             <div class="col-sm-10">
                                 <button type="submit" class="btn btn-primary">
@@ -99,5 +98,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
@@ -23,9 +24,43 @@ class UserController extends Controller
                 return $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             })
-            ->paginate(10);
+            ->paginate(20);
 
         return view('pages.admin.users.index', compact('users'));
+    }
+    
+    /**
+     * Process datatables ajax request.
+     */
+    public function dataTable(Request $request)
+    {
+        $users = User::with('roles');
+        
+        return DataTables::of($users)
+            ->addIndexColumn()
+            ->editColumn('roles', function ($user) {
+                return $user->roles->pluck('name')->first() ?? 'No Role';
+            })
+            ->addColumn('action', function ($user) {
+                return '
+                    <div class="d-flex">
+                        <a href="' . route('users.show', $user) . '" class="text-info dropdown-item me-1" title="View">
+                            <i class="bx bx-show"></i>
+                        </a>
+                        <a href="' . route('users.edit', $user) . '" class="text-primary dropdown-item me-1" title="Edit">
+                            <i class="bx bx-edit"></i>
+                        </a>
+                        <form action="' . route('users.destroy', $user) . '" method="POST" class="d-inline">
+                            ' . csrf_field() . '
+                            ' . method_field('DELETE') . '
+                            <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </form>
+                    </div>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**
