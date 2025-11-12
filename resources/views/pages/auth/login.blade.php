@@ -12,9 +12,9 @@
                             <img src="{{ asset('digilab-crop.png') }}" class="img-fluid " style="height: 100px; " alt="Logo" />
                         </a>
                     </div>
-                    <!-- /Logo -->
                     <h4 class="mb-2">Welcome to {{ config('app.name', 'Sneat') }}! 👋</h4>
                     <p class="mb-4">Please sign-in to your account and start the adventure</p>
+                    <!-- /Logo -->
 
                     @if (session('status'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -27,7 +27,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="email" class="form-label">Email or Username</label>
-                            <input type="text" class="form-control" value="admin@example.com" id="email" name="email" placeholder="Enter your email or username" value="{{ old('email') }}" required autofocus />
+                            <input type="text" class="form-control" value="admin@example.com" id="email" name="email" placeholder="Enter your email or username" value="{{ old('email') }}" />
                             @error('email')
                                 <div class="text-danger mt-1">
                                     {{ $message }}
@@ -44,7 +44,7 @@
                                 @endif
                             </div>
                             <div class="input-group input-group-merge">
-                                <input type="password" value="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" required />
+                                <input type="password" value="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                             </div>
                             @error('password')

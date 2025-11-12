@@ -5,6 +5,7 @@
 
     <div class="card">
         <div class="card-body">
+            @include('components.flash-message')
             <div class="dt-container dt-bootstrap5">
                 <div class="row">
                     <div class="col-sm-12 col-md-6">

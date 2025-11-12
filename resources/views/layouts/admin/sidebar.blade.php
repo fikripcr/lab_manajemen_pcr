@@ -35,6 +35,13 @@
                 <div data-i18n="Documentation">Data Lab</div>
             </a>
         </li>
+        
+        <li class="menu-item {{request()->routeIs('inventories.*')? 'active' : ''}}">
+            <a href="{{route('inventories.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-package"></i>
+                <div data-i18n="Documentation">Data Inventory</div>
+            </a>
+        </li>
 
         <!-- Layouts -->
         <li class="menu-item">

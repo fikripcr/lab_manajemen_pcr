@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LabController;
-use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Guest\GuestController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\InventoryController;
 
 Route::get('/', [GuestController::class, 'home'])->name('home');
 
@@ -23,6 +24,9 @@ Route::middleware('auth')->group(function () {
 
     // Lab resource routes
     Route::resource('labs', LabController::class);
+
+    // Inventory resource routes
+    Route::resource('inventories', InventoryController::class);
 });
 
 require __DIR__ . '/auth.php';

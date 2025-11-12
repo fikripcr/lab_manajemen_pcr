@@ -20,4 +20,7 @@
 
     <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apex-charts.css" />
 
+        <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/css/pages/page-auth.css" />
+
+
     <!-- Page CSS -->
