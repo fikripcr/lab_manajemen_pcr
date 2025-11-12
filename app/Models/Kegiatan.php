@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Kegiatan extends Model
+{
+    use HasFactory;
+
+    protected $table = 'kegiatans';
+
+    protected $fillable = [
+        'lab_id',
+        'penyelenggara_id',
+        'nama_kegiatan',
+        'deskripsi',
+        'tanggal',
+        'jam_mulai',
+        'jam_selesai',
+        'status',
+        'catatan_pic',
+        'qr_code_path',
+        'berita_acara_path',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
+        'jam_mulai' => 'datetime',
+        'jam_selesai' => 'datetime',
+        'status' => 'string',
+    ];
+
+    /**
+     * Relationship: Event belongs to a lab
+     */
+    public function lab()
+    {
+        return $this->belongsTo(Lab::class, 'lab_id', 'lab_id');
+    }
+
+    /**
+     * Relationship: Event belongs to a penyelenggara (user)
+     */
+    public function penyelenggara()
+    {
+        return $this->belongsTo(User::class, 'penyelenggara_id');
+    }
+
+    /**
+     * Relationship: Event has many lab usage logs
+     */
+    public function logPenggunaanLabs()
+    {
+        return $this->hasMany(LogPenggunaanLab::class, 'kegiatan_id');
+    }
+}
