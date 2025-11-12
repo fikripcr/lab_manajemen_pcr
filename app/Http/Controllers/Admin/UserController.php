@@ -18,39 +18,40 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        // $search = $request->input('search');
 
-        $users = User::with('roles')->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            })
-            ->paginate(20);
+        // $users = User::with('roles')->when($search, function ($query, $search) {
+        //         return $query->where('name', 'like', "%{$search}%")
+        //             ->orWhere('email', 'like', "%{$search}%");
+        //     })
+        //     ->paginate(20);
 
-        return view('pages.admin.users.index', compact('users'));
+        return view('pages.admin.users.index');
     }
-    
+
     /**
      * Process datatables ajax request.
      */
-    public function dataTable(Request $request)
+    public function data(Request $request)
     {
         $users = User::with('roles');
-        
+
         return DataTables::of($users)
             ->addIndexColumn()
             ->editColumn('roles', function ($user) {
                 return $user->roles->pluck('name')->first() ?? 'No Role';
             })
             ->addColumn('action', function ($user) {
+                $encryptedId = encryptId($user->id);
                 return '
                     <div class="d-flex">
-                        <a href="' . route('users.show', $user) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route('users.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route('users.edit', $user) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route('users.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route('users.destroy', $user) . '" method="POST" class="d-inline">
+                        <form action="' . route('users.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
                             <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
@@ -78,7 +79,7 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $validated = $request->validated();
-        
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -97,16 +98,29 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $user = User::findOrFail($realId);
+        $user->id = encryptId($user->id);
         return view('pages.admin.users.show', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $user = User::findOrFail($realId);
         $roles = Role::all();
         return view('pages.admin.users.edit', compact('user', 'roles'));
     }
@@ -114,10 +128,16 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserRequest $request, User $user)
+    public function update(UserRequest $request, $id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $user = User::findOrFail($realId);
         $validated = $request->validated();
-        
+
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -141,8 +161,14 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $user = User::findOrFail($realId);
         $user->delete();
 
         return redirect()->route('users.index')

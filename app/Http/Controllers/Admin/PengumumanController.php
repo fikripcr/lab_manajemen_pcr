@@ -18,7 +18,7 @@ class PengumumanController extends Controller
     {
         if ($request->ajax()) {
             $pengumumen = Pengumuman::with('penulis')->where('jenis', 'pengumuman');
-            
+
             return DataTables::of($pengumumen)
                 ->addIndexColumn()
                 ->editColumn('judul', function ($pengumuman) {
@@ -33,15 +33,16 @@ class PengumumanController extends Controller
                     return $pengumuman->created_at ? $pengumuman->created_at->format('d M Y') : '-';
                 })
                 ->addColumn('action', function ($pengumuman) {
+                    $encryptedId = encryptId($pengumuman->id);
                     return '
                         <div class="d-flex">
-                            <a href="' . route('pengumuman.show', $pengumuman) . '" class="text-info dropdown-item me-1" title="View">
+                            <a href="' . route('pengumuman.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
                                 <i class="bx bx-show"></i>
                             </a>
-                            <a href="' . route('pengumuman.edit', $pengumuman) . '" class="text-primary dropdown-item me-1" title="Edit">
+                            <a href="' . route('pengumuman.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
-                            <form action="' . route('pengumuman.destroy', $pengumuman) . '" method="POST" class="d-inline">
+                            <form action="' . route('pengumuman.destroy', $encryptedId) . '" method="POST" class="d-inline">
                                 ' . csrf_field() . '
                                 ' . method_field('DELETE') . '
                                 <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
@@ -53,7 +54,7 @@ class PengumumanController extends Controller
                 ->rawColumns(['judul', 'is_published', 'action'])
                 ->make(true);
         }
-        
+
         return view('pages.admin.pengumuman.index', ['type' => 'pengumuman']);
     }
 
@@ -64,7 +65,7 @@ class PengumumanController extends Controller
     {
         if ($request->ajax()) {
             $berita = Pengumuman::with('penulis')->where('jenis', 'berita');
-            
+
             return DataTables::of($berita)
                 ->addIndexColumn()
                 ->editColumn('judul', function ($berita) {
@@ -79,15 +80,16 @@ class PengumumanController extends Controller
                     return $berita->created_at ? $berita->created_at->format('d M Y') : '-';
                 })
                 ->addColumn('action', function ($berita) {
+                    $encryptedId = encryptId($berita->id);
                     return '
                         <div class="d-flex">
-                            <a href="' . route('berita.show', $berita) . '" class="text-info dropdown-item me-1" title="View">
+                            <a href="' . route('berita.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
                                 <i class="bx bx-show"></i>
                             </a>
-                            <a href="' . route('berita.edit', $berita) . '" class="text-primary dropdown-item me-1" title="Edit">
+                            <a href="' . route('berita.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
-                            <form action="' . route('berita.destroy', $berita) . '" method="POST" class="d-inline">
+                            <form action="' . route('berita.destroy', $encryptedId) . '" method="POST" class="d-inline">
                                 ' . csrf_field() . '
                                 ' . method_field('DELETE') . '
                                 <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
@@ -99,7 +101,7 @@ class PengumumanController extends Controller
                 ->rawColumns(['judul', 'is_published', 'action'])
                 ->make(true);
         }
-        
+
         return view('pages.admin.pengumuman.index', ['type' => 'berita']);
     }
 
@@ -118,9 +120,9 @@ class PengumumanController extends Controller
     public function store(PengumumanRequest $request)
     {
         $validated = $request->validated();
-        
+
         $isPublished = $validated['is_published'] ?? false;
-        
+
         $pengumuman = Pengumuman::create([
             'judul' => $validated['judul'],
             'isi' => $validated['isi'],
@@ -130,8 +132,17 @@ class PengumumanController extends Controller
             'published_at' => $isPublished ? now() : null,
         ]);
 
+        // Handle media uploads if present
+        if ($request->hasFile('cover_image')) {
+            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
+        }
+
+        if ($request->hasFile('attachments')) {
+            $pengumuman->addMultipleMedia($request->file('attachments'), 'info_attachment');
+        }
+
         $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
-        
+
         return redirect()->route($redirectRoute)
             ->with('success', ucfirst($pengumuman->jenis) . ' created successfully.');
     }
@@ -139,16 +150,28 @@ class PengumumanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Pengumuman $pengumuman)
+    public function show($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $pengumuman = Pengumuman::findOrFail($realId);
         return view('pages.admin.pengumuman.show', compact('pengumuman'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pengumuman $pengumuman)
+    public function edit($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $pengumuman = Pengumuman::findOrFail($realId);
         $penulisOptions = User::all();
         $type = $pengumuman->jenis;
         return view('pages.admin.pengumuman.edit', compact('pengumuman', 'type', 'penulisOptions'));
@@ -157,12 +180,18 @@ class PengumumanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PengumumanRequest $request, Pengumuman $pengumuman)
+    public function update(PengumumanRequest $request, $id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $pengumuman = Pengumuman::findOrFail($realId);
         $validated = $request->validated();
-        
+
         $isPublished = $validated['is_published'] ?? false;
-        
+
         $pengumuman->update([
             'judul' => $validated['judul'],
             'isi' => $validated['isi'],
@@ -172,8 +201,21 @@ class PengumumanController extends Controller
             'published_at' => $isPublished ? now() : $pengumuman->published_at, // Keep original published_at if not changing status
         ]);
 
+        // Handle media uploads if present
+        if ($request->hasFile('cover_image')) {
+            // Remove existing cover image if any
+            $pengumuman->clearMediaCollection('info_cover');
+            // Add new cover image
+            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
+        }
+
+        if ($request->hasFile('attachments')) {
+            // Add new attachments
+            $pengumuman->addMultipleMedia($request->file('attachments'), 'info_attachment');
+        }
+
         $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
-        
+
         return redirect()->route($redirectRoute)
             ->with('success', ucfirst($pengumuman->jenis) . ' updated successfully.');
     }
@@ -181,89 +223,61 @@ class PengumumanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pengumuman $pengumuman)
+    public function destroy($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $pengumuman = Pengumuman::findOrFail($realId);
         $jenis = $pengumuman->jenis;
         $pengumuman->delete();
 
         $redirectRoute = $jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
-        
+
         return redirect()->route($redirectRoute)
             ->with('success', ucfirst($jenis) . ' deleted successfully.');
     }
 
     /**
-     * Process datatables ajax request for pengumuman.
+     * Process datatables ajax request.
      */
-    public function dataTablePengumuman(Request $request)
+    public function data(Request $request)
     {
-        $pengumumen = Pengumuman::with('penulis')->where('jenis', 'pengumuman');
+        // Determine the type based on the route name
+        $routeName = $request->route()->getName();
+        $type = $routeName === 'berita.data' ? 'berita' : 'pengumuman';
+        
+        $data = Pengumuman::with('penulis')->where('jenis', $type);
 
-        return DataTables::of($pengumumen)
+        return DataTables::of($data)
             ->addIndexColumn()
-            ->editColumn('judul', function ($pengumuman) {
-                return '<strong>' . e($pengumuman->judul) . '</strong>';
+            ->editColumn('judul', function ($item) {
+                return '<strong>' . e($item->judul) . '</strong>';
             })
-            ->editColumn('is_published', function ($pengumuman) {
-                $status = $pengumuman->is_published ? 'Published' : 'Draft';
-                $class = $pengumuman->is_published ? 'bg-label-success' : 'bg-label-warning';
+            ->editColumn('is_published', function ($item) {
+                $status = $item->is_published ? 'Published' : 'Draft';
+                $class = $item->is_published ? 'bg-label-success' : 'bg-label-warning';
                 return '<span class="badge ' . $class . '">' . $status . '</span>';
             })
-            ->editColumn('created_at', function ($pengumuman) {
-                return $pengumuman->created_at ? $pengumuman->created_at->format('d M Y') : '-';
+            ->editColumn('created_at', function ($item) {
+                return $item->created_at ? $item->created_at->format('d M Y') : '-';
             })
-            ->addColumn('action', function ($pengumuman) {
+            ->addColumn('action', function ($item) {
+                $encryptedId = encryptId($item->id);
+                // Use the appropriate route based on jenis
+                $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
+                
                 return '
                     <div class="d-flex">
-                        <a href="' . route('pengumuman.show', $pengumuman) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route($routePrefix . '.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route('pengumuman.edit', $pengumuman) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route($routePrefix . '.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route('pengumuman.destroy', $pengumuman) . '" method="POST" class="d-inline">
-                            ' . csrf_field() . '
-                            ' . method_field('DELETE') . '
-                            <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </form>
-                    </div>';
-            })
-            ->rawColumns(['judul', 'is_published', 'action'])
-            ->make(true);
-    }
-
-    /**
-     * Process datatables ajax request for berita.
-     */
-    public function dataTableBerita(Request $request)
-    {
-        $berita = Pengumuman::with('penulis')->where('jenis', 'berita');
-
-        return DataTables::of($berita)
-            ->addIndexColumn()
-            ->editColumn('judul', function ($berita) {
-                return '<strong>' . e($berita->judul) . '</strong>';
-            })
-            ->editColumn('is_published', function ($berita) {
-                $status = $berita->is_published ? 'Published' : 'Draft';
-                $class = $berita->is_published ? 'bg-label-success' : 'bg-label-warning';
-                return '<span class="badge ' . $class . '">' . $status . '</span>';
-            })
-            ->editColumn('created_at', function ($berita) {
-                return $berita->created_at ? $berita->created_at->format('d M Y') : '-';
-            })
-            ->addColumn('action', function ($berita) {
-                return '
-                    <div class="d-flex">
-                        <a href="' . route('berita.show', $berita) . '" class="text-info dropdown-item me-1" title="View">
-                            <i class="bx bx-show"></i>
-                        </a>
-                        <a href="' . route('berita.edit', $berita) . '" class="text-primary dropdown-item me-1" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <form action="' . route('berita.destroy', $berita) . '" method="POST" class="d-inline">
+                        <form action="' . route($routePrefix . '.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
                             <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">

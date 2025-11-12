@@ -46,46 +46,44 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function() {
             var table = $('#{{ $type }}-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ $type === "pengumuman" ? route("pengumuman.dataTable") : route("berita.dataTable") }}',
+                ajax: '{{ $type === "pengumuman" ? route("pengumuman.data") : route("berita.data") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { 
-                        data: 'judul', 
+                    {
+                        data: 'judul',
                         name: 'judul',
                         orderable: true,
                         searchable: true
                     },
-                    { 
-                        data: 'is_published', 
+                    {
+                        data: 'is_published',
                         name: 'is_published',
                         orderable: true,
                         searchable: false
                     },
-                    { 
+                    {
                         data: null,
                         name: 'penulis.name',
                         render: function(data, type, row) {
                             return row.penulis ? row.penulis.name : 'System';
                         }
                     },
-                    { 
-                        data: 'created_at', 
+                    {
+                        data: 'created_at',
                         name: 'created_at',
                         orderable: true,
                         searchable: false
                     },
-                    { 
-                        data: 'action', 
-                        name: 'action', 
-                        orderable: false, 
-                        searchable: false 
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
                     }
                 ],
                 order: [[0, 'desc']],
@@ -98,7 +96,7 @@
             $('#searchInput').on('keyup', function() {
                 table.search(this.value).draw();
             });
-            
+
             // Handle page length change
             $('#pageLength').on('change', function() {
                 var pageLength = parseInt($(this).val());

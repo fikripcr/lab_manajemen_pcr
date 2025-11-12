@@ -34,9 +34,9 @@
             <h1 class="mb-4">{{ e($pengumuman->judul) }}</h1>
 
             <div class="content">
-              <p>
-                {!! nl2br(e($pengumuman->isi)) !!}
-              </p>
+              <div>
+                {!! $pengumuman->isi !!}
+              </div>
             </div>
 
             <div class="post-tags d-flex justify-content-between align-items-center">

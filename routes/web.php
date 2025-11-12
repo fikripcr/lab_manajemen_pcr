@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\LabController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Guest\GuestController;
-use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InventarisController;
+use App\Http\Controllers\Admin\LabController;
 use App\Http\Controllers\Admin\PengumumanController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Guest\GuestController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [GuestController::class, 'home'])->name('home');
 
@@ -22,15 +22,15 @@ Route::middleware('auth')->group(function () {
 
     // User resource routes
     Route::resource('users', UserController::class);
+    Route::get('api/users', [UserController::class, 'data'])->name('users.data');
 
     // Lab resource routes
     Route::resource('labs', LabController::class);
+    Route::get('api/labs', [LabController::class, 'data'])->name('labs.data');
 
     // Inventory resource routes
     Route::resource('inventories', InventarisController::class);
-    Route::get('api/inventories', [InventarisController::class, 'dataTable'])->name('inventories.dataTable');
-    Route::get('api/users', [UserController::class, 'dataTable'])->name('users.dataTable');
-    Route::get('api/labs', [LabController::class, 'dataTable'])->name('labs.dataTable');
+    Route::get('api/inventories', [InventarisController::class, 'data'])->name('inventories.data');
 
     // Pengumuman routes
     Route::prefix('pengumuman')->name('pengumuman.')->group(function () {
@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{pengumuman}/edit', [PengumumanController::class, 'edit'])->name('edit');
         Route::put('/{pengumuman}', [PengumumanController::class, 'update'])->name('update');
         Route::delete('/{pengumuman}', [PengumumanController::class, 'destroy'])->name('destroy');
-        Route::get('/api/data', [PengumumanController::class, 'dataTablePengumuman'])->name('dataTable');
+        Route::get('/api/data', [PengumumanController::class, 'data'])->name('data');
     });
 
     // Berita routes
@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{berita}/edit', [PengumumanController::class, 'edit'])->name('edit');
         Route::put('/{berita}', [PengumumanController::class, 'update'])->name('update');
         Route::delete('/{berita}', [PengumumanController::class, 'destroy'])->name('destroy');
-        Route::get('/api/data', [PengumumanController::class, 'dataTableBerita'])->name('dataTable');
+        Route::get('/api/data', [PengumumanController::class, 'data'])->name('data');
     });
 
 });

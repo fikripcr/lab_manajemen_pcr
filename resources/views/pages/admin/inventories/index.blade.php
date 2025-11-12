@@ -11,6 +11,15 @@
                     <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search inventories...">
                 </div>
                 <div class="me-3 mb-2 mb-sm-0">
+                    <select id="conditionFilter" class="form-select form-select-sm">
+                        <option value="">All Conditions</option>
+                        <option value="Baik">Good</option>
+                        <option value="Rusak Ringan">Minor Damage</option>
+                        <option value="Rusak Berat">Major Damage</option>
+                        <option value="Tidak Dapat Digunakan">Cannot Be Used</option>
+                    </select>
+                </div>
+                <div class="me-3 mb-2 mb-sm-0">
                     <select id="pageLength" class="form-select form-select-sm">
                         <option value="10" selected>10</option>
                         <option value="25">25</option>
@@ -45,15 +54,18 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
     <script>
         $(document).ready(function() {
             var table = $('#inventaris-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('inventories.dataTable') }}',
+                ajax: {
+                    url: '{{ route('inventories.data') }}',
+                    data: function(d) {
+                        d.condition = $('#conditionFilter').val();
+                    }
+                },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     {
@@ -82,7 +94,7 @@
                         data: 'tanggal_pengecekan',
                         name: 'tanggal_pengecekan',
                         render: function(data) {
-                            return data ? moment(data).format('MMM DD, YYYY') : '-';
+                            return data ? data : '-';
                         }
                     },
                     {
@@ -102,7 +114,12 @@
             $('#searchInput').on('keyup', function() {
                 table.search(this.value).draw();
             });
-            
+
+            // Handle condition filter change
+            $('#conditionFilter').on('change', function() {
+                table.ajax.reload();
+            });
+
             // Handle page length change
             $('#pageLength').on('change', function() {
                 var pageLength = parseInt($(this).val());

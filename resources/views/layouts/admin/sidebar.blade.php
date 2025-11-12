@@ -35,7 +35,7 @@
                 <div data-i18n="Documentation">Data Lab</div>
             </a>
         </li>
-        
+
         <li class="menu-item {{request()->routeIs('inventories.*')? 'active' : ''}}">
             <a href="{{route('inventories.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-package"></i>
@@ -43,10 +43,10 @@
             </a>
         </li>
 
-        <li class="menu-item {{request()->routeIs('pengumuman.*') || request()->routeIs('berita.*') ? 'active' : ''}}">
+        <li class="menu-item {{request()->routeIs('pengumuman.*') || request()->routeIs('berita.*') ? 'active open' : ''}}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-bell"></i>
-                <div data-i18n="Pengumuman">Pengumuman & Berita</div>
+                <div data-i18n="Pengumuman">Info Publik</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{request()->routeIs('pengumuman.*') ? (request()->routeIs('pengumuman.create') || request()->routeIs('pengumuman.edit') ? '' : 'active') : ''}}">

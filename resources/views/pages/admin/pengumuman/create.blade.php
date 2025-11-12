@@ -13,13 +13,13 @@
                 </div>
                 <div class="card-body">
                     @include('components.flash-message')
-                    
+
                     <form action="{{ route($type.'.store') }}" method="POST">
                         @csrf
-                        
+
                         <div class="mb-3">
                             <label class="form-label" for="judul">Title</label>
-                            <input type="text" class="form-control @error('judul') is-invalid @enderror" 
+                            <input type="text" class="form-control @error('judul') is-invalid @enderror"
                                    id="judul" name="judul" value="{{ old('judul') }}" required>
                             @error('judul')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -28,8 +28,13 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="isi">Content</label>
-                            <textarea class="form-control @error('isi') is-invalid @enderror" 
-                                      id="isi" name="isi" rows="6" required>{{ old('isi') }}</textarea>
+                            <x-tinymce.editor 
+                                id="isi"
+                                name="isi" 
+                                :value="old('isi')"
+                                height="400"
+                                required
+                            />
                             @error('isi')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -37,7 +42,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="jenis">Type</label>
-                            <select class="form-select @error('jenis') is-invalid @enderror" 
+                            <select class="form-select @error('jenis') is-invalid @enderror"
                                     id="jenis" name="jenis" required>
                                 <option value="pengumuman" {{ old('jenis', $type) == 'pengumuman' ? 'selected' : '' }}>
                                     Pengumuman
@@ -53,7 +58,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="penulis_id">Author</label>
-                            <select class="form-select @error('penulis_id') is-invalid @enderror" 
+                            <select class="form-select @error('penulis_id') is-invalid @enderror"
                                     id="penulis_id" name="penulis_id" required>
                                 <option value="">Select Author</option>
                                 @foreach($penulisOptions as $penulis)
@@ -67,8 +72,28 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label" for="cover_image">Cover Image</label>
+                            <input type="file" class="form-control @error('cover_image') is-invalid @enderror" 
+                                   id="cover_image" name="cover_image" accept="image/*">
+                            @error('cover_image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">Upload a cover image for this {{ strtolower($type) }}.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="attachments">Attachments</label>
+                            <input type="file" class="form-control @error('attachments') is-invalid @enderror" 
+                                   id="attachments" name="attachments[]" multiple accept="*/*">
+                            @error('attachments')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">Upload related attachments/files for this {{ strtolower($type) }}.</div>
+                        </div>
+
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input @error('is_published') is-invalid @enderror" 
+                            <input type="checkbox" class="form-check-input @error('is_published') is-invalid @enderror"
                                    id="is_published" name="is_published" value="1" {{ old('is_published') ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_published">Publish {{ ucfirst($type) }}</label>
                             @error('is_published')
@@ -90,3 +115,5 @@
         </div>
     </div>
 @endsection
+
+

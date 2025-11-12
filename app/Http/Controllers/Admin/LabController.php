@@ -16,37 +16,29 @@ class LabController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
-
-        $labs = Lab::when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('location', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            })
-            ->paginate(20);
-
-        return view('pages.admin.labs.index', compact('labs'));
+        return view('pages.admin.labs.index');
     }
-    
+
     /**
      * Process datatables ajax request.
      */
-    public function dataTable(Request $request)
+    public function data(Request $request)
     {
         $labs = Lab::select('*');
-        
+
         return DataTables::of($labs)
             ->addIndexColumn()
             ->addColumn('action', function ($lab) {
+                $encryptedId = encryptId($lab->lab_id);
                 return '
                     <div class="d-flex">
-                        <a href="' . route('labs.show', $lab) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route('labs.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route('labs.edit', $lab) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route('labs.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route('labs.destroy', $lab) . '" method="POST" class="d-inline">
+                        <form action="' . route('labs.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
                             <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
@@ -81,24 +73,42 @@ class LabController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Lab $lab)
+    public function show(string $id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $lab = Lab::findOrFail($realId);
         return view('pages.admin.labs.show', compact('lab'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Lab $lab)
+    public function edit($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $lab = Lab::findOrFail($realId);
         return view('pages.admin.labs.edit', compact('lab'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(LabRequest $request, Lab $lab)
+    public function update(LabRequest $request, $id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $lab = Lab::findOrFail($realId);
         $lab->update($request->validated());
 
         return redirect()->route('labs.index')
@@ -108,8 +118,14 @@ class LabController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Lab $lab)
+    public function destroy($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $lab = Lab::findOrFail($realId);
         $lab->delete();
 
         return redirect()->route('labs.index')

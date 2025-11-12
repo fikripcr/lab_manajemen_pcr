@@ -17,28 +17,33 @@ class InventarisController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
-
-        $inventories = Inventaris::with('lab')
-            ->when($search, function ($query, $search) {
-                return $query->where('nama_alat', 'like', "%{$search}%")
-                    ->orWhere('jenis_alat', 'like', "%{$search}%")
-                    ->orWhereHas('lab', function($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            })
-            ->paginate(20);
-
-        return view('pages.admin.inventories.index', compact('inventories'));
+        return view('pages.admin.inventories.index');
     }
-    
+
     /**
      * Process datatables ajax request.
      */
-    public function dataTable(Request $request)
+    public function data(Request $request)
     {
         $inventaris = Inventaris::with('lab');
-        
+
+        // Apply filters if provided
+        // if ($request->has('search') && !empty($request->search)) {
+        //     $searchTerm = $request->search;
+        //     $inventaris = $inventaris->where(function ($query) use ($searchTerm) {
+        //         $query->where('nama_alat', 'like', "%{$searchTerm}%")
+        //               ->orWhere('jenis_alat', 'like', "%{$searchTerm}%")
+        //               ->orWhereHas('lab', function ($q) use ($searchTerm) {
+        //                   $q->where('name', 'like', "%{$searchTerm}%");
+        //               });
+        //     });
+        // }
+
+        // Apply condition filter if provided
+        if ($request->has('condition') && !empty($request->condition)) {
+            $inventaris = $inventaris->where('kondisi_terakhir', $request->condition);
+        }
+
         return DataTables::of($inventaris)
             ->addIndexColumn()
             ->editColumn('kondisi_terakhir', function ($item) {
@@ -65,15 +70,16 @@ class InventarisController extends Controller
                 return $item->tanggal_pengecekan ? $item->tanggal_pengecekan->format('d M Y') : '-';
             })
             ->addColumn('action', function ($item) {
+                $encryptedId = encryptId($item->id);
                 return '
                     <div class="d-flex">
-                        <a href="' . route('inventories.show', $item) . '" class="text-info dropdown-item me-1" title="View">
+                        <a href="' . route('inventories.show', $encryptedId) . '" class="text-info dropdown-item me-1" title="View">
                             <i class="bx bx-show"></i>
                         </a>
-                        <a href="' . route('inventories.edit', $item) . '" class="text-primary dropdown-item me-1" title="Edit">
+                        <a href="' . route('inventories.edit', $encryptedId) . '" class="text-primary dropdown-item me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route('inventories.destroy', $item) . '" method="POST" class="d-inline">
+                        <form action="' . route('inventories.destroy', $encryptedId) . '" method="POST" class="d-inline">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
                             <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm(\'Are you sure?\')">
@@ -109,16 +115,28 @@ class InventarisController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Inventaris $inventory)
+    public function show($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $inventory = Inventaris::findOrFail($realId);
         return view('pages.admin.inventories.show', compact('inventory'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Inventaris $inventory)
+    public function edit($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $inventory = Inventaris::findOrFail($realId);
         $labs = Lab::all();
         return view('pages.admin.inventories.edit', compact('inventory', 'labs'));
     }
@@ -126,8 +144,14 @@ class InventarisController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(InventarisRequest $request, Inventaris $inventory)
+    public function update(InventarisRequest $request, $id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $inventory = Inventaris::findOrFail($realId);
         $inventory->update($request->validated());
 
         return redirect()->route('inventories.index')
@@ -137,8 +161,14 @@ class InventarisController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Inventaris $inventory)
+    public function destroy($id)
     {
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $inventory = Inventaris::findOrFail($realId);
         $inventory->delete();
 
         return redirect()->route('inventories.index')

@@ -90,4 +90,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(LaporanKerusakan::class, 'teknisi_id');
     }
+    
+    /**
+     * Get the value of the model's route key.
+     */
+    public function getRouteKey()
+    {
+        return encryptId($this->getKey());
+    }
 }

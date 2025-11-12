@@ -80,4 +80,12 @@ class Lab extends Model
     {
         return $this->hasMany(Inventaris::class, 'lab_id');
     }
+    
+    /**
+     * Get the value of the model's route key.
+     */
+    public function getRouteKey()
+    {
+        return encryptId($this->getKey());
+    }
 }

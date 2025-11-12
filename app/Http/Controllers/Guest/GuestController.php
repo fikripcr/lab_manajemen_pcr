@@ -18,7 +18,14 @@ class GuestController extends Controller
         return view('pages.guest.home', compact('recentNews'));
     }
     
-    public function showNews(Pengumuman $pengumuman){
+    public function showNews($id){
+        $realId = decryptId($id);
+        if (!$realId) {
+            abort(404);
+        }
+        
+        $pengumuman = Pengumuman::findOrFail($realId);
+        
         // Only show published items
         if (!$pengumuman->is_published) {
             abort(404);

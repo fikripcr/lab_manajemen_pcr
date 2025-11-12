@@ -51,7 +51,7 @@
             var table = $('#labs-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('labs.dataTable') }}',
+                ajax: '{{ route('labs.data') }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
