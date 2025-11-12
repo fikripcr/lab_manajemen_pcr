@@ -12,11 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // Use standard 'id' for better library compatibility
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('password'); // Required for Laravel authentication
+            $table->string('google_id')->nullable()->unique();
+            $table->string('npm')->nullable()->unique();
+            $table->string('nip')->nullable()->unique();
+            $table->unsignedBigInteger('role_id')->nullable(); // Role ID will be constrained later after permission tables are created
+            $table->string('avatar')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });

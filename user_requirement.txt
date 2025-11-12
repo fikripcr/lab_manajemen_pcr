@@ -1,0 +1,64 @@
+User Requirement Sistem
+Logbook Lab JTI
+1️⃣ General
+User: Kajur, Ka.Lab, PIC, Teknisi, Dosen, Mahasiswa
+Menampilkan informasi umum dihalaman awal seperti:
+Slideshow Lab, Jadwal Lab
+Pengumuman (seperti barang hilang, ketentuan dll) dan Artikel berita.
+Statistik singkat Jumlah alat, Penggunaan Alat dan Peminjaman Lab.
+Menampilkan pilihan untuk mengisi Log Perkuliahan atau Log Kegiatan
+2️⃣ Pencatatan & Maintenance Alat Lab
+Setiap Lab diberikan informasi seperti Fokus Utama, Ka.Lab, PIC, Teknisi,
+Nomor Ruang. Sehingga setiap hak akses dapat melihat informasi Lab nya
+masing-masing.
+Alat-alat yang bersifat mendukung perkuliahan dan harus di pastikan
+keadaannya perlu di catat ke sistem seperti AC, Loker, Meja, Switch, Router
+dll)
+Teknisi/PIC akan membuat laporan kerusakan terhadap alat-alat yang
+sudah terdata di lab
+User Requirement Sistem Logbook Lab JTI 1Sediakan halaman khusus yang menampilkan informasi laporan kerusakan
+tanpa harus Login, sehingga Kajur, Rumah Tangga atau BSTI dapat
+memantau secara langsung
+Setiap laporan kerusakan terdapat aksi untuk merubah status perbaikan (No
+Status/In Progress/Done) dan keterangan pendukung yang diisi oleh teknisi
+terhadap perbaikan (seperti foto atau link pendukung)
+Setiap laporan kerusakan akan tampil di semua teknisi, namun siapa yang
+merubah status perbaikan harus disimpan
+3️⃣ Penggunaan Lab untuk Perkuliahan
+User login ke sistem menggunakan akun gmail PCR
+PIC/Teknisi melakukan Import data Tahun Ajaran, Semester (Genap, Ganjil,
+Matrikulasi), Matakuliah, Waktu Kuliah, Dosen untuk setiap awal semester
+Diawal semester, Dosen/PIC menetapkan setiap Nomor PC beserta Loker
+akan di-lock untuk mahasiswa tertentu. Perlu melapor ke PIC jika terjadi
+perpindahan PC agar di-unlock terlebih dahulu
+Penyederhanaan form saat mengisi Log Perkuliahan oleh Mahasiswa
+(cukup tampilkan alat, status dan keterangan untuk setiap barang, serta
+keterangan secara umum)
+Pengisian Log Perkuliahan hanya bisa dilakukan selama masa perkuliahan
+berlangsung dan dapat dipantau, sehingga langsung bisa diketahui PC
+nomor berapa yang belum mengisi Log
+4️⃣ Penggunaan Lab untuk Kegiatan
+Penggunaan lab untuk kegiatan dapat dilakukan oleh Penyelenggara
+kegiatan baik itu internal (Civitas PCR) maupun eksternal dan diajukan
+melalui form yang tersedia
+Form tersebut akan di-approve oleh PIC Lab jika yang mengajukan bukan
+PIC
+Pastikan ada pengecekan ketersediaan Lab yang sedang dipakai perkuliahn
+atau digunakan oleh kegiatan lain saat mengisi form
+Sistem dapat men-generate link atau QR Code yang aktif selama jam
+kegiatan untuk mengisi Log Penggunaan Lab sesuai tempat duduk peserta
+User Requirement Sistem Logbook Lab JTI 2kegiatan
+Sistem dapat men-generate Berita Acara sebagai bukti adanya kegiatan
+5️⃣ Request Software untuk Perkuliahan
+Form permintaan tampil di halaman depan dengan mengisi matakuliah, Lab
+serta software yang dibutuhkan
+Fitur ini bisa di aktifkan atau di non aktifkan oleh PIC
+6️⃣ Monitoring & Data
+Terdapat Master Data periode range waktu Semester Genap, Ganjil dan
+Matrikulasi yang dapat digunakan untuk filter data
+Ka.Lab hanya bisa melihat lab miliknya serta tampil semua data
+Maintenance, Perkuliahan, Kegiatan dan Request
+Dashboard dapat di-filter berdasarkan tanggal atau minggu
+Perkirakan pertumbuhan data akan sangat banyak dalam satu semester
+perkuliahan
+Integrasi dengan sistem PCR terutama Mahasiswa, Pegawai & Jabatan

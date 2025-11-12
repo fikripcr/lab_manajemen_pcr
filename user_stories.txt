@@ -1,0 +1,37 @@
+#	User Stories
+	A. Civitas PCR
+1	Sebagai Civitas PCR (Mahasiswa, Dosen, PIC Lab, Teknisi, Ka.Lab, Kajur), saya ingin login menggunakan akun Gmail PCR sehingga akses sistem lebih mudah, aman, dan terintegrasi dengan kampus.
+	B. Mahasiswa
+2	Sebagai Mahasiswa, saya ingin mengisi Log Penggunaan PC saat perkuliahan (status PC, kondisi, catatan umum) sehingga kondisi penggunaan PC selama kuliah terdokumentasi.
+3	Sebagai Mahasiswa, saya ingin hanya bisa mengisi Log Penggunaan PC selama jadwal perkuliahan berlangsung sehingga data tetap valid.
+	C. Dosen
+4	Sebagai Dosen, saya ingin memantau isian Log Penggunaan PC mahasiswa sesuai jadwal perkuliahan saya sehingga saya tahu siapa yang sudah dan belum mengisi.
+5	Sebagai Dosen, saya ingin mengajukan request software untuk mata kuliah saya sehingga kebutuhan pembelajaran terpenuhi.
+	D. PIC Lab
+6	Sebagai PIC Lab, saya ingin mengimpor data akademik (tahun ajaran, semester, mata kuliah, dosen, jadwal) sehingga sistem siap digunakan sejak awal semester.
+7	Sebagai PIC Lab, saya ingin menetapkan nomor PC dan loker untuk mahasiswa di awal semester sehingga penggunaan lebih teratur.
+8	Sebagai PIC Lab, saya ingin melakukan unlock nomor PC jika ada mahasiswa pindah PC sehingga penggunaan PC bisa dialihkan dengan benar.
+9	Sebagai PIC Lab, saya ingin memantau isian Log Penggunaan PC mahasiswa di kelas yang berjalan sehingga saya tahu PC mana yang belum terisi log.
+10	Sebagai PIC Lab, saya ingin menyetujui atau menolak pengajuan penggunaan lab dari penyelenggara kegiatan sehingga jadwal tetap terkontrol.
+11	Sebagai PIC Lab, saya ingin memastikan jadwal kegiatan tidak bentrok dengan perkuliahan sehingga penggunaan lab tidak tabrakan.
+12	Sebagai PIC Lab, saya ingin mengaktifkan atau menonaktifkan fitur request software sehingga fitur ini bisa dikendalikan sesuai kebutuhan.
+	E. Teknisi
+13	Sebagai Teknisi, saya ingin mencatat kondisi alat pendukung (AC, loker, meja, switch, router, dll.) sehingga inventaris selalu terpantau.
+14	Sebagai Teknisi, saya ingin membuat laporan kerusakan alat sehingga perbaikan bisa segera dilakukan.
+15	Sebagai Teknisi, saya ingin mengubah status laporan kerusakan (No Status / In Progress / Done) beserta catatan dan foto sehingga perkembangan perbaikan terdokumentasi.
+16	Sebagai Teknisi, saya ingin setiap perubahan status perbaikan tersimpan atas nama teknisi yang melakukannya sehingga riwayat tetap jelas.
+17	Sebagai Teknisi, saya ingin memantau laporan kerusakan pada lab yang saya ditugaskan sehingga saya bisa menindaklanjuti lebih cepat.
+	F. Ka.Lab
+18	Sebagai Ka.Lab, saya ingin melihat data log penggunaan PC saat perkuliahan, log penggunaan lab saat kegiatan, laporan kerusakan, dan request software pada lab saya sehingga saya bisa memantau aktivitas secara menyeluruh.
+	G. Kajur
+19	Sebagai Kajur, saya ingin melihat statistik jumlah alat, penggunaan, dan peminjaman lab sehingga saya mendapat gambaran umum kondisi laboratorium.
+20	Sebagai Kajur, saya ingin melihat laporan kerusakan tanpa login sehingga kondisi lab dapat saya pantau langsung.
+21	Sebagai Kajur, saya ingin memfilter dashboard berdasarkan tanggal atau minggu sehingga saya bisa menganalisis data dengan lebih detail.
+22	Sebagai Kajur, saya ingin memantau data log penggunaan PC, kegiatan, serta kerusakan di semua lab sehingga saya punya gambaran besar unit laboratorium.
+	H. Penyelenggara Kegiatan
+23	Sebagai Penyelenggara kegiatan (internal/eksternal), saya ingin mengajukan penggunaan lab melalui form sehingga kegiatan dapat dijadwalkan resmi.
+24	Sebagai Penyelenggara kegiatan, saya ingin sistem memberikan status approval dari PIC sehingga saya tahu apakah pengajuan diterima.
+25	Sebagai Penyelenggara kegiatan, saya ingin dapat menghasilkan QR Code khusus kegiatan saya sehingga peserta bisa mengisi Log Penggunaan Lab tanpa harus login.
+26	Sebagai Penyelenggara kegiatan, saya ingin mendapatkan dokumen berita acara kegiatan sehingga ada bukti resmi pelaksanaan kegiatan.
+	I. Peserta Kegiatan (Umum/Civitas PCR)
+27	Sebagai Peserta kegiatan, saya ingin mengisi Log Penggunaan Lab melalui QR Code tanpa harus login sehingga kehadiran dan pemakaian PC/lab saya tercatat.
