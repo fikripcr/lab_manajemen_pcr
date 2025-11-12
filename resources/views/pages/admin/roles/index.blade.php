@@ -39,7 +39,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mt-3">
                         <p class="card-text mb-1"><strong>Assigned Permissions:</strong></p>
                         @if($role->permissions->count() > 0)
@@ -70,9 +70,4 @@
         @endforelse
     </div>
 
-    @if($roles->hasPages())
-    <div class="d-flex justify-content-center">
-        {{ $roles->links() }}
-    </div>
-    @endif
 @endsection

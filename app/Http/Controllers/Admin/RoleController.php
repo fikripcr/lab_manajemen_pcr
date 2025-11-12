@@ -1,19 +1,24 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+
     public function __construct()
     {
-        $this->middleware(['permission:manage roles']);
+        // $this->middleware('permission:access-departemen', [
+        //     'only' => ['show'],
+        // ]);
+
+        // $this->middleware('permission:manage-departemen', [
+        //     'only' => ['create', 'store', 'edit', 'update', 'destroy'],
+        // ]);
     }
 
     /**
@@ -40,21 +45,21 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:roles,name',
-            'permissions' => 'array',
+            'name'          => 'required|unique:roles,name',
+            'permissions'   => 'array',
             'permissions.*' => 'exists:permissions,name',
         ]);
 
         DB::beginTransaction();
         try {
             $role = Role::create(['name' => $request->name]);
-            
+
             if ($request->has('permissions')) {
                 $role->givePermissionTo($request->permissions);
             }
 
             DB::commit();
-            
+
             return redirect()->route('roles.index')->with('success', 'Role created successfully.');
         } catch (\Exception $e) {
             DB::rollback();
@@ -76,7 +81,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $permissions = Permission::all();
+        $permissions     = Permission::all();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         return view('pages.admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
@@ -87,20 +92,20 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $request->validate([
-            'name' => 'required|unique:roles,name,' . $role->id,
-            'permissions' => 'array',
+            'name'          => 'required|unique:roles,name,' . $role->id,
+            'permissions'   => 'array',
             'permissions.*' => 'exists:permissions,name',
         ]);
 
         DB::beginTransaction();
         try {
             $role->update(['name' => $request->name]);
-            
+
             // Sync permissions
             $role->syncPermissions($request->permissions ?? []);
 
             DB::commit();
-            
+
             return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
         } catch (\Exception $e) {
             DB::rollback();

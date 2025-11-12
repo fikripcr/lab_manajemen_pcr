@@ -69,14 +69,14 @@
                 <li class="menu-item {{request()->routeIs('users.*')? 'active' : ''}}">
             <a href="{{route('users.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user"></i>
-                <div data-i18n="Documentation">Data User</div>
+                <div data-i18n="Documentation">User Management</div>
             </a>
         </li>
          <!-- Roles & Permissions Menu -->
         <li class="menu-item {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-shield"></i>
-                <div data-i18n="Roles & Permissions">Roles & Permissions</div>
+                <div data-i18n="Roles & Permissions">Access Control</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">

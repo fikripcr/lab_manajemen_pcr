@@ -65,12 +65,6 @@
                             </tbody>
                         </table>
                     </div>
-
-                    @if($permissions->hasPages())
-                    <div class="mt-4">
-                        {{ $permissions->links() }}
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>

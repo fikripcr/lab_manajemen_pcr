@@ -52,7 +52,7 @@
             var table = $('#{{ $type }}-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ $type === 'pengumuman' ? route('pengumuman.data') : route('berita.data') }}',
+                ajax: '{{ route($type.'.data')}}',
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',

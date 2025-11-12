@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class PermissionController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['permission:manage permissions']);
-    }
 
     /**
      * Display a listing of the resource.
@@ -60,16 +56,28 @@ class PermissionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Permission $permission)
+    public function edit($permissionId)
     {
+        $realId = decryptId($permissionId);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $permission = Permission::findOrFail($realId);
         return view('pages.admin.permissions.edit', compact('permission'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Permission $permission)
+    public function update(Request $request, $permissionId)
     {
+        $realId = decryptId($permissionId);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $permission = Permission::findOrFail($realId);
         $request->validate([
             'name' => 'required|unique:permissions,name,' . $permission->id,
         ]);
@@ -86,8 +94,15 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permission $permission)
+    public function destroy($permissionId)
     {
+        $realId = decryptId($permissionId);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $permission = Permission::findOrFail($realId);
+
         // Prevent deletion of permissions that are assigned to roles
         if ($permission->roles->count() > 0) {
             return redirect()->back()->with('error', 'Cannot delete permission that is assigned to roles.');
