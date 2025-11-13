@@ -38,6 +38,28 @@
             </a>
         </li>
 
+        <!-- Academic Data Menu -->
+        <li class="menu-item {{request()->routeIs('semesters.*')? 'active' : ''}}">
+            <a href="{{route('semesters.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-calendar"></i>
+                <div data-i18n="Documentation">Data Semester</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{request()->routeIs('mata-kuliah.*')? 'active' : ''}}">
+            <a href="{{route('mata-kuliah.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-book"></i>
+                <div data-i18n="Documentation">Data Mata Kuliah</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{request()->routeIs('jadwal.*')? 'active' : ''}}">
+            <a href="{{route('jadwal.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-table"></i>
+                <div data-i18n="Documentation">Jadwal</div>
+            </a>
+        </li>
+
 
 
 
@@ -62,6 +84,14 @@
                     </a>
                 </li>
             </ul>
+        </li>
+
+        <!-- Software Requests Menu -->
+        <li class="menu-item {{request()->routeIs('admin.software-requests.*') ? 'active' : ''}}">
+            <a href="{{route('software-requests.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-software"></i>
+                <div data-i18n="Software Requests">Software Requests</div>
+            </a>
         </li>
 
         <!-- Misc -->

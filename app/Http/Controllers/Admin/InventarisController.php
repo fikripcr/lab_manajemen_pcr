@@ -81,13 +81,9 @@ class InventarisController extends Controller
                         <a href="' . route('inventories.edit', $encryptedId) . '" class="btn btn-primary btn-sm me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route('inventories.destroy', $encryptedId) . '" method="POST" class="d-inline">
-                            ' . csrf_field() . '
-                            ' . method_field('DELETE') . '
-                            <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm(\'Are you sure?\')">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-danger btn-sm" title="Delete" onclick="confirmDelete(\'' . route('inventories.destroy', $encryptedId) . '\')">
+                            <i class="bx bx-trash"></i>
+                        </button>
                     </div>';
             })
             ->rawColumns(['kondisi_terakhir', 'action'])
@@ -172,6 +168,13 @@ class InventarisController extends Controller
 
         $inventory = Inventaris::findOrFail($realId);
         $inventory->delete();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Inventaris deleted successfully.'
+            ]);
+        }
 
         return redirect()->route('inventories.index')
             ->with('success', 'Inventaris deleted successfully.');

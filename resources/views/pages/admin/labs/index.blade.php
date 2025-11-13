@@ -49,6 +49,7 @@
             var table = $('#labs-table').DataTable({
                 processing: true,
                 serverSide: true,
+                stateSave: true,
                 ajax: '{{ route('labs.data') }}',
                 columns: [{
                         data: 'DT_RowIndex',

@@ -886,6 +886,90 @@
       </div>
     </section><!-- /Recent News and Announcements Section -->
 
+    <!-- Approved Software Requests Section -->
+    <section id="approved-software-requests" class="approved-software-requests section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Approved Software Requests</h2>
+        <p>Software yang telah disetujui untuk digunakan di laboratorium</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row g-4">
+          @if($approvedSoftwareRequests && $approvedSoftwareRequests->count() > 0)
+            @foreach($approvedSoftwareRequests as $request)
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+              <div class="post-box">
+                <div class="post-img">
+                  <img src="{{ asset('assets-guest/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($request->nama_software) }}">
+                </div>
+                <div class="meta">
+                  <ul>
+                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <time datetime="{{ $request->created_at->format('Y-m-d') }}">{{ $request->created_at->format('M d, Y') }}</time></li>
+                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> 
+                      @php
+                          $badgeClass = '';
+                          switch ($request->status) {
+                              case 'menunggu_approval':
+                                  $badgeClass = 'bg-warning';
+                                  break;
+                              case 'disetujui':
+                                  $badgeClass = 'bg-success';
+                                  break;
+                              case 'ditolak':
+                                  $badgeClass = 'bg-danger';
+                                  break;
+                              default:
+                                  $badgeClass = 'bg-secondary';
+                          }
+                      @endphp
+                      <span class="badge {{ $badgeClass }}">{{ ucfirst(str_replace('_', ' ', $request->status)) }}</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="d-flex align-items-start">
+                  <div class="flex-shrink-0 me-3">
+                    <i class="bi bi-software bx-lg text-primary" style="font-size: 3rem;"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h3 class="post-title">{{ e($request->nama_software) }}</h3>
+                    <div class="post-content">
+                      <p>{!! Str::limit(strip_tags($request->alasan), 120, '...') !!}</p>
+                      
+                      @if($request->mataKuliahs->count() > 0)
+                        <div class="mt-2">
+                          <strong>Mata Kuliah:</strong>
+                          @foreach($request->mataKuliahs->take(3) as $mk)
+                            <span class="badge bg-label-primary me-1">{{ $mk->kode }} - {{ $mk->nama }}</span>
+                          @endforeach
+                          @if($request->mataKuliahs->count() > 3)
+                            <span class="text-muted">+{{ $request->mataKuliahs->count() - 3 }} lainnya</span>
+                          @endif
+                        </div>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            @endforeach
+          @else
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-software icon-lg mb-3"></i>
+                <h4>Tidak ada software yang disetujui</h4>
+                <p>Belum ada software yang disetujui untuk digunakan di laboratorium.</p>
+                <a href="{{ route('guest.request-software') }}" class="btn btn-primary">
+                  <i class="bx bx-software me-1"></i> Ajukan Software
+                </a>
+              </div>
+            </div>
+          @endif
+        </div>
+      </div>
+    </section><!-- /Approved Software Requests Section -->
+
     <!-- Call To Action Section -->
     <section class="call-to-action-2 call-to-action section light-background" id="call-to-action">
       <div class="container" data-aos="fade-up" data-aos-delay="100">

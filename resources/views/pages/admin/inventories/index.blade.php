@@ -62,6 +62,7 @@
             var table = $('#inventaris-table').DataTable({
                 processing: true,
                 serverSide: true,
+                stateSave: true,
                 ajax: {
                     url: '{{ route('inventories.data') }}',
                     data: function(d) {
@@ -156,6 +157,8 @@
                 // Redirect to export URL with parameters
                 window.location.href = '{{ route('inventories.export') }}?' + params.toString();
             });
+
         });
-    </script>
-@endpush
+        </script>
+    @include('components.sweetalert')
+@endpush>

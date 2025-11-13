@@ -52,6 +52,7 @@
             var table = $('#{{ $type }}-table').DataTable({
                 processing: true,
                 serverSide: true,
+                stateSave: true,
                 ajax: '{{ route($type.'.data')}}',
                 columns: [{
                         data: 'DT_RowIndex',

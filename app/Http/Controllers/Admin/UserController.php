@@ -51,13 +51,9 @@ class UserController extends Controller
                         <a href="' . route('users.edit', $encryptedId) . '" class="btn-primary btn btn-sm me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route('users.destroy', $encryptedId) . '" method="POST" class="d-inline">
-                            ' . csrf_field() . '
-                            ' . method_field('DELETE') . '
-                            <button type="submit" class="btn-danger btn btn-sm" title="Delete" onclick="return confirm(\'Are you sure?\')">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </form>
+                        <button type="button" class="btn-danger btn btn-sm" title="Delete" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\')">
+                            <i class="bx bx-trash"></i>
+                        </button>
                     </div>';
             })
             ->rawColumns(['action'])
@@ -170,6 +166,13 @@ class UserController extends Controller
 
         $user = User::findOrFail($realId);
         $user->delete();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully.'
+            ]);
+        }
 
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully.');

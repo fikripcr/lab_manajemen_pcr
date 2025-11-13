@@ -11,6 +11,12 @@ use Yajra\DataTables\DataTables;
 
 class LabController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:access-lab'], ['only' => ['index', 'show', 'data']]);
+        $this->middleware(['permission:manage-lab'], ['only' => ['create', 'store', 'edit', 'update', 'destroy']]);
+    }
+    
     /**
      * Display a listing of the resource.
      */

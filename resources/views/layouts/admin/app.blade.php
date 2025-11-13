@@ -23,6 +23,9 @@
 
     <link rel="icon" type="image/x-icon" href="{{ asset('assets-admin') }}/img/favicon/favicon.ico" />
 
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     @include('layouts.admin.css')
 
     <script src="{{ asset('assets-admin') }}/vendor/js/helpers.js"></script>
@@ -58,6 +61,4 @@
         <!-- Additional scripts pushed from views -->
         @stack('scripts')
     </body>
-</html>
-
 </html>

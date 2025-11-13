@@ -49,6 +49,7 @@
             var table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
+                stateSave: true,
                 ajax: '{{ route('users.data') }}',
                 columns: [{
                         data: 'DT_RowIndex',

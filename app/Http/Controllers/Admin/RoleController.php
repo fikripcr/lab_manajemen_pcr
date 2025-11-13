@@ -72,8 +72,47 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $role->load('permissions');
-        return view('pages.admin.roles.show', compact('role'));
+        $role->load('permissions', 'users');
+        $allPermissions = \Spatie\Permission\Models\Permission::all();
+        return view('pages.admin.roles.show', compact('role', 'allPermissions'));
+    }
+    
+    /**
+     * Update permissions for the specified role.
+     */
+    public function updatePermissions(Request $request, Role $role)
+    {
+        $request->validate([
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,name',
+        ]);
+        
+        DB::beginTransaction();
+        try {
+            // Sync the selected permissions
+            $role->syncPermissions($request->permissions ?? []);
+            
+            DB::commit();
+            
+            if(request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Permissions updated successfully.'
+                ]);
+            }
+            
+            return redirect()->back()->with('success', 'Permissions updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            if(request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error updating permissions: ' . $e->getMessage()
+                ]);
+            }
+            
+            return redirect()->back()->with('error', 'Error updating permissions: ' . $e->getMessage());
+        }
     }
 
     /**
