@@ -29,6 +29,7 @@
         <button type="button" class="btn btn-secondary w-100 filter-clear-btn" id="clearFilterButton-{{ $dataTableId ?? 'dataTable' }}">Clear</button>
     </div>
 </div>
+@push('scripts')
 
 <script>
     // Wait for the DataTable to be fully initialized before applying filters
@@ -37,22 +38,22 @@
         var globalSearchInput = $('#globalSearch-{{ $dataTableId ?? 'dataTable' }}');
         var filterButton = $('#filterButton-{{ $dataTableId ?? 'dataTable' }}');
         var clearFilterButton = $('#clearFilterButton-{{ $dataTableId ?? 'dataTable' }}');
-        
+
         // Wait a bit for DataTable to initialize, then attach events
         setTimeout(function() {
             try {
                 var dataTable = $('#{{ $dataTableId ?? 'dataTable' }}').DataTable();
-                
+
                 // Handle global search - use DataTable's built-in search
                 globalSearchInput.on('keyup', function() {
                     dataTable.search(this.value).draw();
                 });
-                
+
                 // Handle filter apply button
                 filterButton.on('click', function() {
                     dataTable.ajax.reload();
                 });
-                
+
                 // Handle clear filter button
                 clearFilterButton.on('click', function() {
                     globalSearchInput.val('');
@@ -64,7 +65,7 @@
                     dataTable.search('').draw();
                     dataTable.ajax.reload();
                 });
-                
+
                 // Handle individual filter changes
                 @if(isset($filters))
                     @foreach($filters as $filter)
@@ -73,10 +74,11 @@
                         });
                     @endforeach
                 @endif
-                
+
             } catch(e) {
                 console.warn('DataTable not initialized yet for {{ $dataTableId ?? 'dataTable' }}:', e.message);
             }
         }, 500); // Wait 500ms to ensure DataTable is ready
     });
 </script>
+@endpush

@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PermissionRequest;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class PermissionController extends Controller
 {
@@ -16,8 +15,48 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $permissions = Permission::withCount('roles')->get();
-        return view('pages.admin.permissions.index', compact('permissions'));
+        return view('pages.admin.permissions.index');
+    }
+
+    /**
+     * Process datatables ajax request.
+     */
+    public function data(Request $request)
+    {
+        $permissions = Permission::withCount('roles');
+
+        return DataTables::of($permissions)
+            ->addIndexColumn()
+            ->filterColumn('name', function ($query, $keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            })
+            ->editColumn('created_at', function ($permission) {
+                return $permission->created_at->format('d M Y');
+            })
+            ->addColumn('action', function ($permission) {
+                $encryptedId = encryptId($permission->id);
+                return '
+                    <div class="d-flex align-items-center">
+                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('permissions.edit', $encryptedId) . '" title="Edit">
+                            <i class="bx bx-edit"></i>
+                        </a>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="' . route('permissions.show', $encryptedId) . '">
+                                    <i class="bx bx-show me-1"></i> View
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('permissions.destroy', $encryptedId) . '\')">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**
@@ -56,7 +95,7 @@ class PermissionController extends Controller
     public function edit($permissionId)
     {
         $realId = decryptId($permissionId);
-        if (!$realId) {
+        if (! $realId) {
             abort(404);
         }
 
@@ -70,7 +109,7 @@ class PermissionController extends Controller
     public function update(PermissionRequest $request, $permissionId)
     {
         $realId = decryptId($permissionId);
-        if (!$realId) {
+        if (! $realId) {
             abort(404);
         }
 
@@ -91,7 +130,7 @@ class PermissionController extends Controller
     public function destroy($permissionId)
     {
         $realId = decryptId($permissionId);
-        if (!$realId) {
+        if (! $realId) {
             abort(404);
         }
 

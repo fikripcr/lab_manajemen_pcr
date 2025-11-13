@@ -2,71 +2,120 @@
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold py-3 mb-0">Permission Management</h4>
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Access Control /</span> Permission</h4>
         <a href="{{ route('permissions.create') }}" class="btn btn-primary">
             <i class="bx bx-plus"></i> Add New Permission
         </a>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    @include('components.flash-message')
-
-                    <div class="table-responsive text-nowrap">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Roles Assigned</th>
-                                    <th>Created At</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                                @forelse($permissions as $permission)
-                                <tr>
-                                    <td><strong>{{ $permission->name }}</strong></td>
-                                    <td>{{ $permission->roles_count }} roles</td>
-                                    <td>{{ $permission->created_at->format('d M Y') }}</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <a href="{{ route('permissions.show', $permission) }}" class="text-primary dropdown-item me-1" title="View">
-                                                <i class="bx bx-show"></i>
-                                            </a>
-                                            <a href="{{ route('permissions.edit', $permission) }}" class="text-primary dropdown-item me-1" title="Edit">
-                                                <i class="bx bx-edit"></i>
-                                            </a>
-                                            <form action="{{ route('permissions.destroy', $permission) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-danger dropdown-item" title="Delete" onclick="return confirm('Are you sure you want to delete this permission?')">
-                                                    <i class="bx bx-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">
-                                        <div class="d-flex flex-column align-items-center justify-content-center py-5">
-                                            <i class="bx bx-key bx-lg text-muted mb-3"></i>
-                                            <h5 class="mb-1">No permissions found</h5>
-                                            <p class="text-muted">Get started by creating a new permission.</p>
-                                            <a href="{{ route('permissions.create') }}" class="btn btn-primary mt-2">
-                                                <i class="bx bx-plus me-1"></i> Create Permission
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
+                <h5 class="mb-2 mb-sm-0">Permissions List</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="me-3 mb-2 mb-sm-0">
+                        <select id="pageLength" class="form-select form-select-sm">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
                     </div>
                 </div>
+            </div>
+            @include('components.datatable-search-filter', [
+                'dataTableId' => 'permissions-table'
+            ])
+        </div>
+        <div class="card-body">
+            @include('components.flash-message')
+            <div class="table-responsive">
+                <table id="permissions-table" class="table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Roles Assigned</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            if (!$.fn.DataTable.isDataTable('#permissions-table')) {
+                var table = $('#permissions-table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    stateSave: true,
+                    ajax: {
+                        url: '{{ route('permissions.data') }}',
+                        data: function(d) {
+                            // Capture custom search from the filter component
+                            var searchValue = $('#globalSearch-permissions-table').val();
+                            if (searchValue) {
+                                d.search.value = searchValue;
+                            }
+                        }
+                    },
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false,
+                            className: 'text-center'
+                        },
+                        {
+                            data: 'name',
+                            name: 'name',
+                            render: function(data, type, row) {
+                                return '<span class="fw-medium">' + data + '</span>';
+                            }
+                        },
+                        {
+                            data: 'roles_count',
+                            name: 'roles_count',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'created_at',
+                            name: 'created_at',
+                            searchable: false
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
+                    ],
+                    order: [
+                        [0, 'desc']
+                    ],
+                    pageLength: 10,
+                    responsive: true,
+                    dom: 'rtip' // Only show table, info, and paging
+                });
+
+                // Handle page length change
+                $(document).on('change', '#pageLength', function() {
+                    var pageLength = parseInt($(this).val());
+                    table.page.len(pageLength).draw();
+                });
+
+                // Handle search input from the filter component
+                $(document).on('keyup', '#globalSearch-permissions-table', function() {
+                    table.search(this.value).draw();
+                });
+            }
+        });
+    </script>
+    @include('components.sweetalert')
+@endpush

@@ -27,3 +27,7 @@ Kode harus ditulis dengan prinsip **Separation of Concerns** yang ketat. Hindari
 - **Variabel:** Deskriptif. ` $userList` lebih baik daripada `$data`. `$isExpired` lebih baik daripada `$status`.
 - **Fungsi:** Kata kerja + Kata benda. Contoh: `calculateTotalRevenue()`, `uploadProfileImage()`.
 - **Konsistensi:** Gunakan Bahasa Inggris untuk penamaan variabel dan fungsi. Gunakan Bahasa Indonesia hanya untuk komentar penjelasan jika diminta pengguna.
+
+### Template UI
+- Cek ke public/assets-admin/templates jika kamu berurusn dengan UI yang ada pada file views/pages/admin
+- Cek ke public/assets-guest/templates jika kamu berurusan dengan UI yang ada pada file views/pages/guest

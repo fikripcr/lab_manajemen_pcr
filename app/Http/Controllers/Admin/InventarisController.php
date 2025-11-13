@@ -62,16 +62,23 @@ class InventarisController extends Controller
             ->addColumn('action', function ($item) {
                 $encryptedId = encryptId($item->id);
                 return '
-                    <div class="d-flex">
-                        <a href="' . route('inventories.show', $encryptedId) . '" class="btn btn-info btn-sm me-1" title="View">
-                            <i class="bx bx-show"></i>
-                        </a>
-                        <a href="' . route('inventories.edit', $encryptedId) . '" class="btn btn-primary btn-sm me-1" title="Edit">
+                    <div class="d-flex align-items-center">
+                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('inventories.edit', $encryptedId) . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <button type="button" class="btn btn-danger btn-sm" title="Delete" onclick="confirmDelete(\'' . route('inventories.destroy', $encryptedId) . '\')">
-                            <i class="bx bx-trash"></i>
-                        </button>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="' . route('inventories.show', $encryptedId) . '">
+                                    <i class="bx bx-show me-1"></i> View
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('inventories.destroy', $encryptedId) . '\')">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
+                            </div>
+                        </div>
                     </div>';
             })
             ->rawColumns(['kondisi_terakhir', 'action'])

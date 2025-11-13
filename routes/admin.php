@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
     // Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
     //     ->name('roles.update-permissions');
     Route::resource('roles', RoleController::class);
+    Route::get('permissions/api', [PermissionController::class, 'data'])->name('permissions.data');
     Route::resource('permissions', PermissionController::class);
 
     // Semester

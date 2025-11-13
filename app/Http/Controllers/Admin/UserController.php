@@ -44,16 +44,23 @@ class UserController extends Controller
             ->addColumn('action', function ($user) {
                 $encryptedId = encryptId($user->id);
                 return '
-                    <div class="d-flex">
-                        <a href="' . route('users.show', $encryptedId) . '" class="btn-info btn btn-sm me-1" title="View">
-                            <i class="bx bx-show"></i>
-                        </a>
-                        <a href="' . route('users.edit', $encryptedId) . '" class="btn-primary btn btn-sm me-1" title="Edit">
+                    <div class="d-flex align-items-center">
+                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('users.edit', $encryptedId) . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <button type="button" class="btn-danger btn btn-sm" title="Delete" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\')">
-                            <i class="bx bx-trash"></i>
-                        </button>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="' . route('users.show', $encryptedId) . '">
+                                    <i class="bx bx-show me-1"></i> View
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\')">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
+                            </div>
+                        </div>
                     </div>';
             })
             ->rawColumns(['action'])
