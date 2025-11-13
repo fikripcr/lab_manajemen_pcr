@@ -19,11 +19,10 @@ class RoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        $roleId = $this->route('role'); // Get the role ID from the route for update operations
-
+        $roleId = $this->route('role')?->id; // Get the role ID from the route for update operations
         return [
             'name' => $roleId ? 'required|unique:roles,name,' . $roleId : 'required|unique:roles,name',
-            'permissions' => 'array',
+            'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,name',
         ];
     }

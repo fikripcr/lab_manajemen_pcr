@@ -1,20 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\{
-    DashboardController,
-    ProfileController,
-    UserController,
-    LabController,
-    InventarisController,
-    RoleController,
-    PermissionController,
-    SemesterController,
-    JadwalController,
-    MataKuliahController,
-    SoftwareRequestController,
-    PengumumanController
-};
+use App\Http\Controllers\Admin\DashboardController;
+
+use App\Http\Controllers\Admin\InventarisController;
+use App\Http\Controllers\Admin\JadwalController;
+use App\Http\Controllers\Admin\LabController;
+use App\Http\Controllers\Admin\MataKuliahController;
+use App\Http\Controllers\Admin\PengumumanController;;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SemesterController;
+use App\Http\Controllers\Admin\SoftwareRequestController;
+use App\Http\Controllers\Admin\UserController;use Illuminate\Support\Facades\Route;
 
 // ==========================
 // 🔹 Admin Routes (Auth Required)
@@ -57,9 +55,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('inventories', InventarisController::class);
 
     // Roles & Permissions
+    // Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
+    //     ->name('roles.update-permissions');
     Route::resource('roles', RoleController::class);
-    Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
-        ->name('roles.update-permissions');
     Route::resource('permissions', PermissionController::class);
 
     // Semester

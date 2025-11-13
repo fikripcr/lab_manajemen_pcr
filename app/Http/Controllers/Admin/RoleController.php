@@ -50,8 +50,12 @@ class RoleController extends Controller
         try {
             $role = Role::create(['name' => $request->name]);
 
-            if ($request->has('permissions')) {
-                $role->givePermissionTo($request->permissions);
+            if ($request->has('permissions') && is_array($request->permissions)) {
+                // Ensure we have valid permission names
+                $permissions = array_values(array_filter($request->permissions, function($permission) {
+                    return !empty($permission);
+                }));
+                $role->givePermissionTo($permissions);
             }
 
             DB::commit();
@@ -80,8 +84,15 @@ class RoleController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Sync the selected permissions
-            $role->syncPermissions($request->permissions ?? []);
+            // Sync the selected permissions with proper array handling
+            $permissions = $request->permissions ?? [];
+            if (is_array($permissions)) {
+                // Ensure we have valid permission names
+                $permissions = array_values(array_filter($permissions, function($permission) {
+                    return !empty($permission);
+                }));
+            }
+            $role->syncPermissions($permissions);
 
             DB::commit();
 
@@ -125,8 +136,15 @@ class RoleController extends Controller
         try {
             $role->update(['name' => $request->name]);
 
-            // Sync permissions
-            $role->syncPermissions($request->permissions ?? []);
+            // Sync permissions with proper array handling
+            $permissions = $request->permissions ?? [];
+            if (is_array($permissions)) {
+                // Ensure we have valid permission names
+                $permissions = array_values(array_filter($permissions, function($permission) {
+                    return !empty($permission);
+                }));
+            }
+            $role->syncPermissions($permissions);
 
             DB::commit();
 

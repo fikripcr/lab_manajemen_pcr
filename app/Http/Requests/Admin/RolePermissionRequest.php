@@ -20,7 +20,7 @@ class RolePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'permissions' => 'array',
+            'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,name',
         ];
     }
