@@ -37,7 +37,7 @@ class PermissionController extends Controller
                 $encryptedId = encryptId($permission->id);
                 return '
                     <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('permissions.edit', $encryptedId) . '" title="Edit">
+                        <a class="btn btn-sm btn-icon btn-outline-primary me-1 edit-permission"  href="javascript:void(0)" data-id="' . $encryptedId . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <div class="dropdown">
@@ -45,7 +45,7 @@ class PermissionController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('permissions.show', $encryptedId) . '">
+                                <a class="dropdown-item " href="' . route('permissions.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
                                 <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('permissions.destroy', $encryptedId) . '\')">
@@ -148,4 +148,28 @@ class PermissionController extends Controller
             return redirect()->back()->with('error', 'Error deleting permission: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Show the form for creating a new permission via modal.
+     */
+    public function createModal()
+    {
+        return view('pages.admin.permissions.create-ajax');
+    }
+
+    /**
+     * Show the form for editing the specified permission via modal.
+     */
+    public function editModal($permissionId)
+    {
+        $realId = decryptId($permissionId);
+        if (!$realId) {
+            abort(404);
+        }
+
+        $permission = Permission::findOrFail($realId);
+
+        return view('pages.admin.permissions.edit-ajax', compact('permission'));
+    }
+
 }

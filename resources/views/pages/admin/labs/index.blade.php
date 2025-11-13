@@ -14,16 +14,11 @@
                 <h5 class="mb-2 mb-sm-0">Lab List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <select id="pageLength" class="form-select form-select-sm">
-                            <option value="10" selected>10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
+                        <x:datatable.page-length id="pageLength" selected="10" />
                     </div>
                 </div>
             </div>
-            @include('components.datatable-search-filter', [
+            @include('components.datatable.search-filter', [
                 'dataTableId' => 'labs-table'
             ])
         </div>

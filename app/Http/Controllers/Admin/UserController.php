@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\UserExport;
 use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
@@ -9,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
@@ -38,6 +41,20 @@ class UserController extends Controller
 
         return DataTables::of($users)
             ->addIndexColumn()
+            ->editColumn('name', function ($user) {
+                return '
+                    <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3">
+                            <img src="' . $user->avatar_url . '"
+                                 alt="' . $user->name . '" class="rounded-circle w-px-40 h-40">
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="text-nowrap">' . $user->name . '</span>
+                            <small class="text-muted">' . $user->created_at . '</small>
+                        </div>
+                    </div>
+                ';
+            })
             ->editColumn('roles', function ($user) {
                 return $user->roles->pluck('name')->first() ?? 'No Role';
             })
@@ -45,7 +62,7 @@ class UserController extends Controller
                 $encryptedId = encryptId($user->id);
                 return '
                     <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('users.edit', $encryptedId) . '" title="Edit">
+                        <a class="text-success me-2" href="' . route('users.edit', $encryptedId) . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <div class="dropdown">
@@ -90,6 +107,11 @@ class UserController extends Controller
             'npm' => $validated['npm'] ?? null,
             'nip' => $validated['nip'] ?? null,
         ]);
+
+        // Handle avatar upload using HasMedia trait
+        if ($request->hasFile('avatar')) {
+            $user->addMedia($request->file('avatar'), 'avatar');
+        }
 
         // Assign the selected role to the user
         $user->assignRole($validated['role']);
@@ -141,21 +163,29 @@ class UserController extends Controller
         $user = User::findOrFail($realId);
         $validated = $request->validated();
 
-        $user->update([
+        // Handle avatar upload using HasMedia trait
+        if ($request->hasFile('avatar')) {
+            // Clear existing avatar media
+            $user->clearMediaCollection('avatar');
+            // Add new avatar
+            $user->addMedia($request->file('avatar'), 'avatar');
+        }
+
+        $updatedData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'npm' => $validated['npm'] ?? null,
             'nip' => $validated['nip'] ?? null,
-        ]);
+        ];
+
+        if (isset($validated['password'])) {
+            $updatedData['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($updatedData);
 
         // Update the user's role
         $user->syncRoles([$validated['role']]);
-
-        if (isset($validated['password'])) {
-            $user->update([
-                'password' => Hash::make($validated['password']),
-            ]);
-        }
 
         return redirect()->route('users.index')
             ->with('success', 'User updated successfully.');
@@ -183,5 +213,21 @@ class UserController extends Controller
 
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully.');
+    }
+
+    /**
+     * Export users to Excel
+     */
+    public function export(Request $request)
+    {
+        // Extract filters from request (matching the DataTables filters)
+        $filters = [
+            'search' => $request->get('search'),
+        ];
+        $columns = $request->get('columns', ['id', 'name', 'email', 'role_name', 'npm', 'nip']);
+
+        $export = new UserExport($filters, $columns);
+
+        return Excel::download($export, 'users_' . date('Y-m-d_H-i-s') . '.xlsx');
     }
 }

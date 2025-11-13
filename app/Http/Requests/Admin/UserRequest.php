@@ -25,32 +25,35 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+
         $userId = $this->route('user'); // Get the user ID from the route parameter
-        
+        $userId  = $userId ? decryptId($userId) : null;
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
-                'required', 
-                'email', 
-                Rule::unique('users')->ignore($userId)
+                'required',
+                'email',
+                $userId ? Rule::unique('users')->ignore($userId) : ''
             ],
             'role' => ['required', 'exists:roles,name'],
             'npm' => [
-                'nullable', 
-                'string', 
-                Rule::unique('users')->ignore($userId, 'npm')
+                'nullable',
+                'string',
+                $userId ? Rule::unique('users')->ignore($userId) : ''
             ],
             'nip' => [
-                'nullable', 
-                'string', 
-                Rule::unique('users')->ignore($userId, 'nip')
+                'nullable',
+                'string',
+                $userId ? Rule::unique('users')->ignore($userId) : ''
             ],
             'password' => [
                 $this->isMethod('post') ? 'required' : 'nullable', // required for create (POST), optional for update (PUT/PATCH)
-                'string', 
-                'min:8', 
+                'string',
+                'min:8',
                 'confirmed'
             ],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // 2MB max
         ];
     }
 }

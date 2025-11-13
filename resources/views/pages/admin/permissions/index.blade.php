@@ -3,9 +3,9 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Access Control /</span> Permission</h4>
-        <a href="{{ route('permissions.create') }}" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" id="createPermissionBtn">
             <i class="bx bx-plus"></i> Add New Permission
-        </a>
+        </button>
     </div>
 
     <div class="card">
@@ -14,16 +14,11 @@
                 <h5 class="mb-2 mb-sm-0">Permissions List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <select id="pageLength" class="form-select form-select-sm">
-                            <option value="10" selected>10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
+                        <x:datatable.page-length id="pageLength" selected="10" />
                     </div>
                 </div>
             </div>
-            @include('components.datatable-search-filter', [
+            @include('components.datatable.search-filter', [
                 'dataTableId' => 'permissions-table'
             ])
         </div>
@@ -117,5 +112,40 @@
             }
         });
     </script>
+
+    <!-- Modal container for create/edit operations -->
+    <div class="modal fade" id="modalAction" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div id="modalContent">
+                    <!-- Modal content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle create permission button click
+        $('#createPermissionBtn').on('click', function() {
+            $.get('{{ route('permissions.create-modal') }}', function(data) {
+                $('#modalContent').html(data);
+                $('#modalAction').modal('show');
+            }).fail(function() {
+                Swal.fire('Error!', 'Could not load form', 'error');
+            });
+        });
+
+        // Handle edit permission - using event delegation for dynamically added elements
+        $(document).on('click', '.edit-permission', function() {
+            var permissionId = $(this).data('id');
+            $.get('{{ route('permissions.edit-modal', '') }}/' + permissionId, function(data) {
+                $('#modalContent').html(data);
+                $('#modalAction').modal('show');
+            }).fail(function() {
+                Swal.fire('Error!', 'Could not load form', 'error');
+            });
+        });
+    </script>
+
     @include('components.sweetalert')
 @endpush

@@ -13,24 +13,18 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="name">Full Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                <input type="text" class="form-control"
                                        id="name" name="name" value="{{ old('name') }}"
                                        placeholder="John Doe" >
-                                @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="email">Email</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                <input type="email" class="form-control"
                                        id="email" name="email" value="{{ old('email') }}"
                                        placeholder="john@example.com" >
-                                @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
@@ -38,14 +32,11 @@
                             <label class="col-sm-2 col-form-label" for="password">Password</label>
                             <div class="col-sm-10">
                                 <div class="input-group input-group-merge">
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    <input type="password" class="form-control"
                                            id="password" name="password"
                                            placeholder="••••••••" >
                                     <span class="input-group-text cursor-pointer" id="togglePassword"><i class="bx bx-hide"></i></span>
                                 </div>
-                                @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
@@ -64,7 +55,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="role">Role</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('role') is-invalid @enderror"
+                                <select class="form-select"
                                         id="role" name="role" >
                                     <option value="">Select Role</option>
                                     @foreach($roles as $role)
@@ -73,33 +64,33 @@
                                     </option>
                                     @endforeach
                                 </select>
-                                @error('role')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="npm">NPM (Optional)</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('npm') is-invalid @enderror"
+                                <input type="text" class="form-control"
                                        id="npm" name="npm" value="{{ old('npm') }}"
                                        placeholder="e.g., 1234567890">
-                                @error('npm')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="nip">NIP (Optional)</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('nip') is-invalid @enderror"
+                                <input type="text" class="form-control"
                                        id="nip" name="nip" value="{{ old('nip') }}"
                                        placeholder="e.g., 1234567890">
-                                @error('nip')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="avatar">Avatar (Optional)</label>
+                            <div class="col-sm-10">
+                                <input class="form-control"
+                                       type="file" id="avatar" name="avatar" accept="image/*">
+                                <div class="form-text">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.</div>
                             </div>
                         </div>
 

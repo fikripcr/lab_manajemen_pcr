@@ -2,17 +2,23 @@
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold py-3 mb-0">Mata Kuliah Management</h4>
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Perkuliahan /</span> Mata Kuliah</h4>
         <a href="{{ route('mata-kuliah.create') }}" class="btn btn-primary">
             <i class="bx bx-plus me-1"></i> Add New Mata Kuliah
         </a>
     </div>
 
     <div class="card">
-        <div class="card-body">
-            @include('components.flash-message')
-
-            @include('components.datatable-search-filter', [
+        <div class="card-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
+                <h5 class="mb-2 mb-sm-0">Mata Kuliah List</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="me-3 mb-2 mb-sm-0">
+                        <x:datatable.page-length id="pageLength" selected="10" />
+                    </div>
+                </div>
+            </div>
+            @include('components.datatable.search-filter', [
                 'dataTableId' => 'mata-kuliah-table',
                 'filters' => [
                     [
@@ -32,6 +38,9 @@
                     ]
                 ]
             ])
+        </div>
+        <div class="card-body">
+            @include('components.flash-message')
 
             <div class="table-responsive">
                 <table id="mata-kuliah-table" class="table" style="width:100%">
@@ -60,7 +69,16 @@
                 var table = $('#mata-kuliah-table').DataTable({
                     processing: true,
                     serverSide: true,
-                    ajax: '{{ route('mata-kuliah.data') }}',
+                    ajax: {
+                        url: '{{ route('mata-kuliah.data') }}',
+                        data: function(d) {
+                            // Capture custom search from the filter component
+                            var searchValue = $('#globalSearch-mata-kuliah-table').val();
+                            if (searchValue) {
+                                d.search.value = searchValue;
+                            }
+                        }
+                    },
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
@@ -94,6 +112,17 @@
                     pageLength: 10,
                     responsive: true,
                     dom: 'rtip' // Only show table, info, and paging
+                });
+
+                // Handle page length change
+                $(document).on('change', '#pageLength', function() {
+                    var pageLength = parseInt($(this).val());
+                    table.page.len(pageLength).draw();
+                });
+
+                // Handle search input from the filter component
+                $(document).on('keyup', '#globalSearch-mata-kuliah-table', function() {
+                    table.search(this.value).draw();
                 });
             }
         });

@@ -100,20 +100,27 @@ class JadwalController extends Controller
             })
             ->addColumn('action', function ($jadwal) {
                 return '
-                    <div class="d-flex">
-                        <a href="' . route('jadwal.show', $jadwal->id) . '" class="btn btn-info btn-sm me-1" title="View">
-                            <i class="bx bx-show"></i>
-                        </a>
-                        <a href="' . route('jadwal.edit', $jadwal->id) . '" class="btn btn-primary btn-sm me-1" title="Edit">
+                    <div class="d-flex align-items-center">
+                        <a class="text-success me-2" href="' . route('jadwal.edit', $jadwal->id) . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route('jadwal.destroy', $jadwal->id) . '" method="POST" class="d-inline">
-                            ' . csrf_field() . '
-                            ' . method_field('DELETE') . '
-                            <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirmDelete(this.form.action, \'Hapus Jadwal?\', \'Apakah Anda yakin ingin menghapus jadwal ini?\')">
-                                <i class="bx bx-trash"></i>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
-                        </form>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="' . route('jadwal.show', $jadwal->id) . '">
+                                    <i class="bx bx-show me-1"></i> View
+                                </a>
+                                <form action="' . route('jadwal.destroy', $jadwal->id) . '" method="POST" class="d-inline">
+                                    ' . csrf_field() . '
+                                    ' . method_field('DELETE') . '
+                                    <button type="submit" class="dropdown-item text-danger" title="Delete" onclick="return confirmDelete(this.form.action, \'Hapus Jadwal?\', \'Apakah Anda yakin ingin menghapus jadwal ini?\')">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>';
             })
             ->rawColumns(['action'])

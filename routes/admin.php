@@ -40,7 +40,10 @@ Route::middleware(['auth'])->group(function () {
     // ======================
 
     // Users
-    Route::get('api/users', [UserController::class, 'data'])->name('users.data');
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('api', [UserController::class, 'data'])->name('data');
+        Route::get('export', [UserController::class, 'export'])->name('export');
+    });
     Route::resource('users', UserController::class);
 
     // Labs
@@ -58,7 +61,11 @@ Route::middleware(['auth'])->group(function () {
     // Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
     //     ->name('roles.update-permissions');
     Route::resource('roles', RoleController::class);
-    Route::get('permissions/api', [PermissionController::class, 'data'])->name('permissions.data');
+    Route::prefix('permissions')->name('permissions.')->group(function () {
+        Route::get('api', [PermissionController::class, 'data'])->name('data');
+        Route::get('create-modal', [PermissionController::class, 'createModal'])->name('create-modal');
+        Route::get('edit-modal/{permissionId?}', [PermissionController::class, 'editModal'])->name('edit-modal');
+    });
     Route::resource('permissions', PermissionController::class);
 
     // Semester

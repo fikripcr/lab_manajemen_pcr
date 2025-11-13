@@ -8,10 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Traits\HasRoles;
+use App\Traits\HasMedia;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -97,5 +98,30 @@ class User extends Authenticatable
     public function getRouteKey()
     {
         return encryptId($this->getKey());
+    }
+
+    /**
+     * Get the avatar URL attribute
+     */
+    public function getAvatarUrlAttribute()
+    {
+        // Try to get avatar from HasMedia trait first
+        $media = $this->getFirstMediaByCollection('avatar');
+        if ($media) {
+            // If thumbnail exists, use it; otherwise, use the original image
+            if (isset($media->thumbnail_url)) {
+                return $media->thumbnail_url;
+            } else {
+                return asset('storage/' . $media->file_path);
+            }
+        }
+
+        // Fallback: check if legacy avatar field exists (for backward compatibility)
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        // Ultimate fallback: UI Avatars
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
     }
 }

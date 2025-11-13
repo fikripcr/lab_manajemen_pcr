@@ -2,34 +2,28 @@
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold py-3 mb-0">Semester Management</h4>
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Perkuliahan /</span>Semester</h4>
         <a href="{{ route('semesters.create') }}" class="btn btn-primary">
             <i class="bx bx-plus me-1"></i> Add New Semester
         </a>
     </div>
 
     <div class="card">
+        <div class="card-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
+                <h5 class="mb-2 mb-sm-0">User List</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="me-3 mb-2 mb-sm-0">
+                        <x:datatable.page-length id="pageLength" selected="10" />
+                    </div>
+                </div>
+            </div>
+            @include('components.datatable.search-filter', [
+                'dataTableId' => 'users-table'
+            ])
+        </div>
         <div class="card-body">
             @include('components.flash-message')
-
-            @include('components.datatable-search-filter', [
-                'dataTableId' => 'semesters-table',
-                'filters' => [
-                    [
-                        'id' => 'statusFilter',
-                        'name' => 'status',
-                        'label' => 'Status',
-                        'type' => 'select',
-                        'column' => 5, // Status column index
-                        'options' => [
-                            '' => 'All Status',
-                            'Aktif' => 'Aktif',
-                            'Tidak Aktif' => 'Tidak Aktif'
-                        ],
-                        'placeholder' => 'Select Status'
-                    ]
-                ]
-            ])
 
             <div class="table-responsive">
                 <table id="semesters-table" class="table" style="width:100%">

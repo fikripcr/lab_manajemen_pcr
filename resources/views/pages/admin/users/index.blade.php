@@ -3,9 +3,14 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tables /</span> User Management</h4>
-        <a href="{{ route('users.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus"></i> Add New User
-        </a>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('users.create') }}" class="btn btn-primary me-2">
+                <i class="bx bx-plus"></i> Add New User
+            </a>
+            <button type="button" class="btn btn-success" id="exportBtn">
+                <i class="bx bx-export"></i> Export Excel
+            </button>
+        </div>
     </div>
 
     <div class="card">
@@ -14,16 +19,11 @@
                 <h5 class="mb-2 mb-sm-0">User List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <select id="pageLength" class="form-select form-select-sm">
-                            <option value="10" selected>10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
+                        <x:datatable.page-length id="pageLength" selected="10" />
                     </div>
                 </div>
             </div>
-            @include('components.datatable-search-filter', [
+            @include('components.datatable.search-filter', [
                 'dataTableId' => 'users-table'
             ])
         </div>
@@ -129,6 +129,21 @@
                 // Handle search input from the filter component
                 $(document).on('keyup', '#globalSearch-users-table', function() {
                     table.search(this.value).draw();
+                });
+
+                // Handle export button click
+                $('#exportBtn').on('click', function() {
+                    // Get current search value from the search filter component
+                    var searchValue = $('#globalSearch-users-table').val();
+
+                    // Build query parameters
+                    var params = new URLSearchParams();
+                    if(searchValue) {
+                        params.append('search', searchValue);
+                    }
+
+                    // Redirect to export URL with parameters
+                    window.location.href = '{{ route('users.export') }}?' + params.toString();
                 });
             }
         });

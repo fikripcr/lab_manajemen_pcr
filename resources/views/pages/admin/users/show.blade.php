@@ -25,8 +25,13 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-start align-items-sm-center gap-4">
-                        <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=7F9CF5&background=EBF4FF' }}"
-                             alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100" id="uploadedAvatar">
+                        @if($user->avatar)
+                            <img src="{{ Storage::url($user->avatar) }}"
+                                 alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100" id="uploadedAvatar">
+                        @else
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&color=7F9CF5&background=EBF4FF"
+                                 alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100" id="uploadedAvatar">
+                        @endif
                         <div class="button-wrapper">
                             <h4 class="mb-1">{{ $user->name }}</h4>
                             <p class="mb-1">{{ $user->email }}</p>

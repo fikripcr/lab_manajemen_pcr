@@ -27,7 +27,15 @@ class InventarisExport implements FromQuery, WithHeadings, WithMapping, WithColu
      */
     public function query()
     {
-        $query = Inventaris::query()->select('inventaris.*')
+        $query = Inventaris::query()->select([
+            'inventaris.id',
+            'inventaris.nama_alat',
+            'inventaris.jenis_alat',
+            'inventaris.kondisi_terakhir',
+            'inventaris.tanggal_pengecekan',
+            'inventaris.created_at',
+            'inventaris.updated_at'
+        ])
             ->leftJoin('labs', 'inventaris.lab_id', '=', 'labs.lab_id');
 
         // Apply search filter if provided
@@ -68,6 +76,8 @@ class InventarisExport implements FromQuery, WithHeadings, WithMapping, WithColu
             'jenis_alat'         => 'Equipment Type',
             'kondisi_terakhir'   => 'Condition',
             'tanggal_pengecekan' => 'Check Date',
+            'created_at'         => 'Created At',
+            'updated_at'         => 'Updated At',
             'lab_name'           => 'Lab',
         ];
 
@@ -88,8 +98,10 @@ class InventarisExport implements FromQuery, WithHeadings, WithMapping, WithColu
             'id'                 => $inventaris->id,
             'nama_alat'          => $inventaris->nama_alat,
             'jenis_alat'         => $inventaris->jenis_alat,
-            'kondisi_terakhir'   => $inventaris->kondisi_terakhir,
-            'tanggal_pengecekan' => $inventaris->tanggal_pengecekan ? $inventaris->tanggal_pengecekan->format('Y-m-d') : '',
+            'kondisi_terakhir'   => $inventaris->kondisi_terakhir ?: '-',
+            'tanggal_pengecekan' => $inventaris->tanggal_pengecekan ? $inventaris->tanggal_pengecekan->format('Y-m-d') : '-',
+            'created_at'         => $inventaris->created_at ? $inventaris->created_at->format('Y-m-d H:i:s') : '-',
+            'updated_at'         => $inventaris->updated_at ? $inventaris->updated_at->format('Y-m-d H:i:s') : '-',
             'lab_name'           => $inventaris->lab_name ?: '-',
         ];
 

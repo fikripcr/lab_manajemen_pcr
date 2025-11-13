@@ -1,10 +1,10 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <h4 class="fw-bold py-3 mb-0">Schedule Management</h4>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Perkuliahan /</span> Jadwal Kuliah</h4>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('jadwal.import.form') }}" class="btn btn-success">
+            <a href="{{ route('jadwal.import.form') }}" class="btn btn-success me-2">
                 <i class="bx bx-import me-1"></i> Import Jadwal
             </a>
             <a href="{{ route('jadwal.create') }}" class="btn btn-primary">
@@ -14,10 +14,16 @@
     </div>
 
     <div class="card">
-        <div class="card-body">
-            @include('components.flash-message')
-
-            @include('components.datatable-search-filter', [
+        <div class="card-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
+                <h5 class="mb-2 mb-sm-0">Jadwal List</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="me-3 mb-2 mb-sm-0">
+                        <x:datatable.page-length id="pageLength" selected="10" />
+                    </div>
+                </div>
+            </div>
+            @include('components.datatable.search-filter', [
                 'dataTableId' => 'jadwal-table',
                 'filters' => [
                     [
@@ -49,6 +55,9 @@
                     ]
                 ]
             ])
+        </div>
+        <div class="card-body">
+            @include('components.flash-message')
 
             <div class="table-responsive">
                 <table id="jadwal-table" class="table" style="width:100%">
@@ -83,7 +92,16 @@
                     processing: true,
                     serverSide: true,
                     stateSave: true,
-                    ajax: '{{ route('jadwal.data') }}',
+                    ajax: {
+                        url: '{{ route('jadwal.data') }}',
+                        data: function(d) {
+                            // Capture custom search from the filter component
+                            var searchValue = $('#globalSearch-jadwal-table').val();
+                            if (searchValue) {
+                                d.search.value = searchValue;
+                            }
+                        }
+                    },
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
@@ -132,6 +150,17 @@
                     pageLength: 10,
                     responsive: true,
                     dom: 'rtip' // Only show table, info, and paging
+                });
+
+                // Handle page length change
+                $(document).on('change', '#pageLength', function() {
+                    var pageLength = parseInt($(this).val());
+                    table.page.len(pageLength).draw();
+                });
+
+                // Handle search input from the filter component
+                $(document).on('keyup', '#globalSearch-jadwal-table', function() {
+                    table.search(this.value).draw();
                 });
             }
         });
