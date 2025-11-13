@@ -12,8 +12,29 @@
         <div class="card-body">
             @include('components.flash-message')
 
+            @include('components.datatable-search-filter', [
+                'dataTableId' => 'mata-kuliah-table',
+                'filters' => [
+                    [
+                        'id' => 'sksFilter',
+                        'name' => 'sks',
+                        'label' => 'SKS',
+                        'type' => 'select',
+                        'column' => 3, // SKS column index
+                        'options' => [
+                            '' => 'All SKS',
+                            '1' => '1 SKS',
+                            '2' => '2 SKS',
+                            '3' => '3 SKS',
+                            '4' => '4 SKS'
+                        ],
+                        'placeholder' => 'Select SKS'
+                    ]
+                ]
+            ])
+
             <div class="table-responsive">
-                <table id="mata-kuliah-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="mata-kuliah-table" class="table" style="width:100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -34,44 +55,47 @@
 
     <script>
         $(document).ready(function() {
-            var table = $('#mata-kuliah-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('mata-kuliah.data') }}',
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false,
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'kode_mk',
-                        name: 'kode_mk'
-                    },
-                    {
-                        data: 'nama_mk',
-                        name: 'nama_mk'
-                    },
-                    {
-                        data: 'sks',
-                        name: 'sks',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ],
-                order: [
-                    [0, 'desc']
-                ],
-                pageLength: 10,
-                responsive: true,
-                dom: 'rtip' // Only show table, info, and paging
-            });
+            // Check if DataTable is already initialized to avoid re-initialization
+            if (!$.fn.DataTable.isDataTable('#mata-kuliah-table')) {
+                var table = $('#mata-kuliah-table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: '{{ route('mata-kuliah.data') }}',
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false,
+                            className: 'text-center'
+                        },
+                        {
+                            data: 'kode_mk',
+                            name: 'kode_mk'
+                        },
+                        {
+                            data: 'nama_mk',
+                            name: 'nama_mk'
+                        },
+                        {
+                            data: 'sks',
+                            name: 'sks',
+                            className: 'text-center'
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
+                    ],
+                    order: [
+                        [0, 'desc']
+                    ],
+                    pageLength: 10,
+                    responsive: true,
+                    dom: 'rtip' // Only show table, info, and paging
+                });
+            }
         });
     </script>
 @endpush

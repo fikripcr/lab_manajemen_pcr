@@ -15,7 +15,7 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
                                        id="name" name="name" value="{{ old('name') }}"
-                                       placeholder="John Doe" required>
+                                       placeholder="John Doe" >
                                 @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -27,7 +27,7 @@
                             <div class="col-sm-10">
                                 <input type="email" class="form-control @error('email') is-invalid @enderror"
                                        id="email" name="email" value="{{ old('email') }}"
-                                       placeholder="john@example.com" required>
+                                       placeholder="john@example.com" >
                                 @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -40,7 +40,7 @@
                                 <div class="input-group input-group-merge">
                                     <input type="password" class="form-control @error('password') is-invalid @enderror"
                                            id="password" name="password"
-                                           placeholder="••••••••" required>
+                                           placeholder="••••••••" >
                                     <span class="input-group-text cursor-pointer" id="togglePassword"><i class="bx bx-hide"></i></span>
                                 </div>
                                 @error('password')
@@ -55,7 +55,7 @@
                                 <div class="input-group input-group-merge">
                                     <input type="password" class="form-control"
                                            id="password_confirmation" name="password_confirmation"
-                                           placeholder="••••••••" required>
+                                           placeholder="••••••••" >
                                     <span class="input-group-text cursor-pointer" id="togglePasswordConfirmation"><i class="bx bx-hide"></i></span>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                             <label class="col-sm-2 col-form-label" for="role">Role</label>
                             <div class="col-sm-10">
                                 <select class="form-select @error('role') is-invalid @enderror"
-                                        id="role" name="role" required>
+                                        id="role" name="role" >
                                     <option value="">Select Role</option>
                                     @foreach($roles as $role)
                                     <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>

@@ -57,7 +57,7 @@ class GuestController extends Controller
         $softwareRequest = \App\Models\RequestSoftware::create([
             'nama_software' => $request->nama_software,
             'alasan' => $request->alasan,
-            'status' => 'menunggu_approval', // waiting for approval
+            'status' => 'Pending', // waiting for approval
         ]);
         
         // Attach selected mata kuliah if provided

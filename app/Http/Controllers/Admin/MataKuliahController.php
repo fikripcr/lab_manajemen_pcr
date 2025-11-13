@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\MataKuliahRequest;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -29,8 +30,23 @@ class MataKuliahController extends Controller
     {
         $mataKuliahs = MataKuliah::select('*');
 
+        // Apply filters if present
+        if ($request->filled('sks')) {
+            $mataKuliahs->where('sks', $request->sks);
+        }
+
         return DataTables::of($mataKuliahs)
             ->addIndexColumn()
+            ->filter(function ($query) use ($request) {
+                // Global search functionality
+                if ($request->has('search') && $request->search['value'] != '') {
+                    $searchValue = $request->search['value'];
+                    $query->where(function($q) use ($searchValue) {
+                        $q->where('kode_mk', 'like', '%' . $searchValue . '%')
+                          ->orWhere('nama_mk', 'like', '%' . $searchValue . '%');
+                    });
+                }
+            })
             ->addColumn('action', function ($mk) {
                 return '
                     <div class="d-flex">
@@ -64,18 +80,22 @@ class MataKuliahController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(MataKuliahRequest $request)
     {
-        $request->validate([
-            'kode_mk' => 'required|string|max:20|unique:mata_kuliahs,kode_mk',
-            'nama_mk' => 'required|string|max:255',
-            'sks' => 'required|integer|min:1|max:6',
-        ]);
+        \DB::beginTransaction();
+        try {
+            MataKuliah::create($request->validated());
 
-        MataKuliah::create($request->all());
+            \DB::commit();
 
-        return redirect()->route('mata-kuliah.index')
-            ->with('success', 'Mata Kuliah created successfully.');
+            return redirect()->route('mata-kuliah.index')
+                ->with('success', 'Mata Kuliah created successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to create mata kuliah: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -99,20 +119,24 @@ class MataKuliahController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(MataKuliahRequest $request, $id)
     {
         $mataKuliah = MataKuliah::findOrFail($id);
 
-        $request->validate([
-            'kode_mk' => 'required|string|max:20|unique:mata_kuliahs,kode_mk,' . $mataKuliah->id,
-            'nama_mk' => 'required|string|max:255',
-            'sks' => 'required|integer|min:1|max:6',
-        ]);
+        \DB::beginTransaction();
+        try {
+            $mataKuliah->update($request->validated());
 
-        $mataKuliah->update($request->all());
+            \DB::commit();
 
-        return redirect()->route('mata-kuliah.index')
-            ->with('success', 'Mata Kuliah updated successfully.');
+            return redirect()->route('mata-kuliah.index')
+                ->with('success', 'Mata Kuliah updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to update mata kuliah: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**

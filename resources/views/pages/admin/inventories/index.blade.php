@@ -38,7 +38,7 @@
         <div class="card-body">
             @include('components.flash-message')
             <div class="table-responsive">
-                <table id="inventaris-table" class="table table-striped table-sm table-bordered " style="width:100%">
+                <table id="inventaris-table" class="table  " style="width:100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -120,7 +120,9 @@
                 ],
                 pageLength: 10,
                 responsive: true,
-                dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs
+                dom:
+                    "<'table-responsive'tr>" +
+                    "<'row align-items-center mt-2'<'col-sm-6'i><'col-sm-6 text-end'p>>",
             });
 
             // Handle search input

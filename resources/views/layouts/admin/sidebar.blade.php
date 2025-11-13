@@ -39,25 +39,28 @@
         </li>
 
         <!-- Academic Data Menu -->
-        <li class="menu-item {{request()->routeIs('semesters.*')? 'active' : ''}}">
-            <a href="{{route('semesters.index')}}" class="menu-link">
+        <li class="menu-item {{request()->routeIs('semesters.*') || request()->routeIs('mata-kuliah.*') || request()->routeIs('jadwal.*') ? 'active open' : ''}}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-calendar"></i>
-                <div data-i18n="Documentation">Data Semester</div>
+                <div data-i18n="Perkuliahan">Perkuliahan</div>
             </a>
-        </li>
-
-        <li class="menu-item {{request()->routeIs('mata-kuliah.*')? 'active' : ''}}">
-            <a href="{{route('mata-kuliah.index')}}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-book"></i>
-                <div data-i18n="Documentation">Data Mata Kuliah</div>
-            </a>
-        </li>
-
-        <li class="menu-item {{request()->routeIs('jadwal.*')? 'active' : ''}}">
-            <a href="{{route('jadwal.index')}}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-table"></i>
-                <div data-i18n="Documentation">Jadwal</div>
-            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{request()->routeIs('semesters.*') ? 'active' : ''}}">
+                    <a href="{{route('semesters.index')}}" class="menu-link">
+                        <div data-i18n="Data Semester">Data Semester</div>
+                    </a>
+                </li>
+                <li class="menu-item {{request()->routeIs('mata-kuliah.*') ? 'active' : ''}}">
+                    <a href="{{route('mata-kuliah.index')}}" class="menu-link">
+                        <div data-i18n="Data Mata Kuliah">Data Mata Kuliah</div>
+                    </a>
+                </li>
+                <li class="menu-item {{request()->routeIs('jadwal.*') ? 'active' : ''}}">
+                    <a href="{{route('jadwal.index')}}" class="menu-link">
+                        <div data-i18n="Jadwal Perkuliahan">Jadwal Perkuliahan</div>
+                    </a>
+                </li>
+            </ul>
         </li>
 
 
@@ -89,7 +92,7 @@
         <!-- Software Requests Menu -->
         <li class="menu-item {{request()->routeIs('admin.software-requests.*') ? 'active' : ''}}">
             <a href="{{route('software-requests.index')}}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-software"></i>
+                <i class="menu-icon tf-icons bx bx-extension"></i>
                 <div data-i18n="Software Requests">Software Requests</div>
             </a>
         </li>
@@ -121,11 +124,6 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-item">
-            <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div data-i18n="Documentation">Documentation</div>
-            </a>
-        </li>
+
     </ul>
 </aside>

@@ -12,8 +12,27 @@
         <div class="card-body">
             @include('components.flash-message')
 
+            @include('components.datatable-search-filter', [
+                'dataTableId' => 'semesters-table',
+                'filters' => [
+                    [
+                        'id' => 'statusFilter',
+                        'name' => 'status',
+                        'label' => 'Status',
+                        'type' => 'select',
+                        'column' => 5, // Status column index
+                        'options' => [
+                            '' => 'All Status',
+                            'Aktif' => 'Aktif',
+                            'Tidak Aktif' => 'Tidak Aktif'
+                        ],
+                        'placeholder' => 'Select Status'
+                    ]
+                ]
+            ])
+
             <div class="table-responsive">
-                <table id="semesters-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="semesters-table" class="table" style="width:100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -37,52 +56,54 @@
 
     <script>
         $(document).ready(function() {
-            var table = $('#semesters-table').DataTable({
-                processing: true,
-                serverSide: true,
-                stateSave: true,
-                ajax: '{{ route('semesters.data') }}',
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false,
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'tahun_ajaran',
-                        name: 'tahun_ajaran'
-                    },
-                    {
-                        data: 'semester',
-                        name: 'semester'
-                    },
-                    {
-                        data: 'start_date',
-                        name: 'start_date',
-                    },
-                    {
-                        data: 'end_date',
-                        name: 'end_date',
-                    },
-                    {
-                        data: 'is_active',
-                        name: 'is_active'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ],
-                order: [
-                    [0, 'desc']
-                ],
-                pageLength: 10,
-                responsive: true,
-                dom: 'rtip' // Only show table, info, and paging
-            });
+            if (!$.fn.DataTable.isDataTable('#semesters-table')) {
+                var table = $('#semesters-table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    stateSave: true,
+                    ajax: '{{ route('semesters.data') }}',
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false,
+                            className: 'text-center'
+                        },
+                        {
+                            data: 'tahun_ajaran',
+                            name: 'tahun_ajaran'
+                        },
+                        {
+                            data: 'semester',
+                            name: 'semester'
+                        },
+                        {
+                            data: 'start_date',
+                            name: 'start_date',
+                        },
+                        {
+                            data: 'end_date',
+                            name: 'end_date',
+                        },
+                        {
+                            data: 'is_active',
+                            name: 'is_active'
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
+                    ],
+                    order: [
+                        [0, 'desc']
+                    ],
+                    pageLength: 10,
+                    responsive: true,
+                    dom: 'rtip' // Only show table, info, and paging
+                });
+            }
         });
     </script>
 @endpush

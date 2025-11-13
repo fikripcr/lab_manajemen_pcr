@@ -92,6 +92,18 @@ class RolePermissionSeeder extends Seeder
             'create software requests',
             'edit software requests',
             'delete software requests',
+
+            // Semester management permissions
+            'view semesters',
+            'create semesters',
+            'edit semesters',
+            'delete semesters',
+
+            // Mata Kuliah management permissions
+            'view mata_kuliah',
+            'create mata_kuliah',
+            'edit mata_kuliah',
+            'delete mata_kuliah',
         ];
 
         foreach ($permissions as $permissionName) {

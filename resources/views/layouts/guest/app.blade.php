@@ -45,6 +45,7 @@
   {{-- <div id="preloader"></div> --}}
 
   @include('layouts.guest.js')
+  @stack('scripts')
 
 </body>
 

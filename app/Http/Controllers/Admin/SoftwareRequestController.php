@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SoftwareRequestUpdateRequest;
 use App\Models\RequestSoftware;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
@@ -90,19 +91,11 @@ class SoftwareRequestController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(SoftwareRequestUpdateRequest $request, $id)
     {
         $softwareRequest = RequestSoftware::findOrFail($id);
 
-        $request->validate([
-            'status' => 'required|in:menunggu_approval,disetujui,ditolak',
-            'catatan_admin' => 'nullable|string',
-        ]);
-
-        $softwareRequest->update([
-            'status' => $request->status,
-            'catatan_admin' => $request->catatan_admin,
-        ]);
+        $softwareRequest->update($request->validated());
 
         return redirect()->route('software-requests.index')
             ->with('success', 'Status permintaan software berhasil diperbarui.');

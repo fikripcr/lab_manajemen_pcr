@@ -32,9 +32,9 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label" for="name">Full Name</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                               id="name" name="name" value="{{ old('name', $user->name) }}" 
-                                               required>
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                               id="name" name="name" value="{{ old('name', $user->name) }}"
+                                               >
                                         @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -44,9 +44,9 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label" for="email">Email</label>
                                     <div class="col-sm-10">
-                                        <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                               id="email" name="email" value="{{ old('email', $user->email) }}" 
-                                               required>
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                               id="email" name="email" value="{{ old('email', $user->email) }}"
+                                               >
                                         @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -76,8 +76,8 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label" for="current_password">Current Password</label>
                                     <div class="col-sm-10">
-                                        <input type="password" class="form-control @error('current_password') is-invalid @enderror" 
-                                               id="current_password" name="current_password" 
+                                        <input type="password" class="form-control @error('current_password') is-invalid @enderror"
+                                               id="current_password" name="current_password"
                                                autocomplete="current-password">
                                         @error('current_password')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -88,8 +88,8 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label" for="password">New Password</label>
                                     <div class="col-sm-10">
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                               id="password" name="password" 
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                               id="password" name="password"
                                                autocomplete="new-password">
                                         @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -100,8 +100,8 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label" for="password_confirmation">Confirm New Password</label>
                                     <div class="col-sm-10">
-                                        <input type="password" class="form-control" 
-                                               id="password_confirmation" name="password_confirmation" 
+                                        <input type="password" class="form-control"
+                                               id="password_confirmation" name="password_confirmation"
                                                autocomplete="new-password">
                                     </div>
                                 </div>
@@ -133,8 +133,8 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label" for="delete-password">Password</label>
                                     <div class="col-sm-10">
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                               id="delete-password" name="password" 
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                               id="delete-password" name="password"
                                                placeholder="Enter your password">
                                         @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>

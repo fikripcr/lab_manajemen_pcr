@@ -27,7 +27,7 @@
                             <li><strong>jam_selesai</strong> - Format: HH:MM (contoh: 10:00)</li>
                             <li><strong>lab</strong> - Nama lab (contoh: Lab Jaringan)</li>
                         </ul>
-                        <a href="{{ asset('templates/import_jadwal_template.xlsx') }}" class="btn btn-sm btn-outline-primary">
+                        <a href="{{ asset('assets-admin/import/template_import_jadwal.xlsx') }}" class="btn btn-sm btn-outline-primary">
                             <i class="bx bx-download me-1"></i> Download Template
                         </a>
                     </div>
@@ -39,7 +39,7 @@
                             <label for="file" class="form-label fw-bold">File Jadwal <span class="text-danger">*</span></label>
                             <input type="file" class="form-control @error('file') is-invalid @enderror"
                                    id="file" name="file"
-                                   accept=".xlsx,.xls,.csv" required>
+                                   accept=".xlsx,.xls,.csv" >
                             @error('file')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

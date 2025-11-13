@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SemesterRequest;
 use App\Models\Semester;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -24,9 +25,30 @@ class SemesterController extends Controller
 
     public function data(Request $request)
     {
-        $semesters = Semester::all();
+        $semesters = Semester::query();
+
+        // Apply filters if present
+        if ($request->filled('status')) {
+            if ($request->status === 'Aktif') {
+                $semesters->where('is_active', 1);
+            } elseif ($request->status === 'Tidak Aktif') {
+                $semesters->where('is_active', 0);
+            }
+        }
+
         return DataTables::of($semesters)
             ->addIndexColumn()
+            ->filter(function ($query) use ($request) {
+                // Global search functionality
+                if ($request->has('search') && $request->search['value'] != '') {
+                    $searchValue = $request->search['value'];
+                    $query->where(function($q) use ($searchValue) {
+                        $q->where('tahun_ajaran', 'like', '%' . $searchValue . '%')
+                          ->orWhere('semester', 'like', '%' . $searchValue . '%')
+                          ->orWhereRaw("CASE WHEN is_active = 1 THEN 'Aktif' ELSE 'Tidak Aktif' END LIKE ?", ['%' . $searchValue . '%']);
+                    });
+                }
+            })
             ->editColumn('is_active', function ($semester) {
                 return $semester->is_active
                     ? '<span class="badge bg-success">Aktif</span>'
@@ -71,20 +93,22 @@ class SemesterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SemesterRequest $request)
     {
-        $request->validate([
-            'tahun_ajaran' => 'required|string|max:20',
-            'semester' => 'required|in:1,2',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'is_active' => 'boolean',
-        ]);
+        \DB::beginTransaction();
+        try {
+            Semester::create($request->validated());
 
-        Semester::create($request->all());
+            \DB::commit();
 
-        return redirect()->route('semesters.index')
-            ->with('success', 'Semester created successfully.');
+            return redirect()->route('semesters.index')
+                ->with('success', 'Semester created successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to create semester: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -108,21 +132,24 @@ class SemesterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(SemesterRequest $request, $id)
     {
-        $request->validate([
-            'tahun_ajaran' => 'required|string|max:20',
-            'semester' => 'required|in:1,2',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'is_active' => 'boolean',
-        ]);
-
         $semester = Semester::findOrFail($id);
-        $semester->update($request->all());
 
-        return redirect()->route('semesters.index')
-            ->with('success', 'Semester updated successfully.');
+        \DB::beginTransaction();
+        try {
+            $semester->update($request->validated());
+
+            \DB::commit();
+
+            return redirect()->route('semesters.index')
+                ->with('success', 'Semester updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to update semester: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             InventorySeeder::class,
             PengumumanSeeder::class,
+            AcademicDataSeeder::class,
         ]);
 
         // Create some test users if needed

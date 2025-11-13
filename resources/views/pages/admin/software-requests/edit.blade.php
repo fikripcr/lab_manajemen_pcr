@@ -58,7 +58,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="status" class="form-label fw-bold">Status <span class="text-danger">*</span></label>
-                                <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
+                                <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" >
                                     <option value="menunggu_approval" {{ old('status', $softwareRequest->status) === 'menunggu_approval' ? 'selected' : '' }}>
                                         Menunggu Approval
                                     </option>

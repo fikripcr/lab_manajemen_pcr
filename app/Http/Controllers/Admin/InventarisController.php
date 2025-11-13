@@ -29,18 +29,6 @@ class InventarisController extends Controller
     {
         $inventaris = Inventaris::with('lab');
 
-        // Apply filters if provided
-        // if ($request->has('search') && !empty($request->search)) {
-        //     $searchTerm = $request->search;
-        //     $inventaris = $inventaris->where(function ($query) use ($searchTerm) {
-        //         $query->where('nama_alat', 'like', "%{$searchTerm}%")
-        //               ->orWhere('jenis_alat', 'like', "%{$searchTerm}%")
-        //               ->orWhereHas('lab', function ($q) use ($searchTerm) {
-        //                   $q->where('name', 'like', "%{$searchTerm}%");
-        //               });
-        //     });
-        // }
-
         // Apply condition filter if provided
         if ($request->has('condition') && !empty($request->condition)) {
             $inventaris = $inventaris->where('kondisi_terakhir', $request->condition);
@@ -104,10 +92,20 @@ class InventarisController extends Controller
      */
     public function store(InventarisRequest $request)
     {
-        Inventaris::create($request->validated());
+        \DB::beginTransaction();
+        try {
+            Inventaris::create($request->validated());
 
-        return redirect()->route('inventories.index')
-            ->with('success', 'Inventaris created successfully.');
+            \DB::commit();
+
+            return redirect()->route('inventories.index')
+                ->with('success', 'Inventaris created successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to create inventaris: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -150,10 +148,21 @@ class InventarisController extends Controller
         }
 
         $inventory = Inventaris::findOrFail($realId);
-        $inventory->update($request->validated());
 
-        return redirect()->route('inventories.index')
-            ->with('success', 'Inventaris updated successfully.');
+        \DB::beginTransaction();
+        try {
+            $inventory->update($request->validated());
+
+            \DB::commit();
+
+            return redirect()->route('inventories.index')
+                ->with('success', 'Inventaris updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to update inventaris: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -191,7 +200,6 @@ class InventarisController extends Controller
             'condition' => $request->get('condition'),
             'lab_id' => $request->get('lab_id'),
         ];
-
         $columns = $request->get('columns', ['id', 'nama_alat', 'jenis_alat', 'kondisi_terakhir', 'tanggal_pengecekan', 'lab_name']);
 
         $export = new InventarisExport($filters, $columns);

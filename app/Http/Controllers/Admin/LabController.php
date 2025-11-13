@@ -13,10 +13,12 @@ class LabController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['permission:access-lab'], ['only' => ['index', 'show', 'data']]);
-        $this->middleware(['permission:manage-lab'], ['only' => ['create', 'store', 'edit', 'update', 'destroy']]);
+        $this->middleware(['permission:view labs'], ['only' => ['index', 'show', 'data']]);
+        $this->middleware(['permission:edit labs'], ['only' => [ 'edit', 'update']]);
+        $this->middleware(['permission:create labs'], ['only' => ['create', 'store']]);
+        $this->middleware(['permission:delete labs'], ['only' => ['destroy']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -70,10 +72,20 @@ class LabController extends Controller
      */
     public function store(LabRequest $request)
     {
-        Lab::create($request->validated());
+        \DB::beginTransaction();
+        try {
+            Lab::create($request->validated());
 
-        return redirect()->route('labs.index')
-            ->with('success', 'Lab created successfully.');
+            \DB::commit();
+
+            return redirect()->route('labs.index')
+                ->with('success', 'Lab created successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to create lab: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -115,10 +127,21 @@ class LabController extends Controller
         }
 
         $lab = Lab::findOrFail($realId);
-        $lab->update($request->validated());
 
-        return redirect()->route('labs.index')
-            ->with('success', 'Lab updated successfully.');
+        \DB::beginTransaction();
+        try {
+            $lab->update($request->validated());
+
+            \DB::commit();
+
+            return redirect()->route('labs.index')
+                ->with('success', 'Lab updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to update lab: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**

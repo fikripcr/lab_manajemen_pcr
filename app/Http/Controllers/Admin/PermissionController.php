@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PermissionRequest;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
@@ -30,12 +31,8 @@ class PermissionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PermissionRequest $request)
     {
-        $request->validate([
-            'name' => 'required|unique:permissions,name',
-        ]);
-
         try {
             Permission::create(['name' => $request->name]);
 
@@ -70,7 +67,7 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $permissionId)
+    public function update(PermissionRequest $request, $permissionId)
     {
         $realId = decryptId($permissionId);
         if (!$realId) {
@@ -78,9 +75,6 @@ class PermissionController extends Controller
         }
 
         $permission = Permission::findOrFail($realId);
-        $request->validate([
-            'name' => 'required|unique:permissions,name,' . $permission->id,
-        ]);
 
         try {
             $permission->update(['name' => $request->name]);

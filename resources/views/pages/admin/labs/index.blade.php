@@ -26,7 +26,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="labs-table" class="table table-striped table-sm table-bordered" style="width:100%">
+                <table id="labs-table" class="table " style="width:100%">
                     <thead>
                         <tr>
                             <th>#</th>

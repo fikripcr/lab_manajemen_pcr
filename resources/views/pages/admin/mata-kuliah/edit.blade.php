@@ -24,7 +24,7 @@
                                 <input type="text" class="form-control @error('kode_mk') is-invalid @enderror"
                                        id="kode_mk" name="kode_mk"
                                        value="{{ old('kode_mk', $mataKuliah->kode_mk) }}"
-                                       placeholder="e.g. IF101" required>
+                                       placeholder="e.g. IF101" >
                                 @error('kode_mk')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -35,7 +35,7 @@
                                 <input type="number" class="form-control @error('sks') is-invalid @enderror"
                                        id="sks" name="sks"
                                        value="{{ old('sks', $mataKuliah->sks) }}"
-                                       min="1" max="6" required>
+                                       min="1" max="6" >
                                 @error('sks')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -47,7 +47,7 @@
                             <input type="text" class="form-control @error('nama_mk') is-invalid @enderror"
                                    id="nama_mk" name="nama_mk"
                                    value="{{ old('nama_mk', $mataKuliah->nama_mk) }}"
-                                   placeholder="e.g. Pemrograman Web" required>
+                                   placeholder="e.g. Pemrograman Web" >
                             @error('nama_mk')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

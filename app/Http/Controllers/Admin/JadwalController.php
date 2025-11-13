@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\JadwalRequest;
 use App\Models\Jadwal;
 use App\Models\Semester;
 use App\Models\MataKuliah;
@@ -33,31 +34,67 @@ class JadwalController extends Controller
      */
     public function data(Request $request)
     {
-        $jadwals = Jadwal::with(['semester', 'mataKuliah', 'dosen', 'lab'])->select('*');
+        $jadwals = Jadwal::select('jadwals.*')
+            ->leftJoin('semesters', 'jadwals.semester_id', '=', 'semesters.semester_id')
+            ->leftJoin('mata_kuliahs', 'jadwals.mata_kuliah_id', '=', 'mata_kuliahs.id')
+            ->leftJoin('users', 'jadwals.dosen_id', '=', 'users.id')
+            ->leftJoin('labs', 'jadwals.lab_id', '=', 'labs.lab_id');
+
+        // Apply filters if present
+        if ($request->filled('hari')) {
+            $jadwals->where('jadwals.hari', $request->hari);
+        }
+
+        if ($request->filled('dosen')) {
+            $jadwals->where('users.name', 'like', '%' . $request->dosen . '%');
+        }
 
         return DataTables::of($jadwals)
             ->addIndexColumn()
-            ->editColumn('semester', function ($jadwal) {
-                if ($jadwal->semester) {
-                    return $jadwal->semester->tahun_ajaran . ' - ' . ($jadwal->semester->semester == 1 ? 'Ganjil' : 'Genap');
+            ->filter(function ($query) use ($request) {
+                // Global search functionality
+                if ($request->has('search') && $request->search['value'] != '') {
+                    $searchValue = $request->search['value'];
+                    $query->where(function($q) use ($searchValue) {
+                        $q->where('jadwals.hari', 'like', '%' . $searchValue . '%')
+                          ->orWhere('mata_kuliahs.kode_mk', 'like', '%' . $searchValue . '%')
+                          ->orWhere('mata_kuliahs.nama_mk', 'like', '%' . $searchValue . '%')
+                          ->orWhere('users.name', 'like', '%' . $searchValue . '%')
+                          ->orWhere('labs.name', 'like', '%' . $searchValue . '%')
+                          ->orWhere('semesters.tahun_ajaran', 'like', '%' . $searchValue . '%');
+                    });
                 }
-                return '-';
             })
-            ->editColumn('mata_kuliah', function ($jadwal) {
-                if ($jadwal->mataKuliah) {
+            ->addColumn('tanggal', function ($jadwal) {
+                return $jadwal->hari;
+            })
+            ->addColumn('waktu_mulai', function ($jadwal) {
+                return $jadwal->jam_mulai ? $jadwal->jam_mulai->format('H:i') : '-';
+            })
+            ->addColumn('waktu_selesai', function ($jadwal) {
+                return $jadwal->jam_selesai ? $jadwal->jam_selesai->format('H:i') : '-';
+            })
+            ->addColumn('mata_kuliah.nama', function ($jadwal) {
+                if ($jadwal->mata_kuliah_id && $jadwal->mataKuliah) {
                     return $jadwal->mataKuliah->kode_mk . ' - ' . $jadwal->mataKuliah->nama_mk;
                 }
                 return '-';
             })
-            ->editColumn('dosen', function ($jadwal) {
-                if ($jadwal->dosen) {
+            ->addColumn('dosen.nama', function ($jadwal) {
+                if ($jadwal->dosen_id && $jadwal->dosen) {
                     return $jadwal->dosen->name;
                 }
                 return '-';
             })
-            ->editColumn('lab', function ($jadwal) {
-                if ($jadwal->lab) {
+            ->addColumn('ruang', function ($jadwal) {
+                if ($jadwal->lab_id && $jadwal->lab) {
                     return $jadwal->lab->name;
+                }
+                return '-';
+            })
+            ->addColumn('semester.tahun_ajaran', function ($jadwal) {
+                if ($jadwal->semester_id && $jadwal->semester) {
+                    return $jadwal->semester->tahun_ajaran . ' - ' . ($jadwal->semester->semester == 1 ? 'Ganjil' : 'Genap');
                 }
                 return '-';
             })
@@ -101,22 +138,22 @@ class JadwalController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(JadwalRequest $request)
     {
-        $request->validate([
-            'semester_id' => 'required|exists:semesters,semester_id',
-            'mata_kuliah_id' => 'required|exists:mata_kuliahs,id',
-            'dosen_id' => 'required|exists:users,id',
-            'hari' => 'required|string|max:20',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'lab_id' => 'required|exists:labs,lab_id',
-        ]);
+        \DB::beginTransaction();
+        try {
+            Jadwal::create($request->validated());
 
-        Jadwal::create($request->all());
+            \DB::commit();
 
-        return redirect()->route('jadwal.index')
-            ->with('success', 'Jadwal created successfully.');
+            return redirect()->route('jadwal.index')
+                ->with('success', 'Jadwal created successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to create jadwal: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -147,24 +184,24 @@ class JadwalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(JadwalRequest $request, $id)
     {
         $jadwal = Jadwal::findOrFail($id);
 
-        $request->validate([
-            'semester_id' => 'required|exists:semesters,semester_id',
-            'mata_kuliah_id' => 'required|exists:mata_kuliahs,id',
-            'dosen_id' => 'required|exists:users,id',
-            'hari' => 'required|string|max:20',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'lab_id' => 'required|exists:labs,lab_id',
-        ]);
+        \DB::beginTransaction();
+        try {
+            $jadwal->update($request->validated());
 
-        $jadwal->update($request->all());
+            \DB::commit();
 
-        return redirect()->route('jadwal.index')
-            ->with('success', 'Jadwal updated successfully.');
+            return redirect()->route('jadwal.index')
+                ->with('success', 'Jadwal updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to update jadwal: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**

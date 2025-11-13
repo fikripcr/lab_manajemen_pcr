@@ -16,7 +16,7 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
                                        id="name" name="name" value="{{ old('name', $lab->name) }}"
-                                       placeholder="Computer Lab A" required>
+                                       placeholder="Computer Lab A" >
                                 @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -28,7 +28,7 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('location') is-invalid @enderror"
                                        id="location" name="location" value="{{ old('location', $lab->location) }}"
-                                       placeholder="Building A, Floor 2" required>
+                                       placeholder="Building A, Floor 2" >
                                 @error('location')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -40,7 +40,7 @@
                             <div class="col-sm-10">
                                 <input type="number" class="form-control @error('capacity') is-invalid @enderror"
                                        id="capacity" name="capacity" value="{{ old('capacity', $lab->capacity) }}"
-                                       placeholder="30" min="1" required>
+                                       placeholder="30" min="1" >
                                 @error('capacity')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

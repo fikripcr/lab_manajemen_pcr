@@ -23,7 +23,7 @@
                                 <input type="text" class="form-control @error('tahun_ajaran') is-invalid @enderror"
                                        id="tahun_ajaran" name="tahun_ajaran"
                                        value="{{ old('tahun_ajaran') }}"
-                                       placeholder="e.g. 2023/2024" required>
+                                       placeholder="e.g. 2023/2024" >
                                 @error('tahun_ajaran')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -32,7 +32,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="semester" class="form-label fw-bold">Semester <span class="text-danger">*</span></label>
                                 <select class="form-select @error('semester') is-invalid @enderror"
-                                        id="semester" name="semester" required>
+                                        id="semester" name="semester" >
                                     <option value="">Pilih Semester</option>
                                     <option value="1" {{ old('semester') == 1 ? 'selected' : '' }}>Ganjil</option>
                                     <option value="2" {{ old('semester') == 2 ? 'selected' : '' }}>Genap</option>
@@ -48,7 +48,7 @@
                                 <label for="start_date" class="form-label fw-bold">Start Date <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('start_date') is-invalid @enderror"
                                        id="start_date" name="start_date"
-                                       value="{{ old('start_date') }}" required>
+                                       value="{{ old('start_date') }}" >
                                 @error('start_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -58,7 +58,7 @@
                                 <label for="end_date" class="form-label fw-bold">End Date <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('end_date') is-invalid @enderror"
                                        id="end_date" name="end_date"
-                                       value="{{ old('end_date') }}" required>
+                                       value="{{ old('end_date') }}" >
                                 @error('end_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

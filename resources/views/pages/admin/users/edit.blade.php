@@ -16,7 +16,7 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
                                        id="name" name="name" value="{{ old('name', $user->name) }}"
-                                       placeholder="John Doe" required>
+                                       placeholder="John Doe" >
                                 @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -28,7 +28,7 @@
                             <div class="col-sm-10">
                                 <input type="email" class="form-control @error('email') is-invalid @enderror"
                                        id="email" name="email" value="{{ old('email', $user->email) }}"
-                                       placeholder="john@example.com" required>
+                                       placeholder="john@example.com" >
                                 @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -67,7 +67,7 @@
                             <label class="col-sm-2 col-form-label" for="role">Role</label>
                             <div class="col-sm-10">
                                 <select class="form-select @error('role') is-invalid @enderror"
-                                        id="role" name="role" required>
+                                        id="role" name="role" >
                                     @foreach($roles as $role)
                                     <option value="{{ $role->name }}" {{ old('role', $user->roles->first()?->name) == $role->name ? 'selected' : '' }}>
                                         {{ ucfirst($role->name) }}
