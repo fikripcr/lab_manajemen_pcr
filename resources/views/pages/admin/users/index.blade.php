@@ -49,7 +49,7 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             if (!$.fn.DataTable.isDataTable('#users-table')) {
                 var table = $('#users-table').DataTable({
                     processing: true,
@@ -75,20 +75,6 @@
                         {
                             data: 'name',
                             name: 'name',
-                            render: function(data, type, row) {
-                                return `
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar flex-shrink-0 me-3">
-                                            <img src="` + (row.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(row.name) + '&color=7F9CF5&background=EBF4FF') + `"
-                                                 alt="` + row.name + `" class="rounded-circle w-px-40 h-40">
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <span class="text-nowrap">` + row.name + `</span>
-                                            <small class="text-muted">` + row.created_at + `</small>
-                                        </div>
-                                    </div>
-                                `;
-                            }
                         },
                         {
                             data: 'email',

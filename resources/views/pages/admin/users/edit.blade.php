@@ -7,7 +7,7 @@
         <div class="col-xxl">
             <div class="card mb-4">
                 <div class="card-body">
-                    <form action="{{ route('users.update', $user) }}" method="POST">
+                    <form action="{{ route('users.update', $user) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -107,9 +107,9 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="avatar">Avatar</label>
                             <div class="col-sm-10">
-                                @if($user->avatar)
+                                @if($user->avatar_url)
                                     <div class="mb-2">
-                                        <img src="{{ Storage::url($user->avatar) }}"
+                                        <img src="{{ $user->avatar_url }}"
                                              class="rounded-circle"
                                              width="60"
                                              height="60"
@@ -119,7 +119,7 @@
                                 <input class="form-control @error('avatar') is-invalid @enderror"
                                        type="file" id="avatar" name="avatar" accept="image/*">
                                 <div class="form-text">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.
-                                    @if($user->avatar) Leave empty to keep current avatar @endif
+                                    @if($user->avatar_url) Leave empty to keep current avatar @endif
                                 </div>
                                 @error('avatar')
                                 <div class="invalid-feedback">{{ $message }}</div>

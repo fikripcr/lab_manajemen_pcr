@@ -49,7 +49,7 @@ table.dataTable thead th {
   font-size: 0.75rem; /* Font header sedikit lebih kecil */
   text-transform: uppercase; /* Memberikan kesan profesional/teknis */
   letter-spacing: 0.5px;
-  padding: 0.75rem 1rem; /* Padding dikurangi untuk hemat space */
+  padding: 0.55rem 1rem; /* Padding dikurangi untuk hemat space */
   border-bottom: 1px solid #dfe3e7;
 }
 

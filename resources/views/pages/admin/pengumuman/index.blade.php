@@ -25,7 +25,7 @@
         <div class="card-body">
             @include('components.flash-message')
             <div class="table-responsive">
-                <table id="{{ $type }}-table" class="table table-striped  table-sm table-bordered" style="width:100%">
+                <table id="{{ $type }}-table" class="table" style="width:100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -45,7 +45,7 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             if (!$.fn.DataTable.isDataTable('#{{ $type }}-table')) {
                 var table = $('#{{ $type }}-table').DataTable({
                     processing: true,

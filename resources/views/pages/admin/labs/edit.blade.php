@@ -50,9 +50,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="description">Description</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control @error('description') is-invalid @enderror"
-                                          id="description" name="description" rows="4"
-                                          placeholder="Description of the lab...">{{ old('description', $lab->description) }}</textarea>
+                                <x-tinymce.editor id="description" name="description" :value="old('description', $lab->description)" height="300" />
                                 @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

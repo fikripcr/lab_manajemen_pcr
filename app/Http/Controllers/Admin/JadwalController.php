@@ -245,7 +245,6 @@ class JadwalController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-
         try {
             Excel::import(new JadwalImport, $request->file('file'));
 

@@ -44,7 +44,7 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             if (!$.fn.DataTable.isDataTable('#labs-table')) {
                 var table = $('#labs-table').DataTable({
                     processing: true,

@@ -49,7 +49,7 @@
     @include('components.sweetalert')
 
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             if (!$.fn.DataTable.isDataTable('#semesters-table')) {
                 var table = $('#semesters-table').DataTable({
                     processing: true,

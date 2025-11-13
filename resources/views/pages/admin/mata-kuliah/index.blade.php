@@ -63,7 +63,7 @@
     @include('components.sweetalert')
 
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             // Check if DataTable is already initialized to avoid re-initialization
             if (!$.fn.DataTable.isDataTable('#mata-kuliah-table')) {
                 var table = $('#mata-kuliah-table').DataTable({

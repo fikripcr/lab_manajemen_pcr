@@ -42,18 +42,21 @@ class UserController extends Controller
         return DataTables::of($users)
             ->addIndexColumn()
             ->editColumn('name', function ($user) {
-                return '
-                    <div class="d-flex align-items-center">
-                        <div class="avatar flex-shrink-0 me-3">
-                            <img src="' . $user->avatar_url . '"
-                                 alt="' . $user->name . '" class="rounded-circle w-px-40 h-40">
-                        </div>
-                        <div class="d-flex flex-column">
-                            <span class="text-nowrap">' . $user->name . '</span>
-                            <small class="text-muted">' . $user->created_at . '</small>
-                        </div>
-                    </div>
-                ';
+                // Ensure we're getting the actual user name, not processed content
+                $userName = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
+                $userCreatedAt = htmlspecialchars($user->created_at, ENT_QUOTES, 'UTF-8');
+
+                $html = '<div class="d-flex align-items-center">';
+                $html .= '<div class="avatar flex-shrink-0 me-3">';
+                $html .= '<img src="' . $user->avatar_url . '" alt="' . $userName . '" class="rounded-circle w-px-40 h-40">';
+                $html .= '</div>';
+                $html .= '<div class="d-flex flex-column">';
+                $html .= '<span class="text-nowrap">' . $userName . '</span>';
+                $html .= '<small class="text-muted">' . $userCreatedAt . '</small>';
+                $html .= '</div>';
+                $html .= '</div>';
+
+                return $html;
             })
             ->editColumn('roles', function ($user) {
                 return $user->roles->pluck('name')->first() ?? 'No Role';
@@ -80,7 +83,7 @@ class UserController extends Controller
                         </div>
                     </div>';
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['name', 'action'])
             ->make(true);
     }
 

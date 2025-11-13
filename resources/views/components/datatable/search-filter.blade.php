@@ -12,8 +12,8 @@
     @if (isset($filters))
         @foreach ($filters as $filter)
             <div class="col-md-{{ $filter['col_size'] ?? 2 }}">
-                <div class="input-group  input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-filter"></i></span>
+                {{-- <div class="input-group  input-group-merge"> --}}
+                    {{-- <span class="input-group-text"><i class="bx bx-filter"></i></span> --}}
                     {{-- <label class="form-label">{{$filter['label']}}</label> --}}
                     @if ($filter['type'] == 'select')
                         <select class="form-control {{ $filter['class'] ?? '' }} filter-select" id="{{ $filter['id'] }}" data-column="{{ $filter['column'] }}">
@@ -25,7 +25,7 @@
                     @else
                         <input type="{{ $filter['type'] ?? 'text' }}" class="form-control filter-input" id="{{ $filter['id'] }}" data-column="{{ $filter['column'] }}" placeholder="{{ $filter['placeholder'] ?? '' }}" value="{{ request($filter['name']) ?? '' }}" />
                     @endif
-                </div>
+                {{-- </div> --}}
             </div>
         @endforeach
     @endif
@@ -35,13 +35,25 @@
     <script>
         // Wait for the DataTable to be fully initialized before applying filters
         $(document).ready(function() {
+            // Initialize Choice.js for select elements with 'choice-select' class
+            const choiceElements = document.querySelectorAll('.choice-select');
+
+
             // Global search input for this table
             var globalSearchInput = $('#globalSearch-{{ $dataTableId ?? 'dataTable' }}');
             var filterButton = $('#filterButton-{{ $dataTableId ?? 'dataTable' }}');
             var clearFilterButton = $('#clearFilterButton-{{ $dataTableId ?? 'dataTable' }}');
 
             // Wait a bit for DataTable to initialize, then attach events
-            setTimeout(function() {
+                choiceElements.forEach(function(element) {
+                new Choices(element, {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Search...',
+                    noResultsText: 'No results found',
+                    itemSelectText: false,
+                    shouldSort: false,
+                });
+            });
                 try {
                     var dataTable = $('#{{ $dataTableId ?? 'dataTable' }}').DataTable();
 
@@ -61,6 +73,11 @@
                         @if (isset($filters))
                             @foreach ($filters as $filter)
                                 $('#{{ $filter['id'] }}').val('');
+                                // Update the choice instance if it exists
+                                const choiceElement = document.getElementById('{{ $filter['id'] }}');
+                                if (choiceElement && choiceElement.choicesInstance) {
+                                    choiceElement.choicesInstance.clearStore();
+                                }
                             @endforeach
                         @endif
                         dataTable.search('').draw();
@@ -79,7 +96,6 @@
                 } catch (e) {
                     console.warn('DataTable not initialized yet for {{ $dataTableId ?? 'dataTable' }}:', e.message);
                 }
-            }, 500); // Wait 500ms to ensure DataTable is ready
         });
     </script>
 @endpush

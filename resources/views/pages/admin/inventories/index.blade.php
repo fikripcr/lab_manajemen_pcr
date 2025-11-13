@@ -39,7 +39,8 @@
                             'Rusak Berat' => 'Major Damage',
                             'Tidak Dapat Digunakan' => 'Cannot Be Used'
                         ],
-                        'placeholder' => 'Select Condition'
+                        'placeholder' => 'Select Condition',
+                        'class' => 'choice-select'
                     ]
                 ]
             ])
@@ -67,7 +68,7 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             if (!$.fn.DataTable.isDataTable('#inventaris-table')) {
                 var table = $('#inventaris-table').DataTable({
                     processing: true,

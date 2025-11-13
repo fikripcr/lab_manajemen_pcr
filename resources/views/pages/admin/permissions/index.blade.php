@@ -43,7 +43,7 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             if (!$.fn.DataTable.isDataTable('#permissions-table')) {
                 var table = $('#permissions-table').DataTable({
                     processing: true,

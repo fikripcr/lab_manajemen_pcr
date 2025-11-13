@@ -92,7 +92,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 @foreach($role->permissions as $permission)
                                     <div class="col-md-3 col-6 mb-2">
@@ -104,7 +104,7 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                
+
                                 @php $existingPermissionNames = $role->permissions->pluck('name')->toArray(); @endphp
                                 @foreach($allPermissions as $permission)
                                     @if(!in_array($permission->name, $existingPermissionNames))
@@ -119,7 +119,7 @@
                                     @endif
                                 @endforeach
                             </div>
-                            
+
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-primary" id="savePermissionsBtn">
                                     <i class="bx bx-save me-1"></i> Save Permissions
@@ -127,7 +127,7 @@
                             </div>
                         </form>
                     </div>
-                    
+
                     <!-- Role Deletion Section -->
                     <div class="mt-4 pt-4 border-top">
                         <form action="{{ route('roles.destroy', $role) }}" method="POST" class="d-inline">
@@ -142,46 +142,46 @@
             </div>
         </div>
     </div>
-    
+
     @include('components.sweetalert')
-    
+
     <script>
         // Function to toggle select all checkboxes
         function toggleSelectAll() {
             const selectAllCheckbox = document.getElementById('selectAll');
             const checkboxes = document.querySelectorAll('.permission-checkbox');
-            
+
             checkboxes.forEach(checkbox => {
                 checkbox.checked = selectAllCheckbox.checked;
             });
         }
-        
+
         // Function to handle form submission with SweetAlert
         document.getElementById('permissionForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const form = this;
             const submitBtn = document.getElementById('savePermissionsBtn');
             const originalText = submitBtn.innerHTML;
-            
+
             // Disable the button and show loading state
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Saving...';
-            
+
             // Submit form using AJAX
             const formData = new FormData(form);
             const xhr = new XMLHttpRequest();
-            
+
             xhr.open('POST', form.action);
             xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
             xhr.setRequestHeader('X-HTTP-Method-Override', 'PUT'); // Laravel needs this for PUT via form
-            
+
             const params = new URLSearchParams(formData).toString();
-            
+
             xhr.onload = function() {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
-                
+
                 if (xhr.status === 200) {
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
@@ -193,22 +193,22 @@
                     showErrorMessage('Error!', 'An error occurred while saving permissions.');
                 }
             };
-            
+
             xhr.onerror = function() {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
                 showErrorMessage('Error!', 'An error occurred while saving permissions.');
             };
-            
+
             xhr.send(params);
         });
-        
+
         // Update select all checkbox state when individual checkboxes are checked/unchecked
         document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const allCheckboxes = document.querySelectorAll('.permission-checkbox');
                 const checkedCheckboxes = document.querySelectorAll('.permission-checkbox:checked');
-                
+
                 const selectAllCheckbox = document.getElementById('selectAll');
                 selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
             });
