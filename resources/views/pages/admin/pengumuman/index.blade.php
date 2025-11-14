@@ -23,7 +23,7 @@
             ])
         </div>
         <div class="card-body">
-            @include('components.flash-message')
+            <x-flash-message />
             <div class="table-responsive">
                 <table id="{{ $type }}-table" class="table" style="width:100%">
                     <thead>

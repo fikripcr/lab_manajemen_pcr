@@ -7,6 +7,8 @@
         <div class="col-xxl">
             <div class="card mb-4">
                 <div class="card-body">
+                    <x-flash-message />
+
                     <form action="{{ route('users.update', $user) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')

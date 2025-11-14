@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Admin\LabRequest;
 use App\Models\Lab;
+use App\Models\LabMedia;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\DataTables;
+use App\Http\Requests\Admin\LabRequest;
 
 class LabController extends Controller
 {
@@ -82,24 +83,35 @@ class LabController extends Controller
             // Handle lab media uploads if any
             if ($request->hasFile('media_files')) {
                 $mediaFiles = $request->file('media_files');
+                \Log::info('Number of media files to process: ' . count($mediaFiles)); // Debug log
+
                 $mediaTitles = $request->input('media_titles', []);
                 $mediaDescriptions = $request->input('media_descriptions', []);
-
                 foreach ($mediaFiles as $index => $file) {
+                    \Log::info("Processing file #{$index}: " . $file->getClientOriginalName()); // Debug log
+
                     if ($file->isValid()) {
+                        \Log::info("File #{$index} is valid"); // Debug log
+
                         // Get media title and description if provided, otherwise use default values
                         $title = isset($mediaTitles[$index]) ? $mediaTitles[$index] : 'Gambar ' . ($index + 1);
                         $keterangan = isset($mediaDescriptions[$index]) ? $mediaDescriptions[$index] : 'Deskripsi gambar';
 
                         // Add media to the lab using the HasMedia trait
                         $media = $lab->addMedia($file, 'lab_images');
+                        \Log::info("Media stored with ID: " . $media->id); // Debug log
 
                         // Create a LabMedia record to store title and description
-                        $lab->labMedia()->create([
-                            'media_id' => $media->id,
-                            'judul' => $title,
-                            'keterangan' => $keterangan,
-                        ]);
+                        $labMedia = new LabMedia();
+                        $labMedia->lab_id = $lab->lab_id;
+                        $labMedia->media_id = $media->id;
+                        $labMedia->judul = $title;
+                        $labMedia->keterangan = $keterangan;
+                        $labMedia->save();
+
+                        \Log::info("LabMedia record created with title: " . $title); // Debug log
+                    } else {
+                        \Log::info("File #{$index} is not valid"); // Debug log
                     }
                 }
             }
@@ -154,24 +166,36 @@ class LabController extends Controller
             // Handle lab media uploads if any
             if ($request->hasFile('media_files')) {
                 $mediaFiles = $request->file('media_files');
+                \Log::info('Number of media files to process: ' . count($mediaFiles)); // Debug log
+
                 $mediaTitles = $request->input('media_titles', []);
                 $mediaDescriptions = $request->input('media_descriptions', []);
-
                 foreach ($mediaFiles as $index => $file) {
+                    print_r($index);
+                    \Log::info("Processing file #{$index}: " . $file->getClientOriginalName()); // Debug log
+
                     if ($file->isValid()) {
+                        \Log::info("File #{$index} is valid"); // Debug log
+
                         // Get media title and description if provided, otherwise use default values
                         $title = isset($mediaTitles[$index]) ? $mediaTitles[$index] : 'Gambar ' . ($index + 1);
-                        $keterangan = isset($mediaDescriptions[$index]) ? $mediaDescriptions[$index] : 'Deskripsi gambar';
+                        $deskripsi = isset($mediaDescriptions[$index]) ? $mediaDescriptions[$index] : 'Deskripsi gambar';
 
                         // Add media to the lab using the HasMedia trait
                         $media = $lab->addMedia($file, 'lab_images');
+                        \Log::info("Media stored with ID: " . $media->id); // Debug log
 
                         // Create a LabMedia record to store title and description
-                        $lab->labMedia()->create([
-                            'media_id' => $media->id,
-                            'judul' => $title,
-                            'keterangan' => $keterangan,
-                        ]);
+                        $labMedia = new LabMedia();
+                        $labMedia->lab_id = $lab->lab_id;
+                        $labMedia->media_id = $media->id;
+                        $labMedia->judul = $title;
+                        $labMedia->keterangan = $deskripsi;
+                        $labMedia->save();
+
+                        \Log::info("LabMedia record created with title: " . $title); // Debug log
+                    } else {
+                        \Log::info("File #{$index} is not valid"); // Debug log
                     }
                 }
             }

@@ -6,7 +6,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            @include('components.flash-message')
+            <x-flash-message />
 
             <ul class="nav nav-pills nav-fill mb-4">
                 <li class="nav-item">

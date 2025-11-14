@@ -12,7 +12,7 @@
                     <h5 class="mb-0">Create New {{ ucfirst($type) }}</h5>
                 </div>
                 <div class="card-body">
-                    @include('components.flash-message')
+                    <x-flash-message />
 
                     <form action="{{ route($type . '.store') }}" method="POST"  enctype="multipart/form-data">
                         @csrf

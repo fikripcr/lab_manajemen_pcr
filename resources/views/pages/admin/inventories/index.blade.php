@@ -12,7 +12,79 @@
             </button>
         </div>
     </div>
+    <style>
+/*
+ * =========================================
+ * FINAL - KODE CSS GABUNGAN UNTUK CHOICES.JS
+ * =========================================
+ * Hapus semua style choices.js lama Anda, ganti dengan ini.
+*/
 
+/* 1. KOTAK UTAMA (INPUT FIELD) */
+.choices__inner {
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  min-height: 38px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* 2. TEKS DI DALAM KOTAK (ITEM TERPILIH) */
+.choices__list--single .choices__item {
+  color: #212529;
+}
+
+/* 3. PANAH DROPDOWN */
+.choices[data-type*="select-one"]::after {
+  border-color: #333 transparent transparent;
+  right: 12px;
+  margin-top: -3px;
+}
+
+/* 4. STYLE SAAT FOKUS (DIKLIK) - Versi HALUS, BUKAN BIRU */
+.choices.is-focused .choices__inner {
+  border-color: #ddd;
+  /* Bayangan halus, BUKAN glow biru tebal */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  /* atau 'box-shadow: none;' jika tidak mau ada efek sama sekali */
+}
+
+/* 5. MENU DROPDOWN "MODERN" (INI YANG PENTING) */
+.choices__list--dropdown {
+  /* Sudut melengkung */
+  border-radius: 8px;
+
+  /* Efek bayangan (shadow) */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  /* Border halus */
+  border: 1px solid #e2e8f0;
+
+  /* Jarak dari kotak atas */
+  margin-top: 6px;
+}
+
+/* 6. INPUT "SEARCH..." DI DALAM DROPDOWN */
+.choices__list--dropdown .choices__input {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* 7. EFEK HOVER PADA ITEM PILIHAN */
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+  background-color: #f3f4f6; /* Warna latar hover */
+  color: #111827;
+}
+
+/* 8. Menghilangkan border aneh di atas item pertama */
+.choices__list--dropdown .choices__item--choice:first-child {
+  border-top: 0;
+}
+    </style>
     <div class="card">
         <div class="card-header">
             <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
@@ -46,7 +118,7 @@
             ])
         </div>
         <div class="card-body">
-            @include('components.flash-message')
+            <x-flash-message />
             <div class="table-responsive">
                 <table id="inventaris-table" class="table  " style="width:100%">
                     <thead>

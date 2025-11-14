@@ -15,7 +15,7 @@
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-body p-5">
-                            @include('components.alerts')
+                            @include('components.guest.alerts')
 
                             <form id="softwareRequestForm" method="POST">
                                 @csrf

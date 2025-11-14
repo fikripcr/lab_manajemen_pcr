@@ -12,7 +12,7 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    @include('components.flash-message')
+                    <x-flash-message />
 
                     <form method="POST" action="{{ route('mata-kuliah.store') }}">
                         @csrf

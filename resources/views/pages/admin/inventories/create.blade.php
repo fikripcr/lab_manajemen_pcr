@@ -7,7 +7,7 @@
         <div class="col-xxl">
             <div class="card mb-4">
                 <div class="card-body">
-                    @include('components.flash-message')
+                    <x-flash-message />
 
                     <form action="{{ route('inventories.store') }}" method="POST">
                         @csrf

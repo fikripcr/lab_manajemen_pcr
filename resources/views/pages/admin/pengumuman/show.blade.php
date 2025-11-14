@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @include('components.flash-message')
+                    <x-flash-message />
 
                     <div class="row">
                         <div class="col-md-6 mb-3">

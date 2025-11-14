@@ -17,7 +17,7 @@
         <div class="col-md-8 mx-auto">
             <div class="card mb-4">
                 <div class="card-body">
-                    @include('components.flash-message')
+                    <x-flash-message />
 
                     <form action="{{ route('permissions.update', $permission) }}" method="POST">
                         @csrf

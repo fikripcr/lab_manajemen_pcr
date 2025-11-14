@@ -57,7 +57,7 @@
             ])
         </div>
         <div class="card-body">
-            @include('components.flash-message')
+            <x-flash-message />
 
             <div class="table-responsive">
                 <table id="jadwal-table" class="table" style="width:100%">

@@ -40,7 +40,7 @@
             ])
         </div>
         <div class="card-body">
-            @include('components.flash-message')
+            <x-flash-message />
 
             <div class="table-responsive">
                 <table id="mata-kuliah-table" class="table" style="width:100%">
