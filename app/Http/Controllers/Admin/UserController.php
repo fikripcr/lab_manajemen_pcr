@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\UserExport;
 use App\Http\Requests\Admin\UserRequest;
+use App\Imports\UserImport;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
@@ -107,7 +108,7 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'npm' => $validated['npm'] ?? null,
+            'nim' => $validated['nim'] ?? null,
             'nip' => $validated['nip'] ?? null,
         ]);
 
@@ -168,7 +169,7 @@ class UserController extends Controller
         $updatedData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'npm' => $validated['npm'] ?? null,
+            'nim' => $validated['nim'] ?? null,
             'nip' => $validated['nip'] ?? null,
         ];
 
@@ -220,5 +221,42 @@ class UserController extends Controller
         $export = new UserExport($filters, $columns);
 
         return Excel::download($export, 'users_' . date('Y-m-d_H-i-s') . '.xlsx');
+    }
+
+    /**
+     * Show the import form for users.
+     */
+    public function showImport()
+    {
+        $roles = Role::all();
+        return view('pages.admin.users.import', compact('roles'));
+    }
+
+    /**
+     * Import users from Excel file.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240', // Max 10MB
+        ]);
+
+        try {
+            $file = $request->file('file');
+
+            // Import using the UserImport class with parameters
+            $defaultRole = $request->input('role_default');
+            $overwriteExisting = $request->input('overwrite_existing', false);
+
+            $import = new UserImport($defaultRole, $overwriteExisting);
+            Excel::import($import, $file);
+
+            return redirect()->route('users.index')
+                ->with('success', "Import completed successfully. Users have been added to the database.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error importing users: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 }

@@ -95,7 +95,7 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'name'            => $user->name,
             'email'           => $user->email,
             'google_id'       => $user->google_id ?: '-',
-            'npm'             => $user->npm ?: '-',
+            'nim'             => $user->nim ?: '-',
             'nip'             => $user->nip ?: '-',
             'avatar'          => $user->avatar ?: '-',
             'email_verified_at' => $user->email_verified_at ? $user->email_verified_at->format('Y-m-d H:i:s') : '-',

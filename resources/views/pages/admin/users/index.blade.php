@@ -7,6 +7,9 @@
             <a href="{{ route('users.create') }}" class="btn btn-primary me-2">
                 <i class="bx bx-plus"></i> Add New User
             </a>
+            <a href="{{ route('users.import') }}" class="btn btn-info me-2">
+                <i class="bx bx-import"></i> Import Users
+            </a>
             <button type="button" class="btn btn-success" id="exportBtn">
                 <i class="bx bx-export"></i> Export Excel
             </button>
@@ -88,7 +91,7 @@
                             data: null,
                             name: 'id',
                             render: function(data, type, row) {
-                                return row.npm || row.nip || '-';
+                                return row.nim || row.nip || '-';
                             }
                         },
                         {

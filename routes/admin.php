@@ -25,17 +25,6 @@ Route::middleware(['auth'])->group(function () {
         ->name('dashboard');
 
     // ======================
-    // 👤 Profile
-    // ======================
-    Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
-        Route::get('/', 'show')->name('show');
-        Route::get('/edit', 'edit')->name('edit');
-        Route::patch('/', 'update')->name('update');
-        Route::patch('/password', 'passwordUpdate')->name('password.update');
-        Route::delete('/', 'destroy')->name('destroy');
-    });
-
-    // ======================
     // 📦 Master Data
     // ======================
 
@@ -43,6 +32,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('api', [UserController::class, 'data'])->name('data');
         Route::get('export', [UserController::class, 'export'])->name('export');
+        Route::get('import', [UserController::class, 'showImport'])->name('import');
+        Route::post('import', [UserController::class, 'import'])->name('import');
     });
     Route::resource('users', UserController::class);
 

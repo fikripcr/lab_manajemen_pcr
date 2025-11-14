@@ -48,6 +48,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'id' =>'string' // Ensure id is treated as string for encryption purposes
     ];
 
     // Remove the custom auth methods as they're not needed for standard Laravel auth
@@ -91,7 +92,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(LaporanKerusakan::class, 'teknisi_id');
     }
-    
+
     /**
      * Get the value of the model's route key.
      */

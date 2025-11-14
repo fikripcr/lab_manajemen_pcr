@@ -70,10 +70,10 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="npm">NPM (Optional)</label>
+                            <label class="col-sm-2 col-form-label" for="nim">NIM (Optional)</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control"
-                                       id="npm" name="npm" value="{{ old('npm') }}"
+                                       id="nim" name="nim" value="{{ old('nim') }}"
                                        placeholder="e.g., 1234567890">
                             </div>
                         </div>

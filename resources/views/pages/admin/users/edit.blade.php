@@ -83,12 +83,12 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="npm">NPM (Optional)</label>
+                            <label class="col-sm-2 col-form-label" for="nim">NIM (Optional)</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('npm') is-invalid @enderror"
-                                       id="npm" name="npm" value="{{ old('npm', $user->npm) }}"
+                                <input type="text" class="form-control @error('nim') is-invalid @enderror"
+                                       id="nim" name="nim" value="{{ old('nim', $user->nim ?? '') }}"
                                        placeholder="e.g., 1234567890">
-                                @error('npm')
+                                @error('nim')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

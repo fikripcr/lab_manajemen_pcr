@@ -24,7 +24,6 @@
 .choices__inner {
   background-color: #ffffff;
   border: 1px solid #ced4da;
-  min-height: 38px;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 14px;

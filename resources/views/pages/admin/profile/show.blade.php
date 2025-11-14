@@ -42,8 +42,8 @@
                             <input class="form-control" type="text" id="email" value="{{ $user->email }}" disabled>
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label class="form-label" for="npm">NPM</label>
-                            <input class="form-control" type="text" id="npm" value="{{ $user->npm ?? '-' }}" disabled>
+                            <label class="form-label" for="nim">NIM</label>
+                            <input class="form-control" type="text" id="nim" value="{{ $user->nim ?? '-' }}" disabled>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label class="form-label" for="nip">NIP</label>

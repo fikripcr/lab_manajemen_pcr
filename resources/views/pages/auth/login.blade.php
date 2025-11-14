@@ -27,7 +27,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="email" class="form-label">Email or Username</label>
-                            <input type="text" class="form-control" value="admin@example.com" id="email" name="email" placeholder="Enter your email or username" value="{{ old('email') }}" />
+                            <input type="text" class="form-control" value="user1@contoh-lab.ac.id" id="email" name="email" placeholder="Enter your email or username" value="{{ old('email') }}" />
                             @error('email')
                                 <div class="text-danger mt-1">
                                     {{ $message }}
