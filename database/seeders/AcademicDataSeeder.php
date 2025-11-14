@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Semester;
 use App\Models\MataKuliah;
-use App\Models\Jadwal;
+use App\Models\JadwalKuliah;
 use App\Models\User;
 use App\Models\Lab;
 use Illuminate\Database\Seeder;
@@ -16,39 +16,69 @@ class AcademicDataSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create 1000 semester records
-        for ($i = 1; $i <= 20; $i++) {
-            $tahun_awal = 2015 + ($i % 5);
-            $tahun_akhir = $tahun_awal + 1;
-            $tahun_ajaran = $tahun_awal . '/' . $tahun_akhir;
-            $semester = ($i % 2) + 1; // Alternates between 1 and 2
-            $is_active = $i === 1; // Only the first one is active
+        // Create 50 semester records (25 tahun ajaran dengan genap dan ganjil)
+        $tahunAjaran = [];
+        for ($tahun = 2021; $tahun <= 2035; $tahun++) { // Dari 2021/2022 sampai 2035/2036
+            $tahunAjaran[] = ['tahun_ajaran' => $tahun . '/' . ($tahun + 1), 'semester' => 1]; // Ganjil
+            $tahunAjaran[] = ['tahun_ajaran' => $tahun . '/' . ($tahun + 1), 'semester' => 2]; // Genap
+        }
+
+        foreach ($tahunAjaran as $index => $data) {
+            $is_active = $index === 0; // Hanya semester pertama yang aktif
+
+            // Generate tanggal mulai dan selesai yang logis berdasarkan semester
+            if ($data['semester'] == 1) { // Ganjil
+                $start_date = $tahun . '-08-01'; // Agustus
+                $end_date = $tahun . '-12-31';   // Desember
+            } else { // Genap
+                $tahunAkhir = explode('/', $data['tahun_ajaran'])[1];
+                $start_date = $tahunAkhir . '-01-01'; // Januari
+                $end_date = $tahunAkhir . '-06-30';   // Juni
+            }
 
             Semester::create([
-                'tahun_ajaran' => $tahun_ajaran,
-                'semester' => $semester,
-                'start_date' => fake()->date(),
-                'end_date' => fake()->date(),
+                'tahun_ajaran' => $data['tahun_ajaran'],
+                'semester' => $data['semester'],
+                'start_date' => $start_date,
+                'end_date' => $end_date,
                 'is_active' => $is_active
             ]);
         }
 
         // Create 1000 mata kuliah records
+        $subjects = [
+            'Algoritma dan Struktur Data', 'Pemrograman Berorientasi Objek', 'Basis Data',
+            'Jaringan Komputer', 'Sistem Operasi', 'Teknologi Web',
+            'Kecerdasan Buatan', 'Rekayasa Perangkat Lunak', 'Grafika Komputer',
+            'Analisis dan Desain Sistem', 'Interaksi Manusia dan Komputer', 'Keamanan Komputer',
+            'Manajemen Proyek Perangkat Lunak', 'Big Data Analytics', 'Internet of Things',
+            'Mobile Programming', 'Cloud Computing', 'Machine Learning',
+            'Cybersecurity', 'Blockchain Technology'
+        ];
+
         for ($i = 1; $i <= 1000; $i++) {
+            if ($i <= count($subjects)) {
+                $subjectName = $subjects[$i - 1]; // Use predefined subjects first
+            } else {
+                $subjectName = fake()->sentence(3, true); // Use faker for others
+            }
+
             MataKuliah::create([
                 'kode_mk' => 'MK' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'nama_mk' => fake()->sentence(3),
+                'nama_mk' => $subjectName,
                 'sks' => fake()->numberBetween(2, 4)
             ]);
         }
 
         // Create 1000 lab records
         for ($i = 1; $i <= 500; $i++) {
+            $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
+
             Lab::create([
-                'name' => fake()->company() . ' Lab',
-                'location' => fake()->address(),
-                'capacity' => fake()->numberBetween(10, 50),
-                'description' => fake()->paragraph(),
+                'name' => $faker->company() . ' Laboratorium ' . $i,
+                'location' => $faker->address(),
+                'capacity' => $faker->numberBetween(10, 50),
+                'description' => $faker->paragraph(),
             ]);
         }
 
@@ -71,7 +101,7 @@ class AcademicDataSeeder extends Seeder
                     $jam_selesai = $temp;
                 }
 
-                Jadwal::create([
+                JadwalKuliah::create([
                     'semester_id' => $semesterIds[array_rand($semesterIds)],
                     'mata_kuliah_id' => $mataKuliahIds[array_rand($mataKuliahIds)],
                     'dosen_id' => $dosenUsers->random()->id,

@@ -96,11 +96,11 @@ class MataKuliahController extends Controller
             \DB::commit();
 
             return redirect()->route('mata-kuliah.index')
-                ->with('success', 'Mata Kuliah created successfully.');
+                ->with('success', 'Mata Kuliah berhasil dibuat.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to create mata kuliah: ' . $e->getMessage())
+                ->with('error', 'Gagal membuat mata kuliah: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -137,11 +137,11 @@ class MataKuliahController extends Controller
             \DB::commit();
 
             return redirect()->route('mata-kuliah.index')
-                ->with('success', 'Mata Kuliah updated successfully.');
+                ->with('success', 'Mata Kuliah berhasil diperbarui.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to update mata kuliah: ' . $e->getMessage())
+                ->with('error', 'Gagal memperbarui mata kuliah: ' . $e->getMessage())
                 ->withInput();
         }
     }

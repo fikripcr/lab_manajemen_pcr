@@ -3,7 +3,7 @@ namespace App\Imports;
 
 use App\Models\Lab;
 use App\Models\User;
-use App\Models\Jadwal;
+use App\Models\JadwalKuliah;
 use App\Models\Semester;
 use App\Models\MataKuliah;
 use Illuminate\Support\Collection;
@@ -114,7 +114,7 @@ class JadwalImport implements ToCollection,WithHeadingRow
 
         // Perform bulk insert
         if (! empty($jadwals)) {
-            Jadwal::insert($jadwals);
+            JadwalKuliah::insert($jadwals);
         }
         */
 
@@ -255,7 +255,7 @@ class JadwalImport implements ToCollection,WithHeadingRow
 
         // Perform bulk insert
         if (!empty($jadwals)) {
-            Jadwal::insert($jadwals);
+            JadwalKuliah::insert($jadwals);
         }
     }
 

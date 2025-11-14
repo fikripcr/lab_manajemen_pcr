@@ -106,11 +106,11 @@ class InventarisController extends Controller
             \DB::commit();
 
             return redirect()->route('inventories.index')
-                ->with('success', 'Inventaris created successfully.');
+                ->with('success', 'Inventaris berhasil dibuat.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to create inventaris: ' . $e->getMessage())
+                ->with('error', 'Gagal membuat inventaris: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -120,10 +120,7 @@ class InventarisController extends Controller
      */
     public function show($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $inventory = Inventaris::findOrFail($realId);
         return view('pages.admin.inventories.show', compact('inventory'));
@@ -134,10 +131,7 @@ class InventarisController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $inventory = Inventaris::findOrFail($realId);
         $labs = Lab::all();
@@ -149,10 +143,7 @@ class InventarisController extends Controller
      */
     public function update(InventarisRequest $request, $id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $inventory = Inventaris::findOrFail($realId);
 
@@ -163,11 +154,11 @@ class InventarisController extends Controller
             \DB::commit();
 
             return redirect()->route('inventories.index')
-                ->with('success', 'Inventaris updated successfully.');
+                ->with('success', 'Inventaris berhasil diperbarui.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to update inventaris: ' . $e->getMessage())
+                ->with('error', 'Gagal memperbarui inventaris: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -177,10 +168,7 @@ class InventarisController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $inventory = Inventaris::findOrFail($realId);
         $inventory->delete();

@@ -17,11 +17,11 @@ class AdminUserSeeder extends Seeder
         // Create or update the admin user
         $admin = User::updateOrCreate(
             [
-                'email' => 'admin@example.com',
+                'email' => 'admin@laboran.univ.ac.id',
             ],
             [
-                'name' => 'Admin User',
-                'email' => 'admin@example.com',
+                'name' => 'Admin Laboratorium',
+                'email' => 'admin@laboran.univ.ac.id',
                 'password' => Hash::make('password'), // Use a strong password in production
                 'email_verified_at' => now(),
             ]
@@ -37,18 +37,18 @@ class AdminUserSeeder extends Seeder
         $roles = [
             'mahasiswa',
             'dosen',
-            'pic_lab',
+            'penanggung_jawab_lab',
             'teknisi',
-            'ka_lab',
-            'kajur',
+            'kepala_lab',
+            'ketua_jurusan',
             'penyelenggara_kegiatan'
         ];
 
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
         }
-        
-        // Assign the kajur role to the admin user as well so they have full access
-        $admin->assignRole('kajur');
+
+        // Assign the ketua_jurusan role to the admin user as well so they have full access
+        $admin->assignRole('ketua_jurusan');
     }
 }

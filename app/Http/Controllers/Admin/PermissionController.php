@@ -75,9 +75,9 @@ class PermissionController extends Controller
         try {
             Permission::create(['name' => $request->name]);
 
-            return redirect()->route('permissions.index')->with('success', 'Permission created successfully.');
+            return redirect()->route('permissions.index')->with('success', 'Izin berhasil dibuat.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error creating permission: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal membuat izin: ' . $e->getMessage());
         }
     }
 
@@ -118,9 +118,9 @@ class PermissionController extends Controller
         try {
             $permission->update(['name' => $request->name]);
 
-            return redirect()->route('permissions.index')->with('success', 'Permission updated successfully.');
+            return redirect()->route('permissions.index')->with('success', 'Izin berhasil diperbarui.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error updating permission: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui izin: ' . $e->getMessage());
         }
     }
 
@@ -143,9 +143,9 @@ class PermissionController extends Controller
 
         try {
             $permission->delete();
-            return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully.');
+            return redirect()->route('permissions.index')->with('success', 'Izin berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error deleting permission: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus izin: ' . $e->getMessage());
         }
     }
 
@@ -162,10 +162,7 @@ class PermissionController extends Controller
      */
     public function editModal($permissionId)
     {
-        $realId = decryptId($permissionId);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($permissionId); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $permission = Permission::findOrFail($realId);
 

@@ -120,7 +120,7 @@ class UserController extends Controller
         $user->assignRole($validated['role']);
 
         return redirect()->route('users.index')
-            ->with('success', 'User created successfully.');
+            ->with('success', 'Pengguna berhasil dibuat.');
     }
 
     /**
@@ -128,10 +128,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $user = User::findOrFail($realId);
         $user->id = encryptId($user->id);
@@ -143,10 +140,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $user = User::findOrFail($realId);
         $roles = Role::all();
@@ -158,10 +152,7 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, $id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $user = User::findOrFail($realId);
         $validated = $request->validated();
@@ -191,7 +182,7 @@ class UserController extends Controller
         $user->syncRoles([$validated['role']]);
 
         return redirect()->route('users.index')
-            ->with('success', 'User updated successfully.');
+            ->with('success', 'Pengguna berhasil diperbarui.');
     }
 
     /**
@@ -199,10 +190,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $user = User::findOrFail($realId);
         $user->delete();
@@ -210,12 +198,12 @@ class UserController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'User deleted successfully.'
+                'message' => 'Pengguna berhasil dihapus.'
             ]);
         }
 
         return redirect()->route('users.index')
-            ->with('success', 'User deleted successfully.');
+            ->with('success', 'Pengguna berhasil dihapus.');
     }
 
     /**

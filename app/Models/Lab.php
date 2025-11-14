@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Middleware;
 
 class Lab extends Model
 {
-    use HasFactory;
+    use HasFactory, HasMedia;
 
     protected $table = 'labs';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'lab_id';
     public $incrementing = true;
     protected $keyType = 'int';
 
@@ -31,7 +31,7 @@ class Lab extends Model
      */
     public function mataKuliahs()
     {
-        return $this->hasManyThrough(MataKuliah::class, Jadwal::class, 'lab_id', 'id', 'lab_id', 'mata_kuliah_id');
+        return $this->hasManyThrough(MataKuliah::class, JadwalKuliah::class, 'lab_id', 'id', 'lab_id', 'mata_kuliah_id');
     }
 
     /**
@@ -39,7 +39,7 @@ class Lab extends Model
      */
     public function jadwals()
     {
-        return $this->hasMany(Jadwal::class, 'lab_id');
+        return $this->hasMany(JadwalKuliah::class, 'lab_id');
     }
 
     /**
@@ -82,6 +82,14 @@ class Lab extends Model
         return $this->hasMany(Inventaris::class, 'lab_id');
     }
     
+    /**
+     * Relationship: Lab has many media entries
+     */
+    public function labMedia()
+    {
+        return $this->hasMany(LabMedia::class, 'lab_id', 'lab_id');
+    }
+
     /**
      * Get the value of the model's route key.
      */

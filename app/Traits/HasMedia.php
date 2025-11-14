@@ -7,6 +7,16 @@ use Intervention\Image\Laravel\Facades\Image;
 
 trait HasMedia
 {
+    // Variabel global untuk ukuran media
+    protected $thumbnailSize = [150, 150];  // ukuran thumbnail
+    protected $mediumSize = [400, 400];      // ukuran medium
+    protected $maxSize = [1920, 1080];       // ukuran maksimum gambar
+
+    // Variabel global untuk jenis media
+    protected $allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    protected $allowedDocumentTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    protected $allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv'];
+
     /**
      * Get all media associated with this model.
      */
@@ -27,7 +37,7 @@ trait HasMedia
         $modelType    = strtolower(class_basename($this));
 
         // Determine if this is an image that needs thumbnail
-        $needsThumbnail = in_array($collectionName, ['info_cover', 'cover_image', 'avatar']);
+        $needsThumbnail = in_array($collectionName, ['info_cover', 'cover_image', 'avatar','lab_images']);
 
         // Determine folder structure: uploads/{modelType}/{year}/{collectionName}
         $year       = date('Y');
@@ -48,7 +58,8 @@ trait HasMedia
         ]);
 
         // If this is a cover image, create a thumbnail
-        if ($needsThumbnail && in_array(strtolower($mimeType), ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
+        $allowedImageTypes = array_map('strtolower', $this->allowedImageTypes);
+        if ($needsThumbnail && in_array(strtolower($mimeType), $allowedImageTypes)) {
             $this->createImageThumbnails($media);
         }
 
@@ -61,7 +72,8 @@ trait HasMedia
     public function createImageThumbnails($media)
     {
         // Only process images
-        if (! in_array(strtolower($media->mime_type), ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
+        $allowedImageTypes = array_map('strtolower', $this->allowedImageTypes);
+        if (! in_array(strtolower($media->mime_type), $allowedImageTypes)) {
             return null;
         }
 
@@ -77,13 +89,13 @@ trait HasMedia
         $originalWidth  = $image->width();
         $originalHeight = $image->height();
 
-        // Create thumbnail (150x150 max)
+        // Create thumbnail
         $thumbnail = clone $image;
-        $thumbnail->coverDown(150, 150);
+        $thumbnail->coverDown($this->thumbnailSize[0], $this->thumbnailSize[1]);
 
-        // Create medium size (400x400 max)
+        // Create medium size
         $medium = clone $image;
-        $medium->coverDown(400, 400);
+        $medium->coverDown($this->mediumSize[0], $this->mediumSize[1]);
 
         // Create directory for thumbnails
         $thumbnailDir     = dirname($media->file_path) . '/thumbnails';
@@ -178,7 +190,8 @@ trait HasMedia
      */
     public function createThumbnail($media, $basePath)
     {
-        if (! in_array($media->mime_type, ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
+        $allowedImageTypes = array_map('strtolower', $this->allowedImageTypes);
+        if (! in_array(strtolower($media->mime_type), $allowedImageTypes)) {
             return null; // Only process images
         }
 
@@ -196,7 +209,7 @@ trait HasMedia
 
         // Create thumbnail
         $thumbnail = clone $img;
-        $thumbnail->resize(150, 150, function ($constraint) {
+        $thumbnail->resize($this->thumbnailSize[0], $this->thumbnailSize[1], function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });

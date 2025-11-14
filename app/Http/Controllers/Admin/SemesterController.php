@@ -109,11 +109,11 @@ class SemesterController extends Controller
             \DB::commit();
 
             return redirect()->route('semesters.index')
-                ->with('success', 'Semester created successfully.');
+                ->with('success', 'Semester berhasil dibuat.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to create semester: ' . $e->getMessage())
+                ->with('error', 'Gagal membuat semester: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -150,11 +150,11 @@ class SemesterController extends Controller
             \DB::commit();
 
             return redirect()->route('semesters.index')
-                ->with('success', 'Semester updated successfully.');
+                ->with('success', 'Semester berhasil diperbarui.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to update semester: ' . $e->getMessage())
+                ->with('error', 'Gagal memperbarui semester: ' . $e->getMessage())
                 ->withInput();
         }
     }

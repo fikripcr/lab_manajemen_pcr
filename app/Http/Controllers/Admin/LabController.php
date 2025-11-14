@@ -77,16 +77,41 @@ class LabController extends Controller
     {
         \DB::beginTransaction();
         try {
-            Lab::create($request->validated());
+            $lab = Lab::create($request->validated());
+
+            // Handle lab media uploads if any
+            if ($request->hasFile('media_files')) {
+                $mediaFiles = $request->file('media_files');
+                $mediaTitles = $request->input('media_titles', []);
+                $mediaDescriptions = $request->input('media_descriptions', []);
+
+                foreach ($mediaFiles as $index => $file) {
+                    if ($file->isValid()) {
+                        // Get media title and description if provided, otherwise use default values
+                        $title = isset($mediaTitles[$index]) ? $mediaTitles[$index] : 'Gambar ' . ($index + 1);
+                        $keterangan = isset($mediaDescriptions[$index]) ? $mediaDescriptions[$index] : 'Deskripsi gambar';
+
+                        // Add media to the lab using the HasMedia trait
+                        $media = $lab->addMedia($file, 'lab_images');
+
+                        // Create a LabMedia record to store title and description
+                        $lab->labMedia()->create([
+                            'media_id' => $media->id,
+                            'judul' => $title,
+                            'keterangan' => $keterangan,
+                        ]);
+                    }
+                }
+            }
 
             \DB::commit();
 
             return redirect()->route('labs.index')
-                ->with('success', 'Lab created successfully.');
+                ->with('success', 'Lab berhasil dibuat.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to create lab: ' . $e->getMessage())
+                ->with('error', 'Gagal membuat lab: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -96,10 +121,7 @@ class LabController extends Controller
      */
     public function show(string $id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $lab = Lab::findOrFail($realId);
         return view('pages.admin.labs.show', compact('lab'));
@@ -110,10 +132,7 @@ class LabController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $lab = Lab::findOrFail($realId);
         return view('pages.admin.labs.edit', compact('lab'));
@@ -124,10 +143,7 @@ class LabController extends Controller
      */
     public function update(LabRequest $request, $id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $lab = Lab::findOrFail($realId);
 
@@ -135,14 +151,39 @@ class LabController extends Controller
         try {
             $lab->update($request->validated());
 
+            // Handle lab media uploads if any
+            if ($request->hasFile('media_files')) {
+                $mediaFiles = $request->file('media_files');
+                $mediaTitles = $request->input('media_titles', []);
+                $mediaDescriptions = $request->input('media_descriptions', []);
+
+                foreach ($mediaFiles as $index => $file) {
+                    if ($file->isValid()) {
+                        // Get media title and description if provided, otherwise use default values
+                        $title = isset($mediaTitles[$index]) ? $mediaTitles[$index] : 'Gambar ' . ($index + 1);
+                        $keterangan = isset($mediaDescriptions[$index]) ? $mediaDescriptions[$index] : 'Deskripsi gambar';
+
+                        // Add media to the lab using the HasMedia trait
+                        $media = $lab->addMedia($file, 'lab_images');
+
+                        // Create a LabMedia record to store title and description
+                        $lab->labMedia()->create([
+                            'media_id' => $media->id,
+                            'judul' => $title,
+                            'keterangan' => $keterangan,
+                        ]);
+                    }
+                }
+            }
+
             \DB::commit();
 
             return redirect()->route('labs.index')
-                ->with('success', 'Lab updated successfully.');
+                ->with('success', 'Lab berhasil diperbarui.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to update lab: ' . $e->getMessage())
+                ->with('error', 'Gagal memperbarui lab: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -152,10 +193,7 @@ class LabController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
-        if (!$realId) {
-            abort(404);
-        }
+        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
 
         $lab = Lab::findOrFail($realId);
         $lab->delete();

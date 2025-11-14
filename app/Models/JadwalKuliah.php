@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Jadwal extends Model
+class JadwalKuliah extends Model
 {
     use HasFactory;
 
-    protected $table = 'jadwals';
+    protected $table = 'jadwal_kuliah';
 
     protected $fillable = [
         'semester_id',
@@ -27,7 +27,7 @@ class Jadwal extends Model
     ];
 
     /**
-     * Relationship: Jadwal belongs to a semester
+     * Relationship: Jadwal Kuliah belongs to a semester
      */
     public function semester()
     {
@@ -35,7 +35,7 @@ class Jadwal extends Model
     }
 
     /**
-     * Relationship: Jadwal belongs to a mata kuliah
+     * Relationship: Jadwal Kuliah belongs to a mata kuliah
      */
     public function mataKuliah()
     {
@@ -43,7 +43,7 @@ class Jadwal extends Model
     }
 
     /**
-     * Relationship: Jadwal belongs to a dosen (user)
+     * Relationship: Jadwal Kuliah belongs to a dosen (user)
      */
     public function dosen()
     {
@@ -51,7 +51,7 @@ class Jadwal extends Model
     }
 
     /**
-     * Relationship: Jadwal belongs to a lab
+     * Relationship: Jadwal Kuliah belongs to a lab
      */
     public function lab()
     {
@@ -59,7 +59,7 @@ class Jadwal extends Model
     }
 
     /**
-     * Relationship: Jadwal has many PC assignments
+     * Relationship: Jadwal Kuliah has many PC assignments
      */
     public function pcAssignments()
     {
@@ -67,7 +67,7 @@ class Jadwal extends Model
     }
 
     /**
-     * Relationship: Jadwal has many PC usage logs
+     * Relationship: Jadwal Kuliah has many PC usage logs
      */
     public function logPenggunaanPcs()
     {

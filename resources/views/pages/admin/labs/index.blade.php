@@ -2,16 +2,16 @@
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tables /</span> Lab Management</h4>
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tabel /</span> Manajemen Laboratorium</h4>
         <a href="{{ route('labs.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus"></i> Add New Lab
+            <i class="bx bx-plus"></i> Tambah Lab Baru
         </a>
     </div>
 
     <div class="card">
         <div class="card-header">
             <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <h5 class="mb-2 mb-sm-0">Lab List</h5>
+                <h5 class="mb-2 mb-sm-0">Daftar Laboratorium</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
                         <x:datatable.page-length id="pageLength" selected="10" />
@@ -29,11 +29,11 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Location</th>
-                            <th>Capacity</th>
-                            <th>Description</th>
-                            <th>Actions</th>
+                            <th>Nama</th>
+                            <th>Lokasi</th>
+                            <th>Kapasitas</th>
+                            <th>Deskripsi</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                 </table>

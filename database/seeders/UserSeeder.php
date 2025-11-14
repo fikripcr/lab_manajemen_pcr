@@ -16,15 +16,16 @@ class UserSeeder extends Seeder
     {
         // Define role names
         $roleNames = [
-            'mahasiswa', 'dosen', 'pic_lab', 'teknisi', 'ka_lab', 'kajur',
+            'mahasiswa', 'dosen', 'penanggung_jawab_lab', 'teknisi', 'kepala_lab', 'ketua_jurusan',
             'penyelenggara_kegiatan'
         ];
 
         // Create users with different roles
-        for ($i = 1; $i <= 1000; $i++) {
-            $firstName = fake()->firstName;
-            $lastName = fake()->lastName;
-            $email = 'user' . $i . '@example.com';
+        for ($i = 1; $i <= 400; $i++) {
+            $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
+
+            $firstName = $faker->firstName . ' ' . $faker->lastName;
+            $email = 'user' . $i . '@contoh-lab.ac.id';
             $role = $roleNames[array_rand($roleNames)];
 
             // Generate appropriate NIP/NPM based on role
@@ -38,7 +39,7 @@ class UserSeeder extends Seeder
             }
 
             $user = User::create([
-                'name' => $firstName . ' ' . $lastName,
+                'name' => $firstName,
                 'email' => $email,
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
@@ -51,6 +52,6 @@ class UserSeeder extends Seeder
             $user->assignRole($userRole);
         }
 
-        $this->command->info('Created 1000 sample user records with various roles.');
+        $this->command->info('Berhasil membuat 1000 contoh data pengguna dengan berbagai peran.');
     }
 }

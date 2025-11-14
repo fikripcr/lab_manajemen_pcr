@@ -33,6 +33,6 @@ class Semester extends Model
      */
     public function jadwals()
     {
-        return $this->hasMany(Jadwal::class, 'semester_id', 'semester_id');
+        return $this->hasMany(JadwalKuliah::class, 'semester_id', 'semester_id');
     }
 }

@@ -41,7 +41,7 @@ class PcAssignment extends Model
      */
     public function jadwal()
     {
-        return $this->belongsTo(Jadwal::class, 'jadwal_id');
+        return $this->belongsTo(JadwalKuliah::class, 'jadwal_id');
     }
 
     /**

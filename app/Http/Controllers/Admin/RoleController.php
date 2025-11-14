@@ -60,10 +60,10 @@ class RoleController extends Controller
 
             DB::commit();
 
-            return redirect()->route('roles.index')->with('success', 'Role created successfully.');
+            return redirect()->route('roles.index')->with('success', 'Peran berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Error creating role: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal membuat peran: ' . $e->getMessage());
         }
     }
 
@@ -109,11 +109,11 @@ class RoleController extends Controller
             if(request()->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Error updating permissions: ' . $e->getMessage()
+                    'message' => 'Gagal memperbarui izin: ' . $e->getMessage()
                 ]);
             }
 
-            return redirect()->back()->with('error', 'Error updating permissions: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui izin: ' . $e->getMessage());
         }
     }
 
@@ -148,10 +148,10 @@ class RoleController extends Controller
 
             DB::commit();
 
-            return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
+            return redirect()->route('roles.index')->with('success', 'Peran berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Error updating role: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui peran: ' . $e->getMessage());
         }
     }
 
@@ -167,9 +167,9 @@ class RoleController extends Controller
 
         try {
             $role->delete();
-            return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
+            return redirect()->route('roles.index')->with('success', 'Peran berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error deleting role: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus peran: ' . $e->getMessage());
         }
     }
 }

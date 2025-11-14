@@ -12,16 +12,18 @@ class LabSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create 1000 lab records
+        // Create 1000 lab records using Indonesian locale
         for ($i = 1; $i <= 1000; $i++) {
+            $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
+
             LabModel::create([
-                'name' => fake()->company() . ' Lab ' . $i,
-                'location' => fake()->address(),
-                'capacity' => fake()->numberBetween(10, 60),
-                'description' => fake()->paragraph(),
+                'name' => $faker->company() . ' Laboratorium ' . $i,
+                'location' => $faker->address(),
+                'capacity' => $faker->numberBetween(10, 60),
+                'description' => $faker->paragraph(),
             ]);
         }
 
-        $this->command->info('Created 1000 sample lab records.');
+        $this->command->info('Berhasil membuat 1000 contoh data laboratorium.');
     }
 }

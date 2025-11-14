@@ -3,11 +3,11 @@
     'id' => 'tinymce-editor',
     'value' => '',
     'height' => 400,
-    'plugins' => 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
-    'toolbar' => 'undo redo | blocks | ' .
-               'bold italic forecolor | alignleft aligncenter ' .
+    'plugins' => '  lists link image   anchor searchreplace  code fullscreen insertdatetime media table wordcount',
+    'toolbar' => 'undo redo |  blocks | ' .
+               'bold italic table forecolor | alignleft aligncenter ' .
                'alignright alignjustify | bullist numlist outdent indent | ' .
-               'removeformat | help',
+               'fullscreen',
 ])
 
 <div {{ $attributes->merge(['class' => 'tinymce-container']) }}>

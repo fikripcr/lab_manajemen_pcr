@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\JadwalRequest;
-use App\Models\Jadwal;
+use App\Models\JadwalKuliah;
 use App\Models\Semester;
 use App\Models\MataKuliah;
 use App\Models\User;
@@ -34,15 +34,15 @@ class JadwalController extends Controller
      */
     public function data(Request $request)
     {
-        $jadwals = Jadwal::select('jadwals.*')
-            ->leftJoin('semesters', 'jadwals.semester_id', '=', 'semesters.semester_id')
-            ->leftJoin('mata_kuliahs', 'jadwals.mata_kuliah_id', '=', 'mata_kuliahs.id')
-            ->leftJoin('users', 'jadwals.dosen_id', '=', 'users.id')
-            ->leftJoin('labs', 'jadwals.lab_id', '=', 'labs.lab_id');
+        $jadwals = JadwalKuliah::select('jadwal_kuliah.*')
+            ->leftJoin('semesters', 'jadwal_kuliah.semester_id', '=', 'semesters.semester_id')
+            ->leftJoin('mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'mata_kuliahs.id')
+            ->leftJoin('users', 'jadwal_kuliah.dosen_id', '=', 'users.id')
+            ->leftJoin('labs', 'jadwal_kuliah.lab_id', '=', 'labs.lab_id');
 
         // Apply filters if present
         if ($request->filled('hari')) {
-            $jadwals->where('jadwals.hari', $request->hari);
+            $jadwals->where('jadwal_kuliah.hari', $request->hari);
         }
 
         if ($request->filled('dosen')) {
@@ -56,7 +56,7 @@ class JadwalController extends Controller
                 if ($request->has('search') && $request->search['value'] != '') {
                     $searchValue = $request->search['value'];
                     $query->where(function($q) use ($searchValue) {
-                        $q->where('jadwals.hari', 'like', '%' . $searchValue . '%')
+                        $q->where('jadwal_kuliah.hari', 'like', '%' . $searchValue . '%')
                           ->orWhere('mata_kuliahs.kode_mk', 'like', '%' . $searchValue . '%')
                           ->orWhere('mata_kuliahs.nama_mk', 'like', '%' . $searchValue . '%')
                           ->orWhere('users.name', 'like', '%' . $searchValue . '%')
@@ -149,16 +149,16 @@ class JadwalController extends Controller
     {
         \DB::beginTransaction();
         try {
-            Jadwal::create($request->validated());
+            JadwalKuliah::create($request->validated());
 
             \DB::commit();
 
             return redirect()->route('jadwal.index')
-                ->with('success', 'Jadwal created successfully.');
+                ->with('success', 'Jadwal berhasil dibuat.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to create jadwal: ' . $e->getMessage())
+                ->with('error', 'Gagal membuat jadwal: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -168,7 +168,7 @@ class JadwalController extends Controller
      */
     public function show($id)
     {
-        $jadwal = Jadwal::with(['semester', 'mataKuliah', 'dosen', 'lab'])->findOrFail($id);
+        $jadwal = JadwalKuliah::with(['semester', 'mataKuliah', 'dosen', 'lab'])->findOrFail($id);
         return view('pages.admin.jadwal.show', compact('jadwal'));
     }
 
@@ -177,7 +177,7 @@ class JadwalController extends Controller
      */
     public function edit($id)
     {
-        $jadwal = Jadwal::findOrFail($id);
+        $jadwal = JadwalKuliah::findOrFail($id);
         $semesters = Semester::all();
         $mataKuliahs = MataKuliah::all();
         $dosens = User::whereHas('roles', function($query) {
@@ -193,7 +193,7 @@ class JadwalController extends Controller
      */
     public function update(JadwalRequest $request, $id)
     {
-        $jadwal = Jadwal::findOrFail($id);
+        $jadwal = JadwalKuliah::findOrFail($id);
 
         \DB::beginTransaction();
         try {
@@ -202,11 +202,11 @@ class JadwalController extends Controller
             \DB::commit();
 
             return redirect()->route('jadwal.index')
-                ->with('success', 'Jadwal updated successfully.');
+                ->with('success', 'Jadwal berhasil diperbarui.');
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()
-                ->with('error', 'Failed to update jadwal: ' . $e->getMessage())
+                ->with('error', 'Gagal memperbarui jadwal: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -216,7 +216,7 @@ class JadwalController extends Controller
      */
     public function destroy($id)
     {
-        $jadwal = Jadwal::findOrFail($id);
+        $jadwal = JadwalKuliah::findOrFail($id);
 
         // Check if jadwal is used in any PC assignments or logs
         if ($jadwal->pcAssignments->count() > 0 || $jadwal->logPenggunaanPcs->count() > 0) {
@@ -226,7 +226,7 @@ class JadwalController extends Controller
         $jadwal->delete();
 
         return redirect()->route('jadwal.index')
-            ->with('success', 'Jadwal deleted successfully.');
+            ->with('success', 'Jadwal berhasil dihapus.');
     }
 
     /**
@@ -249,10 +249,10 @@ class JadwalController extends Controller
             Excel::import(new JadwalImport, $request->file('file'));
 
             return redirect()->route('jadwal.index')
-                ->with('success', 'Jadwal imported successfully.');
+                ->with('success', 'Jadwal berhasil diimpor.');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Error importing jadwal: ' . $e->getMessage())
+                ->with('error', 'Gagal mengimpor jadwal: ' . $e->getMessage())
                 ->withInput();
         }
     }

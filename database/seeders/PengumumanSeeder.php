@@ -45,38 +45,42 @@ class PengumumanSeeder extends Seeder
         ];
 
         $contents = [
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-            'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
-            'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.'
+            'Laboratorium akan ditutup sementara untuk perawatan rutin pada tanggal 15-20 bulan ini. Mahasiswa diharapkan mengatur jadwal praktikum mereka sesuai dengan jadwal penutupan tersebut.',
+            'Kami mengumumkan bahwa laboratorium baru untuk pemrograman dan pengembangan perangkat lunak akan segera selesai dibangun. Perkiraan selesai pada akhir bulan ini.',
+            'Diberitahukan bahwa pelatihan peningkatan kapasitas untuk teknisi laboratorium akan diselenggarakan pada tanggal 25 Februari 2024. Wajib bagi seluruh teknisi untuk mengikuti pelatihan ini.',
+            'Peminjaman peralatan laboratorium hanya dapat dilakukan oleh mahasiswa yang telah menyelesaikan pelatihan keselamatan dan telah mendapatkan izin dari dosen pembimbing praktikum.'
         ];
 
         // Create 500 pengumuman
         for ($i = 1; $i <= 500; $i++) {
-            $title = fake()->sentence();
+            $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
+
+            $title = $faker->sentence();
             Pengumuman::create([
                 'judul' => $title,
-                'isi' => fake()->paragraphs(5, true),
+                'isi' => $faker->paragraphs(5, true),
                 'jenis' => 'pengumuman',
                 'penulis_id' => $userIds[array_rand($userIds)],
-                'is_published' => fake()->boolean(80), // 80% chance of being published
-                'published_at' => fake()->dateTimeBetween('-1 year', 'now')
+                'is_published' => $faker->boolean(80), // 80% chance of being published
+                'published_at' => $faker->dateTimeBetween('-1 year', 'now')
             ]);
         }
 
         // Create 500 berita
         for ($i = 1; $i <= 500; $i++) {
-            $title = fake()->sentence();
+            $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
+
+            $title = $faker->sentence();
             Pengumuman::create([
                 'judul' => $title,
-                'isi' => fake()->paragraphs(5, true),
+                'isi' => $faker->paragraphs(5, true),
                 'jenis' => 'artikel_berita', // Using the type from our migration
                 'penulis_id' => $userIds[array_rand($userIds)],
-                'is_published' => fake()->boolean(80), // 80% chance of being published
-                'published_at' => fake()->dateTimeBetween('-1 year', 'now')
+                'is_published' => $faker->boolean(80), // 80% chance of being published
+                'published_at' => $faker->dateTimeBetween('-1 year', 'now')
             ]);
         }
 
-        $this->command->info('Created 500 pengumuman and 500 artikel_berita records.');
+        $this->command->info('Berhasil membuat 500 pengumuman dan 500 artikel berita.');
     }
 }

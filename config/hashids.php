@@ -29,9 +29,9 @@ return [
     'connections' => [
 
         'main' => [
-            'salt' => '',
-            'length' => 0,
-            // 'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+            'salt' => 'aristoteles-m4rc0-p0l0',
+            'length' => 5,
+            'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
         ],
 
         'alternative' => [

@@ -57,9 +57,37 @@
                             <p>{{ $lab->description ?? '-' }}</p>
                         </div>
                     </div>
+
+                    <!-- Lab Media Section -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6 class="mb-2">Gambar Laboratorium</h6>
+                            @if($lab->getMediaByCollection('lab_images')->count() > 0)
+                                <div class="row">
+                                    @foreach($lab->getMediaByCollection('lab_images') as $media)
+                                        <div class="col-md-4 col-lg-3 mb-3">
+                                            <div class="card h-100">
+                                                <img src="{{ asset('storage/' . $media->file_path) }}"
+                                                     class="card-img-top"
+                                                     alt="{{ $media->file_name }}"
+                                                     style="height: 150px; object-fit: cover;">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">{{ $media->file_name }}</h6>
+                                                    <p class="card-text small">{{ $media->file_size }} bytes</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-muted">Belum ada gambar yang diunggah</p>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="mt-2">
                         <a href="{{ route('labs.index') }}" class="btn btn-secondary">
-                            <i class='bx bx-arrow-back me-1'></i> Back to Labs
+                            <i class='bx bx-arrow-back me-1'></i> Kembali ke Daftar Lab
                         </a>
                     </div>
                 </div>

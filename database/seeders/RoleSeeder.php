@@ -14,11 +14,11 @@ class RoleSeeder extends Seeder
         $roles = [
             'mahasiswa',
             'dosen',
-            'pic_lab',
+            'penanggung_jawab_lab',
             'teknisi',
-            'ka_lab',
-            'kajur',
-            'penyelenggara_kegiatan', // Changed from 'penyelenggara' to maintain consistency
+            'kepala_lab',
+            'ketua_jurusan',
+            'penyelenggara_kegiatan',
             'peserta_kegiatan'
         ];
 
