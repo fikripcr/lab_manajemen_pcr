@@ -17,21 +17,6 @@ class RolePermissionSeeder extends Seeder
         // Clear any cached permissions/roles
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         
-        // Create roles for the application
-        $roles = [
-            'mahasiswa',
-            'dosen', 
-            'pic_lab',
-            'teknisi',
-            'ka_lab',
-            'kajur',
-            'penyelenggara_kegiatan',
-            'peserta_kegiatan'
-        ];
-
-        foreach ($roles as $roleName) {
-            Role::updateOrCreate(['name' => $roleName]);
-        }
 
         // Optionally, you can also define permissions here
         $permissions = [

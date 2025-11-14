@@ -16,108 +16,71 @@ class AcademicDataSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create sample semesters
-        $semester1 = Semester::updateOrCreate(
-            ['semester_id' => 1],
-            [
-                'tahun_ajaran' => '2023/2024',
-                'semester' => 1, // Ganjil
-                'start_date' => '2023-09-01',
-                'end_date' => '2023-12-31',
-                'is_active' => true
-            ]
-        );
+        // Create 1000 semester records
+        for ($i = 1; $i <= 20; $i++) {
+            $tahun_awal = 2015 + ($i % 5);
+            $tahun_akhir = $tahun_awal + 1;
+            $tahun_ajaran = $tahun_awal . '/' . $tahun_akhir;
+            $semester = ($i % 2) + 1; // Alternates between 1 and 2
+            $is_active = $i === 1; // Only the first one is active
 
-        $semester2 = Semester::updateOrCreate(
-            ['semester_id' => 2],
-            [
-                'tahun_ajaran' => '2023/2024',
-                'semester' => 2, // Genap
-                'start_date' => '2024-01-01',
-                'end_date' => '2024-05-31',
-                'is_active' => false
-            ]
-        );
+            Semester::create([
+                'tahun_ajaran' => $tahun_ajaran,
+                'semester' => $semester,
+                'start_date' => fake()->date(),
+                'end_date' => fake()->date(),
+                'is_active' => $is_active
+            ]);
+        }
 
-        // Create sample mata kuliah
-        $mk1 = MataKuliah::updateOrCreate(
-            ['kode_mk' => 'IF101'],
-            [
-                'kode_mk' => 'IF101',
-                'nama_mk' => 'Algoritma dan Pemrograman',
-                'sks' => 3
-            ]
-        );
+        // Create 1000 mata kuliah records
+        for ($i = 1; $i <= 1000; $i++) {
+            MataKuliah::create([
+                'kode_mk' => 'MK' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'nama_mk' => fake()->sentence(3),
+                'sks' => fake()->numberBetween(2, 4)
+            ]);
+        }
 
-        $mk2 = MataKuliah::updateOrCreate(
-            ['kode_mk' => 'IF202'],
-            [
-                'kode_mk' => 'IF202',
-                'nama_mk' => 'Struktur Data',
-                'sks' => 3
-            ]
-        );
+        // Create 1000 lab records
+        for ($i = 1; $i <= 500; $i++) {
+            Lab::create([
+                'name' => fake()->company() . ' Lab',
+                'location' => fake()->address(),
+                'capacity' => fake()->numberBetween(10, 50),
+                'description' => fake()->paragraph(),
+            ]);
+        }
 
-        $mk3 = MataKuliah::updateOrCreate(
-            ['kode_mk' => 'IF303'],
-            [
-                'kode_mk' => 'IF303',
-                'nama_mk' => 'Basis Data',
-                'sks' => 3
-            ]
-        );
+        // Create 1000 schedule records
+        $hariOptions = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $dosenUsers = User::role('dosen')->get();
+        $semesterIds = Semester::pluck('semester_id')->toArray();
+        $mataKuliahIds = MataKuliah::pluck('id')->toArray();
+        $labIds = Lab::pluck('lab_id')->toArray(); // Changed to use 'id' instead of 'lab_id'
 
-        // Create sample labs
-        $lab1 = Lab::updateOrCreate(
-            ['lab_id' => 'LAB001'],
-            [
-                'name' => 'Lab Jaringan',
-                'location' => 'Gedung A, Lantai 1',
-                'capacity' => 30,
-                'description' => 'Laboratorium untuk praktikum jaringan komputer'
-            ]
-        );
+        for ($i = 1; $i <= 1000; $i++) {
+            if ($dosenUsers->count() > 0 && !empty($semesterIds) && !empty($mataKuliahIds) && !empty($labIds)) {
+                $jam_mulai = fake()->time('H:i', '07:00:00');
+                $jam_selesai = fake()->time('H:i', '17:00:00');
 
-        $lab2 = Lab::updateOrCreate(
-            ['lab_id' => 'LAB002'],
-            [
-                'name' => 'Lab Pemrograman',
-                'location' => 'Gedung A, Lantai 2',
-                'capacity' => 35,
-                'description' => 'Laboratorium untuk praktikum pemrograman'
-            ]
-        );
+                // Ensure jam_selesai is after jam_mulai
+                if ($jam_mulai > $jam_selesai) {
+                    $temp = $jam_mulai;
+                    $jam_mulai = $jam_selesai;
+                    $jam_selesai = $temp;
+                }
 
-        // Get sample dosen user
-        $dosen = User::whereHas('roles', function($query) {
-            $query->where('name', 'dosen');
-        })->first();
-
-        if ($dosen) {
-            // Create sample schedules
-            Jadwal::updateOrCreate(
-                [
-                    'semester_id' => $semester1->semester_id,
-                    'mata_kuliah_id' => $mk1->id,
-                    'dosen_id' => $dosen->id,
-                    'hari' => 'Senin',
-                    'jam_mulai' => '08:00',
-                    'jam_selesai' => '10:00',
-                    'lab_id' => $lab1->lab_id,
-                ]
-            );
-
-            Jadwal::updateOrCreate(
-                [
-                    'semester_id' => $semester1->semester_id,
-                    'mata_kuliah_id' => $mk2->id,
-                    'dosen_id' => $dosen->id,
-                    'hari' => 'Selasa',
-                    'jam_mulai' => '10:00',
-                    'jam_selesai' => '12:00',
-                    'lab_id' => $lab2->lab_id,
-                ]
-            );
+                Jadwal::create([
+                    'semester_id' => $semesterIds[array_rand($semesterIds)],
+                    'mata_kuliah_id' => $mataKuliahIds[array_rand($mataKuliahIds)],
+                    'dosen_id' => $dosenUsers->random()->id,
+                    'hari' => $hariOptions[array_rand($hariOptions)],
+                    'jam_mulai' => $jam_mulai,
+                    'jam_selesai' => $jam_selesai,
+                    'lab_id' => $labIds[array_rand($labIds)], // This will now reference the 'id' field in labs
+                ]);
+            }
         }
     }
 }

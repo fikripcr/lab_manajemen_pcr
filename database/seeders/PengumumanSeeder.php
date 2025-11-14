@@ -51,32 +51,32 @@ class PengumumanSeeder extends Seeder
             'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.'
         ];
 
-        // Create 50 pengumuman
-        for ($i = 1; $i <= 25; $i++) {
-            $title = $pengumumanTitles[array_rand($pengumumanTitles)] . ' ' . $i;
+        // Create 500 pengumuman
+        for ($i = 1; $i <= 500; $i++) {
+            $title = fake()->sentence();
             Pengumuman::create([
                 'judul' => $title,
-                'isi' => $contents[array_rand($contents)],
+                'isi' => fake()->paragraphs(5, true),
                 'jenis' => 'pengumuman',
                 'penulis_id' => $userIds[array_rand($userIds)],
-                'is_published' => true,
-                'published_at' => fake()->dateTimeBetween('-2 weeks', 'now')
+                'is_published' => fake()->boolean(80), // 80% chance of being published
+                'published_at' => fake()->dateTimeBetween('-1 year', 'now')
             ]);
         }
 
-        // Create 50 berita
-        for ($i = 1; $i <= 25; $i++) {
-            $title = $beritaTitles[array_rand($beritaTitles)] . ' ' . $i;
+        // Create 500 berita
+        for ($i = 1; $i <= 500; $i++) {
+            $title = fake()->sentence();
             Pengumuman::create([
                 'judul' => $title,
-                'isi' => $contents[array_rand($contents)],
-                'jenis' => 'berita',
+                'isi' => fake()->paragraphs(5, true),
+                'jenis' => 'artikel_berita', // Using the type from our migration
                 'penulis_id' => $userIds[array_rand($userIds)],
-                'is_published' => true,
-                'published_at' => fake()->dateTimeBetween('-1 month', '-1 week')
+                'is_published' => fake()->boolean(80), // 80% chance of being published
+                'published_at' => fake()->dateTimeBetween('-1 year', 'now')
             ]);
         }
 
-        $this->command->info('Created 50 pengumuman and 50 berita records.');
+        $this->command->info('Created 500 pengumuman and 500 artikel_berita records.');
     }
 }

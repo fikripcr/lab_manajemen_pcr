@@ -11,13 +11,19 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create(['name' => 'mahasiswa']);
-        Role::create(['name' => 'dosen']);
-        Role::create(['name' => 'pic_lab']);
-        Role::create(['name' => 'teknisi']);
-        Role::create(['name' => 'ka_lab']);
-        Role::create(['name' => 'kajur']);
-        Role::create(['name' => 'penyelenggara']);
-        // 'Peserta Kegiatan' tidak perlu role karena mereka tidak login (via QR)
+        $roles = [
+            'mahasiswa',
+            'dosen',
+            'pic_lab',
+            'teknisi',
+            'ka_lab',
+            'kajur',
+            'penyelenggara_kegiatan', // Changed from 'penyelenggara' to maintain consistency
+            'peserta_kegiatan'
+        ];
+
+        foreach ($roles as $role) {
+            Role::firstOrCreate(['name' => $role]);
+        }
     }
 }

@@ -11,7 +11,7 @@ class Lab extends Model
     use HasFactory;
 
     protected $table = 'labs';
-    protected $primaryKey = 'lab_id';
+    protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
 

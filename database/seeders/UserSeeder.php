@@ -16,12 +16,12 @@ class UserSeeder extends Seeder
     {
         // Define role names
         $roleNames = [
-            'mahasiswa', 'dosen', 'pic_lab', 'teknisi', 'ka_lab', 'kajur', 
-            'penyelenggara_kegiatan', 'peserta_kegiatan'
+            'mahasiswa', 'dosen', 'pic_lab', 'teknisi', 'ka_lab', 'kajur',
+            'penyelenggara_kegiatan'
         ];
 
         // Create users with different roles
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 1000; $i++) {
             $firstName = fake()->firstName;
             $lastName = fake()->lastName;
             $email = 'user' . $i . '@example.com';
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             // Generate appropriate NIP/NPM based on role
             $nip = null;
             $npm = null;
-            
+
             if (in_array($role, ['dosen', 'ka_lab', 'kajur', 'teknisi'])) {
                 $nip = 'NIP' . sprintf('%08d', $i);
             } else {
@@ -51,6 +51,6 @@ class UserSeeder extends Seeder
             $user->assignRole($userRole);
         }
 
-        $this->command->info('Created 100 sample user records with various roles.');
+        $this->command->info('Created 1000 sample user records with various roles.');
     }
 }

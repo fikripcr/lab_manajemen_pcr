@@ -36,13 +36,12 @@ class AdminUserSeeder extends Seeder
         // Also create other necessary roles based on user requirements
         $roles = [
             'mahasiswa',
-            'dosen', 
+            'dosen',
             'pic_lab',
             'teknisi',
             'ka_lab',
             'kajur',
-            'penyelenggara_kegiatan',
-            'peserta_kegiatan'
+            'penyelenggara_kegiatan'
         ];
 
         foreach ($roles as $role) {

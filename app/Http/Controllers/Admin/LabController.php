@@ -13,10 +13,10 @@ class LabController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['permission:view labs'], ['only' => ['index', 'show', 'data']]);
-        $this->middleware(['permission:edit labs'], ['only' => [ 'edit', 'update']]);
-        $this->middleware(['permission:create labs'], ['only' => ['create', 'store']]);
-        $this->middleware(['permission:delete labs'], ['only' => ['destroy']]);
+        // $this->middleware(['permission:view labs'], ['only' => ['index', 'show', 'data']]);
+        // $this->middleware(['permission:edit labs'], ['only' => [ 'edit', 'update']]);
+        // $this->middleware(['permission:create labs'], ['only' => ['create', 'store']]);
+        // $this->middleware(['permission:delete labs'], ['only' => ['destroy']]);
     }
 
     /**

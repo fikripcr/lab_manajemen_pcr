@@ -35,10 +35,10 @@ class InventorySeeder extends Seeder
             $labIds = Lab::pluck('lab_id')->toArray();
         }
 
-        // Create 100 sample inventory records
-        for ($i = 1; $i <= 100; $i++) {
+        // Create 1000 sample inventory records
+        for ($i = 1; $i <= 500; $i++) {
             $equipmentType = $equipmentTypes[array_rand($equipmentTypes)];
-            $equipmentName = $equipmentType . ' ' . rand(1, 1000);
+            $equipmentName = fake()->company() . ' ' . $equipmentType . ' ' . $i;
             $equipmentTypeDetail = $equipmentTypes[array_rand($equipmentTypes)];
 
             Inventaris::create([
@@ -50,6 +50,6 @@ class InventorySeeder extends Seeder
             ]);
         }
 
-        $this->command->info('Created 100 sample inventory records.');
+        $this->command->info('Created 1000 sample inventory records.');
     }
 }
