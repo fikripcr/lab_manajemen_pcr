@@ -24,7 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'google_id',
-        'npm',
+        'nim',
         'nip',
         'avatar',
         'email_verified_at',

@@ -132,8 +132,6 @@ return new class extends Migration
                 $table->index(['status'], 'request_software_status_index');
             }
         });
-
-        // mata_kuliahs table - no indexes needed since lab_id was removed
     }
 
     /**
@@ -308,7 +306,5 @@ return new class extends Migration
                 // Index might not exist, continue
             }
         });
-
-        // mata_kuliahs table - no indexes to drop since lab_id was removed
     }
 };

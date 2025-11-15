@@ -86,7 +86,7 @@ class AcademicDataSeeder extends Seeder
         $hariOptions = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         $dosenUsers = User::role('dosen')->get();
         $semesterIds = Semester::pluck('semester_id')->toArray();
-        $mataKuliahIds = MataKuliah::pluck('id')->toArray();
+        $mataKuliahIds = MataKuliah::pluck('mata_kuliah_id')->toArray();
         $labIds = Lab::pluck('lab_id')->toArray(); // Changed to use 'id' instead of 'lab_id'
 
         for ($i = 1; $i <= 1000; $i++) {
