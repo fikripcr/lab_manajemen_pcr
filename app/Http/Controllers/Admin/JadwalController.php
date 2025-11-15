@@ -1,17 +1,16 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\JadwalRequest;
+use App\Imports\JadwalImport;
 use App\Models\JadwalKuliah;
-use App\Models\Semester;
-use App\Models\MataKuliah;
-use App\Models\User;
 use App\Models\Lab;
+use App\Models\MataKuliah;
+use App\Models\Semester;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\JadwalImport;
 use Yajra\DataTables\DataTables;
 
 class JadwalController extends Controller
@@ -34,11 +33,30 @@ class JadwalController extends Controller
      */
     public function data(Request $request)
     {
-        $jadwals = JadwalKuliah::select('jadwal_kuliah.*')
+        $jadwals = JadwalKuliah::select([
+                'jadwal_kuliah.jadwal_kuliah_id',
+                'jadwal_kuliah.semester_id',
+                'jadwal_kuliah.mata_kuliah_id',
+                'jadwal_kuliah.dosen_id',
+                'jadwal_kuliah.hari',
+                'jadwal_kuliah.jam_mulai',
+                'jadwal_kuliah.jam_selesai',
+                'jadwal_kuliah.lab_id',
+                'jadwal_kuliah.created_at',
+                'jadwal_kuliah.updated_at',
+                'jadwal_kuliah.deleted_at',
+                'semesters.tahun_ajaran',
+                'semesters.semester as semester_nama',
+                'mata_kuliahs.kode_mk',
+                'mata_kuliahs.nama_mk',
+                'users.name as dosen_name',
+                'labs.name as lab_name'
+            ])
             ->leftJoin('semesters', 'jadwal_kuliah.semester_id', '=', 'semesters.semester_id')
-            ->leftJoin('mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'mata_kuliahs.id')
+            ->leftJoin('mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'mata_kuliahs.mata_kuliah_id')
             ->leftJoin('users', 'jadwal_kuliah.dosen_id', '=', 'users.id')
-            ->leftJoin('labs', 'jadwal_kuliah.lab_id', '=', 'labs.lab_id');
+            ->leftJoin('labs', 'jadwal_kuliah.lab_id', '=', 'labs.lab_id')
+            ->whereNull('jadwal_kuliah.deleted_at');
 
         // Apply filters if present
         if ($request->filled('hari')) {
@@ -55,13 +73,13 @@ class JadwalController extends Controller
                 // Global search functionality
                 if ($request->has('search') && $request->search['value'] != '') {
                     $searchValue = $request->search['value'];
-                    $query->where(function($q) use ($searchValue) {
+                    $query->where(function ($q) use ($searchValue) {
                         $q->where('jadwal_kuliah.hari', 'like', '%' . $searchValue . '%')
-                          ->orWhere('mata_kuliahs.kode_mk', 'like', '%' . $searchValue . '%')
-                          ->orWhere('mata_kuliahs.nama_mk', 'like', '%' . $searchValue . '%')
-                          ->orWhere('users.name', 'like', '%' . $searchValue . '%')
-                          ->orWhere('labs.name', 'like', '%' . $searchValue . '%')
-                          ->orWhere('semesters.tahun_ajaran', 'like', '%' . $searchValue . '%');
+                            ->orWhere('mata_kuliahs.kode_mk', 'like', '%' . $searchValue . '%')
+                            ->orWhere('mata_kuliahs.nama_mk', 'like', '%' . $searchValue . '%')
+                            ->orWhere('users.name', 'like', '%' . $searchValue . '%')
+                            ->orWhere('labs.name', 'like', '%' . $searchValue . '%')
+                            ->orWhere('semesters.tahun_ajaran', 'like', '%' . $searchValue . '%');
                     });
                 }
             })
@@ -93,15 +111,16 @@ class JadwalController extends Controller
                 return '-';
             })
             ->addColumn('semester.tahun_ajaran', function ($jadwal) {
-                if ($jadwal->semester_id && $jadwal->semester) {
-                    return $jadwal->semester->tahun_ajaran . ' - ' . ($jadwal->semester->semester == 1 ? 'Ganjil' : 'Genap');
+                if ($jadwal->semester_id) {
+                    return $jadwal->tahun_ajaran . ' - ' . ($jadwal->semester_nama == 1 ? 'Ganjil' : 'Genap');
                 }
                 return '-';
             })
             ->addColumn('action', function ($jadwal) {
+                $encryptedId = encryptId($jadwal->jadwal_kuliah_id);
                 return '
                     <div class="d-flex align-items-center">
-                        <a class="text-success me-2" href="' . route('jadwal.edit', $jadwal->id) . '" title="Edit">
+                        <a class="text-success me-2" href="' . route('jadwal.edit', ['jadwal' => $encryptedId]) . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <div class="dropdown">
@@ -109,16 +128,12 @@ class JadwalController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('jadwal.show', $jadwal->id) . '">
+                                <a class="dropdown-item" href="' . route('jadwal.show', ['jadwal' => $encryptedId]) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <form action="' . route('jadwal.destroy', $jadwal->id) . '" method="POST" class="d-inline">
-                                    ' . csrf_field() . '
-                                    ' . method_field('DELETE') . '
-                                    <button type="submit" class="dropdown-item text-danger" title="Delete" onclick="return confirmDelete(this.form.action, \'Hapus Jadwal?\', \'Apakah Anda yakin ingin menghapus jadwal ini?\')">
-                                        <i class="bx bx-trash me-1"></i> Delete
-                                    </button>
-                                </form>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('jadwal.destroy', ['jadwal' => $encryptedId]) . '\')">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
                             </div>
                         </div>
                     </div>';
@@ -127,14 +142,15 @@ class JadwalController extends Controller
             ->make(true);
     }
 
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $semesters = Semester::all();
+        $semesters   = Semester::all();
         $mataKuliahs = MataKuliah::all();
-        $dosens = User::whereHas('roles', function($query) {
+        $dosens      = User::whereHas('roles', function ($query) {
             $query->where('name', 'dosen');
         })->get();
         $labs = Lab::all();
@@ -168,7 +184,9 @@ class JadwalController extends Controller
      */
     public function show($id)
     {
-        $jadwal = JadwalKuliah::with(['semester', 'mataKuliah', 'dosen', 'lab'])->findOrFail($id);
+        $realId = decryptId($id);
+
+        $jadwal = JadwalKuliah::with(['semester', 'mataKuliah', 'dosen', 'lab'])->findOrFail($realId);
         return view('pages.admin.jadwal.show', compact('jadwal'));
     }
 
@@ -177,10 +195,12 @@ class JadwalController extends Controller
      */
     public function edit($id)
     {
-        $jadwal = JadwalKuliah::findOrFail($id);
-        $semesters = Semester::all();
+        $realId = decryptId($id);
+
+        $jadwal      = JadwalKuliah::findOrFail($realId);
+        $semesters   = Semester::all();
         $mataKuliahs = MataKuliah::all();
-        $dosens = User::whereHas('roles', function($query) {
+        $dosens      = User::whereHas('roles', function ($query) {
             $query->where('name', 'dosen');
         })->get();
         $labs = Lab::all();
@@ -193,7 +213,8 @@ class JadwalController extends Controller
      */
     public function update(JadwalRequest $request, $id)
     {
-        $jadwal = JadwalKuliah::findOrFail($id);
+        $realId = decryptId($id);
+        $jadwal = JadwalKuliah::findOrFail($realId);
 
         \DB::beginTransaction();
         try {
@@ -216,7 +237,8 @@ class JadwalController extends Controller
      */
     public function destroy($id)
     {
-        $jadwal = JadwalKuliah::findOrFail($id);
+        $realId = decryptId($id);
+        $jadwal = JadwalKuliah::findOrFail($realId);
 
         // Check if jadwal is used in any PC assignments or logs
         if ($jadwal->pcAssignments->count() > 0 || $jadwal->logPenggunaanPcs->count() > 0) {
@@ -224,6 +246,13 @@ class JadwalController extends Controller
         }
 
         $jadwal->delete();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Jadwal berhasil dihapus.',
+            ]);
+        }
 
         return redirect()->route('jadwal.index')
             ->with('success', 'Jadwal berhasil dihapus.');

@@ -5,15 +5,14 @@ namespace App\Models;
 use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Lab extends Model
 {
-    use HasFactory, HasMedia;
+    use HasFactory, HasMedia, SoftDeletes;
 
     protected $table = 'labs';
     protected $primaryKey = 'lab_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
 
     protected $fillable = [
         'name',
@@ -81,7 +80,7 @@ class Lab extends Model
     {
         return $this->hasMany(Inventaris::class, 'lab_id');
     }
-    
+
     /**
      * Relationship: Lab has many media entries
      */

@@ -37,12 +37,13 @@
                 type: 'POST',  // Using POST method with _method put in the form
                 data: $(this).serialize(),
                 success: function(response) {
-                    // Show success message
+                    // Show success message with higher z-index to appear above modal
                     Swal.fire({
                         title: 'Success!',
                         text: 'Permission updated successfully.',
                         icon: 'success',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        zIndex: 9999
                     }).then((result) => {
                         // Close the modal
                         $('#modalAction').modal('hide');
@@ -60,7 +61,13 @@
                             $('#editName').siblings('.invalid-feedback').text(errors.name[0]);
                         }
                     } else {
-                        Swal.fire('Error!', xhr.responseJSON.message || 'An error occurred', 'error');
+                        Swal.fire({
+                            title: 'Error!',
+                            text: xhr.responseJSON.message || 'An error occurred',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            zIndex: 9999
+                        });
                     }
                 },
                 complete: function() {

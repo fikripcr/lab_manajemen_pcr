@@ -27,7 +27,7 @@ class InventarisController extends Controller
      */
     public function data(Request $request)
     {
-        $inventaris = Inventaris::with('lab');
+        $inventaris = Inventaris::with('lab')->whereNull('deleted_at');
 
         // Apply condition filter if provided
         if ($request->has('condition') && !empty($request->condition)) {
@@ -120,7 +120,7 @@ class InventarisController extends Controller
      */
     public function show($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $inventory = Inventaris::findOrFail($realId);
         return view('pages.admin.inventories.show', compact('inventory'));
@@ -131,7 +131,7 @@ class InventarisController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
         $inventory = Inventaris::findOrFail($realId);
         $labs = Lab::all();
         return view('pages.admin.inventories.edit', compact('inventory', 'labs'));
@@ -142,7 +142,7 @@ class InventarisController extends Controller
      */
     public function update(InventarisRequest $request, $id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $inventory = Inventaris::findOrFail($realId);
 
@@ -167,7 +167,7 @@ class InventarisController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $inventory = Inventaris::findOrFail($realId);
         $inventory->delete();
@@ -175,12 +175,12 @@ class InventarisController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Inventaris deleted successfully.'
+                'message' => 'Inventaris berhasil dihapus.'
             ]);
         }
 
         return redirect()->route('inventories.index')
-            ->with('success', 'Inventaris deleted successfully.');
+            ->with('success', 'Inventaris berhasil dihapus.');
     }
 
     /**

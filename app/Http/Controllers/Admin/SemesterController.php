@@ -61,9 +61,10 @@ class SemesterController extends Controller
                 return $semester->end_date ? date('d M Y', strtotime($semester->end_date)) : '-';
             })
             ->addColumn('action', function ($semester) {
+                $encryptedId = encryptId($semester->semester_id);
                 return '
                     <div class="d-flex align-items-center">
-                        <a class="text-success me-2" href="' . route('semesters.edit', $semester->semester_id) . '" title="Edit">
+                        <a class="btn btn-sm btn-icon btn-outline-primary me-1 edit-semester" href="javascript:void(0)" data-id="' . $encryptedId . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <div class="dropdown">
@@ -71,16 +72,12 @@ class SemesterController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('semesters.show', $semester->semester_id) . '">
+                                <a class="dropdown-item" href="' . route('semesters.show',$encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <form action="' . route('semesters.destroy', $semester->semester_id) . '" method="POST" class="d-inline">
-                                    ' . csrf_field() . '
-                                    ' . method_field('DELETE') . '
-                                    <button type="submit" class="dropdown-item text-danger" title="Delete" onclick="return confirmDelete(this.form.action, \'Hapus Semester?\', \'Apakah Anda yakin ingin menghapus semester ini?\')">
-                                        <i class="bx bx-trash me-1"></i> Delete
-                                    </button>
-                                </form>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('semesters.destroy',$encryptedId) . '\')">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
                             </div>
                         </div>
                     </div>';
@@ -95,6 +92,14 @@ class SemesterController extends Controller
     public function create()
     {
         return view('pages.admin.semesters.create');
+    }
+
+    /**
+     * Show the form for creating a new semester via modal.
+     */
+    public function createModal()
+    {
+        return view('pages.admin.semesters.create-ajax');
     }
 
     /**
@@ -123,7 +128,8 @@ class SemesterController extends Controller
      */
     public function show($id)
     {
-        $semester = Semester::findOrFail($id);
+        $realId = decryptId($id);
+        $semester = Semester::findOrFail($realId);
         return view('pages.admin.semesters.show', compact('semester'));
     }
 
@@ -132,7 +138,8 @@ class SemesterController extends Controller
      */
     public function edit($id)
     {
-        $semester = Semester::findOrFail($id);
+        $realId = decryptId($id);
+        $semester = Semester::findOrFail($realId);
         return view('pages.admin.semesters.edit', compact('semester'));
     }
 
@@ -141,7 +148,8 @@ class SemesterController extends Controller
      */
     public function update(SemesterRequest $request, $id)
     {
-        $semester = Semester::findOrFail($id);
+        $realId = decryptId($id);
+        $semester = Semester::findOrFail($realId);
 
         \DB::beginTransaction();
         try {
@@ -160,11 +168,22 @@ class SemesterController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource via modal.
+     */
+    public function editModal($id)
+    {
+        $realId = decryptId($id);
+        $semester = Semester::findOrFail($realId);
+        return view('pages.admin.semesters.edit-ajax', compact('semester'));
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-        $semester = Semester::findOrFail($id);
+        $realId = decryptId($id);
+        $semester = Semester::findOrFail($realId);
 
         // Check if semester is used in any schedule
         if ($semester->jadwals->count() > 0) {

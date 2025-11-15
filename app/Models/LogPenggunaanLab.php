@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LogPenggunaanLab extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'log_penggunaan_labs';
+    protected $primaryKey = 'log_penggunaan_labs_id';
 
     protected $fillable = [
         'kegiatan_id',

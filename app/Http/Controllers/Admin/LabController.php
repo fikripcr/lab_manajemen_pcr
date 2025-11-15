@@ -33,7 +33,7 @@ class LabController extends Controller
      */
     public function data(Request $request)
     {
-        $labs = Lab::select('*');
+        $labs = Lab::select('*')->whereNull('deleted_at');
 
         return DataTables::of($labs)
             ->addIndexColumn()
@@ -62,6 +62,7 @@ class LabController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -133,7 +134,7 @@ class LabController extends Controller
      */
     public function show(string $id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $lab = Lab::findOrFail($realId);
         return view('pages.admin.labs.show', compact('lab'));
@@ -144,7 +145,7 @@ class LabController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $lab = Lab::findOrFail($realId);
         return view('pages.admin.labs.edit', compact('lab'));
@@ -155,7 +156,7 @@ class LabController extends Controller
      */
     public function update(LabRequest $request, $id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $lab = Lab::findOrFail($realId);
 
@@ -217,12 +218,20 @@ class LabController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $lab = Lab::findOrFail($realId);
         $lab->delete();
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Lab berhasil dihapus.'
+            ]);
+        }
+
         return redirect()->route('labs.index')
             ->with('success', 'Lab deleted successfully.');
     }
+
 }

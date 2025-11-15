@@ -1,16 +1,17 @@
 <?php
-
 namespace App\Models;
 
 use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pengumuman extends Model
 {
-    use HasFactory, HasMedia;
+    use HasFactory, HasMedia, SoftDeletes;
 
-    protected $table = 'pengumuman';
+    protected $table      = 'pengumuman';
+    protected $primaryKey = 'pengumuman_id';
 
     protected $fillable = [
         'judul',
@@ -22,9 +23,9 @@ class Pengumuman extends Model
     ];
 
     protected $casts = [
-        'is_published' => 'boolean',
-        'published_at' => 'datetime',
-        'jenis' => 'string',
+        'is_published'  => 'boolean',
+        'jenis'         => 'string',
+        'pengumuman_id' => 'string',
     ];
 
     /**
@@ -42,35 +43,13 @@ class Pengumuman extends Model
     {
         return $this->morphMany(Media::class, 'model');
     }
-    
+
     /**
      * Get the value of the model's route key.
      */
     public function getRouteKey()
     {
         return encryptId($this->getKey());
-    }
-    
-    /**
-     * Get cover image with thumbnail fallback.
-     */
-    public function getCoverImageAttribute()
-    {
-        $coverMedia = $this->getFirstMediaByCollection('info_cover');
-        if (!$coverMedia) {
-            return [
-                'original' => null,
-                'thumbnail' => null,
-                'url' => asset('assets-guest/img/person/person-m-10.webp'), // Default image
-            ];
-        }
-        
-        $thumbnailPath = $coverMedia->getThumbnail();
-        return [
-            'original' => $coverMedia,
-            'thumbnail' => $thumbnailPath,
-            'url' => asset('storage/' . ($thumbnailPath ?: $coverMedia->file_path)),
-        ];
     }
 
     /**
@@ -80,37 +59,12 @@ class Pengumuman extends Model
     {
         return $this->media()->where('collection_name', $collectionName)->first();
     }
-    
+
     /**
      * Get media by collection name.
      */
     public function getMediaByCollection(string $collectionName)
     {
         return $this->media()->where('collection_name', $collectionName)->get();
-    }
-    
-    /**
-     * Get media by collection with thumbnail info.
-     */
-    public function getMediaByCollectionWithThumbnails(string $collectionName)
-    {
-        $mediaItems = $this->media()->where('collection_name', $collectionName)->get();
-        
-        return $mediaItems->map(function ($media) {
-            $customProperties = json_decode($media->custom_properties, true);
-            if ($customProperties && isset($customProperties['thumbnail_path'])) {
-                $media->thumbnail_url = asset('storage/' . $customProperties['thumbnail_path']);
-                $media->medium_url = asset('storage/' . $customProperties['medium_path']);
-            }
-            return $media;
-        });
-    }
-    
-    /**
-     * Get all attachment files.
-     */
-    public function getAttachmentsAttribute()
-    {
-        return $this->getMediaByCollection('info_attachment');
     }
 }

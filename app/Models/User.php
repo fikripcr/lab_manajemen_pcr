@@ -4,15 +4,17 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Socialite\Facades\Socialite;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 use App\Traits\HasMedia;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, HasMedia;
+    use HasFactory, Notifiable, HasRoles, HasMedia, SoftDeletes, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -50,6 +52,18 @@ class User extends Authenticatable
         'password' => 'hashed',
         'id' =>'string' // Ensure id is treated as string for encryption purposes
     ];
+
+    protected static $logName = 'user';
+    protected static $logFillable = true;
+    protected static $logOnlyDirty = true;
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()
+            ->logOnly($this->fillable)
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     // Remove the custom auth methods as they're not needed for standard Laravel auth
 

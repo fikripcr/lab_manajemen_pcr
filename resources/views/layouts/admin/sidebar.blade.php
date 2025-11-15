@@ -39,7 +39,7 @@
         </li>
 
         <!-- Academic Data Menu -->
-        <li class="menu-item {{request()->routeIs('semesters.*') || request()->routeIs('mata-kuliah.*') || request()->routeIs('jadwal.*') ? 'active open' : ''}}">
+        <li class="menu-item open {{request()->routeIs('semesters.*') || request()->routeIs('mata-kuliah.*') || request()->routeIs('jadwal.*') ? 'active open' : ''}}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-calendar"></i>
                 <div data-i18n="Perkuliahan">Perkuliahan</div>
@@ -97,16 +97,19 @@
             </a>
         </li>
 
-        <!-- Misc -->
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-                <li class="menu-item {{request()->routeIs('users.*')? 'active' : ''}}">
+        <!-- System Management -->
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">System Management</span>
+        </li>
+
+        <li class="menu-item {{request()->routeIs('users.*')? 'active' : ''}}">
             <a href="{{route('users.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user"></i>
                 <div data-i18n="Documentation">User Management</div>
             </a>
         </li>
          <!-- Roles & Permissions Menu -->
-        <li class="menu-item {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
+        <li class="menu-item open {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-shield"></i>
                 <div data-i18n="Roles & Permissions">Access Control</div>
@@ -125,5 +128,12 @@
             </ul>
         </li>
 
+        <!-- Activity Log -->
+        <li class="menu-item {{ request()->routeIs('activity-log.*') ? 'active' : '' }}">
+            <a href="{{ route('activity-log.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-history"></i>
+                <div data-i18n="Activity Log">Activity Log</div>
+            </a>
+        </li>
     </ul>
 </aside>

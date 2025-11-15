@@ -24,10 +24,6 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('verified')
         ->name('dashboard');
 
-    // ======================
-    // 📦 Master Data
-    // ======================
-
     // Users
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('api', [UserController::class, 'data'])->name('data');
@@ -49,8 +45,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('inventories', InventarisController::class);
 
     // Roles & Permissions
-    // Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
-    //     ->name('roles.update-permissions');
     Route::resource('roles', RoleController::class);
     Route::prefix('permissions')->name('permissions.')->group(function () {
         Route::get('api', [PermissionController::class, 'data'])->name('data');
@@ -60,7 +54,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('permissions', PermissionController::class);
 
     // Semester
-    Route::get('api/semesters', [SemesterController::class, 'data'])->name('semesters.data');
+    Route::prefix('semesters')->name('semesters.')->group(function () {
+        Route::get('api/semesters', [SemesterController::class, 'data'])->name('data');
+        Route::get('create-modal', [SemesterController::class, 'createModal'])->name('create-modal');
+        Route::get('edit-modal/{semesterid?}', [SemesterController::class, 'editModal'])->name('edit-modal');
+    });
     Route::resource('semesters', SemesterController::class);
 
     // Jadwal
@@ -107,4 +105,17 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{berita}', 'destroy')->name('destroy');
         Route::get('/api/data', 'data')->name('data');
     });
+
+    // Modal routes for semester create/edit
+    Route::get('/semesters/create-modal', [App\Http\Controllers\Admin\SemesterController::class, 'createModal'])->name('semesters.create-modal');
+    Route::get('/semesters/edit-modal/{id}', [App\Http\Controllers\Admin\SemesterController::class, 'editModal'])->name('semesters.edit-modal');
+
+    // Activity Log Routes
+    Route::prefix('activity-log')->name('activity-log.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('index');
+        Route::get('/data', [App\Http\Controllers\Admin\ActivityLogController::class, 'data'])->name('data');
+        Route::get('/{id}', [App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('show');
+    });
 });
+
+

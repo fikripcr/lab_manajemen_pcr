@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JadwalKuliah extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'jadwal_kuliah';
+    protected $primaryKey = 'jadwal_kuliah_id';
 
     protected $fillable = [
         'semester_id',
@@ -22,8 +24,7 @@ class JadwalKuliah extends Model
     ];
 
     protected $casts = [
-        'jam_mulai' => 'datetime',
-        'jam_selesai' => 'datetime',
+        'jadwal_kuliah_id' => 'string',
     ];
 
     /**

@@ -4,15 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Semester extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'semesters';
     protected $primaryKey = 'semester_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
 
     protected $fillable = [
         'tahun_ajaran',
@@ -23,9 +22,8 @@ class Semester extends Model
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
         'is_active' => 'boolean',
+        'semester_id' => 'string',
     ];
 
     /**

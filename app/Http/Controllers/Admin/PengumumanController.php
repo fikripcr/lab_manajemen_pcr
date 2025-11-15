@@ -165,7 +165,7 @@ class PengumumanController extends Controller
      */
     public function show($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $pengumuman = Pengumuman::findOrFail($realId);
         return view('pages.admin.pengumuman.show', compact('pengumuman'));
@@ -176,7 +176,7 @@ class PengumumanController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $pengumuman = Pengumuman::findOrFail($realId);
         $penulisOptions = User::all();
@@ -189,7 +189,7 @@ class PengumumanController extends Controller
      */
     public function update(PengumumanRequest $request, $id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $pengumuman = Pengumuman::findOrFail($realId);
         $validated = $request->validated();
@@ -240,7 +240,7 @@ class PengumumanController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $pengumuman = Pengumuman::findOrFail($realId);
         $jenis = $pengumuman->jenis;
@@ -296,7 +296,7 @@ class PengumumanController extends Controller
                 return $item->created_at ? $item->created_at->format('d M Y') : '-';
             })
             ->addColumn('action', function ($item) {
-                $encryptedId = encryptId($item->id);
+                $encryptedId = encryptId($item->pengumuman_id);
                 // Use the appropriate route based on jenis
                 $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
 

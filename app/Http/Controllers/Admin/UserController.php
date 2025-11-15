@@ -38,7 +38,7 @@ class UserController extends Controller
      */
     public function data(Request $request)
     {
-        $users = User::with('roles');
+        $users = User::with('roles')->whereNull('deleted_at');
 
         return DataTables::of($users)
             ->addIndexColumn()
@@ -120,6 +120,12 @@ class UserController extends Controller
         // Assign the selected role to the user
         $user->assignRole($validated['role']);
 
+        // Log the activity
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->log('Membuat pengguna '. $user->name);
+
         return redirect()->route('users.index')
             ->with('success', 'Pengguna berhasil dibuat.');
     }
@@ -129,7 +135,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $user = User::findOrFail($realId);
         $user->id = encryptId($user->id);
@@ -141,7 +147,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $user = User::findOrFail($realId);
         $roles = Role::all();
@@ -153,10 +159,13 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, $id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $user = User::findOrFail($realId);
         $validated = $request->validated();
+
+        // Store old values for logging
+        $oldAttributes = $user->getAttributes();
 
         // Handle avatar upload using HasMedia trait
         if ($request->hasFile('avatar')) {
@@ -182,6 +191,16 @@ class UserController extends Controller
         // Update the user's role
         $user->syncRoles([$validated['role']]);
 
+        // Log the activity
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->withProperties([
+                'old' => $oldAttributes,
+                'attributes' => $user->getAttributes()
+            ])
+            ->log('Memperbarui pengguna '. $user->name);
+
         return redirect()->route('users.index')
             ->with('success', 'Pengguna berhasil diperbarui.');
     }
@@ -191,9 +210,16 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($id);
 
         $user = User::findOrFail($realId);
+
+        // Log the activity before deletion
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->log('Menghapus pengguna '. $user->name);
+
         $user->delete();
 
         if (request()->ajax()) {

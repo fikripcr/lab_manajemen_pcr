@@ -28,7 +28,7 @@ class MataKuliahController extends Controller
      */
     public function data(Request $request)
     {
-        $mataKuliahs = MataKuliah::select('*');
+        $mataKuliahs = MataKuliah::select('*')->whereNull('deleted_at');
 
         // Apply filters if present
         if ($request->filled('sks')) {
@@ -48,9 +48,10 @@ class MataKuliahController extends Controller
                 }
             })
             ->addColumn('action', function ($mk) {
+                $encryptedId = encryptId($mk->mata_kuliah_id);
                 return '
                     <div class="d-flex align-items-center">
-                        <a class="text-success me-2" href="' . route('mata-kuliah.edit', $mk->id) . '" title="Edit">
+                        <a class="text-success me-2" href="' . route('mata-kuliah.edit', $encryptedId) . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <div class="dropdown">
@@ -58,10 +59,10 @@ class MataKuliahController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('mata-kuliah.show', $mk->id) . '">
+                                <a class="dropdown-item" href="' . route('mata-kuliah.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <form action="' . route('mata-kuliah.destroy', $mk->id) . '" method="POST" class="d-inline">
+                                <form action="' . route('mata-kuliah.destroy', $encryptedId) . '" method="POST" class="d-inline">
                                     ' . csrf_field() . '
                                     ' . method_field('DELETE') . '
                                     <button type="submit" class="dropdown-item text-danger" title="Delete" onclick="return confirmDelete(this.form.action, \'Hapus Mata Kuliah?\', \'Apakah Anda yakin ingin menghapus mata kuliah ini?\')">
@@ -75,6 +76,7 @@ class MataKuliahController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -110,7 +112,8 @@ class MataKuliahController extends Controller
      */
     public function show($id)
     {
-        $mataKuliah = MataKuliah::findOrFail($id);
+        $realId = decryptId($id);
+        $mataKuliah = MataKuliah::findOrFail($realId);
         return view('pages.admin.mata-kuliah.show', compact('mataKuliah'));
     }
 
@@ -119,7 +122,8 @@ class MataKuliahController extends Controller
      */
     public function edit($id)
     {
-        $mataKuliah = MataKuliah::findOrFail($id);
+        $realId = decryptId($id);
+        $mataKuliah = MataKuliah::findOrFail($realId);
         return view('pages.admin.mata-kuliah.edit', compact('mataKuliah'));
     }
 
@@ -128,7 +132,8 @@ class MataKuliahController extends Controller
      */
     public function update(MataKuliahRequest $request, $id)
     {
-        $mataKuliah = MataKuliah::findOrFail($id);
+        $realId = decryptId($id);
+        $mataKuliah = MataKuliah::findOrFail($realId);
 
         \DB::beginTransaction();
         try {
@@ -151,7 +156,8 @@ class MataKuliahController extends Controller
      */
     public function destroy($id)
     {
-        $mataKuliah = MataKuliah::findOrFail($id);
+        $realId = decryptId($id);
+        $mataKuliah = MataKuliah::findOrFail($realId);
 
         // Check if mata kuliah is used in any schedule
         if ($mataKuliah->jadwals->count() > 0) {
@@ -165,7 +171,15 @@ class MataKuliahController extends Controller
 
         $mataKuliah->delete();
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Mata Kuliah berhasil dihapus.'
+            ]);
+        }
+
         return redirect()->route('mata-kuliah.index')
             ->with('success', 'Mata Kuliah deleted successfully.');
     }
+
 }

@@ -162,7 +162,7 @@ class PermissionController extends Controller
      */
     public function editModal($permissionId)
     {
-        $realId = decryptId($permissionId); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
+        $realId = decryptId($permissionId);
 
         $permission = Permission::findOrFail($realId);
 

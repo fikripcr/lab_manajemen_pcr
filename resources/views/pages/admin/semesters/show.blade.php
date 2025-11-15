@@ -4,7 +4,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold py-3 mb-0">Semester Details</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('semesters.edit', $semester->semester_id) }}" class="btn btn-primary">
+            <a href="{{ route('semesters.edit', encryptId($semester->semester_id)) }}" class="btn btn-primary">
                 <i class="bx bx-edit me-1"></i> Edit
             </a>
             <a href="{{ route('semesters.index') }}" class="btn btn-secondary">
@@ -33,11 +33,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <h6 class="text-muted">Start Date:</h6>
-                            <p class="mb-0">{{ $semester->start_date->format('d M Y') }}</p>
+                            <p class="mb-0">{{ $semester->start_date }}</p>
                         </div>
                         <div class="col-md-6 mb-3">
                             <h6 class="text-muted">End Date:</h6>
-                            <p class="mb-0">{{ $semester->end_date->format('d M Y') }}</p>
+                            <p class="mb-0">{{ $semester->end_date }}</p>
                         </div>
                     </div>
 
@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-top">
-                        <form method="POST" action="{{ route('semesters.destroy', $semester->semester_id) }}">
+                        <form method="POST" action="{{ route('semesters.destroy', encryptId($semester->semester_id)) }}">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this semester?')">

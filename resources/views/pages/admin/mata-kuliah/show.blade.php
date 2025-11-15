@@ -4,7 +4,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold py-3 mb-0">Mata Kuliah Details</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('mata-kuliah.edit', $mataKuliah->id) }}" class="btn btn-primary">
+            <a href="{{ route('mata-kuliah.edit', encryptId($mataKuliah->mata_kuliah_id)) }}" class="btn btn-primary">
                 <i class="bx bx-edit me-1"></i> Edit
             </a>
             <a href="{{ route('mata-kuliah.index') }}" class="btn btn-secondary">
@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-top">
-                        <form method="POST" action="{{ route('mata-kuliah.destroy', $mataKuliah->id) }}">
+                        <form method="POST" action="{{ route('mata-kuliah.destroy', encryptId($mataKuliah->id)) }}">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this mata kuliah?')">
