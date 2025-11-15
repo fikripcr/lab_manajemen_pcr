@@ -10,6 +10,7 @@ class Inventaris extends Model
     use HasFactory;
 
     protected $table = 'inventaris';
+    protected $primaryKey = 'inventaris_id';
 
     protected $fillable = [
         'lab_id',
@@ -38,7 +39,7 @@ class Inventaris extends Model
     {
         return $this->hasMany(LaporanKerusakan::class, 'inventaris_id');
     }
-    
+
     /**
      * Get the value of the model's route key.
      */

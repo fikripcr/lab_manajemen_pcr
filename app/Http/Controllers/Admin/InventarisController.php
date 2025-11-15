@@ -60,7 +60,7 @@ class InventarisController extends Controller
                 return $item->tanggal_pengecekan ? $item->tanggal_pengecekan->format('d M Y') : '-';
             })
             ->addColumn('action', function ($item) {
-                $encryptedId = encryptId($item->id);
+                $encryptedId = encryptId($item->inventaris_id);
                 return '
                     <div class="d-flex align-items-center">
                         <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('inventories.edit', $encryptedId) . '" title="Edit">
@@ -132,7 +132,6 @@ class InventarisController extends Controller
     public function edit($id)
     {
         $realId = decryptId($id); // Fungsi helper sekarang akan otomatis abort(404) jika gagal
-
         $inventory = Inventaris::findOrFail($realId);
         $labs = Lab::all();
         return view('pages.admin.inventories.edit', compact('inventory', 'labs'));

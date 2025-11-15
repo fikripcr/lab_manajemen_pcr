@@ -9,7 +9,7 @@ use App\Http\Controllers\Guest\GuestController;
 Route::controller(GuestController::class)->group(function () {
     Route::get('/', 'home')->name('home');
     Route::get('/announcements', 'showAllNews')->name('guest.announcements.index');
-    Route::get('/news/{pengumuman}', 'showNews')->name('guest.news.show');
+    Route::get('/news/{pengumuman?}', 'showNews')->name('guest.news.show');
 
     // Request Software (Form)
     Route::get('/request-software', 'requestSoftware')->name('guest.request-software');
