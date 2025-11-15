@@ -15,13 +15,7 @@
                     <h4 class="mb-2">Welcome to {{ config('app.name', 'Sneat') }}! 👋</h4>
                     <p class="mb-4">Please sign-in to your account and start the adventure</p>
                     <!-- /Logo -->
-
-                    @if (session('status'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('status') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                    <x-flash-message />
 
                     <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
                         @csrf
@@ -64,14 +58,21 @@
                         </div>
                     </form>
 
-                    <p class="text-center">
-                        <span>New on our platform?</span>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">
-                                <span>Create an account</span>
+                    <div class="d-flex flex-column align-items-center mb-3">
+                        <div class="mb-3 w-100">
+                            <a href="{{ route('auth.google') }}" class="btn btn-dark d-grid ">
+                                <i class="bx bxl-google me-2"></i>Login with Google
                             </a>
-                        @endif
-                    </p>
+                        </div>
+                        <p class="text-center mb-0">
+                            <span>New on our platform?</span>
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}">
+                                    <span>Create an account</span>
+                                </a>
+                            @endif
+                        </p>
+                    </div>
                 </div>
             </div>
             <!-- /Register Basic Card -->

@@ -5,7 +5,7 @@
         <div class="input-group  input-group-merge">
             <span class="input-group-text"><i class="bx bx-search"></i></span>
             <input type="text" class="form-control global-search" id="globalSearch-{{ $dataTableId ?? 'dataTable' }}" placeholder="Search..." />
-            <button type="button" class="btn btn-secondary filter-clear-btn" id="clearFilterButton-{{ $dataTableId ?? 'dataTable' }}">Clear</button>
+            <button type="button" class="btn btn-primary filter-clear-btn" id="clearFilterButton-{{ $dataTableId ?? 'dataTable' }}">Clear</button>
         </div>
     </div>
 

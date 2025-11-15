@@ -853,7 +853,7 @@
                 </div>
                 <div class="d-flex align-items-start">
                   <div class="flex-shrink-0 me-3">
-                    <img src="{{ $news->cover_image['url'] }}"
+                    <img src="{{ $news->cover_image['url'] ?? '' }}"
                          class="img-fluid rounded"
                          alt="{{ e($news->judul) }}"
                          style="width: 80px; height: 80px; object-fit: cover;"
@@ -907,7 +907,7 @@
                 <div class="meta">
                   <ul>
                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <time datetime="{{ $request->created_at->format('Y-m-d') }}">{{ $request->created_at->format('M d, Y') }}</time></li>
-                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> 
+                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i>
                       @php
                           $badgeClass = '';
                           switch ($request->status) {
@@ -936,7 +936,7 @@
                     <h3 class="post-title">{{ e($request->nama_software) }}</h3>
                     <div class="post-content">
                       <p>{!! Str::limit(strip_tags($request->alasan), 120, '...') !!}</p>
-                      
+
                       @if($request->mataKuliahs->count() > 0)
                         <div class="mt-2">
                           <strong>Mata Kuliah:</strong>
