@@ -77,6 +77,12 @@ class UserController extends Controller
                                 <a class="dropdown-item" href="' . route('users.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
+                                <a href="javascript:void(0)" class="dropdown-item" onclick="sendNotificationToUser(\'' . route('users.send.notification', $encryptedId) . '\', \'' . addslashes($user->name) . '\')">
+                                    <i class="bx bx-bell me-1"></i> Test Kirim Notifikasi
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item" onclick="loginAsUser(\'' . route('users.login.as', $encryptedId) . '\', \'' . addslashes($user->name) . '\')">
+                                    <i class="bx bx-log-in me-1"></i> Login As
+                                </a>
                                 <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\')">
                                     <i class="bx bx-trash me-1"></i> Delete
                                 </a>
@@ -284,5 +290,69 @@ class UserController extends Controller
                 ->with('error', 'Error importing users: ' . $e->getMessage())
                 ->withInput();
         }
+    }
+
+    /**
+     * Login as a specific user.
+     */
+    public function loginAs(Request $request, $user)
+    {
+        // Only allow high-privilege users to use this feature
+        $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to login as other users
+        $hasPermission = false;
+
+        foreach ($allowedRoles as $role) {
+            if (auth()->user()->hasRole($role)) {
+                $hasPermission = true;
+                break;
+            }
+        }
+
+        if (!$hasPermission) {
+            abort(403, 'Unauthorized to use this feature.');
+        }
+
+        // Decrypt the user ID if necessary
+        try {
+            $userId = decryptId($user);
+            $targetUser = User::findOrFail($userId);
+        } catch (\Exception $e) {
+            $targetUser = User::findOrFail($user);
+        }
+
+        // Store the original user ID in session to allow switching back
+        session(['original_user_id' => auth()->user()->id]);
+
+        // Login as the target user
+        auth()->login($targetUser);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login sebagai ' . $targetUser->name . ' berhasil!',
+            'redirect' => route('dashboard')
+        ]);
+    }
+
+    /**
+     * Switch back to original user account.
+     */
+    public function switchBack()
+    {
+        $originalUserId = session('original_user_id');
+
+        if (!$originalUserId) {
+            return redirect()->route('dashboard')->with('error', 'Tidak ada akun asli untuk dikembalikan.');
+        }
+
+        // Find the original user
+        $originalUser = User::findOrFail($originalUserId);
+
+        // Login back as the original user
+        auth()->login($originalUser);
+
+        // Remove the session
+        session()->forget('original_user_id');
+
+        return redirect()->route('dashboard')->with('success', 'Berhasil kembali ke akun asli.');
     }
 }

@@ -139,4 +139,23 @@ class User extends Authenticatable
         // Ultimate fallback: UI Avatars
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
     }
+
+    /**
+     * Get the user's notifications.
+     */
+    public function notifications()
+    {
+        return $this->morphMany(\App\Models\Notification::class, 'notifiable')
+                    ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get the user's unread notifications.
+     */
+    public function unreadNotifications()
+    {
+        return $this->morphMany(\App\Models\Notification::class, 'notifiable')
+                    ->whereNull('read_at')
+                    ->orderBy('created_at', 'desc');
+    }
 }

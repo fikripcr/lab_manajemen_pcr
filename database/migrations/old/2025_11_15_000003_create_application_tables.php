@@ -43,7 +43,7 @@ return new class extends Migration
 
         // Create jadwal_kuliah table (renamed from jadwals)
         Schema::create('jadwal_kuliah', function (Blueprint $table) {
-            $table->id('jadwal_id');
+            $table->id('jadwal_kuliah_id');
             $table->foreignId('semester_id')->constrained('semesters', 'semester_id');
             $table->foreignId('mata_kuliah_id')->constrained('mata_kuliahs', 'mata_kuliah_id');
             $table->foreignId('dosen_id')->constrained('users', 'id');

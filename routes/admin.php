@@ -116,6 +116,28 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data', [App\Http\Controllers\Admin\ActivityLogController::class, 'data'])->name('data');
         Route::get('/{id}', [App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('show');
     });
+
+    // Notifications Management
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\NotificationsController::class, 'index'])->name('index');
+        Route::get('/data', [App\Http\Controllers\Admin\NotificationsController::class, 'data'])->name('data');
+        Route::get('/mark-as-read/{id}', [App\Http\Controllers\Admin\NotificationsController::class, 'markAsRead'])->name('mark-as-read');
+        Route::post('/mark-all-as-read', [App\Http\Controllers\Admin\NotificationsController::class, 'markAllAsRead'])->name('mark-all-as-read');
+        Route::post('/mark-selected-as-read', [App\Http\Controllers\Admin\NotificationsController::class, 'markSelectedAsRead'])->name('mark-selected-as-read');
+        Route::get('/unread-count', [App\Http\Controllers\Admin\NotificationsController::class, 'getUnreadCount'])->name('unread-count');
+    });
+
+    // Send test notification to authenticated user
+    Route::post('/send-test-notification', [App\Http\Controllers\Admin\NotificationsController::class, 'sendTestNotification'])->name('send.test.notification');
+
+    // Send notification to specific user
+    Route::post('/users/{user}/send-notification', [App\Http\Controllers\Admin\NotificationsController::class, 'sendToUser'])->name('users.send.notification');
+
+    // Login as specific user
+    Route::post('/users/{user}/login-as', [App\Http\Controllers\Admin\UserController::class, 'loginAs'])->name('users.login.as');
+
+    // Switch back to original user
+    Route::get('/switch-back', [App\Http\Controllers\Admin\UserController::class, 'switchBack'])->name('admin.switch-back');
 });
 
 
