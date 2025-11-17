@@ -25,6 +25,8 @@ class JadwalKuliah extends Model
 
     protected $casts = [
         'jadwal_kuliah_id' => 'string',
+        'jam_mulai'      => 'datetime',
+        'jam_selesai'    => 'datetime',
     ];
 
     /**

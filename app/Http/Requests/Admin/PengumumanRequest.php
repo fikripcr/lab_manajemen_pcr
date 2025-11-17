@@ -26,6 +26,8 @@ class PengumumanRequest extends FormRequest
             'isi' => ['required', 'string'],
             'jenis' => ['required', 'in:pengumuman,berita'],
             'is_published' => ['boolean'],
+            'cover' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // max 2MB
+            'attachments.*' => ['nullable', 'file', 'mimes:pdf,doc,docx,zip,xls,xlsx', 'max:5120'], // max 5
         ];
     }
 }

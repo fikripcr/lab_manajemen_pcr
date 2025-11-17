@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Lab extends Model
 {
-    use HasFactory, HasMedia, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'labs';
     protected $primaryKey = 'lab_id';
@@ -87,13 +86,5 @@ class Lab extends Model
     public function labMedia()
     {
         return $this->hasMany(LabMedia::class, 'lab_id', 'lab_id');
-    }
-
-    /**
-     * Get the value of the model's route key.
-     */
-    public function getRouteKey()
-    {
-        return encryptId($this->getKey());
     }
 }

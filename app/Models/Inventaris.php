@@ -40,12 +40,4 @@ class Inventaris extends Model
     {
         return $this->hasMany(LaporanKerusakan::class, 'inventaris_id');
     }
-
-    /**
-     * Get the value of the model's route key.
-     */
-    public function getRouteKey()
-    {
-        return encryptId($this->getKey());
-    }
 }

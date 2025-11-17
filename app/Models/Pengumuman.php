@@ -1,14 +1,17 @@
 <?php
 namespace App\Models;
 
-use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Pengumuman extends Model
+class Pengumuman extends Model implements HasMedia
 {
-    use HasFactory, HasMedia, SoftDeletes;
+    use HasFactory, SoftDeletes, InteractsWithMedia;
 
     protected $table      = 'pengumuman';
     protected $primaryKey = 'pengumuman_id';
@@ -36,35 +39,40 @@ class Pengumuman extends Model
         return $this->belongsTo(User::class, 'penulis_id');
     }
 
-    /**
-     * Relationship: Announcement has many media
-     */
-    public function media()
+    public function registerMediaCollections(): void
     {
-        return $this->morphMany(Media::class, 'model');
+        $this->addMediaCollection('cover')
+            ->useDisk('public')
+            ->useFallbackUrl(asset('img/no_image.jpg'))
+            ->useFallbackPath(public_path('img/no_image.jpg'))
+            ->acceptsMimeTypes(['image/jpeg', 'image/png']);
+
+        $this->addMediaCollection('attachments')
+            ->useDisk('public')
+            ->acceptsMimeTypes([
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/zip',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                // tambah kalau perlu
+            ]);
     }
 
     /**
-     * Get the value of the model's route key.
+     * Register the media conversions for this model.
      */
-    public function getRouteKey()
+    public function registerMediaConversions(Media $media = null): void
     {
-        return encryptId($this->getKey());
-    }
+        if ($media?->collection_name === 'cover') {
+            $this->addMediaConversion('thumb')
+                ->fit(Fit::Crop, 150, 150)
+                ->nonQueued();
 
-    /**
-     * Get first media by collection name.
-     */
-    public function getFirstMediaByCollection(string $collectionName)
-    {
-        return $this->media()->where('collection_name', $collectionName)->first();
-    }
-
-    /**
-     * Get media by collection name.
-     */
-    public function getMediaByCollection(string $collectionName)
-    {
-        return $this->media()->where('collection_name', $collectionName)->get();
+            $this->addMediaConversion('medium')
+                ->fit(Fit::Crop, 400, 400)
+                ->nonQueued();
+        }
     }
 }

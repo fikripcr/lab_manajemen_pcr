@@ -10,6 +10,7 @@ class LabMedia extends Model
     use HasFactory;
 
     protected $table = 'lab_media';
+    protected $primaryKey = 'lab_media_id';
 
     protected $fillable = [
         'lab_id',

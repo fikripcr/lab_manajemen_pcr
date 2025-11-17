@@ -36,7 +36,7 @@ class UserRequest extends FormRequest
                 'email',
                 $userId ? Rule::unique('users')->ignore($userId) : ''
             ],
-            'role' => ['required', 'exists:roles,name'],
+            'role' => ['required', 'exists:sys_roles,name'],
             'nip' => [
                 'nullable',
                 'string',

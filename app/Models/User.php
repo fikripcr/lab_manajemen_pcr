@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -7,14 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Socialite\Facades\Socialite;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
-use App\Traits\HasMedia;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use HasFactory, Notifiable, HasRoles, HasMedia, SoftDeletes, LogsActivity;
+    use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -49,23 +51,21 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'id' =>'string' // Ensure id is treated as string for encryption purposes
+        'password'          => 'hashed',
+        'id'                => 'string', // Ensure id is treated as string for encryption purposes
     ];
 
-    protected static $logName = 'user';
-    protected static $logFillable = true;
+    protected static $logName      = 'user';
+    protected static $logFillable  = true;
     protected static $logOnlyDirty = true;
 
-    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
-        return \Spatie\Activitylog\LogOptions::defaults()
+        return LogOptions::defaults()
             ->logOnly($this->fillable)
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
-
-    // Remove the custom auth methods as they're not needed for standard Laravel auth
 
     /**
      * Relationship: User has many PC assignments
@@ -107,37 +107,30 @@ class User extends Authenticatable
         return $this->hasMany(LaporanKerusakan::class, 'teknisi_id');
     }
 
-    /**
-     * Get the value of the model's route key.
-     */
-    public function getRouteKey()
+    public function registerMediaCollections(): void
     {
-        return encryptId($this->getKey());
+        $this->addMediaCollection('avatar')
+            ->useFallbackUrl('/fallback/fallbackAvatarImage.png')
+            ->useFallbackPath(public_path('fallback/fallbackAvatarImage.png'))
+            ->useDisk('public');
     }
 
     /**
-     * Get the avatar URL attribute
+     * Register the media conversions for this model.
      */
-    public function getAvatarUrlAttribute()
+    public function registerMediaConversions(Media $media = null): void
     {
-        // Try to get avatar from HasMedia trait first
-        $media = $this->getFirstMediaByCollection('avatar');
-        if ($media) {
-            // If thumbnail exists, use it; otherwise, use the original image
-            if (isset($media->thumbnail_url)) {
-                return $media->thumbnail_url;
-            } else {
-                return asset('storage/' . $media->file_path);
-            }
-        }
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Crop, 150, 150)
+            ->nonQueued();
 
-        // Fallback: check if legacy avatar field exists (for backward compatibility)
-        if ($this->avatar) {
-            return asset('storage/' . $this->avatar);
-        }
+        $this->addMediaConversion('medium')
+            ->fit(Fit::Crop, 400, 400)
+            ->nonQueued();
 
-        // Ultimate fallback: UI Avatars
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
+        $this->addMediaConversion('avatar_small')
+            ->fit(Fit::Crop, 50, 50)
+            ->nonQueued();
     }
 
     /**
@@ -146,7 +139,7 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->morphMany(\App\Models\Notification::class, 'notifiable')
-                    ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'desc');
     }
 
     /**
@@ -155,7 +148,7 @@ class User extends Authenticatable
     public function unreadNotifications()
     {
         return $this->morphMany(\App\Models\Notification::class, 'notifiable')
-                    ->whereNull('read_at')
-                    ->orderBy('created_at', 'desc');
+            ->whereNull('read_at')
+            ->orderBy('created_at', 'desc');
     }
 }

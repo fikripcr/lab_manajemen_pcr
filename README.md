@@ -1,59 +1,324 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Base Template - Development Guidelines
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository serves as a comprehensive Laravel base template that implements essential features for efficient web application development. It provides a solid foundation with authentication, authorization, CRUD operations, and various utility features that can be reused across multiple projects. Bismillah
 
-## About Laravel
+## 📋 Features Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This template includes preconfigured implementations for:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Authentication System** with Laravel Breeze & Google OAuth
+- **Role-Based Access Control** using spatie/laravel-permission
+- **User Management** with profiles and impersonation
+- **CRUD Operations** with Resource Controllers
+- **Form Validation** with Custom Request Classes
+- **Frontend Architecture** with Blade Components & Layouts
+- **Data Export/Import** with Maatwebsite/Excel
+- **Dynamic Tables** with Yajra DataTables
+- **ID Encryption** with vinkla/hashids
+- **Media Management** with Spatie Media Library
+- **Activity Logging** with spatie/activity-log
+- **Notifications** with Database Channel
+- **Custom Error Pages** for better UX
+- **Soft Delete** for data integrity
+- **Debugging Tools** with Laravel Debugbar
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📁 Project Structure
 
-## Learning Laravel
+### Controller Organization
+- `app/Http/Controllers/Admin/` - Administrative functionality
+- `app/Http/Controllers/Auth/` - Authentication functionality
+- `app/Http/Controllers/Guest/` - Public functionality
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Route Structure
+- `routes/admin.php` - Administrative routes
+- `routes/auth.php` - Authentication routes
+- `routes/guest.php` - Public routes
+- `routes/web.php` - Main route configuration
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Frontend Assets
+- `public/assets-admin/` - Administrative UI assets
+- `public/assets-guest/` - Public UI assets
 
-## Laravel Sponsors
+### View Organization
+- `resources/views/components/` - Reusable Blade components
+- `resources/views/layouts/` - Layout files (admin/auth/guest)
+- `resources/views/pages/` - Page-specific views (admin/auth/guest)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Request Validation
+- `app/Http/Requests/` - Custom request validation classes
 
-### Premium Partners
+## 🛠️ Development Patterns
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Creating New Modules
+Follow these steps to create new functionality:
 
-## Contributing
+1. **Generate Model with Migration and Resource Controller:**
+   ```bash
+   php artisan make:model Product -mcr
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Add Resource Route:**
+   ```php
+   // In routes/admin.php
+   Route::resource('products', ProductController::class);
+   ```
 
-## Code of Conduct
+3. **Create Custom Request Validation:**
+   ```bash
+   php artisan make:request ProductRequest
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. **Use in Controller:**
+   ```php
+   public function store(ProductRequest $request) {
+       // Validation handled automatically by ProductRequest
+       // Implement your logic here
+   }
+   ```
 
-## Security Vulnerabilities
+5. **Implement DataTables (for index view):**
+   ```php
+   public function data(Request $request) {
+       $products = Product::whereNull('deleted_at');
+       // Return DataTables response
+   }
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+6. **Create Views in appropriate directories:**
+   - `resources/views/pages/admin/products/index.blade.php`
+   - `resources/views/pages/admin/products/create.blade.php`
+   - `resources/views/pages/admin/products/edit.blade.php`
+   - `resources/views/pages/admin/products/show.blade.php`
 
-## License
+7. **Prepare Data in Controller:**
+   - Format dates using `formatTanggalIndo()` helper function:
+     ```php
+     $formattedDate = formatTanggalIndo($model->created_at);
+     ```
+   - Encrypt IDs before sending to view:
+     ```php
+     $encryptedId = encryptId($model->id);
+     ```
+   - Prepare formatted data in controller, not in views
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Authentication & Authorization
+- Use `auth` middleware for protected routes
+- Use `can:` middleware for permission checks
+- Use `$user->can('permission')` in controllers/views
+- Permissions and roles managed with Spatie Laravel Permission package
+
+### Database Operations
+- Always use database transactions for important operations (`DB::beginTransaction()`/`commit()`/`rollback()`)
+- Use soft deletes instead of permanent deletion
+- Encrypt sensitive IDs in URLs using `encryptId()`/`decryptId()` helpers
+
+### Helper Functions for Data Preparation
+- Use `formatTanggalIndo()` for Indonesian date formatting (handles both date and datetime)
+- Use `encryptId()`/`decryptId()` for ID security
+- Use `getVerifiedMediaUrl()` for safe media access
+- Prepare all formatted data in controller before sending to view
+
+### Media Handling with Spatie Laravel Media Library
+- Implement `HasMedia` interface in models requiring file uploads
+- Use `getFirstMediaUrl()` or `getVerifiedMediaUrl()` helper for safe media access
+- Define collections and conversions in model's `registerMediaCollections()` and `registerMediaConversions()`
+
+**Example implementation in User model:**
+```php
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+
+class User extends Authenticatable implements HasMedia
+{
+    use InteractsWithMedia;
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->useFallbackUrl('/images/default-avatar.png')
+            ->useFallbackPath(public_path('images/default-avatar.png'))
+            ->useDisk('public');
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Crop, 150, 150)
+            ->nonQueued();
+
+        $this->addMediaConversion('medium')
+            ->fit(Fit::Crop, 400, 400)
+            ->nonQueued();
+    }
+}
+```
+
+**Upload file in controller:**
+```php
+// Store avatar
+if ($request->hasFile('avatar')) {
+    $user->addMedia($request->file('avatar'))->toMediaCollection('avatar');
+}
+
+// Clear existing media
+$user->clearMediaCollection('avatar');
+```
+
+**Get media in views:**
+```php
+// Get media with conversion
+$avatarUrl = getVerifiedMediaUrl($user, 'avatar', 'thumb');
+// Or with helper function
+$avatarUrl = $user->getFirstMediaUrl('avatar', 'thumb');
+```
+
+### Validation
+- Separate validation logic into FormRequest classes
+- Use custom error messages when needed in FormRequest classes
+
+### Export/Import
+- Use `Maatwebsite\Excel` for data import/export functionality
+- Create dedicated Export/Import classes extending appropriate base classes
+- Include filtering capabilities in export functionality
+
+### Activity Logging with Spatie Laravel Activity Log
+- Use `spatie/laravel-activitylog` traits in models for automatic logging
+- Customize log options in model's `getActivitylogOptions()` method
+
+**Example implementation in User model (found in `app/Models/User.php`):**
+```php
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class User extends Authenticatable
+{
+    use LogsActivity;
+
+    protected static $logName = 'user';
+    protected static $logFillable = true;
+    protected static $logOnlyDirty = true;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->fillable)
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+}
+```
+
+**Manual logging in controllers:**
+```php
+// Log user activities in controllers
+activity()
+    ->performedOn($user)
+    ->causedBy(auth()->user())
+    ->log('Membuat pengguna ' . $user->name);
+
+// With properties
+activity()
+    ->performedOn($user)
+    ->causedBy(auth()->user())
+    ->withProperties([
+        'old' => $oldAttributes,
+        'attributes' => $user->getAttributes(),
+    ])
+    ->log('Memperbarui pengguna ' . $user->name);
+```
+
+### Roles & Permissions with Spatie Laravel Permission
+- Use `spatie/laravel-permission` package for role and permission management
+- Create permissions and assign them to roles
+- Use permissions in controllers and views
+
+**Example implementation in User model (found in `app/Models/User.php`):**
+```php
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRoles;
+}
+```
+
+**Create permissions and assign to roles in seeders (found in `database/seeders/PermissionSeeder.php` or `database/seeders/RolePermissionSeeder.php`):**
+```php
+// Create permissions
+Permission::create(['name' => 'manage-users']);
+Permission::create(['name' => 'view-users']);
+
+// Create role and assign permissions
+$role = Role::create(['name' => 'admin']);
+$role->givePermissionTo(['manage-users', 'view-users']);
+```
+
+**Use in controllers:**
+```php
+// Check permission in controller
+if ($request->user()->can('manage-users')) {
+    // Allow action
+}
+
+// Or use middleware
+Route::middleware(['can:manage-users'])->group(function () {
+    // Protected routes
+});
+```
+
+**Use in views:**
+```blade
+@if(auth()->user()->can('manage-users'))
+    <button>Manage Users</button>
+@endif
+```
+### Notifications
+- Use database channel for notifications
+- Create notification classes extending `Illuminate\Notifications\Notification`
+- Use `notify()` method to send notifications
+
+## 🔐 Security Features
+
+- ID encryption prevents enumeration attacks
+- FormRequest validation prevents common vulnerabilities
+- Authorization checks ensure proper access control
+- Google OAuth integration for secure authentication
+- Soft deletes maintain data integrity
+
+## 📚 Additional Features
+
+### Helper Functions
+- `encryptId($id)` and `decryptId($hash)` for ID encryption/decryption
+- `getVerifiedMediaUrl($model, $collection, $conversion)` for safe media URLs
+- `formatTanggalIndo($tanggal)` for Indonesian date formatting (shows time if available, date only if no time)
+
+### TinyMCE Editor
+Rich text editor for content management fields.
+
+### SweetAlert
+Enhanced user experience with beautiful pop-up confirmations.
+
+### Custom Error Pages
+Professional error pages published to `resources/views/errors/`.
+
+### Base System Tables
+- `sys_` prefixed tables are reserved for system functionality
+- Do not modify these tables without proper discussion
+
+### Environment Configuration
+Ensure `APP_URL` is correctly set for media links to work properly.
+
+## 🏗️ Template Usage
+
+When starting a new project using this template:
+
+1. Clone the repository
+2. Install dependencies (`composer install`, `npm install`)
+3. Configure environment settings
+4. Run migrations (`php artisan migrate --seed`)
+5. Build assets (`npm run build`)
+
+The template is designed to handle common requirements like authentication, user management, roles/permissions, and CRUD operations out-of-the-box. Add your specific business logic by following the established patterns.
+
+---
+
+This template provides a strong foundation to build Laravel applications efficiently while following best practices for maintainability and scalability.

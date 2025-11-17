@@ -28,7 +28,7 @@ class PermissionRequest extends FormRequest
         }
 
         return [
-            'name' => $permissionId ? 'required|unique:permissions,name,' . $permissionId : 'required|unique:permissions,name',
+            'name' => $permissionId ? 'required|unique:sys_permissions,name,' . $permissionId : 'required|unique:sys_permissions,name',
         ];
     }
 
