@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <span class="fw-semibold d-block">{{ auth()->user()->name }}</span>
-                                    <small class="text-muted">{{ auth()->user()->roles->first()?->name ?? 'User' }}</small>
+                                    <small class="text-muted">{{ auth()->user()->getRoleNames()->first() ?? 'User' }}</small>
                                 </div>
                             </div>
                         </a>
@@ -85,11 +85,11 @@
                             <span class="align-middle">My Profile</span>
                         </a>
                     </li>
-                    @if(session('original_user_id'))
+                    @if(app('impersonate')->isImpersonating())
                         <li>
                             <a class="dropdown-item" href="{{ route('admin.switch-back') }}">
                                 <i class="bx bx-log-out me-2"></i>
-                                <span class="align-middle">Kembali ke Akun Asli</span>
+                                <span class="align-middle">Switch Back to Original Account</span>
                             </a>
                         </li>
                     @endif
