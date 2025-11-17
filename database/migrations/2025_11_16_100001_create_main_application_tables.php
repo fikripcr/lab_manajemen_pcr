@@ -38,8 +38,8 @@ return new class extends Migration
         }
 
         // Mata Kuliah table (not prefixed with sys_)
-        if (!Schema::hasTable('mata_kuliah')) {
-            Schema::create('mata_kuliah', function (Blueprint $table) {
+        if (!Schema::hasTable('mata_kuliahs')) {
+            Schema::create('mata_kuliahs', function (Blueprint $table) {
                 $table->id('mata_kuliah_id');
                 $table->string('kode_mk');
                 $table->string('nama_mk');
@@ -53,7 +53,7 @@ return new class extends Migration
             Schema::create('jadwal_kuliah', function (Blueprint $table) {
                 $table->id('jadwal_kuliah_id');
                 $table->foreignId('semester_id')->constrained('semesters', 'semester_id');
-                $table->foreignId('mata_kuliah_id')->constrained('mata_kuliah', 'mata_kuliah_id');
+                $table->foreignId('mata_kuliah_id')->constrained('mata_kuliahs', 'mata_kuliah_id');
                 $table->foreignId('dosen_id')->constrained('users', 'id');
                 $table->foreignId('lab_id')->constrained('labs', 'lab_id');
                 $table->string('hari');
@@ -92,8 +92,8 @@ return new class extends Migration
         }
 
         // Kegiatan table (not prefixed with sys_)
-        if (!Schema::hasTable('kegiatan')) {
-            Schema::create('kegiatan', function (Blueprint $table) {
+        if (!Schema::hasTable('kegiatans')) {
+            Schema::create('kegiatans', function (Blueprint $table) {
                 $table->id('kegiatan_id');
                 $table->foreignId('lab_id')->constrained('labs', 'lab_id');
                 $table->foreignId('penyelenggara_id')->constrained('users', 'id');
@@ -112,7 +112,7 @@ return new class extends Migration
         if (!Schema::hasTable('log_penggunaan_labs')) {
             Schema::create('log_penggunaan_labs', function (Blueprint $table) {
                 $table->id('log_penggunaan_labs_id');
-                $table->foreignId('kegiatan_id')->constrained('kegiatan', 'kegiatan_id');
+                $table->foreignId('kegiatan_id')->constrained('kegiatans', 'kegiatan_id');
                 $table->foreignId('lab_id')->constrained('labs', 'lab_id');
                 $table->timestamp('waktu_isi');
                 $table->timestamps();
@@ -185,11 +185,11 @@ return new class extends Migration
         Schema::dropIfExists('inventaris');
         Schema::dropIfExists('request_software');
         Schema::dropIfExists('log_penggunaan_labs');
-        Schema::dropIfExists('kegiatan');
+        Schema::dropIfExists('kegiatans');
         Schema::dropIfExists('log_penggunaan_pcs');
         Schema::dropIfExists('pc_assignments');
         Schema::dropIfExists('jadwal_kuliah');
-        Schema::dropIfExists('mata_kuliah');
+        Schema::dropIfExists('mata_kuliahs');
         Schema::dropIfExists('semesters');
         Schema::dropIfExists('labs');
     }

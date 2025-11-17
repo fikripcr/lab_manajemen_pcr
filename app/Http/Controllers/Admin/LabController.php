@@ -81,51 +81,35 @@ class LabController extends Controller
         try {
             $lab = Lab::create($request->validated());
 
-            // Handle lab media uploads if any
-            if ($request->hasFile('media_files')) {
-                $mediaFiles = $request->file('media_files');
-                \Log::info('Number of media files to process: ' . count($mediaFiles)); // Debug log
+            // Handle image uploads using Spatie Media Library
+            if ($request->hasFile('lab_images')) {
+                foreach ($request->file('lab_images') as $image) {
+                    if ($image->isValid()) {
+                        $lab->addMedia($image)
+                           ->withCustomProperties(['uploaded_by' => auth()->id()])
+                           ->toMediaCollection('lab_images');
+                    }
+                }
+            }
 
-                $mediaTitles = $request->input('media_titles', []);
-                $mediaDescriptions = $request->input('media_descriptions', []);
-                foreach ($mediaFiles as $index => $file) {
-                    \Log::info("Processing file #{$index}: " . $file->getClientOriginalName()); // Debug log
-
-                    if ($file->isValid()) {
-                        \Log::info("File #{$index} is valid"); // Debug log
-
-                        // Get media title and description if provided, otherwise use default values
-                        $title = isset($mediaTitles[$index]) ? $mediaTitles[$index] : 'Gambar ' . ($index + 1);
-                        $keterangan = isset($mediaDescriptions[$index]) ? $mediaDescriptions[$index] : 'Deskripsi gambar';
-
-                        // Add media to the lab using the HasMedia trait
-                        $media = $lab->addMedia($file, 'lab_images');
-                        \Log::info("Media stored with ID: " . $media->id); // Debug log
-
-                        // Create a LabMedia record to store title and description
-                        $labMedia = new LabMedia();
-                        $labMedia->lab_id = $lab->lab_id;
-                        $labMedia->media_id = $media->id;
-                        $labMedia->judul = $title;
-                        $labMedia->keterangan = $keterangan;
-                        $labMedia->save();
-
-                        \Log::info("LabMedia record created with title: " . $title); // Debug log
-                    } else {
-                        \Log::info("File #{$index} is not valid"); // Debug log
+            // Handle attachment uploads using Spatie Media Library
+            if ($request->hasFile('lab_attachments')) {
+                foreach ($request->file('lab_attachments') as $attachment) {
+                    if ($attachment->isValid()) {
+                        $lab->addMedia($attachment)
+                           ->withCustomProperties(['uploaded_by' => auth()->id()])
+                           ->toMediaCollection('lab_attachments');
                     }
                 }
             }
 
             \DB::commit();
 
-            return redirect()->route('labs.index')
-                ->with('success', 'Lab berhasil dibuat.');
+            return redirect()->route('labs.index')->with('success', 'Lab berhasil ditambahkan.');
         } catch (\Exception $e) {
             \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal membuat lab: ' . $e->getMessage())
-                ->withInput();
+            \Log::error('Error creating lab: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal membuat lab: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -164,39 +148,24 @@ class LabController extends Controller
         try {
             $lab->update($request->validated());
 
-            // Handle lab media uploads if any
-            if ($request->hasFile('media_files')) {
-                $mediaFiles = $request->file('media_files');
-                \Log::info('Number of media files to process: ' . count($mediaFiles)); // Debug log
+            // Handle image uploads using Spatie Media Library
+            if ($request->hasFile('lab_images')) {
+                foreach ($request->file('lab_images') as $image) {
+                    if ($image->isValid()) {
+                        $lab->addMedia($image)
+                           ->withCustomProperties(['uploaded_by' => auth()->id()])
+                           ->toMediaCollection('lab_images');
+                    }
+                }
+            }
 
-                $mediaTitles = $request->input('media_titles', []);
-                $mediaDescriptions = $request->input('media_descriptions', []);
-                foreach ($mediaFiles as $index => $file) {
-                    print_r($index);
-                    \Log::info("Processing file #{$index}: " . $file->getClientOriginalName()); // Debug log
-
-                    if ($file->isValid()) {
-                        \Log::info("File #{$index} is valid"); // Debug log
-
-                        // Get media title and description if provided, otherwise use default values
-                        $title = isset($mediaTitles[$index]) ? $mediaTitles[$index] : 'Gambar ' . ($index + 1);
-                        $deskripsi = isset($mediaDescriptions[$index]) ? $mediaDescriptions[$index] : 'Deskripsi gambar';
-
-                        // Add media to the lab using the HasMedia trait
-                        $media = $lab->addMedia($file, 'lab_images');
-                        \Log::info("Media stored with ID: " . $media->id); // Debug log
-
-                        // Create a LabMedia record to store title and description
-                        $labMedia = new LabMedia();
-                        $labMedia->lab_id = $lab->lab_id;
-                        $labMedia->media_id = $media->id;
-                        $labMedia->judul = $title;
-                        $labMedia->keterangan = $deskripsi;
-                        $labMedia->save();
-
-                        \Log::info("LabMedia record created with title: " . $title); // Debug log
-                    } else {
-                        \Log::info("File #{$index} is not valid"); // Debug log
+            // Handle attachment uploads using Spatie Media Library
+            if ($request->hasFile('lab_attachments')) {
+                foreach ($request->file('lab_attachments') as $attachment) {
+                    if ($attachment->isValid()) {
+                        $lab->addMedia($attachment)
+                           ->withCustomProperties(['uploaded_by' => auth()->id()])
+                           ->toMediaCollection('lab_attachments');
                     }
                 }
             }

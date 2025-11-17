@@ -2,8 +2,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\RoleRequest;
 use App\Http\Requests\Admin\RolePermissionRequest;
+use App\Http\Requests\Admin\RoleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
@@ -28,7 +28,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::withCount('users')->get();
+        $roles = Role::select('id', 'name')
+            ->withCount('users')
+            ->get();
         return view('pages.admin.roles.index', compact('roles'));
     }
 
@@ -52,8 +54,8 @@ class RoleController extends Controller
 
             if ($request->has('permissions') && is_array($request->permissions)) {
                 // Ensure we have valid permission names
-                $permissions = array_values(array_filter($request->permissions, function($permission) {
-                    return !empty($permission);
+                $permissions = array_values(array_filter($request->permissions, function ($permission) {
+                    return ! empty($permission);
                 }));
                 $role->givePermissionTo($permissions);
             }
@@ -88,28 +90,28 @@ class RoleController extends Controller
             $permissions = $request->permissions ?? [];
             if (is_array($permissions)) {
                 // Ensure we have valid permission names
-                $permissions = array_values(array_filter($permissions, function($permission) {
-                    return !empty($permission);
+                $permissions = array_values(array_filter($permissions, function ($permission) {
+                    return ! empty($permission);
                 }));
             }
             $role->syncPermissions($permissions);
 
             DB::commit();
 
-            if(request()->ajax()) {
+            if (request()->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Permissions updated successfully.'
+                    'message' => 'Permissions updated successfully.',
                 ]);
             }
 
             return redirect()->back()->with('success', 'Permissions updated successfully.');
         } catch (\Exception $e) {
             DB::rollback();
-            if(request()->ajax()) {
+            if (request()->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Gagal memperbarui izin: ' . $e->getMessage()
+                    'message' => 'Gagal memperbarui izin: ' . $e->getMessage(),
                 ]);
             }
 
@@ -140,8 +142,8 @@ class RoleController extends Controller
             $permissions = $request->permissions ?? [];
             if (is_array($permissions)) {
                 // Ensure we have valid permission names
-                $permissions = array_values(array_filter($permissions, function($permission) {
-                    return !empty($permission);
+                $permissions = array_values(array_filter($permissions, function ($permission) {
+                    return ! empty($permission);
                 }));
             }
             $role->syncPermissions($permissions);

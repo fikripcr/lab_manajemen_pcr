@@ -126,7 +126,6 @@
                             <th>Equipment Name</th>
                             <th>Type</th>
                             <th>Condition</th>
-                            <th>Lab</th>
                             <th>Last Check</th>
                             <th>Actions</th>
                         </tr>
@@ -182,13 +181,6 @@
                         {
                             data: 'kondisi_terakhir',
                             name: 'kondisi_terakhir'
-                        },
-                        {
-                            data: null,
-                            name: 'lab.name',
-                            render: function(data, type, row) {
-                                return row.lab ? row.lab.name : '-';
-                            }
                         },
                         {
                             data: 'tanggal_pengecekan',

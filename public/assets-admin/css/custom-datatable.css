@@ -136,3 +136,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
   line-height: 14px;
   content: "+";
 }
+
+/* Loading dot color */
+div.dataTables_processing>div:last-child>div {
+    position: absolute;
+    top: 0;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #2c7a7b !important;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0)
+}

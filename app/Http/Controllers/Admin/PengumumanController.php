@@ -42,13 +42,9 @@ class PengumumanController extends Controller
                             <a href="' . route('pengumuman.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
-                            <form action="' . route('pengumuman.destroy', $encryptedId) . '" method="POST" class="d-inline">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm(\'Are you sure?\')">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                            </form>
+                            <a href="javascript:void(0)" class="btn btn-sm btn-danger" title="Delete" onclick="confirmDelete(\'' . route('pengumuman.destroy', $encryptedId) . '\')">
+                                <i class="bx bx-trash"></i>
+                            </a>
                         </div>';
                 })
                 ->rawColumns(['judul', 'is_published', 'action'])
@@ -89,13 +85,9 @@ class PengumumanController extends Controller
                             <a href="' . route('berita.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
-                            <form action="' . route('berita.destroy', $encryptedId) . '" method="POST" class="d-inline">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm(\'Are you sure?\')">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                            </form>
+                            <a href="javascript:void(0)" class="btn btn-sm btn-danger" title="Delete" onclick="confirmDelete(\'' . route('berita.destroy', $encryptedId) . '\')">
+                                <i class="bx bx-trash"></i>
+                            </a>
                         </div>';
                 })
                 ->rawColumns(['judul', 'is_published', 'action'])
@@ -229,6 +221,13 @@ class PengumumanController extends Controller
         $jenis      = $pengumuman->jenis;
         $pengumuman->delete();
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => ucfirst($jenis) . ' deleted successfully.',
+            ]);
+        }
+
         $redirectRoute = $jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
 
         return redirect()->route($redirectRoute)
@@ -291,13 +290,9 @@ class PengumumanController extends Controller
                         <a href="' . route($routePrefix . '.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <form action="' . route($routePrefix . '.destroy', $encryptedId) . '" method="POST" class="d-inline">
-                            ' . csrf_field() . '
-                            ' . method_field('DELETE') . '
-                            <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm(\'Are you sure?\')">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </form>
+                        <a href="javascript:void(0)" class="btn btn-sm btn-danger" title="Delete" onclick="confirmDelete(\'' . route($routePrefix . '.destroy', $encryptedId) . '\')">
+                            <i class="bx bx-trash"></i>
+                        </a>
                     </div>';
             })
             ->rawColumns(['judul', 'is_published', 'cover', 'action'])

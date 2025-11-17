@@ -37,6 +37,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Labs
     Route::get('api/labs', [LabController::class, 'paginate'])->name('labs.data');
+    Route::prefix('labs/{lab_id}')->name('labs.')->group(function () {
+        Route::resource('inventaris', LabInventarisController::class);
+        Route::resource('teams', LabTeamController::class);
+    });
+
     Route::resource('labs', LabController::class);
 
     // Inventories
@@ -139,6 +144,9 @@ Route::middleware(['auth'])->group(function () {
     // Switch back to original user
     Route::get('/switch-back', [App\Http\Controllers\Admin\UserController::class, 'switchBack'])->name('admin.switch-back');
 });
+
+// Laravel Impersonate Routes
+Route::impersonate();
 
 // ==========================
 // 🔹 Documentation Route

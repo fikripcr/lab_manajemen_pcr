@@ -39,7 +39,7 @@
         </li>
 
         <!-- Academic Data Menu -->
-        <li class="menu-item open {{ request()->routeIs('semesters.*') || request()->routeIs('mata-kuliah.*') || request()->routeIs('jadwal.*') ? 'active open' : '' }}">
+        <li class="menu-item {{ request()->routeIs('semesters.*') || request()->routeIs('mata-kuliah.*') || request()->routeIs('jadwal.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-calendar"></i>
                 <div data-i18n="Perkuliahan">Perkuliahan</div>
@@ -116,7 +116,7 @@
             </a>
         </li>
         <!-- Roles & Permissions Menu -->
-        <li class="menu-item open {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
+        <li class="menu-item {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-shield"></i>
                 <div data-i18n="Roles & Permissions">Access Control</div>

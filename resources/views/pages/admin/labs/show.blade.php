@@ -66,24 +66,21 @@
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0"><i class='bx bx-images me-2 text-primary'></i>Gambar Laboratorium</h5>
-                        <span class="badge bg-primary bg-opacity-10 text-white">{{ $lab->getMediaByCollection('lab_images')->count() }} Gambar</span>
+                        <span class="badge bg-primary bg-opacity-10 text-white">{{ $lab->getMedia('lab_images')->count() }} Gambar</span>
                     </div>
                     <div class="card-body">
-                        @if ($lab->getMediaByCollection('lab_images')->count() > 0)
+                        @if ($lab->getMedia('lab_images')->count() > 0)
                             <div class="row g-3">
-                                @foreach ($lab->getMediaByCollection('lab_images') as $media)
-                                    @php
-                                        $labMedia = $lab->labMedia()->where('media_id', $media->id)->first();
-                                    @endphp
+                                @foreach ($lab->getMedia('lab_images') as $media)
                                     <div class="col-md-6 col-lg-4">
                                         <div class="card h-100 shadow-sm border">
-                                            <img src="{{ asset('storage/' . $media->file_path) }}" class="card-img-top" alt="{{ $labMedia ? $labMedia->judul : $media->file_name }}" style="height: 200px; object-fit: cover;">
+                                            <img src="{{ $media->getUrl() }}" class="card-img-top" alt="{{ $media->name }}" style="height: 200px; object-fit: cover;">
                                             <div class="card-body">
-                                                <h6 class="card-title">{{ $labMedia ? $labMedia->judul : Str::limit($media->file_name, 20) }}</h6>
-                                                <p class="card-text small text-muted">{{ $labMedia ? $labMedia->keterangan : Str::limit($media->file_name, 50) }}</p>
+                                                <h6 class="card-title">{{ Str::limit($media->name, 20) }}</h6>
+                                                <p class="card-text small text-muted">{{ Str::limit($media->description, 50) }}</p>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <small class="text-muted">{{ round($media->file_size / 1024, 2) }} KB</small>
-                                                    <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                    <small class="text-muted">{{ round($media->size / 1024, 2) }} KB</small>
+                                                    <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-outline-primary btn-sm">
                                                         <i class='bx bx-show'></i>
                                                     </a>
                                                 </div>
@@ -125,7 +122,7 @@
                                     </span>
                                 </div>
                                 <div class="info-title">
-                                    <h5 class="mb-0">{{ $lab->inventaris->count() }}</h5>
+                                    <h5 class="mb-0">{{ $lab->labInventaris->count() }}</h5>
                                     <small class="text-muted">Inventaris</small>
                                 </div>
                             </div>
@@ -161,30 +158,32 @@
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0"><i class='bx bx-package me-2 text-info'></i>Inventaris Laboratorium</h5>
-                        <span class="badge bg-info bg-opacity-10 text-white">{{ $lab->inventaris->count() }} Barang</span>
+                        <span class="badge bg-info bg-opacity-10 text-white">{{ $lab->labInventaris->count() }} Barang</span>
                     </div>
                     <div class="card-body">
-                        @if ($lab->inventaris->isNotEmpty())
+                        @if ($lab->labInventaris->isNotEmpty())
                             <div class="table-responsive">
                                 <table class="table table-hover table-sm">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Nama Alat</th>
+                                            <th>Kode Inventaris</th>
                                             <th>Kondisi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($lab->inventaris->take(5) as $inventaris)
+                                        @foreach ($lab->labInventaris()->with('inventaris')->take(5)->get() as $inventory)
                                             {{-- Show only top 5 --}}
                                             <tr>
-                                                <td>{{ Str::limit($inventaris->nama_alat, 20) }}</td>
+                                                <td>{{ Str::limit($inventory->inventaris->nama_alat, 20) }}</td>
+                                                <td>{{ $inventory->kode_inventaris }}</td>
                                                 <td>
-                                                    @if ($inventaris->kondisi_terakhir == 'Baik')
-                                                        <span class="badge bg-label-success"><i class='bx bx-check-circle me-1'></i>{{ $inventaris->kondisi_terakhir }}</span>
-                                                    @elseif($inventaris->kondisi_terakhir == 'Rusak Ringan')
-                                                        <span class="badge bg-label-warning"><i class='bx bx-exclamation-triangle me-1'></i>{{ $inventaris->kondisi_terakhir }}</span>
+                                                    @if ($inventory->inventaris->kondisi_terakhir == 'Baik')
+                                                        <span class="badge bg-label-success"><i class='bx bx-check-circle me-1'></i>{{ $inventory->inventaris->kondisi_terakhir }}</span>
+                                                    @elseif($inventory->inventaris->kondisi_terakhir == 'Rusak Ringan')
+                                                        <span class="badge bg-label-warning"><i class='bx bx-exclamation-triangle me-1'></i>{{ $inventory->inventaris->kondisi_terakhir }}</span>
                                                     @else
-                                                        <span class="badge bg-label-danger"><i class='bx bx-x-circle me-1'></i>{{ $inventaris->kondisi_terakhir }}</span>
+                                                        <span class="badge bg-label-danger"><i class='bx bx-x-circle me-1'></i>{{ $inventory->inventaris->kondisi_terakhir }}</span>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -192,16 +191,17 @@
                                     </tbody>
                                 </table>
 
-                                @if ($lab->inventaris->count() > 5)
-                                    <a href="{{ route('inventories.index') }}?lab_id={{ encryptId($lab->lab_id) }}" class="btn btn-outline-primary w-100 mt-2">
-                                        <i class='bx bx-list-ul me-1'></i>Lihat Semua Inventaris ({{ $lab->inventaris->count() }})
-                                    </a>
-                                @endif
+                                <a href="{{ route('labs.inventaris.index', $lab->lab_id) }}" class="btn btn-outline-primary w-100 mt-2">
+                                    <i class='bx bx-list-ul me-1'></i>Lihat Semua Inventaris ({{ $lab->labInventaris->count() }})
+                                </a>
                             </div>
                         @else
                             <div class="text-center py-3">
                                 <i class='bx bx-package bx-lg text-muted'></i>
                                 <p class="text-muted mb-0 mt-2">Tidak ada inventaris dalam laboratorium ini</p>
+                                <a href="{{ route('labs.inventaris.create', $lab->lab_id) }}" class="btn btn-primary mt-2">
+                                    <i class='bx bx-plus me-1'></i>Tambah Inventaris
+                                </a>
                             </div>
                         @endif
                     </div>
@@ -245,7 +245,68 @@
             </div>
         </div>
 
-        <div class="row">
+        <!-- Lab Teams Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class='bx bx-group me-2 text-warning'></i>Tim Laboratorium</h5>
+                        <div>
+                            <span class="badge bg-warning bg-opacity-10 text-white me-2">{{ $lab->labTeams->count() }} Anggota</span>
+                            <a href="{{ route('labs.teams.create', $lab->lab_id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class='bx bx-plus me-1'></i>Tambah Anggota
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if ($lab->labTeams->isNotEmpty())
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>Jabatan</th>
+                                            <th>Tanggal Mulai</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($lab->getActiveTeamMembers() as $teamMember)
+                                            <tr>
+                                                <td>{{ $teamMember->user->name }}</td>
+                                                <td>{{ $teamMember->user->email }}</td>
+                                                <td>{{ $teamMember->jabatan ?: '-' }}</td>
+                                                <td>{{ \App\Helpers\Helper::formatTanggalIndo($teamMember->tanggal_mulai) }}</td>
+                                                <td>
+                                                    <span class="badge bg-label-success">
+                                                        <i class='bx bx-check-circle me-1'></i>Aktif
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+
+                                <a href="{{ route('labs.teams.index', $lab->lab_id) }}" class="btn btn-outline-primary w-100">
+                                    <i class='bx bx-list-ul me-1'></i>Lihat Semua Tim ({{ $lab->labTeams->count() }})
+                                </a>
+                            </div>
+                        @else
+                            <div class="text-center py-3">
+                                <i class='bx bx-group bx-lg text-muted'></i>
+                                <p class="text-muted mb-0 mt-2">Tidak ada tim dalam laboratorium ini</p>
+                                <a href="{{ route('labs.teams.create', $lab->lab_id) }}" class="btn btn-primary mt-2">
+                                    <i class='bx bx-plus me-1'></i>Tambah Tim
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
             <div class="col-12 d-flex justify-content-end">
                 <a href="{{ route('labs.index') }}" class="btn btn-secondary">
                     <i class='bx bx-arrow-back me-1'></i> Kembali ke Daftar Lab

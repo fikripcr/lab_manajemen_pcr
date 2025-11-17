@@ -14,7 +14,6 @@ class Inventaris extends Model
     protected $primaryKey = 'inventaris_id';
 
     protected $fillable = [
-        'lab_id',
         'nama_alat',
         'jenis_alat',
         'kondisi_terakhir',
@@ -26,11 +25,21 @@ class Inventaris extends Model
     ];
 
     /**
-     * Relationship: Inventory belongs to a lab
+     * Relationship: Inventory has many lab assignments through lab_inventaris
      */
-    public function lab()
+    public function labs()
     {
-        return $this->belongsTo(Lab::class, 'lab_id', 'lab_id');
+        return $this->belongsToMany(Lab::class, 'lab_inventaris', 'inventaris_id', 'lab_id')
+                    ->withPivot(['kode_inventaris', 'no_series', 'tanggal_penempatan', 'tanggal_penghapusan', 'status', 'keterangan'])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relationship: Inventory has many lab_inventaris entries
+     */
+    public function labInventaris()
+    {
+        return $this->hasMany(LabInventaris::class, 'inventaris_id', 'inventaris_id');
     }
 
     /**
@@ -39,5 +48,16 @@ class Inventaris extends Model
     public function laporanKerusakans()
     {
         return $this->hasMany(LaporanKerusakan::class, 'inventaris_id');
+    }
+
+    /**
+     * Get current lab assignment for this inventory item
+     */
+    public function getCurrentLab()
+    {
+        return $this->labInventaris()
+                    ->where('status', 'active')
+                    ->latest('tanggal_penempatan')
+                    ->first();
     }
 }

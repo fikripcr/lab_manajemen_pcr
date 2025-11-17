@@ -29,13 +29,11 @@ class InventarisController extends Controller
     {
         $inventaris = Inventaris::select([
                 'inventaris_id',
-                'lab_id',
                 'nama_alat',
                 'jenis_alat',
                 'kondisi_terakhir',
                 'tanggal_pengecekan'
             ])
-            ->with(['lab:lab_id,name']) // Hanya ambil field yang diperlukan dari relasi lab
             ->whereNull('deleted_at');
 
         // Apply condition filter if provided

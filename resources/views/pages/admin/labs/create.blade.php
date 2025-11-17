@@ -108,41 +108,4 @@
         const fileInput = document.querySelector('input[name="media_files[]"]');
         const container = document.getElementById('media-files-container');
 
-        fileInput.addEventListener('change', function() {
-            container.innerHTML = ''; // Clear previous entries
-
-            if (this.files.length > 0) {
-                Array.from(this.files).forEach((file, index) => {
-                    if (!file.type.match('image.*')) return; // Only process images
-
-                    const mediaFormHtml = `
-                        <div class="card mb-2">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-md-3">
-                                        <img src="${URL.createObjectURL(file)}" class="img-thumbnail" alt="Preview">
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div class="row mb-2">
-                                            <div class="col-md-6">
-                                                <label class="form-label">Judul Gambar</label>
-                                                <input type="text" class="form-control" name="media_titles[]" placeholder="Judul Gambar" value="${file.name.replace(/\.[^/.]+$/, '')}" />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label">Keterangan</label>
-                                                <input type="text" class="form-control" name="media_descriptions[]" placeholder="Keterangan Gambar" />
-                                            </div>
-                                        </div>
-                                        <small class="text-muted">Ukuran: ${(file.size/1024).toFixed(2)} KB</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    container.insertAdjacentHTML('beforeend', mediaFormHtml);
-                });
-            }
-        });
-    </script>
 @endsection

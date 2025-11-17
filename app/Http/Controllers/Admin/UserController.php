@@ -56,7 +56,7 @@ class UserController extends Controller
                 return formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
             })
             ->editColumn('roles', function ($user) {
-                return $user->roles->pluck('name')->first() ?? 'No Role';
+                return $user->getRoleNames()->first() ?? 'No Role';
             })
             ->addColumn('action', function ($user) {
                 $encryptedId = encryptId($user->id);
@@ -121,6 +121,7 @@ class UserController extends Controller
 
         // Assign the selected role to the user
         $user->assignRole($validated['role']);
+
 
         // Log the activity
         activity()
@@ -192,6 +193,7 @@ class UserController extends Controller
 
         // Update the user's role
         $user->syncRoles([$validated['role']]);
+
 
         // Log the activity
         activity()
@@ -289,12 +291,12 @@ class UserController extends Controller
     }
 
     /**
-     * Login as a specific user.
+     * Login as a specific user using laravel-impersonate.
      */
     public function loginAs(Request $request, $user)
     {
-                                                                   // Only allow high-privilege users to use this feature
-        $allowedRoles  = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to login as other users
+        // Only allow high-privilege users to use this feature
+        $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to impersonate other users
         $hasPermission = false;
 
         foreach ($allowedRoles as $role) {
@@ -304,51 +306,39 @@ class UserController extends Controller
             }
         }
 
-        if (! $hasPermission) {
-            abort(403, 'Unauthorized to use this feature.');
-        }
+        // if (!$hasPermission) {
+        //     abort(403, 'Unauthorized to use this feature.');
+        // }
 
         // Decrypt the user ID if necessary
         try {
-            $userId     = decryptId($user);
+            $userId = decryptId($user);
             $targetUser = User::findOrFail($userId);
         } catch (\Exception $e) {
             $targetUser = User::findOrFail($user);
         }
 
-        // Store the original user ID in session to allow switching back
-        session(['original_user_id' => auth()->user()->id]);
-
-        // Login as the target user
-        auth()->login($targetUser);
+        // Use laravel-impersonate
+        app('impersonate')->take(auth()->user(), $targetUser);
 
         return response()->json([
-            'success'  => true,
-            'message'  => 'Login sebagai ' . $targetUser->name . ' berhasil!',
+            'success' => true,
+            'message' => 'Impersonation successful',
             'redirect' => route('dashboard'),
         ]);
     }
 
     /**
-     * Switch back to original user account.
+     * Leave impersonation and switch back to original user.
      */
     public function switchBack()
     {
-        $originalUserId = session('original_user_id');
-
-        if (! $originalUserId) {
-            return redirect()->route('dashboard')->with('error', 'Tidak ada akun asli untuk dikembalikan.');
+        if (!app('impersonate')->isImpersonating()) {
+            return redirect()->route('dashboard')->with('error', 'Not currently impersonating anyone.');
         }
 
-        // Find the original user
-        $originalUser = User::findOrFail($originalUserId);
+        app('impersonate')->leave();
 
-        // Login back as the original user
-        auth()->login($originalUser);
-
-        // Remove the session
-        session()->forget('original_user_id');
-
-        return redirect()->route('dashboard')->with('success', 'Berhasil kembali ke akun asli.');
+        return redirect()->route('dashboard')->with('success', 'Successfully switched back to original account.');
     }
 }

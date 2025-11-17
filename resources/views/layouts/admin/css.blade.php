@@ -24,12 +24,12 @@
     <link rel="stylesheet" href="{{ asset('assets-admin') }}/css/custom-datatable.css" />
 
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.css') }}" />
 
     <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets-admin/libs/sweetalert2/sweetalert2.min.css') }}">
 
     <!-- Choice.js CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets-admin/libs/choicesjs/choices.min.css') }}">
 
     <!-- Page CSS -->
