@@ -14,80 +14,53 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form action="{{ route($type.'.update', $pengumuman) }}" method="POST"  enctype="multipart/form-data" >
+                    <form action="{{ route($type . '.update', encryptId($pengumuman->pengumuman_id)) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
                         <div class="mb-3">
                             <label class="form-label" for="judul">Title</label>
-                            <input type="text" class="form-control @error('judul') is-invalid @enderror"
-                                   id="judul" name="judul" value="{{ old('judul', $pengumuman->judul) }}" >
-                            @error('judul')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="text" class="form-control @error('judul') is-invalid @enderror" id="judul" name="judul" value="{{ old('judul', $pengumuman->judul) }}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="isi">Content</label>
-                            <x-tinymce.editor
-                                id="isi"
-                                name="isi"
-                                :value="old('isi', $pengumuman->isi)"
-                                height="400"
-                                required
-                            />
-                            @error('isi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <x-tinymce.editor id="isi" name="isi" :value="old('isi', $pengumuman->isi)" height="400" required />
                         </div>
 
                         <!-- Cover Image Section -->
                         <div class="mb-3">
-                            <label class="form-label" for="cover_image">Cover Image</label>
-                            <input type="file" class="form-control @error('cover_image') is-invalid @enderror"
-                                   id="cover_image" name="cover_image" accept="image/*">
-                            @error('cover_image')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label" for="cover">Cover Image</label>
+                            <input type="file" class="form-control @error('cover') is-invalid @enderror" id="cover" name="cover" accept="image/*">
+
                             <div class="form-text">Upload a new cover image (current will be replaced if a file is selected).</div>
 
-                            @if($pengumuman->getFirstMediaByCollection('info_cover'))
+                            @if ($pengumuman->hasMedia('cover'))
                                 <div class="mt-2">
                                     <p>Current Cover Image:</p>
-                                    <img src="{{ asset('storage/' . $pengumuman->getFirstMediaByCollection('info_cover')->file_path) }}"
-                                         alt="Current Cover Image" class="img-thumbnail" style="max-height: 200px;">
-                                    <p class="mt-1">
-                                        <small class="text-muted">
-                                            {{ $pengumuman->getFirstMediaByCollection('info_cover')->file_name }}
-                                            ({{ number_format($pengumuman->getFirstMediaByCollection('info_cover')->file_size / 1024, 2) }} KB)
-                                        </small>
-                                    </p>
+                                    <img src="{{ $pengumuman->getFirstMediaUrl('cover', 'medium') }}" alt="Current Cover Image" class="img-thumbnail">
                                 </div>
                             @endif
                         </div>
 
-                        <!-- Attachments Section -->
                         <div class="mb-3">
                             <label class="form-label" for="attachments">Attachments</label>
-                            <input type="file" class="form-control @error('attachments') is-invalid @enderror"
-                                   id="attachments" name="attachments[]" multiple accept="*/*">
-                            @error('attachments')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="file" class="form-control @error('attachments') is-invalid @enderror" id="attachments" name="attachments[]" multiple accept="*/*">
+
                             <div class="form-text">Upload additional attachment files.</div>
 
-                            @if($pengumuman->getMediaByCollection('info_attachment')->count() > 0)
+                            @if ($pengumuman->hasMedia('attachments'))
                                 <div class="mt-2">
                                     <p>Current Attachments:</p>
                                     <ul class="list-group">
-                                        @foreach($pengumuman->getMediaByCollection('info_attachment') as $attachment)
+                                        @foreach ($pengumuman->getMedia('attachments') as $attachment)
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                                 <div>
                                                     <strong>{{ $attachment->file_name }}</strong>
                                                     <br>
-                                                    <small class="text-muted">{{ number_format($attachment->file_size / 1024, 2) }} KB | {{ $attachment->mime_type }}</small>
+                                                    <small class="text-muted">{{ $attachment->human_readable_size }}</small>
                                                 </div>
-                                                <a href="{{ asset('storage/' . $attachment->file_path) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                <a href="{{ $attachment->getUrl() }}" class="btn btn-sm btn-outline-primary" target="_blank">
                                                     View
                                                 </a>
                                             </li>
@@ -98,12 +71,8 @@
                         </div>
 
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input @error('is_published') is-invalid @enderror"
-                                   id="is_published" name="is_published" value="1" {{ old('is_published', $pengumuman->is_published) ? 'checked' : '' }}>
+                            <input type="checkbox" class="form-check-input @error('is_published') is-invalid @enderror" id="is_published" name="is_published" value="1" {{ old('is_published', $pengumuman->is_published) ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_published">Publish {{ ucfirst($type) }}</label>
-                            @error('is_published')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         <input type="hidden" name="jenis" value="{{ $type }}">
@@ -112,7 +81,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="bx bx-save me-1"></i> Update {{ ucfirst($type) }}
                             </button>
-                            <a href="{{ route($type.'.index') }}" class="btn btn-secondary">
+                            <a href="{{ route($type . '.index') }}" class="btn btn-secondary">
                                 <i class="bx bx-arrow-back me-1"></i> Back
                             </a>
                         </div>
@@ -122,5 +91,3 @@
         </div>
     </div>
 @endsection
-
-

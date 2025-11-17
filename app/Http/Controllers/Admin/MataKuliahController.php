@@ -26,7 +26,7 @@ class MataKuliahController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         $mataKuliahs = MataKuliah::select('*')->whereNull('deleted_at');
 

@@ -20,49 +20,27 @@
             <li class="nav-item navbar-dropdown dropdown-notification dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <i class="bx bx-bell bx-sm"></i>
-                    @if (auth()->user() && auth()->user()->unreadNotifications->count() > 0)
-                        <span class="badge bg-danger rounded-pill">{{ auth()->user()->unreadNotifications->count() }}</span>
-                    @endif
+                    <span class="badge bg-danger rounded-pill" id="notification-count">0</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li class="dropdown-header">
                         <div class="d-flex align-items-center justify-content-between">
                             <h5 class="mb-0 me-2">Notifications</h5>
-                            @if (auth()->user() && auth()->user()->unreadNotifications->count() > 0)
-                                <a href="#" class="text-muted" id="markAllAsReadBtn">Mark all as read</a>
-                            @endif
+                            <a href="#" class="text-muted" id="markAllAsReadBtn">Mark all as read</a>
                         </div>
                     </li>
 
-                    @if (auth()->user() && auth()->user()->notifications()->limit(5)->count() > 0)
-                        @foreach (auth()->user()->notifications()->latest()->limit(5)->get() as $notification)
-                            <li>
-                                <a class="dropdown-item" href="{{ route('notifications.mark-as-read', $notification->id) }}">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0 me-3">
-                                            <div class="avatar avatar-online">
-                                                @if (is_null($notification->read_at))
-                                                    <span class="badge rounded-pill bg-danger">NEW</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">{{ $notification->data['title'] ?? 'Notification' }}</h6>
-                                            <p class="mb-0">{{ Str::limit($notification->data['body'] ?? 'New notification', 80) }}</p>
-                                            <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        @endforeach
-                    @else
-                        <li>
-                            <a class="dropdown-item" href="javascript:void(0);">
-                                <p class="text-center mb-0">No notifications found</p>
-                            </a>
-                        </li>
-                    @endif
-
+                    <li>
+                        <div class="dropdown-menu-scrollable" data-bs-simple="true">
+                            <ul class="menu border-0" id="notifications-list">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void(0);">
+                                        <p class="text-center mb-0">Loading notifications...</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                     <li>
                         <div class="dropdown-divider"></div>
                     </li>

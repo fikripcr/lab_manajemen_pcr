@@ -21,7 +21,7 @@ class PermissionController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         $permissions = Permission::withCount('roles');
 
@@ -31,7 +31,7 @@ class PermissionController extends Controller
                 $query->where('name', 'like', "%{$keyword}%");
             })
             ->editColumn('created_at', function ($permission) {
-                return $permission->created_at->format('d M Y');
+                return formatTanggalIndo($permission->created_at);
             })
             ->addColumn('action', function ($permission) {
                 $encryptedId = encryptId($permission->id);

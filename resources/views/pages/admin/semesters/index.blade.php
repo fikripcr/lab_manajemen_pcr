@@ -142,7 +142,7 @@
         // Handle edit semester - using event delegation for dynamically added elements
         $(document).on('click', '.edit-semester', function() {
             var semesterId = $(this).data('id');
-            $.get('{{ route('semesters.edit-modal', '') }}/' + semesterId, function(data) {
+            $.get('{{ route('semesters.edit-modal.show', '') }}/' + semesterId, function(data) {
                 $('#modalContent').html(data);
                 $('#modalAction').modal('show');
             }).fail(function() {

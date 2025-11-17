@@ -25,7 +25,102 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
 <script>
+// Load notifications asynchronously
+function loadNotifications() {
+    fetch('{{ route('notifications.unread-count') }}')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('notification-count').textContent = data.count;
+        })
+        .catch(error => console.error('Error loading notification count:', error));
+
+    fetch('{{ route('notifications.index') }}')
+        .then(response => response.text())
+        .then(html => {
+            // Parse the HTML response to extract notifications
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const notifications = doc.querySelectorAll('.notification-item'); // assuming notifications have this class
+
+            const notificationsList = document.getElementById('notifications-list');
+            if (notifications.length > 0) {
+                notificationsList.innerHTML = '';
+                notifications.forEach(notification => {
+                    const li = document.createElement('li');
+                    li.innerHTML = notification.outerHTML;
+                    notificationsList.appendChild(li);
+                });
+            } else {
+                notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">No notifications found</p></a></li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading notifications:', error);
+            const notificationsList = document.getElementById('notifications-list');
+            notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">Failed to load notifications</p></a></li>';
+        });
+}
+
+// More efficient notification loading using API
+function loadNotificationsApi() {
+    fetch('{{ route('notifications.dropdown-data') }}')
+        .then(response => response.json())
+        .then(data => {
+            const notificationsList = document.getElementById('notifications-list');
+            if (data.data && data.data.length > 0) {
+                notificationsList.innerHTML = '';
+                data.data.forEach(notification => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <a class="dropdown-item notification-item" href="${notification.action_url}">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="avatar avatar-online">
+                                        ${notification.is_unread ? '<span class="badge rounded-pill bg-danger">NEW</span>' : ''}
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">${notification.title || 'Notification'}</h6>
+                                    <p class="mb-0">${notification.body ? notification.body.substring(0, 80) + (notification.body.length > 80 ? '...' : '') : 'New notification'}</p>
+                                    <small class="text-muted">${notification.created_at}</small>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    notificationsList.appendChild(li);
+                });
+            } else {
+                notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">No notifications found</p></a></li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading notifications via API:', error);
+            const notificationsList = document.getElementById('notifications-list');
+            notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">Failed to load notifications</p></a></li>';
+        });
+}
+
+// Load initial notification count when page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Load initial notification count
+    fetch('{{ route('notifications.unread-count') }}')
+        .then(response => response.json())
+        .then(data => {
+            const countElement = document.getElementById('notification-count');
+            if (countElement) {
+                countElement.textContent = data.count;
+            }
+        })
+        .catch(error => console.error('Error loading initial notification count:', error));
+
+    // Load notifications when dropdown is shown
+    const dropdownElement = document.querySelector('.dropdown-notification');
+    if (dropdownElement) {
+        dropdownElement.addEventListener('show.bs.dropdown', function () {
+            loadNotificationsApi();
+        });
+    }
+
     // Handle "Mark all as read" button
     const markAllAsReadBtn = document.getElementById('markAllAsReadBtn');
     if (markAllAsReadBtn) {
@@ -59,8 +154,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                // Refresh the page to update notification counts
-                                location.reload();
+                                // Update notification count
+                                const countElement = document.getElementById('notification-count');
+                                if (countElement) {
+                                    countElement.textContent = '0';
+                                }
+                                // Clear the notifications list
+                                const notificationsList = document.getElementById('notifications-list');
+                                if (notificationsList) {
+                                    notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">No notifications found</p></a></li>';
+                                }
                             });
                         } else {
                             Swal.fire({
@@ -85,4 +188,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Refresh notification count every minute
+setInterval(function() {
+    fetch('{{ route('notifications.unread-count') }}')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('notification-count').textContent = data.count;
+        })
+        .catch(error => console.error('Error updating notification count:', error));
+}, 60000); // 60 seconds
 </script>

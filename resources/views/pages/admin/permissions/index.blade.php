@@ -138,7 +138,7 @@
         // Handle edit permission - using event delegation for dynamically added elements
         $(document).on('click', '.edit-permission', function() {
             var permissionId = $(this).data('id');
-            $.get('{{ route('permissions.edit-modal', '') }}/' + permissionId, function(data) {
+            $.get('{{ route('permissions.edit-modal.show', '') }}/' + permissionId, function(data) {
                 $('#modalContent').html(data);
                 $('#modalAction').modal('show');
             }).fail(function() {

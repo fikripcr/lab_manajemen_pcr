@@ -13,12 +13,14 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-start align-items-sm-center gap-4 mb-4">
-                            @if($user->getFirstMediaByCollection('avatar'))
+                            @php
+                                $avatarMedia = $user->getFirstMedia('avatar');
+                            @endphp
+                            @if($avatarMedia)
                                 @php
-                                    $avatarMedia = $user->getFirstMediaByCollection('avatar');
-                                    $avatarUrl = $avatarMedia->getCustomProperty('thumbnail_path')
-                                        ? asset('storage/' . $avatarMedia->getCustomProperty('thumbnail_path'))
-                                        : $avatarMedia->getUrl();
+                                    $avatarUrl = $avatarMedia->hasGeneratedConversion('avatar_small')
+                                        ? $avatarMedia->getFullUrl('avatar_small')
+                                        : $avatarMedia->getFullUrl();
                                 @endphp
                                 <img src="{{ $avatarUrl }}"
                                      alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100">

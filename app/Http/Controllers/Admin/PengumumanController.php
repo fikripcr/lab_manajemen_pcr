@@ -1,14 +1,13 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
-use App\Models\Pengumuman;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Admin\PengumumanRequest;
+use App\Models\Pengumuman;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTables;
 
 class PengumumanController extends Controller
 {
@@ -27,11 +26,11 @@ class PengumumanController extends Controller
                 })
                 ->editColumn('is_published', function ($pengumuman) {
                     $status = $pengumuman->is_published ? 'Published' : 'Draft';
-                    $class = $pengumuman->is_published ? 'bg-label-success' : 'bg-label-warning';
+                    $class  = $pengumuman->is_published ? 'bg-label-success' : 'bg-label-warning';
                     return '<span class="badge ' . $class . '">' . $status . '</span>';
                 })
                 ->editColumn('created_at', function ($pengumuman) {
-                    return $pengumuman->created_at ? $pengumuman->created_at->format('d M Y') : '-';
+                    return formatTanggalIndo($pengumuman->created_at);
                 })
                 ->addColumn('action', function ($pengumuman) {
                     $encryptedId = encryptId($pengumuman->id);
@@ -74,11 +73,11 @@ class PengumumanController extends Controller
                 })
                 ->editColumn('is_published', function ($berita) {
                     $status = $berita->is_published ? 'Published' : 'Draft';
-                    $class = $berita->is_published ? 'bg-label-success' : 'bg-label-warning';
+                    $class  = $berita->is_published ? 'bg-label-success' : 'bg-label-warning';
                     return '<span class="badge ' . $class . '">' . $status . '</span>';
                 })
                 ->editColumn('created_at', function ($berita) {
-                    return $berita->created_at ? $berita->created_at->format('d M Y') : '-';
+                    return formatTanggalIndo($berita->created_at);
                 })
                 ->addColumn('action', function ($berita) {
                     $encryptedId = encryptId($berita->id);
@@ -125,33 +124,27 @@ class PengumumanController extends Controller
         $isPublished = $validated['is_published'] ?? false;
 
         $pengumuman = Pengumuman::create([
-            'judul' => $validated['judul'],
-            'isi' => $validated['isi'],
-            'jenis' => $validated['jenis'],
-            'penulis_id' => Auth::id(),
+            'judul'        => $validated['judul'],
+            'isi'          => $validated['isi'],
+            'jenis'        => $validated['jenis'],
+            'penulis_id'   => Auth::id(),
             'is_published' => $isPublished,
             'published_at' => $isPublished ? now() : null,
         ]);
 
         // Handle media uploads if present
-        if ($request->hasFile('cover_image')) {
-            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
+        if ($request->hasFile('cover')) {
+            $pengumuman
+                ->addMedia($request->file('cover'))
+                ->toMediaCollection('cover');
         }
 
         if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $attachment) {
-                $pengumuman->addMedia($attachment, 'info_attachment');
+            foreach ($request->file('attachments') as $file) {
+                $pengumuman
+                    ->addMedia($file)
+                    ->toMediaCollection('attachments');
             }
-        }
-
-        // Handle cover image upload if present
-        if ($request->hasFile('cover_image')) {
-            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
-        }
-
-        // Handle attachment uploads if present
-        if ($request->hasFile('attachments')) {
-            $pengumuman->addMultipleMedia($request->file('attachments'), 'info_attachment');
         }
 
         $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
@@ -178,9 +171,9 @@ class PengumumanController extends Controller
     {
         $realId = decryptId($id);
 
-        $pengumuman = Pengumuman::findOrFail($realId);
+        $pengumuman     = Pengumuman::findOrFail($realId);
         $penulisOptions = User::all();
-        $type = $pengumuman->jenis;
+        $type           = $pengumuman->jenis;
         return view('pages.admin.pengumuman.edit', compact('pengumuman', 'type', 'penulisOptions'));
     }
 
@@ -192,40 +185,30 @@ class PengumumanController extends Controller
         $realId = decryptId($id);
 
         $pengumuman = Pengumuman::findOrFail($realId);
-        $validated = $request->validated();
+        $validated  = $request->validated();
 
         $isPublished = $validated['is_published'] ?? false;
 
         $pengumuman->update([
-            'judul' => $validated['judul'],
-            'isi' => $validated['isi'],
+            'judul'        => $validated['judul'],
+            'isi'          => $validated['isi'],
             'is_published' => $isPublished,
             'published_at' => $isPublished ? now() : $pengumuman->published_at, // Keep original published_at if not changing status
         ]);
 
-        // Handle media uploads if present
-        if ($request->hasFile('cover_image')) {
-            // Remove existing cover image if any
-            $pengumuman->clearMediaCollection('info_cover');
-            // Add new cover image
-            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
+        if ($request->hasFile('cover')) {
+            $pengumuman->clearMediaCollection('cover');
+            $pengumuman
+                ->addMedia($request->file('cover'))
+                ->toMediaCollection('cover');
         }
 
         if ($request->hasFile('attachments')) {
-            // Add new attachments
-            $pengumuman->addMultipleMedia($request->file('attachments'), 'info_attachment');
-        }
-
-        // Handle cover image upload if present
-        if ($request->hasFile('cover_image')) {
-            $pengumuman->clearMediaCollection('info_cover'); // Remove old cover
-            $pengumuman->addMedia($request->file('cover_image'), 'info_cover');
-        }
-
-        // Handle attachment uploads if present
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $attachment) {
-                $pengumuman->addMedia($attachment, 'info_attachment');
+            $pengumuman->clearMediaCollection('attachments');
+            foreach ($request->file('attachments') as $file) {
+                $pengumuman
+                    ->addMedia($file)
+                    ->toMediaCollection('attachments');
             }
         }
 
@@ -243,7 +226,7 @@ class PengumumanController extends Controller
         $realId = decryptId($id);
 
         $pengumuman = Pengumuman::findOrFail($realId);
-        $jenis = $pengumuman->jenis;
+        $jenis      = $pengumuman->jenis;
         $pengumuman->delete();
 
         $redirectRoute = $jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
@@ -255,11 +238,11 @@ class PengumumanController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         // Determine the type based on the route name
         $routeName = $request->route()->getName();
-        $type = $routeName === 'berita.data' ? 'berita' : 'pengumuman';
+        $type      = $routeName === 'berita.data' ? 'berita' : 'pengumuman';
 
         $data = Pengumuman::with(['penulis', 'media'])->where('jenis', $type);
 
@@ -268,32 +251,32 @@ class PengumumanController extends Controller
             ->editColumn('judul', function ($item) {
                 return '<strong>' . e($item->judul) . '</strong>';
             })
-            ->addColumn('cover_image', function ($item) {
-                $coverMedia = $item->getFirstMediaByCollection('info_cover');
+            ->addColumn('cover', function ($item) {
+                $coverMedia = $item->getFirstMedia('info_cover');
                 if ($coverMedia) {
                     $customProperties = json_decode($coverMedia->custom_properties, true);
-                    $thumbnailId = $customProperties['thumbnail_id'] ?? null;
-                    $thumbnail = $thumbnailId ? $item->media()->find($thumbnailId) : null;
+                    $thumbnailId      = $customProperties['thumbnail_id'] ?? null;
+                    $thumbnail        = $thumbnailId ? $item->media()->find($thumbnailId) : null;
 
                     return [
-                        'original' => $coverMedia,
+                        'original'  => $coverMedia,
                         'thumbnail' => $thumbnail,
-                        'url' => asset('storage/' . ($thumbnail ? $thumbnail->file_path : $coverMedia->file_path)),
+                        'url'       => asset('storage/' . ($thumbnail ? $thumbnail->file_path : $coverMedia->file_path)),
                     ];
                 }
                 return [
-                    'original' => null,
+                    'original'  => null,
                     'thumbnail' => null,
-                    'url' => asset('assets-guest/img/person/person-m-10.webp'),
+                    'url'       => asset('assets-guest/img/person/person-m-10.webp'),
                 ];
             })
             ->editColumn('is_published', function ($item) {
                 $status = $item->is_published ? 'Published' : 'Draft';
-                $class = $item->is_published ? 'bg-label-success' : 'bg-label-warning';
+                $class  = $item->is_published ? 'bg-label-success' : 'bg-label-warning';
                 return '<span class="badge ' . $class . '">' . $status . '</span>';
             })
             ->editColumn('created_at', function ($item) {
-                return $item->created_at ? $item->created_at->format('d M Y') : '-';
+                return formatTanggalIndo($item->created_at);
             })
             ->addColumn('action', function ($item) {
                 $encryptedId = encryptId($item->pengumuman_id);
@@ -317,7 +300,7 @@ class PengumumanController extends Controller
                         </form>
                     </div>';
             })
-            ->rawColumns(['judul', 'is_published', 'cover_image', 'action'])
+            ->rawColumns(['judul', 'is_published', 'cover', 'action'])
             ->make(true);
     }
 }

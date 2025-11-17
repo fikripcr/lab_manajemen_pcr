@@ -1,18 +1,17 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\UserExport;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Imports\UserImport;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
@@ -22,34 +21,28 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // $search = $request->input('search');
-
-        // $users = User::with('roles')->when($search, function ($query, $search) {
-        //         return $query->where('name', 'like', "%{$search}%")
-        //             ->orWhere('email', 'like', "%{$search}%");
-        //     })
-        //     ->paginate(20);
-
         return view('pages.admin.users.index');
     }
 
     /**
      * Process datatables ajax request.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
-        $users = User::with('roles')->whereNull('deleted_at');
+        $users = User::select('id', 'name', 'email', 'created_at')
+            ->with(['roles', 'media'])->whereNull('deleted_at');
 
         return DataTables::of($users)
             ->addIndexColumn()
             ->editColumn('name', function ($user) {
                 // Ensure we're getting the actual user name, not processed content
-                $userName = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
-                $userCreatedAt = htmlspecialchars($user->created_at, ENT_QUOTES, 'UTF-8');
+                $userName      = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
+                $userCreatedAt = formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
+                $src = getVerifiedMediaUrl($user, 'avatar', 'thumb');
 
                 $html = '<div class="d-flex align-items-center">';
                 $html .= '<div class="avatar flex-shrink-0 me-3">';
-                $html .= '<img src="' . $user->avatar_url . '" alt="' . $userName . '" class="rounded-circle w-px-40 h-40">';
+                $html .= '<img src="' . $src . '" alt="' . $userName . '" class="rounded-circle w-px-40 h-40">';
                 $html .= '</div>';
                 $html .= '<div class="d-flex flex-column">';
                 $html .= '<span class="text-nowrap">' . $userName . '</span>';
@@ -58,6 +51,9 @@ class UserController extends Controller
                 $html .= '</div>';
 
                 return $html;
+            })
+            ->editColumn('created_at', function ($user) {
+                return formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
             })
             ->editColumn('roles', function ($user) {
                 return $user->roles->pluck('name')->first() ?? 'No Role';
@@ -111,16 +107,16 @@ class UserController extends Controller
         $validated = $request->validated();
 
         $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'nim' => $validated['nim'] ?? null,
-            'nip' => $validated['nip'] ?? null,
+            'nim'      => $validated['nim'] ?? null,
+            'nip'      => $validated['nip'] ?? null,
         ]);
 
-        // Handle avatar upload using HasMedia trait
+        // Handle avatar upload using Spatie Media Library
         if ($request->hasFile('avatar')) {
-            $user->addMedia($request->file('avatar'), 'avatar');
+            $user->addMedia($request->file('avatar'))->toMediaCollection('avatar');
         }
 
         // Assign the selected role to the user
@@ -130,7 +126,7 @@ class UserController extends Controller
         activity()
             ->performedOn($user)
             ->causedBy(auth()->user())
-            ->log('Membuat pengguna '. $user->name);
+            ->log('Membuat pengguna ' . $user->name);
 
         return redirect()->route('users.index')
             ->with('success', 'Pengguna berhasil dibuat.');
@@ -143,7 +139,7 @@ class UserController extends Controller
     {
         $realId = decryptId($id);
 
-        $user = User::findOrFail($realId);
+        $user     = User::findOrFail($realId);
         $user->id = encryptId($user->id);
         return view('pages.admin.users.show', compact('user'));
     }
@@ -155,7 +151,7 @@ class UserController extends Controller
     {
         $realId = decryptId($id);
 
-        $user = User::findOrFail($realId);
+        $user  = User::findOrFail($realId);
         $roles = Role::all();
         return view('pages.admin.users.edit', compact('user', 'roles'));
     }
@@ -165,27 +161,27 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, $id)
     {
-        $realId = decryptId($id);
 
-        $user = User::findOrFail($realId);
+        $realId    = decryptId($id);
+        $user      = User::findOrFail($realId);
         $validated = $request->validated();
 
         // Store old values for logging
         $oldAttributes = $user->getAttributes();
 
-        // Handle avatar upload using HasMedia trait
+        // Handle avatar upload using Spatie Media Library
         if ($request->hasFile('avatar')) {
             // Clear existing avatar media
             $user->clearMediaCollection('avatar');
             // Add new avatar
-            $user->addMedia($request->file('avatar'), 'avatar');
+            $user->addMedia($request->file('avatar'))->toMediaCollection('avatar');
         }
 
         $updatedData = [
-            'name' => $validated['name'],
+            'name'  => $validated['name'],
             'email' => $validated['email'],
-            'nim' => $validated['nim'] ?? null,
-            'nip' => $validated['nip'] ?? null,
+            'nim'   => $validated['nim'] ?? null,
+            'nip'   => $validated['nip'] ?? null,
         ];
 
         if (isset($validated['password'])) {
@@ -202,10 +198,10 @@ class UserController extends Controller
             ->performedOn($user)
             ->causedBy(auth()->user())
             ->withProperties([
-                'old' => $oldAttributes,
-                'attributes' => $user->getAttributes()
+                'old'        => $oldAttributes,
+                'attributes' => $user->getAttributes(),
             ])
-            ->log('Memperbarui pengguna '. $user->name);
+            ->log('Memperbarui pengguna ' . $user->name);
 
         return redirect()->route('users.index')
             ->with('success', 'Pengguna berhasil diperbarui.');
@@ -224,14 +220,14 @@ class UserController extends Controller
         activity()
             ->performedOn($user)
             ->causedBy(auth()->user())
-            ->log('Menghapus pengguna '. $user->name);
+            ->log('Menghapus pengguna ' . $user->name);
 
         $user->delete();
 
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Pengguna berhasil dihapus.'
+                'message' => 'Pengguna berhasil dihapus.',
             ]);
         }
 
@@ -277,7 +273,7 @@ class UserController extends Controller
             $file = $request->file('file');
 
             // Import using the UserImport class with parameters
-            $defaultRole = $request->input('role_default');
+            $defaultRole       = $request->input('role_default');
             $overwriteExisting = $request->input('overwrite_existing', false);
 
             $import = new UserImport($defaultRole, $overwriteExisting);
@@ -297,8 +293,8 @@ class UserController extends Controller
      */
     public function loginAs(Request $request, $user)
     {
-        // Only allow high-privilege users to use this feature
-        $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to login as other users
+                                                                   // Only allow high-privilege users to use this feature
+        $allowedRoles  = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to login as other users
         $hasPermission = false;
 
         foreach ($allowedRoles as $role) {
@@ -308,13 +304,13 @@ class UserController extends Controller
             }
         }
 
-        if (!$hasPermission) {
+        if (! $hasPermission) {
             abort(403, 'Unauthorized to use this feature.');
         }
 
         // Decrypt the user ID if necessary
         try {
-            $userId = decryptId($user);
+            $userId     = decryptId($user);
             $targetUser = User::findOrFail($userId);
         } catch (\Exception $e) {
             $targetUser = User::findOrFail($user);
@@ -327,9 +323,9 @@ class UserController extends Controller
         auth()->login($targetUser);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Login sebagai ' . $targetUser->name . ' berhasil!',
-            'redirect' => route('dashboard')
+            'success'  => true,
+            'message'  => 'Login sebagai ' . $targetUser->name . ' berhasil!',
+            'redirect' => route('dashboard'),
         ]);
     }
 
@@ -340,7 +336,7 @@ class UserController extends Controller
     {
         $originalUserId = session('original_user_id');
 
-        if (!$originalUserId) {
+        if (! $originalUserId) {
             return redirect()->route('dashboard')->with('error', 'Tidak ada akun asli untuk dikembalikan.');
         }
 

@@ -78,7 +78,7 @@ Follow these steps to create new functionality:
 
 5. **Implement DataTables (for index view):**
    ```php
-   public function data(Request $request) {
+   public function paginate(Request $request) {
        $products = Product::whereNull('deleted_at');
        // Return DataTables response
    }
@@ -170,6 +170,32 @@ $user->clearMediaCollection('avatar');
 $avatarUrl = getVerifiedMediaUrl($user, 'avatar', 'thumb');
 // Or with helper function
 $avatarUrl = $user->getFirstMediaUrl('avatar', 'thumb');
+```
+
+### Eloquent Query Optimization
+- Use `with()` method to eager load related models and prevent N+1 query problems
+- Load only the relationships that are actually needed in the view
+- Use `select()` to limit the fields retrieved from the database
+
+**Example implementation:**
+```php
+// Instead of this (causes N+1 queries):
+$users = User::all();
+foreach($users as $user) {
+    echo $user->profile->name; // Triggers additional query for each user
+}
+
+// Use this (eager loading):
+$users = User::with('profile')->get();
+foreach($users as $user) {
+    echo $user->profile->name; // No additional query needed
+}
+
+// Load multiple relationships:
+$users = User::with(['profile', 'posts', 'comments'])->get();
+
+// Load specific fields only:
+$users = User::with(['profile:id,user_id,name'])->select('id', 'name', 'email')->get();
 ```
 
 ### Validation

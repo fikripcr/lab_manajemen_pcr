@@ -24,7 +24,7 @@ class SoftwareRequestController extends Controller
         return view('pages.admin.software-requests.index');
     }
 
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         $softwareRequests = RequestSoftware::with(['dosen', 'mataKuliahs'])->select('*');
 

@@ -23,7 +23,7 @@ class SemesterController extends Controller
         return view('pages.admin.semesters.index');
     }
 
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         $semesters = Semester::query();
 

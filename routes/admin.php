@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DocumentationController;
 
 use App\Http\Controllers\Admin\InventarisController;
 use App\Http\Controllers\Admin\JadwalController;
@@ -12,7 +13,8 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SemesterController;
 use App\Http\Controllers\Admin\SoftwareRequestController;
-use App\Http\Controllers\Admin\UserController;use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
+use Illuminate\Support\Facades\Route;
 
 // ==========================
 // 🔹 Admin Routes (Auth Required)
@@ -26,57 +28,57 @@ Route::middleware(['auth'])->group(function () {
 
     // Users
     Route::prefix('users')->name('users.')->group(function () {
-        Route::get('api', [UserController::class, 'data'])->name('data');
+        Route::get('api', [UserController::class, 'paginate'])->name('data');
         Route::get('export', [UserController::class, 'export'])->name('export');
-        Route::get('import', [UserController::class, 'showImport'])->name('import');
-        Route::post('import', [UserController::class, 'import'])->name('import');
+        Route::get('import', [UserController::class, 'showImport'])->name('import.show');
+        Route::post('import', [UserController::class, 'import'])->name('import.store');
     });
     Route::resource('users', UserController::class);
 
     // Labs
-    Route::get('api/labs', [LabController::class, 'data'])->name('labs.data');
+    Route::get('api/labs', [LabController::class, 'paginate'])->name('labs.data');
     Route::resource('labs', LabController::class);
 
     // Inventories
     Route::prefix('inventories')->name('inventories.')->group(function () {
         Route::get('export', [InventarisController::class, 'export'])->name('export');
-        Route::get('api', [InventarisController::class, 'data'])->name('data');
+        Route::get('api', [InventarisController::class, 'paginate'])->name('data');
     });
     Route::resource('inventories', InventarisController::class);
 
     // Roles & Permissions
     Route::resource('roles', RoleController::class);
     Route::prefix('permissions')->name('permissions.')->group(function () {
-        Route::get('api', [PermissionController::class, 'data'])->name('data');
+        Route::get('api', [PermissionController::class, 'paginate'])->name('data');
         Route::get('create-modal', [PermissionController::class, 'createModal'])->name('create-modal');
-        Route::get('edit-modal/{permissionId?}', [PermissionController::class, 'editModal'])->name('edit-modal');
+        Route::get('edit-modal/{permissionId?}', [PermissionController::class, 'editModal'])->name('edit-modal.show');
     });
     Route::resource('permissions', PermissionController::class);
 
     // Semester
     Route::prefix('semesters')->name('semesters.')->group(function () {
-        Route::get('api/semesters', [SemesterController::class, 'data'])->name('data');
+        Route::get('api/semesters', [SemesterController::class, 'paginate'])->name('data');
         Route::get('create-modal', [SemesterController::class, 'createModal'])->name('create-modal');
-        Route::get('edit-modal/{semesterid?}', [SemesterController::class, 'editModal'])->name('edit-modal');
+        Route::get('edit-modal/{semesterid?}', [SemesterController::class, 'editModal'])->name('edit-modal.show');
     });
     Route::resource('semesters', SemesterController::class);
 
     // Jadwal
     Route::prefix('jadwal')->name('jadwal.')->group(function () {
         Route::get('import/form', [JadwalController::class, 'showImport'])->name('import.form');
-        Route::post('import', [JadwalController::class, 'import'])->name('import');
-        Route::get('api', [JadwalController::class, 'data'])->name('data');
+        Route::post('import', [JadwalController::class, 'import'])->name('import.store');
+        Route::get('api', [JadwalController::class, 'paginate'])->name('data');
     });
     Route::resource('jadwal', JadwalController::class);
 
     // Mata Kuliah
-    Route::get('api/mata-kuliah', [MataKuliahController::class, 'data'])->name('mata-kuliah.data');
+    Route::get('api/mata-kuliah', [MataKuliahController::class, 'paginate'])->name('mata-kuliah.data');
     Route::resource('mata-kuliah', MataKuliahController::class);
 
     // Software Requests
     Route::prefix('software-requests')->name('software-requests.')->controller(SoftwareRequestController::class)->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/data', 'data')->name('data');
+        Route::get('/data', 'paginate')->name('data');
         Route::get('/{id}', 'show')->name('show');
         Route::get('/{id}/edit', 'edit')->name('edit');
         Route::put('/{id}', 'update')->name('update');
@@ -91,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{pengumuman}/edit', 'edit')->name('edit');
         Route::put('/{pengumuman}', 'update')->name('update');
         Route::delete('/{pengumuman}', 'destroy')->name('destroy');
-        Route::get('/api/data', 'data')->name('data');
+        Route::get('/api/data', 'paginate')->name('data');
     });
 
     // Berita
@@ -103,24 +105,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{berita}/edit', 'edit')->name('edit');
         Route::put('/{berita}', 'update')->name('update');
         Route::delete('/{berita}', 'destroy')->name('destroy');
-        Route::get('/api/data', 'data')->name('data');
+        Route::get('/api/data', 'paginate')->name('data');
     });
 
-    // Modal routes for semester create/edit
-    Route::get('/semesters/create-modal', [App\Http\Controllers\Admin\SemesterController::class, 'createModal'])->name('semesters.create-modal');
-    Route::get('/semesters/edit-modal/{id}', [App\Http\Controllers\Admin\SemesterController::class, 'editModal'])->name('semesters.edit-modal');
 
     // Activity Log Routes
     Route::prefix('activity-log')->name('activity-log.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('index');
-        Route::get('/data', [App\Http\Controllers\Admin\ActivityLogController::class, 'data'])->name('data');
+        Route::get('/data', [App\Http\Controllers\Admin\ActivityLogController::class, 'paginate'])->name('data');
         Route::get('/{id}', [App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('show');
     });
 
     // Notifications Management
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\NotificationsController::class, 'index'])->name('index');
-        Route::get('/data', [App\Http\Controllers\Admin\NotificationsController::class, 'data'])->name('data');
+        Route::get('/data', [App\Http\Controllers\Admin\NotificationsController::class, 'paginate'])->name('data');
+        Route::get('/dropdown-data', [App\Http\Controllers\Admin\NotificationsController::class, 'getDropdownData'])->name('dropdown-data');
         Route::get('/mark-as-read/{id}', [App\Http\Controllers\Admin\NotificationsController::class, 'markAsRead'])->name('mark-as-read');
         Route::post('/mark-all-as-read', [App\Http\Controllers\Admin\NotificationsController::class, 'markAllAsRead'])->name('mark-all-as-read');
         Route::post('/mark-selected-as-read', [App\Http\Controllers\Admin\NotificationsController::class, 'markSelectedAsRead'])->name('mark-selected-as-read');
@@ -139,5 +139,10 @@ Route::middleware(['auth'])->group(function () {
     // Switch back to original user
     Route::get('/switch-back', [App\Http\Controllers\Admin\UserController::class, 'switchBack'])->name('admin.switch-back');
 });
+
+// ==========================
+// 🔹 Documentation Route
+// ==========================
+Route::get('/documentation', [DocumentationController::class, 'index'])->name('admin.documentation');
 
 

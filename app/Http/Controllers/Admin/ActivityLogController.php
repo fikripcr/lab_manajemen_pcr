@@ -25,7 +25,7 @@ class ActivityLogController extends Controller
     /**
      * Process datatables ajax request for activity logs.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         $activities = Activity::with(['causer', 'subject'])
             ->select('sys_activity_log.*')
@@ -52,7 +52,7 @@ class ActivityLogController extends Controller
         return DataTables::of($activities)
             ->addIndexColumn()
             ->editColumn('created_at', function ($activity) {
-                return $activity->created_at ? $activity->created_at->format('d M Y H:i:s') : '-';
+                return formatTanggalIndo($activity->created_at);
             })
             ->editColumn('causer.name', function ($activity) {
                 if ($activity->causer) {

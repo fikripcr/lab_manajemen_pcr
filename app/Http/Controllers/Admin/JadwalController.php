@@ -31,7 +31,7 @@ class JadwalController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         $jadwals = JadwalKuliah::select([
                 'jadwal_kuliah.jadwal_kuliah_id',
@@ -51,7 +51,7 @@ class JadwalController extends Controller
                 'mata_kuliahs.nama_mk',
                 'users.name as dosen_name',
                 'labs.name as lab_name'
-            ])
+            ])->with(['semester', 'mataKuliah', 'dosen', 'lab'])
             ->leftJoin('semesters', 'jadwal_kuliah.semester_id', '=', 'semesters.semester_id')
             ->leftJoin('mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'mata_kuliahs.mata_kuliah_id')
             ->leftJoin('users', 'jadwal_kuliah.dosen_id', '=', 'users.id')
@@ -87,10 +87,10 @@ class JadwalController extends Controller
                 return $jadwal->hari;
             })
             ->addColumn('waktu_mulai', function ($jadwal) {
-                return $jadwal->jam_mulai ? $jadwal->jam_mulai->format('H:i') : '-';
+                return formatTanggalIndo($jadwal->jam_mulai);
             })
             ->addColumn('waktu_selesai', function ($jadwal) {
-                return $jadwal->jam_selesai ? $jadwal->jam_selesai->format('H:i') : '-';
+                return formatTanggalIndo($jadwal->jam_selesai);
             })
             ->addColumn('mata_kuliah.nama', function ($jadwal) {
                 if ($jadwal->mata_kuliah_id && $jadwal->mataKuliah) {

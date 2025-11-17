@@ -25,9 +25,18 @@ class InventarisController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
-        $inventaris = Inventaris::with('lab')->whereNull('deleted_at');
+        $inventaris = Inventaris::select([
+                'inventaris_id',
+                'lab_id',
+                'nama_alat',
+                'jenis_alat',
+                'kondisi_terakhir',
+                'tanggal_pengecekan'
+            ])
+            ->with(['lab:lab_id,name']) // Hanya ambil field yang diperlukan dari relasi lab
+            ->whereNull('deleted_at');
 
         // Apply condition filter if provided
         if ($request->has('condition') && !empty($request->condition)) {
@@ -57,7 +66,7 @@ class InventarisController extends Controller
                 return '<span class="badge ' . $badgeClass . '">' . $item->kondisi_terakhir . '</span>';
             })
             ->editColumn('tanggal_pengecekan', function ($item) {
-                return $item->tanggal_pengecekan ? $item->tanggal_pengecekan->format('d M Y') : '-';
+                return formatTanggalIndo($item->tanggal_pengecekan);
             })
             ->addColumn('action', function ($item) {
                 $encryptedId = encryptId($item->inventaris_id);

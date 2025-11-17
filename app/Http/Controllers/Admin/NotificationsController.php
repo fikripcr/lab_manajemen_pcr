@@ -25,7 +25,7 @@ class NotificationsController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function data()
+    public function paginate()
     {
         $notifications = Auth::user()->notifications();
 
@@ -50,7 +50,7 @@ class NotificationsController extends Controller
                 return Str::limit($notification->data['body'] ?? 'New notification', 50);
             })
             ->addColumn('created_at', function ($notification) {
-                return $notification->created_at->format('d M Y H:i');
+                return formatTanggalIndo($notification->created_at);
             })
             ->addColumn('action', function ($notification) {
                 if (is_null($notification->read_at)) {
@@ -176,6 +176,38 @@ class NotificationsController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Notifikasi berhasil dikirim ke ' . $recipient->name . '!'
+        ]);
+    }
+
+    /**
+     * Get notifications data for dropdown (API endpoint)
+     */
+    public function getDropdownData(Request $request)
+    {
+        $limit = $request->get('limit', 5);
+        $user = Auth::user();
+
+        // Get only the fields we need to optimize performance
+        $notifications = $user->notifications()
+            ->select('id', 'data', 'read_at', 'created_at')
+            ->latest()
+            ->limit($limit)
+            ->get();
+
+        $formattedNotifications = $notifications->map(function ($notification) {
+            return [
+                'id' => $notification->id,
+                'title' => $notification->data['title'] ?? 'Notification',
+                'body' => $notification->data['body'] ?? 'New notification',
+                'created_at' => formatTanggalIndo($notification->created_at),
+                'is_unread' => is_null($notification->read_at),
+                'action_url' => route('notifications.mark-as-read', $notification->id)
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedNotifications
         ]);
     }
 }

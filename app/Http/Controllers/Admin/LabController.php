@@ -31,7 +31,7 @@ class LabController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function data(Request $request)
+    public function paginate(Request $request)
     {
         $labs = Lab::select('*')->whereNull('deleted_at');
 

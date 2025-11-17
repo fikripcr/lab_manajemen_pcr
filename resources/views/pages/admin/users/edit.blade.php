@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form action="{{ route('users.update', $user) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('users.update', encryptId($user->id)) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 

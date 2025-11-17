@@ -7,7 +7,7 @@
             <a href="{{ route('users.create') }}" class="btn btn-primary me-2">
                 <i class="bx bx-plus"></i> Add New User
             </a>
-            <a href="{{ route('users.import') }}" class="btn btn-info me-2">
+            <a href="{{ route('users.import.show') }}" class="btn btn-info me-2">
                 <i class="bx bx-import"></i> Import Users
             </a>
             <button type="button" class="btn btn-success" id="exportBtn">

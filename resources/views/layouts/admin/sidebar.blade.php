@@ -108,7 +108,13 @@
                 <div data-i18n="Notifications">Notifications</div>
             </a>
         </li>
-
+        <!-- Activity Log -->
+        <li class="menu-item {{ request()->routeIs('activity-log.*') ? 'active' : '' }}">
+            <a href="{{ route('activity-log.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-history"></i>
+                <div data-i18n="Activity Log">Activity Log</div>
+            </a>
+        </li>
         <!-- Roles & Permissions Menu -->
         <li class="menu-item open {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -129,11 +135,13 @@
             </ul>
         </li>
 
-        <!-- Activity Log -->
-        <li class="menu-item {{ request()->routeIs('activity-log.*') ? 'active' : '' }}">
-            <a href="{{ route('activity-log.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-history"></i>
-                <div data-i18n="Activity Log">Activity Log</div>
+
+
+        <!-- Documentation -->
+        <li class="menu-item {{ request()->routeIs('admin.documentation') ? 'active' : '' }}">
+            <a href="{{ route('admin.documentation') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-code-alt"></i>
+                <div data-i18n="Documentation">Documentation</div>
             </a>
         </li>
     </ul>
