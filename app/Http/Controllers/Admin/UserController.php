@@ -1,18 +1,19 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\UserExport;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UserRequest;
-use App\Imports\UserImport;
 use App\Models\User;
+use App\Exports\UserExport;
+use App\Imports\UserImport;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Yajra\DataTables\DataTables;
+use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Role;
-use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Admin\UserRequest;
 
 class UserController extends Controller
 {
@@ -72,6 +73,9 @@ class UserController extends Controller
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="' . route('users.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
+                                </a>
+                                <a class="dropdown-item" href="' . route('users.export.pdf.detail', $encryptedId) . '" target="_blank">
+                                    <i class="bx bx-file me-1"></i> Download PDF
                                 </a>
                                 <a href="javascript:void(0)" class="dropdown-item" onclick="sendNotificationToUser(\'' . route('users.send.notification', $encryptedId) . '\', \'' . addslashes($user->name) . '\')">
                                     <i class="bx bx-bell me-1"></i> Test Kirim Notifikasi
@@ -251,6 +255,70 @@ class UserController extends Controller
         $export = new UserExport($filters, $columns);
 
         return Excel::download($export, 'users_' . date('Y-m-d_H-i-s') . '.xlsx');
+    }
+
+    /**
+     * Export users to PDF (summary or detail based on parameters)
+     */
+    public function exportPdf(Request $request, $id = null)
+    {
+        if ($id) {
+            // Detail report for specific user
+            $realId = decryptId($id);
+            $user = User::with('roles')->findOrFail($realId);
+
+            $data = [
+                'user' => $user,
+                'reportType' => 'detail',
+                'reportDate' => now()->format('d M Y H:i'),
+            ];
+
+            $pdf = Pdf::loadView('pages.admin.users.pdf.detail', $data);
+            return $pdf->download('user-detail-' . $user->name . '-' . now()->format('Y-m-d-H-i') . '.pdf');
+        } else {
+            // Summary report for all users
+            $type = $request->get('type', 'summary');
+            $filters = [
+                'search' => $request->get('search'),
+                'role' => $request->get('role'),
+                'date_from' => $request->get('date_from'),
+                'date_to' => $request->get('date_to'),
+            ];
+
+            $users = User::with('roles');
+
+            // Apply filters
+            if (!empty($filters['search'])) {
+                $users = $users->where('name', 'LIKE', '%' . $filters['search'] . '%')
+                               ->orWhere('email', 'LIKE', '%' . $filters['search'] . '%');
+            }
+
+            if (!empty($filters['role'])) {
+                $users = $users->whereHas('roles', function($query) use ($filters) {
+                    $query->where('name', $filters['role']);
+                });
+            }
+
+            if (!empty($filters['date_from'])) {
+                $users = $users->whereDate('created_at', '>=', $filters['date_from']);
+            }
+
+            if (!empty($filters['date_to'])) {
+                $users = $users->whereDate('created_at', '<=', $filters['date_to']);
+            }
+
+            $users = $users->get();
+
+            $data = [
+                'users' => $users,
+                'summaryType' => $type,
+                'reportDate' => now()->format('d M Y H:i'),
+                'filters' => $filters,
+            ];
+
+            $pdf = Pdf::loadView('pages.admin.users.pdf.export', $data);
+            return $pdf->download('users-report-' . $type . '-' . now()->format('Y-m-d-H-i') . '.pdf');
+        }
     }
 
     /**

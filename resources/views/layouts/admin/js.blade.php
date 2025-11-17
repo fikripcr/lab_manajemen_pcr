@@ -105,16 +105,30 @@ function loadNotificationsApi() {
 
 // Load initial notification count when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Load initial notification count
-    fetch('{{ route('notifications.unread-count') }}')
-        .then(response => response.json())
-        .then(data => {
-            const countElement = document.getElementById('notification-count');
-            if (countElement) {
-                countElement.textContent = data.count;
-            }
-        })
-        .catch(error => console.error('Error loading initial notification count:', error));
+    // Only load notification count if the element exists
+    // and we're not on a notification-specific page
+    const path = window.location.pathname;
+    if (document.getElementById('notification-count') &&
+        !path.includes('/notifications') &&
+        !path.includes('/api/') &&
+        !path.includes('/unread-count')) {
+
+        fetch('{{ route('notifications.unread-count') }}')
+            .then(response => {
+                // Only proceed if the response is from the correct endpoint
+                if(response.url.includes('/unread-count')) {
+                    return response.json();
+                }
+                throw new Error('Unexpected response from different endpoint');
+            })
+            .then(data => {
+                const countElement = document.getElementById('notification-count');
+                if (countElement) {
+                    countElement.textContent = data.count;
+                }
+            })
+            .catch(error => console.error('Error loading initial notification count:', error));
+    }
 
     // Load notifications when dropdown is shown
     const dropdownElement = document.querySelector('.dropdown-notification');

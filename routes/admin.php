@@ -1,20 +1,25 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\DocumentationController;
-
-use App\Http\Controllers\Admin\InventarisController;
-use App\Http\Controllers\Admin\JadwalController;
-use App\Http\Controllers\Admin\LabController;
-use App\Http\Controllers\Admin\MataKuliahController;
-use App\Http\Controllers\Admin\PengumumanController;;
-use App\Http\Controllers\Admin\PermissionController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\SemesterController;
-use App\Http\Controllers\Admin\SoftwareRequestController;
-use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\LabController;
+
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\JadwalController;
+use App\Http\Controllers\Admin\LabTeamController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\UserPdfController;
+use App\Http\Controllers\Admin\SemesterController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\InventarisController;
+use App\Http\Controllers\Admin\MataKuliahController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\PengumumanController;;
+use App\Http\Controllers\Admin\DocumentationController;
+use App\Http\Controllers\Admin\LabInventarisController;
+use App\Http\Controllers\Admin\NotificationsController;
+use App\Http\Controllers\Admin\SoftwareRequestController;
 
 // ==========================
 // 🔹 Admin Routes (Auth Required)
@@ -30,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('api', [UserController::class, 'paginate'])->name('data');
         Route::get('export', [UserController::class, 'export'])->name('export');
+        Route::get('export-pdf', [UserController::class, 'exportPdf'])->name('export.pdf');
+        Route::get('export-pdf/{id}', [UserController::class, 'exportPdf'])->name('export.pdf.detail');
         Route::get('import', [UserController::class, 'showImport'])->name('import.show');
         Route::post('import', [UserController::class, 'import'])->name('import.store');
     });
@@ -39,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('api/labs', [LabController::class, 'paginate'])->name('labs.data');
     Route::prefix('labs/{lab_id}')->name('labs.')->group(function () {
         Route::resource('inventaris', LabInventarisController::class);
+        Route::get('teams/get-users', [LabTeamController::class, 'getUsers'])->name('teams.get-users');
         Route::resource('teams', LabTeamController::class);
     });
 
@@ -116,33 +124,33 @@ Route::middleware(['auth'])->group(function () {
 
     // Activity Log Routes
     Route::prefix('activity-log')->name('activity-log.')->group(function () {
-        Route::get('/', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('index');
-        Route::get('/data', [App\Http\Controllers\Admin\ActivityLogController::class, 'paginate'])->name('data');
-        Route::get('/{id}', [App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('show');
+        Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+        Route::get('/data', [ActivityLogController::class, 'paginate'])->name('data');
+        Route::get('/{id}', [ActivityLogController::class, 'show'])->name('show');
     });
 
     // Notifications Management
     Route::prefix('notifications')->name('notifications.')->group(function () {
-        Route::get('/', [App\Http\Controllers\Admin\NotificationsController::class, 'index'])->name('index');
-        Route::get('/data', [App\Http\Controllers\Admin\NotificationsController::class, 'paginate'])->name('data');
-        Route::get('/dropdown-data', [App\Http\Controllers\Admin\NotificationsController::class, 'getDropdownData'])->name('dropdown-data');
-        Route::get('/mark-as-read/{id}', [App\Http\Controllers\Admin\NotificationsController::class, 'markAsRead'])->name('mark-as-read');
-        Route::post('/mark-all-as-read', [App\Http\Controllers\Admin\NotificationsController::class, 'markAllAsRead'])->name('mark-all-as-read');
-        Route::post('/mark-selected-as-read', [App\Http\Controllers\Admin\NotificationsController::class, 'markSelectedAsRead'])->name('mark-selected-as-read');
-        Route::get('/unread-count', [App\Http\Controllers\Admin\NotificationsController::class, 'getUnreadCount'])->name('unread-count');
+        Route::get('/', [NotificationsController::class, 'index'])->name('index');
+        Route::get('/data', [NotificationsController::class, 'paginate'])->name('data');
+        Route::get('/dropdown-data', [NotificationsController::class, 'getDropdownData'])->name('dropdown-data');
+        Route::get('/mark-as-read/{id}', [NotificationsController::class, 'markAsRead'])->name('mark-as-read');
+        Route::post('/mark-all-as-read', [NotificationsController::class, 'markAllAsRead'])->name('mark-all-as-read');
+        Route::post('/mark-selected-as-read', [NotificationsController::class, 'markSelectedAsRead'])->name('mark-selected-as-read');
+        Route::get('/unread-count', [NotificationsController::class, 'getUnreadCount'])->name('unread-count');
     });
 
     // Send test notification to authenticated user
-    Route::post('/send-test-notification', [App\Http\Controllers\Admin\NotificationsController::class, 'sendTestNotification'])->name('send.test.notification');
+    Route::post('/send-test-notification', [NotificationsController::class, 'sendTestNotification'])->name('send.test.notification');
 
     // Send notification to specific user
-    Route::post('/users/{user}/send-notification', [App\Http\Controllers\Admin\NotificationsController::class, 'sendToUser'])->name('users.send.notification');
+    Route::post('/users/{user}/send-notification', [NotificationsController::class, 'sendToUser'])->name('users.send.notification');
 
     // Login as specific user
-    Route::post('/users/{user}/login-as', [App\Http\Controllers\Admin\UserController::class, 'loginAs'])->name('users.login.as');
+    Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('users.login.as');
 
     // Switch back to original user
-    Route::get('/switch-back', [App\Http\Controllers\Admin\UserController::class, 'switchBack'])->name('admin.switch-back');
+    Route::get('/switch-back', [UserController::class, 'switchBack'])->name('admin.switch-back');
 });
 
 // Laravel Impersonate Routes

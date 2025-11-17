@@ -16,13 +16,15 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="user_id">Pilih User</label>
-                            <select class="form-select @error('user_id') is-invalid @enderror" id="user_id" name="user_id" required>
-                                <option value="">-- Pilih User --</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }} ({{ $user->email }})
-                                    </option>
-                                @endforeach
+                            <select class="form-select select2 @error('user_id') is-invalid @enderror" id="user_id" name="user_id" required style="width: 100%;">
+                                @if(old('user_id'))
+                                    @php
+                                        $selectedUser = \App\Models\User::find(decryptId(old('user_id')));
+                                    @endphp
+                                    @if($selectedUser)
+                                        <option value="{{ old('user_id') }}" selected>{{ $selectedUser->name }} ({{ $selectedUser->email }})</option>
+                                    @endif
+                                @endif
                             </select>
                             @error('user_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -55,4 +57,34 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <!-- Select2 CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'Pilih atau ketik untuk mencari user...',
+                allowClear: true,
+                ajax: {
+                    url: '{{ route("labs.teams.get-users", $lab->lab_id) }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: params => ({
+                            search: params.term
+                        }),
+                    processResults: data => ({
+                            results: (data.results || data).map(item => ({
+                                id: item.id,
+                                text: `${item.text}`
+                            }))
+                        }),
+                    cache: true
+                }
+            });
+        });
+    </script>
+@endpush
 @endsection

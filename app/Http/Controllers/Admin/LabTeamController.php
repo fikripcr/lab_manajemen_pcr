@@ -18,7 +18,7 @@ class LabTeamController extends Controller
     {
         $lab = Lab::findOrFail($labId);
         $labTeams = $lab->labTeams()->with(['user'])->paginate(10);
-        
+
         return view('pages.admin.labs.teams.index', compact('lab', 'labTeams'));
     }
 
@@ -28,12 +28,40 @@ class LabTeamController extends Controller
     public function create($labId)
     {
         $lab = Lab::findOrFail($labId);
-        $users = User::whereDoesntHave('labTeams', function($query) use ($labId) {
-                $query->where('lab_id', $labId);
-            })
-            ->get();
-        
+        $users = User::all();
+
         return view('pages.admin.labs.teams.create', compact('lab', 'users'));
+    }
+
+    /**
+     * Get users with search for autocomplete
+     */
+    public function getUsers(Request $request, $labId)
+    {
+        $search = $request->get('search');
+        $realLabId = decryptId($labId);
+
+        // Exclude users already assigned to this lab
+        $users = User::select('id', 'name', 'email')
+            ->whereDoesntHave('labTeams', function($query) use ($realLabId) {
+                $query->where('lab_id', $realLabId);
+            })
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'LIKE', "%{$search}%")
+                             ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->limit(5)
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id' => encryptId($user->id),
+                    'text' => $user->name . ' (' . $user->email . ')'
+                ];
+            });
+
+        return response()->json([
+            'results' => $users
+        ]);
     }
 
     /**
@@ -47,8 +75,9 @@ class LabTeamController extends Controller
             'tanggal_mulai' => 'nullable|date',
         ]);
 
+        $realId = decryptId($request->user_id);
         $lab = Lab::findOrFail($labId);
-        $user = User::findOrFail($request->user_id);
+        $user = User::findOrFail($realId);
 
         DB::beginTransaction();
         try {
@@ -89,7 +118,7 @@ class LabTeamController extends Controller
     public function destroy($labId, $id)
     {
         $labTeam = LabTeam::findOrFail($id);
-        
+
         if ($labTeam->lab_id != $labId) {
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }

@@ -11,110 +11,188 @@ use Illuminate\Support\Facades\DB;
 
 class LabInventarisController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request, $labId)
+    public function index($labId)
     {
-        $lab = Lab::findOrFail($labId);
-        $labInventaris = $lab->labInventaris()->with(['inventaris', 'lab'])->paginate(10);
-        
-        return view('pages.admin.labs.inventaris.index', compact('lab', 'labInventaris'));
+        $lab = Lab::findOrFail(decryptId($labId));
+        return view('pages.admin.labs.inventaris.index', compact('lab'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function data(Request $request, $labId)
+    {
+        $lab = Lab::findOrFail(decryptId($labId));
+        $labInventaris = $lab->labInventaris()
+            ->with(['inventaris', 'lab']);
+
+        return \Yajra\DataTables\DataTables::of($labInventaris)
+            ->addIndexColumn()
+            ->editColumn('kode_inventaris', function ($item) {
+                return '<code>' . $item->kode_inventaris . '</code>';
+            })
+            ->editColumn('no_series', function ($item) {
+                return $item->no_series ?: '-';
+            })
+            ->editColumn('tanggal_penempatan', function ($item) {
+                return formatTanggalIndo($item->tanggal_penempatan);
+            })
+            ->editColumn('tanggal_penghapusan', function ($item) {
+                return $item->tanggal_penghapusan ? formatTanggalIndo($item->tanggal_penghapusan) : '-';
+            })
+            ->editColumn('status', function ($item) {
+                $statusClass = '';
+                switch ($item->status) {
+                    case 'active':
+                        $statusClass = 'bg-label-success';
+                        $statusText = 'Active';
+                        break;
+                    case 'moved':
+                        $statusClass = 'bg-label-warning';
+                        $statusText = 'Moved';
+                        break;
+                    case 'inactive':
+                        $statusClass = 'bg-label-secondary';
+                        $statusText = 'Inactive';
+                        break;
+                    default:
+                        $statusClass = 'bg-label-secondary';
+                        $statusText = ucfirst($item->status);
+                }
+
+                return '<span class="badge ' . $statusClass . '">' . $statusText . '</span>';
+            })
+            ->addColumn('nama_alat', function ($item) {
+                return $item->inventaris->nama_alat;
+            })
+            ->addColumn('jenis_alat', function ($item) {
+                return $item->inventaris->jenis_alat;
+            })
+            ->addColumn('action', function ($item) {
+                $encryptedId = encryptId($item->id);
+                $encryptedLabId = encryptId($item->lab_id);
+                
+                return '
+                    <div class="d-flex align-items-center">
+                        <a href="' . route('labs.inventaris.edit', [$encryptedLabId, $encryptedId]) . '" class="btn btn-sm btn-icon btn-outline-primary me-1" title="Edit">
+                            <i class="bx bx-edit"></i>
+                        </a>
+                        <a href="javascript:void(0)" class="btn btn-sm btn-icon btn-outline-danger" title="Delete" onclick="confirmDelete(\'' . route('labs.inventaris.destroy', [$encryptedLabId, $encryptedId]) . '\')">
+                            <i class="bx bx-trash"></i>
+                        </a>
+                    </div>';
+            })
+            ->rawColumns(['kode_inventaris', 'status', 'action'])
+            ->make(true);
+    }
+
     public function create($labId)
     {
-        $lab = Lab::findOrFail($labId);
-        $inventarisOptions = Inventaris::whereDoesntHave('labInventaris', function($query) use ($labId) {
-                $query->where('lab_id', $labId)
-                      ->where('status', 'active');
+        $lab = Lab::findOrFail(decryptId($labId));
+        $inventarisList = Inventaris::whereDoesntHave('labInventaris', function($query) use ($lab) {
+                $query->where('lab_id', $lab->lab_id);
             })
             ->get();
-        
-        return view('pages.admin.labs.inventaris.create', compact('lab', 'inventarisOptions'));
+
+        return view('pages.admin.labs.inventaris.create', compact('lab', 'inventarisList'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request, $labId)
     {
         $request->validate([
             'inventaris_id' => 'required|exists:inventaris,inventaris_id',
             'no_series' => 'nullable|string|max:255',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'nullable|string|max:1000',
+            'tanggal_penempatan' => 'nullable|date',
+            'status' => 'nullable|in:active,moved,inactive',
         ]);
 
-        $lab = Lab::findOrFail($labId);
+        $lab = Lab::findOrFail(decryptId($labId));
         $inventaris = Inventaris::findOrFail($request->inventaris_id);
 
         DB::beginTransaction();
         try {
-            // Check if this inventory is already assigned to this lab
-            $existingAssignment = LabInventaris::where('inventaris_id', $inventaris->inventaris_id)
-                                                ->where('lab_id', $lab->lab_id)
-                                                ->where('status', 'active')
-                                                ->first();
-
-            if ($existingAssignment) {
-                return redirect()->back()
-                    ->with('error', 'Inventaris ini sudah aktif di lab ini.')
-                    ->withInput();
-            }
-
             $kodeInventaris = LabInventaris::generateKodeInventaris($lab->lab_id, $inventaris->inventaris_id);
-            
+
             $labInventaris = LabInventaris::create([
                 'inventaris_id' => $inventaris->inventaris_id,
                 'lab_id' => $lab->lab_id,
                 'kode_inventaris' => $kodeInventaris,
                 'no_series' => $request->no_series,
+                'tanggal_penempatan' => $request->tanggal_penempatan ?? now(),
                 'keterangan' => $request->keterangan,
-                'tanggal_penempatan' => now(),
-                'status' => 'active',
+                'status' => $request->status ?? 'active',
             ]);
 
             DB::commit();
 
-            return redirect()->route('labs.inventaris.index', $lab->lab_id)
+            return redirect()->route('labs.inventaris.index', encryptId($lab->lab_id))
                 ->with('success', 'Inventaris berhasil ditambahkan ke lab.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()
-                ->with('error', 'Gagal menambahkan inventaris: ' . $e->getMessage())
+                ->with('error', 'Gagal menambahkan inventaris ke lab: ' . $e->getMessage())
                 ->withInput();
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($labId, $id)
+    public function edit($labId, $id)
     {
-        $labInventaris = LabInventaris::findOrFail($id);
-        
-        if ($labInventaris->lab_id != $labId) {
-            return redirect()->back()->with('error', 'Data tidak ditemukan.');
-        }
+        $lab = Lab::findOrFail(decryptId($labId));
+        $labInventaris = LabInventaris::findOrFail(decryptId($id));
+        $inventarisList = Inventaris::all();
+
+        return view('pages.admin.labs.inventaris.edit', compact('lab', 'labInventaris', 'inventarisList'));
+    }
+
+    public function update(Request $request, $labId, $id)
+    {
+        $request->validate([
+            'inventaris_id' => 'required|exists:inventaris,inventaris_id',
+            'no_series' => 'nullable|string|max:255',
+            'keterangan' => 'nullable|string|max:1000',
+            'tanggal_penempatan' => 'nullable|date',
+            'tanggal_penghapusan' => 'nullable|date',
+            'status' => 'nullable|in:active,moved,inactive',
+        ]);
+
+        $labInventaris = LabInventaris::findOrFail(decryptId($id));
 
         DB::beginTransaction();
         try {
-            // Update status to 'inactive' instead of deleting to keep history
             $labInventaris->update([
-                'status' => 'inactive',
-                'tanggal_penghapusan' => now()
+                'inventaris_id' => $request->inventaris_id,
+                'no_series' => $request->no_series,
+                'tanggal_penempatan' => $request->tanggal_penempatan,
+                'tanggal_penghapusan' => $request->tanggal_penghapusan,
+                'keterangan' => $request->keterangan,
+                'status' => $request->status,
             ]);
 
             DB::commit();
 
-            return redirect()->route('labs.inventaris.index', $labId)
-                ->with('success', 'Inventaris berhasil dihapus dari lab (riwayat tetap disimpan).');
+            return redirect()->route('labs.inventaris.index', encryptId($labInventaris->lab_id))
+                ->with('success', 'Data inventaris lab berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Gagal menghapus inventaris: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Gagal memperbarui data inventaris lab: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    public function destroy($labId, $id)
+    {
+        $labInventaris = LabInventaris::findOrFail(decryptId($id));
+
+        try {
+            $labInventaris->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Inventaris berhasil dihapus dari lab.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus inventaris: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

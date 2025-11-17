@@ -151,4 +151,9 @@ class User extends Authenticatable implements HasMedia
             ->whereNull('read_at')
             ->orderBy('created_at', 'desc');
     }
+
+    public function labTeam()
+    {
+        return $this->belongsToMany(Lab::class,'lab_teams','user_id','lab_id');
+    }
 }

@@ -10,22 +10,21 @@
 - [Authentication & Authorization](#authentication--authorization)
 - [Database Operations](#database-operations)
 - [Eloquent Query Optimization](#eloquent-query-optimization)
-- [Helper Functions for Data Preparation](#helper-functions-for-data-preparation)
+- [Media Handling with Spatie Laravel Media Library](#media-handling-with-spatie-laravel-media-library)
 - [Asset Management (Local Libraries and Fonts)](#asset-management-local-libraries-and-fonts)
+- [PDF Generation with Laravel DomPDF](#pdf-generation-with-laravel-dompdf)
 - [Activity Logging with Spatie Laravel Activity Log](#activity-logging-with-spatie-laravel-activity-log)
 - [Validation](#validation)
 - [Export/Import](#exportimport)
 - [Notifications](#notifications)
-- [Roles & Permissions with Spatie Laravel Permission](#roles--permissions-with-spatie-laravel-permission)
 - [Laravel Impersonate](#laravel-impersonate)
-- [Database Operations](#database-operations)
-- [Media Handling with Spatie Laravel Media Library](#media-handling-with-spatie-laravel-media-library)
-- [Eloquent Query Optimization](#eloquent-query-optimization)
 - [Helper Functions](#helper-functions)
 - [TinyMCE Editor](#tinymce-editor)
 - [SweetAlert](#sweetalert)
 - [Custom Error Pages](#custom-error-pages)
+- [Helper Functions for Data Preparation](#helper-functions-for-data-preparation)
 - [Base System Tables](#base-system-tables)
+- [Security](#security)
 
 This repository serves as a comprehensive Laravel base template that implements essential features for efficient web application development. It provides a solid foundation with authentication, authorization, CRUD operations, and various utility features that can be reused across multiple projects. Bismillah
 
@@ -45,10 +44,11 @@ This template includes preconfigured implementations for:
 - **Media Management** with Spatie Media Library
 - **Activity Logging** with spatie/activity-log
 - **Notifications** with Database Channel
-- **Asset Management** with local libraries and fonts
+- **Performance Optimization** with local libraries and caching
 - **Custom Error Pages** for better UX
 - **Soft Delete** for data integrity
 - **Debugging Tools** with Laravel Debugbar
+- **Security** with environment files and encryption
 
 ## 📁 Project Structure
 
@@ -137,6 +137,32 @@ Follow these steps to create new functionality:
 - Cache permissions for performance using `php artisan permission:cache-reset`
 - Use `auth()->user()->getRoleNames()->first()` to get roles from cache efficiently
 - For deletion, use soft deletes instead of permanent deletion (use `forceDelete()` for permanent deletion)
+
+**Example implementation in User model (found in `app/Models/User.php`):**
+```php
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRoles;
+}
+```
+
+**Create permissions and assign to roles in seeders (found in `database/seeders/PermissionSeeder.php` or `database/seeders/RolePermissionSeeder.php`):**
+```php
+// Create permissions
+Permission::create(['name' => 'manage-users']);
+Permission::create(['name' => 'view-users']);
+
+// Create role and assign permissions
+$role = Role::create(['name' => 'admin']);
+$role->givePermissionTo(['manage-users', 'view-users']);
+```
+
+**Cache permissions for performance:**
+```bash
+php artisan permission:cache-reset
+```
 
 **Example implementation:**
 ```php
@@ -290,6 +316,16 @@ $users = User::with(['profile:id,user_id,name'])->select('id', 'name', 'email')-
 - TinyMCE Editor: `public/assets-admin/js/tinymce/`
 - Images: `public/images/` and respective asset folders
 
+### PDF Generation with Laravel DomPDF
+- Use `barryvdh/laravel-dompdf` for generating PDF reports
+- Include user summary, detailed user reports, and role-specific reports
+- Available in user management section with dropdown option
+
+**Available report types:**
+- Summary Report: Overall user statistics
+- Detailed Report: Complete user details
+- Role-specific Report: Users assigned to specific roles
+
 ### Activity Logging with Spatie Laravel Activity Log
 - Use `spatie/laravel-activitylog` traits in models for automatic logging
 - Customize log options in model's `getActivitylogOptions()` method
@@ -345,17 +381,7 @@ activity()
 - Include filtering capabilities in export functionality
 - Import/Export files are located in `storage/app/exports` and `storage/app/imports` directories
 
-### Asset Management (Local Libraries and Fonts)
-- All external libraries (CDNs) have been downloaded and stored locally
-- Located in `public/assets-admin/` and `public/assets-guest/` directories
-- CSS, JS, fonts, and other assets are served locally for better performance and offline support
-- Third-party libraries are stored in appropriate asset directories instead of using CDNs
-
-**Asset locations:**
-- Admin assets: `public/assets-admin/`
-- Guest assets: `public/assets-guest/`
-- TinyMCE Editor: `public/assets-admin/js/tinymce/`
-- Images: `public/images/` and respective asset folders
+### Activity Logging with Spatie Laravel Activity Log
 - Use `spatie/laravel-activitylog` traits in models for automatic logging
 - Customize log options in model's `getActivitylogOptions()` method
 
@@ -525,11 +551,6 @@ if (app('impersonate')->isImpersonating()) {
 
 ## 📚 Additional Features
 
-### Helper Functions
-- `encryptId($id)` and `decryptId($hash)` for ID encryption/decryption
-- `getVerifiedMediaUrl($model, $collection, $conversion)` for safe media URLs
-- `formatTanggalIndo($tanggal)` for Indonesian date formatting (shows time if available, date only if no time)
-
 ### TinyMCE Editor
 Rich text editor for content management fields.
 
@@ -542,6 +563,23 @@ Professional error pages published to `resources/views/errors/`.
 ### Base System Tables
 - `sys_` prefixed tables are reserved for system functionality
 - Do not modify these tables without proper discussion
+
+### Security
+- Never commit `.env` files to Git - Always add `.env` to `.gitignore` to protect sensitive information
+- Set `APP_DEBUG=false` in production to prevent exposing sensitive configuration details
+- Always regenerate application key using `php artisan key:generate` during deployment
+
+**Environment security best practices:**
+```bash
+# Ensure .env is in .gitignore
+echo ".env" >> .gitignore
+
+# Set APP_DEBUG to false in production
+APP_DEBUG=false
+
+# Always regenerate key during deployment
+php artisan key:generate
+```
 
 ### Environment Configuration
 Ensure `APP_URL` is correctly set for media links to work properly.

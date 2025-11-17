@@ -277,7 +277,7 @@
                                                 <td>{{ $teamMember->user->name }}</td>
                                                 <td>{{ $teamMember->user->email }}</td>
                                                 <td>{{ $teamMember->jabatan ?: '-' }}</td>
-                                                <td>{{ \App\Helpers\Helper::formatTanggalIndo($teamMember->tanggal_mulai) }}</td>
+                                                <td>{{ formatTanggalIndo($teamMember->tanggal_mulai) }}</td>
                                                 <td>
                                                     <span class="badge bg-label-success">
                                                         <i class='bx bx-check-circle me-1'></i>Aktif

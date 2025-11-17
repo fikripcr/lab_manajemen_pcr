@@ -248,7 +248,9 @@ class PengumumanController extends Controller
         return DataTables::of($data)
             ->addIndexColumn()
             ->editColumn('judul', function ($item) {
-                return '<strong>' . e($item->judul) . '</strong>';
+                $encryptedId = encryptId($item->pengumuman_id);
+                $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
+                return '<a href="' . route($routePrefix . '.show', $encryptedId) . '">' . e($item->judul) . '</a>';
             })
             ->addColumn('cover', function ($item) {
                 $coverMedia = $item->getFirstMedia('info_cover');
@@ -278,19 +280,16 @@ class PengumumanController extends Controller
                 return formatTanggalIndo($item->created_at);
             })
             ->addColumn('action', function ($item) {
-                $encryptedId = encryptId($item->pengumuman_id);
                 // Use the appropriate route based on jenis
+                $encryptedId = encryptId($item->pengumuman_id);
                 $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
 
                 return '
-                    <div class="d-flex">
-                        <a href="' . route($routePrefix . '.show', $encryptedId) . '" class="btn btn-sm btn-info me-1" title="View">
-                            <i class="bx bx-show"></i>
-                        </a>
-                        <a href="' . route($routePrefix . '.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
+                    <div class="d-flex align-items-center">
+                        <a href="' . route($routePrefix . '.edit', $encryptedId) . '" class="text-primary me-2" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <a href="javascript:void(0)" class="btn btn-sm btn-danger" title="Delete" onclick="confirmDelete(\'' . route($routePrefix . '.destroy', $encryptedId) . '\')">
+                        <a href="javascript:void(0)" class="text-danger" title="Delete" onclick="confirmDelete(\'' . route($routePrefix . '.destroy', $encryptedId) . '\')">
                             <i class="bx bx-trash"></i>
                         </a>
                     </div>';

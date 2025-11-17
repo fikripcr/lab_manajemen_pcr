@@ -10,9 +10,25 @@
             <a href="{{ route('users.import.show') }}" class="btn btn-info me-2">
                 <i class="bx bx-import"></i> Import Users
             </a>
-            <button type="button" class="btn btn-success" id="exportBtn">
-                <i class="bx bx-export"></i> Export Excel
-            </button>
+
+            <!-- Dropdown for Export -->
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class='bx bx-export'></i> Export
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{{ route('users.export') }}">
+                            <i class='bx bx-file me-1'></i> Export to Excel
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('users.export.pdf', ['type' => 'summary']) }}">
+                            <i class='bx bx-file me-1'></i> Export to PDF
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 

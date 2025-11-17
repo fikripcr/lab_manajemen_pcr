@@ -27,12 +27,23 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Permissions</label>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="form-label">Permissions</label>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="selectAllBtn">
+                                        <i class="bx bx-check-square"></i> Select All
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary ms-1" id="deselectAllBtn">
+                                        <i class="bx bx-square"></i> Deselect All
+                                    </button>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 @forelse($permissions as $permission)
                                     <div class="col-md-6 col-lg-4 mb-2">
                                         <div class="form-check">
-                                            <input class="form-check-input @error('permissions') is-invalid @enderror"
+                                            <input class="form-check-input permission-checkbox @error('permissions') is-invalid @enderror"
                                                    type="checkbox"
                                                    value="{{ $permission->name }}"
                                                    id="perm_{{ $permission->id }}"
@@ -52,6 +63,24 @@
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        @push('scripts')
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const selectAllBtn = document.getElementById('selectAllBtn');
+                                const deselectAllBtn = document.getElementById('deselectAllBtn');
+                                const checkboxes = document.querySelectorAll('.permission-checkbox');
+
+                                selectAllBtn?.addEventListener('click', function() {
+                                    checkboxes.forEach(checkbox => checkbox.checked = true);
+                                });
+
+                                deselectAllBtn?.addEventListener('click', function() {
+                                    checkboxes.forEach(checkbox => checkbox.checked = false);
+                                });
+                            });
+                        </script>
+                        @endpush
 
                         <div class="d-flex justify-content-start gap-2">
                             <button type="submit" class="btn btn-primary">

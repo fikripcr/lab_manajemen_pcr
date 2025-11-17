@@ -46,7 +46,7 @@
                                         <td>{{ $team->user->name }}</td>
                                         <td>{{ $team->user->email }}</td>
                                         <td>{{ $team->jabatan ?? '-' }}</td>
-                                        <td>{{ \App\Helpers\Helper::formatTanggalIndo($team->tanggal_mulai) }}</td>
+                                        <td>{{ formatTanggalIndo($team->tanggal_mulai) }}</td>
                                         <td>
                                             <span class="badge {{ $team->is_active ? 'bg-label-success' : 'bg-label-secondary' }}">
                                                 {{ $team->is_active ? 'Aktif' : 'Tidak Aktif' }}
@@ -56,7 +56,7 @@
                                             <form action="{{ route('labs.teams.destroy', [$lab->lab_id, $team->id]) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
                                                         onclick="return confirm('Apakah Anda yakin ingin menghapus anggota ini dari tim lab?')">
                                                     <i class='bx bx-trash'></i>
                                                 </button>

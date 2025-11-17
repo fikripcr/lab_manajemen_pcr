@@ -20,7 +20,7 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
     public function __construct($filters = [], $columns = [])
     {
         $this->filters = $filters;
-        $this->columns = ! empty($columns) ? $columns : ['name', 'email', 'role', 'npm', 'nip'];
+        $this->columns = ! empty($columns) ? $columns : ['name', 'email', 'role', 'nim', 'nip'];
     }
 
     /**
@@ -32,13 +32,13 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'users.name',
             'users.email',
             'users.google_id',
-            'users.npm',
+            'users.nim',
             'users.nip',
             'users.avatar',
             'users.email_verified_at',
         ])
-            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id');
+            ->leftJoin('sys_model_has_roles', 'users.id', '=', 'sys_model_has_roles.model_id')
+            ->leftJoin('sys_roles', 'sys_model_has_roles.role_id', '=', 'sys_roles.id');
 
         // Apply search filter if provided
         if (! empty($this->filters['search'])) {
@@ -46,14 +46,14 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             $query->where(function ($q) use ($search) {
                 $q->where('users.name', 'LIKE', "%{$search}%")
                     ->orWhere('users.email', 'LIKE', "%{$search}%")
-                    ->orWhere('roles.name', 'LIKE', "%{$search}%")
-                    ->orWhere('users.npm', 'LIKE', "%{$search}%")
+                    ->orWhere('sys_roles.name', 'LIKE', "%{$search}%")
+                    ->orWhere('users.nim', 'LIKE', "%{$search}%")
                     ->orWhere('users.nip', 'LIKE', "%{$search}%");
             });
         }
 
         // Add the role name to the selection
-        $query->addSelect(DB::raw('roles.name as role_name'));
+        $query->addSelect(DB::raw('sys_roles.name as role_name'));
 
         return $query;
     }
@@ -68,7 +68,7 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'name'            => 'Name',
             'email'           => 'Email',
             'google_id'       => 'Google ID',
-            'npm'             => 'NPM',
+            'nim'             => 'NIM',
             'nip'             => 'NIP',
             'avatar'          => 'Avatar',
             'email_verified_at' => 'Email Verified At',
@@ -122,7 +122,7 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'B' => 20, // Name
             'C' => 30, // Email
             'D' => 20, // Google ID
-            'E' => 15, // NPM
+            'E' => 15, // NIM
             'F' => 15, // NIP
             'G' => 40, // Avatar
             'H' => 20, // Email Verified At
