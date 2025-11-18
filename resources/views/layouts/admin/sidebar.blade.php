@@ -157,7 +157,7 @@
         <li class="menu-item {{ request()->routeIs('admin.documentation') ? 'active' : '' }}">
             <a href="{{ route('admin.documentation') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-code-alt"></i>
-                <div data-i18n="Documentation">System Guide</div>
+                <div data-i18n="Documentation">Development Guide</div>
             </a>
         </li>
     </ul>
