@@ -2,19 +2,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Image\Enums\Fit;
+use App\Models\Notification;
 use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\Permission\Traits\HasRoles;
 use Spatie\Searchable\Searchable;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Searchable\SearchResult;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements HasMedia, Searchable
 {
@@ -147,7 +148,7 @@ class User extends Authenticatable implements HasMedia, Searchable
      */
     public function notifications()
     {
-        return $this->morphMany(\App\Models\Notification::class, 'notifiable')
+        return $this->morphMany(Notification::class, 'notifiable')
             ->orderBy('created_at', 'desc');
     }
 
@@ -156,7 +157,7 @@ class User extends Authenticatable implements HasMedia, Searchable
      */
     public function unreadNotifications()
     {
-        return $this->morphMany(\App\Models\Notification::class, 'notifiable')
+        return $this->morphMany(Notification::class, 'notifiable')
             ->whereNull('read_at')
             ->orderBy('created_at', 'desc');
     }
