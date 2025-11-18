@@ -107,6 +107,18 @@
                         </div>
 
                         <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="expired_at">Expiration Date (Optional)</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control @error('expired_at') is-invalid @enderror"
+                                       id="expired_at" name="expired_at" value="{{ old('expired_at', $user->expired_at ? $user->expired_at->format('Y-m-d') : '') }}">
+                                <div class="form-text">Leave empty for no expiration.</div>
+                                @error('expired_at')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="avatar">Avatar</label>
                             <div class="col-sm-10">
                                 @if($user->avatar_url)

@@ -160,11 +160,20 @@ Follow these steps to create new functionality:
 ### Authentication & Authorization
 - Use `auth` middleware for protected routes
 - Use `can:` middleware for permission checks
+- Use `check.expired` middleware to verify account expiration status
 - Use `$user->can('permission')` in controllers/views
 - Permissions and roles managed with Spatie Laravel Permission package
 - Cache permissions for performance using `php artisan permission:cache-reset`
 - Use `auth()->user()->getRoleNames()->first()` to get roles from cache efficiently
 - For deletion, use soft deletes instead of permanent deletion (use `forceDelete()` for permanent deletion)
+
+### Account Expiration Middleware
+- **CheckAccountExpiration Middleware** - Automatically checks if user accounts have expired on every authenticated request
+- When applied together with `auth` middleware as `['auth', 'check.expired']`, it verifies that authenticated users haven't exceeded their account validity period
+- Automatically logs out users with expired accounts
+- Shows appropriate error messages when account is expired
+- Supports both web and API requests (returns JSON error for API requests)
+- Implemented as `check.expired` middleware alias in bootstrap/app.php
 
 **Example implementation in User model (found in `app/Models/User.php`):**
 ```php
@@ -576,6 +585,7 @@ if (app('impersonate')->isImpersonating()) {
 - Authorization checks ensure proper access control
 - Google OAuth integration for secure authentication
 - Soft deletes maintain data integrity
+- **Account Expiration Middleware** - Automatically checks if user accounts have expired on every authenticated request with the `check.expired` middleware
 
 ## 📚 Additional Features
 

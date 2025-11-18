@@ -10,7 +10,7 @@ use App\Http\Controllers\Sys\PermissionController;
 use App\Http\Controllers\Sys\RoleController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.expired'])->group(function () {
 // ==========================
 // 🔹 System Management Routes (require authentication)
 // ==========================

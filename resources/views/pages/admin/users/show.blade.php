@@ -83,6 +83,11 @@
                                 <input class="form-control" type="text" id="lastLogin"
                                        value="{{ $user->last_login_at ? $user->last_login_at->format('M d, Y H:i') : 'Never' }}" readonly>
                             </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label" for="expiredAt">Account Expiration</label>
+                                <input class="form-control" type="text" id="expiredAt"
+                                       value="{{ $user->expired_at ? $user->expired_at->format('M d, Y') : 'No Expiration' }}" readonly>
+                            </div>
                         </div>
 
                         <div class="mt-2">

@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'impersonate' => \Lab404\Impersonate\Middleware\ImpersonateMiddleware::class,
+            'check.expired' => \App\Http\Middleware\CheckAccountExpiration::class,
             // 'validatePasswordResetToken' => \App\Http\Middleware\ValidatePasswordResetToken::class,
         ]);
     })

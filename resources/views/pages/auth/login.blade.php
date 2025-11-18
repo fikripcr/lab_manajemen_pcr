@@ -22,11 +22,6 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Email or Username</label>
                             <input type="text" class="form-control" value="user1@contoh-lab.ac.id" id="email" name="email" placeholder="Enter your email or username" value="{{ old('email') }}" />
-                            @error('email')
-                                <div class="text-danger mt-1">
-                                    {{ $message }}
-                                </div>
-                            @enderror
                         </div>
                         <div class="mb-3 form-password-toggle">
                             <div class="d-flex justify-content-between">
@@ -41,11 +36,6 @@
                                 <input type="password" value="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                             </div>
-                            @error('password')
-                                <div class="text-danger mt-1">
-                                    {{ $message }}
-                                </div>
-                            @enderror
                         </div>
                         <div class="mb-3">
                             <div class="form-check">

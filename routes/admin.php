@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 // ==========================
 // 🔹 Admin Routes (Auth Required)
 // ==========================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.expired'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -105,4 +105,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/api/data', 'paginate')->name('data');
     });
 
+    Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('users.login.as');
+    Route::get('/switch-back', [UserController::class, 'switchBack'])->name('users.switch-back');
 });

@@ -34,6 +34,7 @@ class User extends Authenticatable implements HasMedia, Searchable
         'nip',
         'avatar',
         'email_verified_at',
+        'expired_at',
     ];
 
     /**
@@ -53,9 +54,15 @@ class User extends Authenticatable implements HasMedia, Searchable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'expired_at'        => 'datetime',
         'password'          => 'hashed',
         'id'                => 'string', // Ensure id is treated as string for encryption purposes
     ];
+
+    public function isExpired(): bool
+    {
+        return $this->expired_at && $this->expired_at->isPast();
+    }
 
     protected static $logName      = 'user';
     protected static $logFillable  = true;
@@ -156,7 +163,7 @@ class User extends Authenticatable implements HasMedia, Searchable
 
     public function labTeam()
     {
-        return $this->belongsToMany(Lab::class,'lab_teams','user_id','lab_id');
+        return $this->belongsToMany(Lab::class, 'lab_teams', 'user_id', 'lab_id');
     }
 
     /**

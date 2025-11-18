@@ -57,6 +57,7 @@
                             <th>Email</th>
                             <th>Role</th>
                             <th>ID</th>
+                            <th>Expiration</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -109,6 +110,10 @@
                             render: function(data, type, row) {
                                 return row.nim || row.nip || '-';
                             }
+                        },
+                        {
+                            data: 'expired_at',
+                            name: 'expired_at'
                         },
                         {
                             data: 'action',

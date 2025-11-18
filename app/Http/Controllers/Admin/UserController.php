@@ -30,7 +30,7 @@ class UserController extends Controller
      */
     public function paginate(Request $request)
     {
-        $users = User::select('id', 'name', 'email', 'created_at')
+        $users = User::select('id', 'name', 'email', 'created_at', 'expired_at')
             ->with(['roles', 'media'])->whereNull('deleted_at');
 
         return DataTables::of($users)
@@ -55,6 +55,17 @@ class UserController extends Controller
             })
             ->editColumn('created_at', function ($user) {
                 return formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
+            })
+            ->editColumn('expired_at', function ($user) {
+                if ($user->expired_at) {
+                    $isExpired = $user->isExpired();
+                    $formattedDate = formatTanggalIndo($user->expired_at);
+                    $badgeClass = $isExpired ? 'bg-label-danger' : 'bg-label-warning';
+                    $statusText = $isExpired ? 'Expired' : 'Active';
+
+                    return '<span class="badge ' . $badgeClass . '">' . $formattedDate . ' (' . $statusText . ')</span>';
+                }
+                return '<span class="badge bg-label-success">No Expiration</span>';
             })
             ->editColumn('roles', function ($user) {
                 return $user->getRoleNames()->first() ?? 'No Role';
@@ -90,7 +101,7 @@ class UserController extends Controller
                         </div>
                     </div>';
             })
-            ->rawColumns(['name', 'action'])
+            ->rawColumns(['name', 'expired_at', 'action'])
             ->make(true);
     }
 
@@ -111,11 +122,12 @@ class UserController extends Controller
         $validated = $request->validated();
 
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'nim'      => $validated['nim'] ?? null,
-            'nip'      => $validated['nip'] ?? null,
+            'name'       => $validated['name'],
+            'email'      => $validated['email'],
+            'password'   => Hash::make($validated['password']),
+            'nim'        => $validated['nim'] ?? null,
+            'nip'        => $validated['nip'] ?? null,
+            'expired_at' => $validated['expired_at'] ?? null,
         ]);
 
         // Handle avatar upload using Spatie Media Library
@@ -182,10 +194,11 @@ class UserController extends Controller
         }
 
         $updatedData = [
-            'name'  => $validated['name'],
-            'email' => $validated['email'],
-            'nim'   => $validated['nim'] ?? null,
-            'nip'   => $validated['nip'] ?? null,
+            'name'       => $validated['name'],
+            'email'      => $validated['email'],
+            'nim'        => $validated['nim'] ?? null,
+            'nip'        => $validated['nip'] ?? null,
+            'expired_at' => $validated['expired_at'] ?? null,
         ];
 
         if (isset($validated['password'])) {

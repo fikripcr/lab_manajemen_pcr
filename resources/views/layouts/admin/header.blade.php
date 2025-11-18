@@ -87,7 +87,7 @@
                     </li>
                     @if(app('impersonate')->isImpersonating())
                         <li>
-                            <a class="dropdown-item" href="{{ route('admin.switch-back') }}">
+                            <a class="dropdown-item" href="{{ route('users.switch-back') }}">
                                 <i class="bx bx-log-out me-2"></i>
                                 <span class="align-middle">Switch Back to Original Account</span>
                             </a>

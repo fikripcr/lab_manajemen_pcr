@@ -33,6 +33,6 @@ class DocumentationController extends Controller
 
         $lastUpdated = file_exists($readmePath) ? filemtime($readmePath) : null;
 
-        return view('pages.admin.documentation', compact('htmlContent', 'lastUpdated'));
+        return view('pages.sys.documentation.index', compact('htmlContent', 'lastUpdated'));
     }
 }

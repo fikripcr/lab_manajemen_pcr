@@ -54,6 +54,7 @@ class UserRequest extends FormRequest
                 'confirmed'
             ],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // 2MB max
+            'expired_at' => ['nullable', 'date'],
         ];
     }
 }
