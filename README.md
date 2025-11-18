@@ -175,6 +175,22 @@ Follow these steps to create new functionality:
 - Supports both web and API requests (returns JSON error for API requests)
 - Implemented as `check.expired` middleware alias in bootstrap/app.php
 
+### Authentication Event Logging
+- **Login Logging** - Records all successful user login events with user identity
+- **Logout Logging** - Records all user logout events
+- **Impersonation Logging** - Records when administrators impersonate other users
+- **Switch Back Logging** - Records when impersonation sessions end and users return to their original accounts
+- All authentication events are stored in the activity log system for audit trails
+
+### Application Configuration Logging
+- **Configuration Update Logging** - Records when application configuration is updated (app name, environment, debug mode, URL)
+- **Cache Clear Logging** - Records when application cache is cleared (config, cache, views, and routes)
+- **Optimization Logging** - Records when application optimization occurs (caching config, routes, and views)
+
+### Notification Event Logging
+- **Notification Sending Logging** - Records when test notifications are sent to users
+- **Notification Marking Logging** - Records when users mark notifications as read (individually, all, or in bulk)
+
 **Example implementation in User model (found in `app/Models/User.php`):**
 ```php
 use Spatie\Permission\Traits\HasRoles;
@@ -586,6 +602,7 @@ if (app('impersonate')->isImpersonating()) {
 - Google OAuth integration for secure authentication
 - Soft deletes maintain data integrity
 - **Account Expiration Middleware** - Automatically checks if user accounts have expired on every authenticated request with the `check.expired` middleware
+- **Activity Logging** - Comprehensive logging for user authentication events (login, logout, impersonation)
 
 ## 📚 Additional Features
 

@@ -209,15 +209,10 @@
                     table.ajax.reload();
                 });
 
-                // Handle page length change
-                $(document).on('change', '#pageLength', function() {
-                    var pageLength = parseInt($(this).val());
-                    table.page.len(pageLength).draw();
-                });
-
-                // Handle search input from the filter component
-                $(document).on('keyup', '#globalSearch-inventaris-table', function() {
-                    table.search(this.value).draw();
+                // Setup common DataTable behaviors
+                setupCommonDataTableBehaviors(table, {
+                    searchInputSelector: '#globalSearch-inventaris-table',
+                    pageLengthSelector: '#pageLength'
                 });
 
                 // Handle export button click

@@ -119,15 +119,10 @@
                     dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs
                 });
 
-                // Handle page length change
-                $(document).on('change', '#{{ $type }}PageLength', function() {
-                    var pageLength = parseInt($(this).val());
-                    table.page.len(pageLength).draw();
-                });
-
-                // Handle search input from the filter component
-                $(document).on('keyup', '#globalSearch-{{ $type }}-table', function() {
-                    table.search(this.value).draw();
+                // Setup common DataTable behaviors
+                setupCommonDataTableBehaviors(table, {
+                    searchInputSelector: '#globalSearch-{{ $type }}-table',
+                    pageLengthSelector: '#{{ $type }}PageLength'
                 });
             }
         });

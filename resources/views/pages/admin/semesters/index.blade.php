@@ -103,15 +103,10 @@
                     dom: 'rtip' // Only show table, info, and paging
                 });
 
-                // Handle page length change
-                $(document).on('change', '#pageLength', function() {
-                    var pageLength = parseInt($(this).val());
-                    table.page.len(pageLength).draw();
-                });
-
-                // Handle search input from the filter component
-                $(document).on('keyup', '#globalSearch-semesters-table', function() {
-                    table.search(this.value).draw();
+                // Setup common DataTable behaviors
+                setupCommonDataTableBehaviors(table, {
+                    searchInputSelector: '#globalSearch-semesters-table',
+                    pageLengthSelector: '#pageLength'
                 });
             }
         });
