@@ -66,7 +66,12 @@
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0"><i class='bx bx-images me-2 text-primary'></i>Gambar Laboratorium</h5>
-                        <span class="badge bg-primary bg-opacity-10 text-white">{{ $lab->getMedia('lab_images')->count() }} Gambar</span>
+                        <div>
+                            <span class="badge bg-primary bg-opacity-10 text-white">{{ $lab->getMedia('lab_images')->count() }} Gambar</span>
+                            <a href="{{ route('labs.edit', $lab->encrypted_lab_id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class='bx bx-plus me-1'></i>Tambah Gambar
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body">
                         @if ($lab->getMedia('lab_images')->count() > 0)
@@ -97,7 +102,7 @@
                                     </div>
                                 </div>
                                 <p class="text-muted mb-0">Belum ada gambar yang diunggah untuk laboratorium ini</p>
-                                <a href="{{ route('labs.edit', $lab) }}" class="btn btn-primary mt-3">
+                                <a href="{{ route('labs.edit', $lab->encrypted_lab_id) }}" class="btn btn-primary mt-3">
                                     <i class='bx bx-upload me-1'></i>Tambahkan Gambar
                                 </a>
                             </div>
@@ -191,7 +196,7 @@
                                     </tbody>
                                 </table>
 
-                                <a href="{{ route('labs.inventaris.index', $lab->lab_id) }}" class="btn btn-outline-primary w-100 mt-2">
+                                <a href="{{ route('labs.inventaris.index', $lab->encrypted_lab_id) }}" class="btn btn-outline-primary w-100 mt-2">
                                     <i class='bx bx-list-ul me-1'></i>Lihat Semua Inventaris ({{ $lab->labInventaris->count() }})
                                 </a>
                             </div>
@@ -199,7 +204,7 @@
                             <div class="text-center py-3">
                                 <i class='bx bx-package bx-lg text-muted'></i>
                                 <p class="text-muted mb-0 mt-2">Tidak ada inventaris dalam laboratorium ini</p>
-                                <a href="{{ route('labs.inventaris.create', $lab->lab_id) }}" class="btn btn-primary mt-2">
+                                <a href="{{ route('labs.inventaris.create', $lab->encrypted_lab_id) }}" class="btn btn-primary mt-2">
                                     <i class='bx bx-plus me-1'></i>Tambah Inventaris
                                 </a>
                             </div>
@@ -253,7 +258,7 @@
                         <h5 class="card-title mb-0"><i class='bx bx-group me-2 text-warning'></i>Tim Laboratorium</h5>
                         <div>
                             <span class="badge bg-warning bg-opacity-10 text-white me-2">{{ $lab->labTeams->count() }} Anggota</span>
-                            <a href="{{ route('labs.teams.create', $lab->lab_id) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('labs.teams.create', $lab->encrypted_lab_id) }}" class="btn btn-sm btn-outline-primary">
                                 <i class='bx bx-plus me-1'></i>Tambah Anggota
                             </a>
                         </div>
@@ -288,7 +293,7 @@
                                     </tbody>
                                 </table>
 
-                                <a href="{{ route('labs.teams.index', $lab->lab_id) }}" class="btn btn-outline-primary w-100">
+                                <a href="{{ route('labs.teams.index', $lab->encrypted_lab_id) }}" class="btn btn-outline-primary w-100">
                                     <i class='bx bx-list-ul me-1'></i>Lihat Semua Tim ({{ $lab->labTeams->count() }})
                                 </a>
                             </div>
@@ -296,7 +301,7 @@
                             <div class="text-center py-3">
                                 <i class='bx bx-group bx-lg text-muted'></i>
                                 <p class="text-muted mb-0 mt-2">Tidak ada tim dalam laboratorium ini</p>
-                                <a href="{{ route('labs.teams.create', $lab->lab_id) }}" class="btn btn-primary mt-2">
+                                <a href="{{ route('labs.teams.create', $lab->encrypted_lab_id) }}" class="btn btn-primary mt-2">
                                     <i class='bx bx-plus me-1'></i>Tambah Tim
                                 </a>
                             </div>

@@ -91,11 +91,11 @@
                             </button>
 
                             @if(Auth::id() == decryptId($user->id))
-                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary me-2">
+                                <a href="{{ route('users.edit', $user->encrypted_id) }}" class="btn btn-primary me-2">
                                     <i class='bx bx-edit me-1'></i> Edit Profile
                                 </a>
                             @else
-                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary me-2">
+                                <a href="{{ route('users.edit', $user->encrypted_id) }}" class="btn btn-primary me-2">
                                     <i class='bx bx-edit me-1'></i> Edit User
                                 </a>
                             @endif

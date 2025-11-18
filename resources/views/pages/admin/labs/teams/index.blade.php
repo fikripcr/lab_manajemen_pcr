@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Team Lab: {{ $lab->name }}</h4>
-                    <a href="{{ route('labs.teams.create', $lab->lab_id) }}" class="btn btn-primary">
+                    <a href="{{ route('labs.teams.create', $lab->encrypted_lab_id) }}" class="btn btn-primary">
                         <i class='bx bx-plus'></i> Tambah Anggota
                     </a>
                 </div>
@@ -53,7 +53,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <form action="{{ route('labs.teams.destroy', [$lab->lab_id, $team->id]) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('labs.teams.destroy', [$lab->encrypted_lab_id, $team->encrypted_id]) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-outline-danger"

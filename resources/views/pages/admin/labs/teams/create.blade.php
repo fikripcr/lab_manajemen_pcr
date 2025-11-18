@@ -11,7 +11,7 @@
                     <h4 class="mb-0">Tambah Anggota Tim Lab: {{ $lab->name }}</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('labs.teams.store', $lab->lab_id) }}" method="POST">
+                    <form action="{{ route('labs.teams.store', $lab->encrypted_lab_id) }}" method="POST">
                         @csrf
 
                         <div class="mb-3">
@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('labs.teams.index', $lab->lab_id) }}" class="btn btn-secondary">Kembali</a>
+                            <a href="{{ route('labs.teams.index', $lab->encrypted_lab_id) }}" class="btn btn-secondary">Kembali</a>
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
                     </form>
@@ -69,7 +69,7 @@
                 placeholder: 'Pilih atau ketik untuk mencari user...',
                 allowClear: true,
                 ajax: {
-                    url: '{{ route("labs.teams.get-users", $lab->lab_id) }}',
+                    url: '{{ route("labs.teams.get-users", $lab->encrypted_lab_id) }}',
                     dataType: 'json',
                     delay: 250,
                     data: params => ({

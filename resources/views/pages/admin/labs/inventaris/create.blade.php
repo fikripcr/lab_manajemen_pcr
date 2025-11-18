@@ -13,25 +13,28 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form action="{{ route('labs.inventaris.store', encryptId($lab->lab_id)) }}" method="POST">
+                    <form action="{{ route('labs.inventaris.store', $lab->encrypted_lab_id) }}" method="POST">
                         @csrf
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="inventaris_id" class="form-label">Nama Alat *</label>
-                                    <select 
-                                        class="form-select @error('inventaris_id') is-invalid @enderror" 
-                                        id="inventaris_id" 
-                                        name="inventaris_id" 
+                                    <select
+                                        class="form-select select2 @error('inventaris_id') is-invalid @enderror"
+                                        id="inventaris_id"
+                                        name="inventaris_id"
                                         required
+                                        style="width: 100%;"
                                     >
-                                        <option value="">-- Pilih Inventaris --</option>
-                                        @foreach($inventarisList as $item)
-                                            <option value="{{ $item->inventaris_id }}" {{ old('inventaris_id') == $item->inventaris_id ? 'selected' : '' }}>
-                                                {{ $item->nama_alat }} ({{ $item->jenis_alat }})
-                                            </option>
-                                        @endforeach
+                                        @if(old('inventaris_id'))
+                                            @php
+                                                $selectedInventaris = \App\Models\Inventaris::find(decryptId(old('inventaris_id')));
+                                            @endphp
+                                            @if($selectedInventaris)
+                                                <option value="{{ old('inventaris_id') }}" selected>{{ $selectedInventaris->nama_alat }} ({{ $selectedInventaris->jenis_alat }})</option>
+                                            @endif
+                                        @endif
                                     </select>
                                     @error('inventaris_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -108,7 +111,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('labs.inventaris.index', encryptId($lab->lab_id)) }}" class="btn btn-secondary">
+                            <a href="{{ route('labs.inventaris.index', $lab->encrypted_lab_id) }}" class="btn btn-secondary">
                                 <i class='bx bx-arrow-back'></i> Kembali
                             </a>
                             <button type="submit" class="btn btn-primary">
@@ -121,4 +124,34 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <!-- Select2 CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'Pilih atau ketik untuk mencari inventaris...',
+                allowClear: true,
+                ajax: {
+                    url: '{{ route("labs.inventaris.get-inventaris", $lab->encrypted_lab_id) }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: params => ({
+                            search: params.term
+                        }),
+                    processResults: data => ({
+                            results: (data.results || data).map(item => ({
+                                id: item.id,
+                                text: `${item.text}`
+                            }))
+                        }),
+                    cache: true
+                }
+            });
+        });
+    </script>
+@endpush
 @endsection

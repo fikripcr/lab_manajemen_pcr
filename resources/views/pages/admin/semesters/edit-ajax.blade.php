@@ -2,7 +2,7 @@
     <h4 class="modal-title">Edit Semester</h4>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<form id="editSemesterForm" action="{{ route('semesters.update', encryptId($semester->semester_id)) }}" method="POST">
+<form id="editSemesterForm" action="{{ route('semesters.update', $semester->encrypted_semester_id) }}" method="POST">
     @csrf
     @method('PUT')
     <div class="modal-body">

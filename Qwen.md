@@ -28,6 +28,7 @@ Kode harus ditulis dengan prinsip **Separation of Concerns** yang ketat. Hindari
 - **Fungsi:** Kata kerja + Kata benda. Contoh: `calculateTotalRevenue()`, `uploadProfileImage()`.
 - **Konsistensi:** Gunakan Bahasa Inggris untuk penamaan variabel dan fungsi. Gunakan Bahasa Indonesia hanya untuk komentar penjelasan jika diminta pengguna.
 
-### Template UI
+### Template 
 - Cek ke public/assets-admin/templates jika kamu berurusn dengan UI yang ada pada file views/pages/admin
 - Cek ke public/assets-guest/templates jika kamu berurusan dengan UI yang ada pada file views/pages/guest
+- Cek readme.md untuk melihat standarisasi project ini berjalan

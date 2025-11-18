@@ -137,11 +137,27 @@
 
 
 
-        <!-- Documentation -->
+        <!-- App Configuration -->
+        <li class="menu-item {{ request()->routeIs('app-config') ? 'active' : '' }}">
+            <a href="{{ route('app-config') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-cog"></i>
+                <div data-i18n="App Config">App Configuration</div>
+            </a>
+        </li>
+
+        <!-- Backup Management -->
+        <li class="menu-item {{ request()->routeIs('admin.backup.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.backup.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-archive"></i>
+                <div data-i18n="Backup">Backup Management</div>
+            </a>
+        </li>
+
+        <!-- System Guide -->
         <li class="menu-item {{ request()->routeIs('admin.documentation') ? 'active' : '' }}">
             <a href="{{ route('admin.documentation') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-code-alt"></i>
-                <div data-i18n="Documentation">Documentation</div>
+                <div data-i18n="Documentation">System Guide</div>
             </a>
         </li>
     </ul>

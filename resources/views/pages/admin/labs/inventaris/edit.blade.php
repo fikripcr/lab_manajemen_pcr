@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form action="{{ route('labs.inventaris.update', [encryptId($labInventaris->lab_id), encryptId($labInventaris->id)]) }}" method="POST">
+                    <form action="{{ route('labs.inventaris.update', [$labInventaris->encrypted_lab_id, $labInventaris->encrypted_id]) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -125,7 +125,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('labs.inventaris.index', encryptId($labInventaris->lab_id)) }}" class="btn btn-secondary">
+                            <a href="{{ route('labs.inventaris.index', $labInventaris->encrypted_lab_id) }}" class="btn btn-secondary">
                                 <i class='bx bx-arrow-back'></i> Kembali
                             </a>
                             <button type="submit" class="btn btn-primary">

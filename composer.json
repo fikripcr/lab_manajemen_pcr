@@ -18,6 +18,7 @@
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.17",
         "spatie/laravel-permission": "^6.23",
+        "spatie/laravel-searchable": "^1.13",
         "vinkla/hashids": "^13.0",
         "yajra/laravel-datatables-oracle": "^12.6"
     },

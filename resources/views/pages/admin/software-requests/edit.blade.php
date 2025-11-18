@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form method="POST" action="{{ route('software-requests.update', $softwareRequest->id) }}">
+                    <form method="POST" action="{{ route('software-requests.update', $softwareRequest->encrypted_request_software_id) }}">
                         @csrf
                         @method('PUT')
 
@@ -87,7 +87,7 @@
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="bx bx-save me-1"></i> Update Status
                             </button>
-                            <a href="{{ route('software-requests.show', $softwareRequest->id) }}" class="btn btn-secondary">
+                            <a href="{{ route('software-requests.show', $softwareRequest->encrypted_request_software_id) }}" class="btn btn-secondary">
                                 Cancel
                             </a>
                         </div>

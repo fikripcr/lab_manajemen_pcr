@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form action="{{ route('labs.teams.update', [$teamMember->lab_id, $teamMember->id]) }}" method="POST">
+                    <form action="{{ route('labs.teams.update', [$teamMember->encrypted_lab_id, $teamMember->encrypted_id]) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('labs.teams.index', $teamMember->lab_id) }}" class="btn btn-secondary">Kembali</a>
+                            <a href="{{ route('labs.teams.index', $teamMember->encrypted_lab_id) }}" class="btn btn-secondary">Kembali</a>
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
                     </form>

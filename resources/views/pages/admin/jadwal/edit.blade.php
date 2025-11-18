@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form method="POST" action="{{ route('jadwal.update', encryptId($jadwal->jadwal_kuliah_id)) }}">
+                    <form method="POST" action="{{ route('jadwal.update', $jadwal->encrypted_jadwal_kuliah_id) }}">
                         @csrf
                         @method('PUT')
 

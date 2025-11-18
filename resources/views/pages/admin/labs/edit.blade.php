@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form action="{{ route('labs.update', $lab) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('labs.update', $lab->encrypted_lab_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -63,26 +63,21 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label">Gambar Saat Ini</label>
                             <div class="col-sm-10">
-                                @if($lab->getMediaByCollection('lab_images')->count() > 0)
-                                    <div class="row mb-3">
-                                        @foreach($lab->getMediaByCollection('lab_images') as $media)
-                                            <div class="col-md-3 mb-3">
-                                                <div class="card h-100">
-                                                    <img src="{{ asset('storage/' . $media->file_path) }}"
-                                                         class="card-img-top"
-                                                         alt="{{ $media->file_name }}"
-                                                         style="height: 120px; object-fit: cover;">
-                                                    <div class="card-body p-2">
-                                                        <h6 class="card-title small">{{ Str::limit($media->file_name, 20) }}</h6>
-                                                        @php
-                                                            $labMedia = $lab->labMedia()->where('media_id', $media->id)->first();
-                                                        @endphp
-                                                        @if($labMedia)
-                                                            <p class="card-text small">{{ Str::limit($labMedia->keterangan, 30) }}</p>
-                                                        @endif
-                                                    </div>
-                                                    <div class="card-footer p-2">
-                                                        <small class="text-muted">{{ round($media->file_size / 1024, 2) }} KB</small>
+                                 @if ($lab->getMedia('lab_images')->count() > 0)
+                                    <div class="row g-3">
+                                        @foreach ($lab->getMedia('lab_images') as $media)
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 shadow-sm border">
+                                                    <img src="{{ $media->getUrl() }}" class="card-img-top" alt="{{ $media->name }}" style="height: 200px; object-fit: cover;">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title">{{ Str::limit($media->name, 20) }}</h6>
+                                                        <p class="card-text small text-muted">{{ Str::limit($media->description, 50) }}</p>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <small class="text-muted">{{ round($media->size / 1024, 2) }} KB</small>
+                                                            <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                                <i class='bx bx-show'></i>
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -102,7 +97,7 @@
                                     <div id="media-upload-section">
                                         <div class="mb-3">
                                             <label class="form-label">Pilih Gambar</label>
-                                            <input type="file" class="form-control" name="media_files[]" multiple accept="image/*">
+                                            <input type="file" class="form-control" name="lab_images[]" multiple accept="image/*">
                                             <small class="text-muted">Pilih satu atau lebih gambar untuk diunggah</small>
                                         </div>
 

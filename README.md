@@ -25,6 +25,7 @@
 - [Helper Functions for Data Preparation](#helper-functions-for-data-preparation)
 - [Base System Tables](#base-system-tables)
 - [Security](#security)
+- [System Configuration Management](#system-configuration-management)
 
 This repository serves as a comprehensive Laravel base template that implements essential features for efficient web application development. It provides a solid foundation with authentication, authorization, CRUD operations, and various utility features that can be reused across multiple projects. Bismillah
 
@@ -123,9 +124,36 @@ Follow these steps to create new functionality:
      ```php
      $formattedDate = formatTanggalIndo($model->created_at);
      ```
-   - Encrypt IDs before sending to view:
+   - Use accessor in models for encrypted IDs (IMPORTANT: Handle encryption in model using accessor):
      ```php
-     $encryptedId = encryptId($model->id);
+     // In model - create accessor for encrypted ID based on the primary key
+     // For example, for User model with 'id' as primary key:
+     public function getEncryptedIdAttribute()
+     {
+         return encryptId($this->id);
+     }
+
+     // For Lab model with 'lab_id' as primary key:
+     public function getEncryptedLabIdAttribute()
+     {
+         return encryptId($this->lab_id);
+     }
+
+     // For foreign keys that reference other entities:
+     public function getEncryptedLabIdAttribute()
+     {
+         return encryptId($this->lab_id);
+     }
+
+     public function getEncryptedUserIdAttribute()
+     {
+         return encryptId($this->user_id);
+     }
+
+     // In view - use encrypted ID via accessor
+     <form action="{{ route('route.name', $user->encrypted_id) }}">  // For user
+     <form action="{{ route('route.name', $lab->encrypted_lab_id) }}">  // For lab
+     <form action="{{ route('route.name', $model->encrypted_lab_id) }}">  // For model with lab_id
      ```
    - Prepare formatted data in controller, not in views
 
@@ -583,6 +611,85 @@ php artisan key:generate
 
 ### Environment Configuration
 Ensure `APP_URL` is correctly set for media links to work properly.
+
+## System Configuration Management
+
+The application includes comprehensive system configuration management accessible from the "System Config" menu in the admin panel. This combines both application configuration and backup management in a single location.
+
+## Global Search Feature
+
+The application includes a powerful global search functionality accessible from the search icon in the header. This feature allows users to quickly find any content across the application. Key features include:
+
+### Search Capabilities
+- **Multi-model Search**: Search across multiple data types simultaneously
+- **Real-time Results**: See results as you type without page refresh
+- **Smart Filtering**: Automatic filtering and relevance ranking
+- **Modal Interface**: Dedicated search interface with improved UX
+
+### How to Use
+1. **Click the Search Icon**: Located in the header navigation
+2. **Type Your Query**: Enter text to search across all relevant content
+3. **View Results**: Results appear in real-time in a dedicated modal
+4. **Navigate**: Click on any result to go directly to that content's page
+
+### Advanced Search
+- **Auto-Focus**: Search input automatically gains focus when modal opens
+- **Quick Navigation**: Direct links to search results for rapid access
+- **Grouped Results**: Results are organized by content type for easier scanning
+- **Responsive Interface**: Works seamlessly on all device sizes
+
+### Customizable Search
+Developers can easily extend the search functionality to include additional models by modifying the GlobalSearchController:
+- Add new models to the search logic
+- Customize which fields to search in each model
+- Adjust result presentation formatting
+
+### App Configuration Features
+
+- **Application Name**: Dynamically change the application name as it appears throughout the system
+- **Environment Settings**: Configure between local, staging, and production environments
+- **Debug Mode**: Toggle debugging functionality on or off
+- **URL Configuration**: Set the application's base URL
+- **Cache Management**: Clear application cache (config, view, route)
+- **Application Optimization**: Cache configuration, routes, and views for performance
+
+### Backup Management Features
+
+- **Database Backup**: Creates SQL dump of the entire database
+- **Web File Backup**: Creates ZIP archive of application files (excluding unnecessary directories)
+- **Custom Backup Implementation**: Uses custom backup logic instead of third-party packages
+- **Backup Management**: View, download, and delete existing backups
+- **Secure Storage**: Backups stored in `storage/app/private/backup/` directory
+
+### How to Use
+
+1. **Access System Config Panel**: Navigate to the "System Config" menu in the admin panel
+2. **Configure Application**: Modify application settings as needed
+3. **Manage Backups**: Create database or web file backups as needed
+4. **Optimize Performance**: Use cache management and optimization features
+5. **View Existing Backups**: See list of existing backups with size and creation date
+6. **Download/Manage Backups**: Download or remove old backups to manage storage space
+
+### Configuration Process
+
+**App Configuration**:
+- Settings are saved directly to the `.env` file
+- Changes take effect immediately after configuration cache is cleared
+- Includes validation for all fields to ensure valid configurations
+
+**Backup Process**:
+- **Database Backup**: Uses `mysqldump` to create SQL backup of the database; stored with timestamp in filename (e.g., `database_backup_2025-11-18_12-00-00.sql`)
+- **Web File Backup**: Creates ZIP archive of application code and assets; includes important directories while excluding vendor/, node_modules/, .git/, and storage/ to reduce size; stored with timestamp in filename (e.g., `web_backup_2025-11-18_12-00-00.zip`)
+
+### Security Considerations
+
+- Configuration changes are validated to prevent harmful settings
+- Backup files are stored in private directory (`storage/app/private/`)
+- Proper path validation prevents directory traversal attacks
+- System configuration management is restricted to authorized administrators only
+- Direct file system access to sensitive files is protected
+
+---
 
 ## 🏗️ Template Usage
 

@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form action="{{ route($type . '.update', encryptId($pengumuman->pengumuman_id)) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route($type . '.update', $pengumuman->encrypted_pengumuman_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 

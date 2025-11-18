@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Inventaris Lab: {{ $lab->name }}</h4>
-                    <a href="{{ route('labs.inventaris.create', encryptId($lab->lab_id)) }}" class="btn btn-primary">
+                    <a href="{{ route('labs.inventaris.create', $lab->encrypted_lab_id) }}" class="btn btn-primary">
                         <i class='bx bx-plus'></i> Tambah Inventaris
                     </a>
                 </div>
@@ -40,7 +40,7 @@
 </div>
 
 @include('components.datatable.datatable-js', [
-    'url' => route('labs.inventaris.data', encryptId($lab->lab_id)),
+    'url' => route('labs.inventaris.paginate', $lab->encrypted_lab_id),
     'columns' => [
         ['data' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false],
         ['data' => 'kode_inventaris', 'name' => 'kode_inventaris'],

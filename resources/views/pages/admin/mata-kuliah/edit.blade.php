@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <x-flash-message />
 
-                    <form method="POST" action="{{ route('mata-kuliah.update', encryptId($mataKuliah->mata_kuliah_id)) }}">
+                    <form method="POST" action="{{ route('mata-kuliah.update', $mataKuliah->encrypted_mata_kuliah_id) }}">
                         @csrf
                         @method('PUT')
 
