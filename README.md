@@ -733,3 +733,94 @@ The template is designed to handle common requirements like authentication, user
 ---
 
 This template provides a strong foundation to build Laravel applications efficiently while following best practices for maintainability and scalability.
+
+## Page-specific CSS and JavaScript with @stack and @push
+
+Laravel provides a powerful system for including CSS and JavaScript files that are specific to individual pages using `@stack` and `@push` directives. This enables efficient loading of only the resources needed for each page, improving performance and preventing conflicts.
+
+### Implementation in Layout
+
+The main layout file (`resources/views/layouts/admin/app.blade.php`) includes two stack locations for additional assets:
+
+```blade
+<!-- In the <head> section for CSS -->
+@stack('css')
+
+<!-- Before closing </body> tag for JavaScript -->
+@stack('scripts')
+```
+
+### Adding Page-specific CSS
+
+To include CSS that is only needed on a specific page:
+
+1. **In your Blade view**, use the `@push` directive:
+
+```blade
+@push('css')
+    <link rel="stylesheet" href="{{ asset('assets-admin/css/specific-page.css') }}">
+    <style>
+        /* Inline CSS for this page only */
+        .specific-page-element {
+            background-color: #f0f0f0;
+        }
+    </style>
+@endpush
+```
+
+### Adding Page-specific JavaScript
+
+To include JavaScript that is only needed on a specific page:
+
+1. **In your Blade view**, use the `@push` directive:
+
+```blade
+@push('scripts')
+    <script src="{{ asset('assets-admin/js/specific-page.js') }}"></script>
+    <script>
+        // JavaScript code specific to this page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize page-specific functionality
+            initializeSpecificPageFeature();
+        });
+    </script>
+@endpush
+```
+
+### Examples in the Project
+
+Several existing pages already use this system:
+
+**Dashboard (resources/views/pages/admin/dashboard.blade.php):**
+```blade
+@push('css')
+    <!-- Dashboard-specific CSS -->
+@endpush
+
+@push('scripts')
+    <!-- Dashboard-specific JavaScript -->
+@endpush
+```
+
+**Data Tables (resources/views/components/datatable/datatable.blade.php):**
+```blade
+@push('scripts')
+    <!-- DataTable-specific JavaScript -->
+@endpush
+```
+
+### Best Practices
+
+- **Use `@push` only in main views**, not in components to avoid confusion
+- **Combine related CSS/JS** into single @push blocks when possible
+- **Use descriptive names** for external files to indicate their purpose
+- **Always wrap inline JavaScript** in DOM ready events when needed
+- **Minimize global CSS/JS** by using page-specific assets when possible
+
+### Common Use Cases
+
+- **Rich Text Editors**: TinyMCE or other editor-specific CSS and JS
+- **Charts**: Chart-specific libraries and initialization code
+- **Date Pickers**: Date picker CSS and JavaScript
+- **File Uploads**: File upload component CSS and JS
+- **Custom Components**: Page-specific interactive elements

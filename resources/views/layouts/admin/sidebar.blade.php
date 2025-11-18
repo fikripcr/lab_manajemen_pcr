@@ -1,6 +1,6 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="index.html" class="app-brand-link">
+        <a href="{{ route('dashboard') }}" class="app-brand-link">
             <img class="w-100" src="{{ asset('digilab-crop.png') }}" />
         </a>
 
@@ -94,6 +94,14 @@
         <!-- System Management -->
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">System Management</span>
+        </li>
+
+        <!-- System Dashboard -->
+        <li class="menu-item {{ request()->routeIs('sys.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('sys.dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-layout"></i>
+                <div data-i18n="System Dashboard">System Dashboard</div>
+            </a>
         </li>
 
         <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">

@@ -28,9 +28,12 @@
 
     @include('layouts.admin.css')
 
+    @stack('css')
+
+
     <script src="{{ asset('assets-admin') }}/vendor/js/helpers.js"></script>
     <script src="{{ asset('assets-admin') }}/js/config.js"></script>
-
+</head>
 <body>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -46,19 +49,24 @@
                     <div class="container-xxl flex-grow-1 container-p-y">
                         @yield('content')
 
-                        @include('layouts.admin.footer')
 
                         <div class="content-backdrop fade"></div>
+
                     </div>
+                    @include('layouts.admin.footer')
                 </div>
             </div>
 
             <div class="layout-overlay layout-menu-toggle"></div>
         </div>
 
+        <!-- Global Search Modal Component -->
+        <x-global-search-modal />
+
         @include('layouts.admin.js')
-        
-        <!-- Additional scripts pushed from views -->
+
         @stack('scripts')
+
+
     </body>
 </html>

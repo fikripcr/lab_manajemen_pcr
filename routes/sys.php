@@ -3,6 +3,7 @@
 use App\Http\Controllers\Sys\ActivityLogController;
 use App\Http\Controllers\Sys\AppConfigController;
 use App\Http\Controllers\Sys\BackupController;
+use App\Http\Controllers\Sys\DashboardController;
 use App\Http\Controllers\Sys\DocumentationController;
 use App\Http\Controllers\Sys\GlobalSearchController;
 use App\Http\Controllers\Sys\NotificationsController;
@@ -15,7 +16,10 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 // 🔹 System Management Routes (require authentication)
 // ==========================
 
-// Activity Log Routes
+    // System Dashboard
+    Route::get('/sys-dashboard', [DashboardController::class, 'index'])->name('sys.dashboard');
+
+    // Activity Log Routes
     Route::prefix('activity-log')->name('activity-log.')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
         Route::get('/data', [ActivityLogController::class, 'paginate'])->name('data');

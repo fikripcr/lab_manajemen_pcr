@@ -1,15 +1,5 @@
 // Load notifications asynchronously
 function loadNotifications() {
-    fetch(window.appRoutes.notificationsUnreadCount)
-        .then(response => response.json())
-        .then(data => {
-            const countElement = document.getElementById('notification-count');
-            if (countElement) {
-                countElement.textContent = data.count;
-            }
-        })
-        .catch(error => console.error('Error loading notification count:', error));
-
     fetch(window.appRoutes.notificationsIndex)
         .then(response => response.text())
         .then(html => {
@@ -82,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // and we're not on a notification-specific page
     const path = window.location.pathname;
     const countElement = document.getElementById('notification-count');
-    if (countElement && 
+    if (countElement &&
         !path.includes('/notifications') &&
         !path.includes('/api/') &&
         !path.includes('/unread-count')) {
@@ -173,8 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Refresh notification count every minute
-setInterval(function() {
+// Function to periodically refresh notification count
+function updateNotificationCount() {
     const countElement = document.getElementById('notification-count');
     if (countElement) {
         fetch(window.appRoutes.notificationsUnreadCount)
@@ -184,4 +174,13 @@ setInterval(function() {
             })
             .catch(error => console.error('Error updating notification count:', error));
     }
-}, 60000); // 60 seconds
+}
+
+// Initial call when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Update notification count once when page loads
+    updateNotificationCount();
+
+    // Set interval to update every 60 seconds (optional)
+    // setInterval(updateNotificationCount, 60000); // Uncomment to refresh every minute
+});

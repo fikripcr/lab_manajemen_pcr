@@ -6,14 +6,16 @@
     </div>
 
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-        <!-- Search -->
+        <!-- Global Search Trigger -->
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex align-items-center">
-                <i class="bx bx-search fs-4 lh-0"></i>
-                <input type="text" class="form-control border-0 shadow-none search-input" id="global-search-input" placeholder="Search" aria-label="Search..." autocomplete="off" readonly style="background-color: transparent; border: none; box-shadow: none; margin-left: 0.5rem;" />
+                <a href="javascript:void(0)" class="nav-link text-dark" onclick="openGlobalSearchModal()" title="Global Search">
+                    <i class="bx bx-search fs-4 lh-0 me-1"></i>
+                    <span>Search</span>
+                </a>
             </div>
         </div>
-        <!-- /Search -->
+        <!-- /Global Search Trigger -->
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
             <!-- Notification -->
@@ -113,53 +115,6 @@
                     </li>
                 </ul>
             </li>
-            <!--/ User -->
         </ul>
     </div>
 </nav>
-
-<!-- Search Input Styles -->
-<style>
-.search-input:focus {
-    outline: none;
-    border-color: transparent !important;
-    box-shadow: none !important;
-}
-
-.search-input {
-    cursor: pointer;
-}
-
-#modal-search-input {
-    border: 1px solid #d9dee3;
-    padding: 0.5rem 1rem;
-}
-
-#modal-search-input:focus {
-    outline: 2px solid #3498db !important;
-    outline-offset: 2px;
-}
-</style>
-
-<!-- Global Search Modal -->
-<div class="modal fade" id="global-search-modal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="d-flex align-items-center w-100">
-                    <i class="bx bx-search fs-4 lh-0 me-2"></i>
-                    <input type="text" class="form-control border-0 shadow-none flex-grow-1"
-                           id="modal-search-input"
-                           placeholder="Search users, roles, permissions..."
-                           aria-label="Search..." autocomplete="off" style="border-radius: 0.375rem;"/>
-                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-            </div>
-            <div class="modal-body p-0">
-                <div class="search-results-container p-3">
-                    <p class="text-center text-muted mb-0 py-5">Start typing to search...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

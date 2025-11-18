@@ -48,116 +48,66 @@
         </div>
         <div class="card-body">
             <x-flash-message />
-            <div class="table-responsive">
-                <table id="users-table" class="table " style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>ID</th>
-                            <th>Expiration</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+
+            <x:datatable.datatable
+                id="users-table"
+                route="{{ route('users.data') }}"
+                :columns="[
+                    [
+                        'title' => '#',
+                        'data' => 'DT_RowIndex',
+                        'name' => 'DT_RowIndex',
+                        'orderable' => false,
+                        'searchable' => false,
+                        'className' => 'text-center'
+                    ],
+                    [
+                        'title' => 'Name',
+                        'data' => 'name',
+                        'name' => 'name'
+                    ],
+                    [
+                        'title' => 'Email',
+                        'data' => 'email',
+                        'name' => 'email'
+                    ],
+                    [
+                        'title' => 'Role',
+                        'data' => 'roles',
+                        'name' => 'roles'
+                    ],
+                    [
+                        'title' => 'ID',
+                        'data' => null,
+                        'name' => 'id',
+                        'orderable' => false,
+                        'searchable' => false,
+                        'render' => 'function(data, type, row) {
+                            return row.nim || row.nip || \'-\';
+                        }'
+                    ],
+                    [
+                        'title' => 'Expiration',
+                        'data' => 'expired_at',
+                        'name' => 'expired_at'
+                    ],
+                    [
+                        'title' => 'Actions',
+                        'data' => 'action',
+                        'name' => 'action',
+                        'orderable' => false,
+                        'searchable' => false
+                    ]
+                ]"
+                search="true"
+                page-length-selector="#pageLength"
+            />
         </div>
     </div>
 @endsection
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!$.fn.DataTable.isDataTable('#users-table')) {
-                var table = $('#users-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    stateSave: true,
-                    ajax: {
-                        url: '{{ route('users.data') }}',
-                        data: function(d) {
-                            // Capture custom search from the filter component
-                            var searchValue = $('#globalSearch-users-table').val();
-                            if (searchValue) {
-                                d.search.value = searchValue;
-                            }
-                        }
-                    },
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center'
-                        },
-                        {
-                            data: 'name',
-                            name: 'name',
-                        },
-                        {
-                            data: 'email',
-                            name: 'email'
-                        },
-                        {
-                            data: 'roles',
-                            name: 'roles'
-                        },
-                        {
-                            data: null,
-                            name: 'id',
-                            render: function(data, type, row) {
-                                return row.nim || row.nip || '-';
-                            }
-                        },
-                        {
-                            data: 'expired_at',
-                            name: 'expired_at'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        }
-                    ],
-                    order: [
-                        [0, 'desc']
-                    ],
-                    pageLength: 10,
-                    responsive: true,
-                    dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs
-                });
-
-                // Handle page length change
-                $(document).on('change', '#pageLength', function() {
-                    var pageLength = parseInt($(this).val());
-                    table.page.len(pageLength).draw();
-                });
-
-                // Handle search input from the filter component
-                $(document).on('keyup', '#globalSearch-users-table', function() {
-                    table.search(this.value).draw();
-                });
-
-                // Handle export button click
-                $('#exportBtn').on('click', function() {
-                    // Get current search value from the search filter component
-                    var searchValue = $('#globalSearch-users-table').val();
-
-                    // Build query parameters
-                    var params = new URLSearchParams();
-                    if(searchValue) {
-                        params.append('search', searchValue);
-                    }
-
-                    // Redirect to export URL with parameters
-                    window.location.href = '{{ route('users.export') }}?' + params.toString();
-                });
-            }
-        });
-
         // Function to send notification to a specific user
         function sendNotificationToUser(url, userName) {
             fetch(url, {
@@ -249,6 +199,21 @@
                 }
             });
         }
+
+        // Handle export button click
+        $(document).on('click', '#exportBtn', function() {
+            // Get current search value from the search filter component
+            var searchValue = $('#globalSearch-users-table').val();
+
+            // Build query parameters
+            var params = new URLSearchParams();
+            if(searchValue) {
+                params.append('search', searchValue);
+            }
+
+            // Redirect to export URL with parameters
+            window.location.href = '{{ route('users.export') }}?' + params.toString();
+        });
     </script>
     @include('components.sweetalert')
 @endpush
