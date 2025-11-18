@@ -9,10 +9,10 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Inventory Information</h5>
                     <div class="d-flex">
-                        <a href="{{ route('inventories.edit', $inventory) }}" class="btn btn-primary me-2">
+                        <a href="{{ route('inventaris.edit', $inventory) }}" class="btn btn-primary me-2">
                             <i class='bx bx-edit me-1'></i> Edit
                         </a>
-                        <form action="{{ route('inventories.destroy', $inventory) }}" method="POST" class="d-inline">
+                        <form action="{{ route('inventaris.destroy', $inventory) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger"
@@ -72,8 +72,8 @@
                         </div>
                     </div>
                     <div class="mt-2">
-                        <a href="{{ route('inventories.index') }}" class="btn btn-secondary">
-                            <i class='bx bx-arrow-back me-1'></i> Back to Inventories
+                        <a href="{{ route('inventaris.index') }}" class="btn btn-secondary">
+                            <i class='bx bx-arrow-back me-1'></i> Back to Inventaris
                         </a>
                     </div>
                 </div>

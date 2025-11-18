@@ -31,8 +31,8 @@
             </a>
         </li>
 
-        <li class="menu-item {{ request()->routeIs('inventories.*') ? 'active' : '' }}">
-            <a href="{{ route('inventories.index') }}" class="menu-link">
+        <li class="menu-item {{ request()->routeIs('inventaris.*') ? 'active' : '' }}">
+            <a href="{{ route('inventaris.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-package"></i>
                 <div data-i18n="Documentation">Data Inventaris</div>
             </a>

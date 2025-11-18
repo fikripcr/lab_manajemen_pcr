@@ -45,12 +45,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('labs', LabController::class);
 
-    // Inventories
-    Route::prefix('inventories')->name('inventories.')->group(function () {
+    // Inventaris
+    Route::prefix('inventaris')->name('inventaris.')->group(function () {
         Route::get('export', [InventarisController::class, 'export'])->name('export');
         Route::get('api', [InventarisController::class, 'paginate'])->name('data');
     });
-    Route::resource('inventories', InventarisController::class);
+    Route::resource('inventaris', InventarisController::class);
 
     // Semester
     Route::prefix('semesters')->name('semesters.')->group(function () {

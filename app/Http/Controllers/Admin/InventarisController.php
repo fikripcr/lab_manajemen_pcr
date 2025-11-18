@@ -19,7 +19,7 @@ class InventarisController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pages.admin.inventories.index');
+        return view('pages.admin.inventaris.index');
     }
 
     /**
@@ -70,7 +70,7 @@ class InventarisController extends Controller
                 $encryptedId = encryptId($item->inventaris_id);
                 return '
                     <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('inventories.edit', $encryptedId) . '" title="Edit">
+                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('inventaris.edit', $encryptedId) . '" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         <div class="dropdown">
@@ -78,10 +78,10 @@ class InventarisController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('inventories.show', $encryptedId) . '">
+                                <a class="dropdown-item" href="' . route('inventaris.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('inventories.destroy', $encryptedId) . '\')">
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('inventaris.destroy', $encryptedId) . '\')">
                                     <i class="bx bx-trash me-1"></i> Delete
                                 </a>
                             </div>
@@ -98,7 +98,7 @@ class InventarisController extends Controller
     public function create()
     {
         $labs = Lab::all();
-        return view('pages.admin.inventories.create', compact('labs'));
+        return view('pages.admin.inventaris.create', compact('labs'));
     }
 
     /**
@@ -112,7 +112,7 @@ class InventarisController extends Controller
 
             \DB::commit();
 
-            return redirect()->route('inventories.index')
+            return redirect()->route('inventaris.index')
                 ->with('success', 'Inventaris berhasil dibuat.');
         } catch (\Exception $e) {
             \DB::rollback();
@@ -130,7 +130,7 @@ class InventarisController extends Controller
         $realId = decryptId($id);
 
         $inventory = Inventaris::findOrFail($realId);
-        return view('pages.admin.inventories.show', compact('inventory'));
+        return view('pages.admin.inventaris.show', compact('inventory'));
     }
 
     /**
@@ -141,7 +141,7 @@ class InventarisController extends Controller
         $realId = decryptId($id);
         $inventory = Inventaris::findOrFail($realId);
         $labs = Lab::all();
-        return view('pages.admin.inventories.edit', compact('inventory', 'labs'));
+        return view('pages.admin.inventaris.edit', compact('inventory', 'labs'));
     }
 
     /**
@@ -159,7 +159,7 @@ class InventarisController extends Controller
 
             \DB::commit();
 
-            return redirect()->route('inventories.index')
+            return redirect()->route('inventaris.index')
                 ->with('success', 'Inventaris berhasil diperbarui.');
         } catch (\Exception $e) {
             \DB::rollback();
@@ -186,12 +186,12 @@ class InventarisController extends Controller
             ]);
         }
 
-        return redirect()->route('inventories.index')
+        return redirect()->route('inventaris.index')
             ->with('success', 'Inventaris berhasil dihapus.');
     }
 
     /**
-     * Export inventories to Excel
+     * Export inventaris to Excel
      */
     public function export(Request $request)
     {

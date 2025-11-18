@@ -19,7 +19,7 @@ class AppConfigController extends Controller
             'app_url' => config('app.url'),
         ];
 
-        return view('pages.admin.app-config.index', compact('config'));
+        return view('pages.sys.app-config.index', compact('config'));
     }
 
     public function update(Request $request)
