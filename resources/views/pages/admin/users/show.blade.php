@@ -13,21 +13,8 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-start align-items-sm-center gap-4 mb-4">
-                            @php
-                                $avatarMedia = $user->getFirstMedia('avatar');
-                            @endphp
-                            @if($avatarMedia)
-                                @php
-                                    $avatarUrl = $avatarMedia->hasGeneratedConversion('avatar_small')
-                                        ? $avatarMedia->getFullUrl('avatar_small')
-                                        : $avatarMedia->getFullUrl();
-                                @endphp
-                                <img src="{{ $avatarUrl }}"
-                                     alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100">
-                            @else
-                                <img src="{{ $user->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=7F9CF5&background=EBF4FF' }}"
-                                     alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100">
-                            @endif
+                            <img src="{{ getVerifiedMediaUrl($user, 'avatar', 'medium') }}"
+                                 alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100">
 
                             <div class="button-wrapper">
                                 <h4 class="mb-0">{{ $user->name }}</h4>
@@ -95,7 +82,7 @@
                                 <i class='bx bx-key me-1'></i> Change Password
                             </button>
 
-                            @if(Auth::id() == decryptId($user->id))
+                            @if(Auth::id() == $user->id)
                                 <a href="{{ route('users.edit', $user->encrypted_id) }}" class="btn btn-primary me-2">
                                     <i class='bx bx-edit me-1'></i> Edit Profile
                                 </a>
@@ -161,42 +148,5 @@
                 </div>
             </div>
         </div>
-
-        <!-- Delete Account Modal -->
-        @if(Auth::id() === $user->id)
-        <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title text-danger" id="deleteAccountModalLabel">Delete Account</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="post" action="{{ route('profile.destroy') }}">
-                        @csrf
-                        @method('delete')
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <h5 class="text-danger">Are you absolutely sure?</h5>
-                                <p>All of your data will be permanently removed from our servers forever. This action cannot be undone.</p>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="delete_password">Password</label>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                       id="delete_password" name="password"
-                                       placeholder="Enter your password to confirm">
-                                @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger">Yes, Delete Account</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        @endif
     </div>
 @endsection

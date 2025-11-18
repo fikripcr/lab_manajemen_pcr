@@ -35,6 +35,11 @@ class UserController extends Controller
 
         return DataTables::of($users)
             ->addIndexColumn()
+            ->filterColumn('roles', function($query, $keyword) {
+                $query->whereHas('roles', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
             ->editColumn('name', function ($user) {
                 // Ensure we're getting the actual user name, not processed content
                 $userName      = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
@@ -401,6 +406,12 @@ class UserController extends Controller
         // Use laravel-impersonate
         app('impersonate')->take(auth()->user(), $targetUser);
 
+        // Log the impersonation activity
+        activity()
+            ->performedOn($targetUser)
+            ->causedBy(auth()->user())
+            ->log('User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')');
+
         return response()->json([
             'success' => true,
             'message' => 'Impersonation successful',
@@ -417,7 +428,18 @@ class UserController extends Controller
             return redirect()->route('dashboard')->with('error', 'Not currently impersonating anyone.');
         }
 
+        // Get the impersonator before leaving impersonation
+        $impersonator = app('impersonate')->getImpersonator();
+
         app('impersonate')->leave();
+
+        // Log the end impersonation activity
+        if ($impersonator) {
+            activity()
+                ->performedOn($impersonator) // Log on the impersonator (the user ending the impersonation)
+                ->causedBy($impersonator) // Log as the impersonator who is switching back
+                ->log('User switched back from impersonation to original account');
+        }
 
         return redirect()->route('dashboard')->with('success', 'Successfully switched back to original account.');
     }

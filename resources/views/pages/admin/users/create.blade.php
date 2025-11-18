@@ -99,6 +99,13 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="avatar">Avatar (Optional)</label>
                             <div class="col-sm-10">
+                                <div class="mb-2">
+                                    <img src="{{ getVerifiedMediaUrl(new \App\Models\User(), 'avatar', 'thumb') }}"
+                                         class="rounded-circle"
+                                         width="60"
+                                         height="60"
+                                         alt="Avatar">
+                                </div>
                                 <input class="form-control"
                                        type="file" id="avatar" name="avatar" accept="image/*">
                                 <div class="form-text">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.</div>

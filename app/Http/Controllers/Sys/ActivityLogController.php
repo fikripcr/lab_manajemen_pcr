@@ -19,7 +19,7 @@ class ActivityLogController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pages.admin.activity-log.index');
+        return view('pages.sys.activity-log.index');
     }
 
     /**

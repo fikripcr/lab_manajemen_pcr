@@ -27,7 +27,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="app_name">Application Name</label>
-                                    <input type="text" class="form-control @error('app_name') is-invalid @enderror" id="app_name" name="app_name" value="{{ old('app_name', $config['app_name']) }}" required>
+                                    <input type="text" class="form-control @error('app_name') is-invalid @enderror" id="app_name" name="app_name" value="{{ old('app_name', $config['app_name']) }}">
                                     @error('app_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -36,7 +36,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="app_url">Application URL</label>
-                                    <input type="url" class="form-control @error('app_url') is-invalid @enderror" id="app_url" name="app_url" value="{{ old('app_url', $config['app_url']) }}" required>
+                                    <input type="url" class="form-control @error('app_url') is-invalid @enderror" id="app_url" name="app_url" value="{{ old('app_url', $config['app_url']) }}">
                                     @error('app_url')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -46,9 +46,9 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="app_env">Environment</label>
-                                    <select class="form-select @error('app_env') is-invalid @enderror" id="app_env" name="app_env" required>
-                                        <option value="local" {{ old('app_env', $config['app_env']) == 'local' ? 'selected' : '' }}>Local</option>
-                                        <option value="production" {{ old('app_env', $config['app_env']) == 'production' ? 'selected' : '' }}>Production</option>
+                                    <select class="form-select @error('app_env') is-invalid @enderror" id="app_env" name="app_env">
+                                        <option value="local" {{ config('app.env') == 'local' ? 'selected' : '' }}>Local</option>
+                                        <option value="production" {{ config('app.env') == 'production' ? 'selected' : '' }}>Production</option>
                                     </select>
                                     @error('app_env')
                                         <div class="invalid-feedback">{{ $message }}</div>

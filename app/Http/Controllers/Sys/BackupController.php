@@ -13,7 +13,7 @@ class BackupController extends Controller
     {
         $backups = $this->getBackupList();
 
-        return view('pages.admin.backup.index', compact('backups'));
+        return view('pages.sys.backup.index', compact('backups'));
     }
 
     public function create(Request $request)
@@ -49,7 +49,7 @@ class BackupController extends Controller
             }
 
             // For non-AJAX requests, redirect back with error message
-            return redirect()->route('admin.backup.index')
+            return redirect()->route('sys.backup.index')
                 ->with('error', 'Failed to create backup: ' . $errorMessage);
         }
     }
@@ -250,7 +250,7 @@ class BackupController extends Controller
             abort(404, 'Backup file not found: ' . $filename);
         }
 
-        return redirect()->route('admin.backup.index')
+        return redirect()->route('sys.backup.index')
             ->with('success', 'Backup deleted successfully');
     }
 

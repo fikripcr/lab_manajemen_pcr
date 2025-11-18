@@ -121,20 +121,17 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="avatar">Avatar</label>
                             <div class="col-sm-10">
-                                @if($user->avatar_url)
-                                    <div class="mb-2">
-                                        <img src="{{ $user->avatar_url }}"
-                                             class="rounded-circle"
-                                             width="60"
-                                             height="60"
-                                             alt="Avatar">
-                                    </div>
-                                @endif
+                                <div class="mb-2">
+                                    <img src="{{ getVerifiedMediaUrl($user, 'avatar', 'thumb') }}"
+                                         class="rounded-circle"
+                                         width="60"
+                                         height="60"
+                                         alt="Avatar">
+                                </div>
                                 <input class="form-control @error('avatar') is-invalid @enderror"
                                        type="file" id="avatar" name="avatar" accept="image/*">
                                 <div class="form-text">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.
-                                    @if($user->avatar_url) Leave empty to keep current avatar @endif
-                                </div>
+                                    Leave empty to keep current avatar</div>
                                 @error('avatar')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

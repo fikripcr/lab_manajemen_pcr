@@ -31,7 +31,7 @@ class RoleController extends Controller
         $roles = Role::select('id', 'name')
             ->withCount('users')
             ->get();
-        return view('pages.admin.roles.index', compact('roles'));
+        return view('pages.sys.roles.index', compact('roles'));
     }
 
     /**
@@ -40,7 +40,7 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::all();
-        return view('pages.admin.roles.create', compact('permissions'));
+        return view('pages.sys.roles.create', compact('permissions'));
     }
 
     /**
@@ -76,7 +76,7 @@ class RoleController extends Controller
     {
         $role->load('permissions', 'users');
         $allPermissions = \Spatie\Permission\Models\Permission::all();
-        return view('pages.admin.roles.show', compact('role', 'allPermissions'));
+        return view('pages.sys.roles.show', compact('role', 'allPermissions'));
     }
 
     /**
@@ -126,7 +126,7 @@ class RoleController extends Controller
     {
         $permissions     = Permission::all();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
-        return view('pages.admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
+        return view('pages.sys.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**

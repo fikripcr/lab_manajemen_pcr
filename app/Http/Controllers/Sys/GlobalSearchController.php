@@ -31,11 +31,31 @@ class GlobalSearchController extends Controller
                 ->registerModel(Permission::class, 'name')
                 ->search($query);
 
+            // Additional search for users by role name
+            $usersByRole = collect();
+            if (strlen($query) >= 2) { // Only search for roles if query is at least 2 chars
+                $usersWithRole = User::whereHas('roles', function($q) use ($query) {
+                    $q->where('name', 'like', '%' . $query . '%');
+                })->with('roles')->limit(5)->get();
+
+                foreach ($usersWithRole as $user) {
+                    // Make sure this user isn't already in the main search results
+                    $alreadyExists = $searchResults->contains(function($result) use ($user) {
+                        return $result->searchable instanceof User && $result->searchable->id === $user->id;
+                    });
+
+                    if (!$alreadyExists) {
+                        $usersByRole->push($user);
+                    }
+                }
+            }
+
             // Group results by type and limit to 5 per type for performance
             $users = collect();
             $roles = collect();
             $permissions = collect();
 
+            // Process the main search results
             foreach ($searchResults as $result) {
                 $model = $result->searchable;
 
@@ -60,6 +80,19 @@ class GlobalSearchController extends Controller
                         'name' => $model->name,
                         'type' => 'permission',
                         'url' => route('permissions.index') . '?search=' . urlencode($query),
+                    ]);
+                }
+            }
+
+            // Add users found by role if we haven't reached the limit
+            foreach ($usersByRole as $user) {
+                if ($users->count() < 5) {
+                    $users->push([
+                        'id' => $user->encrypted_id ?? $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'type' => 'user',
+                        'url' => route('users.show', $user->encrypted_id ?? $user->id),
                     ]);
                 }
             }

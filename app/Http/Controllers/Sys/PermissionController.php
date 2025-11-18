@@ -15,7 +15,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        return view('pages.admin.permissions.index');
+        return view('pages.sys.permissions.index');
     }
 
     /**
@@ -64,7 +64,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.permissions.create');
+        return view('pages.sys.permissions.create');
     }
 
     /**
@@ -86,7 +86,7 @@ class PermissionController extends Controller
      */
     public function show(Permission $permission)
     {
-        return view('pages.admin.permissions.show', compact('permission'));
+        return view('pages.sys.permissions.show', compact('permission'));
     }
 
     /**
@@ -100,7 +100,7 @@ class PermissionController extends Controller
         }
 
         $permission = Permission::findOrFail($realId);
-        return view('pages.admin.permissions.edit', compact('permission'));
+        return view('pages.sys.permissions.edit', compact('permission'));
     }
 
     /**
@@ -154,7 +154,7 @@ class PermissionController extends Controller
      */
     public function createModal()
     {
-        return view('pages.admin.permissions.create-ajax');
+        return view('pages.sys.permissions.create-ajax');
     }
 
     /**
@@ -166,7 +166,7 @@ class PermissionController extends Controller
 
         $permission = Permission::findOrFail($realId);
 
-        return view('pages.admin.permissions.edit-ajax', compact('permission'));
+        return view('pages.sys.permissions.edit-ajax', compact('permission'));
     }
 
 }

@@ -19,7 +19,7 @@ class NotificationsController extends Controller
     {
         $notifications = Auth::user()->notifications()->latest()->paginate(10);
 
-        return view('pages.admin.notifications.index', compact('notifications'));
+        return view('pages.sys.notifications.index', compact('notifications'));
     }
 
     /**
@@ -82,6 +82,12 @@ class NotificationsController extends Controller
 
         $notification->markAsRead();
 
+        // Log the notification marking as read
+        activity()
+            ->performedOn($notification)
+            ->causedBy(auth()->user())
+            ->log('Notification marked as read');
+
         return redirect()->back()->with('success', 'Notifikasi telah ditandai sebagai telah dibaca.');
     }
 
@@ -90,7 +96,13 @@ class NotificationsController extends Controller
      */
     public function markAllAsRead()
     {
+        $count = Auth::user()->unreadNotifications->count();
         Auth::user()->unreadNotifications->markAsRead();
+
+        // Log the notification marking as read
+        activity()
+            ->causedBy(auth()->user())
+            ->log('All notifications marked as read: ' . $count . ' notifications by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
         return response()->json([
             'success' => true,
@@ -124,6 +136,11 @@ class NotificationsController extends Controller
 
         $count = count($notifications);
 
+        // Log the notification marking as read
+        activity()
+            ->causedBy(auth()->user())
+            ->log($count . ' selected notifications marked as read by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
+
         return response()->json([
             'success' => true,
             'message' => $count . ' notifikasi telah ditandai sebagai telah dibaca.'
@@ -150,6 +167,12 @@ class NotificationsController extends Controller
         // Send the test notification to the authenticated user
         $user->notify(new TestNotification());
 
+        // Log the notification sending
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->log('Test notification sent to user: ' . $user->name . ' (ID: ' . $user->id . ')');
+
         return response()->json([
             'success' => true,
             'message' => 'Notifikasi berhasil dikirim!'
@@ -172,6 +195,12 @@ class NotificationsController extends Controller
 
         // Send the test notification to the specific user
         $recipient->notify(new TestNotification());
+
+        // Log the notification sending
+        activity()
+            ->performedOn($recipient)
+            ->causedBy(auth()->user())
+            ->log('Test notification sent to user: ' . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
         return response()->json([
             'success' => true,
