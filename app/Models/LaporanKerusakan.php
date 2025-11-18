@@ -42,4 +42,28 @@ class LaporanKerusakan extends Model
     {
         return $this->belongsTo(User::class, 'teknisi_id');
     }
+
+    /**
+     * Accessor to get encrypted laporan_kerusakan_id
+     */
+    public function getEncryptedLaporanKerusakanIdAttribute()
+    {
+        return encryptId($this->laporan_kerusakan_id);
+    }
+
+    /**
+     * Accessor to get encrypted inventaris_id
+     */
+    public function getEncryptedInventarisIdAttribute()
+    {
+        return encryptId($this->inventaris_id);
+    }
+
+    /**
+     * Accessor to get encrypted teknisi_id
+     */
+    public function getEncryptedTeknisiIdAttribute()
+    {
+        return encryptId($this->teknisi_id);
+    }
 }

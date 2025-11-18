@@ -53,4 +53,28 @@ class LabInventaris extends Model
     {
         return \App\Helpers\Helper::generateKodeInventaris($labId, $inventarisId);
     }
+
+    /**
+     * Accessor to get encrypted ID
+     */
+    public function getEncryptedIdAttribute()
+    {
+        return encryptId($this->id);
+    }
+
+    /**
+     * Accessor to get encrypted lab_id
+     */
+    public function getEncryptedLabIdAttribute()
+    {
+        return encryptId($this->lab_id);
+    }
+
+    /**
+     * Accessor to get encrypted inventaris_id
+     */
+    public function getEncryptedInventarisIdAttribute()
+    {
+        return encryptId($this->inventaris_id);
+    }
 }

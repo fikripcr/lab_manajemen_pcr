@@ -45,4 +45,28 @@ class LogPenggunaanLab extends Model
     {
         return $this->belongsTo(Lab::class, 'lab_id', 'lab_id');
     }
+
+    /**
+     * Accessor to get encrypted log_penggunaan_labs_id
+     */
+    public function getEncryptedLogPenggunaanLabsIdAttribute()
+    {
+        return encryptId($this->log_penggunaan_labs_id);
+    }
+
+    /**
+     * Accessor to get encrypted lab_id
+     */
+    public function getEncryptedLabIdAttribute()
+    {
+        return encryptId($this->lab_id);
+    }
+
+    /**
+     * Accessor to get encrypted kegiatan_id
+     */
+    public function getEncryptedKegiatanIdAttribute()
+    {
+        return encryptId($this->kegiatan_id);
+    }
 }

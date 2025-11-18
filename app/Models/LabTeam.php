@@ -43,4 +43,28 @@ class LabTeam extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    /**
+     * Accessor to get encrypted ID
+     */
+    public function getEncryptedIdAttribute()
+    {
+        return encryptId($this->id);
+    }
+
+    /**
+     * Accessor to get encrypted lab_id
+     */
+    public function getEncryptedLabIdAttribute()
+    {
+        return encryptId($this->lab_id);
+    }
+
+    /**
+     * Accessor to get encrypted user_id
+     */
+    public function getEncryptedUserIdAttribute()
+    {
+        return encryptId($this->user_id);
+    }
 }

@@ -13,8 +13,10 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements HasMedia, Searchable
 {
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity;
 
@@ -155,5 +157,24 @@ class User extends Authenticatable implements HasMedia
     public function labTeam()
     {
         return $this->belongsToMany(Lab::class,'lab_teams','user_id','lab_id');
+    }
+
+    /**
+     * Accessor to get encrypted ID
+     */
+    public function getEncryptedIdAttribute()
+    {
+        return encryptId($this->id);
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        $url = route('users.show', $this->encrypted_id ?? $this->id);
+
+        return new SearchResult(
+            $this,
+            $this->name,
+            $url
+        );
     }
 }

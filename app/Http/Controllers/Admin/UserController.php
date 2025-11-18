@@ -144,8 +144,7 @@ class UserController extends Controller
     {
         $realId = decryptId($id);
 
-        $user     = User::findOrFail($realId);
-        $user->id = encryptId($user->id);
+        $user = User::findOrFail($realId);
         return view('pages.admin.users.show', compact('user'));
     }
 

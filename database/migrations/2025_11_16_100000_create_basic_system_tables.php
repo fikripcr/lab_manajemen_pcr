@@ -135,6 +135,18 @@ return new class extends Migration
 
         }
 
+        Schema::create('sys_cache', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->mediumText('value');
+            $table->integer('expiration');
+        });
+
+        Schema::create('sys_cache_locks', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('owner');
+            $table->integer('expiration');
+        });
+
         // Activity log table with sys_ prefix
         if (!Schema::hasTable('sys_activity_log')) {
             Schema::create('sys_activity_log', function (Blueprint $table) {
@@ -180,6 +192,8 @@ return new class extends Migration
         Schema::dropIfExists('sys_password_reset_tokens');
         Schema::dropIfExists('sys_activity_log');
         Schema::dropIfExists('sys_notifications');
+        Schema::dropIfExists('sys_cache');
+        Schema::dropIfExists('sys_cache_locks');
         Schema::dropIfExists('users');
     }
 };

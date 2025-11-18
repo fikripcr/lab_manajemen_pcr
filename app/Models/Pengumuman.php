@@ -75,4 +75,12 @@ class Pengumuman extends Model implements HasMedia
                 ->nonQueued();
         }
     }
+
+    /**
+     * Accessor to get encrypted pengumuman_id
+     */
+    public function getEncryptedPengumumanIdAttribute()
+    {
+        return encryptId($this->pengumuman_id);
+    }
 }

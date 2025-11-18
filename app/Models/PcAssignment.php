@@ -61,4 +61,36 @@ class PcAssignment extends Model
     {
         return $this->hasMany(LogPenggunaanPc::class, 'pc_assignment_id');
     }
+
+    /**
+     * Accessor to get encrypted pc_assignments_id
+     */
+    public function getEncryptedPcAssignmentsIdAttribute()
+    {
+        return encryptId($this->pc_assignments_id);
+    }
+
+    /**
+     * Accessor to get encrypted lab_id
+     */
+    public function getEncryptedLabIdAttribute()
+    {
+        return encryptId($this->lab_id);
+    }
+
+    /**
+     * Accessor to get encrypted user_id
+     */
+    public function getEncryptedUserIdAttribute()
+    {
+        return encryptId($this->user_id);
+    }
+
+    /**
+     * Accessor to get encrypted jadwal_id
+     */
+    public function getEncryptedJadwalIdAttribute()
+    {
+        return encryptId($this->jadwal_id);
+    }
 }

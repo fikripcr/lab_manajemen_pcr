@@ -57,4 +57,28 @@ class Kegiatan extends Model
     {
         return $this->hasMany(LogPenggunaanLab::class, 'kegiatan_id');
     }
+
+    /**
+     * Accessor to get encrypted kegiatan_id
+     */
+    public function getEncryptedKegiatanIdAttribute()
+    {
+        return encryptId($this->kegiatan_id);
+    }
+
+    /**
+     * Accessor to get encrypted lab_id
+     */
+    public function getEncryptedLabIdAttribute()
+    {
+        return encryptId($this->lab_id);
+    }
+
+    /**
+     * Accessor to get encrypted penyelenggara_id
+     */
+    public function getEncryptedPenyelenggaraIdAttribute()
+    {
+        return encryptId($this->penyelenggara_id);
+    }
 }

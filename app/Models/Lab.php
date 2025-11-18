@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\MediaCollections\MediaRepository;
 
@@ -26,6 +27,7 @@ class Lab extends Model implements HasMedia
 
     protected $casts = [
         'capacity' => 'integer',
+        'lab_id' => 'string',
     ];
 
     /**
@@ -128,11 +130,11 @@ class Lab extends Model implements HasMedia
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->fit(\Spatie\Image\Manipulations::FIT_CROP, 150, 150)
+            ->fit(Fit::Crop, 150, 150)
             ->nonQueued();
 
         $this->addMediaConversion('preview')
-            ->fit(\Spatie\Image\Manipulations::FIT_CROP, 400, 400)
+            ->fit(Fit::Crop, 400, 400)
             ->nonQueued();
     }
 
@@ -145,5 +147,13 @@ class Lab extends Model implements HasMedia
                     ->where('is_active', true)
                     ->with('user')
                     ->get();
+    }
+
+    /**
+     * Accessor to get encrypted lab_id
+     */
+    public function getEncryptedLabIdAttribute()
+    {
+        return encryptId($this->lab_id);
     }
 }

@@ -14,4 +14,12 @@ class Notification extends DatabaseNotification
         $this->table = config('notifications.table', 'sys_notifications');
         parent::__construct($attributes);
     }
+
+    /**
+     * Accessor to get encrypted ID
+     */
+    public function getEncryptedIdAttribute()
+    {
+        return encryptId($this->id);
+    }
 }

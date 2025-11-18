@@ -60,4 +60,12 @@ class Inventaris extends Model
                     ->latest('tanggal_penempatan')
                     ->first();
     }
+
+    /**
+     * Accessor to get encrypted inventaris_id
+     */
+    public function getEncryptedInventarisIdAttribute()
+    {
+        return encryptId($this->inventaris_id);
+    }
 }

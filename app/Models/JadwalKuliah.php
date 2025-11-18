@@ -74,4 +74,12 @@ class JadwalKuliah extends Model
     {
         return $this->hasMany(LogPenggunaanPc::class, 'jadwal_id');
     }
+
+    /**
+     * Accessor to get encrypted jadwal_kuliah_id
+     */
+    public function getEncryptedJadwalKuliahIdAttribute()
+    {
+        return encryptId($this->jadwal_kuliah_id);
+    }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
                 $table->integer('capacity')->nullable();
                 $table->text('description')->nullable();
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -34,6 +35,7 @@ return new class extends Migration
                 $table->date('end_date');
                 $table->boolean('is_active')->default(false);
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -45,6 +47,7 @@ return new class extends Migration
                 $table->string('nama_mk');
                 $table->integer('sks');
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -60,6 +63,7 @@ return new class extends Migration
                 $table->time('jam_mulai');
                 $table->time('jam_selesai');
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -74,6 +78,7 @@ return new class extends Migration
                 $table->string('keterangan')->nullable();
                 $table->boolean('is_active')->default(true);
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -88,6 +93,7 @@ return new class extends Migration
                 $table->string('status');
                 $table->timestamp('waktu_isi');
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -105,6 +111,7 @@ return new class extends Migration
                 $table->string('status')->default('pending');
                 $table->string('dokumentasi_path')->nullable();
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -116,6 +123,7 @@ return new class extends Migration
                 $table->foreignId('lab_id')->constrained('labs', 'lab_id');
                 $table->timestamp('waktu_isi');
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -129,6 +137,7 @@ return new class extends Migration
                 $table->string('status')->default('pending');
                 $table->text('catatan')->nullable();
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -136,12 +145,12 @@ return new class extends Migration
         if (!Schema::hasTable('inventaris')) {
             Schema::create('inventaris', function (Blueprint $table) {
                 $table->id('inventaris_id');
-                $table->foreignId('lab_id')->constrained('labs', 'lab_id');
                 $table->string('nama_alat');
                 $table->string('jenis_alat');
                 $table->string('kondisi_terakhir');
                 $table->date('tanggal_pengecekan')->nullable();
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -155,6 +164,7 @@ return new class extends Migration
                 $table->string('status')->default('pending');
                 $table->text('catatan_perbaikan')->nullable();
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
@@ -169,8 +179,46 @@ return new class extends Migration
                 $table->boolean('is_published')->default(false);
                 $table->timestamp('published_at')->nullable();
                 $table->timestamps();
+                $table->softDeletes();
 
                 $table->foreign('penulis_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
+
+        // Lab Inventaris table
+        if (!Schema::hasTable('lab_inventaris')) {
+            Schema::create('lab_inventaris', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('inventaris_id')->constrained('inventaris', 'inventaris_id')->onDelete('cascade');
+                $table->foreignId('lab_id')->constrained('labs', 'lab_id')->onDelete('cascade');
+                $table->string('kode_inventaris')->unique(); // Format: LAB-INV-XXXX
+                $table->string('no_series')->nullable(); // Nomor seri atau kode tambahan
+                $table->timestamp('tanggal_penempatan')->nullable();
+                $table->timestamp('tanggal_penghapusan')->nullable();
+                $table->string('status')->default('active'); // active, moved, inactive
+                $table->text('keterangan')->nullable();
+                $table->timestamps();
+                $table->softDeletes(); // Adds deleted_at column
+
+                $table->index(['inventaris_id', 'lab_id']); // Index for faster joins
+                $table->index('kode_inventaris');
+            });
+        }
+
+        // Lab Teams table
+        if (!Schema::hasTable('lab_teams')) {
+            Schema::create('lab_teams', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('lab_id')->constrained('labs', 'lab_id')->onDelete('cascade');
+                $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+                $table->string('jabatan')->nullable(); // PIC, Teknisi, dll
+                $table->boolean('is_active')->default(true);
+                $table->timestamp('tanggal_mulai')->nullable();
+                $table->timestamp('tanggal_selesai')->nullable();
+                $table->timestamps();
+                $table->softDeletes(); // Adds deleted_at column
+
+                $table->unique(['lab_id', 'user_id']); // One user per lab
             });
         }
     }
@@ -180,6 +228,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('lab_teams');
+        Schema::dropIfExists('lab_inventaris');
         Schema::dropIfExists('pengumuman');
         Schema::dropIfExists('laporan_kerusakan');
         Schema::dropIfExists('inventaris');

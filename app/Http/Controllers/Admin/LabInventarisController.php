@@ -85,9 +85,10 @@ class LabInventarisController extends Controller
 
     public function create($labId)
     {
-        $lab = Lab::findOrFail(decryptId($labId));
-        $inventarisList = Inventaris::whereDoesntHave('labInventaris', function($query) use ($lab) {
-                $query->where('lab_id', $lab->lab_id);
+        $realId = decryptId($labId);
+        $lab = Lab::findOrFail($realId);
+        $inventarisList = Inventaris::whereDoesntHave('labInventaris', function($query) use ($realId) {
+                $query->where('lab_id', $realId);
             })
             ->get();
 
@@ -123,7 +124,7 @@ class LabInventarisController extends Controller
 
             DB::commit();
 
-            return redirect()->route('labs.inventaris.index', encryptId($lab->lab_id))
+            return redirect()->route('labs.inventaris.index', $lab->encrypted_lab_id)
                 ->with('success', 'Inventaris berhasil ditambahkan ke lab.');
         } catch (\Exception $e) {
             DB::rollback();
@@ -168,7 +169,7 @@ class LabInventarisController extends Controller
 
             DB::commit();
 
-            return redirect()->route('labs.inventaris.index', encryptId($labInventaris->lab_id))
+            return redirect()->route('labs.inventaris.index', $labInventaris->encrypted_lab_id)
                 ->with('success', 'Data inventaris lab berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollback();
@@ -176,6 +177,34 @@ class LabInventarisController extends Controller
                 ->with('error', 'Gagal memperbarui data inventaris lab: ' . $e->getMessage())
                 ->withInput();
         }
+    }
+
+    public function getInventaris(Request $request, $labId)
+    {
+        $search = $request->get('search');
+        $realLabId = decryptId($labId);
+
+        // Exclude inventaris already assigned to this lab
+        $inventaris = Inventaris::select('inventaris_id', 'nama_alat', 'jenis_alat')
+            ->whereDoesntHave('labInventaris', function($query) use ($realLabId) {
+                $query->where('lab_id', $realLabId);
+            })
+            ->when($search, function($query, $search) {
+                return $query->where('nama_alat', 'LIKE', "%{$search}%")
+                             ->orWhere('jenis_alat', 'LIKE', "%{$search}%");
+            })
+            ->limit(5)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'id' => encryptId($item->inventaris_id),
+                    'text' => $item->nama_alat . ' (' . $item->jenis_alat . ')'
+                ];
+            });
+
+        return response()->json([
+            'results' => $inventaris
+        ]);
     }
 
     public function destroy($labId, $id)

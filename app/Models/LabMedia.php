@@ -39,4 +39,28 @@ class LabMedia extends Model
     {
         return $this->belongsTo(Media::class, 'media_id');
     }
+
+    /**
+     * Accessor to get encrypted lab_media_id
+     */
+    public function getEncryptedLabMediaIdAttribute()
+    {
+        return encryptId($this->lab_media_id);
+    }
+
+    /**
+     * Accessor to get encrypted lab_id
+     */
+    public function getEncryptedLabIdAttribute()
+    {
+        return encryptId($this->lab_id);
+    }
+
+    /**
+     * Accessor to get encrypted media_id
+     */
+    public function getEncryptedMediaIdAttribute()
+    {
+        return encryptId($this->media_id);
+    }
 }

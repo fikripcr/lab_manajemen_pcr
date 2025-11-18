@@ -33,4 +33,12 @@ class Semester extends Model
     {
         return $this->hasMany(JadwalKuliah::class, 'semester_id', 'semester_id');
     }
+
+    /**
+     * Accessor to get encrypted semester_id
+     */
+    public function getEncryptedSemesterIdAttribute()
+    {
+        return encryptId($this->semester_id);
+    }
 }

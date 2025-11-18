@@ -121,6 +121,7 @@ class LabController extends Controller
         $realId = decryptId($id);
 
         $lab = Lab::findOrFail($realId);
+        // $lab->lab_id = encryptId($lab->lab_id);
         return view('pages.admin.labs.show', compact('lab'));
     }
 

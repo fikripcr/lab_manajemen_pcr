@@ -38,4 +38,12 @@ class MataKuliah extends Model
     {
         return $this->belongsToMany(RequestSoftware::class, 'request_software_mata_kuliah', 'mata_kuliah_id', 'request_software_id');
     }
+
+    /**
+     * Accessor to get encrypted mata_kuliah_id
+     */
+    public function getEncryptedMataKuliahIdAttribute()
+    {
+        return encryptId($this->mata_kuliah_id);
+    }
 }
