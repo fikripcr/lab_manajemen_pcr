@@ -1,16 +1,5 @@
 @extends('layouts.admin.app')
 
-@push('css')
-    <!-- Apex Charts CSS -->
-    <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apex-charts.css" />
-@endpush
-
-@push('scripts')
-    <script src="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apexcharts.js"></script>
-    <script src="{{ asset('assets-admin') }}/js/dashboards-analytics.js"></script>
-@endpush
-
-
 @section('content')
     <div class="row">
         <div class="col-lg-8 mb-4 order-0">
@@ -459,4 +448,14 @@
         </div>
     </div>
 @endsection
+
+@push('css')
+    <!-- Apex Charts CSS -->
+    <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apex-charts.css" />
+@endpush
+
+@push('scripts')
+    <script src="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apexcharts.js"></script>
+    <script src="{{ asset('assets-admin') }}/js/dashboards-analytics.js"></script>
+@endpush
 

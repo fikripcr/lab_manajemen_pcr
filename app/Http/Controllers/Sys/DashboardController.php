@@ -80,7 +80,7 @@ class DashboardController extends Controller
             'categories' => $dates
         ]);
 
-        return view('pages.sys.dashboard', compact(
+        return view('pages.sys.dashboard.index', compact(
             'totalUsers',
             'totalRoles',
             'totalPermissions',
