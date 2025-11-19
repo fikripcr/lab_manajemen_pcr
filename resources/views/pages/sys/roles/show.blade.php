@@ -79,7 +79,6 @@
         </div>
     </div>
 
-    @include('components.sweetalert')
 
     <script>
         // Function to toggle select all checkboxes

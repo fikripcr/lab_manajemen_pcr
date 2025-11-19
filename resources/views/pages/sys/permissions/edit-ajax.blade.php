@@ -38,13 +38,7 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     // Show success message with higher z-index to appear above modal
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Permission updated successfully.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                        zIndex: 9999
-                    }).then((result) => {
+                    showSuccessMessage('Success!', 'Permission updated successfully.').then((result) => {
                         // Close the modal
                         $('#modalAction').modal('hide');
                         // Reload the DataTable
@@ -61,13 +55,7 @@
                             $('#editName').siblings('.invalid-feedback').text(errors.name[0]);
                         }
                     } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: xhr.responseJSON.message || 'An error occurred',
-                            icon: 'error',
-                            confirmButtonText: 'OK',
-                            zIndex: 9999
-                        });
+                        showErrorMessage('Error!', xhr.responseJSON.message || 'An error occurred');
                     }
                 },
                 complete: function() {

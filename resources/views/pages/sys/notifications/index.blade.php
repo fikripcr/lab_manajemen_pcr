@@ -204,25 +204,15 @@
                     }).get();
 
                     if (selectedIds.length === 0) {
-                        Swal.fire({
-                            title: 'Info!',
-                            text: 'Silakan pilih setidaknya satu notifikasi.',
-                            icon: 'info',
-                            confirmButtonText: 'OK'
-                        });
+                        showInfoMessage('Info!', 'Silakan pilih setidaknya satu notifikasi.');
                         return;
                     }
 
-                    Swal.fire({
-                        title: 'Konfirmasi',
-                        text: `Apakah Anda yakin ingin menandai ${selectedIds.length} notifikasi sebagai telah dibaca?`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, tandai sebagai telah dibaca',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
+                    showConfirmation(
+                        'Konfirmasi',
+                        `Apakah Anda yakin ingin menandai ${selectedIds.length} notifikasi sebagai telah dibaca?`,
+                        'Ya, tandai sebagai telah dibaca'
+                    ).then((result) => {
                         if (result.isConfirmed) {
                             fetch('{{ route('notifications.mark-selected-as-read') }}', {
                                 method: 'POST',
@@ -345,7 +335,6 @@
                 .catch(error => console.error('Error updating stats:', error));
         }
     </script>
-    @include('components.sweetalert')
 
     <!-- Add the mark all as read button in a fixed position -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">

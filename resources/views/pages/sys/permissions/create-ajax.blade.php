@@ -37,12 +37,7 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     // Show success message
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Permission created successfully.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
+                    showSuccessMessage('Success!', 'Permission created successfully.').then((result) => {
                         // Close the modal
                         $('#modalAction').modal('hide');
                         // Reload the DataTable
@@ -59,7 +54,7 @@
                             $('#name').siblings('.invalid-feedback').text(errors.name[0]);
                         }
                     } else {
-                        Swal.fire('Error!', xhr.responseJSON.message || 'An error occurred', 'error');
+                        showErrorMessage('Error!', xhr.responseJSON.message || 'An error occurred');
                     }
                 },
                 complete: function() {

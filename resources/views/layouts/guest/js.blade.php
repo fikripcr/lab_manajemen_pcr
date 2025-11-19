@@ -20,43 +20,5 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
-  <!-- SweetAlert Component JS -->
-  <script>
-    // SweetAlert function for success messages
-    function showSuccessMessage(title, text = '') {
-        Swal.fire({
-            icon: 'success',
-            title: title,
-            text: text,
-            showConfirmButton: false,
-            timer: 1500
-        });
-    }
-
-    // SweetAlert function for error messages
-    function showErrorMessage(title, text = '') {
-        Swal.fire({
-            icon: 'error',
-            title: title,
-            text: text
-        });
-    }
-
-    // SweetAlert function for info messages
-    function showInfoMessage(title, text = '') {
-        Swal.fire({
-            icon: 'info',
-            title: title,
-            text: text
-        });
-    }
-
-    // SweetAlert function for warning messages
-    function showWarningMessage(title, text = '') {
-        Swal.fire({
-            icon: 'warning',
-            title: title,
-            text: text
-        });
-    }
-  </script>
+  <!-- SweetAlert Utility Functions -->
+  <script src="{{ asset('assets-admin/js/custom/sweetalert-utils.js') }}"></script>

@@ -112,5 +112,4 @@
             }
         });
     </script>
-    @include('components.sweetalert')
 @endpush

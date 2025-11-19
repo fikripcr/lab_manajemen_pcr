@@ -57,11 +57,14 @@
                             <label class="col-sm-2 col-form-label" for="password_confirmation">Confirm New Password</label>
                             <div class="col-sm-10">
                                 <div class="input-group input-group-merge">
-                                    <input type="password" class="form-control"
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
                                            id="password_confirmation" name="password_confirmation"
                                            placeholder="••••••••">
                                     <span class="input-group-text cursor-pointer" id="togglePasswordConfirmation"><i class="bx bx-hide"></i></span>
                                 </div>
+                                @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 

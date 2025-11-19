@@ -96,7 +96,6 @@
 @endsection
 
 @push('scripts')
-    @include('components.sweetalert')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

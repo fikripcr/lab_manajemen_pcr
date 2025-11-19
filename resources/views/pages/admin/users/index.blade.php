@@ -40,6 +40,15 @@
                     <div class="me-3 mb-2 mb-sm-0">
                         <x:datatable.page-length id="pageLength" selected="10" />
                     </div>
+                    <!-- Action buttons for selected users -->
+                    <div id="bulk-actions-users-table" class="d-none">
+                        <button type="button" class="btn btn-sm btn-primary" onclick="bulkAction('send-notification')">
+                            <i class="bx bx-envelope"></i> Send Notification
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="bulkAction('delete')">
+                            <i class="bx bx-trash"></i> Delete
+                        </button>
+                    </div>
                 </div>
             </div>
             @include('components.datatable.search-filter', [
@@ -49,18 +58,10 @@
         <div class="card-body">
             <x-flash-message />
 
-            <x:datatable.datatable
+            <x-datatable.datatable
                 id="users-table"
                 route="{{ route('users.data') }}"
                 :columns="[
-                    [
-                        'title' => '#',
-                        'data' => 'DT_RowIndex',
-                        'name' => 'DT_RowIndex',
-                        'orderable' => false,
-                        'searchable' => false,
-                        'className' => 'text-center'
-                    ],
                     [
                         'title' => 'Name',
                         'data' => 'name',
@@ -99,11 +100,83 @@
                         'searchable' => false
                     ]
                 ]"
+                with-checkbox="true"
+                checkbox-key="id"
                 search="true"
                 page-length-selector="#pageLength"
             />
         </div>
     </div>
+    <script>
+        // Function to show/hide bulk action buttons based on whether any rows are selected
+        function updateBulkActionVisibility() {
+            const selectedCount = window.getSelectedIds ? window.getSelectedIds().length : 0;
+            const bulkActionsDiv = document.getElementById('bulk-actions-users-table');
+
+            if (selectedCount > 0) {
+                bulkActionsDiv.classList.remove('d-none');
+            } else {
+                bulkActionsDiv.classList.add('d-none');
+            }
+        }
+
+        // Add event listeners to handle checkbox changes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listen for changes to checkboxes in the table
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('select-row') || e.target.id.includes('selectAll')) {
+                    setTimeout(updateBulkActionVisibility, 100); // Delay to ensure state is updated
+                }
+            });
+        });
+
+        // Function to handle bulk actions
+        function bulkAction(action) {
+            const selectedIds = window.getSelectedIds();
+
+            if (selectedIds.length === 0) {
+                showWarningMessage('Warning', 'Please select at least one user to perform this action');
+                return;
+            }
+
+            let actionText = '';
+            let actionColor = 'primary';
+
+            switch(action) {
+                case 'send-notification':
+                    actionText = 'Send Notification';
+                    actionColor = 'primary';
+                    break;
+                case 'impersonate':
+                    actionText = 'Login As';
+                    actionColor = 'info';
+                    break;
+                case 'delete':
+                    actionText = 'Delete';
+                    actionColor = 'danger';
+                    break;
+            }
+
+            showBulkActionConfirmation(actionText, selectedIds.length, 'user').then((result) => {
+                if (result.isConfirmed) {
+                    // In a real implementation, you would send the selectedIds to a backend endpoint
+                    // For now, just show a confirmation message
+                    showSuccessMessage(`${actionText} action performed on ${selectedIds.length} user(s)`).then(() => {
+                        // Deselect all checkboxes after action
+                        const selectAllCheckbox = document.getElementById('selectAll-users-table');
+                        if (selectAllCheckbox) {
+                            selectAllCheckbox.checked = false;
+                        }
+                        // Also uncheck individual checkboxes
+                        document.querySelectorAll('.select-row').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        updateBulkActionVisibility();
+                    });
+                }
+            });
+        }
+    </script>
 @endsection
 
 @push('scripts')
@@ -215,5 +288,18 @@
             window.location.href = '{{ route('users.export') }}?' + params.toString();
         });
     </script>
-    @include('components.sweetalert')
+    <script>
+        // Add additional functionality after the DataTable initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for DataTable to be initialized
+            setTimeout(function() {
+                if ($('#users-table').DataTable()) {
+                    // Update visibility when table is redrawn (pagination, sorting, etc.)
+                    $('#users-table').on('draw.dt', function() {
+                        setTimeout(updateBulkActionVisibility, 100);
+                    });
+                }
+            }, 500); // Slight delay to ensure DataTable is initialized
+        });
+    </script>
 @endpush

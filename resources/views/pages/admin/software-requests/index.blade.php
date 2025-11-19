@@ -41,7 +41,6 @@
 @endsection
 
 @push('scripts')
-    @include('components.sweetalert')
 
     <script>
         $(document).ready(function() {

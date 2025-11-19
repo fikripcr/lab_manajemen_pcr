@@ -131,7 +131,7 @@
                 $('#modalContent').html(data);
                 $('#modalAction').modal('show');
             }).fail(function() {
-                Swal.fire('Error!', 'Could not load form', 'error');
+                showErrorMessage('Error!', 'Could not load form');
             });
         });
 
@@ -142,10 +142,9 @@
                 $('#modalContent').html(data);
                 $('#modalAction').modal('show');
             }).fail(function() {
-                Swal.fire('Error!', 'Could not load form', 'error');
+                showErrorMessage('Error!', 'Could not load form');
             });
         });
     </script>
 
-    @include('components.sweetalert')
 @endpush

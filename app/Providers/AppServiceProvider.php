@@ -34,8 +34,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Force HTTPS untuk semua URL
-        if (env('APP_ENV') === 'production' || request()->header('X-Forwarded-Proto') == 'https') {
-            URL::forceScheme('https');
-        }
+        // if (env('APP_ENV') === 'production' || request()->header('X-Forwarded-Proto') == 'https') {
+        //     URL::forceScheme('https');
+        // }
     }
 }
