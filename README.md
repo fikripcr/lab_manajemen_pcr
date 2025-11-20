@@ -564,6 +564,39 @@ if (app('impersonate')->isImpersonating()) {
 - Use database channel for notifications
 - Create notification classes extending `Illuminate\Notifications\Notification`
 - Use `notify()` method to send notifications
+- **Enhanced Notification Management**: Implemented comprehensive notification system with both database and email delivery options
+- **Test Notification Functionality**: Added test notification features with loading indicators and success feedback
+- **Unified Notification Interface**: Centralized notification management available in System Configuration
+- **User-Specific Notifications**: Ability to send notifications to individual users or user groups
+- **Loading Indicators**: Implemented SweetAlert loading indicators during notification operations
+
+## Notification System Features
+
+The application includes a comprehensive notification management system with the following capabilities:
+
+### Core Features
+- **Database Notifications**: Notifications stored in `sys_notifications` table with title, body, and timestamp
+- **Email Notifications**: Support for sending notifications via email
+- **User Dashboard**: Notifications displayed in header dropdown and dedicated notifications page
+- **Read/Unread Management**: Mark notifications as read individually, in bulk, or all at once
+
+### Testing Capabilities
+- **Test Notifications**: Send test notifications to current user from notifications page
+- **User-Specific Testing**: Send notifications to specific users from user management page
+- **Email Testing**: Test email notifications functionality
+- **Loading Indicators**: Visual feedback during notification sending operations
+
+### Management Interface
+- **Dedicated Pages**: Separate interface for managing notifications in System Configuration
+- **Bulk Operations**: Mark multiple notifications as read simultaneously
+- **Status Tracking**: Clear indication of read/unread status
+- **Timestamp Information**: Shows when notifications were created
+
+### How to Use
+1. **Send Test Notification**: Click "Test Notification" button on notifications page
+2. **Send to Specific User**: Use dropdown menu on user management page
+3. **View Notifications**: Check header dropdown or notifications page
+4. **Manage Notifications**: Access full management interface in System Configuration
 
 ## 🔐 Security Features
 
@@ -582,6 +615,13 @@ Rich text editor for content management fields.
 
 ### SweetAlert
 Enhanced user experience with beautiful pop-up confirmations.
+### Enhanced User Interface with Loading Indicators
+Added SweetAlert loading indicators to improve user experience during operations that may take time to complete:
+- **Notification Operations**: Loading indicators during notification and email sending operations
+- **Database Operations**: Visual feedback during backup and other database operations
+- **User Experience**: Clear indication that operations are processing with "Processing..." message
+- **Loading States**: Prevents user interaction during operations to avoid duplicate actions
+- **Success Feedback**: Automatic transition from loading to success/error messages
 
 ### Custom Error Pages
 Professional error pages published to `resources/views/errors/`.
@@ -667,6 +707,36 @@ Developers can easily extend the search functionality to include additional mode
 4. **Optimize Performance**: Use cache management and optimization features
 5. **View Existing Backups**: See list of existing backups with size and creation date
 6. **Download/Manage Backups**: Download or remove old backups to manage storage space
+
+## DataTable State Persistence
+
+The application includes a robust state persistence system for DataTable components that preserves user preferences between page loads using DataTables' built-in state saving functionality. This feature enhances user experience by maintaining their search terms, page length, and pagination state.
+
+### Features
+- **Search Persistence**: Search terms are automatically saved and restored using DataTable's built-in state saving
+- **Filter Persistence**: Custom applied filters are preserved between page loads using custom localStorage
+- **Page Length Persistence**: Selected page length (10, 25, 50, 100, All) is automatically maintained by DataTable
+- **Pagination Persistence**: Current page number and state are automatically preserved by DataTable
+- **Unique Storage Keys**: DataTable automatically creates unique keys based on table ID and URL path
+- **Server-side Processing Compatible**: Works properly with server-side DataTables
+
+### Implementation Details
+- **DataTable Component**: Uses native DataTables `stateSave: true` for standard features (search, pagination, page length, column ordering, etc.)
+- **Custom Filters**: Custom filter controls are handled separately with custom localStorage functionality
+- **UI Synchronization**: All UI components are updated to match the restored DataTable state
+
+### How It Works
+1. **State Saving**: DataTable automatically saves state when users change search, pagination, or page length
+2. **Custom Filter Saving**: Custom filters are saved to localStorage when changed
+3. **State Loading**: On page load, saved state is retrieved and applied to the DataTable and UI components
+4. **Synchronization**: The UI components are updated to match the restored DataTable state
+
+### Components Affected
+- All pages using the `x-datatable.datatable` component
+- All pages using the `x-datatable.search-filter` component
+- All pages using the `x-datatable.page-length` component
+
+This feature significantly improves user experience by maintaining context when navigating between pages or refreshing content.
 
 ### Configuration Process
 
@@ -795,11 +865,12 @@ Several existing pages already use this system:
 - **Date Pickers**: Date picker CSS and JavaScript
 - **File Uploads**: File upload component CSS and JS
 - **Custom Components**: Page-specific interactive elements
-### Additional Features and Updates 
-- **Enhanced Activity Logging**: Extended activity logs with IP address, browser information, and additional context 
-- **Centralized Configuration**: Added form-based management for Google OAuth, Mail settings, and mysqldump path in App Configuration 
-- **Unified Notification System**: Consolidated notification sending and marking functions for both email and database notifications 
-- **Improved Avatar Handling**: Added image conversions (small, medium, large) and automatic cleanup of original files 
-- **Enhanced User Interface**: Improved DataTables with consistent pagination, and better UI components  
-- **Email Testing**: Added email testing functionality accessible from user dropdown menu  
-- **Validation Messages**: Added Indonesian translation helper for validation messages 
+### Additional Features and Updates
+- **Enhanced Activity Logging**: Extended activity logs with IP address, browser information, and additional context
+- **Centralized Configuration**: Added form-based management for Google OAuth, Mail settings, and mysqldump path in App Configuration
+- **Unified Notification System**: Consolidated notification sending and marking functions for both email and database notifications
+- **Improved Avatar Handling**: Added image conversions (small, medium, large) and automatic cleanup of original files
+- **Enhanced User Interface**: Improved DataTables with consistent pagination, and better UI components
+- **Email Testing**: Added email testing functionality accessible from user dropdown menu
+- **Validation Messages**: Added Indonesian translation helper for validation messages
+- **DataTable State Persistence**: Leveraged DataTable's built-in state saving functionality to preserve search terms, page length, and pagination state, with additional custom localStorage for filter controls

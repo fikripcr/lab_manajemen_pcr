@@ -83,7 +83,39 @@
                 order: {!! json_encode($order) !!},
                 pageLength: 10,
                 responsive: true,
-                dom: 'rtip'
+                dom: 'rtip',
+                stateSave: true,
+                // Restore state as early as possible
+                stateLoadCallback: function(settings, callback) {
+                    const tableId = '{{ $id }}';
+                    const stateName = 'DataTables_' + tableId + '_' + window.location.pathname;
+                    const storedState = localStorage.getItem(stateName);
+
+                    if (storedState) {
+                        const state = JSON.parse(storedState);
+                        // Update the page length selector with saved value
+                        const savedPageLength = state.length;
+                        if (savedPageLength) {
+                            const pageLengthSelector = '{{ $pageLengthSelector }}';
+                            $(pageLengthSelector).val(savedPageLength);
+                        }
+                        // Update the search input with saved value from DataTable's internal search
+                        @if ($search)
+                        const savedSearch = state.search && state.search.search;
+                        if (savedSearch) {
+                            $('#globalSearch-{{ $id }}').val(savedSearch);
+                        }
+                        @endif
+                        callback(state);
+                    } else {
+                        callback(null);
+                    }
+                },
+                stateSaveCallback: function(settings, data) {
+                    const tableId = '{{ $id }}';
+                    const stateName = 'DataTables_' + tableId + '_' + window.location.pathname;
+                    localStorage.setItem(stateName, JSON.stringify(data));
+                }
             });
 
             // Handle "Select All" checkbox
@@ -194,12 +226,17 @@
                         }
                     });
 
-                    // Handle search input
-                    @if ($search)
-                        $(document).on('keyup', options.searchInputSelector, function() {
-                            table.search(this.value).draw();
-                        });
-                    @endif
+                    // Update the page length selector when table state changes
+                    table.on('draw', function() {
+                        const pageLength = table.page.len();
+                        $(options.pageLengthSelector).val(pageLength);
+                    });
+
+                    // On the first draw after state load, ensure page length is properly set
+                    table.one('draw', function() {
+                        const pageLength = table.page.len();
+                        $(options.pageLengthSelector).val(pageLength);
+                    });
                 };
             }
         });

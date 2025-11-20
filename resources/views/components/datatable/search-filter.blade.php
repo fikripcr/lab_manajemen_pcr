@@ -1,7 +1,6 @@
 <div class="row mb-3">
 
     <div class="col-md-3">
-        {{-- <label class="form-label">Search</label> --}}
         <div class="input-group  input-group-merge">
             <span class="input-group-text"><i class="bx bx-search"></i></span>
             <input type="text" class="form-control global-search" id="globalSearch-{{ $dataTableId ?? 'dataTable' }}" placeholder="Search..." />
@@ -12,9 +11,6 @@
     @if (isset($filters))
         @foreach ($filters as $filter)
             <div class="col-md-{{ $filter['col_size'] ?? 2 }}">
-                {{-- <div class="input-group  input-group-merge"> --}}
-                    {{-- <span class="input-group-text"><i class="bx bx-filter"></i></span> --}}
-                    {{-- <label class="form-label">{{$filter['label']}}</label> --}}
                     @if ($filter['type'] == 'select')
                         <select class="form-control {{ $filter['class'] ?? '' }} filter-select" id="{{ $filter['id'] }}" data-column="{{ $filter['column'] }}">
                             <option value="">{{ $filter['placeholder'] ?? 'Select...' }}</option>
@@ -25,7 +21,6 @@
                     @else
                         <input type="{{ $filter['type'] ?? 'text' }}" class="form-control filter-input" id="{{ $filter['id'] }}" data-column="{{ $filter['column'] }}" placeholder="{{ $filter['placeholder'] ?? '' }}" value="{{ request($filter['name']) ?? '' }}" />
                     @endif
-                {{-- </div> --}}
             </div>
         @endforeach
     @endif
@@ -38,14 +33,16 @@
             // Initialize Choice.js for select elements with 'choice-select' class
             const choiceElements = document.querySelectorAll('.choice-select');
 
-
             // Global search input for this table
             var globalSearchInput = $('#globalSearch-{{ $dataTableId ?? 'dataTable' }}');
-            var filterButton = $('#filterButton-{{ $dataTableId ?? 'dataTable' }}');
             var clearFilterButton = $('#clearFilterButton-{{ $dataTableId ?? 'dataTable' }}');
 
+            // Storage keys
+            const tableId = '{{ $dataTableId ?? 'dataTable' }}';
+            const filtersStorageKey = 'datatable_filters_' + tableId;
+
             // Wait a bit for DataTable to initialize, then attach events
-                choiceElements.forEach(function(element) {
+            choiceElements.forEach(function(element) {
                 new Choices(element, {
                     searchEnabled: true,
                     searchPlaceholderValue: 'Search...',
@@ -54,48 +51,70 @@
                     shouldSort: false,
                 });
             });
-                try {
-                    var dataTable = $('#{{ $dataTableId ?? 'dataTable' }}').DataTable();
 
-                    // Handle global search - use DataTable's built-in search
-                    globalSearchInput.on('keyup', function() {
-                        dataTable.search(this.value).draw();
-                    });
+            try {
+                var dataTable = $('#{{ $dataTableId ?? 'dataTable' }}').DataTable();
 
-                    // Handle filter apply button
-                    filterButton.on('click', function() {
-                        dataTable.ajax.reload();
-                    });
+                // Restore saved filters on page load (search is handled by DataTable's state saving)
+                @if (isset($filters))
+                    var savedFilters = JSON.parse(localStorage.getItem(filtersStorageKey)) || {};
+                    @foreach ($filters as $filter)
+                        var savedValue = savedFilters['{{ $filter['id'] }}'];
+                        if (savedValue !== undefined) {
+                            $('#{{ $filter['id'] }}').val(savedValue);
+                            // Update the choice instance if it exists
+                            const choiceElement = document.getElementById('{{ $filter['id'] }}');
+                            if (choiceElement && choiceElement.choicesInstance) {
+                                choiceElement.choicesInstance.setChoiceByValue(savedValue);
+                            }
+                        }
+                    @endforeach
+                @endif
 
-                    // Handle clear filter button
-                    clearFilterButton.on('click', function() {
-                        globalSearchInput.val('');
-                        @if (isset($filters))
-                            @foreach ($filters as $filter)
-                                $('#{{ $filter['id'] }}').val('');
-                                // Update the choice instance if it exists
-                                const choiceElement = document.getElementById('{{ $filter['id'] }}');
-                                if (choiceElement && choiceElement.choicesInstance) {
-                                    choiceElement.choicesInstance.clearStore();
-                                }
-                            @endforeach
-                        @endif
-                        dataTable.search('').draw();
-                        dataTable.ajax.reload();
-                    });
+                // Handle global search - custom search for server-side processing
+                // (Note: DataTable's state saving will restore the search term)
+                globalSearchInput.on('input', function() {
+                    dataTable.ajax.reload();
+                });
 
-                    // Handle individual filter changes
+                // Handle clear filter button
+                clearFilterButton.on('click', function() {
+                    globalSearchInput.val('');
+
                     @if (isset($filters))
+                        var filterData = {};
                         @foreach ($filters as $filter)
-                            $('#{{ $filter['id'] }}').on('change', function() {
-                                dataTable.ajax.reload();
-                            });
+                            $('#{{ $filter['id'] }}').val('');
+                            // Update the choice instance if it exists
+                            const choiceElement = document.getElementById('{{ $filter['id'] }}');
+                            if (choiceElement && choiceElement.choicesInstance) {
+                                choiceElement.choicesInstance.clearStore();
+                            }
+                            filterData['{{ $filter['id'] }}'] = '';
                         @endforeach
+
+                        localStorage.setItem(filtersStorageKey, JSON.stringify(filterData));
                     @endif
 
-                } catch (e) {
-                    console.warn('DataTable not initialized yet for {{ $dataTableId ?? 'dataTable' }}:', e.message);
-                }
+                    dataTable.ajax.reload();
+                });
+
+                // Handle individual filter changes
+                @if (isset($filters))
+                    @foreach ($filters as $filter)
+                        $('#{{ $filter['id'] }}').on('change', function() {
+                            var filterData = JSON.parse(localStorage.getItem(filtersStorageKey)) || {};
+                            filterData['{{ $filter['id'] }}'] = $(this).val();
+                            localStorage.setItem(filtersStorageKey, JSON.stringify(filterData));
+
+                            dataTable.ajax.reload();
+                        });
+                    @endforeach
+                @endif
+
+            } catch (e) {
+                console.warn('DataTable not initialized yet for {{ $dataTableId ?? 'dataTable' }}:', e.message);
+            }
         });
     </script>
 @endpush
