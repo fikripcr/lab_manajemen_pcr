@@ -183,6 +183,18 @@
     <script>
         // Function to send notification to a specific user
         function sendNotificationToUser(url, userId, userName) {
+            // Show loading indicator
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Sending notification to ' + userName,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -197,6 +209,7 @@
             })
             .then(response => response.json())
             .then(data => {
+                Swal.close();
                 if (data.success) {
                     Swal.fire({
                         title: 'Sukses!',
@@ -214,6 +227,7 @@
                 }
             })
             .catch(error => {
+                Swal.close();
                 console.error('Error:', error);
                 Swal.fire({
                     title: 'Error!',
@@ -237,6 +251,18 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Show loading indicator
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Sending email to ' + userName,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     fetch(url, {
                         method: 'POST',
                         headers: {
@@ -251,6 +277,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        Swal.close();
                         if (data.success) {
                             Swal.fire({
                                 title: 'Sukses!',
@@ -268,6 +295,7 @@
                         }
                     })
                     .catch(error => {
+                        Swal.close();
                         console.error('Error:', error);
                         Swal.fire({
                             title: 'Error!',

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Exception;
+use Spatie\DbDumper\Databases\MySql;
 
 class BackupController extends Controller
 {
@@ -134,6 +136,35 @@ class BackupController extends Controller
         $filename = 'database_backup_' . date('Y-m-d_H-i-s') . '.sql';
         $fullPath = $backupDir . '/' . $filename;
 
+        try {
+            // Use Spatie DbDumper as the primary method for database backup
+            $dumper = \Spatie\DbDumper\Databases\MySql::create()
+                ->setHost(config('database.connections.mysql.host'))
+                ->setPort(config('database.connections.mysql.port'))
+                ->setUsername(config('database.connections.mysql.username'))
+                ->setPassword(config('database.connections.mysql.password'))
+                ->setDbName(config('database.connections.mysql.database'));
+
+            // Optionally set the mysqldump executable path from environment configuration if available
+            $mysqldumpPath = env('MYSQLDUMP_PATH');
+            if ($mysqldumpPath && file_exists($mysqldumpPath)) {
+                // If a specific path is provided and exists, we can set the bin path directory
+                $dumper->setBinPath(dirname($mysqldumpPath));
+            }
+
+            $dumper->dumpToFile($fullPath);
+        } catch (\Exception $e) {
+            \Log::error('Spatie DbDumper failed: ' . $e->getMessage());
+            // If Spatie DbDumper fails, fall back to the original implementation
+            $this->createDatabaseBackupLegacy($fullPath);
+        }
+    }
+
+    /**
+     * Legacy database backup method (preserved for compatibility)
+     */
+    private function createDatabaseBackupLegacy($fullPath)
+    {
         // Get mysqldump path from environment, with fallback
         $mysqldumpPath = env('MYSQLDUMP_PATH', 'C:/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysqldump.exe');
 

@@ -68,6 +68,9 @@
                         <button id="markSelectedAsReadBtn" class="btn btn-primary btn-sm me-2" disabled>
                             <i class="bx bx-check-double me-1"></i> Mark Selected as Read
                         </button>
+                        <button id="sendTestNotificationBtn" class="btn btn-success btn-sm me-2" onclick="sendTestNotification()">
+                            <i class="bx bx-bell me-1"></i> Test Notification
+                        </button>
                         <div class="me-3 mb-2 mb-sm-0">
                             <x-datatable.page-length id="pageLength" selected="10" />
                         </div>
@@ -216,6 +219,66 @@
                     }
                 })
                 .catch(error => console.error('Error updating stats:', error));
+        }
+
+        // Function to send test notification to current user
+        function sendTestNotification() {
+            // Show loading indicator
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Sending test notification...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            fetch('{{ route('notifications.test') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    type: 'database'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Sukses!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Reload the table to show the new notification
+                        $('#notifications-table').DataTable().ajax.reload();
+                        // Update stats
+                        updateNotificationStats();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Gagal mengirim notifikasi',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.close();
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat mengirim notifikasi',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
         }
     </script>
 @endsection

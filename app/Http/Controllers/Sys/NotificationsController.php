@@ -157,8 +157,8 @@ class NotificationsController extends Controller
     {
         $user = Auth::user();
 
-        // Send the test notification to the authenticated user
-        $user->notify(new TestNotification());
+        // Send the test notification to the authenticated user (database channel)
+        $user->notify(new TestNotification('database'));
 
         // Log the notification sending
         logActivity('notification', 'Test notification sent to user: ' . $user->name . ' (ID: ' . $user->id . ')', $user);
@@ -184,7 +184,7 @@ class NotificationsController extends Controller
         }
 
         // Send the test notification to the specific user
-        $recipient->notify(new TestNotification());
+        $recipient->notify(new TestNotification('database')); // Default to database notification
 
         // Log the notification sending
         logActivity('notification', 'Test notification sent to user: ' . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')', $recipient);
@@ -249,12 +249,25 @@ class NotificationsController extends Controller
     }
 
     /**
+     * Update notification (currently not implemented)
+     */
+    public function update(Request $request, $id = null)
+    {
+        // Currently not implemented - notifications are read/unread only
+        return response()->json([
+            'success' => false,
+            'message' => 'Update operation is not supported for notifications. Use mark-as-read to update status.'
+        ], 405); // Method not allowed
+    }
+
+    /**
      * Test notification function that can send to database or email based on parameters
      */
     public function testNotification(Request $request)
     {
         $request->validate([
             'type' => 'required|in:database,email',
+            'user_id' => 'nullable'
         ]);
 
         $type = $request->input('type');
@@ -282,9 +295,13 @@ class NotificationsController extends Controller
         }
 
         try {
+            // Determine channel based on type
+            $channel = $type === 'email' ? 'mail' : 'database';
+            $notification = new TestNotification($channel);
+
             if ($type === 'email') {
                 // Send email notification
-                $user->notify(new TestNotification());
+                $user->notify($notification);
 
                 return response()->json([
                     'success' => true,
@@ -292,7 +309,7 @@ class NotificationsController extends Controller
                 ]);
             } else {
                 // Send database notification (default)
-                $user->notify(new TestNotification());
+                $user->notify($notification);
 
                 return response()->json([
                     'success' => true,
@@ -315,7 +332,7 @@ class NotificationsController extends Controller
         $request->validate([
             'type' => 'required|in:database,email',
             // user_id is optional when sending to authenticated user
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable',
             'notification_class' => 'required|string' // Notification class name
         ]);
 
@@ -355,6 +372,14 @@ class NotificationsController extends Controller
 
         try {
             if ($type === 'email') {
+                // Verify the recipient has an email address
+                if (empty($recipient->email)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Recipient does not have an email address.'
+                    ], 400);
+                }
+
                 $recipient->notify($notification);
                 $message = 'Email notification sent successfully to ' . $recipient->email;
             } else {
@@ -363,13 +388,14 @@ class NotificationsController extends Controller
             }
 
             // Log the notification sending
-            logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')', $recipient);
+            logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
             return response()->json([
                 'success' => true,
                 'message' => $message
             ]);
         } catch (\Exception $e) {
+            \Log::error('Notification sending failed: ' . $e->getMessage() . ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send notification: ' . $e->getMessage()
