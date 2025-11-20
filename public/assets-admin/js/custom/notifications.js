@@ -1,32 +1,3 @@
-// Load notifications asynchronously
-function loadNotifications() {
-    fetch(window.appRoutes.notificationsIndex)
-        .then(response => response.text())
-        .then(html => {
-            // Parse the HTML response to extract notifications
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const notifications = doc.querySelectorAll('.notification-item'); // assuming notifications have this class
-
-            const notificationsList = document.getElementById('notifications-list');
-            if (notifications.length > 0) {
-                notificationsList.innerHTML = '';
-                notifications.forEach(notification => {
-                    const li = document.createElement('li');
-                    li.innerHTML = notification.outerHTML;
-                    notificationsList.appendChild(li);
-                });
-            } else {
-                notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">No notifications found</p></a></li>';
-            }
-        })
-        .catch(error => {
-            console.error('Error loading notifications:', error);
-            const notificationsList = document.getElementById('notifications-list');
-            notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">Failed to load notifications</p></a></li>';
-        });
-}
-
 // More efficient notification loading using API
 function loadNotificationsApi() {
     fetch(window.appRoutes.notificationsDropdownData)
