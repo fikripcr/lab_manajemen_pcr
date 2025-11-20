@@ -1,13 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
 use Exception;
-use Spatie\DbDumper\Databases\MySql;
+use Illuminate\Http\Request;
 
 class BackupController extends Controller
 {
@@ -33,11 +29,17 @@ class BackupController extends Controller
 
             $message = "Backup created successfully";
 
-                return response()->json([
-                    'success' => true,
-                    'message' => $message
-                ]);
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
         } catch (Exception $e) {
+            // Log the error to the ErrorLog model
+            logError($e, 'error', [
+                'backup_type' => $type,
+                'description' => 'Error during backup creation',
+            ]);
+
             $errorMessage = $e->getMessage();
             // Clean the error message to remove newlines for JSON response
             $cleanErrorMessage = trim(str_replace(["\n", "\r"], " ", $errorMessage));
@@ -46,7 +48,7 @@ class BackupController extends Controller
             if ($request->expectsJson() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to create backup: ' . $cleanErrorMessage
+                    'message' => 'Failed to create backup: ' . $cleanErrorMessage,
                 ], 500);
             }
 
@@ -63,7 +65,7 @@ class BackupController extends Controller
     {
         // Create backup directory
         $backupDir = storage_path('app/private/backup');
-        if (!file_exists($backupDir)) {
+        if (! file_exists($backupDir)) {
             mkdir($backupDir, 0755, true);
         }
 
@@ -122,128 +124,62 @@ class BackupController extends Controller
     }
 
     /**
-     * Create a custom database backup
+     * Create a custom database backup using spatie/laravel-backup
      */
     private function createDatabaseBackup()
     {
-        // Create backup directory
+        // Pastikan hanya MySQL yang didukung
+        $driver   = config('database.default');
+        $dbConfig = config("database.connections.{$driver}");
+
+        if (($dbConfig['driver'] ?? null) !== 'mysql') {
+            throw new \Exception(
+                'Database backup hanya didukung untuk MySQL. ' .
+                'Driver saat ini: ' . ($dbConfig['driver'] ?? 'unknown')
+            );
+        }
+
         $backupDir = storage_path('app/private/backup');
-        if (!file_exists($backupDir)) {
+        if (! is_dir($backupDir)) {
             mkdir($backupDir, 0755, true);
         }
 
-        // Create a unique filename with timestamp
         $filename = 'database_backup_' . date('Y-m-d_H-i-s') . '.sql';
         $fullPath = $backupDir . '/' . $filename;
 
-        try {
-            // Use Spatie DbDumper as the primary method for database backup
-            $dumper = \Spatie\DbDumper\Databases\MySql::create()
-                ->setHost(config('database.connections.mysql.host'))
-                ->setPort(config('database.connections.mysql.port'))
-                ->setUsername(config('database.connections.mysql.username'))
-                ->setPassword(config('database.connections.mysql.password'))
-                ->setDbName(config('database.connections.mysql.database'));
-
-            // Optionally set the mysqldump executable path from environment configuration if available
-            $mysqldumpPath = env('MYSQLDUMP_PATH');
-            if ($mysqldumpPath && file_exists($mysqldumpPath)) {
-                // If a specific path is provided and exists, we can set the bin path directory
-                $dumper->setBinPath(dirname($mysqldumpPath));
-            }
-
-            $dumper->dumpToFile($fullPath);
-        } catch (\Exception $e) {
-            \Log::error('Spatie DbDumper failed: ' . $e->getMessage());
-            // If Spatie DbDumper fails, fall back to the original implementation
-            $this->createDatabaseBackupLegacy($fullPath);
-        }
-    }
-
-    /**
-     * Legacy database backup method (preserved for compatibility)
-     */
-    private function createDatabaseBackupLegacy($fullPath)
-    {
-        // Get mysqldump path from environment, with fallback
         $mysqldumpPath = env('MYSQLDUMP_PATH', 'C:/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysqldump.exe');
 
-        // Check if mysqldump path is set and executable exists
-        if (empty($mysqldumpPath)) {
-            throw new Exception('Mysqldump path is not set in configuration. Please set it in the App Configuration.');
+        if (! file_exists($mysqldumpPath)) {
+            throw new \Exception("mysqldump tidak ditemukan di: {$mysqldumpPath}. Pastikan path benar di file .env.");
         }
 
-        // For Windows, check if the file exists
-        if (PHP_OS_FAMILY === 'Windows' && !file_exists($mysqldumpPath)) {
-            throw new Exception("Mysqldump executable not found at: {$mysqldumpPath}. Please verify the path in App Configuration.");
+        $command = '"' . $mysqldumpPath . '" ' .
+        '--host=' . escapeshellarg($dbConfig['host']) . ' ' .
+        '--port=' . escapeshellarg($dbConfig['port'] ?? 3306) . ' ' .
+        '--user=' . escapeshellarg($dbConfig['username']) . ' ' .
+        '--password=' . escapeshellarg($dbConfig['password']) . ' ' .
+        escapeshellarg($dbConfig['database']) . ' ' .
+        '> ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $fullPath));
+
+        $exitCode = 0;
+        exec($command, $output, $exitCode);
+
+        if ($exitCode !== 0) {
+            throw new \Exception("Backup database gagal. Exit code: {$exitCode}");
         }
 
-        // Get database connection details from environment
-        $host = env('DB_HOST', '127.0.0.1');
-        $port = env('DB_PORT', '3306');
-        $database = env('DB_DATABASE');
-        $username = env('DB_USERNAME', 'root');
-        $password = env('DB_PASSWORD', '');
-
-        // Build the mysqldump command with proper executable path for Laragon
-        $mysqldumpCmd = $mysqldumpPath;
-
-        // For Windows systems, wrap the path in quotes if it contains spaces
-        if (PHP_OS_FAMILY === 'Windows' && strpos($mysqldumpPath, ' ') !== false) {
-            $mysqldumpCmd = '"' . $mysqldumpPath . '"';
+        // Opsional: kompres ke ZIP
+        $zipFile = str_replace('.sql', '.zip', $fullPath);
+        $zip     = new \ZipArchive();
+        if ($zip->open($zipFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE)) {
+            $zip->addFile($fullPath, basename($fullPath));
+            $zip->close();
+            unlink($fullPath);
+            $fullPath = $zipFile;
         }
 
-        // For Windows, we'll use the full path to mysqldump
-        $command = sprintf(
-            '%s --host=%s --port=%s --user=%s --password=%s %s > "%s"',
-            $mysqldumpCmd,
-            $host,
-            $port,
-            $username,
-            $password,
-            $database,
-            $fullPath
-        );
-
-        // Execute the command using cmd on Windows
-        $output = [];
-        $returnCode = 0;
-
-        // For Windows systems
-        if (PHP_OS_FAMILY === 'Windows') {
-            $command = str_replace('\\', '/', $command);
-            exec('cmd /c ' . escapeshellcmd($command) . ' 2>&1', $output, $returnCode);
-        } else {
-            // For Unix-like systems
-            exec(escapeshellcmd($command) . ' 2>&1', $output, $returnCode);
-        }
-
-        if ($returnCode !== 0) {
-            // If the specific path doesn't work, try generic mysqldump
-            $genericMysqldumpPath = 'mysqldump';
-            $genericCommand = sprintf(
-                '%s --host=%s --port=%s --user=%s --password=%s %s > "%s"',
-                $genericMysqldumpPath,
-                $host,
-                $port,
-                $username,
-                $password,
-                $database,
-                $fullPath
-            );
-
-            $output = [];
-            $returnCode = 0;
-            if (PHP_OS_FAMILY === 'Windows') {
-                exec('cmd /c ' . escapeshellcmd($genericCommand) . ' 2>&1', $output, $returnCode);
-            } else {
-                exec(escapeshellcmd($genericCommand) . ' 2>&1', $output, $returnCode);
-            }
-
-            if ($returnCode !== 0) {
-                throw new Exception('Database backup failed with return code: ' . $returnCode . '. Output: ' . implode(' ', $output) . '. Please verify your Mysqldump path in App Configuration.');
-            }
-        }
+        \Log::info("Backup database berhasil: {$fullPath}");
+        return $fullPath;
     }
 
     /**
@@ -273,7 +209,7 @@ class BackupController extends Controller
     public function download($filename)
     {
         // Normalize the path to prevent directory traversal
-        $filename = $this->normalizePath($filename);
+        $filename = normalizePath($filename);
 
         // Check if it's in the backup directory
         if (strpos($filename, 'backup/') === 0) {
@@ -284,7 +220,7 @@ class BackupController extends Controller
             $filePath = storage_path('app/private/' . $filename);
         }
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             abort(404, 'Backup file not found: ' . $filename);
         }
 
@@ -294,7 +230,7 @@ class BackupController extends Controller
     public function delete($filename)
     {
         // Normalize the path to prevent directory traversal
-        $filename = $this->normalizePath($filename);
+        $filename = normalizePath($filename);
 
         // Check if it's in the backup directory
         if (strpos($filename, 'backup/') === 0) {
@@ -311,15 +247,8 @@ class BackupController extends Controller
             abort(404, 'Backup file not found: ' . $filename);
         }
 
-        return redirect()->route('pages.sys.backup.index')
+        return redirect()->back()
             ->with('success', 'Backup deleted successfully');
-    }
-
-    private function normalizePath($path)
-    {
-        // Clean up the path to prevent directory traversal attacks
-        $path = str_replace(['../', '..\\', './', '.\\'], '', $path);
-        return $path;
     }
 
     private function getBackupList()
@@ -334,15 +263,15 @@ class BackupController extends Controller
             foreach ($files as $file) {
                 if ($file !== '.' && $file !== '..' &&
                     (preg_match('/^web_backup_.*\.(zip|sql)$/', $file) ||
-                     preg_match('/^database_backup_.*\.(zip|sql)$/', $file))) {
+                        preg_match('/^database_backup_.*\.(zip|sql)$/', $file))) {
                     $filePath = $backupDir . '/' . $file;
                     if (is_file($filePath)) {
                         $backups[] = [
-                            'name' => 'backup/' . $file,
-                            'size' => filesize($filePath),
-                            'modified' => filemtime($filePath),
-                            'formatted_size' => $this->formatBytes(filesize($filePath)),
-                            'formatted_date' => date('M j, Y g:i A', filemtime($filePath))
+                            'name'           => 'backup/' . $file,
+                            'size'           => filesize($filePath),
+                            'modified'       => filemtime($filePath),
+                            'formatted_size' => formatBytes(filesize($filePath)),
+                            'formatted_date' => date('M j, Y g:i A', filemtime($filePath)),
                         ];
                     }
                 }
@@ -350,21 +279,11 @@ class BackupController extends Controller
         }
 
         // Sort by modification time (newest first)
-        usort($backups, function($a, $b) {
+        usort($backups, function ($a, $b) {
             return $b['modified'] - $a['modified'];
         });
 
         return $backups;
     }
 
-    private function formatBytes($size, $precision = 2)
-    {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
-
-        for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
-            $size /= 1024;
-        }
-
-        return round($size, $precision) . ' ' . $units[$i];
-    }
 }

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         // Users table (not prefixed with sys_)
-        if (!Schema::hasTable('users')) {
+        if (! Schema::hasTable('users')) {
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -21,9 +21,9 @@ return new class extends Migration
                 $table->timestamp('expired_at')->nullable()->after('email_verified_at');
                 $table->string('password');
                 $table->string('google_id')->nullable(); // Added for Google authentication
-                $table->string('nim')->nullable(); // Student ID
-                $table->string('nip')->nullable(); // Employee ID
-                $table->string('avatar')->nullable(); // Avatar image path
+                $table->string('nim')->nullable();       // Student ID
+                $table->string('nip')->nullable();       // Employee ID
+                $table->string('avatar')->nullable();    // Avatar image path
                 $table->rememberToken();
                 $table->timestamps();
                 $table->softDeletes(); // Added for soft deletes
@@ -31,7 +31,7 @@ return new class extends Migration
         }
 
         // Password resets table
-        if (!Schema::hasTable('sys_password_reset_tokens')) {
+        if (! Schema::hasTable('sys_password_reset_tokens')) {
             Schema::create('sys_password_reset_tokens', function (Blueprint $table) {
                 $table->string('email')->primary();
                 $table->string('token');
@@ -40,7 +40,7 @@ return new class extends Migration
         }
 
         // Sessions table
-        if (!Schema::hasTable('sys_sessions')) {
+        if (! Schema::hasTable('sys_sessions')) {
             Schema::create('sys_sessions', function (Blueprint $table) {
                 $table->string('id')->primary();
                 $table->foreignId('user_id')->nullable()->index();
@@ -52,7 +52,7 @@ return new class extends Migration
         }
 
         // Sys Roles table (from spatie/laravel-permission) - using sys_ prefix
-        if (!Schema::hasTable('sys_roles')) {
+        if (! Schema::hasTable('sys_roles')) {
             Schema::create('sys_roles', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('name');
@@ -62,7 +62,7 @@ return new class extends Migration
         }
 
         // Sys Permissions table (from spatie/laravel-permission) - using sys_ prefix
-        if (!Schema::hasTable('sys_permissions')) {
+        if (! Schema::hasTable('sys_permissions')) {
             Schema::create('sys_permissions', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('name');
@@ -72,7 +72,7 @@ return new class extends Migration
         }
 
         // Sys Model has roles table (from spatie/laravel-permission) - using sys_ prefix
-        if (!Schema::hasTable('sys_model_has_roles')) {
+        if (! Schema::hasTable('sys_model_has_roles')) {
             Schema::create('sys_model_has_roles', function (Blueprint $table) {
                 $table->unsignedBigInteger('role_id');
                 $table->string('model_type');
@@ -85,7 +85,7 @@ return new class extends Migration
         }
 
         // Sys Model has permissions table (from spatie/laravel-permission) - using sys_ prefix
-        if (!Schema::hasTable('sys_model_has_permissions')) {
+        if (! Schema::hasTable('sys_model_has_permissions')) {
             Schema::create('sys_model_has_permissions', function (Blueprint $table) {
                 $table->unsignedBigInteger('permission_id');
                 $table->string('model_type');
@@ -98,7 +98,7 @@ return new class extends Migration
         }
 
         // Sys Role has permissions table (from spatie/laravel-permission) - using sys_ prefix
-        if (!Schema::hasTable('sys_role_has_permissions')) {
+        if (! Schema::hasTable('sys_role_has_permissions')) {
             Schema::create('sys_role_has_permissions', function (Blueprint $table) {
                 $table->unsignedBigInteger('permission_id');
                 $table->unsignedBigInteger('role_id');
@@ -111,7 +111,7 @@ return new class extends Migration
         }
 
         // Media table for Laravel Media Library with correct structure for Spatie
-        if (!Schema::hasTable('sys_media')) {
+        if (! Schema::hasTable('sys_media')) {
             Schema::create('sys_media', function (Blueprint $table) {
                 $table->id();
 
@@ -133,7 +133,6 @@ return new class extends Migration
                 $table->nullableTimestamps();
             });
 
-
         }
 
         Schema::create('sys_cache', function (Blueprint $table) {
@@ -149,7 +148,7 @@ return new class extends Migration
         });
 
         // Activity log table with sys_ prefix
-        if (!Schema::hasTable('sys_activity_log')) {
+        if (! Schema::hasTable('sys_activity_log')) {
             Schema::create('sys_activity_log', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('log_name')->nullable();
@@ -170,7 +169,7 @@ return new class extends Migration
         }
 
         // Sys Notifications table with sys_ prefix
-        if (!Schema::hasTable('sys_notifications')) {
+        if (! Schema::hasTable('sys_notifications')) {
             Schema::create('sys_notifications', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->string('type');
@@ -178,6 +177,32 @@ return new class extends Migration
                 $table->text('data');
                 $table->timestamp('read_at')->nullable();
                 $table->timestamps();
+            });
+        }
+
+        // Create sys_error_log table
+        if (! Schema::hasTable('sys_error_log')) {
+            Schema::create('sys_error_log', function (Blueprint $table) {
+                $table->id();
+                $table->string('level')->default('error'); // error, warning, info, etc.
+                $table->text('message');
+                $table->string('exception_class')->nullable();
+                $table->text('file');
+                $table->integer('line');
+                $table->text('trace')->nullable();   // Full stack trace
+                $table->json('context')->nullable(); // Additional context data
+                $table->string('url')->nullable();
+                $table->string('method')->nullable();
+                $table->string('ip_address')->nullable();
+                $table->string('user_agent')->nullable();
+                $table->unsignedBigInteger('user_id')->nullable(); // User that encountered the error
+                $table->timestamps();
+                $table->softDeletes();
+
+                // Indexes for performance
+                $table->index(['created_at']);
+                $table->index(['level']);
+                $table->index(['user_id']);
             });
         }
     }
@@ -196,6 +221,7 @@ return new class extends Migration
         Schema::dropIfExists('sys_sessions');
         Schema::dropIfExists('sys_password_reset_tokens');
         Schema::dropIfExists('sys_activity_log');
+        Schema::dropIfExists('sys_error_log');
         Schema::dropIfExists('sys_notifications');
         Schema::dropIfExists('sys_cache');
         Schema::dropIfExists('sys_cache_locks');

@@ -220,6 +220,9 @@ $model->forceDelete(); // Permanent deletion bypassing soft delete
 ### Helper Functions for Data Preparation
 - Use `formatTanggalIndo()` for Indonesian date formatting (handles both date and datetime)
 - Use `encryptId()`/`decryptId()` for ID security
+- Use `logError()` to log errors directly to the ErrorLog model
+- Use `normalizePath()` to clean up file paths and prevent directory traversal attacks
+- Use `formatBytes()` to format file sizes to human-readable format
 - Use `getVerifiedMediaUrl()` for safe media access
 - Prepare all formatted data in controller before sending to view
 
@@ -874,3 +877,4 @@ Several existing pages already use this system:
 - **Email Testing**: Added email testing functionality accessible from user dropdown menu
 - **Validation Messages**: Added Indonesian translation helper for validation messages
 - **DataTable State Persistence**: Leveraged DataTable's built-in state saving functionality to preserve search terms, page length, and pagination state, with additional custom localStorage for filter controls
+- **System Error Logging**: Implemented comprehensive error logging system that captures all application and database errors, storing them in a dedicated table with full stack traces and context information for system administrators

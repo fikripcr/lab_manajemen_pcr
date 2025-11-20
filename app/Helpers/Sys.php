@@ -79,6 +79,121 @@ if (!function_exists('logActivity')) {
     }
 }
 
+if (!function_exists('normalizePath')) {
+    /**
+     * Clean up the path to prevent directory traversal attacks
+     *
+     * @param string $path
+     * @return string
+     */
+    function normalizePath($path)
+    {
+        // Clean up the path to prevent directory traversal attacks
+        $path = str_replace(['../', '..\\', './', '.\\'], '', $path);
+        return $path;
+    }
+}
+
+if (!function_exists('formatBytes')) {
+    /**
+     * Format bytes to human readable format
+     *
+     * @param int $size Size in bytes
+     * @param int $precision Number of decimal places
+     * @return string Formatted size with unit
+     */
+    function formatBytes($size, $precision = 2)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+        for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
+            $size /= 1024;
+        }
+
+        return round($size, $precision) . ' ' . $units[$i];
+    }
+}
+
+if (!function_exists('logError')) {
+    /**
+     * Log an error directly to the ErrorLog model
+     *
+     * @param \Throwable|string $error
+     * @param string $level
+     * @param array $context Additional context information
+     * @return \App\Models\Sys\ErrorLog|null
+     */
+    function logError($error, $level = 'error', $context = [])
+    {
+        try {
+            // Handle both exception objects and string messages
+            $exception = $error;
+            if (!$error instanceof \Throwable) {
+                $exception = new \Exception($error);
+            }
+
+            // Extract additional context data from exception if it's a database exception
+            $additionalContext = [];
+
+            if ($exception instanceof \PDOException || $exception instanceof \Illuminate\Database\QueryException) {
+                if (isset($exception->errorInfo) && is_array($exception->errorInfo)) {
+                    $additionalContext = [
+                        'error_info' => [
+                            'SQLSTATE' => $exception->errorInfo[0] ?? null,
+                            'Driver Code' => $exception->errorInfo[1] ?? null,
+                            'Driver Message' => $exception->errorInfo[2] ?? null,
+                        ],
+                    ];
+                } elseif (property_exists($exception, 'getCode') && $exception->getCode()) {
+                    $additionalContext['sql_state'] = $exception->getCode();
+                }
+            } elseif (method_exists($exception, 'getSqlState')) {
+                $additionalContext['sql_state'] = $exception->getSqlState();
+            }
+
+            // Get request information if available
+            $request = app('request');
+            $finalContext = array_merge([
+                'url' => $request->fullUrl() ?? 'N/A',
+                'method' => $request->method() ?? 'N/A',
+                'ip_address' => $request->ip() ?? 'N/A',
+                'user_agent' => $request->userAgent() ?? 'N/A',
+                'user_id' => auth()->id() ?? null,
+                'session_id' => session()->getId() ?? null,
+                'timestamp' => now()->toISOString(),
+            ], $context, $additionalContext);
+
+            // Create the error log record
+            return \App\Models\Sys\ErrorLog::create([
+                'level' => $level,
+                'message' => $exception->getMessage(),
+                'exception_class' => get_class($exception),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => collect($exception->getTrace())->map(function ($trace) {
+                    return [
+                        'file' => $trace['file'] ?? 'unknown',
+                        'line' => $trace['line'] ?? 'unknown',
+                        'function' => $trace['function'] ?? 'unknown',
+                        'class' => $trace['class'] ?? null,
+                        'type' => $trace['type'] ?? null,
+                    ];
+                })->toArray(),
+                'context' => $finalContext,
+                'url' => $finalContext['url'],
+                'method' => $finalContext['method'],
+                'ip_address' => $finalContext['ip_address'],
+                'user_agent' => $finalContext['user_agent'],
+                'user_id' => $finalContext['user_id'],
+            ]);
+        } catch (\Throwable $logError) {
+            // If logging fails, at least log to standard Laravel logs
+            \Log::error('Failed to log error to sys_error_log: ' . $logError->getMessage());
+            return null;
+        }
+    }
+}
+
 if (!function_exists('validation_messages_id')) {
     function validation_messages_id()
     {
