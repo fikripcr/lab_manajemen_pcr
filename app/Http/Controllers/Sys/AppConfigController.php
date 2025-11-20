@@ -39,56 +39,85 @@ class AppConfigController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'app_name' => 'nullable|string|max:255',
-            'app_env' => 'nullable|in:local,production',
-            'app_debug' => 'nullable|boolean',
-            'app_url' => 'nullable|url',
-            // Mail validation
-            'mail_mailer' => 'nullable|string',
-            'mail_host' => 'nullable|string',
-            'mail_port' => 'nullable|integer',
-            'mail_username' => 'nullable|string',
-            'mail_password' => 'nullable|string',
-            'mail_encryption' => 'nullable|string',
-            'mail_from_address' => 'nullable|email',
-            'mail_from_name' => 'nullable|string',
-            // Google validation
-            'google_client_id' => 'nullable|string',
-            'google_client_secret' => 'nullable|string',
-            'google_redirect_uri' => 'nullable|url',
-            // Mysqldump validation
-            'mysqldump_path' => 'nullable|string',
-        ]);
+        $configSection = $request->input('config_section', 'app');
+
+        // Define validation rules based on the section
+        $validationRules = [];
+
+        switch($configSection) {
+            case 'app':
+                $validationRules = [
+                    'app_name' => 'nullable|string|max:255',
+                    'app_env' => 'nullable|in:local,production',
+                    'app_debug' => 'nullable|boolean',
+                    'app_url' => 'nullable|url',
+                ];
+                break;
+            case 'mail':
+                $validationRules = [
+                    'mail_mailer' => 'nullable|string',
+                    'mail_host' => 'nullable|string',
+                    'mail_port' => 'nullable|integer',
+                    'mail_username' => 'nullable|string',
+                    'mail_password' => 'nullable|string',
+                    'mail_encryption' => 'nullable|string',
+                    'mail_from_address' => 'nullable|email',
+                    'mail_from_name' => 'nullable|string',
+                ];
+                break;
+            case 'google':
+                $validationRules = [
+                    'google_client_id' => 'nullable|string',
+                    'google_client_secret' => 'nullable|string',
+                    'google_redirect_uri' => 'nullable|url',
+                ];
+                break;
+            case 'backup':
+                $validationRules = [
+                    'mysqldump_path' => 'nullable|string',
+                ];
+                break;
+            default:
+                return redirect()->back()->with('error', 'Invalid configuration section');
+        }
+
+        $request->validate($validationRules);
 
         // Read the current .env file
         $envPath = base_path('.env');
         $envContent = File::get($envPath);
 
-        // Update the values
-        $envContent = $this->updateEnvValue($envContent, 'APP_NAME=', 'APP_NAME=' . $request->app_name);
-        $envContent = $this->updateEnvValue($envContent, 'APP_ENV=', 'APP_ENV=' . $request->app_env);
-        $envContent = $this->updateEnvValue($envContent, 'APP_DEBUG=', 'APP_DEBUG=' . ($request->app_debug ? 'true' : 'false'));
-        $envContent = $this->updateEnvValue($envContent, 'DEBUGBAR_ENABLED=', 'DEBUGBAR_ENABLED=' . ($request->app_debug ? 'true' : 'false'));
-        $envContent = $this->updateEnvValue($envContent, 'APP_URL=', 'APP_URL=' . $request->app_url);
+        // Update values based on the section
+        switch($configSection) {
+            case 'app':
+                $envContent = $this->updateEnvValue($envContent, 'APP_NAME=', 'APP_NAME=' . $request->app_name);
+                $envContent = $this->updateEnvValue($envContent, 'APP_ENV=', 'APP_ENV=' . $request->app_env);
+                $envContent = $this->updateEnvValue($envContent, 'APP_DEBUG=', 'APP_DEBUG=' . ($request->app_debug ? 'true' : 'false'));
+                $envContent = $this->updateEnvValue($envContent, 'DEBUGBAR_ENABLED=', 'DEBUGBAR_ENABLED=' . ($request->app_debug ? 'true' : 'false'));
+                $envContent = $this->updateEnvValue($envContent, 'APP_URL=', 'APP_URL=' . $request->app_url);
+                break;
 
-        // Update mail configuration
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_MAILER=', 'MAIL_MAILER=' . $request->mail_mailer);
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_HOST=', 'MAIL_HOST=' . $request->mail_host);
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_PORT=', 'MAIL_PORT=' . $request->mail_port);
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_USERNAME=', 'MAIL_USERNAME=' . $request->mail_username);
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_PASSWORD=', 'MAIL_PASSWORD=' . $request->mail_password);
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_ENCRYPTION=', 'MAIL_ENCRYPTION=' . $request->mail_encryption);
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_FROM_ADDRESS=', 'MAIL_FROM_ADDRESS=' . $request->mail_from_address);
-        $envContent = $this->updateEnvValue($envContent, 'MAIL_FROM_NAME=', 'MAIL_FROM_NAME=' . $request->mail_from_name);
+            case 'mail':
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_MAILER=', 'MAIL_MAILER=' . $request->mail_mailer);
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_HOST=', 'MAIL_HOST=' . $request->mail_host);
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_PORT=', 'MAIL_PORT=' . $request->mail_port);
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_USERNAME=', 'MAIL_USERNAME=' . $request->mail_username);
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_PASSWORD=', 'MAIL_PASSWORD=' . $request->mail_password);
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_ENCRYPTION=', 'MAIL_ENCRYPTION=' . $request->mail_encryption);
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_FROM_ADDRESS=', 'MAIL_FROM_ADDRESS=' . $request->mail_from_address);
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_FROM_NAME=', 'MAIL_FROM_NAME=' . $request->mail_from_name);
+                break;
 
-        // Update Google configuration
-        $envContent = $this->updateEnvValue($envContent, 'GOOGLE_CLIENT_ID=', 'GOOGLE_CLIENT_ID=' . $request->google_client_id);
-        $envContent = $this->updateEnvValue($envContent, 'GOOGLE_CLIENT_SECRET=', 'GOOGLE_CLIENT_SECRET=' . $request->google_client_secret);
-        $envContent = $this->updateEnvValue($envContent, 'GOOGLE_REDIRECT_URI=', 'GOOGLE_REDIRECT_URI=' . $request->google_redirect_uri);
+            case 'google':
+                $envContent = $this->updateEnvValue($envContent, 'GOOGLE_CLIENT_ID=', 'GOOGLE_CLIENT_ID=' . $request->google_client_id);
+                $envContent = $this->updateEnvValue($envContent, 'GOOGLE_CLIENT_SECRET=', 'GOOGLE_CLIENT_SECRET=' . $request->google_client_secret);
+                $envContent = $this->updateEnvValue($envContent, 'GOOGLE_REDIRECT_URI=', 'GOOGLE_REDIRECT_URI=' . $request->google_redirect_uri);
+                break;
 
-        // Update Mysqldump path
-        $envContent = $this->updateEnvValue($envContent, 'MYSQLDUMP_PATH=', 'MYSQLDUMP_PATH=' . $request->mysqldump_path);
+            case 'backup':
+                $envContent = $this->updateEnvValue($envContent, 'MYSQLDUMP_PATH=', 'MYSQLDUMP_PATH=' . $request->mysqldump_path);
+                break;
+        }
 
         // Write the updated content back to .env
         File::put($envPath, $envContent);
@@ -96,10 +125,19 @@ class AppConfigController extends Controller
         // Clear config cache
         Artisan::call('config:clear');
 
-        // Log the configuration update
-        logActivity('config', 'Application configuration updated: app_name=' . $request->app_name . ', app_env=' . $request->app_env . ', app_debug=' . ($request->app_debug ? 'true' : 'false') . ', app_url=' . $request->app_url, auth()->user());
+        // Log the configuration update with appropriate message based on section
+        $sectionNames = [
+            'app' => 'Application',
+            'mail' => 'Mail',
+            'google' => 'Google OAuth',
+            'backup' => 'Database Backup',
+        ];
 
-        return redirect()->back()->with('success', 'Application configuration updated successfully!');
+        $sectionName = $sectionNames[$configSection] ?? 'Configuration';
+
+        logActivity('config', $sectionName . ' configuration updated', auth()->user());
+
+        return redirect()->back()->with('success', $sectionName . ' configuration updated successfully!');
     }
 
     public function clearCache()

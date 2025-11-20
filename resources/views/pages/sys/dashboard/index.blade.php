@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <!-- Application Environment & Stats -->
+        <!-- Application Environment & Server Stats -->
         <div class="col-12 mb-4">
             <div class="card">
                 <div class="card-body">
@@ -48,23 +48,107 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="d-flex flex-wrap gap-3">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    <div class="avatar-initial rounded-circle bg-transparent text-info">
+                                        <i class="bx bx-server bx-lg"></i>
+                                    </div>
+                                </div>
+                                 <div class="d-flex flex-wrap gap-3">
                                 <div>
-                                    <p class="mb-1 text-muted">Environment</p>
+                                    <p class="mb-1">Environment</p>
                                     <span class="badge bg-label-{{ $appEnvironment === 'production' ? 'danger' : ($appEnvironment === 'local' ? 'success' : 'warning') }}">
                                         {{ ucfirst($appEnvironment) }}
                                     </span>
                                 </div>
                                 <div>
-                                    <p class="mb-1 text-muted">Debug</p>
+                                    <p class="mb-1">Debug</p>
                                     <span class="badge bg-label-{{ $appDebug === 'Enabled' ? 'danger' : 'success' }}">
                                         {{ $appDebug }}
                                     </span>
                                 </div>
                                 <div>
-                                    <p class="mb-1 text-muted">URL</p>
+                                    <p class="mb-1">URL</p>
                                     <span class="badge bg-label-info">{{ $appUrl }}</span>
                                 </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- Disk Space and Database Size -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Disk Space</h6>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-3" style="height: 1.2rem;">
+                                    @if(isset($serverMonitoringData['disk_space']))
+                                        @php
+                                            $usagePercentage = $serverMonitoringData['disk_space']['data']['usage_percentage'] ?? 0;
+                                        @endphp
+                                        <div class="progress-bar {{ $usagePercentage > 80 ? 'bg-danger' : ($usagePercentage > 60 ? 'bg-warning' : 'bg-success') }}"
+                                             role="progressbar"
+                                             style="width: {{ $usagePercentage }}%"
+                                             aria-valuenow="{{ $usagePercentage }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                            {{ $usagePercentage }}%
+                                        </div>
+                                    @else
+                                        <div class="progress-bar bg-secondary"
+                                             role="progressbar"
+                                             style="width: 0%"
+                                             aria-valuenow="0"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                            0%
+                                        </div>
+                                    @endif
+                                </div>
+                                @if(isset($serverMonitoringData['disk_space']) && isset($serverMonitoringData['disk_space']['data']))
+                                    <span class="fw-bold">
+                                        {{ $serverMonitoringData['disk_space']['data']['used_space_formatted'] }} /
+                                        {{ $serverMonitoringData['disk_space']['data']['total_space_formatted'] }}
+                                    </span>
+                                @else
+                                    <span class="text-muted">No data</span>
+                                @endif
+                            </div>
+                            <div class="mt-1 d-flex justify-content-between">
+                                @if(isset($serverMonitoringData['disk_space']))
+                                    <small class="text-muted">Last checked: {{ \Carbon\Carbon::parse($serverMonitoringData['disk_space']['last_check'])->diffForHumans() }}</small>
+                                @else
+                                    <small class="text-muted">Never checked</small>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Database Size  <span class="text-muted">({{ $serverMonitoringData['database_size']['data']['database_name'] ?? 'N/A' }})</span></h6>
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    @if(isset($serverMonitoringData['database_size']))
+                                        <h5 class="mb-0">{{ $serverMonitoringData['database_size']['data']['size_formatted'] ?? 'N/A' }}</h5>
+                                    @else
+                                        <h5 class="mb-0 text-muted">No data</h5>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mt-1 d-flex justify-content-between">
+                                @if(isset($serverMonitoringData['database_size']))
+                                    <small class="text-muted">Last checked: {{ \Carbon\Carbon::parse($serverMonitoringData['database_size']['last_check'])->diffForHumans() }}</small>
+                                @else
+                                    <small class="text-muted">Never checked</small>
+                                @endif
+                                <a href="{{ route('sys.dashboard', ['refresh_monitoring' => true]) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-refresh"></i> Refresh
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -251,6 +335,23 @@
                     </div>
                 </div>
 
+                <!-- Error Log -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer"
+                         onclick="window.location='{{ route('sys.error-log.index') }}'">
+                        <div class="avatar me-3">
+                            <div class="avatar-initial rounded-circle bg-transparent text-danger">
+                                <i class="bx bx-error bx-lg"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">Error Log</h6>
+                            <small class="text-muted">View and manage system errors</small>
+                        </div>
+                        <i class="bx bx-chevron-right text-muted"></i>
+                    </div>
+                </div>
+
                 <!-- Documentation -->
                 <div class="col-md-6 col-lg-4">
                     <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer"
@@ -269,6 +370,8 @@
                 </div>
             </div>
         </div>
+
+
 
 
         <!-- Charts Section -->
@@ -474,5 +577,5 @@
                 }
             }, 300); // Delay initialization to ensure DOM is ready
         });
-    </script>
+</script>
 @endpush

@@ -80,7 +80,7 @@ class ErrorLogController extends Controller
                 }
             })
             ->editColumn('created_at', function ($log) {
-                return formatTanggalIndo($log->created_at);
+                return $log->created_at;
             })
             ->addColumn('actions', function ($log) {
                 return '

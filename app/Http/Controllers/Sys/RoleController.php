@@ -11,18 +11,6 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-
-    public function __construct()
-    {
-        // $this->middleware('permission:access-departemen', [
-        //     'only' => ['show'],
-        // ]);
-
-        // $this->middleware('permission:manage-departemen', [
-        //     'only' => ['create', 'store', 'edit', 'update', 'destroy'],
-        // ]);
-    }
-
     /**
      * Display a listing of the resource.
      */

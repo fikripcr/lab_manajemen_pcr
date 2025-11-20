@@ -1,23 +1,24 @@
 <?php
-
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Sys\ServerMonitorCheck;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         // Get statistics
-        $totalUsers = User::count();
-        $totalRoles = Role::count();
+        $totalUsers       = User::count();
+        $totalRoles       = Role::count();
         $totalPermissions = Permission::count();
-        $todayActivities = Activity::whereDate('created_at', today())->count();
+        $todayActivities  = Activity::whereDate('created_at', today())->count();
 
         // Get application name from config
         $appName = config('app.name', 'Laravel');
@@ -33,8 +34,8 @@ class DashboardController extends Controller
 
         // Get application environment
         $appEnvironment = app()->environment();
-        $appDebug = config('app.debug') ? 'Enabled' : 'Disabled';
-        $appUrl = config('app.url');
+        $appDebug       = config('app.debug') ? 'Enabled' : 'Disabled';
+        $appUrl         = config('app.url');
 
         // Get recent logs (last 10)
         $recentLogs = Activity::with(['causer:id,name', 'subject'])
@@ -44,41 +45,70 @@ class DashboardController extends Controller
 
         // Get user role distribution for chart
         $userRoleData = [];
-        $roleNames = [];
+        $roleNames    = [];
 
         $roles = Role::all();
         foreach ($roles as $role) {
-            $userCount = $role->users()->count();
+            $userCount      = $role->users()->count();
             $userRoleData[] = $userCount;
-            $roleNames[] = $role->name;
+            $roleNames[]    = $role->name;
         }
 
         // Format role data for ApexCharts
         $roleChartData = json_encode([
             'series' => $userRoleData,
-            'labels' => $roleNames
+            'labels' => $roleNames,
         ]);
 
         // Get activities by date for the last 7 days
         $activityByDate = [];
-        $dates = [];
+        $dates          = [];
 
         for ($i = 6; $i >= 0; $i--) {
-            $date = now()->subDays($i);
+            $date  = now()->subDays($i);
             $count = Activity::whereDate('created_at', $date)->count();
 
             $activityByDate[] = $count;
-            $dates[] = $date->format('M d');
+            $dates[]          = $date->format('M d');
         }
 
         // Format activity data for ApexCharts
         $activityChartData = json_encode([
-            'series' => [[
+            'series'     => [[
                 'name' => 'Activities',
-                'data' => $activityByDate
+                'data' => $activityByDate,
             ]],
-            'categories' => $dates
+            'categories' => $dates,
         ]);
+
+        // Check if we need to run server monitoring
+        if (request()->has('refresh_monitoring')) {
+            Artisan::call('server:monitor');
+            LogActivity('sys_dashboard', 'Server monitoring refreshed manually', auth()->user());
+        }
+
+        // Retrieve server monitoring data
+        $serverMonitoringData = [];
+
+        $diskSpaceCheck = ServerMonitorCheck::where('type', 'diskspace')->latest()->first();
+        if ($diskSpaceCheck) {
+            $diskSpaceData                      = json_decode($diskSpaceCheck->last_run_output, true);
+            $serverMonitoringData['disk_space'] = [
+                'last_check' => $diskSpaceCheck->last_ran_at,
+                'data'       => $diskSpaceData,
+                'message'    => $diskSpaceCheck->last_run_message,
+            ];
+        }
+
+        $databaseSizeCheck = ServerMonitorCheck::where('type', 'databasesize')->latest()->first();
+        if ($databaseSizeCheck) {
+            $databaseSizeData                      = json_decode($databaseSizeCheck->last_run_output, true);
+            $serverMonitoringData['database_size'] = [
+                'last_check' => $databaseSizeCheck->last_ran_at,
+                'data'       => $databaseSizeData,
+                'message'    => $databaseSizeCheck->last_run_message,
+            ];
+        }
 
         return view('pages.sys.dashboard.index', compact(
             'totalUsers',
@@ -93,7 +123,8 @@ class DashboardController extends Controller
             'appUrl',
             'recentLogs',
             'roleChartData',
-            'activityChartData'
+            'activityChartData',
+            'serverMonitoringData'
         ));
     }
 }

@@ -24,7 +24,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
     Route::prefix('activity-log')->name('activity-log.')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
         Route::get('/data', [ActivityLogController::class, 'paginate'])->name('data');
-        Route::get('/{id}', [ActivityLogController::class, 'show'])->name('show');
+        Route::get('/{id?}', [ActivityLogController::class, 'show'])->name('show');
     });
 
 // Notifications Management
@@ -74,6 +74,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::post('clear-all', [ErrorLogController::class, 'clearAll'])->name('clear-all');
         Route::get('test', [ErrorLogController::class, 'testErrorLog'])->name('test');
     });
+
 
 // Roles & Permissions
     Route::resource('roles', RoleController::class);

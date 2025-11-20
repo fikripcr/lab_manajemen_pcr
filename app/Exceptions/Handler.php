@@ -16,8 +16,6 @@ class Handler extends ExceptionHandler
         // Laravel otomatis tidak report exception di sini
         AuthenticationException::class,
         ValidationException::class,
-        NotFoundHttpException::class,
-        MethodNotAllowedHttpException::class,
         // tambahkan lainnya jika perlu
     ];
 

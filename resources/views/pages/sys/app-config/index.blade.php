@@ -23,6 +23,7 @@
                         <form action="{{ route('app-config.update') }}" method="POST">
                             @csrf
                             @method('POST')
+                            <input type="hidden" name="config_section" value="app">
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -45,7 +46,7 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="app_env">Environment</label>
+                                    <label class="form-label" for="app_env">Environment {{config('app.env')}}</label>
                                     <select class="form-select @error('app_env') is-invalid @enderror" id="app_env" name="app_env">
                                         <option value="local" {{ config('app.env') == 'local' ? 'selected' : '' }}>Local</option>
                                         <option value="production" {{ config('app.env') == 'production' ? 'selected' : '' }}>Production</option>
@@ -80,6 +81,7 @@
                         <form action="{{ route('app-config.update') }}" method="POST">
                             @csrf
                             @method('POST')
+                            <input type="hidden" name="config_section" value="mail">
                             <h5>Mail Configuration</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -167,6 +169,7 @@
                         <form action="{{ route('app-config.update') }}" method="POST">
                             @csrf
                             @method('POST')
+                            <input type="hidden" name="config_section" value="google">
                             <h5>Google OAuth Configuration</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -208,6 +211,7 @@
                         <form action="{{ route('app-config.update') }}" method="POST">
                             @csrf
                             @method('POST')
+                            <input type="hidden" name="config_section" value="backup">
                             <h5>Database Backup Configuration</h5>
                             <div class="row">
                                 <div class="col-md-12 mb-3">
