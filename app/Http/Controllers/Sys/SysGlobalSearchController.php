@@ -9,7 +9,7 @@ use App\Models\Sys\Role;
 use App\Models\Sys\Permission;
 use Spatie\Searchable\Search;
 
-class GlobalSearchController extends Controller
+class SysGlobalSearchController extends Controller
 {
     public function search(Request $request)
     {

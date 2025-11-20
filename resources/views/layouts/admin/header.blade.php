@@ -9,7 +9,7 @@
         <!-- Global Search Trigger -->
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex align-items-center">
-                <a href="javascript:void(0)" class="nav-link text-dark" onclick="openGlobalSearchModal()" title="Global Search">
+                <a href="javascript:void(0)" class="nav-link text-dark" onclick="openGlobalSearchModal('{{ route('global-search') }}')" title="Global Search">
                     <i class="bx bx-search fs-4 lh-0 me-1"></i>
                     <span>Search</span>
                 </a>

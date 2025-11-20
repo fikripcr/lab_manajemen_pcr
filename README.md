@@ -224,7 +224,15 @@ $model->forceDelete(); // Permanent deletion bypassing soft delete
 - Use `normalizePath()` to clean up file paths and prevent directory traversal attacks
 - Use `formatBytes()` to format file sizes to human-readable format
 - Use `getVerifiedMediaUrl()` for safe media access
+- Use Spatie Server Monitor for system monitoring (disk space, database size, project size breakdown)
 - Prepare all formatted data in controller before sending to view
+
+### System Monitoring with Spatie Server Monitor
+- Automatically monitors disk space, database size, and project size breakdown
+- Provides detailed breakdown of project components (apps, storage, logs, uploads)
+- Real-time monitoring available on the system dashboard
+- Configurable monitoring intervals and alerts
+- Integration with the ErrorLog system for monitoring failures
 
 ### Media Handling with Spatie Laravel Media Library
 - Implement `HasMedia` interface in models requiring file uploads

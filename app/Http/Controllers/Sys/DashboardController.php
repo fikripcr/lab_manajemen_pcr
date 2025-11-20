@@ -110,6 +110,16 @@ class DashboardController extends Controller
             ];
         }
 
+        $projectSizeCheck = ServerMonitorCheck::where('type', 'projectsize')->latest()->first();
+        if ($projectSizeCheck) {
+            $projectSizeData                      = json_decode($projectSizeCheck->last_run_output, true);
+            $serverMonitoringData['project_size'] = [
+                'last_check' => $projectSizeCheck->last_ran_at,
+                'data'       => $projectSizeData,
+                'message'    => $projectSizeCheck->last_run_message,
+            ];
+        }
+
         return view('pages.sys.dashboard.index', compact(
             'totalUsers',
             'totalRoles',

@@ -6,7 +6,7 @@ use App\Http\Controllers\Sys\BackupController;
 use App\Http\Controllers\Sys\DashboardController;
 use App\Http\Controllers\Sys\DocumentationController;
 use App\Http\Controllers\Sys\ErrorLogController;
-use App\Http\Controllers\Sys\GlobalSearchController;
+use App\Http\Controllers\Sys\SysGlobalSearchController;
 use App\Http\Controllers\Sys\NotificationsController;
 use App\Http\Controllers\Sys\PermissionController;
 use App\Http\Controllers\Sys\RoleController;
@@ -48,8 +48,8 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 // Send notification to specific user
     Route::post('/users/{user}/send-notification', [NotificationsController::class, 'sendToUser'])->name('users.send.notification');
 
-// Global Search
-    Route::get('/global-search', [GlobalSearchController::class, 'search'])->name('global-search');
+// Sys Global Search
+    Route::get('/sys-search', [SysGlobalSearchController::class, 'search'])->name('sys-search');
 
 // App Configuration
     Route::get('/app-config', [AppConfigController::class, 'index'])->name('app-config');
