@@ -217,22 +217,23 @@ $model->forceDelete(); // Permanent deletion bypassing soft delete
 - Use soft deletes instead of permanent deletion
 - Encrypt sensitive IDs in URLs using `encryptId()`/`decryptId()` helpers
 
-### Helper Functions for Data Preparation
-- Use `formatTanggalIndo()` for Indonesian date formatting (handles both date and datetime)
-- Use `encryptId()`/`decryptId()` for ID security
-- Use `logError()` to log errors directly to the ErrorLog model
-- Use `normalizePath()` to clean up file paths and prevent directory traversal attacks
-- Use `formatBytes()` to format file sizes to human-readable format
-- Use `getVerifiedMediaUrl()` for safe media access
-- Use Spatie Server Monitor for system monitoring (disk space, database size, project size breakdown)
-- Prepare all formatted data in controller before sending to view
+### Helper Functions
+The application includes two main helper categories:
+
+**Sys Helper (`app/Helpers/Sys.php`)** - Core system functions that should not be modified without discussion
+- Contains critical system utilities like error logging, path normalization, and data formatting
+- Any modifications to this file require team coordination and review
+
+**Global Helper (`app/Helpers/Global.php`)** - General-purpose functions available throughout the application
+- Contains reusable functions like date formatting, ID encryption, etc.
+- Safe to modify and extend as needed
 
 ### System Monitoring with Spatie Server Monitor
 - Automatically monitors disk space, database size, and project size breakdown
-- Provides detailed breakdown of project components (apps, storage, logs, uploads)
-- Real-time monitoring available on the system dashboard
+- Provides detailed breakdown of project components (apps, storage, logs, uploads, backups)
 - Configurable monitoring intervals and alerts
 - Integration with the ErrorLog system for monitoring failures
+- Project size monitoring includes separate tracking of apps, uploads, backups, and logs
 
 ### Media Handling with Spatie Laravel Media Library
 - Implement `HasMedia` interface in models requiring file uploads
@@ -885,4 +886,4 @@ Several existing pages already use this system:
 - **Email Testing**: Added email testing functionality accessible from user dropdown menu
 - **Validation Messages**: Added Indonesian translation helper for validation messages
 - **DataTable State Persistence**: Leveraged DataTable's built-in state saving functionality to preserve search terms, page length, and pagination state, with additional custom localStorage for filter controls
-- **System Error Logging**: Implemented comprehensive error logging system that captures all application and database errors, storing them in a dedicated table with full stack traces and context information for system administrators
+- **System Error Logging**: Implemented comprehensive error logging system that captures all application and database errors, storing them in a dedicated table with full stack traces and context information for system administrators. Error logging is configured in bootstrap/app.php for optimal reliability across all environments.

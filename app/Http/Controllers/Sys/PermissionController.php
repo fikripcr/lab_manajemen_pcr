@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\PermissionRequest;
+use App\Http\Requests\Sys\PermissionRequest;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Yajra\DataTables\DataTables;

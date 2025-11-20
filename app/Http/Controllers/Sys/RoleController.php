@@ -2,8 +2,8 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\RolePermissionRequest;
-use App\Http\Requests\Admin\RoleRequest;
+use App\Http\Requests\Sys\RolePermissionRequest;
+use App\Http\Requests\Sys\RoleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;

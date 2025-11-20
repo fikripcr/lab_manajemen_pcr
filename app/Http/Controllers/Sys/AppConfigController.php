@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Sys\AppConfigurationRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -14,7 +15,6 @@ class AppConfigController extends Controller
     {
         $config = [
             'app_name' => config('app.name'),
-            'app_env' => $this->getCurrentEnvValue('APP_ENV', config('app.env')),
             'app_debug' => $this->getBooleanEnvValue('APP_DEBUG', config('app.debug')),
             'app_url' => config('app.url'),
             // Mail configuration
@@ -37,51 +37,9 @@ class AppConfigController extends Controller
         return view('pages.sys.app-config.index', compact('config'));
     }
 
-    public function update(Request $request)
+    public function update(AppConfigurationRequest $request)
     {
         $configSection = $request->input('config_section', 'app');
-
-        // Define validation rules based on the section
-        $validationRules = [];
-
-        switch($configSection) {
-            case 'app':
-                $validationRules = [
-                    'app_name' => 'nullable|string|max:255',
-                    'app_env' => 'nullable|in:local,production',
-                    'app_debug' => 'nullable|boolean',
-                    'app_url' => 'nullable|url',
-                ];
-                break;
-            case 'mail':
-                $validationRules = [
-                    'mail_mailer' => 'nullable|string',
-                    'mail_host' => 'nullable|string',
-                    'mail_port' => 'nullable|integer',
-                    'mail_username' => 'nullable|string',
-                    'mail_password' => 'nullable|string',
-                    'mail_encryption' => 'nullable|string',
-                    'mail_from_address' => 'nullable|email',
-                    'mail_from_name' => 'nullable|string',
-                ];
-                break;
-            case 'google':
-                $validationRules = [
-                    'google_client_id' => 'nullable|string',
-                    'google_client_secret' => 'nullable|string',
-                    'google_redirect_uri' => 'nullable|url',
-                ];
-                break;
-            case 'backup':
-                $validationRules = [
-                    'mysqldump_path' => 'nullable|string',
-                ];
-                break;
-            default:
-                return redirect()->back()->with('error', 'Invalid configuration section');
-        }
-
-        $request->validate($validationRules);
 
         // Read the current .env file
         $envPath = base_path('.env');
@@ -91,7 +49,6 @@ class AppConfigController extends Controller
         switch($configSection) {
             case 'app':
                 $envContent = $this->updateEnvValue($envContent, 'APP_NAME=', 'APP_NAME=' . $request->app_name);
-                $envContent = $this->updateEnvValue($envContent, 'APP_ENV=', 'APP_ENV=' . $request->app_env);
                 $envContent = $this->updateEnvValue($envContent, 'APP_DEBUG=', 'APP_DEBUG=' . ($request->app_debug ? 'true' : 'false'));
                 $envContent = $this->updateEnvValue($envContent, 'DEBUGBAR_ENABLED=', 'DEBUGBAR_ENABLED=' . ($request->app_debug ? 'true' : 'false'));
                 $envContent = $this->updateEnvValue($envContent, 'APP_URL=', 'APP_URL=' . $request->app_url);

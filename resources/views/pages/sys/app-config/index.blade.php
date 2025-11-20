@@ -46,17 +46,6 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label" for="app_env">Environment {{config('app.env')}}</label>
-                                    <select class="form-select @error('app_env') is-invalid @enderror" id="app_env" name="app_env">
-                                        <option value="local" {{ config('app.env') == 'local' ? 'selected' : '' }}>Local</option>
-                                        <option value="production" {{ config('app.env') == 'production' ? 'selected' : '' }}>Production</option>
-                                    </select>
-                                    @error('app_env')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6 mb-3">
                                     <label class="form-label" for="app_debug">Debug Mode</label>
                                     <div class="form-check form-switch mb-2">
                                         <input class="form-check-input @error('app_debug') is-invalid @enderror" type="checkbox" id="app_debug" name="app_debug" value="1" {{ old('app_debug', $config['app_debug']) ? 'checked' : '' }}>
@@ -66,6 +55,10 @@
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                     <div class="form-text">When enabled, detailed error messages will be shown.</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Empty column to maintain layout -->
                                 </div>
                             </div>
 
