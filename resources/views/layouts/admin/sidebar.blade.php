@@ -123,6 +123,13 @@
                 <div data-i18n="Activity Log">Activity Log</div>
             </a>
         </li>
+        <!-- Error Log -->
+        <li class="menu-item {{ request()->routeIs('sys.error-log.*') ? 'active' : '' }}">
+            <a href="{{ route('sys.error-log.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-error"></i>
+                <div data-i18n="Error Log">Error Log</div>
+            </a>
+        </li>
         <!-- Roles & Permissions Menu -->
         <li class="menu-item {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">

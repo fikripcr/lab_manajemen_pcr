@@ -15,6 +15,8 @@
 
 <!-- SweetAlert2 JS -->
 <script src="{{ asset('assets-admin/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
+<script src="{{ asset('assets-admin/js/custom/sweetalert-utils.js') }}"></script>
+
 
 <!-- Define application routes for JavaScript -->
 <script>
@@ -28,7 +30,5 @@
 </script>
 
 <!-- Custom JavaScript files -->
-<script src="{{ asset('assets-admin/js/custom/datatable-utils.js') }}"></script>
 <script src="{{ asset('assets-admin/js/custom/notifications.js') }}"></script>
 <script src="{{ asset('assets-admin/js/custom/global-search.js') }}"></script>
-<script src="{{ asset('assets-admin/js/custom/sweetalert-utils.js') }}"></script>

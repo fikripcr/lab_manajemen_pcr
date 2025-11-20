@@ -1,5 +1,11 @@
 @props(['id', 'route', 'columns', 'search' => true, 'pageLengthSelector' => '#pageLength', 'order' => [[0, 'desc']], 'withCheckbox' => false, 'checkboxKey' => 'id'])
 
+@push('css')
+       <!-- DataTables CSS -->
+    <link rel="stylesheet" href="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets-admin') }}/css/custom-datatable.css" />
+@endpush
+
 <div class="table-responsive">
     <table id="{{ $id }}" class="table" style="width:100%">
         <thead>
@@ -23,6 +29,8 @@
 @push('scripts')
     <script src="{{ asset('assets-admin/libs/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets-admin/js/custom/datatable-utils.js') }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Prevent reinitialization if already initialized

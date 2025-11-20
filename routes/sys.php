@@ -5,6 +5,7 @@ use App\Http\Controllers\Sys\AppConfigController;
 use App\Http\Controllers\Sys\BackupController;
 use App\Http\Controllers\Sys\DashboardController;
 use App\Http\Controllers\Sys\DocumentationController;
+use App\Http\Controllers\Sys\ErrorLogController;
 use App\Http\Controllers\Sys\GlobalSearchController;
 use App\Http\Controllers\Sys\NotificationsController;
 use App\Http\Controllers\Sys\PermissionController;
@@ -62,6 +63,16 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::post('/create', [BackupController::class, 'create'])->name('create');
         Route::get('/download/{filename}', [BackupController::class, 'download'])->where('filename', '.*')->name('download');
         Route::delete('/delete/{filename}', [BackupController::class, 'delete'])->where('filename', '.*')->name('delete');
+    });
+
+// Error Log Management
+    Route::prefix('error-log')->name('sys.error-log.')->group(function () {
+        Route::get('/', [ErrorLogController::class, 'index'])->name('index');
+        Route::get('data', [ErrorLogController::class, 'paginate'])->name('data');
+        Route::get('{id}', [ErrorLogController::class, 'show'])->name('show');
+        Route::delete('{id}', [ErrorLogController::class, 'destroy'])->name('destroy');
+        Route::post('clear-all', [ErrorLogController::class, 'clearAll'])->name('clear-all');
+        Route::get('test', [ErrorLogController::class, 'testErrorLog'])->name('test');
     });
 
 // Roles & Permissions

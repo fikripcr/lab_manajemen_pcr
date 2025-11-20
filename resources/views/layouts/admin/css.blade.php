@@ -14,10 +14,6 @@
     <link rel="stylesheet" href="{{ asset('assets-admin') }}/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets-admin') }}/css/custom-datatable.css" />
-
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="{{ asset('assets-admin/libs/sweetalert2/sweetalert2.min.css') }}">
 
