@@ -84,7 +84,6 @@
                 pageLength: 10,
                 responsive: true,
                 dom: 'rtip',
-                stateSave: true,
                 // Restore state as early as possible
                 stateLoadCallback: function(settings, callback) {
                     const tableId = '{{ $id }}';

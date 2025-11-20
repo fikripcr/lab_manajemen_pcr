@@ -362,20 +362,6 @@
             });
         }
 
-        // Handle export button click
-        $(document).on('click', '#exportBtn', function() {
-            // Get current search value from the search filter component
-            var searchValue = $('#globalSearch-users-table').val();
-
-            // Build query parameters
-            var params = new URLSearchParams();
-            if(searchValue) {
-                params.append('search', searchValue);
-            }
-
-            // Redirect to export URL with parameters
-            window.location.href = '{{ route('users.export') }}?' + params.toString();
-        });
     </script>
     <script>
         // Add additional functionality after the DataTable initialization
