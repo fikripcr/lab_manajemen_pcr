@@ -37,9 +37,6 @@ class PermissionRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'name.required' => 'Nama permission wajib diisi.',
-            'name.unique' => 'Nama permission sudah digunakan.',
-        ];
+        return validation_messages_id();
     }
 }

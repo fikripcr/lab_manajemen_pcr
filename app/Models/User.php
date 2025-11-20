@@ -120,9 +120,10 @@ class User extends Authenticatable implements HasMedia, Searchable
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
-            ->useFallbackUrl('/fallback/fallbackAvatarImage.png')
-            ->useFallbackPath(public_path('fallback/fallbackAvatarImage.png'))
-            ->useDisk('public');
+            ->useFallbackUrl('/img/no-avatar.png')
+            ->useFallbackPath(public_path('img/no-avatar.png'))
+            ->useDisk('public')
+            ->singleFile();
     }
 
     /**
@@ -130,16 +131,19 @@ class User extends Authenticatable implements HasMedia, Searchable
      */
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumb')
-            ->fit(Fit::Crop, 150, 150)
+        $this->addMediaConversion('small')
+            ->fit(Fit::Crop, 50, 50)
+            ->optimize()
             ->nonQueued();
 
         $this->addMediaConversion('medium')
-            ->fit(Fit::Crop, 400, 400)
+            ->fit(Fit::Crop, 200, 200)
+            ->optimize()
             ->nonQueued();
 
-        $this->addMediaConversion('avatar_small')
-            ->fit(Fit::Crop, 50, 50)
+        $this->addMediaConversion('large')
+            ->fit(Fit::Crop, 512, 512)
+            ->optimize()
             ->nonQueued();
     }
 
@@ -185,4 +189,30 @@ class User extends Authenticatable implements HasMedia, Searchable
             $url
         );
     }
+
+    /**
+     * Accessor to get the user's avatar URL
+     */
+    public function getAvatarUrlAttribute()
+    {
+        return $this->getFirstMediaUrl('avatar', 'large');
+    }
+
+    /**
+     * Get medium avatar URL
+     */
+    public function getAvatarMediumUrlAttribute()
+    {
+        return $this->getFirstMediaUrl('avatar', 'medium');
+    }
+
+    /**
+     * Get small avatar URL
+     */
+    public function getAvatarSmallUrlAttribute()
+    {
+        return $this->getFirstMediaUrl('avatar', 'small');
+    }
+
+
 }

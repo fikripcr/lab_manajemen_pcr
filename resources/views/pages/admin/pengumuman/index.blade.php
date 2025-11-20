@@ -14,7 +14,7 @@
                 <h5 class="mb-2 mb-sm-0">{{ ucfirst($type) }} List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <x:datatable.page-length id="{{ $type }}PageLength" selected="10" />
+                        <x-datatable.page-length id="{{ $type }}PageLength" selected="10" />
                     </div>
                 </div>
             </div>
@@ -69,13 +69,8 @@
                             className: 'text-center'
                         },
                         {
-                            data: null,
-                            name: 'cover_image',
-                            render: function(data, type, row) {
-                                var coverInfo = row.cover_image || {};
-                                var imageUrl = coverInfo.url || "{{ asset('assets-guest/img/person/person-m-10.webp') }}";
-                                return '<img src="' + imageUrl + '" alt="Cover" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">';
-                            },
+                            data: 'cover',
+                            name: 'cover',
                             orderable: false,
                             searchable: false
                         },

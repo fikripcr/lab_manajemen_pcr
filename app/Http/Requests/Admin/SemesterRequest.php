@@ -35,19 +35,6 @@ class SemesterRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'tahun_ajaran.required' => 'Tahun ajaran wajib diisi.',
-            'tahun_ajaran.string' => 'Tahun ajaran harus berupa teks.',
-            'tahun_ajaran.max' => 'Tahun ajaran maksimal :max karakter.',
-            'semester.required' => 'Semester wajib diisi.',
-            'semester.integer' => 'Semester harus berupa angka.',
-            'semester.in' => 'Semester harus 1 (Ganjil) atau 2 (Genap).',
-            'start_date.required' => 'Tanggal mulai wajib diisi.',
-            'start_date.date' => 'Tanggal mulai harus berupa tanggal yang valid.',
-            'end_date.required' => 'Tanggal selesai wajib diisi.',
-            'end_date.date' => 'Tanggal selesai harus berupa tanggal yang valid.',
-            'end_date.after' => 'Tanggal selesai harus setelah tanggal mulai.',
-            'is_active.boolean' => 'Status aktif harus berupa benar atau salah.',
-        ];
+        return validation_messages_id();
     }
 }

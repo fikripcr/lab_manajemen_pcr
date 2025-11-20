@@ -49,7 +49,7 @@ class BackupController extends Controller
             }
 
             // For non-AJAX requests, redirect back with error message
-            return redirect()->route('sys.backup.index')
+            return redirect()->route('pages.sys.backup.index')
                 ->with('error', 'Failed to create backup: ' . $errorMessage);
         }
     }
@@ -134,6 +134,19 @@ class BackupController extends Controller
         $filename = 'database_backup_' . date('Y-m-d_H-i-s') . '.sql';
         $fullPath = $backupDir . '/' . $filename;
 
+        // Get mysqldump path from environment, with fallback
+        $mysqldumpPath = env('MYSQLDUMP_PATH', 'C:/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysqldump.exe');
+
+        // Check if mysqldump path is set and executable exists
+        if (empty($mysqldumpPath)) {
+            throw new Exception('Mysqldump path is not set in configuration. Please set it in the App Configuration.');
+        }
+
+        // For Windows, check if the file exists
+        if (PHP_OS_FAMILY === 'Windows' && !file_exists($mysqldumpPath)) {
+            throw new Exception("Mysqldump executable not found at: {$mysqldumpPath}. Please verify the path in App Configuration.");
+        }
+
         // Get database connection details from environment
         $host = env('DB_HOST', '127.0.0.1');
         $port = env('DB_PORT', '3306');
@@ -142,12 +155,17 @@ class BackupController extends Controller
         $password = env('DB_PASSWORD', '');
 
         // Build the mysqldump command with proper executable path for Laragon
-        $mysqldumpPath = 'C:/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysqldump.exe';
+        $mysqldumpCmd = $mysqldumpPath;
+
+        // For Windows systems, wrap the path in quotes if it contains spaces
+        if (PHP_OS_FAMILY === 'Windows' && strpos($mysqldumpPath, ' ') !== false) {
+            $mysqldumpCmd = '"' . $mysqldumpPath . '"';
+        }
 
         // For Windows, we'll use the full path to mysqldump
         $command = sprintf(
-            '"%s" --host=%s --port=%s --user=%s --password=%s %s > "%s"',
-            $mysqldumpPath,
+            '%s --host=%s --port=%s --user=%s --password=%s %s > "%s"',
+            $mysqldumpCmd,
             $host,
             $port,
             $username,
@@ -159,10 +177,18 @@ class BackupController extends Controller
         // Execute the command using cmd on Windows
         $output = [];
         $returnCode = 0;
-        exec('cmd /c ' . $command . ' 2>&1', $output, $returnCode);
+
+        // For Windows systems
+        if (PHP_OS_FAMILY === 'Windows') {
+            $command = str_replace('\\', '/', $command);
+            exec('cmd /c ' . escapeshellcmd($command) . ' 2>&1', $output, $returnCode);
+        } else {
+            // For Unix-like systems
+            exec(escapeshellcmd($command) . ' 2>&1', $output, $returnCode);
+        }
 
         if ($returnCode !== 0) {
-            // If the specific version doesn't work, try generic path
+            // If the specific path doesn't work, try generic mysqldump
             $genericMysqldumpPath = 'mysqldump';
             $genericCommand = sprintf(
                 '%s --host=%s --port=%s --user=%s --password=%s %s > "%s"',
@@ -177,10 +203,14 @@ class BackupController extends Controller
 
             $output = [];
             $returnCode = 0;
-            exec('cmd /c ' . $genericCommand . ' 2>&1', $output, $returnCode);
+            if (PHP_OS_FAMILY === 'Windows') {
+                exec('cmd /c ' . escapeshellcmd($genericCommand) . ' 2>&1', $output, $returnCode);
+            } else {
+                exec(escapeshellcmd($genericCommand) . ' 2>&1', $output, $returnCode);
+            }
 
             if ($returnCode !== 0) {
-                throw new Exception('Database backup failed with return code: ' . $returnCode . '. Output: ' . implode(' ', $output));
+                throw new Exception('Database backup failed with return code: ' . $returnCode . '. Output: ' . implode(' ', $output) . '. Please verify your Mysqldump path in App Configuration.');
             }
         }
     }
@@ -250,7 +280,7 @@ class BackupController extends Controller
             abort(404, 'Backup file not found: ' . $filename);
         }
 
-        return redirect()->route('sys.backup.index')
+        return redirect()->route('pages.sys.backup.index')
             ->with('success', 'Backup deleted successfully');
     }
 

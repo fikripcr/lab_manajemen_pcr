@@ -11,7 +11,7 @@
                 <h5 class="mb-2 mb-sm-0">Activity Log</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <x:datatable.page-length id="pageLength" selected="10" />
+                        <x-datatable.page-length id="pageLength" selected="10" />
                     </div>
                 </div>
             </div>
@@ -53,22 +53,46 @@
         <div class="card-body">
             <x-flash-message />
 
-            <div class="table-responsive">
-                <table id="activity-log-table" class="table" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Time</th>
-                            <th>User</th>
-                            <th>Log Name</th>
-                            <th>Event</th>
-                            <th>Subject</th>
-                            <th>Description</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+            <x-datatable.datatable
+                id="activity-log-table"
+                route="{{ route('activity-log.data') }}"
+                :columns="[
+                    [
+                        'title' => '#',
+                        'data' => 'DT_RowIndex',
+                        'name' => 'DT_RowIndex',
+                        'orderable' => false,
+                        'searchable' => false
+                    ],
+                    [
+                        'title' => 'Time',
+                        'data' => 'created_at',
+                        'name' => 'created_at'
+                    ],
+                    [
+                        'title' => 'User',
+                        'data' => 'causer.name',
+                        'name' => 'causer.name'
+                    ],
+                    [
+                        'title' => 'Log Name',
+                        'data' => 'log_name',
+                        'name' => 'log_name'
+                    ],
+                    [
+                        'title' => 'Description',
+                        'data' => 'description',
+                        'name' => 'description'
+                    ],
+                    [
+                        'title' => 'Actions',
+                        'data' => 'action',
+                        'name' => 'action',
+                        'orderable' => false,
+                        'searchable' => false
+                    ]
+                ]"
+            />
         </div>
     </div>
 
@@ -93,128 +117,63 @@
             </div>
         </div>
     </div>
-@endsection
-
-@push('scripts')
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if DataTable is already initialized to avoid re-initialization
-            if (!$.fn.DataTable.isDataTable('#activity-log-table')) {
-                var table = $('#activity-log-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: '{{ route('activity-log.data') }}',
-                        data: function(d) {
-                            // Capture custom search from the filter component
-                            var searchValue = $('#globalSearch-activity-log-table').val();
-                            if (searchValue) {
-                                d.search.value = searchValue;
-                            }
-                        }
-                    },
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center'
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at'
-                        },
-                        {
-                            data: 'causer.name',
-                            name: 'causer.name'
-                        },
-                        {
-                            data: 'log_name',
-                            name: 'log_name'
-                        },
-                        {
-                            data: 'event',
-                            name: 'event'
-                        },
-                        {
-                            data: 'subject_info',
-                            name: 'subject_info'
-                        },
-                        {
-                            data: 'description',
-                            name: 'description'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        }
-                    ],
-                    order: [
-                        [0, 'desc']
-                    ],
-                    pageLength: 10,
-                    responsive: true,
-                    dom: 'rtip' // Only show table, info, and paging
-                });
-
-                // Handle page length change
-                $(document).on('change', '#pageLength', function() {
-                    var pageLength = parseInt($(this).val());
-                    table.page.len(pageLength).draw();
-                });
-
-                // Handle search input from the filter component
-                $(document).on('keyup', '#globalSearch-activity-log-table', function() {
-                    table.search(this.value).draw();
-                });
-                
-                // Handle activity detail modal
-                $(document).on('click', '[data-bs-target="#activityDetailModal"]', function() {
-                    var activityId = $(this).data('activity-id');
+        // Handle activity detail modal
+        document.addEventListener('click', function(event) {
+            var targetElement = event.target.closest('[data-bs-toggle="modal"][data-bs-target="#activityDetailModal"]');
+            if (targetElement) {
+                var activityId = targetElement.getAttribute('data-activity-id');
+                if (activityId) {
                     loadActivityDetails(activityId);
-                });
+                }
             }
         });
-        
+
         function loadActivityDetails(activityId) {
-            $.get('{{ url("admin/activity-log") }}/' + activityId, function(response) {
-                var activity = response.activity;
-                var properties = response.properties;
-                
-                var content = '<div class="row">';
-                content += '<div class="col-md-6"><strong>Time:</strong> ' + activity.created_at + '</div>';
-                content += '<div class="col-md-6"><strong>Log Name:</strong> ' + activity.log_name + '</div>';
-                content += '<div class="col-md-6"><strong>Event:</strong> ' + activity.event + '</div>';
-                content += '<div class="col-md-6"><strong>User:</strong> ' + (activity.causer ? activity.causer.name : 'System') + '</div>';
-                content += '<div class="col-md-12"><strong>Subject:</strong> ' + (activity.subject ? activity.subject_type + ': ' + activity.subject.name : 'N/A') + '</div>';
-                content += '<div class="col-md-12"><strong>Description:</strong> ' + activity.description + '</div>';
-                
-                if (properties && Object.keys(properties).length > 0) {
-                    content += '<div class="col-md-12 mt-3"><strong>Properties:</strong></div>';
-                    content += '<div class="col-md-12">';
-                    for (var key in properties) {
-                        if (properties.hasOwnProperty(key)) {
-                            content += '<div><strong>' + key + ':</strong> ';
-                            if (typeof properties[key] === 'object') {
-                                content += '<pre>' + JSON.stringify(properties[key], null, 2) + '</pre>';
-                            } else {
-                                content += properties[key];
+            fetch('{{ route('activity-log.show') }}/' + activityId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        var activity = data.activity;
+                        var properties = data.properties;
+
+                        var content = '<div class="row">';
+                        content += '<div class="col-md-6"><strong>Time:</strong> ' + activity.created_at + '</div>';
+                        content += '<div class="col-md-6"><strong>Log Name:</strong> ' + activity.log_name + '</div>';
+                        content += '<div class="col-md-6"><strong>Event:</strong> ' + activity.event + '</div>';
+                        content += '<div class="col-md-6"><strong>User:</strong> ' + (activity.causer ? activity.causer.name : 'System') + '</div>';
+                        content += '<div class="col-md-12"><strong>Subject:</strong> ' + (activity.subject ? activity.subject_type + ': ' + activity.subject.name : 'N/A') + '</div>';
+                        content += '<div class="col-md-12"><strong>Description:</strong> ' + activity.description + '</div>';
+
+                        if (properties && Object.keys(properties).length > 0) {
+                            content += '<div class="col-md-12 mt-3"><strong>Properties:</strong></div>';
+                            content += '<div class="col-md-12">';
+                            for (var key in properties) {
+                                if (properties.hasOwnProperty(key)) {
+                                    content += '<div><strong>' + key + ':</strong> ';
+                                    if (typeof properties[key] === 'object') {
+                                        content += '<pre>' + JSON.stringify(properties[key], null, 2) + '</pre>';
+                                    } else {
+                                        content += properties[key];
+                                    }
+                                    content += '</div>';
+                                }
                             }
                             content += '</div>';
                         }
+
+                        content += '</div>';
+
+                        document.getElementById('activity-detail-content').innerHTML = content;
+                    } else {
+                        document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
                     }
-                    content += '</div>';
-                }
-                
-                content += '</div>';
-                
-                $('#activity-detail-content').html(content);
-            }).fail(function() {
-                $('#activity-detail-content').html('<div class="alert alert-danger">Failed to load activity details.</div>');
-            });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
+                });
         }
     </script>
-@endpush
+@endsection

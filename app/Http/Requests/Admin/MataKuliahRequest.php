@@ -33,18 +33,6 @@ class MataKuliahRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'kode_mk.required' => 'Kode mata kuliah wajib diisi.',
-            'kode_mk.string' => 'Kode mata kuliah harus berupa teks.',
-            'kode_mk.max' => 'Kode mata kuliah maksimal :max karakter.',
-            'kode_mk.unique' => 'Kode mata kuliah sudah digunakan.',
-            'nama_mk.required' => 'Nama mata kuliah wajib diisi.',
-            'nama_mk.string' => 'Nama mata kuliah harus berupa teks.',
-            'nama_mk.max' => 'Nama mata kuliah maksimal :max karakter.',
-            'sks.required' => 'SKS wajib diisi.',
-            'sks.integer' => 'SKS harus berupa angka.',
-            'sks.min' => 'SKS minimal :min.',
-            'sks.max' => 'SKS maksimal :max.',
-        ];
+        return validation_messages_id();
     }
 }

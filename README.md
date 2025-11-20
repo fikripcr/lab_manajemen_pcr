@@ -1,32 +1,3 @@
-# Laravel Base Template - Development Guidelines
-
-[Table of Contents](#table-of-contents)
-
-## Table of Contents
-- [Installation](#installation)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Development Patterns](#development-patterns)
-- [Authentication & Authorization](#authentication--authorization)
-- [Database Operations](#database-operations)
-- [Eloquent Query Optimization](#eloquent-query-optimization)
-- [Media Handling with Spatie Laravel Media Library](#media-handling-with-spatie-laravel-media-library)
-- [Asset Management (Local Libraries and Fonts)](#asset-management-local-libraries-and-fonts)
-- [PDF Generation with Laravel DomPDF](#pdf-generation-with-laravel-dompdf)
-- [Activity Logging with Spatie Laravel Activity Log](#activity-logging-with-spatie-laravel-activity-log)
-- [Validation](#validation)
-- [Export/Import](#exportimport)
-- [Notifications](#notifications)
-- [Laravel Impersonate](#laravel-impersonate)
-- [Helper Functions](#helper-functions)
-- [TinyMCE Editor](#tinymce-editor)
-- [SweetAlert](#sweetalert)
-- [Custom Error Pages](#custom-error-pages)
-- [Helper Functions for Data Preparation](#helper-functions-for-data-preparation)
-- [Base System Tables](#base-system-tables)
-- [Security](#security)
-- [System Configuration Management](#system-configuration-management)
-
 This repository serves as a comprehensive Laravel base template that implements essential features for efficient web application development. It provides a solid foundation with authentication, authorization, CRUD operations, and various utility features that can be reused across multiple projects. Bismillah
 
 ## 📋 Features Overview
@@ -824,3 +795,11 @@ Several existing pages already use this system:
 - **Date Pickers**: Date picker CSS and JavaScript
 - **File Uploads**: File upload component CSS and JS
 - **Custom Components**: Page-specific interactive elements
+### Additional Features and Updates 
+- **Enhanced Activity Logging**: Extended activity logs with IP address, browser information, and additional context 
+- **Centralized Configuration**: Added form-based management for Google OAuth, Mail settings, and mysqldump path in App Configuration 
+- **Unified Notification System**: Consolidated notification sending and marking functions for both email and database notifications 
+- **Improved Avatar Handling**: Added image conversions (small, medium, large) and automatic cleanup of original files 
+- **Enhanced User Interface**: Improved DataTables with consistent pagination, and better UI components  
+- **Email Testing**: Added email testing functionality accessible from user dropdown menu  
+- **Validation Messages**: Added Indonesian translation helper for validation messages 

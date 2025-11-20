@@ -37,23 +37,6 @@ class JadwalRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'semester_id.required' => 'Semester wajib diisi.',
-            'semester_id.exists' => 'Semester yang dipilih tidak valid.',
-            'mata_kuliah_id.required' => 'Mata kuliah wajib diisi.',
-            'mata_kuliah_id.exists' => 'Mata kuliah yang dipilih tidak valid.',
-            'dosen_id.required' => 'Dosen wajib diisi.',
-            'dosen_id.exists' => 'Dosen yang dipilih tidak valid.',
-            'hari.required' => 'Hari wajib diisi.',
-            'hari.string' => 'Hari harus berupa teks.',
-            'hari.max' => 'Hari maksimal :max karakter.',
-            'jam_mulai.required' => 'Jam mulai wajib diisi.',
-            'jam_mulai.date_format' => 'Format jam mulai harus HH:MM.',
-            'jam_selesai.required' => 'Jam selesai wajib diisi.',
-            'jam_selesai.date_format' => 'Format jam selesai harus HH:MM.',
-            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai.',
-            'lab_id.required' => 'Lab wajib diisi.',
-            'lab_id.exists' => 'Lab yang dipilih tidak valid.',
-        ];
+        return validation_messages_id();
     }
 }

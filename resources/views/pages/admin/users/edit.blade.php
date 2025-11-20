@@ -69,12 +69,12 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="role">Role</label>
+                            <label class="col-sm-2 col-form-label" for="role">Role(s)</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('role') is-invalid @enderror"
-                                        id="role" name="role" >
+                                <select class="form-select @error('role') is-invalid @enderror js-choice"
+                                        id="role" name="role[]" multiple>
                                     @foreach($roles as $role)
-                                    <option value="{{ $role->name }}" {{ old('role', $user->roles->first()?->name) == $role->name ? 'selected' : '' }}>
+                                    <option value="{{ $role->name }}" {{ in_array($role->name, old('role', $user->roles->pluck('name')->toArray())) ? 'selected' : '' }}>
                                         {{ ucfirst($role->name) }}
                                     </option>
                                     @endforeach
@@ -125,7 +125,7 @@
                             <label class="col-sm-2 col-form-label" for="avatar">Avatar</label>
                             <div class="col-sm-10">
                                 <div class="mb-2">
-                                    <img src="{{ getVerifiedMediaUrl($user, 'avatar', 'thumb') }}"
+                                    <img src="{{ $user->avatar_small_url }}"
                                          class="rounded-circle"
                                          width="60"
                                          height="60"
@@ -182,3 +182,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Choices.js on the role multiselect
+            const roleChoices = new Choices('#role', {
+                removeItemButton: true,
+                placeholder: true,
+                placeholderValue: 'Select roles...',
+                searchPlaceholderValue: 'Search roles...'
+            });
+        });
+    </script>
+@endpush

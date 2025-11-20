@@ -16,41 +16,6 @@ class PengumumanController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $pengumumen = Pengumuman::with('penulis')->where('jenis', 'pengumuman');
-
-            return DataTables::of($pengumumen)
-                ->addIndexColumn()
-                ->editColumn('judul', function ($pengumuman) {
-                    return '<strong>' . e($pengumuman->judul) . '</strong>';
-                })
-                ->editColumn('is_published', function ($pengumuman) {
-                    $status = $pengumuman->is_published ? 'Published' : 'Draft';
-                    $class  = $pengumuman->is_published ? 'bg-label-success' : 'bg-label-warning';
-                    return '<span class="badge ' . $class . '">' . $status . '</span>';
-                })
-                ->editColumn('created_at', function ($pengumuman) {
-                    return formatTanggalIndo($pengumuman->created_at);
-                })
-                ->addColumn('action', function ($pengumuman) {
-                    $encryptedId = encryptId($pengumuman->id);
-                    return '
-                        <div class="d-flex">
-                            <a href="' . route('pengumuman.show', $encryptedId) . '" class="btn btn-sm btn-info me-1" title="View">
-                                <i class="bx bx-show"></i>
-                            </a>
-                            <a href="' . route('pengumuman.edit', $encryptedId) . '" class="btn btn-sm btn-primary me-1" title="Edit">
-                                <i class="bx bx-edit"></i>
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-sm btn-danger" title="Delete" onclick="confirmDelete(\'' . route('pengumuman.destroy', $encryptedId) . '\')">
-                                <i class="bx bx-trash"></i>
-                            </a>
-                        </div>';
-                })
-                ->rawColumns(['judul', 'is_published', 'action'])
-                ->make(true);
-        }
-
         return view('pages.admin.pengumuman.index', ['type' => 'pengumuman']);
     }
 
@@ -253,23 +218,7 @@ class PengumumanController extends Controller
                 return '<a href="' . route($routePrefix . '.show', $encryptedId) . '">' . e($item->judul) . '</a>';
             })
             ->addColumn('cover', function ($item) {
-                $coverMedia = $item->getFirstMedia('info_cover');
-                if ($coverMedia) {
-                    $customProperties = json_decode($coverMedia->custom_properties, true);
-                    $thumbnailId      = $customProperties['thumbnail_id'] ?? null;
-                    $thumbnail        = $thumbnailId ? $item->media()->find($thumbnailId) : null;
-
-                    return [
-                        'original'  => $coverMedia,
-                        'thumbnail' => $thumbnail,
-                        'url'       => asset('storage/' . ($thumbnail ? $thumbnail->file_path : $coverMedia->file_path)),
-                    ];
-                }
-                return [
-                    'original'  => null,
-                    'thumbnail' => null,
-                    'url'       => asset('assets-guest/img/person/person-m-10.webp'),
-                ];
+                return '<img src="' . $item->cover_small_url . '" class="rounded w-px-40 h-40">';
             })
             ->editColumn('is_published', function ($item) {
                 $status = $item->is_published ? 'Published' : 'Draft';

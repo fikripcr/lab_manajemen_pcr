@@ -30,6 +30,15 @@ class PermissionController extends Controller
             ->filterColumn('name', function ($query, $keyword) {
                 $query->where('name', 'like', "%{$keyword}%");
             })
+            ->filter(function ($query) use ($request) {
+                // Global search functionality
+                if ($request->has('search') && $request->search['value'] != '') {
+                    $searchValue = $request->search['value'];
+                    $query->where(function($q) use ($searchValue) {
+                        $q->where('name', 'like', '%' . $searchValue . '%');
+                    });
+                }
+            })
             ->editColumn('created_at', function ($permission) {
                 return formatTanggalIndo($permission->created_at);
             })

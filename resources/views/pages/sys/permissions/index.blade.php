@@ -14,7 +14,7 @@
                 <h5 class="mb-2 mb-sm-0">Permissions List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <x:datatable.page-length id="pageLength" selected="10" />
+                        <x-datatable.page-length id="pageLength" selected="10" />
                     </div>
                 </div>
             </div>
@@ -24,94 +24,46 @@
         </div>
         <div class="card-body">
             <x-flash-message />
-            <div class="table-responsive">
-                <table id="permissions-table" class="table" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Roles Assigned</th>
-                            <th>Created At</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+
+            <x-datatable.datatable
+                id="permissions-table"
+                route="{{ route('permissions.data') }}"
+                :columns="[
+                    [
+                        'title' => '#',
+                        'data' => 'DT_RowIndex',
+                        'name' => 'DT_RowIndex',
+                        'orderable' => false,
+                        'searchable' => false
+                    ],
+                    [
+                        'title' => 'Name',
+                        'data' => 'name',
+                        'name' => 'name',
+                    ],
+                    [
+                        'title' => 'Roles Assigned',
+                        'data' => 'roles_count',
+                        'name' => 'roles_count',
+                        'orderable' => false,
+                        'searchable' => false
+                    ],
+                    [
+                        'title' => 'Created At',
+                        'data' => 'created_at',
+                        'name' => 'created_at'
+                    ],
+                    [
+                        'title' => 'Actions',
+                        'data' => 'action',
+                        'name' => 'action',
+                        'orderable' => false,
+                        'searchable' => false
+                    ]
+                ]"
+            />
         </div>
     </div>
-@endsection
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!$.fn.DataTable.isDataTable('#permissions-table')) {
-                var table = $('#permissions-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    stateSave: true,
-                    ajax: {
-                        url: '{{ route('permissions.data') }}',
-                        data: function(d) {
-                            // Capture custom search from the filter component
-                            var searchValue = $('#globalSearch-permissions-table').val();
-                            if (searchValue) {
-                                d.search.value = searchValue;
-                            }
-                        }
-                    },
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center'
-                        },
-                        {
-                            data: 'name',
-                            name: 'name',
-                            render: function(data, type, row) {
-                                return '<span class="fw-medium">' + data + '</span>';
-                            }
-                        },
-                        {
-                            data: 'roles_count',
-                            name: 'roles_count',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at',
-                            searchable: false
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        }
-                    ],
-                    order: [
-                        [0, 'desc']
-                    ],
-                    pageLength: 10,
-                    responsive: true,
-                    dom: 'rtip' // Only show table, info, and paging
-                });
-
-                // Handle page length change
-                $(document).on('change', '#pageLength', function() {
-                    var pageLength = parseInt($(this).val());
-                    table.page.len(pageLength).draw();
-                });
-
-                // Handle search input from the filter component
-                $(document).on('keyup', '#globalSearch-permissions-table', function() {
-                    table.search(this.value).draw();
-                });
-            }
-        });
-    </script>
 
     <!-- Modal container for create/edit operations -->
     <div class="modal fade" id="modalAction" tabindex="-1" aria-hidden="true">
@@ -124,12 +76,15 @@
         </div>
     </div>
 
+@endsection
+@push('scripts')
     <script>
         // Handle create permission button click
         $('#createPermissionBtn').on('click', function() {
+
+            $('#modalAction').modal('show');
             $.get('{{ route('permissions.create-modal') }}', function(data) {
                 $('#modalContent').html(data);
-                $('#modalAction').modal('show');
             }).fail(function() {
                 showErrorMessage('Error!', 'Could not load form');
             });
@@ -139,12 +94,11 @@
         $(document).on('click', '.edit-permission', function() {
             var permissionId = $(this).data('id');
             $.get('{{ route('permissions.edit-modal.show', '') }}/' + permissionId, function(data) {
-                $('#modalContent').html(data);
                 $('#modalAction').modal('show');
+                $('#modalContent').html(data);
             }).fail(function() {
                 showErrorMessage('Error!', 'Could not load form');
             });
         });
     </script>
-
 @endpush

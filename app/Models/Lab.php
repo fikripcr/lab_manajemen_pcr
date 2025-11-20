@@ -129,12 +129,14 @@ class Lab extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $this->addMediaConversion('thumb')
+        $this->addMediaConversion('small')
             ->fit(Fit::Crop, 150, 150)
+            ->optimize()
             ->nonQueued();
 
-        $this->addMediaConversion('preview')
+        $this->addMediaConversion('medium')
             ->fit(Fit::Crop, 400, 400)
+            ->optimize()
             ->nonQueued();
     }
 

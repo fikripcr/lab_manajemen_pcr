@@ -175,12 +175,3 @@ function updateNotificationCount() {
             .catch(error => console.error('Error updating notification count:', error));
     }
 }
-
-// Initial call when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Update notification count once when page loads
-    updateNotificationCount();
-
-    // Set interval to update every 60 seconds (optional)
-    // setInterval(updateNotificationCount, 60000); // Uncomment to refresh every minute
-});

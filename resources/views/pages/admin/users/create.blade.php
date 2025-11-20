@@ -66,13 +66,12 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="role">Role</label>
+                            <label class="col-sm-2 col-form-label" for="role">Role(s)</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('role') is-invalid @enderror"
-                                        id="role" name="role" >
-                                    <option value="">Select Role</option>
+                                <select class="form-select @error('role') is-invalid @enderror js-choice"
+                                        id="role" name="role[]" multiple>
                                     @foreach($roles as $role)
-                                    <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
+                                    <option value="{{ $role->name }}" {{ in_array($role->name, old('role', [])) ? 'selected' : '' }}>
                                         {{ ucfirst($role->name) }}
                                     </option>
                                     @endforeach
@@ -122,13 +121,6 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="avatar">Avatar (Optional)</label>
                             <div class="col-sm-10">
-                                <div class="mb-2">
-                                    <img src="{{ getVerifiedMediaUrl(new \App\Models\User(), 'avatar', 'thumb') }}"
-                                         class="rounded-circle"
-                                         width="60"
-                                         height="60"
-                                         alt="Avatar">
-                                </div>
                                 <input class="form-control @error('avatar') is-invalid @enderror"
                                        type="file" id="avatar" name="avatar" accept="image/*">
                                 <div class="form-text">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.</div>
@@ -179,3 +171,39 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Choices.js on the role multiselect
+            const roleChoices = new Choices('#role', {
+                removeItemButton: true,
+                placeholder: true,
+                placeholderValue: 'Select roles...',
+                searchPlaceholderValue: 'Search roles...'
+            });
+
+            // Existing password toggle functionality
+            const passwordInput = document.getElementById('password');
+            const passwordConfirmationInput = document.getElementById('password_confirmation');
+            const togglePassword = document.getElementById('togglePassword');
+            const togglePasswordConfirmation = document.getElementById('togglePasswordConfirmation');
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ? '<i class="bx bx-hide"></i>' : '<i class="bx bx-show"></i>';
+                });
+            }
+
+            if (togglePasswordConfirmation && passwordConfirmationInput) {
+                togglePasswordConfirmation.addEventListener('click', function() {
+                    const type = passwordConfirmationInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordConfirmationInput.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ? '<i class="bx bx-hide"></i>' : '<i class="bx bx-show"></i>';
+                });
+            }
+        });
+    </script>
+@endpush

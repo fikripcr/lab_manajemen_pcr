@@ -35,6 +35,9 @@ class UserController extends Controller
 
         return DataTables::of($users)
             ->addIndexColumn()
+            ->order(function ($query) {
+                $query->latest('created_at'); // Sort by created_at DESC by default
+            })
             ->filterColumn('roles', function($query, $keyword) {
                 $query->whereHas('roles', function($q) use ($keyword) {
                     $q->where('name', 'like', "%{$keyword}%");
@@ -44,11 +47,10 @@ class UserController extends Controller
                 // Ensure we're getting the actual user name, not processed content
                 $userName      = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
                 $userCreatedAt = formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
-                $src = getVerifiedMediaUrl($user, 'avatar', 'thumb');
 
                 $html = '<div class="d-flex align-items-center">';
                 $html .= '<div class="avatar flex-shrink-0 me-3">';
-                $html .= '<img src="' . $src . '" alt="' . $userName . '" class="rounded-circle w-px-40 h-40">';
+                $html .= '<img src="' . $user->avatar_small_url . '" alt="' . $userName . '" class="rounded-circle w-px-40 h-40">';
                 $html .= '</div>';
                 $html .= '<div class="d-flex flex-column">';
                 $html .= '<span class="text-nowrap">' . $userName . '</span>';
@@ -57,9 +59,6 @@ class UserController extends Controller
                 $html .= '</div>';
 
                 return $html;
-            })
-            ->editColumn('created_at', function ($user) {
-                return formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
             })
             ->editColumn('expired_at', function ($user) {
                 if ($user->expired_at) {
@@ -73,7 +72,17 @@ class UserController extends Controller
                 return '<span class="badge bg-label-success">No Expiration</span>';
             })
             ->editColumn('roles', function ($user) {
-                return $user->getRoleNames()->first() ?? 'No Role';
+                $roles = $user->getRoleNames();
+                if ($roles->isEmpty()) {
+                    return '<span class="badge bg-label-secondary">No Role</span>';
+                }
+
+                $roleBadges = '';
+                foreach ($roles as $role) {
+                    $roleBadges .= '<span class="badge bg-label-primary me-1">' . ucfirst($role) . '</span>';
+                }
+
+                return $roleBadges;
             })
             ->addColumn('action', function ($user) {
                 $encryptedId = encryptId($user->id);
@@ -90,23 +99,27 @@ class UserController extends Controller
                                 <a class="dropdown-item" href="' . route('users.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <a class="dropdown-item" href="' . route('users.export.pdf.detail', $encryptedId) . '" target="_blank">
-                                    <i class="bx bx-file me-1"></i> Download PDF
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item" onclick="sendNotificationToUser(\'' . route('users.send.notification', $encryptedId) . '\', \'' . addslashes($user->name) . '\')">
-                                    <i class="bx bx-bell me-1"></i> Test Kirim Notifikasi
-                                </a>
                                 <a href="javascript:void(0)" class="dropdown-item" onclick="loginAsUser(\'' . route('users.login.as', $encryptedId) . '\', \'' . addslashes($user->name) . '\')">
                                     <i class="bx bx-log-in me-1"></i> Login As
                                 </a>
                                 <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\')">
                                     <i class="bx bx-trash me-1"></i> Delete
                                 </a>
+                                <div class="dropdown-divider" bis_skin_checked="1"></div>
+                                <a class="dropdown-item" href="' . route('users.export.pdf.detail', $encryptedId) . '" target="_blank">
+                                    <i class="bx bx-file me-1"></i> Test Generate PDF
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item" onclick="sendNotificationToUser(\'' . route('notifications.send') . '\', \'' . $encryptedId . '\', \'' . addslashes($user->name) . '\')">
+                                    <i class="bx bx-bell me-1"></i> Test Kirim Notifikasi
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item" onclick="sendEmailToUser(\'' . route('notifications.send') . '\', \'' . $encryptedId . '\', \'' . addslashes($user->name) . '\')">
+                                    <i class="bx bx-envelope me-1"></i> Test Kirim Email
+                                </a>
                             </div>
                         </div>
                     </div>';
             })
-            ->rawColumns(['name', 'expired_at', 'action'])
+            ->rawColumns(['name', 'roles','expired_at', 'action'])
             ->make(true);
     }
 
@@ -140,15 +153,16 @@ class UserController extends Controller
             $user->addMedia($request->file('avatar'))->toMediaCollection('avatar');
         }
 
-        // Assign the selected role to the user
-        $user->assignRole($validated['role']);
+        // Assign the selected role(s) to the user
+        if (is_array($validated['role'])) {
+            $user->syncRoles($validated['role']); // syncRoles replaces all roles with new set
+        } else {
+            $user->assignRole($validated['role']);
+        }
 
 
         // Log the activity
-        activity()
-            ->performedOn($user)
-            ->causedBy(auth()->user())
-            ->log('Membuat pengguna ' . $user->name);
+        logActivity('user', 'Membuat pengguna ' . $user->name, $user);
 
         return redirect()->route('users.index')
             ->with('success', 'Pengguna berhasil dibuat.');
@@ -212,19 +226,19 @@ class UserController extends Controller
 
         $user->update($updatedData);
 
-        // Update the user's role
-        $user->syncRoles([$validated['role']]);
+        // Update the user's role(s)
+        if (is_array($validated['role'])) {
+            $user->syncRoles($validated['role']);
+        } else {
+            $user->syncRoles([$validated['role']]);
+        }
 
 
         // Log the activity
-        activity()
-            ->performedOn($user)
-            ->causedBy(auth()->user())
-            ->withProperties([
-                'old'        => $oldAttributes,
-                'attributes' => $user->getAttributes(),
-            ])
-            ->log('Memperbarui pengguna ' . $user->name);
+        logActivity('user', 'Memperbarui pengguna ' . $user->name, $user, [
+            'old'        => $oldAttributes,
+            'attributes' => $user->getAttributes(),
+        ]);
 
         return redirect()->route('users.index')
             ->with('success', 'Pengguna berhasil diperbarui.');
@@ -240,10 +254,7 @@ class UserController extends Controller
         $user = User::findOrFail($realId);
 
         // Log the activity before deletion
-        activity()
-            ->performedOn($user)
-            ->causedBy(auth()->user())
-            ->log('Menghapus pengguna ' . $user->name);
+        logActivity('user', 'Menghapus pengguna ' . $user->name, $user);
 
         $user->delete();
 
@@ -407,10 +418,7 @@ class UserController extends Controller
         app('impersonate')->take(auth()->user(), $targetUser);
 
         // Log the impersonation activity
-        activity()
-            ->performedOn($targetUser)
-            ->causedBy(auth()->user())
-            ->log('User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')');
+        logActivity('impersonation', 'User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')', $targetUser);
 
         return response()->json([
             'success' => true,
@@ -435,10 +443,7 @@ class UserController extends Controller
 
         // Log the end impersonation activity
         if ($impersonator) {
-            activity()
-                ->performedOn($impersonator) // Log on the impersonator (the user ending the impersonation)
-                ->causedBy($impersonator) // Log as the impersonator who is switching back
-                ->log('User switched back from impersonation to original account');
+            logActivity('impersonation', 'User switched back from impersonation to original account', $impersonator);
         }
 
         return redirect()->route('dashboard')->with('success', 'Successfully switched back to original account.');

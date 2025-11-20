@@ -30,10 +30,6 @@ class SoftwareRequestUpdateRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'status.required' => 'Status wajib diisi.',
-            'status.in' => 'Status yang dipilih tidak valid.',
-            'catatan_admin.string' => 'Catatan harus berupa teks.',
-        ];
+        return validation_messages_id();
     }
 }

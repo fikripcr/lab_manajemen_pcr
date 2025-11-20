@@ -38,7 +38,7 @@
                 <h5 class="mb-2 mb-sm-0">User List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <x:datatable.page-length id="pageLength" selected="10" />
+                        <x-datatable.page-length id="pageLength" selected="10" />
                     </div>
                     <!-- Action buttons for selected users -->
                     <div id="bulk-actions-users-table" class="d-none">
@@ -182,13 +182,18 @@
 @push('scripts')
     <script>
         // Function to send notification to a specific user
-        function sendNotificationToUser(url, userName) {
+        function sendNotificationToUser(url, userId, userName) {
             fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
+                },
+                body: JSON.stringify({
+                    type: 'database',
+                    user_id: userId,
+                    notification_class: 'TestNotification'
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -202,7 +207,7 @@
                 } else {
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Gagal mengirim notifikasi ke ' + userName,
+                        text: data.message || 'Gagal mengirim notifikasi ke ' + userName,
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
@@ -216,6 +221,62 @@
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
+            });
+        }
+
+        // Function to send email to a specific user
+        function sendEmailToUser(url, userId, userName) {
+            Swal.fire({
+                title: 'Konfirmasi Kirim Email',
+                text: 'Apakah Anda yakin ingin mengirim email test ke ' + userName + '?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, kirimkan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            type: 'email',
+                            user_id: userId,
+                            notification_class: 'TestNotification'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Sukses!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Gagal mengirim email ke ' + userName,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat mengirim email: ' + error.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                }
             });
         }
 

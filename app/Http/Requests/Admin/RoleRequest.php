@@ -32,11 +32,6 @@ class RoleRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'name.required' => 'Nama role wajib diisi.',
-            'name.unique' => 'Nama role sudah digunakan.',
-            'permissions.array' => 'Permissions harus berupa array.',
-            'permissions.*.exists' => 'Salah satu permission yang dipilih tidak valid.',
-        ];
+        return validation_messages_id();
     }
 }

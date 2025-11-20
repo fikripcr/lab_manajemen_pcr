@@ -455,7 +455,7 @@
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apexcharts.js"></script>
+    <script src="{{ asset('assets-admin') }}/vendor/libs/apex-charts/apexcharts.min.js"></script>
     <script src="{{ asset('assets-admin') }}/js/dashboards-analytics.js"></script>
 @endpush
 

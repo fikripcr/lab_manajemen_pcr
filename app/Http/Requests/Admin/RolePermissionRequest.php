@@ -30,9 +30,6 @@ class RolePermissionRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'permissions.array' => 'Permissions harus berupa array.',
-            'permissions.*.exists' => 'Salah satu permission yang dipilih tidak valid.',
-        ];
+        return validation_messages_id();
     }
 }

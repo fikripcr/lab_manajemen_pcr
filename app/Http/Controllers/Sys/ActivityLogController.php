@@ -51,6 +51,23 @@ class ActivityLogController extends Controller
 
         return DataTables::of($activities)
             ->addIndexColumn()
+            ->order(function ($query) {
+                $query->latest('sys_activity_log.created_at'); // Sort by created_at DESC by default
+            })
+            ->filterColumn('description', function ($query, $keyword) {
+                $query->where('sys_activity_log.description', 'like', "%{$keyword}%");
+            })
+            ->filterColumn('causer.name', function ($query, $keyword) {
+                $query->whereHas('causer', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('log_name', function ($query, $keyword) {
+                $query->where('sys_activity_log.log_name', 'like', "%{$keyword}%");
+            })
+            ->filterColumn('event', function ($query, $keyword) {
+                $query->where('sys_activity_log.event', 'like', "%{$keyword}%");
+            })
             ->editColumn('created_at', function ($activity) {
                 return formatTanggalIndo($activity->created_at);
             })
@@ -63,16 +80,6 @@ class ActivityLogController extends Controller
             ->editColumn('description', function ($activity) {
                 $description = htmlspecialchars($activity->description, ENT_QUOTES, 'UTF-8');
                 return '<span title="' . $description . '">' . substr($description, 0, 100) . (strlen($description) > 100 ? '...' : '') . '</span>';
-            })
-            ->addColumn('subject_info', function ($activity) {
-                if ($activity->subject) {
-                    $subjectClass = class_basename($activity->subject);
-                    $subjectName = method_exists($activity->subject, '__toString')
-                        ? (string)$activity->subject
-                        : ($activity->subject->name ?? $activity->subject->id ?? 'N/A');
-                    return $subjectClass . ': ' . $subjectName;
-                }
-                return 'N/A';
             })
             ->addColumn('action', function ($activity) {
                 return '
@@ -90,7 +97,9 @@ class ActivityLogController extends Controller
                         $q->where('sys_activity_log.description', 'like', '%' . $searchValue . '%')
                           ->orWhere('sys_activity_log.log_name', 'like', '%' . $searchValue . '%')
                           ->orWhere('sys_activity_log.event', 'like', '%' . $searchValue . '%')
-                          ->orWhere('users.name', 'like', '%' . $searchValue . '%');
+                          ->orWhereHas('causer', function($q) use ($searchValue) {
+                              $q->where('name', 'like', '%' . $searchValue . '%');
+                          });
                     });
                 }
             })
@@ -121,6 +130,7 @@ class ActivityLogController extends Controller
     {
         $activity = Activity::with(['causer', 'subject'])->findOrFail($id);
         return response()->json([
+            'success' => true,
             'activity' => $activity,
             'properties' => json_decode($activity->properties, true) ?: []
         ]);

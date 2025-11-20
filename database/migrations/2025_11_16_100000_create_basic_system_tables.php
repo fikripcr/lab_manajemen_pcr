@@ -153,14 +153,16 @@ return new class extends Migration
             Schema::create('sys_activity_log', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('log_name')->nullable();
-                $table->string('description'); // Description of the activity
-                $table->string('event')->nullable(); // Added to match spatie/laravel-activity-log package
+                $table->string('description');
+                $table->string('event')->nullable();
                 $table->string('subject_type')->nullable();
                 $table->unsignedBigInteger('subject_id')->nullable();
                 $table->string('causer_type')->nullable();
                 $table->unsignedBigInteger('causer_id')->nullable();
                 $table->json('properties')->nullable();
-                $table->uuid('batch_uuid')->nullable(); // Added to match spatie/laravel-activity-log package
+                $table->uuid('batch_uuid')->nullable();
+                $table->string('ip_address', 45)->nullable();
+                $table->text('user_agent')->nullable();
                 $table->timestamps();
 
                 $table->index(['log_name', 'subject_type', 'subject_id']);

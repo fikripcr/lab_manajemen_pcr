@@ -19,7 +19,7 @@
                 <h5 class="mb-2 mb-sm-0">Jadwal List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <x:datatable.page-length id="pageLength" selected="10" />
+                        <x-datatable.page-length id="pageLength" selected="10" />
                     </div>
                 </div>
             </div>

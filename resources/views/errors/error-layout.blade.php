@@ -92,12 +92,12 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="{{ asset('assets-admin/vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('assets-admin/vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('assets-admin/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets-admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('assets-admin/vendor/libs/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets-admin/vendor/libs/popper/popper.min.js') }}"></script>
+    <script src="{{ asset('assets-admin/vendor/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets-admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
 
-    <script src="{{ asset('assets-admin/vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('assets-admin/vendor/js/menu.min.js') }}"></script>
     <!-- endbuild -->
 
     <!-- Vendors JS -->

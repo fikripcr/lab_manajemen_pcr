@@ -42,10 +42,10 @@ class Pengumuman extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('cover')
+            ->useFallbackUrl('/img/no-image.jpg')
+            ->useFallbackPath(public_path('img/no-image.jpg'))
             ->useDisk('public')
-            ->useFallbackUrl(asset('img/no_image.jpg'))
-            ->useFallbackPath(public_path('img/no_image.jpg'))
-            ->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            ->singleFile();
 
         $this->addMediaCollection('attachments')
             ->useDisk('public')
@@ -65,15 +65,37 @@ class Pengumuman extends Model implements HasMedia
      */
     public function registerMediaConversions(Media $media = null): void
     {
-        if ($media?->collection_name === 'cover') {
-            $this->addMediaConversion('thumb')
+        if ($media?->collection_name == 'cover') {
+            $this->addMediaConversion('small')
                 ->fit(Fit::Crop, 150, 150)
+                ->optimize()
                 ->nonQueued();
 
             $this->addMediaConversion('medium')
                 ->fit(Fit::Crop, 400, 400)
+                ->optimize()
                 ->nonQueued();
         }
+    }
+
+    public function getCoverUrlAttribute()
+    {
+        return $this->getFirstMediaUrl('cover');
+    }
+
+    public function getCoverSmallUrlAttribute()
+    {
+        return $this->getFirstMediaUrl('cover','small');
+    }
+
+    public function getCoverMediumUrllttribute()
+    {
+        return $this->getFirstMediaUrl('cover','medium');
+    }
+
+    public function getAttachmentsUrlAttribute()
+    {
+        return $this->getFirstMediaUrl('attachments');
     }
 
     /**

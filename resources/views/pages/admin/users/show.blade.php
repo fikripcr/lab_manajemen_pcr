@@ -13,9 +13,11 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-start align-items-sm-center gap-4 mb-4">
-                            <img src="{{ getVerifiedMediaUrl($user, 'avatar', 'medium') }}"
-                                 alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100">
+                            <a href="{{$user->avatar_url}}" target="_blank">
 
+                            <img src="{{ $user->avatar_medium_url }}"
+                                 alt="user-avatar" class="d-block rounded-circle w-px-100 h-px-100">
+                            </a>
                             <div class="button-wrapper">
                                 <h4 class="mb-0">{{ $user->name }}</h4>
                                 <p class="mb-0 text-muted">{{ $user->email }}</p>

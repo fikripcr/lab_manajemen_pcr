@@ -54,10 +54,10 @@
                                 <td>{{ $backup['formatted_size'] }}</td>
                                 <td>{{ $backup['formatted_date'] }}</td>
                                 <td>
-                                    <a href="{{ route('admin.backup.download', basename($backup['name'])) }}" class="btn btn-outline-primary btn-sm">
+                                    <a href="{{ route('admin.backup.download', $backup['name']) }}" class="btn btn-outline-primary btn-sm">
                                         <i class="bx bx-download"></i> Download
                                     </a>
-                                    <form action="{{ route('admin.backup.delete', basename($backup['name'])) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.backup.delete', $backup['name']) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this backup?')">
@@ -84,6 +84,18 @@
 <!-- JavaScript for Backup Functionality -->
 <script>
 function createBackup(type) {
+    // Show loading Swal
+    Swal.fire({
+        title: 'Processing Backup...',
+        text: type === 'db' ? 'Creating database backup, please wait...' : 'Creating web files backup, please wait...',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
     fetch('{{ route('admin.backup.create') }}', {
         method: 'POST',
         headers: {
@@ -95,6 +107,9 @@ function createBackup(type) {
     })
     .then(response => response.json())
     .then(data => {
+        // Close the loading Swal
+        Swal.close();
+
         if (data.success) {
             Swal.fire({
                 title: 'Success!',
@@ -115,6 +130,8 @@ function createBackup(type) {
         }
     })
     .catch(error => {
+        // Close the loading Swal
+        Swal.close();
         console.error('Error creating backup:', error);
         Swal.fire({
             title: 'Error!',

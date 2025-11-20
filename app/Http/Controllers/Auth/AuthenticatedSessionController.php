@@ -32,10 +32,7 @@ class AuthenticatedSessionController extends Controller
 
         // Log the login activity
         $user = $request->user();
-        activity()
-            ->performedOn($user)
-            ->causedBy($user)
-            ->log('User logged in');
+        logActivity('auth', 'User logged in', $user);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -55,10 +52,7 @@ class AuthenticatedSessionController extends Controller
 
         // Log the logout activity
         if ($user) {
-            activity()
-                ->performedOn($user)
-                ->causedBy($user)
-                ->log('User logged out');
+            logActivity('auth', 'User logged out', $user);
         }
 
         return redirect('/');

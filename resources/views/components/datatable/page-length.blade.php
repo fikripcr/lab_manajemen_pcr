@@ -10,4 +10,7 @@
             {{ $option }}
         </option>
     @endforeach
+    <option value="-1" {{ $selected == -1 ? 'selected' : '' }}>
+        All
+    </option>
 </select>

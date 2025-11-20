@@ -35,6 +35,10 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::post('/mark-all-as-read', [NotificationsController::class, 'markAllAsRead'])->name('mark-all-as-read');
         Route::post('/mark-selected-as-read', [NotificationsController::class, 'markSelectedAsRead'])->name('mark-selected-as-read');
         Route::get('/unread-count', [NotificationsController::class, 'getUnreadCount'])->name('unread-count');
+        Route::post('/test', [NotificationsController::class, 'testNotification'])->name('test');
+        Route::get('/counts', [NotificationsController::class, 'getNotificationCounts'])->name('counts');
+        Route::put('/update/{id?}', [NotificationsController::class, 'update'])->name('update');
+        Route::post('/send', [NotificationsController::class, 'send'])->name('send');
     });
 
 // Send test notification to authenticated user

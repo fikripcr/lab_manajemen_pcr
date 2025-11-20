@@ -31,4 +31,14 @@ class InventarisRequest extends FormRequest
             'tanggal_pengecekan' => ['required', 'date'],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return validation_messages_id();
+    }
 }

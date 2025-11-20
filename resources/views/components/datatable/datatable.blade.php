@@ -19,7 +19,10 @@
         @endif
     </table>
 </div>
+
 @push('scripts')
+    <script src="{{ asset('assets-admin/libs/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Prevent reinitialization if already initialized
@@ -175,6 +178,30 @@
                 @endif
                 pageLengthSelector: '{{ $pageLengthSelector }}'
             });
+
+            // Define the setupCommonDataTableBehaviors function
+            if (typeof setupCommonDataTableBehaviors === 'undefined') {
+                window.setupCommonDataTableBehaviors = function(table, options) {
+                    // Handle page length change
+                    $(document).on('change', options.pageLengthSelector, function() {
+                        const pageLength = parseInt($(this).val());
+
+                        // Set page length to -1 for "All" option to show all records
+                        if (pageLength === -1) {
+                            table.page.len(-1).draw();
+                        } else {
+                            table.page.len(pageLength).draw();
+                        }
+                    });
+
+                    // Handle search input
+                    @if ($search)
+                        $(document).on('keyup', options.searchInputSelector, function() {
+                            table.search(this.value).draw();
+                        });
+                    @endif
+                };
+            }
         });
     </script>
 @endpush

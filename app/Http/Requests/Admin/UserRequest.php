@@ -36,7 +36,8 @@ class UserRequest extends FormRequest
                 'email',
                 $userId ? Rule::unique('users')->ignore($userId) : ''
             ],
-            'role' => ['required', 'exists:sys_roles,name'],
+            'role' => ['required', 'array'],
+            'role.*' => ['exists:sys_roles,name'],
             'nip' => [
                 'nullable',
                 'string',
@@ -65,34 +66,6 @@ class UserRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'name.required' => 'Nama wajib diisi.',
-            'name.string' => 'Nama harus berupa teks.',
-            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
-
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah digunakan oleh pengguna lain.',
-
-            'role.required' => 'Peran wajib dipilih.',
-            'role.exists' => 'Peran yang dipilih tidak valid.',
-
-            'nip.string' => 'NIP harus berupa teks.',
-            'nip.unique' => 'NIP sudah digunakan oleh pengguna lain.',
-
-            'nim.string' => 'NIM harus berupa teks.',
-            'nim.unique' => 'NIM sudah digunakan oleh pengguna lain.',
-
-            'password.required' => 'Kata sandi wajib diisi.',
-            'password.string' => 'Kata sandi harus berupa teks.',
-            'password.min' => 'Kata sandi minimal harus 8 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-
-            'avatar.image' => 'File avatar harus berupa gambar.',
-            'avatar.mimes' => 'File avatar harus berupa file JPEG, PNG, JPG, atau GIF.',
-            'avatar.max' => 'File avatar tidak boleh lebih dari 2MB.',
-
-            'expired_at.date' => 'Tanggal kadaluarsa tidak valid.',
-        ];
+        return validation_messages_id();
     }
 }
