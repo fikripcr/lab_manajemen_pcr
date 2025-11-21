@@ -357,13 +357,6 @@ Laravel provides a powerful system for including CSS and JavaScript files that a
 3. **Button Positioning**: Consistent placement of action buttons
 4. **Responsive Forms**: Ensure forms work well on all device sizes
 
-### Accessibility
-
-1. **Semantic HTML**: Use appropriate HTML elements
-2. **ARIA Attributes**: Implement ARIA attributes where needed
-3. **Keyboard Navigation**: Ensure all functionality is accessible via keyboard
-4. **Color Contrast**: Maintain proper contrast ratios
-
 ## Custom Components
 
 ### DataTable Component with Search and Filters

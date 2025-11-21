@@ -34,10 +34,11 @@ Welcome to the documentation for the Laboratory Management System - Laravel Base
    - Backup System
    - Configuration Management
 
-7. [Helper Functions](./documentation/helpers-utilities)
-   - Global Helper Functions
-   - Date Formatting
-   - ID Encryption
+7. [Development Patterns & Best Practices](./documentation/patterns-best-practices)
+   - Code Organization
+   - Security Considerations
+   - Performance Optimization
+   - Helper Functions Classification
 
 8. [Advanced Features](./documentation/advanced-features)
    - Activity Logging

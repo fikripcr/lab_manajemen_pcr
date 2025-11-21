@@ -1,18 +1,9 @@
 # Database & Models
 
-### System Tables
+## System Tables
 
-The system includes several categories of tables:
-
-#### Base System Tables
-- Prefixed with `sys_` (reserved for system functionality)
-- Include error logs, notifications, activity logs, and monitoring data
-
-#### Core Application Tables
-- `users` - User accounts and authentication
-- `roles` - User roles (via spatie/laravel-permission)
-- `permissions` - System permissions (via spatie/laravel-permission)
-- `model_has_permissions`, `model_has_roles`, `role_has_permissions` - Permission relationships
+### Core System Tables
+Tables with the `sys_` prefix are core system tables that are essential for application functionality. **These tables should not be modified without further discussion.**
 
 ## Eloquent Models
 
@@ -106,6 +97,10 @@ class User extends Authenticatable
 
 ### Query Scopes
 
+Query scopes are methods that allow you to define common query constraints that can be reused in Eloquent models. This makes code cleaner and more reusable.
+
+Example of query scopes usage:
+
 ```php
 class User extends Authenticatable
 {
@@ -125,7 +120,28 @@ class User extends Authenticatable
 }
 ```
 
+Then you can use them in a controller or elsewhere as follows:
+
+```php
+// Using scope to get active users
+$activeUsers = User::active()->get();
+
+// Using scope with parameter
+$adminUsers = User::byRole('admin')->get();
+
+// Combining multiple scopes
+$activeAdminUsers = User::active()->byRole('admin')->get();
+```
+
 ## Migrations
+
+### Migration System
+
+The `database/migrations/sys` folder contains core system migrations and **should not be modified** as it contains the essential table structures for application functionality.
+
+It's important to ensure migration structures match the actual database tables for smooth deployment processes. If the migration structure doesn't match the actual tables, issues may occur during deployment.
+
+Column structure changes should not be made directly to tables; they must go through the migration process to ensure changes are recorded and can be applied to other environments.
 
 ### Creating Migrations
 
@@ -182,3 +198,45 @@ php artisan db:seed --class=UserSeeder
 # Refresh database and run seeds
 php artisan migrate:refresh --seed
 ```
+
+### Dummy Data with Faker
+
+To create dummy data in seeders, use Faker as a data source. Ensure you use the `id_ID` locale so that the generated data is in Indonesian to match the local context.
+
+Example usage with id_ID locale:
+
+```php
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Faker\Factory as Faker;
+
+class UsersTableSeeder extends Seeder
+{
+    public function run()
+    {
+        $faker = Faker::create('id_ID'); // Using Indonesian locale
+
+        DB::table('users')->insert([
+            'name' => $faker->name,
+            'email' => $faker->unique()->safeEmail,
+            'email_verified_at' => now(),
+            'password' => bcrypt('password'), // password
+            'remember_token' => Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Or using factory with id_ID locale
+        \App\Models\User::factory()
+            ->count(50)
+            ->create();
+    }
+}
+```
+
+Note that we use `$faker = Faker::create('id_ID')` to ensure the dummy data is generated in Indonesian, including names, addresses, and other data that matches the local context.

@@ -467,3 +467,63 @@ function loadCustomFilterState(filterId) {
 - All pages using the `x-datatable.datatable` component
 - All pages using the `x-datatable.search-filter` component
 - All pages using the x-datatable.page-length` component
+
+## Helper Functions Classification
+
+The system implements a classification system for helper functions to maintain code quality and prevent accidental modifications to critical system functions.
+
+### Sys Helper Functions
+
+Sys helpers (located in `app/Helpers/Sys.php`) contain core system functions that handle critical operations. **These functions should not be modified without team discussion and review** as they affect fundamental system functionality.
+
+### Global Helper Functions
+
+Global helpers (located in `app/Helpers/Global.php`) contain general-purpose functions that are safe to modify and extend as needed. These functions are designed to be customized for specific business requirements.
+
+### Usage Guidelines
+
+1. **For Sys Helpers**: Only use existing functions; do not modify or add new functions without explicit team approval
+2. **For Global Helpers**: Safe to extend and modify for additional functionality
+3. **Creating New Helpers**: Follow the classification guidelines when adding new functions
+
+### Example of Helper Usage
+
+```php
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        $users = User::all();
+
+        // Format dates using helper function (Global helper)
+        $users->transform(function ($user) {
+            $user->formatted_created_at = formatTanggalIndo($user->created_at);
+            $user->formatted_updated_at = formatTanggalIndo($user->updated_at);
+            return $user;
+        });
+
+        return view('pages.admin.users.index', compact('users'));
+    }
+
+    public function show($encryptedId)
+    {
+        // Decrypt the ID using helper (Sys helper)
+        $id = decryptId($encryptedId);
+        $user = User::findOrFail($id);
+
+        // Format data using helpers
+        $user->formatted_created_at = formatTanggalIndo($user->created_at);
+        $user->formatted_updated_at = formatTanggalWaktuIndo($user->updated_at);
+
+        return view('pages.admin.users.show', compact('user'));
+    }
+}
+```

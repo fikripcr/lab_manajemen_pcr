@@ -94,6 +94,32 @@ Route::middleware(['can:manage-users'])->group(function () {
 });
 ```
 
+### Authorization Checks via Controller Constructor
+
+For more complex authorization requirements, you can implement middleware-based authorization checks directly in the controller's constructor:
+
+```php
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+
+class LabController extends Controller
+{
+    public function __construct()
+    {
+        // Apply specific permissions to specific methods
+        $this->middleware(['permission:view labs'], ['only' => ['index', 'show', 'data']]);
+        $this->middleware(['permission:edit labs'], ['only' => ['edit', 'update']]);
+        $this->middleware(['permission:create labs'], ['only' => ['create', 'store']]);
+        $this->middleware(['permission:delete labs'], ['only' => ['destroy']]);
+    }
+}
+```
+
+This approach provides fine-grained control over access to different controller methods based on specific permissions, making it easier to manage complex authorization requirements.
+
 ### Caching Permissions
 
 For performance optimization:

@@ -5,39 +5,37 @@
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
-        <!-- Sidebar TOC -->
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="documentation-content" id="doc-content">
+                        {!! $htmlContent !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar TOC and other info -->
         <div class="col-md-3">
             <div class="card sticky-top" style="top: 1rem;">
+                <div class="card-header">
+                    <button class="btn primary"><a href="{{route('sys.documentation.index')}}"><i class="bx bx-arrow-back me-1"></i> Back to Documentation </a></button>
+                </div>
                 <div class="card-body p-0">
                     <nav id="toc-nav" class="nav flex-column">
                         <!-- TOC akan di-generate oleh JS -->
                     </nav>
                 </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="col-md-8 ">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title mb-0">{{ $pageTitle }}</h4>
+                <div class="card-footer d-flex justify-content-between align-items-center">
                     <small class="text-muted">Last updated: {{ \Carbon\Carbon::parse($lastUpdated)->format('d M Y H:i') }}</small>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <a href="{{ route('sys.documentation.index') }}" class="btn btn-secondary">
-                            <i class="bx bx-arrow-back"></i> Back to Documentation Index
-                        </a>
-                    </div>
-                    <div class="documentation-content" id="doc-content">
-                        {!! $htmlContent !!}
-                    </div>
-                    <div class="mt-4">
-                        <a href="{{ route('sys.documentation.index') }}" class="btn btn-secondary">
-                            <i class="bx bx-arrow-back"></i> Back to Documentation Index
-                        </a>
-                    </div>
-                </div>
+            </div>
+
+            <div class="mt-3">
+                <a href="{{ route('sys.documentation.index') }}" class="btn btn-secondary w-100">
+                    <i class="bx bx-arrow-back"></i> Back to Documentation
+                </a>
             </div>
         </div>
     </div>
@@ -98,11 +96,11 @@
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
 .documentation-content a {
-    color: #0d6efd;
+    color: #43536d;
     text-decoration: none;
 }
 .documentation-content a:hover {
-    color: #0a58ca;
+    color: #364156;
     text-decoration: underline;
 }
 
@@ -114,13 +112,13 @@
     transition: all 0.2s ease;
 }
 #toc-nav .nav-link:hover {
-    color: #0d6efd;
+    color: #43536d;
     background-color: #f8f9fa;
 }
 #toc-nav .nav-link.active {
-    color: #0d6efd;
-    border-left-color: #0d6efd;
-    background-color: #e7f1ff;
+    color: #43536d;
+    border-left-color: #43536d;
+    background-color: #edf2f7;
     font-weight: 500;
 }
 #toc-nav .nav-link[data-depth="1"] {
@@ -159,6 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Ambil semua heading (h1, h2, h3) untuk TOC
     const headings = Array.from(docContent.querySelectorAll('h1, h2, h3'));
+
+    // Hapus TOC lama jika ada
+    tocNav.innerHTML = '';
 
     // Buat TOC dinamis dari heading
     headings.forEach(heading => {
