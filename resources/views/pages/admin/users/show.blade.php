@@ -43,14 +43,8 @@
                                        value="{{ $user->email }}" readonly>
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="nim">NIM</label>
-                                <input class="form-control" type="text" id="nim"
-                                       value="{{ $user->nim ?? '-' }}" readonly>
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="nip">NIP</label>
-                                <input class="form-control" type="text" id="nip"
-                                       value="{{ $user->nip ?? '-' }}" readonly>
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="emailVerified">Email Verified</label>

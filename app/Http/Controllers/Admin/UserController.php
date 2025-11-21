@@ -143,8 +143,6 @@ class UserController extends Controller
             'name'       => $validated['name'],
             'email'      => $validated['email'],
             'password'   => Hash::make($validated['password']),
-            'nim'        => $validated['nim'] ?? null,
-            'nip'        => $validated['nip'] ?? null,
             'expired_at' => $validated['expired_at'] ?? null,
         ]);
 
@@ -215,8 +213,6 @@ class UserController extends Controller
         $updatedData = [
             'name'       => $validated['name'],
             'email'      => $validated['email'],
-            'nim'        => $validated['nim'] ?? null,
-            'nip'        => $validated['nip'] ?? null,
             'expired_at' => $validated['expired_at'] ?? null,
         ];
 
@@ -278,7 +274,7 @@ class UserController extends Controller
         $filters = [
             'search' => $request->get('search'),
         ];
-        $columns = $request->get('columns', ['id', 'name', 'email', 'role_name', 'npm', 'nip']);
+        $columns = $request->get('columns', ['id', 'name', 'email', 'role_name']);
 
         $export = new UserExport($filters, $columns);
 
@@ -447,5 +443,27 @@ class UserController extends Controller
         }
 
         return redirect()->route('dashboard')->with('success', 'Successfully switched back to original account.');
+    }
+
+    /**
+     * Switch the active role for the authenticated user.
+     */
+    public function switchRole($role)
+    {
+        $user = auth()->user();
+
+        // Verify that the user has this role
+        $userRoles = $user->getRoleNames();
+        if (!$userRoles->contains($role)) {
+            return redirect()->back()->with('error', 'You do not have permission to switch to this role.');
+        }
+
+        // Set the active role in session
+        setActiveRole($role);
+
+        // Log the role switch activity
+        logActivity('role_switch', 'User switched active role to ' . $role, $user);
+
+        return redirect()->back()->with('success', 'Successfully switched to ' . $role . ' role.');
     }
 }

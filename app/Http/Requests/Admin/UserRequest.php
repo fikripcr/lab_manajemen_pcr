@@ -38,16 +38,6 @@ class UserRequest extends FormRequest
             ],
             'role' => ['required', 'array'],
             'role.*' => ['exists:sys_roles,name'],
-            'nip' => [
-                'nullable',
-                'string',
-                $userId ? Rule::unique('users')->ignore($userId) : ''
-            ],
-            'nim' => [
-                'nullable',
-                'string',
-                $userId ? Rule::unique('users')->ignore($userId) : ''
-            ],
             'password' => [
                 $this->isMethod('post') ? 'required' : 'nullable', // required for create (POST), optional for update (PUT/PATCH)
                 'string',

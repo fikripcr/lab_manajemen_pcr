@@ -363,6 +363,22 @@
                         </div>
                     </div>
 
+                    <!-- Testing -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('test.index') }}'">
+                            <div class="avatar me-3">
+                                <div class="avatar-initial rounded-circle bg-transparent text-primary">
+                                    <i class="bx bx-wrench bx-lg"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Testing</h6>
+                                <small class="text-muted">Test system functionality</small>
+                            </div>
+                            <i class="bx bx-chevron-right text-muted"></i>
+                        </div>
+                    </div>
+
                     <!-- Documentation -->
                     <div class="col-md-6 col-lg-4">
                         <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('admin.documentation') }}'">
@@ -408,6 +424,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Recent Logs -->
             <div class="col-12 mb-4">
@@ -588,4 +605,5 @@
             }, 300); // Delay initialization to ensure DOM is ready
         });
     </script>
+
 @endpush

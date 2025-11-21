@@ -10,6 +10,13 @@ class Permission extends SpatiePermission implements \Spatie\Searchable\Searchab
 {
     protected $table = 'sys_permissions';
 
+    protected $fillable = [
+        'name',
+        'guard_name',
+        'category',
+        'sub_category'
+    ];
+
     /**
      * Accessor to get encrypted ID
      */

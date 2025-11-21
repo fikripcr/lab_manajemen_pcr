@@ -45,27 +45,61 @@
                                 </div>
                             </div>
 
+                            <!-- Group permissions by category and sub-category -->
+                            @php
+                                // Group all permissions by category and sub-category
+                                $categorizedPermissions = collect($permissions)->groupBy(['category', 'sub_category']);
+                            @endphp
+
                             <div class="row">
-                                @forelse($permissions as $permission)
-                                    <div class="col-md-6 col-lg-4 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input permission-checkbox @error('permissions') is-invalid @enderror"
-                                                   type="checkbox"
-                                                   value="{{ $permission->name }}"
-                                                   id="perm_{{ $permission->id }}"
-                                                   name="permissions[]"
-                                                   {{ in_array($permission->name, $rolePermissions) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="perm_{{ $permission->id }}">
-                                                {{ $permission->name }}
-                                            </label>
+                                @foreach($categorizedPermissions as $category => $subCategories)
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-header">
+                                                <h6 class="mb-0 text-primary">{{ $category }}</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                @foreach($subCategories as $subCategory => $perms)
+                                                    <div class="sub-category-section mb-3">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <h6 class="mb-0">{{ $subCategory }}</h6>
+                                                            <div class="form-check form-switch">
+                                                                <input class="form-check-input sub-category-select-all"
+                                                                       type="checkbox"
+                                                                       role="switch"
+                                                                       id="selectAll_{{ Str::slug($category . '_' . $subCategory) }}"
+                                                                       data-subcategory="{{ Str::slug($category . '_' . $subCategory) }}">
+                                                                <label class="form-check-label" for="selectAll_{{ Str::slug($category . '_' . $subCategory) }}">
+                                                                    All
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            @foreach($perms as $permission)
+                                                                <div class="col-md-12 mb-1">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input permission-checkbox @error('permissions') is-invalid @enderror"
+                                                                               type="checkbox"
+                                                                               value="{{ $permission->name }}"
+                                                                               id="perm_{{ $permission->id }}"
+                                                                               name="permissions[]"
+                                                                               data-subcategory="{{ Str::slug($category . '_' . $subCategory) }}"
+                                                                               {{ in_array($permission->name, $rolePermissions) ? 'checked' : '' }}>
+                                                                        <label class="form-check-label small" for="perm_{{ $permission->id }}">
+                                                                            {{ Str::slug($permission->name, '_') }}
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
-                                @empty
-                                    <div class="col-12">
-                                        <p class="text-muted">No permissions available. <a href="{{ route('permissions.index') }}">Create permissions first</a>.</p>
-                                    </div>
-                                @endforelse
+                                @endforeach
                             </div>
+
                             @error('permissions')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
@@ -76,15 +110,54 @@
                             document.addEventListener('DOMContentLoaded', function() {
                                 const selectAllBtn = document.getElementById('selectAllBtn');
                                 const deselectAllBtn = document.getElementById('deselectAllBtn');
-                                const checkboxes = document.querySelectorAll('.permission-checkbox');
+                                const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
+                                const subCategorySelectAllCheckboxes = document.querySelectorAll('.sub-category-select-all');
 
+                                // Select/Deselect All permissions
                                 selectAllBtn.addEventListener('click', function() {
-                                    checkboxes.forEach(checkbox => checkbox.checked = true);
+                                    permissionCheckboxes.forEach(checkbox => checkbox.checked = true);
+                                    updateSubCategorySelectAllCheckboxes();
                                 });
 
                                 deselectAllBtn.addEventListener('click', function() {
-                                    checkboxes.forEach(checkbox => checkbox.checked = false);
+                                    permissionCheckboxes.forEach(checkbox => checkbox.checked = false);
+                                    updateSubCategorySelectAllCheckboxes();
                                 });
+
+                                // Sub-category Select All functionality
+                                subCategorySelectAllCheckboxes.forEach(checkbox => {
+                                    checkbox.addEventListener('change', function() {
+                                        const subCategory = this.getAttribute('data-subcategory');
+                                        const isChecked = this.checked;
+
+                                        // Find all permission checkboxes within this sub-category
+                                        document.querySelectorAll(`.permission-checkbox[data-subcategory="${subCategory}"]`)
+                                            .forEach(permissionCheckbox => {
+                                                permissionCheckbox.checked = isChecked;
+                                            });
+                                    });
+                                });
+
+                                // Update sub-category select-all checkboxes based on individual permissions
+                                permissionCheckboxes.forEach(checkbox => {
+                                    checkbox.addEventListener('change', updateSubCategorySelectAllCheckboxes);
+                                });
+
+                                function updateSubCategorySelectAllCheckboxes() {
+                                    // Update each sub-category select-all checkbox
+                                    subCategorySelectAllCheckboxes.forEach(selectAllCheckbox => {
+                                        const subCategory = selectAllCheckbox.getAttribute('data-subcategory');
+
+                                        const subCategoryCheckboxes = document.querySelectorAll(`.permission-checkbox[data-subcategory="${subCategory}"]`);
+                                        const checkedSubCategoryCheckboxes = document.querySelectorAll(`.permission-checkbox[data-subcategory="${subCategory}"]:checked`);
+
+                                        selectAllCheckbox.checked = subCategoryCheckboxes.length === checkedSubCategoryCheckboxes.length;
+                                        selectAllCheckbox.indeterminate = checkedSubCategoryCheckboxes.length > 0 && checkedSubCategoryCheckboxes.length < subCategoryCheckboxes.length;
+                                    });
+                                }
+
+                                // Initialize sub-category select-all checkboxes
+                                updateSubCategorySelectAllCheckboxes();
                             });
                         </script>
                         @endpush

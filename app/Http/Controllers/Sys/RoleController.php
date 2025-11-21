@@ -28,6 +28,7 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::all();
+
         return view('pages.sys.roles.create', compact('permissions'));
     }
 
@@ -112,10 +113,12 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $permissions     = Permission::all();
+        $permissions = Permission::all();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
+
         return view('pages.sys.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
+
 
     /**
      * Update the specified resource in storage.

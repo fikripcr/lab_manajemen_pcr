@@ -20,10 +20,8 @@ return new class extends Migration
                 $table->timestamp('email_verified_at')->nullable();
                 $table->timestamp('expired_at')->nullable()->after('email_verified_at');
                 $table->string('password');
-                $table->string('google_id')->nullable(); // Added for Google authentication
-                $table->string('nim')->nullable();       // Student ID
-                $table->string('nip')->nullable();       // Employee ID
-                $table->string('avatar')->nullable();    // Avatar image path
+                $table->string('google_id')->nullable();
+                $table->string('avatar')->nullable();
                 $table->rememberToken();
                 $table->timestamps();
                 $table->softDeletes(); // Added for soft deletes
@@ -67,6 +65,8 @@ return new class extends Migration
                 $table->bigIncrements('id');
                 $table->string('name');
                 $table->string('guard_name');
+                $table->string('category')->nullable();
+                $table->string('sub_category')->nullable();
                 $table->timestamps();
             });
         }

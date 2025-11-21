@@ -308,3 +308,35 @@ if (!function_exists('validation_messages_id')) {
         ];
     }
 }
+
+use Illuminate\Support\Facades\Session;
+
+if (!function_exists('setActiveRole')) {
+    /**
+     * Set the active role for the authenticated user
+     */
+    function setActiveRole($roleName)
+    {
+        session(['active_role' => $roleName]);
+    }
+}
+
+if (!function_exists('getActiveRole')) {
+    /**
+     * Get the active role for the authenticated user
+     */
+    function getActiveRole()
+    {
+        return session('active_role', auth()->user()->getRoleNames()->first());
+    }
+}
+
+if (!function_exists('getAllUserRoles')) {
+    /**
+     * Get all roles assigned to the authenticated user
+     */
+    function getAllUserRoles()
+    {
+        return auth()->user()->getRoleNames();
+    }
+}

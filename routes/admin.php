@@ -109,6 +109,9 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
     Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('users.login.as');
     Route::get('/switch-back', [UserController::class, 'switchBack'])->name('users.switch-back');
 
+    // Role Switching
+    Route::post('/users/switch-role/{role?}', [UserController::class, 'switchRole'])->name('users.switch-role');
+
     // Global Search
     Route::get('/global-search', [GlobalSearchController::class, 'search'])->name('global-search');
 });

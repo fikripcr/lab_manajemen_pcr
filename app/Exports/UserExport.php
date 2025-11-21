@@ -20,7 +20,7 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
     public function __construct($filters = [], $columns = [])
     {
         $this->filters = $filters;
-        $this->columns = ! empty($columns) ? $columns : ['name', 'email', 'role', 'nim', 'nip'];
+        $this->columns = ! empty($columns) ? $columns : ['name', 'email', 'role'];
     }
 
     /**
@@ -32,8 +32,6 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'users.name',
             'users.email',
             'users.google_id',
-            'users.nim',
-            'users.nip',
             'users.avatar',
             'users.email_verified_at',
         ])
@@ -47,8 +45,6 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
                 $q->where('users.name', 'LIKE', "%{$search}%")
                     ->orWhere('users.email', 'LIKE', "%{$search}%")
                     ->orWhere('sys_roles.name', 'LIKE', "%{$search}%")
-                    ->orWhere('users.nim', 'LIKE', "%{$search}%")
-                    ->orWhere('users.nip', 'LIKE', "%{$search}%");
             });
         }
 
@@ -68,8 +64,6 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'name'            => 'Name',
             'email'           => 'Email',
             'google_id'       => 'Google ID',
-            'nim'             => 'NIM',
-            'nip'             => 'NIP',
             'avatar'          => 'Avatar',
             'email_verified_at' => 'Email Verified At',
             'created_at'      => 'Created At',
@@ -95,8 +89,6 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'name'            => $user->name,
             'email'           => $user->email,
             'google_id'       => $user->google_id ?: '-',
-            'nim'             => $user->nim ?: '-',
-            'nip'             => $user->nip ?: '-',
             'avatar'          => $user->avatar ?: '-',
             'email_verified_at' => $user->email_verified_at ? $user->email_verified_at->format('Y-m-d H:i:s') : '-',
             'created_at'      => $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '',
@@ -122,8 +114,6 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             'B' => 20, // Name
             'C' => 30, // Email
             'D' => 20, // Google ID
-            'E' => 15, // NIM
-            'F' => 15, // NIP
             'G' => 40, // Avatar
             'H' => 20, // Email Verified At
             'I' => 20, // Created At

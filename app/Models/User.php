@@ -31,8 +31,6 @@ class User extends Authenticatable implements HasMedia, Searchable
         'email',
         'password',
         'google_id',
-        'nim',
-        'nip',
         'avatar',
         'email_verified_at',
         'expired_at',

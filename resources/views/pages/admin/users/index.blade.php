@@ -78,16 +78,6 @@
                         'name' => 'roles'
                     ],
                     [
-                        'title' => 'ID',
-                        'data' => null,
-                        'name' => 'id',
-                        'orderable' => false,
-                        'searchable' => false,
-                        'render' => 'function(data, type, row) {
-                            return row.nim || row.nip || \'-\';
-                        }'
-                    ],
-                    [
                         'title' => 'Expiration',
                         'data' => 'expired_at',
                         'name' => 'expired_at'

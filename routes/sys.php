@@ -20,6 +20,11 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
     // System Dashboard
     Route::get('/sys-dashboard', [DashboardController::class, 'index'])->name('sys.dashboard');
 
+    // Test Functions
+    Route::post('/sys-dashboard/test-email', [DashboardController::class, 'testEmail'])->name('sys.dashboard.test-email');
+    Route::post('/sys-dashboard/test-notification', [DashboardController::class, 'testNotification'])->name('sys.dashboard.test-notification');
+    Route::post('/sys-dashboard/test-pdf-export', [DashboardController::class, 'testPdfExport'])->name('sys.dashboard.test-pdf-export');
+
     // Activity Log Routes
     Route::prefix('activity-log')->name('activity-log.')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
@@ -84,6 +89,14 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::get('edit-modal/{permissionId?}', [PermissionController::class, 'editModal'])->name('edit-modal.show');
     });
     Route::resource('permissions', PermissionController::class);
+
+// Testing Dashboard
+    Route::prefix('test')->name('test.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Sys\TestController::class, 'index'])->name('index');
+        Route::post('/email', [\App\Http\Controllers\Sys\TestController::class, 'testEmail'])->name('email');
+        Route::post('/notification', [\App\Http\Controllers\Sys\TestController::class, 'testNotification'])->name('notification');
+        Route::post('/pdf-export', [\App\Http\Controllers\Sys\TestController::class, 'testPdfExport'])->name('pdf-export');
+    });
 
 // ==========================
 // 🔹 Documentation Route

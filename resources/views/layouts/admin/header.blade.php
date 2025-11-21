@@ -73,7 +73,7 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <span class="fw-semibold d-block">{{ auth()->user()->name }}</span>
-                                    <small class="text-muted">{{ auth()->user()->getRoleNames()->first() ?? 'User' }}</small>
+                                    <small class="text-muted">{{ getActiveRole() ?? 'User' }}</small>
                                 </div>
                             </div>
                         </a>
@@ -81,6 +81,33 @@
                     <li>
                         <div class="dropdown-divider"></div>
                     </li>
+                    <!-- Role Switching Dropdown -->
+                    @if(getAllUserRoles()->count() > 1)
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item" href="javascript:void(0);">
+                                <i class="bx bx-user-check me-2"></i>
+                                <span class="align-middle">Switch Role</span>
+                                <i class="bx bx-chevron-right float-end"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                @foreach(getAllUserRoles() as $role)
+                                    <li>
+                                        <a class="dropdown-item {{ $role === getActiveRole() ? 'active' : '' }}"
+                                           href="javascript:void(0)"
+                                           onclick="switchRole('{{ $role }}')">
+                                            {{ $role }}
+                                            @if($role === getActiveRole())
+                                                <i class="bx bx-check float-end"></i>
+                                            @endif
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="dropdown-divider"></div>
+                        </li>
+                    @endif
                     <li>
                         <a class="dropdown-item" href="{{ route('users.show', auth()->user()->encrypted_id) }}">
                             <i class="bx bx-user me-2"></i>
@@ -118,3 +145,65 @@
         </ul>
     </div>
 </nav>
+
+<style>
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    border-radius: 0.375rem;
+}
+
+.dropdown-submenu:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu > a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    border-radius: 0.375rem;
+}
+</style>
+
+<script>
+    function switchRole(role) {
+        // Create a form and submit it via POST
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route('users.switch-role', '') }}/' + role;
+
+        // Add CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '_token';
+        tokenInput.value = csrfToken;
+
+        form.appendChild(tokenInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>

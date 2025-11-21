@@ -37,7 +37,7 @@ class UserImport implements ToCollection, WithHeadingRow
                 !isset($row['name']) ||
                 !isset($row['email'])
             ) {
-                throw new \Exception("Kolom Excel tidak sesuai template. Kolom yang diperlukan: name, email. Kolom tambahan: nim, nip, role, password.");
+                throw new \Exception("Kolom Excel tidak sesuai template. Kolom yang diperlukan: name, email. Kolom tambahan: role, password.");
             }
 
             // Validate email format
@@ -50,8 +50,6 @@ class UserImport implements ToCollection, WithHeadingRow
                 'name' => $row['name'],
                 'email' => $row['email'],
                 'password' => !empty($row['password']) ? Hash::make($row['password']) : $defaultPassword,
-                'nim' => $row['nim'] ?? $row['npm'] ?? null, // Support both nim and npm columns
-                'nip' => $row['nip'] ?? null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -77,8 +75,6 @@ class UserImport implements ToCollection, WithHeadingRow
                     // Update existing user
                     $updateData = [
                         'name' => $user['name'],
-                        'nim' => $user['nim'],
-                        'nip' => $user['nip'],
                         'email_verified_at' => $user['email_verified_at'],
                     ];
 
@@ -107,8 +103,6 @@ class UserImport implements ToCollection, WithHeadingRow
                         'name' => $user['name'],
                         'email' => $user['email'],
                         'password' => $user['password'],
-                        'nim' => $user['nim'],
-                        'nip' => $user['nip'],
                         'email_verified_at' => $user['email_verified_at'],
                     ]);
 

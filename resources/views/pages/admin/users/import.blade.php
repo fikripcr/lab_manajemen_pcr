@@ -24,8 +24,6 @@
                             <li><strong>Email:</strong> Alamat email pengguna (unik)</li>
                             <li><strong>Password:</strong> Sandi pengguna (opsional, akan di-generate jika kosong)</li>
                             <li><strong>Role:</strong> Nama role pengguna (contoh: admin, dosen, mahasiswa, dll)</li>
-                            <li><strong>NIM:</strong> Nomor Induk Mahasiswa (jika pengguna adalah mahasiswa)</li>
-                            <li><strong>NIP:</strong> Nomor Induk Pegawai (jika pengguna adalah dosen/karyawan)</li>
                         </ul>
                         <a href="{{ asset('assets-admin/import/template_import_user.xlsx') }}" class="btn btn-primary btn-sm">
                             <i class='bx bx-download me-1'></i> Download Template

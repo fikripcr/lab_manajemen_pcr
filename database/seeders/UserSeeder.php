@@ -28,23 +28,12 @@ class UserSeeder extends Seeder
             $email = 'user' . $i . '@contoh-lab.ac.id';
             $role = $roleNames[array_rand($roleNames)];
 
-            // Generate appropriate NIP/NIM based on role
-            $nip = null;
-            $nim = null;
-
-            if (in_array($role, ['dosen', 'ka_lab', 'kajur', 'teknisi'])) {
-                $nip = 'NIP' . sprintf('%08d', $i);
-            } else {
-                $nim = 'NIM' . sprintf('%08d', $i);
-            }
 
             $user = User::create([
                 'name' => $firstName,
                 'email' => $email,
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'nip' => $nip,
-                'nim' => $nim,
             ]);
 
             // Assign role to user

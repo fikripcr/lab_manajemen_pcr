@@ -78,8 +78,6 @@
             <div class="label">Role:</div>
             <div class="value">{{ $user->getRoleNames()->first() ?? 'Tidak ada role' }}</div>
             
-            <div class="label">NIM/NIP:</div>
-            <div class="value">{{ $user->nim ?? $user->nip ?? '-' }}</div>
             
             <div class="label">Tanggal Dibuat:</div>
             <div class="value">{{ formatTanggalIndo($user->created_at) }}</div>
