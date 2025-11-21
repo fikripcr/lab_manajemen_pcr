@@ -64,23 +64,6 @@ activity()
     ->log('Memperbarui pengguna ' . $user->name);
 ```
 
-### Activity Log Features
-
-- **Automatic Logging**: Models with `LogsActivity` trait automatically log changes
-- **Custom Logging**: Manual logging for specific actions with context
-- **Property Tracking**: Track old and new values for updates
-- **User Attribution**: Link activities to the user who caused them
-- **Model Association**: Link activities to the affected model
-- **Log Categories**: Organize logs by category (user, role, etc.)
-
-### Activity Log Interface
-
-Access activity logs through the "Activity Log" menu in the admin panel:
-- Filter logs by user, date range, or log type
-- View detailed information about each activity
-- Export logs for analysis
-- Clear old logs to manage database size
-
 ## Notifications
 
 The system includes a comprehensive notification management system with both database and email delivery options.
@@ -100,39 +83,6 @@ The system includes a comprehensive notification management system with both dat
 
 ### Implementation
 
-#### Notification Model
-
-```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class SysNotification extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'user_id',
-        'title',
-        'body',
-        'read_at',
-        'data'
-    ];
-
-    protected $casts = [
-        'read_at' => 'datetime',
-        'data' => 'array',
-    ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-}
-```
 
 #### Sending Notifications
 
@@ -286,20 +236,6 @@ function initGlobalSearch() {
 }
 ```
 
-### Advanced Search Features
-
-#### Auto-Focus
-- Search input automatically gains focus when modal opens
-- Improved user experience for quick searching
-
-#### Quick Navigation
-- Direct links to search results for rapid access
-- Keyboard navigation support with up/down arrows and Enter key
-
-#### Grouped Results
-- Results are organized by content type for easier scanning
-- Visual separation between different result types
-
 ### Customizable Search
 
 Developers can easily extend the search functionality to include additional models by modifying the `GlobalSearchController`:
@@ -367,8 +303,6 @@ A "Switch Back" button is available in the user profile dropdown when impersonat
 
 The system includes PDF generation capabilities using Laravel DomPDF.
 
-### Implementation
-
 #### PDF Export Service
 
 ```php
@@ -414,13 +348,6 @@ class PdfExportService
     }
 }
 ```
-
-#### Available Report Types
-
-- **Summary Report**: Overall user statistics and system information
-- **Detailed Report**: Complete user details with all available information
-- **Role-specific Report**: Users assigned to specific roles
-- **Custom Reports**: Reports based on specific filtering criteria
 
 #### PDF Templates
 
@@ -492,115 +419,15 @@ public function exportPdf()
 }
 ```
 
-## Configuration Management
-
-The application includes comprehensive system configuration management accessible from the "System Config" menu in the admin panel.
-
-### App Configuration Features
-
-#### Application Name Management
-- Dynamically change the application name as it appears throughout the system
-- Changes are reflected immediately across all pages
-
-#### Environment Settings
-- Configure between local, staging, and production environments
-- Environment-specific settings are properly validated
-
-#### Debug Mode Toggle
-- Toggle debugging functionality on or off
-- Includes proper validation to prevent accidental production debugging
-
-#### URL Configuration
-- Set the application's base URL
-- Used for generating proper links and media URLs
-
-### Cache Management
-
-#### Configuration Cache
-- Clear cached configuration values with `php artisan config:clear`
-- Cache configuration values for performance with `php artisan config:cache`
-
-#### View Cache
-- Clear cached Blade templates with `php artisan view:clear`
-- Cache compiled templates with `php artisan view:cache`
-
-#### Route Cache
-- Clear cached route definitions with `php artisan route:clear`
-- Cache routes for improved performance with `php artisan route:cache`
-
-#### Application Cache
-- Clear all application cache with `php artisan cache:clear`
-
-### Application Optimization
-
-#### Performance Features
-- Cache configuration, routes, and views for improved performance
-- Proper cache invalidation when configurations change
-
-#### Implementation
-
-```php
-// In configuration controller
-public function updateAppConfig(Request $request)
-{
-    $request->validate([
-        'app_name' => 'required|string|max:255',
-        'app_env' => 'required|in:local,production,staging',
-        'app_debug' => 'required|boolean',
-        'app_url' => 'required|url',
-    ]);
-    
-    // Update .env file with new values
-    $this->updateEnvFile([
-        'APP_NAME' => $request->app_name,
-        'APP_ENV' => $request->app_env,
-        'APP_DEBUG' => $request->app_debug ? 'true' : 'false',
-        'APP_URL' => rtrim($request->app_url, '/')
-    ]);
-    
-    // Clear and re-cache configurations
-    Artisan::call('config:clear');
-    Artisan::call('config:cache');
-    
-    // Log the configuration update
-    activity()->log('Updated application configuration');
-    
-    return redirect()->back()->with('success', 'Configuration updated successfully.');
-}
-
-private function updateEnvFile($values)
-{
-    $envPath = base_path('.env');
-    $content = file_get_contents($envPath);
-    
-    foreach ($values as $key => $value) {
-        if (strpos($content, $key) !== false) {
-            $content = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $content);
-        } else {
-            $content .= "\n{$key}={$value}";
-        }
-    }
-    
-    file_put_contents($envPath, $content);
-}
-```
-
 ## DataTable State Persistence
 
 The system includes a robust state persistence system for DataTable components that preserves user preferences between page loads.
 
 ### Features
 
-#### Search Persistence
 - Search terms are automatically saved and restored using DataTable's built-in state saving
-
-#### Filter Persistence
 - Custom applied filters are preserved between page loads using custom localStorage
-
-#### Page Length Persistence
 - Selected page length (10, 25, 50, 100, All) is automatically maintained by DataTable
-
-#### Pagination Persistence
 - Current page number and state are automatically preserved by DataTable
 
 #### Unique Storage Keys
@@ -633,22 +460,6 @@ function loadCustomFilterState(filterId) {
     const key = `datatable_filter_${getTableId()}_${filterId}`;
     return localStorage.getItem(key) || '';
 }
-```
-
-#### UI Synchronization
-
-All UI components are updated to match the restored DataTable state:
-
-```javascript
-// When DataTable state loads
-$('#my-datatable').on('init.dt', function() {
-    // Restore custom filter values
-    restoreCustomFilters();
-    
-    // Update UI components to match DataTable state
-    updatePageLengthSelector();
-    updateSearchBox();
-});
 ```
 
 ### Components Affected

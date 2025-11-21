@@ -1,43 +1,32 @@
 # Project Summary
 
 ## Overall Goal
-Transform the laboratory management system into a comprehensive Laravel base template that implements essential features for efficient web application development with authentication, authorization, CRUD operations, and system utilities, while enhancing error logging, backup functionality, and server monitoring capabilities.
+Transform the laboratory management system into a comprehensive Laravel base template that implements essential features for efficient web application development with authentication, authorization, CRUD operations, and system utilities, while enhancing error logging, backup functionality, and server monitoring capabilities, and providing comprehensive yet focused documentation for junior developers.
 
 ## Key Knowledge
 - **Technology Stack**: Laravel 12, Bootstrap 5, Datatables, Spatie packages (Permission, Activitylog, Media Library), Yajra DataTables, Laravel Debugbar
 - **Architecture**: Uses a layered architecture with Controllers separated by domain (Admin, Sys, Guest), with Sys controllers managing system functions like error logging, backup, monitoring, etc.
 - **Security**: Implements role-based access control (RBAC) using spatie/laravel-permission, ID encryption using hashids, and comprehensive error logging with the ErrorLog model
 - **File Structure**: Organized in `app/Http/Controllers/{domain}/` structure, with Views organized in `resources/views/pages/{domain}/`
-- **Error Handling**: Captures all exceptions to the `sys_error_log` table with comprehensive context information (URL, method, IP, user agent, user ID)
-- **Backup Strategy**: Uses both file and database backup capabilities with spatie/laravel-backup package and fallback to custom implementation
-- **Monitoring**: Implements server monitoring with Spatie Server Monitor tracking disk space, database size, and project breakdown
+- **Documentation**: Comprehensive documentation system accessible through admin panel under "Development Guide" section, organized in `/docs` directory with 8 main sections
+- **Testing Module**: System includes testing features for email, notifications, and PDF export accessible through system dashboard
+- **Removed Components**: Successfully removed opcodesio/log-viewer package and all its references from the system
 - **Helper Functions**: Two main categories - Sys helpers (core functions not to be modified without discussion) and Global helpers (safe to extend)
 
 ## Recent Actions
 - **Enhanced Error Logging System**: Implemented comprehensive error logging that captures all types of errors, including AJAX requests, in all environments to a dedicated ErrorLog model
 - **Created System Dashboard**: Developed a comprehensive system dashboard showing key metrics including user roles, permissions, activity logs, and server monitoring information
-- **Implemented Server Monitoring**: Added functionality to monitor disk space, database size, and project size breakdown (apps, uploads, storage, logs) with automatic and manual refresh
-- **Built Backup System**: Developed a robust backup system with both database and file backup functionality with fallback mechanisms
+- **Implemented Server Monitoring**: Added functionality to monitor disk space, database size, and project size breakdown with automatic and manual refresh
+- **Developed Backup System**: Developed a robust backup system with both database and file backup functionality with fallback mechanisms
 - **Organized Validation Requests**: Moved validation request classes from Admin to Sys directory and created a unified AppConfigurationRequest for application configuration validation
 - **Modularized Global Search**: Created a separate JavaScript file for global search functionality making it more modular and reusable across the application
 - **Improved Configuration Management**: Enhanced application configuration management with proper validation and environment variable handling
 - **Refactored Exception Handling**: Moved exception handler to bootstrap/app.php for better reliability and comprehensive error capture
-- **Documented Features**: Updated README with comprehensive documentation of all implemented features, helper functions, and usage examples
-- **Implemented Role Switching Functionality**: Added ability for users with multiple roles to switch between their active roles with UI in the header dropdown
-- **Added Testing Features to Sys Dashboard**: Created test functions for email, notifications, and PDF export with downloadable test reports
-- **Reorganized Permissions Interface**: Grouped permissions by feature with select-all options and separated Sys/Global permissions for easier management in role assignment
-- **Created Dedicated Testing Controller**: Moved testing functionality to a dedicated TestController with proper routing
-- **Implemented Permission Categories**: Added category and sub_category fields to permissions for better organization
-- **Created Comprehensive Permission Seeders**: Developed detailed seeders for permissions with proper categorization and role assignments
-- **Fixed Notification Error**: Corrected notification sending to follow existing patterns and avoid database schema issues
-- **Optimized PDF Reports**: Streamlined PDF export functionality to prevent page overflow with essential information only
-- **Implemented Role-Based Permission Grouping**: Updated role management to display permissions organized by category and sub-category
-- **Added SweetAlert Integration**: Enhanced testing features with confirmations, loading indicators, and auto-reload functionality
-- **Fixed Role Switching Mechanism**: Corrected role switching to use proper POST requests with CSRF protection
-- **Consolidated Sys-related Seeders**: Created a SysSeeder and SysSuperAdminSeeder for system permissions and roles
-- **Removed NIM/NIP fields**: Completely removed NIM/NIP functionality from the entire system including models, controllers, views, migrations, and seeder
-- **Reorganized Helper Functions**: Moved setActiveRole, getActiveRole, and getAllUserRoles functions from Global helper to Sys helper
-- **Improved Role Form UI**: Restructured the role management forms with separate cards for role information and permissions, and better organized permissions display
+- **Documented Features**: Created comprehensive documentation system with 8 focused sections instead of 12 broad ones, focusing on core features
+- **Removed Log-Viewer**: Completely removed opcodesio/log-viewer and all its references from the system
+- **Simplified Testing Documentation**: Changed testing documentation from comprehensive unit/feature testing to focus on system's test module functionality
+- **Created Documentation Cards UI**: Implemented card-based UI for documentation index for easier navigation
+- **Added CSS for Documentation**: Created dedicated CSS file for documentation card styling
 
 ## Current Plan
 1. [DONE] Enhanced error logging system to capture all errors including AJAX requests and exceptions in all environments
@@ -47,7 +36,7 @@ Transform the laboratory management system into a comprehensive Laravel base tem
 5. [DONE] Organized validation requests under Sys namespace for system-level validations
 6. [DONE] Created unified AppConfigurationRequest for handling application configuration validation
 7. [DONE] Modularized global search functionality into separate JavaScript file
-8. [DONE] Improved documentation in README with updated feature descriptions
+8. [DONE] Improved documentation in README with comprehensive feature descriptions
 9. [DONE] Refactored exception handling for better reliability
 10. [DONE] Updated helper function documentation and classification system
 11. [DONE] Implemented project size breakdown with detailed components tracking
@@ -66,8 +55,13 @@ Transform the laboratory management system into a comprehensive Laravel base tem
 24. [DONE] Removed all NIM/NIP functionality from the system
 25. [DONE] Moved role-related helper functions from Global to Sys helper
 26. [DONE] Improved role management forms UI with separate cards and better organization
+27. [DONE] Updated documentation to be more focused and accessible to junior developers
+28. [DONE] Removed log-viewer package and all its references
+29. [DONE] Simplified testing documentation to focus on system's testing module
+30. [DONE] Created card-based UI for documentation index
+31. [DONE] Implemented CSS for documentation cards
 
 ---
 
 ## Summary Metadata
-**Update time**: 2025-11-21T06:56:50.284Z 
+**Update time**: 2025-11-21T15:27:48.072Z 

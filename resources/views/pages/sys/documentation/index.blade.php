@@ -213,26 +213,6 @@
                 </div>
             </div>
 
-            <!-- Testing QA Card -->
-            <div class="documentation-card">
-                <div class="documentation-card-header text-center">
-                    <div class="documentation-card-icon">
-                        <i class="bx bx-test-tube"></i>
-                    </div>
-                    <h4 class="documentation-card-title">Testing & Quality Assurance</h4>
-                </div>
-                <div class="documentation-card-body">
-                    <p class="documentation-card-description">
-                        Learn about unit tests, feature tests, and quality assurance practices.
-                    </p>
-                </div>
-                <div class="documentation-card-footer">
-                    <a href="{{ route('sys.documentation.show', 'testing') }}" class="documentation-card-link">
-                        View Documentation
-                    </a>
-                </div>
-            </div>
-
             <!-- Deployment Card -->
             <div class="documentation-card">
                 <div class="documentation-card-header text-center">

@@ -1,51 +1,41 @@
 # Documentation Index
 
-Welcome to the comprehensive documentation for the Laboratory Management System - Laravel Base Template.
+Welcome to the documentation for the Laboratory Management System - Laravel Base Template.
 
 ## Table of Contents
 
 1. [Project Overview & Setup](./documentation/project-overview)
    - Getting Started
-   - System Requirements
    - Installation
    - Environment Configuration
-   - Initial Setup
 
 2. [Authentication & Authorization](./documentation/authentication)
    - User Registration & Login
-   - Google OAuth Integration
    - Role-Based Access Control
    - Permissions Management
-   - Account Expiration
 
-3. [CRUD Operations & Data Management](./documentation/crud-operations)
+3. [Core CRUD Operations](./documentation/crud-operations)
    - Creating New Modules
-   - Resource Controllers
-   - Custom Request Validation
+   - Form Validation
    - DataTables Integration
-   - Soft Delete Implementation
 
-4. [User Interface & Frontend Features](./documentation/ui-frontend)
+4. [User Interface & Components](./documentation/ui-frontend)
    - Layout Structure
    - Blade Components
-   - Asset Management (CSS/JS)
-   - Responsive Design
-   - JavaScript Features
+   - DataTable Component
 
 5. [Media Management](./documentation/media-management)
    - File Upload with Spatie Media Library
    - Image Processing & Conversions
-   - Collection Management
 
-6. [System Monitoring & Backup](./documentation/monitoring-backup)
-   - Server Monitoring with Spatie Server Monitor
-   - Backup System (Database & File)
+6. [System Management Features](./documentation/monitoring-backup)
    - System Dashboard
    - Error Logging
+   - Backup System
+   - Configuration Management
 
-7. [Helper Functions & Utilities](./documentation/helpers-utilities)
+7. [Helper Functions](./documentation/helpers-utilities)
    - Global Helper Functions
-   - Sys Helper Functions
    - Date Formatting
    - ID Encryption
 
@@ -55,26 +45,9 @@ Welcome to the comprehensive documentation for the Laboratory Management System 
    - Global Search
    - Impersonation
    - PDF Generation
-   - Configuration Management
 
-9. [Development Patterns & Best Practices](./documentation/patterns-best-practices)
-   - Code Organization
-   - Eloquent Query Optimization
-   - Security Considerations
-   - Performance Optimization
-
-10. [Database & Models](./documentation/database-models)
-    - Model Structure
-    - Relationships
-    - Migrations & Seeders
-
-11. [Testing & Quality Assurance](./documentation/testing)
-    - Unit Tests
-    - Feature Tests
-    - Debugging Tools
-
-12. [Deployment & Production](./documentation/deployment-production)
-    - Environment Configuration
-    - Security Considerations
-    - Performance Optimization
-    - Maintenance Tasks
+9. [Module Testing](./documentation/testing)
+   - Testing Features in Test Module
+   - Email Testing
+   - Notification Testing
+   - PDF Export Testing

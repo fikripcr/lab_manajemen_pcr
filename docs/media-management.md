@@ -179,51 +179,6 @@ public function registerMediaConversions(Media $media = null): void
 }
 ```
 
-## File Validation
-
-Configure file validation rules in collections:
-
-```php
-public function registerMediaCollections(): void
-{
-    $this->addMediaCollection('documents')
-        ->acceptsMimeTypes(['application/pdf', 'application/msword'])
-        ->acceptsFile(function (File $file) {
-            return $file->size < 5000000; // 5MB limit
-        });
-}
-```
-
-## Security Considerations
-
-### File Type Validation
-
-Always validate file types to prevent malicious uploads:
-
-```php
-public function registerMediaCollections(): void
-{
-    $this->addMediaCollection('user_uploads')
-        ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif']);
-}
-```
-
-### File Size Limits
-
-Set appropriate file size limits:
-
-```php
-public function registerMediaConversions(Media $media = null): void
-{
-    // Only apply conversions to images smaller than 10MB
-    if ($media && $media->size < 10000000) {
-        $this->addMediaConversion('thumb')
-            ->fit(\Spatie\Image\Manipulations::FIT_CROP, 100, 100)
-            ->nonQueued();
-    }
-}
-```
-
 ## Advanced Features
 
 ### Custom Properties
@@ -264,36 +219,6 @@ public function registerMediaConversions(Media $media = null): void
 }
 ```
 
-## Helper Functions
-
-The system includes helper functions for safe media access:
-
-```php
-// In App\Helpers\Global.php or App\Helpers\Sys.php
-function getMediaUrl($model, $collectionName, $conversion = null)
-{
-    if ($model->hasMedia($collectionName)) {
-        return $conversion 
-            ? $model->getFirstMediaUrl($collectionName, $conversion)
-            : $model->getFirstMediaUrl($collectionName);
-    }
-    
-    return null;
-}
-
-function getVerifiedMediaUrl($model, $collectionName, $conversion = null)
-{
-    $url = getMediaUrl($model, $collectionName, $conversion);
-    
-    // Verify the URL is valid before returning
-    if ($url && !str_starts_with($url, 'http') && !str_starts_with($url, '/storage')) {
-        return asset($url);
-    }
-    
-    return $url;
-}
-```
-
 ## File Organization
 
 Uploaded files are organized in the storage directory:
@@ -301,12 +226,13 @@ Uploaded files are organized in the storage directory:
 ```
 storage/
 └── app/
-    └── media/
-        ├── model_type/
-        │   └── collection_name/
-        │       ├── original/
-        │       └── conversions/
-        └── ...
+    └── public/
+        └── uploads/
+            ├── model_type/
+            │   └── collection_name/
+            │       ├── original/
+            │       └── conversions/
+            └── ...
 ```
 
 ## Performance Optimization
@@ -320,24 +246,7 @@ public function registerMediaConversions(Media $media = null): void
 {
     $this->addMediaConversion('large')
         ->fit(\Spatie\Image\Manipulations::FIT_MAX, 1200, 1200)
-        ->queued(); // Process in background
-}
-```
-
-### Clean Up Original Files
-
-After conversions are complete, you may want to clean up original files:
-
-```php
-public function registerMediaConversions(Media $media = null): void
-{
-    $this->addMediaConversion('web')
-        ->fit(\Spatie\Image\Manipulations::FIT_MAX, 1200, 1200)
-        ->optimize()
-        ->nonQueued();
-
-    // Keep only converted files, remove original
-    $this->deletePreservingOriginal();
+        ->queued(); // Process in background or ->nonQueued()
 }
 ```
 
