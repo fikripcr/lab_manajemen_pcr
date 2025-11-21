@@ -381,7 +381,7 @@
 
                     <!-- Documentation -->
                     <div class="col-md-6 col-lg-4">
-                        <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('admin.documentation') }}'">
+                        <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.documentation.index') }}'">
                             <div class="avatar me-3">
                                 <div class="avatar-initial rounded-circle bg-transparent text-secondary">
                                     <i class="bx bx-book bx-lg"></i>
