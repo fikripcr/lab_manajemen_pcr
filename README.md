@@ -877,6 +877,29 @@ Several existing pages already use this system:
 - **Date Pickers**: Date picker CSS and JavaScript
 - **File Uploads**: File upload component CSS and JS
 - **Custom Components**: Page-specific interactive elements
+
+### Documentation
+
+Comprehensive documentation for this project is available within the application itself. To access the documentation:
+
+1. Log in to the admin panel
+2. Navigate to the "Development Guide" section in the sidebar
+3. Browse through the structured documentation
+
+The documentation is organized in a structured format in the `/docs` directory with the following sections:
+- Project Overview & Setup
+- Authentication & Authorization
+- CRUD Operations & Data Management
+- User Interface & Frontend Features
+- Media Management
+- System Monitoring & Backup
+- Helper Functions & Utilities
+- Advanced Features
+- Development Patterns & Best Practices
+- Database & Models
+- Testing & Quality Assurance
+- Deployment & Production
+
 ### Additional Features and Updates
 - **Enhanced Activity Logging**: Extended activity logs with IP address, browser information, and additional context
 - **Centralized Configuration**: Added form-based management for Google OAuth, Mail settings, and mysqldump path in App Configuration
@@ -887,3 +910,4 @@ Several existing pages already use this system:
 - **Validation Messages**: Added Indonesian translation helper for validation messages
 - **DataTable State Persistence**: Leveraged DataTable's built-in state saving functionality to preserve search terms, page length, and pagination state, with additional custom localStorage for filter controls
 - **System Error Logging**: Implemented comprehensive error logging system that captures all application and database errors, storing them in a dedicated table with full stack traces and context information for system administrators. Error logging is configured in bootstrap/app.php for optimal reliability across all environments.
+- **Structured Documentation**: Comprehensive documentation available in the admin panel under "Development Guide" section, organized in the `/docs` directory with multiple detailed sections.

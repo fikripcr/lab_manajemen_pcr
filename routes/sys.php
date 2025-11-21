@@ -99,8 +99,11 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
     });
 
 // ==========================
-// 🔹 Documentation Route
+// 🔹 Documentation Routes
 // ==========================
-    Route::get('/documentation', [DocumentationController::class, 'index'])->name('admin.documentation');
+    Route::prefix('documentation')->name('sys.documentation.')->group(function () {
+        Route::get('/', [DocumentationController::class, 'index'])->name('index');
+        Route::get('/{page?}', [DocumentationController::class, 'show'])->name('show');
+    });
 
 });

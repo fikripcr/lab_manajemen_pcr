@@ -34,6 +34,10 @@ Transform the laboratory management system into a comprehensive Laravel base tem
 - **Implemented Role-Based Permission Grouping**: Updated role management to display permissions organized by category and sub-category
 - **Added SweetAlert Integration**: Enhanced testing features with confirmations, loading indicators, and auto-reload functionality
 - **Fixed Role Switching Mechanism**: Corrected role switching to use proper POST requests with CSRF protection
+- **Consolidated Sys-related Seeders**: Created a SysSeeder and SysSuperAdminSeeder for system permissions and roles
+- **Removed NIM/NIP fields**: Completely removed NIM/NIP functionality from the entire system including models, controllers, views, migrations, and seeder
+- **Reorganized Helper Functions**: Moved setActiveRole, getActiveRole, and getAllUserRoles functions from Global helper to Sys helper
+- **Improved Role Form UI**: Restructured the role management forms with separate cards for role information and permissions, and better organized permissions display
 
 ## Current Plan
 1. [DONE] Enhanced error logging system to capture all errors including AJAX requests and exceptions in all environments
@@ -58,8 +62,12 @@ Transform the laboratory management system into a comprehensive Laravel base tem
 20. [DONE] Implemented role-based permission grouping with category and sub-category organization
 21. [DONE] Added SweetAlert integration with confirmations, loading indicators, and auto-reload
 22. [DONE] Fixed role switching mechanism to use proper POST requests with CSRF protection
+23. [DONE] Consolidated sys-related seeders into SysSeeder and SysSuperAdminSeeder
+24. [DONE] Removed all NIM/NIP functionality from the system
+25. [DONE] Moved role-related helper functions from Global to Sys helper
+26. [DONE] Improved role management forms UI with separate cards and better organization
 
 ---
 
 ## Summary Metadata
-**Update time**: 2025-11-21T02:45:00.000Z 
+**Update time**: 2025-11-21T06:56:50.284Z 
