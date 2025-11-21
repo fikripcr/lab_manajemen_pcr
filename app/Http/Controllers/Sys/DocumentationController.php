@@ -71,7 +71,8 @@ class DocumentationController extends Controller
         return view('pages.sys.documentation.show', [
             'htmlContent' => $htmlContent,
             'lastUpdated' => $lastUpdated,
-            'pageTitle' => $pageTitle
+            'pageTitle' => $pageTitle,
+            'fileName' => str_replace('.md', '', $page)
         ]);
     }
 
@@ -92,6 +93,105 @@ class DocumentationController extends Controller
         $environment->addExtension(new TableExtension());
 
         return $converter->convert($markdown)->getContent();
+    }
+
+    /**
+     * Show the documentation edit form
+     */
+    public function edit($page = 'index')
+    {
+        // Only allow users with admin role to edit documentation
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403, 'You do not have permission to edit documentation.');
+        }
+
+        // Sanitize the page parameter to prevent directory traversal
+        $page = basename($page);
+
+        // Ensure the file has .md extension and is valid
+        if (!str_ends_with($page, '.md')) {
+            $page .= '.md';
+        }
+
+        // Additional security: Only allow files in docs directory and with expected extensions
+        if (!preg_match('/^[a-zA-Z0-9_-]+\.md$/', $page)) {
+            abort(400, 'Invalid file name');
+        }
+
+        $filePath = $this->docsPath . $page;
+
+        // Check if the file exists and is within the docs directory
+        if (!file_exists($filePath) || strpos(realpath($filePath), realpath($this->docsPath)) !== 0) {
+            abort(404, 'Documentation page not found');
+        }
+
+        $content = file_get_contents($filePath);
+        $pageTitle = $this->generatePageTitle($page);
+
+        return view('pages.sys.documentation.edit', [
+            'content' => $content,
+            'page' => str_replace('.md', '', $page),
+            'pageTitle' => 'Edit - ' . $pageTitle
+        ]);
+    }
+
+    /**
+     * Update the documentation file
+     */
+    public function update(Request $request, $page = 'index')
+    {
+        // Only allow users with admin role to update documentation
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403, 'You do not have permission to edit documentation.');
+        }
+
+        // Sanitize the page parameter to prevent directory traversal
+        $page = basename($page);
+
+        // Ensure the file has .md extension and is valid
+        if (!str_ends_with($page, '.md')) {
+            $page .= '.md';
+        }
+
+        // Additional security: Only allow files in docs directory and with expected extensions
+        if (!preg_match('/^[a-zA-Z0-9_-]+\.md$/', $page)) {
+            abort(400, 'Invalid file name');
+        }
+
+        $filePath = $this->docsPath . $page;
+
+        // Check if the file exists and is within the docs directory
+        if (!file_exists($filePath) || strpos(realpath($filePath), realpath($this->docsPath)) !== 0) {
+            abort(404, 'Documentation page not found');
+        }
+
+        $request->validate([
+            'content' => 'required|string'
+        ]);
+
+        // Sanitize content to prevent potential security issues
+        $content = $request->input('content');
+
+        // Check if file is writable before attempting to write
+        if (!is_writable($filePath)) {
+            \Log::error('Documentation file is not writable: ' . $filePath);
+            return redirect()->back()->with('error', 'Documentation file is not writable. Check file permissions.');
+        }
+
+        // Write the updated content back to the file
+        $bytesWritten = file_put_contents($filePath, $content);
+        if ($bytesWritten === false) {
+            \Log::error('Failed to write documentation file: ' . $filePath);
+            return redirect()->back()->with('error', 'Failed to update documentation file. Check file permissions.');
+        }
+
+        if ($bytesWritten === 0 && !empty($content)) {
+            \Log::warning('0 bytes written to documentation file: ' . $filePath);
+            return redirect()->back()->with('error', 'Failed to update documentation file. No content was written.');
+        }
+
+        return redirect()->route('sys.documentation.show', str_replace('.md', '', $page))
+                         ->with('success', 'Documentation updated successfully.');
     }
 
     /**

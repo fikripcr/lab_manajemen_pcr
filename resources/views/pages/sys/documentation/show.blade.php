@@ -4,6 +4,20 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="row">
         <!-- Main Content -->
         <div class="col-md-8">
@@ -17,26 +31,35 @@
         </div>
 
         <!-- Sidebar TOC and other info -->
-        <div class="col-md-3">
-            <div class="card sticky-top" style="top: 1rem;">
-                <div class="card-header">
-                    <button class="btn primary"><a href="{{route('sys.documentation.index')}}"><i class="bx bx-arrow-back me-1"></i> Back to Documentation </a></button>
+        <div class="col-md-3 ">
+            <div class=" sticky-top">
+                <div class="mb-1">
+                    <a href="{{ route('sys.documentation.index') }}" class="btn btn-secondary w-100">
+                        <i class="bx bx-arrow-back"></i> Back to Documentation
+                    </a>
                 </div>
-                <div class="card-body p-0">
-                    <nav id="toc-nav" class="nav flex-column">
-                        <!-- TOC akan di-generate oleh JS -->
-                    </nav>
+                <div class="card" style="top: 1rem;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bx bx-list-ul me-2"></i>Table of Contents</h5>
+                        <div>
+                            <a href="{{ route('sys.documentation.edit', $fileName) }}" class="btn btn-sm btn-primary me-2" title="Edit Documentation">
+                                <i class="bx bx-edit"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <nav id="toc-nav" class="nav flex-column">
+                            <!-- TOC akan di-generate oleh JS -->
+                        </nav>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Last updated: {{ \Carbon\Carbon::parse($lastUpdated)->format('d M Y H:i') }}</small>
+                    </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <small class="text-muted">Last updated: {{ \Carbon\Carbon::parse($lastUpdated)->format('d M Y H:i') }}</small>
-                </div>
+
             </div>
 
-            <div class="mt-3">
-                <a href="{{ route('sys.documentation.index') }}" class="btn btn-secondary w-100">
-                    <i class="bx bx-arrow-back"></i> Back to Documentation
-                </a>
-            </div>
+
         </div>
     </div>
 </div>

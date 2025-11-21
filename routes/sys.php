@@ -104,6 +104,8 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
     Route::prefix('documentation')->name('sys.documentation.')->group(function () {
         Route::get('/', [DocumentationController::class, 'index'])->name('index');
         Route::get('/{page?}', [DocumentationController::class, 'show'])->name('show');
+        Route::get('/edit/{page?}', [DocumentationController::class, 'edit'])->name('edit');
+        Route::put('/update/{page?}', [DocumentationController::class, 'update'])->name('update');
     });
 
 });
