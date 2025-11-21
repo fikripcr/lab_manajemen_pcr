@@ -15,7 +15,6 @@
         "league/commonmark": "^2.7",
         "league/html-to-markdown": "^5.1",
         "maatwebsite/excel": "^3.1",
-        "opcodesio/log-viewer": "^3.21",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.17",
         "spatie/laravel-permission": "^6.23",
