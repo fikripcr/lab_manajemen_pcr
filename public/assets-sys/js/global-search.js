@@ -227,6 +227,6 @@ function displaySearchResults(results, searchTerm) {
 
 
 // Initialize global search when document is ready
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function() {
     initGlobalSearch();
 });
