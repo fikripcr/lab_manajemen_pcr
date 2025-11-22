@@ -14,8 +14,8 @@
 
 
 <!-- SweetAlert2 JS -->
-<script src="{{ asset('assets-admin/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
-<script src="{{ asset('assets-admin/js/custom/sweetalert-utils.js') }}"></script>
+<script src="{{ asset('assets-global/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
+<script src="{{ asset('assets-global/js/custom/sweetalert-utils.js') }}"></script>
 
 
 <!-- Define application routes for JavaScript -->

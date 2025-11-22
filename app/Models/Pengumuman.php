@@ -42,8 +42,8 @@ class Pengumuman extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('cover')
-            ->useFallbackUrl('/img/no-image.jpg')
-            ->useFallbackPath(public_path('img/no-image.jpg'))
+            ->useFallbackUrl(asset('assets-global/img/no-image.jpg'))
+            ->useFallbackPath(public_path('assets-global/img/no-image.jpg'))
             ->useDisk('public')
             ->singleFile();
 

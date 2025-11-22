@@ -5,7 +5,7 @@
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.webp" alt=""> -->
         <h1 class="sitename">
-          <img class="img rounded-circle" src="{{asset('digilab-crop.png')}}" style="object-fit: cover;" alt="Logo"/>
+          <img class="img rounded-circle" src="{{asset('assets-global/img/digilab-crop.png')}}" style="object-fit: cover;" alt="Logo"/>
         </h1>
       </a>
 

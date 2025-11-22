@@ -1,7 +1,7 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <a href="{{ route('sys.dashboard') }}" class="app-brand-link">
-            <img class="w-100" src="{{ asset('digilab-crop.png') }}" />
+            <img class="w-100" src="{{ asset('assets-global/img/digilab-crop.png') }}" />
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">

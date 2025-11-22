@@ -14,7 +14,7 @@
 
 
     <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="{{ asset('assets-sys/libs/sweetalert2/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets-global/libs/sweetalert2/sweetalert2.min.css') }}">
 
     <!-- Choice.js CSS -->
     <link rel="stylesheet" href="{{ asset('assets-sys/libs/choicesjs/choices.min.css') }}">

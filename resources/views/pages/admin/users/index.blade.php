@@ -194,7 +194,7 @@
                 body: JSON.stringify({
                     type: 'database',
                     user_id: userId,
-                    notification_class: 'TestNotification'
+                    notification_class: 'SysTestNotification'
                 })
             })
             .then(response => response.json())
@@ -262,7 +262,7 @@
                         body: JSON.stringify({
                             type: 'email',
                             user_id: userId,
-                            notification_class: 'TestNotification'
+                            notification_class: 'SysTestNotification'
                         })
                     })
                     .then(response => response.json())

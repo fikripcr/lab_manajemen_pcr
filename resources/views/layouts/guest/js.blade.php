@@ -14,10 +14,10 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="{{ asset('assets-global/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
 <!-- Main JS File -->
 <script src="{{asset('assets-guest')}}/js/main.js"></script>
 
 <!-- SweetAlert Utility Functions -->
-<script src="{{ asset('assets-guest/js/custom/sweetalert-utils.js') }}"></script>
+<script src="{{ asset('assets-global/js/custom/sweetalert-utils.js') }}"></script>

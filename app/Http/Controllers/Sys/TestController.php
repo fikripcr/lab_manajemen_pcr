@@ -1,15 +1,13 @@
 <?php
-
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sys\ErrorLog;
 use App\Models\Sys\Activity;
+use App\Models\Sys\ErrorLog;
 use App\Models\Sys\ServerMonitorCheck;
-use App\Notifications\CustomNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class TestController extends Controller
 {
@@ -25,10 +23,10 @@ class TestController extends Controller
         try {
             // Send a test email to the current user
             Mail::raw(
-                'This is a test email sent from the Testing Dashboard.', 
+                'This is a test email sent from the Testing Dashboard.',
                 function ($message) use ($user) {
                     $message->to($user->email)
-                            ->subject('Test Email from Testing Dashboard');
+                        ->subject('Test Email from Testing Dashboard');
                 }
             );
 
@@ -36,14 +34,14 @@ class TestController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Test email sent successfully to ' . $user->email
+                'message' => 'Test email sent successfully to ' . $user->email,
             ]);
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error sending test email: ' . $e->getMessage(), $user);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error sending test email: ' . $e->getMessage()
+                'message' => 'Error sending test email: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -54,20 +52,20 @@ class TestController extends Controller
 
         try {
             // Send the test notification to the user using the existing TestNotification class
-            $user->notify(new \App\Notifications\TestNotification());
+            $user->notify(new \App\Notifications\SysTestNotification());
 
             logActivity('test_dashboard', 'Test notification sent successfully to ' . $user->name, $user);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Test notification sent successfully to ' . $user->name
+                'message' => 'Test notification sent successfully to ' . $user->name,
             ]);
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error sending test notification: ' . $e->getMessage(), $user);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error sending test notification: ' . $e->getMessage()
+                'message' => 'Error sending test notification: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -90,11 +88,11 @@ class TestController extends Controller
             $monitoringLogs = ServerMonitorCheck::orderBy('created_at', 'desc')->limit(10)->get();
 
             $data = [
-                'user' => $user,
-                'errorLogs' => $errorLogs,
-                'activityLogs' => $activityLogs,
+                'user'           => $user,
+                'errorLogs'      => $errorLogs,
+                'activityLogs'   => $activityLogs,
                 'monitoringLogs' => $monitoringLogs,
-                'reportDate' => now()->format('d M Y H:i'),
+                'reportDate'     => now()->format('d M Y H:i'),
             ];
 
             $pdf = Pdf::loadView('pages.sys.test.test-pdf', $data);
@@ -107,7 +105,7 @@ class TestController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error generating test PDF export: ' . $e->getMessage()
+                'message' => 'Error generating test PDF export: ' . $e->getMessage(),
             ], 500);
         }
     }
