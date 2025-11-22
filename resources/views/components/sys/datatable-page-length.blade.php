@@ -4,9 +4,9 @@
     'options' => ['10', '25', '50', '100']
 ])
 
-<select 
-    id="{{ $id }}" 
-    class="dataTable-input form-select" 
+<select
+    id="{{ $id }}"
+    class="dataTable-input form-select"
     onchange="handlePageLengthChange(this)"
     {{ $attributes->merge(['class' => '']) }}
 >
@@ -17,13 +17,14 @@
     @endforeach
 </select>
 
+@push('scripts')
 <script>
     function handlePageLengthChange(element) {
         const length = parseInt(element.value);
-        const tableId = element.closest('.dataTables_wrapper').previousElementSibling?.id || 
+        const tableId = element.closest('.dataTables_wrapper').previousElementSibling?.id ||
                         element.closest('.card-datatable')?.querySelector('table')?.id ||
                         'default-table';
-        
+
         if (window.DataTableInstances && window.DataTableInstances[tableId]) {
             window.DataTableInstances[tableId].page.len(length).draw();
         } else {
@@ -39,3 +40,4 @@
         }
     }
 </script>
+@endpush

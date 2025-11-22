@@ -83,6 +83,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 
         // Roles & Permissions
         Route::resource('roles', RoleController::class);
+
         Route::prefix('permissions')->name('permissions.')->group(function () {
             Route::get('api', [PermissionController::class, 'paginate'])->name('data');
             Route::get('create-modal', [PermissionController::class, 'createModal'])->name('create-modal');

@@ -42,7 +42,7 @@
         <div class="card-body">
             <x-admin.flash-message />
 
-            <x-admin.datatable-datatable
+            <x-admin.datatable
                 id="users-table"
                 route="{{ route('users.data') }}"
                 :columns="[
