@@ -25,12 +25,6 @@
             <span class="menu-header-text">System Management</span>
         </li>
 
-        <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-            <a href="{{ route('users.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div data-i18n="Documentation">User Management</div>
-            </a>
-        </li>
         <li class="menu-item {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
             <a href="{{ route('notifications.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-bell"></i>

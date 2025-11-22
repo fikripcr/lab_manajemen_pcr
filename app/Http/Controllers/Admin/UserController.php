@@ -105,16 +105,6 @@ class UserController extends Controller
                                 <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\')">
                                     <i class="bx bx-trash me-1"></i> Delete
                                 </a>
-                                <div class="dropdown-divider" bis_skin_checked="1"></div>
-                                <a class="dropdown-item" href="' . route('users.export.pdf.detail', $encryptedId) . '" target="_blank">
-                                    <i class="bx bx-file me-1"></i> Test Generate PDF
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item" onclick="sendNotificationToUser(\'' . route('notifications.send') . '\', \'' . $encryptedId . '\', \'' . addslashes($user->name) . '\')">
-                                    <i class="bx bx-bell me-1"></i> Test Kirim Notifikasi
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item" onclick="sendEmailToUser(\'' . route('notifications.send') . '\', \'' . $encryptedId . '\', \'' . addslashes($user->name) . '\')">
-                                    <i class="bx bx-envelope me-1"></i> Test Kirim Email
-                                </a>
                             </div>
                         </div>
                     </div>';

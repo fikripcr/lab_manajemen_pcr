@@ -89,6 +89,13 @@
                 <div data-i18n="Software Requests">Software Requests</div>
             </a>
         </li>
+        <!-- Users Menu -->
+        <li class="menu-item {{ request()->routeIs('admin.software-requests.*') ? 'active' : '' }}">
+            <a href="{{ route('software-requests.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-extension"></i>
+                <div data-i18n="Users">Users</div>
+            </a>
+        </li>
 
 
         <!-- System Management -->
