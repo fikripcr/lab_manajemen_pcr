@@ -17,7 +17,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>{{config('app.name')}}</title>
+    <title>{{ config('app.name') }}</title>
 
     <meta name="description" content="" />
 
@@ -30,10 +30,10 @@
 
     @stack('css')
 
-
     <script src="{{ asset('assets-sys') }}/vendor/js/helpers.min.js"></script>
     <script src="{{ asset('assets-sys') }}/js/config.js"></script>
 </head>
+
 <body>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -58,13 +58,16 @@
             <div class="layout-overlay layout-menu-toggle"></div>
         </div>
 
+        @vite(['resources/js/sys.js'])
+
         <!-- Global Search Modal Component -->
-        <x-global-search-modal />
+        <x-sys.modal-global-search />
 
         @include('layouts.sys.js')
 
         @stack('scripts')
 
 
-    </body>
+</body>
+
 </html>

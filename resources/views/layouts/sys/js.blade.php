@@ -1,7 +1,4 @@
-<script src="{{ asset('assets-sys') }}/vendor/libs/jquery/jquery.min.js"></script>
-<script src="{{ asset('assets-sys') }}/vendor/libs/popper/popper.min.js"></script>
-<script src="{{ asset('assets-sys') }}/vendor/js/bootstrap.min.js"></script>
-<script src="{{ asset('assets-sys') }}/vendor/libs/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+{{-- <script src="{{ asset('assets-sys') }}/vendor/libs/perfect-scrollbar/perfect-scrollbar.min.js"></script> --}}
 <script src="{{ asset('assets-sys') }}/vendor/js/menu.min.js"></script>
 
 <script src="{{ asset('assets-sys') }}/js/main.js"></script>
@@ -13,9 +10,6 @@
 <script src="{{ asset('assets-sys/libs/choicesjs/choices.min.js') }}"></script>
 
 
-<!-- SweetAlert2 JS -->
-<script src="{{ asset('assets-global/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
-<script src="{{ asset('assets-global/js/custom/sweetalert-utils.js') }}"></script>
 
 
 <!-- Define application routes for JavaScript -->
@@ -32,3 +26,5 @@
 <!-- Custom JavaScript files -->
 <script src="{{ asset('assets-sys/js/custom/notifications.js') }}"></script>
 <script src="{{ asset('assets-sys/js/custom/global-search.js') }}"></script>
+<script src="{{ asset('assets-global/js/custom/datatable-utils.js') }}"></script>
+<script src="{{ asset('assets-global/js/custom/sweetalert-utils.js') }}"></script>

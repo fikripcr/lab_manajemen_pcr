@@ -57,7 +57,7 @@ class PermissionController extends Controller
                                 <a class="dropdown-item " href="' . route('permissions.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('permissions.destroy', $encryptedId) . '\')">
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('permissions.destroy', $encryptedId) . '\', \'permissions-table\')" >
                                     <i class="bx bx-trash me-1"></i> Delete
                                 </a>
                             </div>
@@ -147,12 +147,19 @@ class PermissionController extends Controller
 
         // Prevent deletion of permissions that are assigned to roles
         if ($permission->roles->count() > 0) {
-            return redirect()->back()->with('error', 'Cannot delete permission that is assigned to roles.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete permission that is assigned to roles.',
+                ]);
         }
 
         try {
             $permission->delete();
-            return redirect()->route('permissions.index')->with('success', 'Izin berhasil dihapus.');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Izin berhasil dihapus.',
+                ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus izin: ' . $e->getMessage());
         }

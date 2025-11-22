@@ -7,53 +7,25 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <h5 class="mb-2 mb-sm-0">Activity Log</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <div class="me-3 mb-2 mb-sm-0">
-                        <x-datatable.page-length id="pageLength" selected="10" />
+            <div class="d-flex flex-wrap justify-content-between">
+                <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
+                    <div>
+                        <x-sys.datatable-page-length :dataTableId="'activity-log-table'" />
+                    </div>
+                    <div>
+                        <x-sys.datatable-search-filter :dataTableId="'activity-log-table'" />
                     </div>
                 </div>
-            </div>
-            @include('components.datatable.search-filter', [
-                'dataTableId' => 'activity-log-table',
-                'filters' => [
-                    [
-                        'id' => 'logNameFilter',
-                        'name' => 'log_name',
-                        'label' => 'Log Name',
-                        'type' => 'select',
-                        'column' => 3, // Log name column index
-                        'options' => [
-                            '' => 'All Logs',
-                            'default' => 'Default',
-                            'user' => 'User',
-                            'system' => 'System',
-                        ],
-                        'placeholder' => 'Select Log Name'
-                    ],
-                    [
-                        'id' => 'eventFilter',
-                        'name' => 'event',
-                        'label' => 'Event',
-                        'type' => 'select',
-                        'column' => 4, // Event column index
-                        'options' => [
-                            '' => 'All Events',
-                            'created' => 'Created',
-                            'updated' => 'Updated',
-                            'deleted' => 'Deleted',
-                            'restored' => 'Restored',
-                        ],
-                        'placeholder' => 'Select Event'
-                    ]
-                ]
-            ])
-        </div>
-        <div class="card-body">
-            <x-flash-message />
+                <div class="d-flex flex-wrap gap-2">
 
-            <x-datatable.datatable
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <x-sys.flash-message />
+
+            <x-sys.datatable
                 id="activity-log-table"
                 route="{{ route('activity-log.data') }}"
                 :columns="[
@@ -119,61 +91,63 @@
     </div>
 
     <script>
-        // Handle activity detail modal
-        document.addEventListener('click', function(event) {
-            var targetElement = event.target.closest('[data-bs-toggle="modal"][data-bs-target="#activityDetailModal"]');
-            if (targetElement) {
-                var activityId = targetElement.getAttribute('data-activity-id');
-                if (activityId) {
-                    loadActivityDetails(activityId);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle activity detail modal
+            document.addEventListener('click', function(event) {
+                var targetElement = event.target.closest('[data-bs-toggle="modal"][data-bs-target="#activityDetailModal"]');
+                if (targetElement) {
+                    var activityId = targetElement.getAttribute('data-activity-id');
+                    if (activityId) {
+                        loadActivityDetails(activityId);
+                    }
                 }
+            });
+
+            function loadActivityDetails(activityId) {
+                fetch('{{ route('activity-log.show') }}/' + activityId)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            var activity = data.activity;
+                            var properties = data.properties;
+
+                            var content = '<div class="row">';
+                            content += '<div class="col-md-6"><strong>Time:</strong> ' + activity.created_at + '</div>';
+                            content += '<div class="col-md-6"><strong>Log Name:</strong> ' + activity.log_name + '</div>';
+                            content += '<div class="col-md-6"><strong>Event:</strong> ' + activity.event + '</div>';
+                            content += '<div class="col-md-6"><strong>User:</strong> ' + (activity.causer ? activity.causer.name : 'System') + '</div>';
+                            content += '<div class="col-md-12"><strong>Subject:</strong> ' + (activity.subject ? activity.subject_type + ': ' + activity.subject.name : 'N/A') + '</div>';
+                            content += '<div class="col-md-12"><strong>Description:</strong> ' + activity.description + '</div>';
+
+                            if (properties && Object.keys(properties).length > 0) {
+                                content += '<div class="col-md-12 mt-3"><strong>Properties:</strong></div>';
+                                content += '<div class="col-md-12">';
+                                for (var key in properties) {
+                                    if (properties.hasOwnProperty(key)) {
+                                        content += '<div><strong>' + key + ':</strong> ';
+                                        if (typeof properties[key] === 'object') {
+                                            content += '<pre>' + JSON.stringify(properties[key], null, 2) + '</pre>';
+                                        } else {
+                                            content += properties[key];
+                                        }
+                                        content += '</div>';
+                                    }
+                                }
+                                content += '</div>';
+                            }
+
+                            content += '</div>';
+
+                            document.getElementById('activity-detail-content').innerHTML = content;
+                        } else {
+                            document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
+                    });
             }
         });
-
-        function loadActivityDetails(activityId) {
-            fetch('{{ route('activity-log.show') }}/' + activityId)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        var activity = data.activity;
-                        var properties = data.properties;
-
-                        var content = '<div class="row">';
-                        content += '<div class="col-md-6"><strong>Time:</strong> ' + activity.created_at + '</div>';
-                        content += '<div class="col-md-6"><strong>Log Name:</strong> ' + activity.log_name + '</div>';
-                        content += '<div class="col-md-6"><strong>Event:</strong> ' + activity.event + '</div>';
-                        content += '<div class="col-md-6"><strong>User:</strong> ' + (activity.causer ? activity.causer.name : 'System') + '</div>';
-                        content += '<div class="col-md-12"><strong>Subject:</strong> ' + (activity.subject ? activity.subject_type + ': ' + activity.subject.name : 'N/A') + '</div>';
-                        content += '<div class="col-md-12"><strong>Description:</strong> ' + activity.description + '</div>';
-
-                        if (properties && Object.keys(properties).length > 0) {
-                            content += '<div class="col-md-12 mt-3"><strong>Properties:</strong></div>';
-                            content += '<div class="col-md-12">';
-                            for (var key in properties) {
-                                if (properties.hasOwnProperty(key)) {
-                                    content += '<div><strong>' + key + ':</strong> ';
-                                    if (typeof properties[key] === 'object') {
-                                        content += '<pre>' + JSON.stringify(properties[key], null, 2) + '</pre>';
-                                    } else {
-                                        content += properties[key];
-                                    }
-                                    content += '</div>';
-                                }
-                            }
-                            content += '</div>';
-                        }
-
-                        content += '</div>';
-
-                        document.getElementById('activity-detail-content').innerHTML = content;
-                    } else {
-                        document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
-                });
-        }
     </script>
 @endsection

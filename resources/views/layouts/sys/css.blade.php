@@ -10,11 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets-sys') }}/css/demo.css" />
 
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{{ asset('assets-sys') }}/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-
-
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="{{ asset('assets-global/libs/sweetalert2/sweetalert2.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets-sys') }}/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" /> --}}
 
     <!-- Choice.js CSS -->
     <link rel="stylesheet" href="{{ asset('assets-sys/libs/choicesjs/choices.min.css') }}">

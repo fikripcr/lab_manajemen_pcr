@@ -1,8 +1,8 @@
-@props(['id', 'route', 'columns', 'search' => true, 'pageLengthSelector' => '#pageLength', 'order' => [[0, 'desc']], 'withCheckbox' => false, 'checkboxKey' => 'id'])
+@props(['id', 'route', 'columns', 'search' => true, 'pageLengthSelector' => '#pageLength', 'withCheckbox' => false, 'checkboxKey' => 'id'])
 
 @push('css')
-       <!-- DataTables CSS - using sys assets -->
-    <link rel="stylesheet" href="{{ asset('assets-sys/libs/datatables/dataTables.bootstrap5.min.css') }}" />
+    <!-- DataTables CSS - using sys assets -->
+    <link rel="stylesheet" href="{{ asset('assets-sys/css/custom-datatable.css') }}" />
 @endpush
 
 <div class="table-responsive">
@@ -10,7 +10,7 @@
         <thead>
             <tr>
                 @if ($withCheckbox)
-                    <th style="min-width: 40px;">
+                    <th style="min-width: 30px;">
                         <input type="checkbox" id="selectAll-{{ $id }}" class="form-check-input dt-checkboxes">
                     </th>
                 @endif
@@ -26,29 +26,36 @@
 </div>
 
 @push('scripts')
-    <script src="{{ asset('assets-sys/libs/datatables/dataTables.bootstrap5.min.js') }}"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Prevent reinitialization if already initialized
-            if ($.fn.DataTable.isDataTable('#{{ $id }}')) {
-                return;
-            }
+            const TABLE_ID = '{{ $id }}';
+            const SELECTOR = {
+                table: `#${TABLE_ID}`,
+                search: `#${TABLE_ID}-search`,
+                pageLength: `{{ $pageLengthSelector }}`,
+                selectAll: `#selectAll-${TABLE_ID}`,
+                body: `#${TABLE_ID} tbody`,
+                rowCheckbox: '.select-row'
+            };
+            const stateName = 'DataTables_' + TABLE_ID + '_' + window.location.pathname;
+
 
             // Initialize DataTable
             const table = $('#{{ $id }}').DataTable({
                 processing: true,
                 serverSide: true,
                 stateSave: true,
+                searchDelay: 1000,
+                responsive: true,
+                order: [
+                    [0, 'desc']
+                ],
                 ajax: {
                     url: '{{ $route }}',
                     data: function(d) {
-                        // Capture custom search from the filter component if search is enabled
                         @if ($search)
-                            const searchValue = $('#globalSearch-{{ $id }}').val();
-                            if (searchValue) {
-                                d.search.value = searchValue;
-                            }
+                            const searchValue = document.querySelector(SELECTOR.search)?.value || '';
+                            if (searchValue) d.search.value = searchValue;
                         @endif
                     }
                 },
@@ -85,30 +92,28 @@
                         },
                     @endforeach
                 ],
-                order: {!! json_encode($order) !!},
-                pageLength: 10,
-                responsive: true,
-                dom: 'rtip',
-                // Restore state as early as possible
+                layout: {
+                    topStart: null,
+                    topEnd: null,
+                    bottomStart: ['info'],
+                    bottomEnd: ['paging'],
+                },
+                // // Restore state as early as possible
                 stateLoadCallback: function(settings, callback) {
-                    const tableId = '{{ $id }}';
-                    const stateName = 'DataTables_' + tableId + '_' + window.location.pathname;
                     const storedState = localStorage.getItem(stateName);
 
                     if (storedState) {
                         const state = JSON.parse(storedState);
                         // Update the page length selector with saved value
                         const savedPageLength = state.length;
-                        if (savedPageLength) {
-                            const pageLengthSelector = '{{ $pageLengthSelector }}';
-                            $(pageLengthSelector).val(savedPageLength);
-                        }
+                        $('#{{ $id }}-pagelength').val(savedPageLength);
+
                         // Update the search input with saved value from DataTable's internal search
                         @if ($search)
-                        const savedSearch = state.search && state.search.search;
-                        if (savedSearch) {
-                            $('#globalSearch-{{ $id }}').val(savedSearch);
-                        }
+                            const savedSearch = state.search && state.search.search;
+                            if (savedSearch) {
+                                $('#{{ $id }}-search').val(savedSearch);
+                            }
                         @endif
                         callback(state);
                     } else {
@@ -116,133 +121,83 @@
                     }
                 },
                 stateSaveCallback: function(settings, data) {
-                    const tableId = '{{ $id }}';
-                    const stateName = 'DataTables_' + tableId + '_' + window.location.pathname;
                     localStorage.setItem(stateName, JSON.stringify(data));
                 }
             });
 
-            // Handle "Select All" checkbox
-            @if ($withCheckbox)
-                let isSelectAllChecked = false;
-                const selectAllCheckbox = $('#selectAll-{{ $id }}');
-
-                // Create a Set to store selected IDs
-                const selectedIds = new Set();
-
-                // Handle individual row checkbox clicks
-                $('#{{ $id }} tbody').on('change', '.select-row', function() {
-                    const id = $(this).data('id');
-
-                    if (this.checked) {
-                        selectedIds.add(id);
-                    } else {
-                        selectedIds.delete(id);
-                    }
-
-                    // Update the select all checkbox state
-                    const totalRows = table.rows({
-                        search: 'applied'
-                    }).count();
-                    const checkedRows = $('.select-row:checked', '#{{ $id }} tbody').length;
-
-                    selectAllCheckbox.prop('checked', checkedRows === totalRows && totalRows > 0);
-                    isSelectAllChecked = (checkedRows === totalRows && totalRows > 0);
-                });
-
-                // Handle "Select All" checkbox click
-                selectAllCheckbox.on('change', function() {
-                    const rows = table.rows({
-                        search: 'applied'
-                    }).nodes();
-                    const isChecked = this.checked;
-
-                    // Update checkboxes in current view
-                    $('.select-row', rows).each(function() {
-                        const id = $(this).data('id');
-                        $(this).prop('checked', isChecked);
-
-                        if (isChecked) {
-                            selectedIds.add(id);
-                        } else {
-                            selectedIds.delete(id);
-                        }
-                    });
-
-                    isSelectAllChecked = isChecked;
-                });
-
-                // Restore checkbox states when the table is redrawn
-                table.on('draw', function() {
-                    const rows = table.rows().nodes();
-
-                    // Update "Select All" checkbox based on selectedIds
-                    let totalRows = 0;
-                    let checkedCount = 0;
-
-                    $('.select-row', rows).each(function() {
-                        const id = $(this).data('id');
-                        if (selectedIds.has(id)) {
-                            $(this).prop('checked', true);
-                            checkedCount++;
-                        } else {
-                            $(this).prop('checked', false);
-                        }
-                        totalRows++;
-                    });
-
-                    // Update select all checkbox state
-                    if (totalRows > 0) {
-                        selectAllCheckbox.prop('checked', checkedCount === totalRows);
-                        isSelectAllChecked = (checkedCount === totalRows);
-                    } else {
-                        selectAllCheckbox.prop('checked', false);
-                        isSelectAllChecked = false;
-                    }
-                });
-
-                // Store selected IDs in a global variable accessible from outside
-                window.getSelectedIds = function() {
-                    return Array.from(selectedIds);
-                };
-            @endif
-
-            // Setup common DataTable behaviors
-            setupCommonDataTableBehaviors(table, {
-                @if ($search)
-                    searchInputSelector: '#globalSearch-{{ $id }}',
-                @endif
-                pageLengthSelector: '{{ $pageLengthSelector }}'
+            // Sync page length selector on draw
+            table.on('draw', function() {
+                const pageLengthEl = document.querySelector(SELECTOR.pageLength);
+                if (pageLengthEl) {
+                    pageLengthEl.value = table.page.len();
+                }
             });
 
-            // Define the setupCommonDataTableBehaviors function
-            if (typeof setupCommonDataTableBehaviors === 'undefined') {
-                window.setupCommonDataTableBehaviors = function(table, options) {
-                    // Handle page length change
-                    $(document).on('change', options.pageLengthSelector, function() {
-                        const pageLength = parseInt($(this).val());
+            // === SEARCH ===
+            @if ($search)
+                document.querySelector(SELECTOR.search)?.addEventListener('input', function() {
+                    table.search(this.value).draw();
+                });
+            @endif
 
-                        // Set page length to -1 for "All" option to show all records
-                        if (pageLength === -1) {
-                            table.page.len(-1).draw();
-                        } else {
-                            table.page.len(pageLength).draw();
+            // Handle "Select All" checkbox
+            @if ($withCheckbox)
+                const selectedIds = new Set();
+
+                // Select All
+                document.querySelector(SELECTOR.selectAll)?.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    table.rows({
+                        search: 'applied'
+                    }).every(function() {
+                        const row = table.row(this).node();
+                        const checkbox = row.querySelector(SELECTOR.rowCheckbox);
+                        if (checkbox) {
+                            checkbox.checked = isChecked;
+                            const id = checkbox.dataset.id;
+                            if (isChecked) selectedIds.add(id);
+                            else selectedIds.delete(id);
                         }
                     });
+                    updateSelectAllState();
+                });
+                // Individual row
+                document.querySelector(SELECTOR.body).addEventListener('change', function(e) {
+                    if (e.target.matches(SELECTOR.rowCheckbox)) {
+                        const id = e.target.dataset.id;
+                        if (e.target.checked) selectedIds.add(id);
+                        else selectedIds.delete(id);
+                        updateSelectAllState();
+                    }
+                });
 
-                    // Update the page length selector when table state changes
-                    table.on('draw', function() {
-                        const pageLength = table.page.len();
-                        $(options.pageLengthSelector).val(pageLength);
+                // Restore checkbox state on draw
+                table.on('draw', function() {
+                    table.rows().every(function() {
+                        const row = table.row(this).node();
+                        const checkbox = row.querySelector(SELECTOR.rowCheckbox);
+                        if (checkbox) {
+                            const id = checkbox.dataset.id;
+                            checkbox.checked = selectedIds.has(id);
+                        }
                     });
+                    updateSelectAllState();
+                });
 
-                    // On the first draw after state load, ensure page length is properly set
-                    table.one('draw', function() {
-                        const pageLength = table.page.len();
-                        $(options.pageLengthSelector).val(pageLength);
-                    });
-                };
-            }
+                function updateSelectAllState() {
+                    const total = table.rows({
+                        search: 'applied'
+                    }).count();
+                    const checked = Array.from(document.querySelectorAll(`${SELECTOR.body} ${SELECTOR.rowCheckbox}:checked`)).length;
+                    const selectAll = document.querySelector(SELECTOR.selectAll);
+                    if (selectAll) {
+                        selectAll.checked = total > 0 && checked === total;
+                    }
+                }
+            @endif
+
+            // Simpan instance ke window untuk akses eksternal
+            window['DT_' + TABLE_ID] = table;
         });
     </script>
 @endpush

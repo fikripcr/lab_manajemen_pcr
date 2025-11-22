@@ -530,80 +530,73 @@
 @endsection
 
 @push('scripts')
-    <script src="/js/dashboard.js"></script>
     <!-- Apex Charts JS -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
-        // Ensure the DOM is fully loaded before initializing charts
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wait a bit more for the layout to be fully rendered
-            setTimeout(function() {
-                // Parse chart data from JSON
-                const roleChartData = {!! $roleChartData !!};
-                const activityChartData = {!! $activityChartData !!};
+        // Parse chart data from JSON
+        const roleChartData = {!! $roleChartData !!};
+        const activityChartData = {!! $activityChartData !!};
 
-                // User Role Distribution Chart (Donut)
-                const userRoleChart = {
+        // User Role Distribution Chart (Donut)
+        const userRoleChart = {
+            chart: {
+                height: 350,
+                type: 'donut',
+            },
+            series: roleChartData.series,
+            labels: roleChartData.labels,
+            responsive: [{
+                breakpoint: 480,
+                options: {
                     chart: {
-                        height: 350,
-                        type: 'donut',
+                        width: 200
                     },
-                    series: roleChartData.series,
-                    labels: roleChartData.labels,
-                    responsive: [{
-                        breakpoint: 480,
-                        options: {
-                            chart: {
-                                width: 200
-                            },
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }]
-                }
-
-                const userRoleChartEl = document.querySelector('#userRoleChart');
-                if (userRoleChartEl) {
-                    const userRoleChartObj = new ApexCharts(userRoleChartEl, userRoleChart);
-                    userRoleChartObj.render();
-                }
-
-                // Activity Trend Chart (Line)
-                const activityTrendChart = {
-                    chart: {
-                        height: 350,
-                        type: 'line',
-                        zoom: {
-                            enabled: false
-                        }
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        curve: 'straight'
-                    },
-                    series: activityChartData.series,
-                    grid: {
-                        row: {
-                            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                            opacity: 0.5
-                        },
-                    },
-                    xaxis: {
-                        categories: activityChartData.categories,
+                    legend: {
+                        position: 'bottom'
                     }
                 }
+            }]
+        }
 
-                const activityTrendChartEl = document.querySelector('#activityTrendChart');
-                if (activityTrendChartEl) {
-                    const activityTrendChartObj = new ApexCharts(activityTrendChartEl, activityTrendChart);
-                    activityTrendChartObj.render();
+        const userRoleChartEl = document.querySelector('#userRoleChart');
+        if (userRoleChartEl) {
+            const userRoleChartObj = new ApexCharts(userRoleChartEl, userRoleChart);
+            userRoleChartObj.render();
+        }
+
+        // Activity Trend Chart (Line)
+        const activityTrendChart = {
+            chart: {
+                height: 350,
+                type: 'line',
+                zoom: {
+                    enabled: false
                 }
-            }, 300); // Delay initialization to ensure DOM is ready
-        });
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'straight'
+            },
+            series: activityChartData.series,
+            grid: {
+                row: {
+                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    opacity: 0.5
+                },
+            },
+            xaxis: {
+                categories: activityChartData.categories,
+            }
+        }
+
+        const activityTrendChartEl = document.querySelector('#activityTrendChart');
+        if (activityTrendChartEl) {
+            const activityTrendChartObj = new ApexCharts(activityTrendChartEl, activityTrendChart);
+            activityTrendChartObj.render();
+        }
     </script>
 
 @endpush

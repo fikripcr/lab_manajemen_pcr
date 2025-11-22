@@ -10,58 +10,54 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <h5 class="mb-2 mb-sm-0">Permissions List</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <div class="me-3 mb-2 mb-sm-0">
-                        <x-datatable.page-length id="pageLength" selected="10" />
-                    </div>
+            <div class="d-flex flex-wrap gap-2">
+                <div>
+                    <x-sys.datatable-page-length :dataTableId="'permissions-table'" />
+                </div>
+                <div>
+                    <x-sys.datatable-search-filter :dataTableId="'permissions-table'" />
                 </div>
             </div>
-            @include('components.datatable.search-filter', [
-                'dataTableId' => 'permissions-table'
-            ])
         </div>
         <div class="card-body">
-            <x-flash-message />
+            <x-sys.flash-message />
 
-            <x-datatable.datatable
-                id="permissions-table"
-                route="{{ route('permissions.data') }}"
-                :columns="[
-                    [
-                        'title' => '#',
-                        'data' => 'DT_RowIndex',
-                        'name' => 'DT_RowIndex',
-                        'orderable' => false,
-                        'searchable' => false
-                    ],
-                    [
-                        'title' => 'Name',
-                        'data' => 'name',
-                        'name' => 'name',
-                    ],
-                    [
-                        'title' => 'Roles Assigned',
-                        'data' => 'roles_count',
-                        'name' => 'roles_count',
-                        'orderable' => false,
-                        'searchable' => false
-                    ],
-                    [
-                        'title' => 'Created At',
-                        'data' => 'created_at',
-                        'name' => 'created_at'
-                    ],
-                    [
-                        'title' => 'Actions',
-                        'data' => 'action',
-                        'name' => 'action',
-                        'orderable' => false,
-                        'searchable' => false
-                    ]
-                ]"
-            />
+            <x-sys.datatable id="permissions-table" route="{{ route('permissions.data') }}" with-checkbox="true" checkbox-key="id"
+             :columns="[
+                [
+                    'title' => '#',
+                    'data' => 'DT_RowIndex',
+                    'name' => 'DT_RowIndex',
+                    'orderable' => true,
+                    'searchable' => false,
+                ],
+                [
+                    'title' => 'Name',
+                    'data' => 'name',
+                    'orderable' => true,
+                    'name' => 'name',
+                ],
+                [
+                    'title' => 'Roles Assigned',
+                    'data' => 'roles_count',
+                    'name' => 'roles_count',
+                    'orderable' => true,
+                    'searchable' => false,
+                ],
+                [
+                    'title' => 'Created At',
+                    'data' => 'created_at',
+                    'orderable' => true,
+                    'name' => 'created_at',
+                ],
+                [
+                    'title' => 'Actions',
+                    'data' => 'action',
+                    'name' => 'action',
+                    'orderable' => false,
+                    'searchable' => false,
+                ],
+            ]" />
         </div>
     </div>
 
@@ -75,30 +71,48 @@
             </div>
         </div>
     </div>
-
 @endsection
 @push('scripts')
     <script>
-        // Handle create permission button click
-        $('#createPermissionBtn').on('click', function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle create permission button click
+            document.getElementById('createPermissionBtn').addEventListener('click', function() {
+                // 1. Buka modal
+                const modal = new bootstrap.Modal(document.getElementById('modalAction'));
+                modal.show();
 
-            $('#modalAction').modal('show');
-            $.get('{{ route('permissions.create-modal') }}', function(data) {
-                $('#modalContent').html(data);
-            }).fail(function() {
-                showErrorMessage('Error!', 'Could not load form');
+                axios.get('{{ route('permissions.create-modal') }}')
+                    .then(response => {
+                        document.getElementById('modalContent').innerHTML = response.data;
+                    })
+                    .catch(() => {
+                        showErrorMessage('Error!', 'Could not load form');
+                    });
             });
-        });
 
-        // Handle edit permission - using event delegation for dynamically added elements
-        $(document).on('click', '.edit-permission', function() {
-            var permissionId = $(this).data('id');
-            $.get('{{ route('permissions.edit-modal.show', '') }}/' + permissionId, function(data) {
-                $('#modalAction').modal('show');
-                $('#modalContent').html(data);
-            }).fail(function() {
-                showErrorMessage('Error!', 'Could not load form');
+            // Handle edit permission (event delegation)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.edit-permission')) {
+                    const btn = e.target.closest('.edit-permission');
+                    const id = btn.dataset.id;
+
+                    const modal = new bootstrap.Modal(document.getElementById('modalAction'));
+                    modal.show();
+
+                    axios.get(`/sys/permissions/${id}/edit`, {
+                            params: {
+                                id: id
+                            }
+                        })
+                        .then(response => {
+                            document.getElementById('modalContent').innerHTML = response.data;
+                        })
+                        .catch(() => {
+                            showErrorMessage('Error!', 'Could not load form');
+                        });
+                }
             });
+
         });
     </script>
 @endpush

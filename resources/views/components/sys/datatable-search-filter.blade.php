@@ -2,19 +2,18 @@
     'dataTableId' => null,
 ])
 
-<div class="dataTables_toolbar mb-3">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bx bx-search"></i></span>
-                <input type="text" id="{{ $dataTableId ? $dataTableId . '-filter' : 'global-search' }}" class="dataTable-input form-control" placeholder="Search..." onkeyup="handleDataTableFilter(this, '{{ $dataTableId }}')" />
-            </div>
-        </div>
-    </div>
+<div class="input-group">
+    <span class="input-group-text"><i class="bx bx-search"></i></span>
+    <input type="text" id="{{$dataTableId . '-search'}}"
+        class="form-control"
+        placeholder="Search..."
+        onkeyup="handleDataTableSearch(this, '{{ $dataTableId }}')"
+    />
 </div>
+
 @push('scripts')
     <script>
-        function handleDataTableFilter(element, tableId) {
+        function handleDataTableSearch(element, tableId) {
             const searchTerm = element.value;
 
             if (tableId) {
