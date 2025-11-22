@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends('layouts.sys.app')
 
 @section('title', $pageTitle)
 
@@ -38,6 +38,7 @@
                         <i class="bx bx-arrow-back"></i> Back to Documentation
                     </a>
                 </div>
+
                 <div class="card" style="top: 1rem;">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0"><i class="bx bx-list-ul me-2"></i>Table of Contents</h5>

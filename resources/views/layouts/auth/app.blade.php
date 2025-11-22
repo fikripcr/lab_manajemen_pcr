@@ -7,15 +7,13 @@
 
     <title>{{ config('app.name') }}</title>
 
-    @include('layouts.admin.css')
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('layouts.auth.css')
 </head>
 <body class="font-sans bg-gray-50">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
         @yield('content')
     </div>
-    @include('layouts.admin.js')
+
+    @include('layouts.auth.js')
 </body>
 </html>
