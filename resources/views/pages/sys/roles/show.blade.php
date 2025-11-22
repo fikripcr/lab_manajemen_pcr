@@ -17,7 +17,7 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-sys.flash-message />
 
                     <div class="row">
                         <div class="col-md-6 mb-3">

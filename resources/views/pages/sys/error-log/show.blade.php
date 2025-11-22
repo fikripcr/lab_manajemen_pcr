@@ -9,7 +9,7 @@
     </h4>
 
     <!-- Success Message -->
-    <x-flash-message />
+    <x-sys.flash-message />
 
     <div class="row">
         <div class="col-md-12">
@@ -20,7 +20,7 @@
                         <a href="{{ route('sys.error-log.index') }}" class="btn btn-secondary btn-sm">
                             <i class="bx bx-arrow-back me-1"></i> Back to Logs
                         </a>
-                        <button type="button" class="btn btn-danger btn-sm ms-2" 
+                        <button type="button" class="btn btn-danger btn-sm ms-2"
                                 onclick="confirmDelete('{{ route('sys.error-log.destroy', encryptId($errorLog->id)) }}')">
                             <i class="bx bx-trash me-1"></i> Delete
                         </button>
@@ -32,10 +32,10 @@
                             <tr>
                                 <th width="200">Level</th>
                                 <td>
-                                    <span class="badge 
-                                        @if($errorLog->level === 'error') bg-danger 
-                                        @elseif($errorLog->level === 'warning') bg-warning 
-                                        @elseif($errorLog->level === 'info') bg-info 
+                                    <span class="badge
+                                        @if($errorLog->level === 'error') bg-danger
+                                        @elseif($errorLog->level === 'warning') bg-warning
+                                        @elseif($errorLog->level === 'info') bg-info
                                         @else bg-secondary @endif">
                                         {{ ucfirst($errorLog->level) }}
                                     </span>

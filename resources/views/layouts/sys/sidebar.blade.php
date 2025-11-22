@@ -20,6 +20,24 @@
             </a>
         </li>
         
+        <!-- Access Control -->
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Access Control</span>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
+            <a href="{{ route('roles.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-lock-alt"></i>
+                <div data-i18n="Roles">Roles</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->routeIs('permissions.*') ? 'active' : '' }}">
+            <a href="{{ route('permissions.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-key"></i>
+                <div data-i18n="Permissions">Permissions</div>
+            </a>
+        </li>
+
         <!-- System Management -->
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">System Management</span>
@@ -44,25 +62,6 @@
                 <i class="menu-icon tf-icons bx bx-error"></i>
                 <div data-i18n="Error Log">Error Log</div>
             </a>
-        </li>
-        <!-- Roles & Permissions Menu -->
-        <li class="menu-item {{ request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'active open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-shield"></i>
-                <div data-i18n="Roles & Permissions">Access Control</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
-                    <a href="{{ route('roles.index') }}" class="menu-link">
-                        <div data-i18n="Roles">Roles</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ request()->routeIs('permissions.*') ? 'active' : '' }}">
-                    <a href="{{ route('permissions.index') }}" class="menu-link">
-                        <div data-i18n="Permissions">Permissions</div>
-                    </a>
-                </li>
-            </ul>
         </li>
 
 

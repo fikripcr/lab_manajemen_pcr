@@ -8,7 +8,7 @@
         </a>
     </div>
 
-    <x-flash-message />
+    <x-sys.flash-message />
 
     <!-- Role Form Card -->
     <div class="card mb-4">
