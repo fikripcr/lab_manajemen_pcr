@@ -6,7 +6,7 @@
 
     <div class="row">
         <div class="col-12">
-            <x-flash-message />
+            <x-admin.flash-message />
 
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">

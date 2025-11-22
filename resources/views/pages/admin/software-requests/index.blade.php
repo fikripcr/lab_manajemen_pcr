@@ -11,7 +11,7 @@
                 <h5 class="mb-2 mb-sm-0">Software Request List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <x-datatable.page-length id="pageLength" selected="10" />
+                        <x-admin.datatable-page-length id="pageLength" selected="10" />
                     </div>
                 </div>
             </div>
@@ -20,7 +20,7 @@
             ])
         </div>
         <div class="card-body">
-            <x-flash-message />
+            <x-admin.flash-message />
             <div class="table-responsive">
                 <table id="software-requests-table" class="table" style="width:100%">
                     <thead>

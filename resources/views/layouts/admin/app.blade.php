@@ -59,7 +59,7 @@
         </div>
 
         <!-- Global Search Modal Component -->
-        <x-global-search-modal />
+        <x-admin.global-search-modal />
 
         @include('layouts.admin.js')
 

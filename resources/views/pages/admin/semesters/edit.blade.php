@@ -12,7 +12,7 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <form method="POST" action="{{ route('semesters.update', $semester->encrypted_semester_id) }}">
                         @csrf

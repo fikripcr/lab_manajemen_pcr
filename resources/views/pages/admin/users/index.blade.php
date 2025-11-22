@@ -12,23 +12,9 @@
             </a>
 
             <!-- Dropdown for Export -->
-            <div class="dropdown">
-                <button class="btn btn-success dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class='bx bx-export'></i> Export
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-                    <li>
-                        <a class="dropdown-item" href="{{ route('users.export') }}">
-                            <i class='bx bx-file me-1'></i> Export to Excel
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ route('users.export.pdf', ['type' => 'summary']) }}">
-                            <i class='bx bx-file me-1'></i> Export to PDF
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <a href="{{ route('users.export') }}" class="btn btn-success me-2">
+                <i class='bx bx-export'></i> Export to Excel
+            </a>
         </div>
     </div>
 
@@ -38,7 +24,7 @@
                 <h5 class="mb-2 mb-sm-0">User List</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <div class="me-3 mb-2 mb-sm-0">
-                        <x-datatable.page-length id="pageLength" selected="10" />
+                        <x-admin.datatable-page-length id="pageLength" selected="10" />
                     </div>
                     <!-- Action buttons for selected users -->
                     <div id="bulk-actions-users-table" class="d-none">
@@ -51,14 +37,12 @@
                     </div>
                 </div>
             </div>
-            @include('components.datatable.search-filter', [
-                'dataTableId' => 'users-table'
-            ])
+            <x-admin.datatable-search-filter :dataTableId="'users-table'" />
         </div>
         <div class="card-body">
-            <x-flash-message />
+            <x-admin.flash-message />
 
-            <x-datatable.datatable
+            <x-admin.datatable-datatable
                 id="users-table"
                 route="{{ route('users.data') }}"
                 :columns="[

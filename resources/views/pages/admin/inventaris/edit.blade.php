@@ -7,7 +7,7 @@
         <div class="col-xxl">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <form action="{{ route('inventaris.update', $inventory) }}" method="POST">
                         @csrf

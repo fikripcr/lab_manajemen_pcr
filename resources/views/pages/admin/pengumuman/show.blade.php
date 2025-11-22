@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -55,7 +55,7 @@
                             <h6 class="text-muted">Last Updated:</h6>
                             <p class="mb-0">{{ $pengumuman->updated_at->format('d M Y H:i') }}</p>
                         </div>
-                        
+
                         @php
                             $coverMedia = $pengumuman->getFirstMedia('info_cover');
                         @endphp
@@ -66,7 +66,7 @@
                                      alt="Cover Image" class="img-fluid img-thumbnail" style="max-height: 300px;">
                             </div>
                         @endif
-                        
+
                         @php
                             $attachments = $pengumuman->getMedia('info_attachment');
                         @endphp

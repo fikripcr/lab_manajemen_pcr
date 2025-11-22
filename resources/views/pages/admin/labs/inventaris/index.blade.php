@@ -14,7 +14,7 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <div class="table-responsive">
                         <table id="inventaris-table" class="table" style="width:100%">

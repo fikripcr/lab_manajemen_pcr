@@ -12,7 +12,7 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <div class="alert alert-info">
                         <h6 class="alert-heading">Petunjuk Import Jadwal</h6>

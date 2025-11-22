@@ -8,7 +8,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <x-flash-message />
+                <x-admin.flash-message />
 
                 <div class="card mb-4">
                     <div class="card-body">

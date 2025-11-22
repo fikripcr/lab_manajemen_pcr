@@ -11,7 +11,7 @@
                     <h4 class="card-title mb-0">Tambah Inventaris ke Lab: {{ $lab->name }}</h4>
                 </div>
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <form action="{{ route('labs.inventaris.store', $lab->encrypted_lab_id) }}" method="POST">
                         @csrf
@@ -45,9 +45,9 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="status" class="form-label">Status</label>
-                                    <select 
-                                        class="form-select @error('status') is-invalid @enderror" 
-                                        id="status" 
+                                    <select
+                                        class="form-select @error('status') is-invalid @enderror"
+                                        id="status"
                                         name="status"
                                     >
                                         <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
@@ -59,15 +59,15 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="no_series" class="form-label">No Series</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control @error('no_series') is-invalid @enderror" 
-                                        id="no_series" 
-                                        name="no_series" 
+                                    <input
+                                        type="text"
+                                        class="form-control @error('no_series') is-invalid @enderror"
+                                        id="no_series"
+                                        name="no_series"
                                         value="{{ old('no_series') }}"
                                         placeholder="Nomor seri atau kode tambahan"
                                     >
@@ -80,11 +80,11 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="tanggal_penempatan" class="form-label">Tanggal Penempatan</label>
-                                    <input 
-                                        type="date" 
-                                        class="form-control @error('tanggal_penempatan') is-invalid @enderror" 
-                                        id="tanggal_penempatan" 
-                                        name="tanggal_penempatan" 
+                                    <input
+                                        type="date"
+                                        class="form-control @error('tanggal_penempatan') is-invalid @enderror"
+                                        id="tanggal_penempatan"
+                                        name="tanggal_penempatan"
                                         value="{{ old('tanggal_penempatan') ?: date('Y-m-d') }}"
                                     >
                                     @error('tanggal_penempatan')
@@ -96,10 +96,10 @@
                             <div class="col-md-12">
                                 <div class="mb-3">
                                     <label for="keterangan" class="form-label">Keterangan</label>
-                                    <textarea 
-                                        class="form-control @error('keterangan') is-invalid @enderror" 
-                                        id="keterangan" 
-                                        name="keterangan" 
+                                    <textarea
+                                        class="form-control @error('keterangan') is-invalid @enderror"
+                                        id="keterangan"
+                                        name="keterangan"
                                         rows="3"
                                         placeholder="Tambahkan keterangan tambahan"
                                     >{{ old('keterangan') }}</textarea>

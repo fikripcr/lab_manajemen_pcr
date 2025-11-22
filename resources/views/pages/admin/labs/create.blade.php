@@ -7,7 +7,7 @@
         <div class="col-xxl">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <form action="{{ route('labs.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -51,7 +51,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="description">Description</label>
                             <div class="col-sm-10">
-                                <x-tinymce.editor id="description" name="description" :value="old('description')" height="300" />
+                                <x-admin.editor id="description" name="description" :value="old('description')" height="300" />
                                 @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

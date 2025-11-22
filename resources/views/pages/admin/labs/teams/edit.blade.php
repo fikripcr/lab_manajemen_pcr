@@ -11,7 +11,7 @@
                     <h4 class="mb-0">Edit Anggota Tim Lab: {{ $teamMember->user->name }}</h4>
                 </div>
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <form action="{{ route('labs.teams.update', [$teamMember->encrypted_lab_id, $teamMember->encrypted_id]) }}" method="POST">
                         @csrf

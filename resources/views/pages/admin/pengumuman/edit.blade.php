@@ -12,7 +12,7 @@
                     <h5 class="mb-0">Edit {{ ucfirst($type) }}</h5>
                 </div>
                 <div class="card-body">
-                    <x-flash-message />
+                    <x-admin.flash-message />
 
                     <form action="{{ route($type . '.update', $pengumuman->encrypted_pengumuman_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -25,7 +25,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="isi">Content</label>
-                            <x-tinymce.editor id="isi" name="isi" :value="old('isi', $pengumuman->isi)" height="400" required />
+                            <x-admin.editor id="isi" name="isi" :value="old('isi', $pengumuman->isi)" height="400" required />
                         </div>
 
                         <!-- Cover Image Section -->
