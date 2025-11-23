@@ -9,19 +9,8 @@ window.bootstrap = bootstrap;
 // --- Axios (untuk AJAX modern)
 import axios from 'axios';
 window.axios = axios;
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.defaults.withCredentials = true; // untuk Sanctum/session
-
-// --- Setup CSRF Token (untuk jQuery AJAX & Axios)
-const token = document.head.querySelector('meta[name="csrf-token"]');
-if (token) {
-    // Untuk jQuery ($.ajax, $.get, dll)
-    $.ajaxSetup({
-        headers: { 'X-CSRF-TOKEN': token.content }
-    });
-    // Untuk Axios
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-}
+window.axios.defaults.withXSRFToken = true
 
 // --- DataTables (dynamic import – hanya load saat dipanggil)
 import 'datatables.net';

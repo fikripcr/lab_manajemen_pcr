@@ -269,87 +269,6 @@
             });
         }
 
-        function testDatabase() {
-            Swal.fire({
-                title: 'Run Database Test?',
-                text: 'This will run a basic database connectivity test.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, run test!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showLoading('Running database test...');
-
-                    // Simulating database test - replace with actual functionality
-                    setTimeout(() => {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Database Test Passed!',
-                            text: 'Database connectivity is working properly.'
-                        });
-                    }, 1500);
-                }
-            });
-        }
-
-        function testSecurity() {
-            Swal.fire({
-                title: 'Run Security Test?',
-                text: 'This will run a basic security configuration test.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, run test!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showLoading('Running security test...');
-
-                    // Simulating security test - replace with actual functionality
-                    setTimeout(() => {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Security Test Passed!',
-                            text: 'Security configurations are properly set.'
-                        });
-                    }, 1500);
-                }
-            });
-        }
-
-        function testPerformance() {
-            Swal.fire({
-                title: 'Run Performance Test?',
-                text: 'This will run a basic performance test.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, run test!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showLoading('Running performance test...');
-
-                    // Simulating performance test - replace with actual functionality
-                    setTimeout(() => {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Performance Test Passed!',
-                            text: 'System performance is within acceptable limits.'
-                        });
-                    }, 1500);
-                }
-            });
-        }
-
         function testNotificationAPI() {
             // Open a modal or new window to show API testing interface
             Swal.fire({
@@ -384,34 +303,46 @@
             });
         }
 
-        function testNotificationCount() {
+        async function testNotificationCount() {
             const resultsDiv = document.getElementById('apiResults');
-            resultsDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p>Testing count API...</p></div>';
+            resultsDiv.innerHTML = '<div class="text-center"><div class="spinner-border"></div>';
 
-            axios.get('/api/notifications/count')
-                .then(response => {
-                    resultsDiv.innerHTML = `
-                        <div class="alert alert-success">
-                            <h6>Count API Response:</h6>
-                            <pre>${JSON.stringify(response.data, null, 2)}</pre>
-                        </div>
-                    `;
-                })
-                .catch(error => {
-                    resultsDiv.innerHTML = `
-                        <div class="alert alert-danger">
-                            <h6>Error:</h6>
-                            <pre>${error.response?.data?.message || error.message}</pre>
-                        </div>
-                    `;
-                });
+            axios.defaults.withCredentials = true;
+            axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+            try {
+                // WAJIB: tunggu sampai cookie Sanctum terpasang
+                await axios.get('/sanctum/csrf-cookie');
+
+                // Baru panggil API setelah cookie siap
+                const response = await axios.get('/api/notifications/count');
+
+                resultsDiv.innerHTML = `
+            <div class="alert alert-success">
+                <h6>Count API Response:</h6>
+                <pre>${JSON.stringify(response.data, null, 2)}</pre>
+            </div>
+        `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <h6>Error:</h6>
+                <pre>${error.response?.data?.message || error.message}</pre>
+            </div>
+        `;
+            }
         }
+
 
         function testNotificationList() {
             const resultsDiv = document.getElementById('apiResults');
             resultsDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p>Testing list API...</p></div>';
 
-            axios.get('/api/notifications/list', { params: { per_page: 5 } })
+            axios.get('/api/notifications/list', {
+                    params: {
+                        per_page: 5
+                    }
+                })
                 .then(response => {
                     resultsDiv.innerHTML = `
                         <div class="alert alert-success">

@@ -99,12 +99,12 @@
             });
 
             function loadActivityDetails(activityId) {
-                fetch('{{ route('activity-log.show') }}/' + activityId)
+                fetch('/api/activity-logs/' + activityId)
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            var activity = data.activity;
-                            var properties = data.properties;
+                        if (data.status === 'success' && data.data) {
+                            var activity = data.data.activity;
+                            var properties = activity.properties || {};
 
                             var content = '<div class="row">';
                             content += '<div class="col-md-6"><strong>Time:</strong> ' + activity.created_at + '</div>';
@@ -114,16 +114,16 @@
                             content += '<div class="col-md-12"><strong>Subject:</strong> ' + (activity.subject ? activity.subject_type + ': ' + activity.subject.name : 'N/A') + '</div>';
                             content += '<div class="col-md-12"><strong>Description:</strong> ' + activity.description + '</div>';
 
-                            if (properties && Object.keys(properties).length > 0) {
+                            if (activity.properties && typeof activity.properties === 'object' && Object.keys(activity.properties).length > 0) {
                                 content += '<div class="col-md-12 mt-3"><strong>Properties:</strong></div>';
                                 content += '<div class="col-md-12">';
-                                for (var key in properties) {
-                                    if (properties.hasOwnProperty(key)) {
+                                for (var key in activity.properties) {
+                                    if (activity.properties.hasOwnProperty(key)) {
                                         content += '<div><strong>' + key + ':</strong> ';
-                                        if (typeof properties[key] === 'object') {
-                                            content += '<pre>' + JSON.stringify(properties[key], null, 2) + '</pre>';
+                                        if (typeof activity.properties[key] === 'object') {
+                                            content += '<pre>' + JSON.stringify(activity.properties[key], null, 2) + '</pre>';
                                         } else {
-                                            content += properties[key];
+                                            content += activity.properties[key];
                                         }
                                         content += '</div>';
                                     }

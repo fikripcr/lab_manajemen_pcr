@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NotificationResource;
@@ -19,10 +19,9 @@ class NotificationController extends Controller
     /**
      * Get count of unread notifications for the authenticated user
      */
-    public function getUnreadCount()
+    public function getCount()
     {
         $count = $this->notificationService->getUnreadCount();
-
         return response()->json([
             'count' => $count
         ]);

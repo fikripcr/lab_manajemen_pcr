@@ -1,16 +1,17 @@
 <?php
-
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLogsService;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
 use Yajra\DataTables\DataTables;
 
 class ActivityLogController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        protected ActivityLogsService $activityLogService
+    ) {
         // $this->middleware(['permission:view activity logs']);
     }
 
@@ -19,7 +20,12 @@ class ActivityLogController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pages.sys.activity-log.index');
+        try {
+            return view('pages.sys.activity-log.index');
+        } catch (\Exception $e) {
+            \Log::error('Error in ActivityLogController@index: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat halaman log aktivitas.');
+        }
     }
 
     /**
@@ -27,83 +33,48 @@ class ActivityLogController extends Controller
      */
     public function paginate(Request $request)
     {
-        $activities = Activity::with(['causer', 'subject'])
-            ->select('sys_activity_log.*')
-            ->leftJoin('users', 'sys_activity_log.causer_id', '=', 'users.id')
-            ->orderBy('sys_activity_log.created_at', 'desc');
+        try {
+            $filters = $this->activityLogService->buildFiltersFromRequest($request);
+            $query   = $this->activityLogService->getFilteredQuery();
 
-        if ($request->filled('log_name')) {
-            $activities->where('sys_activity_log.log_name', $request->log_name);
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->order(function ($query) {
+                    $query->latest('created_at');
+                })
+                ->editColumn('created_at', function ($activity) {
+                    return formatTanggalIndo($activity->created_at);
+                })
+                ->editColumn('causer.name', function ($activity) {
+                    return $activity->causer_name ?? 'System';
+                })
+                ->editColumn('description', function ($activity) {
+                    $desc = htmlspecialchars($activity->description, ENT_QUOTES, 'UTF-8');
+                    return '<span title="' . $desc . '">' .
+                    substr($desc, 0, 100) . (strlen($desc) > 100 ? '...' : '') .
+                        '</span>';
+                })
+                ->addColumn('action', function ($activity) {
+                    return '
+                        <div class="d-flex align-items-center">
+                            <a class="text-success me-2" href="#"
+                               data-bs-toggle="modal"
+                               data-bs-target="#activityDetailModal"
+                               data-activity-id="' . $activity->id . '"
+                               title="View Details">
+                                <i class="bx bx-show"></i>
+                            </a>
+                        </div>';
+                })
+                ->rawColumns(['description', 'action'])
+                ->make(true);
+
+        } catch (\Exception $e) {
+            logError($e, 'error', $e->getMessage());
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat mengambil data log aktivitas.',
+            ], 500);
         }
-
-        if ($request->filled('subject_type')) {
-            $activities->where('sys_activity_log.subject_type', $request->subject_type);
-        }
-
-        if ($request->filled('event')) {
-            $activities->where('sys_activity_log.event', $request->event);
-        }
-
-        if ($request->filled('date_from') && $request->filled('date_to')) {
-            $activities->whereBetween('sys_activity_log.created_at', [$request->date_from, $request->date_to]);
-        }
-
-        return DataTables::of($activities)
-            ->addIndexColumn()
-            ->order(function ($query) {
-                $query->latest('sys_activity_log.created_at'); // Sort by created_at DESC by default
-            })
-            ->filterColumn('description', function ($query, $keyword) {
-                $query->where('sys_activity_log.description', 'like', "%{$keyword}%");
-            })
-            ->filterColumn('causer.name', function ($query, $keyword) {
-                $query->whereHas('causer', function ($q) use ($keyword) {
-                    $q->where('name', 'like', "%{$keyword}%");
-                });
-            })
-            ->filterColumn('log_name', function ($query, $keyword) {
-                $query->where('sys_activity_log.log_name', 'like', "%{$keyword}%");
-            })
-            ->filterColumn('event', function ($query, $keyword) {
-                $query->where('sys_activity_log.event', 'like', "%{$keyword}%");
-            })
-            ->editColumn('created_at', function ($activity) {
-                return formatTanggalIndo($activity->created_at);
-            })
-            ->editColumn('causer.name', function ($activity) {
-                if ($activity->causer) {
-                    return $activity->causer->name;
-                }
-                return 'System';
-            })
-            ->editColumn('description', function ($activity) {
-                $description = htmlspecialchars($activity->description, ENT_QUOTES, 'UTF-8');
-                return '<span title="' . $description . '">' . substr($description, 0, 100) . (strlen($description) > 100 ? '...' : '') . '</span>';
-            })
-            ->addColumn('action', function ($activity) {
-                return '
-                    <div class="d-flex align-items-center">
-                        <a class="text-success me-2" href="#" data-bs-toggle="modal" data-bs-target="#activityDetailModal" data-activity-id="' . $activity->id . '" title="View Details">
-                            <i class="bx bx-show"></i>
-                        </a>
-                    </div>';
-            })
-            ->filter(function ($query) use ($request) {
-                // Global search functionality
-                if ($request->has('search') && $request->search['value'] != '') {
-                    $searchValue = $request->search['value'];
-                    $query->where(function($q) use ($searchValue) {
-                        $q->where('sys_activity_log.description', 'like', '%' . $searchValue . '%')
-                          ->orWhere('sys_activity_log.log_name', 'like', '%' . $searchValue . '%')
-                          ->orWhere('sys_activity_log.event', 'like', '%' . $searchValue . '%')
-                          ->orWhereHas('causer', function($q) use ($searchValue) {
-                              $q->where('name', 'like', '%' . $searchValue . '%');
-                          });
-                    });
-                }
-            })
-            ->rawColumns(['description', 'action'])
-            ->make(true);
     }
 
     /**
@@ -127,12 +98,7 @@ class ActivityLogController extends Controller
      */
     public function show($id)
     {
-        $activity = Activity::with(['causer', 'subject'])->findOrFail($id);
-        return response()->json([
-            'success' => true,
-            'activity' => $activity,
-            'properties' => json_decode($activity->properties, true) ?: []
-        ]);
+        //
     }
 
     /**
@@ -156,6 +122,14 @@ class ActivityLogController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $activity = Activity::findOrFail($id);
+            $activity->delete();
+
+            return apiSuccess([], 'Log aktivitas berhasil dihapus.', 200);
+
+        } catch (\Exception $e) {
+            return apiError($e->getMessage(), $e->getCode());
+        }
     }
 }

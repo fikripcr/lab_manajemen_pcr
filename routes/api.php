@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\NotificationController;
-
+use App\Http\Controllers\Api\Sys\SystemDataController;
+use App\Http\Controllers\Api\Sys\ActivityLogController;
+use App\Http\Controllers\Api\Sys\NotificationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,11 +15,19 @@ use App\Http\Controllers\Api\NotificationController;
 |
 */
 
-// For in-app API calls, we can use session authentication
-Route::middleware(['auth'])->group(function () {
+
+
+// For in-app API calls, we use session authentication (web middleware)
+Route::middleware(['web','auth:sanctum'])->group(function () {
     // Notification API routes
     Route::prefix('notifications')->name('api.notifications.')->group(function () {
-        Route::get('/count', [NotificationController::class, 'getUnreadCount'])->name('count');
+        Route::get('/count', [NotificationController::class, 'getCount'])->name('count');
         Route::get('/list', [NotificationController::class, 'getList'])->name('list');
+    });
+
+    // Activity Log API routes
+    Route::prefix('activity-logs')->name('api.activity-logs.')->group(function () {
+        Route::get('/', [ActivityLogController::class, 'list'])->name('list');
+        Route::get('/{id}', [ActivityLogController::class, 'detail'])->name('detail');
     });
 });

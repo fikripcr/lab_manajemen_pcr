@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\RolePermissionRequest;
 use App\Http\Requests\Sys\RoleRequest;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
@@ -11,15 +12,25 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $roles = Role::select('id', 'name')
-            ->withCount('users')
-            ->get();
-        return view('pages.sys.roles.index', compact('roles'));
+        try {
+            $roles = $this->roleService->getRoleList([]);
+            return view('pages.sys.roles.index', compact('roles'));
+        } catch (\Exception $e) {
+            \Log::error('Error in RoleController@index: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat halaman peran.');
+        }
     }
 
     /**
@@ -37,23 +48,15 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        DB::beginTransaction();
         try {
-            $role = Role::create(['name' => $request->name]);
+            $data = $request->validated();
+            $data['permissions'] = $request->has('permissions') ? $request->permissions : [];
 
-            if ($request->has('permissions') && is_array($request->permissions)) {
-                // Ensure we have valid permission names
-                $permissions = array_values(array_filter($request->permissions, function ($permission) {
-                    return ! empty($permission);
-                }));
-                $role->givePermissionTo($permissions);
-            }
-
-            DB::commit();
+            $this->roleService->createRole($data);
 
             return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil dibuat.');
         } catch (\Exception $e) {
-            DB::rollback();
+            \Log::error('Error in RoleController@store: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal membuat peran: ' . $e->getMessage());
         }
     }
@@ -125,25 +128,15 @@ class RoleController extends Controller
      */
     public function update(RoleRequest $request, Role $role)
     {
-        DB::beginTransaction();
         try {
-            $role->update(['name' => $request->name]);
+            $data = $request->validated();
+            $data['permissions'] = $request->has('permissions') ? $request->permissions : [];
 
-            // Sync permissions with proper array handling
-            $permissions = $request->permissions ?? [];
-            if (is_array($permissions)) {
-                // Ensure we have valid permission names
-                $permissions = array_values(array_filter($permissions, function ($permission) {
-                    return ! empty($permission);
-                }));
-            }
-            $role->syncPermissions($permissions);
-
-            DB::commit();
+            $this->roleService->updateRole($role->id, $data);
 
             return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil diperbarui.');
         } catch (\Exception $e) {
-            DB::rollback();
+            \Log::error('Error in RoleController@update: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal memperbarui peran: ' . $e->getMessage());
         }
     }
@@ -153,15 +146,16 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        // Prevent deletion of roles that have users assigned
-        if ($role->users->count() > 0) {
-            return redirect()->back()->with('error', 'Cannot delete role with assigned users.');
-        }
-
         try {
-            $role->delete();
+            // Prevent deletion of roles that have users assigned
+            if ($role->users->count() > 0) {
+                return redirect()->back()->with('error', 'Cannot delete role with assigned users.');
+            }
+
+            $this->roleService->deleteRole($role->id);
             return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil dihapus.');
         } catch (\Exception $e) {
+            \Log::error('Error in RoleController@destroy: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus peran: ' . $e->getMessage());
         }
     }

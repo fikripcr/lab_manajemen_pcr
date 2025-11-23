@@ -1,5 +1,81 @@
 <?php
 
+if (!function_exists('apiResponse')) {
+    /**
+     * Create standardized API response
+     */
+    function apiResponse($data = null, $message = null, $code = 200, $status = 'success')
+    {
+        $response = [
+            'status' => $status,
+            'code' => $code
+        ];
+
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+
+        if ($message) {
+            $response['message'] = $message;
+        }
+
+        return response()->json($response, $code);
+    }
+}
+
+if (!function_exists('apiSuccess')) {
+    /**
+     * Create standardized success API response
+     */
+    function apiSuccess($data = null, $message = 'Operation successful', $code = 200)
+    {
+        return apiResponse($data, $message, $code, 'success');
+    }
+}
+
+if (!function_exists('apiError')) {
+    /**
+     * Create standardized error API response
+     */
+    function apiError($message = 'An error occurred', $code = 400, $data = null)
+    {
+        return apiResponse($data, $message, $code, 'error');
+    }
+}
+
+if (!function_exists('apiPaginated')) {
+    /**
+     * Create standardized paginated API response
+     */
+    function apiPaginated($paginator, $additionalData = [])
+    {
+        $paginationData = [
+            'data' => $paginator->items(),
+            'links' => [
+                'first' => $paginator->url(1),
+                'last' => $paginator->url($paginator->lastPage()),
+                'prev' => $paginator->previousPageUrl(),
+                'next' => $paginator->nextPageUrl(),
+            ],
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'from' => $paginator->firstItem(),
+                'last_page' => $paginator->lastPage(),
+                'path' => $paginator->path(),
+                'per_page' => $paginator->perPage(),
+                'to' => $paginator->lastItem(),
+                'total' => $paginator->total(),
+            ]
+        ];
+
+        if (!empty($additionalData)) {
+            $paginationData = array_merge($paginationData, $additionalData);
+        }
+
+        return apiSuccess($paginationData);
+    }
+}
+
 if (!function_exists('encryptId')) {
     /**
      * Encrypt an ID using Hashids
@@ -180,11 +256,11 @@ if (!function_exists('logError')) {
                     ];
                 })->toArray(),
                 'context' => $finalContext,
-                'url' => $finalContext['url'],
-                'method' => $finalContext['method'],
-                'ip_address' => $finalContext['ip_address'],
-                'user_agent' => $finalContext['user_agent'],
-                'user_id' => $finalContext['user_id'],
+                'url' => $finalContext['url'] ?? $request->fullUrl(),
+                'method' => $finalContext['method'] ?? $request->method(),
+                'ip_address' => $finalContext['ip_address'] ?? $request->ip(),
+                'user_agent' => $finalContext['user_agent'] ?? $request->userAgent(),
+                'user_id' => $finalContext['user_id'] ?? auth()->id(),
             ]);
         } catch (\Throwable $logError) {
             // If logging fails, at least log to standard Laravel logs
@@ -279,7 +355,6 @@ if (!function_exists('validation_messages_id')) {
             'not_regex'       => 'Format :attribute tidak valid.',
             'numeric'         => ':attribute harus berupa angka.',
             'password'        => 'Kata sandi salah.',
-            'password.user'   => 'Alamat email yang Anda masukkan tidak terdaftar.',
             'present'         => ':attribute harus ada.',
             'regex'           => 'Format :attribute tidak valid.',
             'required'        => ':attribute wajib diisi.',
@@ -308,7 +383,7 @@ if (!function_exists('validation_messages_id')) {
             'failed'          => 'Kredensial yang Anda masukkan tidak valid.',
             'throttle'        => 'Terlalu banyak percobaan login. Silakan coba lagi dalam :seconds detik.',
 
-            // Custom attributes (opsional)
+            // Custom attributes (optional)
             'attributes' => [],
         ];
     }
@@ -343,5 +418,25 @@ if (!function_exists('getAllUserRoles')) {
     function getAllUserRoles()
     {
         return auth()->user()->getRoleNames();
+    }
+}
+
+if (!function_exists('formatTanggalIndo')) {
+    /**
+     * Format tanggal ke bahasa Indonesia
+     */
+    function formatTanggalIndo($tanggal)
+    {
+        return \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY HH:mm:ss');
+    }
+}
+
+if (!function_exists('formatTanggalWaktuIndo')) {
+    /**
+     * Format tanggal dan waktu ke bahasa Indonesia
+     */
+    function formatTanggalWaktuIndo($tanggal)
+    {
+        return \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm');
     }
 }

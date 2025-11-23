@@ -12,7 +12,12 @@ class NotificationService
      */
     public function getUnreadCount(): int
     {
-        return Auth::user()->unreadNotifications()->count();
+        $user = auth()->user();
+        if (!$user) {
+            return 0;
+        }
+
+        return $user->unreadNotifications()->count();
     }
 
     /**
@@ -21,6 +26,11 @@ class NotificationService
     public function getNotificationList(array $filters = []): LengthAwarePaginator
     {
         $user = Auth::user();
+        if (!$user) {
+            // Return empty paginator if no user is authenticated
+            return collect([])->paginate(10);
+        }
+
         $query = $user->notifications();
 
         // Apply filters
@@ -42,7 +52,12 @@ class NotificationService
      */
     public function markAsRead(string $notificationId): bool
     {
-        $notification = Auth::user()->notifications()->where('id', $notificationId)->first();
+        $user = Auth::user();
+        if (!$user) {
+            return false;
+        }
+
+        $notification = $user->notifications()->where('id', $notificationId)->first();
 
         if ($notification) {
             $notification->markAsRead();
@@ -57,7 +72,12 @@ class NotificationService
      */
     public function markAllAsRead(): bool
     {
-        Auth::user()->unreadNotifications->markAsRead();
+        $user = Auth::user();
+        if (!$user) {
+            return false;
+        }
+
+        $user->unreadNotifications->markAsRead();
         return true;
     }
 }
