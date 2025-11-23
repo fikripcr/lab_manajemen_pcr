@@ -17,9 +17,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use Laravel\Sanctum\HasApiTokens;
+
 class User extends Authenticatable implements HasMedia, Searchable
 {
-    use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity;
+    use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.

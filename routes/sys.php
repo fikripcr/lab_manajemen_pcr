@@ -104,6 +104,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::post('/pdf-export', [TestController::class, 'testPdfExport'])->name('pdf-export');
         });
 
+
         // Documentation Routes - accessible via /sys/documentation
         Route::prefix('documentation')->name('sys.documentation.')->group(function () {
             Route::get('/', [DocumentationController::class, 'index'])->name('index');

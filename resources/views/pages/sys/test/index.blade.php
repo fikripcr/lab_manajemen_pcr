@@ -52,6 +52,22 @@
                 </div>
             </div>
         </div>
+
+        <!-- Test Notification API Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
+                        <i class="bx bx-data bx-lg text-info"></i>
+                    </div>
+                    <h5 class="card-title">Test Notification API</h5>
+                    <p class="card-text text-muted">Test the notification API endpoints for count and list operations</p>
+                    <button type="button" class="btn btn-info" onclick="testNotificationAPI()">
+                        Test Notification API
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -332,6 +348,86 @@
                     }, 1500);
                 }
             });
+        }
+
+        function testNotificationAPI() {
+            // Open a modal or new window to show API testing interface
+            Swal.fire({
+                title: 'Notification API Test',
+                html: `
+                    <div class="text-start">
+                        <p>Testing notification API endpoints:</p>
+                        <ul>
+                            <li><strong>Count API:</strong> GET /api/notifications/count</li>
+                            <li><strong>List API:</strong> GET /api/notifications/list</li>
+                        </ul>
+                        <p>Click "Test" to make API calls using axios.</p>
+                    </div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button id="testCountBtn" class="btn btn-primary">Test Count</button>
+                        <button id="testListBtn" class="btn btn-info">Test List</button>
+                    </div>
+                    <div id="apiResults" class="mt-3" style="max-height: 200px; overflow-y: auto;"></div>
+                `,
+                width: '60%',
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: 'Close',
+                willOpen: () => {
+                    document.getElementById('testCountBtn').addEventListener('click', function() {
+                        testNotificationCount();
+                    });
+                    document.getElementById('testListBtn').addEventListener('click', function() {
+                        testNotificationList();
+                    });
+                }
+            });
+        }
+
+        function testNotificationCount() {
+            const resultsDiv = document.getElementById('apiResults');
+            resultsDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p>Testing count API...</p></div>';
+
+            axios.get('/api/notifications/count')
+                .then(response => {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <h6>Count API Response:</h6>
+                            <pre>${JSON.stringify(response.data, null, 2)}</pre>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h6>Error:</h6>
+                            <pre>${error.response?.data?.message || error.message}</pre>
+                        </div>
+                    `;
+                });
+        }
+
+        function testNotificationList() {
+            const resultsDiv = document.getElementById('apiResults');
+            resultsDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p>Testing list API...</p></div>';
+
+            axios.get('/api/notifications/list', { params: { per_page: 5 } })
+                .then(response => {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <h6>List API Response (first 5 items):</h6>
+                            <pre>${JSON.stringify(response.data, null, 2)}</pre>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h6>Error:</h6>
+                            <pre>${error.response?.data?.message || error.message}</pre>
+                        </div>
+                    `;
+                });
         }
     </script>
 @endpush

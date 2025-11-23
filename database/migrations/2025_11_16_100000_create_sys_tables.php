@@ -197,7 +197,7 @@ return new class extends Migration
             });
         }
 
-        if(! Schema::hasTable('sys_hosts')) {
+        if (! Schema::hasTable('sys_hosts')) {
             Schema::create('sys_hosts', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name');
@@ -209,7 +209,7 @@ return new class extends Migration
             });
         }
 
-        if(! Schema::hasTable('sys_checks')) {
+        if (! Schema::hasTable('sys_checks')) {
             Schema::create('sys_checks', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('host_id')->unsigned();
@@ -223,6 +223,19 @@ return new class extends Migration
                 $table->integer('next_run_in_minutes')->nullable();
                 $table->timestamp('started_throttling_failing_notifications_at')->nullable();
                 $table->json('custom_properties')->nullable();
+                $table->timestamps();
+            });
+        }
+
+        if (! Schema::hasTable('sys_personal_access_tokens')) {
+            Schema::create('sys_personal_access_tokens', function (Blueprint $table) {
+                $table->id();
+                $table->morphs('tokenable');
+                $table->text('name');
+                $table->string('token', 64)->unique();
+                $table->text('abilities')->nullable();
+                $table->timestamp('last_used_at')->nullable();
+                $table->timestamp('expires_at')->nullable()->index();
                 $table->timestamps();
             });
         }
@@ -248,6 +261,7 @@ return new class extends Migration
         Schema::dropIfExists('sys_cache_locks');
         Schema::dropIfExists('sys_hosts');
         Schema::dropIfExists('sys_checks');
+        Schema::dropIfExists('sys_personal_access_tokens');
         Schema::dropIfExists('users');
     }
 };

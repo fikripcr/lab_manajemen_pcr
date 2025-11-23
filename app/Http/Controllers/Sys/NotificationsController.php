@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\SysTestNotification;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -11,6 +12,12 @@ use Yajra\DataTables\DataTables;
 
 class NotificationsController extends Controller
 {
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
     /**
      * Display a listing of the notifications.
      */
@@ -91,7 +98,7 @@ class NotificationsController extends Controller
     public function markAllAsRead()
     {
         $count = Auth::user()->unreadNotifications->count();
-        Auth::user()->unreadNotifications->markAsRead();
+        $this->notificationService->markAllAsRead();
 
         // Log the notification marking as read
         logActivity('notification', 'All notifications marked as read: ' . $count . ' notifications by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
@@ -142,7 +149,7 @@ class NotificationsController extends Controller
      */
     public function getUnreadCount()
     {
-        $count = Auth::user()->unreadNotifications->count();
+        $count = $this->notificationService->getUnreadCount();
 
         return response()->json(['count' => $count]);
     }
