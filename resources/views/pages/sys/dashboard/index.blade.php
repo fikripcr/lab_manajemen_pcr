@@ -268,7 +268,7 @@
 
                 <!-- Roles -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('roles.index') }}'">
+                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.roles.index') }}'">
                         <div class="avatar me-3">
                             <div class="avatar-initial rounded-circle bg-transparent text-success">
                                 <i class="bx bx-shield-alt bx-lg"></i>
@@ -284,7 +284,7 @@
 
                 <!-- Permissions -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('permissions.index') }}'">
+                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.permissions.index') }}'">
                         <div class="avatar me-3">
                             <div class="avatar-initial rounded-circle bg-transparent text-success">
                                 <i class="bx bx-key bx-lg"></i>
@@ -396,28 +396,46 @@
             </div>
         </div>
 
-
-
-
         <!-- Charts Section -->
         <div class="col-12 mb-4">
-            <div class="row">
-                <!-- User Role Distribution Chart -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">User Distribution by Role</h5>
-                            <div id="userRoleChart"></div>
+            <!-- User Role Distribution List -->
+            <div class="mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">User Distribution by Role</h5>
+                        <div class="role-list-container d-flex flex-wrap gap-2">
+                            @forelse($roleUserCounts as $roleData)
+                                <div class="role-item d-flex justify-content-between align-items-center px-2 py-1 bg-primary text-white rounded">
+                                    <span class="fw-medium me-2">{{ Str::ucfirst($roleData['name']) }}</span>
+                                    <span class="badge bg-label-primary rounded-pill">{{ $roleData['count'] }}</span>
+                                </div>
+                            @empty
+                                <div class="text-center w-100">
+                                    <p class="text-muted py-4 mb-0">No roles found</p>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
 
                 <!-- Activity Trend Chart -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title">Activity Trend (Last 7 Days)</h5>
+                            <h5 class="card-title">Activity Trend (Last 14 Days)</h5>
                             <div id="activityTrendChart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Log Trend Chart -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Error Trend (Last 14 Days)</h5>
+                            <div id="errorTrendChart"></div>
                         </div>
                     </div>
                 </div>
@@ -425,105 +443,128 @@
         </div>
 
 
-        <!-- Recent Logs -->
+        <!-- Recent Logs and Errors -->
         <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Recent Logs (Last 10 Entries)</h5>
+            <div class="row">
+                <!-- Recent Logs -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Recent Activities</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Activity</th>
+                                            <th>Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-border-bottom-0">
+                                        @forelse($recentLogs as $log)
+                                            <tr>
+                                                <td>
+
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar-xs me-2">
+                                                            <span class="avatar-title rounded-circle bg-label-info text-info">
+                                                                @if (str_contains(strtolower($log->description), 'create'))
+                                                                    <i class="bx bx-plus bx-xs"></i>
+                                                                @elseif(str_contains(strtolower($log->description), 'update'))
+                                                                    <i class="bx bx-edit bx-xs"></i>
+                                                                @elseif(str_contains(strtolower($log->description), 'delete') || str_contains(strtolower($log->description), 'destroy'))
+                                                                    <i class="bx bx-trash bx-xs"></i>
+                                                                @elseif(str_contains(strtolower($log->description), 'login'))
+                                                                    <i class="bx bx-log-in bx-xs"></i>
+                                                                @elseif(str_contains(strtolower($log->description), 'logout'))
+                                                                    <i class="bx bx-log-out bx-xs"></i>
+                                                                @else
+                                                                    <i class="bx bx-cog bx-xs"></i>
+                                                                @endif
+                                                            </span>
+                                                        </div>
+                                                        <span>
+                                                            {{ $log->description }}
+                                                            <div class="d-flex flex-column text-muted text-sm">
+                                                                <small>({{ $log->causer ? $log->causer->name : 'System' }})</small>
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted">{{ $log->created_at->diffForHumans() }}</span>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted py-4">
+                                                    No recent activities
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive text-nowrap">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>User</th>
-                                    <th>Activity</th>
-                                    <th>Time</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                                @forelse($recentLogs as $log)
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar-xs me-3">
-                                                    <span class="avatar-title rounded-circle bg-label-primary text-primary">
-                                                        {{ $log->causer ? strtoupper($log->causer->name[0]) : 'S' }}
-                                                    </span>
-                                                </div>
-                                                <div class="d-flex flex-column">
-                                                    <span class="fw-medium">{{ $log->causer ? $log->causer->name : 'System' }}</span>
-                                                    <small class="text-muted">{{ $log->causer ? $log->causer->email : '' }}</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar-xs me-2">
-                                                    <span class="avatar-title rounded-circle bg-label-info text-info">
-                                                        @if (str_contains(strtolower($log->description), 'create'))
-                                                            <i class="bx bx-plus bx-xs"></i>
-                                                        @elseif(str_contains(strtolower($log->description), 'update'))
-                                                            <i class="bx bx-edit bx-xs"></i>
-                                                        @elseif(str_contains(strtolower($log->description), 'delete') || str_contains(strtolower($log->description), 'destroy'))
-                                                            <i class="bx bx-trash bx-xs"></i>
-                                                        @elseif(str_contains(strtolower($log->description), 'login'))
-                                                            <i class="bx bx-log-in bx-xs"></i>
-                                                        @elseif(str_contains(strtolower($log->description), 'logout'))
-                                                            <i class="bx bx-log-out bx-xs"></i>
-                                                        @else
-                                                            <i class="bx bx-cog bx-xs"></i>
-                                                        @endif
-                                                    </span>
-                                                </div>
-                                                <span>{{ $log->description }}</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="text-muted">{{ $log->created_at->diffForHumans() }}</span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="text-center text-muted py-4">
-                                            No recent logs
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+
+                <!-- Recent Errors -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Recent Errors</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Error</th>
+                                            <th>Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-border-bottom-0">
+                                        @php
+                                            $recentErrors = \App\Models\Sys\ErrorLog::with('user')->latest()->limit(10)->get();
+                                        @endphp
+                                        @forelse($recentErrors as $error)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar-xs me-3">
+                                                            <span class="avatar-title rounded-circle bg-label-danger text-danger">
+                                                                <i class="bx bx-error bx-xs"></i>
+                                                            </span>
+                                                        </div>
+                                                       <div class="d-flex flex-column">
+                                                        <span>{{ \Illuminate\Support\Str::limit(strip_tags($error->message), 50) }}</span>
+                                                        <small class="text-muted">{{ $error->exception_class ?? 'Unknown Error' }}</small>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted">{{ $error->created_at->diffForHumans() }}</span>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted py-4">
+                                                    No recent errors
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
     </div>
-
-    <style>
-        .hover-pointer {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .hover-pointer:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            border-color: #d9dee3 !important;
-        }
-
-        .menu-icon {
-            font-size: 1.125rem;
-            line-height: 1.4;
-            min-width: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .bx {
-            font-size: 1.4rem;
-        }
-    </style>
 
 @endsection
 
@@ -533,35 +574,8 @@
 
     <script>
         // Parse chart data from JSON
-        const roleChartData = {!! $roleChartData !!};
         const activityChartData = {!! $activityChartData !!};
-
-        // User Role Distribution Chart (Donut)
-        const userRoleChart = {
-            chart: {
-                height: 350,
-                type: 'donut',
-            },
-            series: roleChartData.series,
-            labels: roleChartData.labels,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: 200
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }]
-        }
-
-        const userRoleChartEl = document.querySelector('#userRoleChart');
-        if (userRoleChartEl) {
-            const userRoleChartObj = new ApexCharts(userRoleChartEl, userRoleChart);
-            userRoleChartObj.render();
-        }
+        const errorChartData = {!! $errorChartData !!};
 
         // Activity Trend Chart (Line)
         const activityTrendChart = {
@@ -576,7 +590,8 @@
                 enabled: false
             },
             stroke: {
-                curve: 'straight'
+                curve: 'straight',
+                width: 2
             },
             series: activityChartData.series,
             grid: {
@@ -587,7 +602,8 @@
             },
             xaxis: {
                 categories: activityChartData.categories,
-            }
+            },
+            colors: ['#0d6efd'] // Blue color for activities
         }
 
         const activityTrendChartEl = document.querySelector('#activityTrendChart');
@@ -595,5 +611,66 @@
             const activityTrendChartObj = new ApexCharts(activityTrendChartEl, activityTrendChart);
             activityTrendChartObj.render();
         }
+
+        // Error Trend Chart (Line) - Using red color to differentiate from activity chart
+        const errorTrendChart = {
+            chart: {
+                height: 350,
+                type: 'line',
+                zoom: {
+                    enabled: false
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'straight',
+                width: 2
+            },
+            series: errorChartData.series,
+            grid: {
+                row: {
+                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    opacity: 0.5
+                },
+            },
+            xaxis: {
+                categories: errorChartData.categories,
+            },
+            colors: ['#dc3545'] // Red color for errors to differentiate from activity chart
+        }
+
+        const errorTrendChartEl = document.querySelector('#errorTrendChart');
+        if (errorTrendChartEl) {
+            const errorTrendChartObj = new ApexCharts(errorTrendChartEl, errorTrendChart);
+            errorTrendChartObj.render();
+        }
+
+        // Update server time by fetching from server endpoint
+        function updateServerTime() {
+            fetch('{{ route('sys.server-time') }}', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.server_time) {
+                        document.getElementById('serverTime').textContent = data.server_time;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching server time:', error);
+                });
+        }
+
+        // Update the time every 30 seconds to maintain accuracy
+        setInterval(updateServerTime, 30000);
+
+        // Initial call to update time immediately
+        setTimeout(updateServerTime, 1000); // Wait 1 second to allow initial render
     </script>
 @endpush

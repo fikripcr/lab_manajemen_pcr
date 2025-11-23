@@ -20,7 +20,7 @@ class Role extends SpatieRole implements \Spatie\Searchable\Searchable
 
     public function getSearchResult(): SearchResult
     {
-        $url = route('roles.index') . '?search=' . urlencode($this->name);
+        $url = route('sys.roles.index') . '?search=' . urlencode($this->name);
 
         return new SearchResult(
             $this,

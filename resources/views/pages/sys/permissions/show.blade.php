@@ -4,10 +4,10 @@
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Permission Details: {{ $permission->name }}</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('permissions.edit', $permission) }}" class="btn btn-primary">
+            <a href="{{ route('sys.permissions.edit', $permission) }}" class="btn btn-primary">
                 <i class="bx bx-edit me-1"></i> Edit
             </a>
-            <a href="{{ route('permissions.index') }}" class="btn btn-secondary">
+            <a href="{{ route('sys.permissions.index') }}" class="btn btn-secondary">
                 <i class="bx bx-arrow-back me-1"></i> Back
             </a>
         </div>
@@ -58,7 +58,7 @@
                     @endif
 
                     <div class="mt-4">
-                        <form action="{{ route('permissions.destroy', $permission) }}" method="POST" class="d-inline">
+                        <form action="{{ route('sys.permissions.destroy', $permission) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger me-2" onclick="return confirm('Are you sure you want to delete this permission? This will remove it from {{ $permission->roles->count() }} roles.')">

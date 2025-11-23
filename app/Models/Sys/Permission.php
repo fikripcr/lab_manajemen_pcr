@@ -27,7 +27,7 @@ class Permission extends SpatiePermission implements \Spatie\Searchable\Searchab
 
     public function getSearchResult(): SearchResult
     {
-        $url = route('permissions.index') . '?search=' . urlencode($this->name);
+        $url = route('sys.permissions.index') . '?search=' . urlencode($this->name);
 
         return new SearchResult(
             $this,

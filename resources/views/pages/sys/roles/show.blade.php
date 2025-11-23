@@ -4,10 +4,10 @@
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Role Details: {{ $role->name }}</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('roles.edit', $role) }}" class="btn btn-primary">
+            <a href="{{ route('sys.roles.edit', $role) }}" class="btn btn-primary">
                 <i class="bx bx-edit me-1"></i> Edit Role
             </a>
-            <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+            <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
                 <i class="bx bx-arrow-back me-1"></i> Back to Roles
             </a>
         </div>

@@ -3,7 +3,7 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Access Control /</span> Role</h4>
-        <a href="{{ route('roles.create') }}" class="btn btn-primary">
+        <a href="{{ route('sys.roles.create') }}" class="btn btn-primary">
             <i class="bx bx-plus"></i> Add New Role
         </a>
     </div>
@@ -23,13 +23,13 @@
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="{{ route('roles.show', $role) }}">
+                                <a class="dropdown-item" href="{{ route('sys.roles.show', $role) }}">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <a class="dropdown-item" href="{{ route('roles.edit', $role) }}">
+                                <a class="dropdown-item" href="{{ route('sys.roles.edit', $role) }}">
                                     <i class="bx bx-edit me-1"></i> Edit
                                 </a>
-                                <form action="{{ route('roles.destroy', $role) }}" method="POST" class="d-inline">
+                                <form action="{{ route('sys.roles.destroy', $role) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to delete this role?')">
@@ -64,7 +64,7 @@
                 <i class="bx bx-shield bx-lg text-muted mb-3"></i>
                 <h5 class="text-muted">No roles found</h5>
                 <p class="text-muted">Get started by creating a new role</p>
-                <a href="{{ route('roles.create') }}" class="btn btn-primary">Create Role</a>
+                <a href="{{ route('sys.roles.create') }}" class="btn btn-primary">Create Role</a>
             </div>
         </div>
         @endforelse

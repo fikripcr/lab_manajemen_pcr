@@ -1,16 +1,17 @@
 <?php
 
-use App\Http\Controllers\Sys\ActivityLogController;
-use App\Http\Controllers\Sys\AppConfigController;
-use App\Http\Controllers\Sys\BackupController;
-use App\Http\Controllers\Sys\DashboardController;
-use App\Http\Controllers\Sys\DocumentationController;
-use App\Http\Controllers\Sys\ErrorLogController;
-use App\Http\Controllers\Sys\SysGlobalSearchController;
-use App\Http\Controllers\Sys\NotificationsController;
-use App\Http\Controllers\Sys\PermissionController;
-use App\Http\Controllers\Sys\RoleController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Sys\RoleController;
+use App\Http\Controllers\Sys\TestController;
+use App\Http\Controllers\Sys\BackupController;
+use App\Http\Controllers\Sys\ErrorLogController;
+use App\Http\Controllers\Sys\AppConfigController;
+use App\Http\Controllers\Sys\DashboardController;
+use App\Http\Controllers\Sys\PermissionController;
+use App\Http\Controllers\Sys\ActivityLogController;
+use App\Http\Controllers\Sys\DocumentationController;
+use App\Http\Controllers\Sys\NotificationsController;
+use App\Http\Controllers\Sys\SysGlobalSearchController;
 
 Route::middleware(['auth', 'check.expired'])->group(function () {
     // ==========================
@@ -18,7 +19,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
     // All routes are prefixed with /sys/
     // ==========================
     Route::prefix('sys')->group(function () {
-        // System Dashboard - accessible via /sys
         Route::get('/', [DashboardController::class, 'index'])->name('sys.dashboard');
 
         // Activity Log Routes - accessible via /sys/activity-log
@@ -42,12 +42,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::put('/update/{id?}', [NotificationsController::class, 'update'])->name('update');
             Route::post('/send', [NotificationsController::class, 'send'])->name('send');
         });
-
-        // Send test notification to authenticated user
-        Route::post('/send-test-notification', [NotificationsController::class, 'sendTestNotification'])->name('send.sys.test.notification');
-
-        // Send notification to specific user
-        Route::post('/users/{user}/send-notification', [NotificationsController::class, 'sendToUser'])->name('users.send.notification');
 
         // Sys Global Search - accessible via /sys/sys-search
         Route::get('/sys-search', [SysGlobalSearchController::class, 'search'])->name('sys-search');
@@ -76,22 +70,38 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('test', [ErrorLogController::class, 'testErrorLog'])->name('test');
         });
 
-        // Roles & Permissions
-        Route::resource('roles', RoleController::class);
-
-        Route::prefix('permissions')->name('sys.permissions.')->group(function () {
-            Route::get('api', [PermissionController::class, 'paginate'])->name('data');
-            Route::get('create-modal', [PermissionController::class, 'createModal'])->name('create-modal');
-            Route::get('edit-modal/{permissionId?}', [PermissionController::class, 'editModal'])->name('edit-modal.show');
+        // Roles Management - accessible via /sys/roles
+        Route::prefix('roles')->name('sys.roles.')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/create', [RoleController::class, 'create'])->name('create');
+            Route::post('/', [RoleController::class, 'store'])->name('store');
+            Route::get('/{role}', [RoleController::class, 'show'])->name('show');
+            Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+            Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+            Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+            Route::put('/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('update-permissions');
         });
-        Route::resource('permissions', PermissionController::class);
+
+        // Permissions Management - accessible via /sys/permissions
+        Route::prefix('permissions')->name('sys.permissions.')->group(function () {
+            Route::get('/', [PermissionController::class, 'index'])->name('index');
+            Route::get('/api', [PermissionController::class, 'paginate'])->name('data');
+            Route::get('/create', [PermissionController::class, 'create'])->name('create');
+            Route::post('/', [PermissionController::class, 'store'])->name('store');
+            Route::get('/{permissionId}', [PermissionController::class, 'show'])->name('show');
+            Route::get('/{permissionId}/edit', [PermissionController::class, 'edit'])->name('edit');
+            Route::put('/{permissionId}', [PermissionController::class, 'update'])->name('update');
+            Route::delete('/{permissionId}', [PermissionController::class, 'destroy'])->name('destroy');
+            Route::get('/create-modal', [PermissionController::class, 'createModal'])->name('create-modal');
+            Route::get('/edit-modal/{permissionId}', [PermissionController::class, 'editModal'])->name('edit-modal.show');
+        });
 
         // Testing Dashboard - accessible via /sys/test
         Route::prefix('test')->name('sys.test.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Sys\TestController::class, 'index'])->name('index');
-            Route::post('/email', [\App\Http\Controllers\Sys\TestController::class, 'testEmail'])->name('email');
-            Route::post('/notification', [\App\Http\Controllers\Sys\TestController::class, 'testNotification'])->name('notification');
-            Route::post('/pdf-export', [\App\Http\Controllers\Sys\TestController::class, 'testPdfExport'])->name('pdf-export');
+            Route::get('/', [TestController::class, 'index'])->name('index');
+            Route::post('/email', [TestController::class, 'testEmail'])->name('email');
+            Route::post('/notification', [TestController::class, 'testNotification'])->name('notification');
+            Route::post('/pdf-export', [TestController::class, 'testPdfExport'])->name('pdf-export');
         });
 
         // Documentation Routes - accessible via /sys/documentation
@@ -101,5 +111,12 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/edit/{page?}', [DocumentationController::class, 'edit'])->name('edit');
             Route::put('/update/{page?}', [DocumentationController::class, 'update'])->name('update');
         });
+
+        // Get current server time
+        Route::get('/server-time', function() {
+            return response()->json([
+                'server_time' => \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm:ss')
+            ]);
+        })->name('sys.server-time');
     });
 });

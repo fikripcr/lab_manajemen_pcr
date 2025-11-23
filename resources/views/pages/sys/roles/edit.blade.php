@@ -4,10 +4,10 @@
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Edit Role: {{ $role->name }}</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('roles.show', $role) }}" class="btn btn-info">
+            <a href="{{ route('sys.roles.show', $role) }}" class="btn btn-info">
                 <i class="bx bx-show"></i> View Role
             </a>
-            <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+            <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
                 <i class="bx bx-arrow-back"></i> Back to Roles
             </a>
         </div>
@@ -22,7 +22,7 @@
                     <!-- Role Form Card -->
                     <div class="card mb-4">
                         <div class="card-body">
-                            <form action="{{ route('roles.update', $role) }}" method="POST">
+                            <form action="{{ route('sys.roles.update', $role) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 
@@ -39,7 +39,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bx bx-save me-1"></i> Update Role
                                     </button>
-                                    <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+                                    <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
                                         <i class="bx bx-arrow-back me-1"></i> Cancel
                                     </a>
                                 </div>
@@ -180,7 +180,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="bx bx-save me-1"></i> Update Role
                             </button>
-                            <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
                                 <i class="bx bx-arrow-back me-1"></i> Cancel
                             </a>
                         </div>

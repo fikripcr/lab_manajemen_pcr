@@ -22,7 +22,7 @@
         <div class="card-body">
             <x-sys.flash-message />
 
-            <x-sys.datatable id="permissions-table" route="{{ route('permissions.data') }}" with-checkbox="true" checkbox-key="id"
+            <x-sys.datatable id="permissions-table" route="{{ route('sys.permissions.data') }}" with-checkbox="true" checkbox-key="id"
              :columns="[
                 [
                     'title' => '#',
@@ -81,7 +81,7 @@
                 const modal = new bootstrap.Modal(document.getElementById('modalAction'));
                 modal.show();
 
-                axios.get('{{ route('permissions.create-modal') }}')
+                axios.get('{{ route('sys.permissions.create-modal') }}')
                     .then(response => {
                         document.getElementById('modalContent').innerHTML = response.data;
                     })

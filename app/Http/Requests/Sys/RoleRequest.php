@@ -23,7 +23,7 @@ class RoleRequest extends FormRequest
         return [
             'name' => $roleId ? 'required|unique:sys_roles,name,' . $roleId : 'required|unique:sys_roles,name',
             'permissions' => 'nullable|array',
-            'permissions.*' => 'exists:sys_permissions,name',
+            'sys.permissions.*' => 'exists:sys_permissions,name',
         ];
     }
 

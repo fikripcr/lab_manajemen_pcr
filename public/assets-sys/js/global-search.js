@@ -10,10 +10,13 @@ function initGlobalSearch() {
         if (endpoint) {
             globalSearchEndpoint = endpoint;
         }
-        $('#globalSearchModal').modal('show');
+        const modalElement = document.getElementById('globalSearchModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
         // Focus on search input after modal is shown
-        $('#globalSearchModal').on('shown.bs.modal', function () {
-            $('#global-search-input').focus();
+        modalElement.addEventListener('shown.bs.modal', function () {
+            document.getElementById('global-search-input').focus();
         });
     };
 
@@ -60,14 +63,14 @@ function initGlobalSearch() {
     });
 
     // Close modal and clear search when modal is hidden
-    $('#globalSearchModal').on('hidden.bs.modal', function () {
-        $('#global-search-input').val('');
-        $('#search-results-container').html(`
+    document.getElementById('globalSearchModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('global-search-input').value = '';
+        document.getElementById('search-results-container').innerHTML = `
             <div class="text-center py-4">
                 <i class="bx bx-search fs-1"></i>
                 <p class="mb-0">Enter a term to search across all sections</p>
             </div>
-        `);
+        `;
         currentSearchTerm = '';
     });
 
@@ -126,7 +129,11 @@ function displaySearchResults(results, searchTerm) {
     // Count total results
     const totalResults = (results.users?.length || 0) +
         (results.roles?.length || 0) +
-        (results.permissions?.length || 0);
+        (results.permissions?.length || 0) +
+        (results.activities?.length || 0) +
+        (results.error_logs?.length || 0) +
+        (results.server_hosts?.length || 0) +
+        (results.server_checks?.length || 0);
 
     if (totalResults === 0) {
         html += `
@@ -212,6 +219,114 @@ function displaySearchResults(results, searchTerm) {
                     <div class="flex-grow-1">
                         <h6 class="mb-0">` + permission.name + `</h6>
                         <small class="text-muted">Permission</small>
+                    </div>
+                </div>
+            </a>
+        `;
+            });
+            html += '</div></div>';
+        }
+
+        // Activity results
+        if (results.activities && results.activities.length > 0) {
+            html += `
+        <div class="mb-4">
+            <h6 class="mb-3"><i class="bx bx-history me-1"></i> Activities (` + results.activities.length + `)</h6>
+            <div class="list-group list-group-flush">
+    `;
+            results.activities.forEach(function (activity) {
+                html += `
+            <a href="` + activity.url + `" class="list-group-item list-group-item-action">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="avatar avatar-xs bg-label-primary rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bx bx-history"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">` + activity.name + `</h6>
+                        <small class="text-muted">` + activity.description + `</small>
+                    </div>
+                </div>
+            </a>
+        `;
+            });
+            html += '</div></div>';
+        }
+
+        // Error log results
+        if (results.error_logs && results.error_logs.length > 0) {
+            html += `
+        <div class="mb-4">
+            <h6 class="mb-3"><i class="bx bx-error me-1"></i> Error Logs (` + results.error_logs.length + `)</h6>
+            <div class="list-group list-group-flush">
+    `;
+            results.error_logs.forEach(function (error_log) {
+                html += `
+            <a href="` + error_log.url + `" class="list-group-item list-group-item-action">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="avatar avatar-xs bg-label-danger rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bx bx-error"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">` + error_log.name + `</h6>
+                        <small class="text-muted">` + error_log.description + `</small>
+                    </div>
+                </div>
+            </a>
+        `;
+            });
+            html += '</div></div>';
+        }
+
+        // Server host results
+        if (results.server_hosts && results.server_hosts.length > 0) {
+            html += `
+        <div class="mb-4">
+            <h6 class="mb-3"><i class="bx bx-server me-1"></i> Server Hosts (` + results.server_hosts.length + `)</h6>
+            <div class="list-group list-group-flush">
+    `;
+            results.server_hosts.forEach(function (server_host) {
+                html += `
+            <a href="` + server_host.url + `" class="list-group-item list-group-item-action">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="avatar avatar-xs bg-label-success rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bx bx-server"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">` + server_host.name + `</h6>
+                        <small class="text-muted">` + server_host.description + `</small>
+                    </div>
+                </div>
+            </a>
+        `;
+            });
+            html += '</div></div>';
+        }
+
+        // Server check results
+        if (results.server_checks && results.server_checks.length > 0) {
+            html += `
+        <div class="mb-4">
+            <h6 class="mb-3"><i class="bx bx-check-circle me-1"></i> Server Checks (` + results.server_checks.length + `)</h6>
+            <div class="list-group list-group-flush">
+    `;
+            results.server_checks.forEach(function (server_check) {
+                html += `
+            <a href="` + server_check.url + `" class="list-group-item list-group-item-action">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="avatar avatar-xs bg-label-warning rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bx bx-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">` + server_check.name + `</h6>
+                        <small class="text-muted">` + server_check.description + `</small>
                     </div>
                 </div>
             </a>

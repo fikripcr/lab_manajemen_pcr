@@ -21,7 +21,7 @@ class RolePermissionRequest extends FormRequest
     {
         return [
             'permissions' => 'nullable|array',
-            'permissions.*' => 'exists:sys_permissions,name',
+            'sys.permissions.*' => 'exists:sys_permissions,name',
         ];
     }
 

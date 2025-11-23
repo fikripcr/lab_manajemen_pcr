@@ -33,14 +33,14 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Access Control</span>
         </li>
-        <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
-            <a href="{{ route('roles.index') }}" class="menu-link">
+        <li class="menu-item {{ request()->routeIs('sys.roles.*') ? 'active' : '' }}">
+            <a href="{{ route('sys.roles.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-lock-alt"></i>
                 <div data-i18n="Roles">Roles</div>
             </a>
         </li>
-        <li class="menu-item {{ request()->routeIs('permissions.*') ? 'active' : '' }}">
-            <a href="{{ route('permissions.index') }}" class="menu-link">
+        <li class="menu-item {{ request()->routeIs('sys.permissions.*') ? 'active' : '' }}">
+            <a href="{{ route('sys.permissions.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-key"></i>
                 <div data-i18n="Permissions">Permissions</div>
             </a>

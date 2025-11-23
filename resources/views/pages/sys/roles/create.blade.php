@@ -3,7 +3,7 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Create New Role</h4>
-        <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+        <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
             <i class="bx bx-arrow-back"></i> Back to Roles
         </a>
     </div>
@@ -13,7 +13,7 @@
     <!-- Role Form Card -->
     <div class="card mb-4">
         <div class="card-body">
-            <form action="{{ route('roles.store') }}" method="POST">
+            <form action="{{ route('sys.roles.store') }}" method="POST">
                 @csrf
 
                 <div class="mb-3">
@@ -28,7 +28,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="bx bx-save me-1"></i> Create Role
                     </button>
-                    <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
                         <i class="bx bx-arrow-back me-1"></i> Cancel
                     </a>
                 </div>
@@ -159,7 +159,7 @@
         <button type="submit" class="btn btn-primary">
             <i class="bx bx-save me-1"></i> Create Role
         </button>
-        <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+        <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
             <i class="bx bx-arrow-back me-1"></i> Cancel
         </a>
     </div>

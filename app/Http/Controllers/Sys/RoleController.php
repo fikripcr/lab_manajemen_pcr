@@ -51,7 +51,7 @@ class RoleController extends Controller
 
             DB::commit();
 
-            return redirect()->route('roles.index')->with('success', 'Peran berhasil dibuat.');
+            return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'Gagal membuat peran: ' . $e->getMessage());
@@ -141,7 +141,7 @@ class RoleController extends Controller
 
             DB::commit();
 
-            return redirect()->route('roles.index')->with('success', 'Peran berhasil diperbarui.');
+            return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'Gagal memperbarui peran: ' . $e->getMessage());
@@ -160,7 +160,7 @@ class RoleController extends Controller
 
         try {
             $role->delete();
-            return redirect()->route('roles.index')->with('success', 'Peran berhasil dihapus.');
+            return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil dihapus.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus peran: ' . $e->getMessage());
         }

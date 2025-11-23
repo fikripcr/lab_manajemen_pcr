@@ -37,39 +37,44 @@ class DashboardController extends Controller
         $appDebug       = config('app.debug') ? 'Enabled' : 'Disabled';
         $appUrl         = config('app.url');
 
-        // Get recent logs (last 10)
+        // Get recent activities (last 10)
         $recentLogs = Activity::with(['causer:id,name', 'subject'])
             ->latest()
             ->limit(10)
             ->get();
 
-        // Get user role distribution for chart
-        $userRoleData = [];
-        $roleNames    = [];
-
+        // Get user role distribution data for list
+        $roleUserCounts = [];
         $roles = Role::all();
         foreach ($roles as $role) {
-            $userCount      = $role->users()->count();
-            $userRoleData[] = $userCount;
-            $roleNames[]    = $role->name;
+            $roleUserCounts[] = [
+                'name' => $role->name,
+                'count' => $role->users()->count()
+            ];
         }
 
-        // Format role data for ApexCharts
-        $roleChartData = json_encode([
-            'series' => $userRoleData,
-            'labels' => $roleNames,
-        ]);
-
-        // Get activities by date for the last 7 days
+        // Get activities by date for the last 14 days
         $activityByDate = [];
         $dates          = [];
 
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = 13; $i >= 0; $i--) {
             $date  = now()->subDays($i);
             $count = Activity::whereDate('created_at', $date)->count();
 
             $activityByDate[] = $count;
             $dates[]          = $date->format('M d');
+        }
+
+        // Get error log data for chart (last 14 days)
+        $errorByDate = [];
+        $errorDates = [];
+
+        for ($i = 13; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $count = \App\Models\Sys\ErrorLog::whereDate('created_at', $date)->count();
+
+            $errorByDate[] = $count;
+            $errorDates[] = $date->format('M d');
         }
 
         // Format activity data for ApexCharts
@@ -81,10 +86,19 @@ class DashboardController extends Controller
             'categories' => $dates,
         ]);
 
+        // Format error data for ApexCharts
+        $errorChartData = json_encode([
+            'series'     => [[
+                'name' => 'Errors',
+                'data' => $errorByDate,
+            ]],
+            'categories' => $errorDates,
+        ]);
+
         // Check if we need to run server monitoring
         if (request()->has('refresh_monitoring')) {
             Artisan::call('server:monitor');
-            LogActivity('sys_dashboard', 'Server monitoring refreshed manually', auth()->user());
+            logActivity('sys_dashboard', 'Server monitoring refreshed manually', auth()->user());
         }
 
         // Retrieve server monitoring data
@@ -132,8 +146,9 @@ class DashboardController extends Controller
             'appDebug',
             'appUrl',
             'recentLogs',
-            'roleChartData',
+            'roleUserCounts',
             'activityChartData',
+            'errorChartData',
             'serverMonitoringData'
         ));
     }

@@ -54,10 +54,10 @@ class PermissionController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item " href="' . route('permissions.show', $encryptedId) . '">
+                                <a class="dropdown-item " href="' . route('sys.permissions.show', $encryptedId) . '">
                                     <i class="bx bx-show me-1"></i> View
                                 </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('permissions.destroy', $encryptedId) . '\', \'permissions-table\')" >
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('sys.permissions.destroy', $encryptedId) . '\', \'permissions-table\')" >
                                     <i class="bx bx-trash me-1"></i> Delete
                                 </a>
                             </div>
@@ -84,7 +84,7 @@ class PermissionController extends Controller
         try {
             Permission::create(['name' => $request->name]);
 
-            return redirect()->route('permissions.index')->with('success', 'Izin berhasil dibuat.');
+            return redirect()->route('sys.permissions.index')->with('success', 'Izin berhasil dibuat.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal membuat izin: ' . $e->getMessage());
         }
@@ -127,7 +127,7 @@ class PermissionController extends Controller
         try {
             $permission->update(['name' => $request->name]);
 
-            return redirect()->route('permissions.index')->with('success', 'Izin berhasil diperbarui.');
+            return redirect()->route('sys.permissions.index')->with('success', 'Izin berhasil diperbarui.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal memperbarui izin: ' . $e->getMessage());
         }

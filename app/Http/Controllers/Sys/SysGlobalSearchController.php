@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Sys\Role;
 use App\Models\Sys\Permission;
+use App\Models\Sys\Activity;
+use App\Models\Sys\ErrorLog;
+use App\Models\Sys\ServerMonitorHost;
+use App\Models\Sys\ServerMonitorCheck;
 use Spatie\Searchable\Search;
 
 class SysGlobalSearchController extends Controller
@@ -21,6 +25,10 @@ class SysGlobalSearchController extends Controller
                     'users' => [],
                     'roles' => [],
                     'permissions' => [],
+                    'activities' => [],
+                    'error_logs' => [],
+                    'server_hosts' => [],
+                    'server_checks' => [],
                 ]);
             }
 
@@ -29,6 +37,10 @@ class SysGlobalSearchController extends Controller
                 ->registerModel(User::class, 'name', 'email')
                 ->registerModel(Role::class, 'name')
                 ->registerModel(Permission::class, 'name')
+                ->registerModel(Activity::class, 'description', 'log_name', 'event')
+                ->registerModel(ErrorLog::class, 'message', 'exception_class', 'url', 'level')
+                ->registerModel(ServerMonitorHost::class, 'name', 'ip')
+                ->registerModel(ServerMonitorCheck::class, 'type', 'status')
                 ->search($query);
 
             // Additional search for users by role name
@@ -54,6 +66,10 @@ class SysGlobalSearchController extends Controller
             $users = collect();
             $roles = collect();
             $permissions = collect();
+            $activities = collect();
+            $error_logs = collect();
+            $server_hosts = collect();
+            $server_checks = collect();
 
             // Process the main search results
             foreach ($searchResults as $result) {
@@ -72,14 +88,46 @@ class SysGlobalSearchController extends Controller
                         'id' => $model->encrypted_id ?? $model->id,
                         'name' => $model->name,
                         'type' => 'role',
-                        'url' => route('roles.index') . '?search=' . urlencode($query),
+                        'url' => route('sys.roles.index') . '?search=' . urlencode($query),
                     ]);
                 } elseif ($model instanceof Permission && $permissions->count() < 5) {
                     $permissions->push([
                         'id' => $model->encrypted_id ?? $model->id,
                         'name' => $model->name,
                         'type' => 'permission',
-                        'url' => route('permissions.index') . '?search=' . urlencode($query),
+                        'url' => route('sys.permissions.index') . '?search=' . urlencode($query),
+                    ]);
+                } elseif ($model instanceof Activity && $activities->count() < 5) {
+                    $activities->push([
+                        'id' => $model->id,
+                        'name' => $model->description,
+                        'description' => $model->log_name . ' | ' . $model->event,
+                        'type' => 'activity',
+                        'url' => route('activity-log.show', $model->id),
+                    ]);
+                } elseif ($model instanceof ErrorLog && $error_logs->count() < 5) {
+                    $error_logs->push([
+                        'id' => $model->id,
+                        'name' => $model->level . ' - ' . \Illuminate\Support\Str::limit(strip_tags($model->message), 50),
+                        'description' => \Illuminate\Support\Str::limit(strip_tags($model->message), 100),
+                        'type' => 'error_log',
+                        'url' => route('sys.error-log.show', $model->id),
+                    ]);
+                } elseif ($model instanceof ServerMonitorHost && $server_hosts->count() < 5) {
+                    $server_hosts->push([
+                        'id' => $model->id,
+                        'name' => $model->name,
+                        'description' => $model->ip ? 'IP: ' . $model->ip : 'No IP assigned',
+                        'type' => 'server_host',
+                        'url' => '#', // Add specific route if available
+                    ]);
+                } elseif ($model instanceof ServerMonitorCheck && $server_checks->count() < 5) {
+                    $server_checks->push([
+                        'id' => $model->id,
+                        'name' => $model->type . ' - ' . $model->status,
+                        'description' => 'Status: ' . $model->status,
+                        'type' => 'server_check',
+                        'url' => '#', // Add specific route if available
                     ]);
                 }
             }
@@ -101,6 +149,10 @@ class SysGlobalSearchController extends Controller
                 'users' => $users,
                 'roles' => $roles,
                 'permissions' => $permissions,
+                'activities' => $activities,
+                'error_logs' => $error_logs,
+                'server_hosts' => $server_hosts,
+                'server_checks' => $server_checks,
                 'query' => $query,
             ]);
         } catch (\Exception $e) {
@@ -109,6 +161,10 @@ class SysGlobalSearchController extends Controller
                 'users' => [],
                 'roles' => [],
                 'permissions' => [],
+                'activities' => [],
+                'error_logs' => [],
+                'server_hosts' => [],
+                'server_checks' => [],
                 'error' => 'Search error occurred'
             ]);
         }

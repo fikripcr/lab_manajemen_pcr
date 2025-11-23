@@ -2,7 +2,7 @@
     <h4 class="modal-title">Edit Permission</h4>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<form id="editPermissionForm" action="{{ route('permissions.update', $permission->encrypted_id) }}" method="POST">
+<form id="editPermissionForm" action="{{ route('sys.permissions.update', $permission->encrypted_id) }}" method="POST">
     @csrf
     @method('PUT')
     <div class="modal-body">

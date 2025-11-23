@@ -2,7 +2,7 @@
     <h4 class="modal-title">Create New Permission</h4>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<form id="createPermissionForm" action="{{ route('permissions.store') }}" method="POST">
+<form id="createPermissionForm" action="{{ route('sys.permissions.store') }}" method="POST">
     @csrf
     <div class="modal-body">
         <div class="mb-3">
