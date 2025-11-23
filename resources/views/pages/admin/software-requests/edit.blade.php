@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Edit Software Request</h4>
         <a href="{{ route('software-requests.index') }}" class="btn btn-secondary">
             <i class="bx bx-arrow-back me-1"></i> Back to List

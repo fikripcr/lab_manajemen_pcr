@@ -169,3 +169,39 @@ div.dt-container table.dataTable tbody tr td.dt-empty {
     color: #6c757d !important;
     font-size: 0.9rem !important;
 }
+
+
+/* Satu-satunya row di bottom */
+div.dt-container > div.dt-layout-row:last-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.2rem;
+}
+
+/* Info di kiri */
+div.dt-container .dt-info {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+}
+
+/* Paging di kanan */
+div.dt-container .dt-paging {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+/* Mobile: tumpuk vertikal */
+@media (max-width: 767px) {
+    div.dt-container > div.dt-layout-row:last-child {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    div.dt-container .dt-info,
+    div.dt-container .dt-paging {
+        text-align: center;
+    }
+}

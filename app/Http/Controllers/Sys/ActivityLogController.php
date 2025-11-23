@@ -32,7 +32,6 @@ class ActivityLogController extends Controller
             ->leftJoin('users', 'sys_activity_log.causer_id', '=', 'users.id')
             ->orderBy('sys_activity_log.created_at', 'desc');
 
-        // Apply filters if present
         if ($request->filled('log_name')) {
             $activities->where('sys_activity_log.log_name', $request->log_name);
         }

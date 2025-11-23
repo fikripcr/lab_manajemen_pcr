@@ -1,7 +1,7 @@
 @extends('layouts.sys.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Create New Role</h4>
         <a href="{{ route('roles.index') }}" class="btn btn-secondary">
             <i class="bx bx-arrow-back"></i> Back to Roles

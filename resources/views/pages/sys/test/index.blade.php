@@ -17,11 +17,11 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3 bg-primary bg-opacity-10">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
                         <i class="bx bx-envelope bx-lg text-primary"></i>
                     </div>
                     <h5 class="card-title">Test Email</h5>
-                    <p class="card-text text-muted">Send a test email to your account to verify email functionality</p>
+                    <p class="card-text text-muted">Send a test notification via email channel to your account  <b>({{auth()->user()->email}})</b></p>
                     <button type="button" class="btn btn-primary" onclick="testEmail()">
                         Send Test Email
                     </button>
@@ -33,11 +33,11 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3 bg-success bg-opacity-10">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
                         <i class="bx bx-bell bx-lg text-success"></i>
                     </div>
                     <h5 class="card-title">Test Notification</h5>
-                    <p class="card-text text-muted">Send a test notification to your account to verify notification functionality</p>
+                    <p class="card-text text-muted">Send a test notification via database channel to your account <b>({{auth()->user()->email}})</b></p>
                     <button type="button" class="btn btn-success" onclick="testNotification()">
                         Send Test Notification
                     </button>
@@ -49,7 +49,7 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3 bg-danger bg-opacity-10">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
                         <i class="bx bx-file bx-lg text-danger"></i>
                     </div>
                     <h5 class="card-title">Test PDF Export</h5>
@@ -94,8 +94,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 showLoading('Sending email...');
-                
-                fetch('{{ route('test.email') }}', {
+
+                fetch('{{ route('sys.test.email') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -105,7 +105,7 @@
                 .then(response => response.json())
                 .then(data => {
                     Swal.close();
-                    
+
                     if (data.success) {
                         Swal.fire({
                             icon: 'success',
@@ -150,8 +150,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 showLoading('Sending notification...');
-                
-                fetch('{{ route('test.notification') }}', {
+
+                fetch('{{ route('sys.test.notification') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -161,7 +161,7 @@
                 .then(response => response.json())
                 .then(data => {
                     Swal.close();
-                    
+
                     if (data.success) {
                         Swal.fire({
                             icon: 'success',
@@ -206,8 +206,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 showLoading('Generating PDF...');
-                
-                fetch('{{ route('test.pdf-export') }}', {
+
+                fetch('{{ route('sys.test.pdf-export') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -226,9 +226,9 @@
                             a.click();
                             window.URL.revokeObjectURL(url);
                             document.body.removeChild(a);
-                            
+
                             Swal.close();
-                            
+
                             Swal.fire({
                                 icon: 'success',
                                 title: 'PDF Generated!',
@@ -276,7 +276,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 showLoading('Running database test...');
-                
+
                 // Simulating database test - replace with actual functionality
                 setTimeout(() => {
                     Swal.close();
@@ -303,7 +303,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 showLoading('Running security test...');
-                
+
                 // Simulating security test - replace with actual functionality
                 setTimeout(() => {
                     Swal.close();
@@ -330,7 +330,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 showLoading('Running performance test...');
-                
+
                 // Simulating performance test - replace with actual functionality
                 setTimeout(() => {
                     Swal.close();

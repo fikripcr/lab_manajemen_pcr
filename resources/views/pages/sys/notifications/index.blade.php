@@ -1,124 +1,117 @@
 @extends('layouts.sys.app')
 
-@section('title', 'Notifications')
-
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">
-            <span class="text-muted fw-light">Notifications /</span> List
-        </h4>
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Log/</span> Notification</h4>
+    </div>
 
-        <!-- Success Message -->
-        <x-sys.flash-message />
+    <x-sys.flash-message />
 
-        <!-- Notifications Stats -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-primary rounded">
-                                <i class="bx bx-bell bx-lg"></i>
-                            </div>
-                            <div>
-                                <p class="mb-0">Total Notifications</p>
-                                <h4 class="mb-0" id="totalNotifications">0</h4>
-                            </div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3 bg-label-primary rounded">
+                            <i class="bx bx-bell bx-lg"></i>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-warning rounded">
-                                <i class="bx bx-envelope bx-lg"></i>
-                            </div>
-                            <div>
-                                <p class="mb-0">Unread</p>
-                                <h4 class="mb-0" id="unreadNotifications">{{ Auth::user()->unreadNotifications->count() }}</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-success rounded">
-                                <i class="bx bx-check-circle bx-lg"></i>
-                            </div>
-                            <div>
-                                <p class="mb-0">Read</p>
-                                <h4 class="mb-0" id="readNotifications">{{ Auth::user()->notifications()->count() - Auth::user()->unreadNotifications->count() }}</h4>
-                            </div>
+                        <div>
+                            <p class="mb-0">Total Notifications</p>
+                            <h4 class="mb-0" id="totalNotifications">0</h4>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex flex-wrap justify-content-between">
-                    <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
-                        <div>
-                            <x-sys.datatable-page-length :dataTableId="'notifications-table'" />
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3 bg-label-warning rounded">
+                            <i class="bx bx-envelope bx-lg"></i>
                         </div>
                         <div>
-                            <x-sys.datatable-search-filter :dataTableId="'notifications-table'" />
+                            <p class="mb-0">Unread</p>
+                            <h4 class="mb-0" id="unreadNotifications">{{ Auth::user()->unreadNotifications->count() }}</h4>
                         </div>
-                    </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        <button id="markSelectedAsReadBtn" class="btn btn-primary btn-sm" disabled>
-                            <i class="bx bx-check-double me-1"></i> Mark Selected as Read
-                        </button>
-                        <button id="sendTestNotificationBtn" class="btn btn-success btn-sm" onclick="sendTestNotification()">
-                            <i class="bx bx-bell me-1"></i> Test Notification
-                        </button>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <x-sys.flash-message />
-
-                <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" withCheckbox="true" checkboxKey="id" :columns="[
-                    [
-                        'title' => 'Status',
-                        'data' => 'status',
-                        'name' => 'status',
-                        'orderable' => false,
-                        'searchable' => false,
-                    ],
-                    [
-                        'title' => 'Title',
-                        'data' => 'title',
-                        'name' => 'title',
-                    ],
-                    [
-                        'title' => 'Message',
-                        'data' => 'body',
-                        'name' => 'body',
-                    ],
-                    [
-                        'title' => 'Date',
-                        'data' => 'created_at',
-                        'name' => 'created_at',
-                    ],
-                    [
-                        'title' => 'Actions',
-                        'data' => 'action',
-                        'name' => 'action',
-                        'orderable' => false,
-                        'searchable' => false,
-                    ],
-                ]" />
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3 bg-label-success rounded">
+                            <i class="bx bx-check-circle bx-lg"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0">Read</p>
+                            <h4 class="mb-0" id="readNotifications">{{ Auth::user()->notifications()->count() - Auth::user()->unreadNotifications->count() }}</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex flex-wrap justify-content-between">
+                <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
+                    <div>
+                        <x-sys.datatable-page-length :dataTableId="'notifications-table'" />
+                    </div>
+                    <div>
+                        <x-sys.datatable-search-filter :dataTableId="'notifications-table'" />
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="markSelectedAsReadBtn" class="btn btn-primary btn-sm" disabled>
+                        <i class="bx bx-check-double me-1"></i> Mark Selected as Read
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <x-sys.flash-message />
+
+            <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" withCheckbox="true" checkboxKey="id" :columns="[
+                [
+                    'title' => 'Status',
+                    'data' => 'status',
+                    'name' => 'status',
+                    'orderable' => false,
+                    'searchable' => false,
+                ],
+                [
+                    'title' => 'Title',
+                    'data' => 'title',
+                    'name' => 'title',
+                ],
+                [
+                    'title' => 'Message',
+                    'data' => 'body',
+                    'name' => 'body',
+                ],
+                [
+                    'title' => 'Date',
+                    'data' => 'created_at',
+                    'name' => 'created_at',
+                ],
+                [
+                    'title' => 'Actions',
+                    'data' => 'action',
+                    'name' => 'action',
+                    'orderable' => false,
+                    'searchable' => false,
+                ],
+            ]" />
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Handle select all checkboxes
@@ -284,4 +277,4 @@
             };
         });
     </script>
-@endsection
+@endpush

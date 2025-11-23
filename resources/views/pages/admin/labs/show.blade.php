@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Data Lab /</span> {{ $lab->name }}</h4>
         <div class="d-flex">
             <a href="{{ route('labs.edit', $lab) }}" class="btn btn-light me-2">

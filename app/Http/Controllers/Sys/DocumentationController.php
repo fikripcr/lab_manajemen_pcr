@@ -100,11 +100,6 @@ class DocumentationController extends Controller
      */
     public function edit($page = 'index')
     {
-        // Only allow users with admin role to edit documentation
-        if (!auth()->user()->hasRole('admin')) {
-            abort(403, 'You do not have permission to edit documentation.');
-        }
-
         // Sanitize the page parameter to prevent directory traversal
         $page = basename($page);
 
@@ -140,11 +135,6 @@ class DocumentationController extends Controller
      */
     public function update(Request $request, $page = 'index')
     {
-        // Only allow users with admin role to update documentation
-        if (!auth()->user()->hasRole('admin')) {
-            abort(403, 'You do not have permission to edit documentation.');
-        }
-
         // Sanitize the page parameter to prevent directory traversal
         $page = basename($page);
 

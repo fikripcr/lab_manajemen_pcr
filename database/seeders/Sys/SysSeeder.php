@@ -49,9 +49,9 @@ class SysSeeder extends Seeder
             ['name' => 'sys.roles.create', 'category' => 'System Management', 'sub_category' => 'Roles'],
             ['name' => 'sys.roles.update', 'category' => 'System Management', 'sub_category' => 'Roles'],
             ['name' => 'sys.roles.delete', 'category' => 'System Management', 'sub_category' => 'Roles'],
-            ['name' => 'sys.test.email', 'category' => 'System Management', 'sub_category' => 'Testing'],
-            ['name' => 'sys.test.notification', 'category' => 'System Management', 'sub_category' => 'Testing'],
-            ['name' => 'sys.test.pdf-export', 'category' => 'System Management', 'sub_category' => 'Testing'],
+            ['name' => 'sys.sys.test.email', 'category' => 'System Management', 'sub_category' => 'Testing'],
+            ['name' => 'sys.sys.test.notification', 'category' => 'System Management', 'sub_category' => 'Testing'],
+            ['name' => 'sys.sys.test.pdf-export', 'category' => 'System Management', 'sub_category' => 'Testing'],
 
             // Impersonation
             ['name' => 'impersonate.login-as', 'category' => 'System Management', 'sub_category' => 'User Impersonation'],

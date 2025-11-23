@@ -1,10 +1,9 @@
 @extends('layouts.sys.app')
 
-@section('title', 'Backup Management')
-
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4">Backup Management</h4>
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Others/</span> Backup Management</h4>
+    </div>
 
     <div class="card">
         <div class="card-header align-items-center">
@@ -22,21 +21,21 @@
             </div>
         </div>
         <div class="card-body">
-            @if(session('success'))
+            @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
 
-            @if(session('error'))
+            @if (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
 
-            @if(count($backups) > 0)
+            @if (count($backups) > 0)
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -48,24 +47,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($backups as $backup)
-                            <tr>
-                                <td>{{ basename($backup['name']) }}</td>
-                                <td>{{ $backup['formatted_size'] }}</td>
-                                <td>{{ $backup['formatted_date'] }}</td>
-                                <td>
-                                    <a href="{{ route('admin.backup.download', $backup['name']) }}" class="btn btn-outline-primary btn-sm">
-                                        <i class="bx bx-download"></i> Download
-                                    </a>
-                                    <form action="{{ route('admin.backup.delete', $backup['name']) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this backup?')">
-                                            <i class="bx bx-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
+                            @foreach ($backups as $backup)
+                                <tr>
+                                    <td>{{ basename($backup['name']) }}</td>
+                                    <td>{{ $backup['formatted_size'] }}</td>
+                                    <td>{{ $backup['formatted_date'] }}</td>
+                                    <td>
+                                        <a href="{{ route('sys.backup.download', $backup['name']) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bx bx-download"></i> Download
+                                        </a>
+                                        <form action="{{ route('sys.backup.delete', $backup['name']) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this backup?')">
+                                                <i class="bx bx-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -79,67 +78,69 @@
             @endif
         </div>
     </div>
-</div>
-
-<!-- JavaScript for Backup Functionality -->
-<script>
-function createBackup(type) {
-    // Show loading Swal
-    Swal.fire({
-        title: 'Processing Backup...',
-        text: type === 'db' ? 'Creating database backup, please wait...' : 'Creating web files backup, please wait...',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    fetch('{{ route('admin.backup.create') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ type: type })
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Close the loading Swal
-        Swal.close();
-
-        if (data.success) {
-            Swal.fire({
-                title: 'Success!',
-                text: data.message,
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                // Reload the page to show the new backup
-                location.reload();
-            });
-        } else {
-            Swal.fire({
-                title: 'Error!',
-                text: data.message,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    })
-    .catch(error => {
-        // Close the loading Swal
-        Swal.close();
-        console.error('Error creating backup:', error);
-        Swal.fire({
-            title: 'Error!',
-            text: 'An error occurred while creating the backup',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-    });
-}
-</script>
 @endsection
+
+@push('scripts')
+    <script>
+        function createBackup(type) {
+            // Show loading Swal
+            Swal.fire({
+                title: 'Processing Backup...',
+                text: type === 'db' ? 'Creating database backup, please wait...' : 'Creating web files backup, please wait...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            fetch('{{ route('sys.backup.create') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        type: type
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Close the loading Swal
+                    Swal.close();
+
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Reload the page to show the new backup
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Close the loading Swal
+                    Swal.close();
+                    console.error('Error creating backup:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while creating the backup',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
+    </script>
+@endpush

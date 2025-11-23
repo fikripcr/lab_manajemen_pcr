@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tables /</span> Inventory Management</h4>
         <div class="d-flex flex-wrap gap-2">
             <a href="{{ route('inventaris.create') }}" class="btn btn-primary me-2">
@@ -236,4 +236,4 @@
             }
         });
     </script>
-@endpush>
+@endpush

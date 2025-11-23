@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Perkuliahan /</span> Jadwal Kuliah</h4>
         <div class="d-flex flex-wrap gap-2">
             <a href="{{ route('jadwal.import.form') }}" class="btn btn-success me-2">

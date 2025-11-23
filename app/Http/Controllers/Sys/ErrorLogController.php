@@ -80,22 +80,16 @@ class ErrorLogController extends Controller
                 }
             })
             ->editColumn('created_at', function ($log) {
-                return $log->created_at;
+                return formatTanggalIndo($log->created_at);
             })
             ->addColumn('actions', function ($log) {
                 return '
                     <div class="d-flex">
                         <a href="' . route('sys.error-log.show', encryptId($log->id)) . '"
-                           class="btn btn-sm btn-info me-1"
+                           class="text-success"
                            title="View Details">
                             <i class="bx bx-show"></i>
                         </a>
-                        <button type="button"
-                                class="btn btn-sm btn-danger"
-                                onclick="confirmDelete(\'' . route('sys.error-log.destroy', encryptId($log->id)) . '\')"
-                                title="Delete">
-                            <i class="bx bx-trash"></i>
-                        </button>
                     </div>';
             })
             ->rawColumns(['message', 'error_type', 'user_info', 'actions'])
@@ -118,19 +112,7 @@ class ErrorLogController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
-        $errorLog = ErrorLog::findOrFail($realId);
-        $errorLog->delete();
-
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Error log deleted successfully'
-            ]);
-        }
-
-        return redirect()->route('sys.error-log.index')
-            ->with('success', 'Error log deleted successfully');
+        //
     }
 
     /**

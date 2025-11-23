@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Mata Kuliah Details</h4>
         <div class="d-flex gap-2">
             <a href="{{ route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id) }}" class="btn btn-primary">

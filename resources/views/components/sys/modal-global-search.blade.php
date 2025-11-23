@@ -19,4 +19,4 @@
 
 @push('scripts')
     <script src="{{ asset('assets-sys/js/global-search.js') }}"></script>
-@endpush>
+@endpush

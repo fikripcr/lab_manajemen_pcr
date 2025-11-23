@@ -1,7 +1,7 @@
 @extends('layouts.sys.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Role Details: {{ $role->name }}</h4>
         <div class="d-flex gap-2">
             <a href="{{ route('roles.edit', $role) }}" class="btn btn-primary">

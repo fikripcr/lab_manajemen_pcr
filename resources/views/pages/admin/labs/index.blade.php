@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tabel /</span> Manajemen Laboratorium</h4>
         <a href="{{ route('labs.create') }}" class="btn btn-primary">
             <i class="bx bx-plus"></i> Tambah Lab Baru

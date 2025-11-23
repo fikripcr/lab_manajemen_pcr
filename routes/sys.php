@@ -21,11 +21,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // System Dashboard - accessible via /sys
         Route::get('/', [DashboardController::class, 'index'])->name('sys.dashboard');
 
-        // Test Functions
-        Route::post('/dashboard/test-email', [DashboardController::class, 'testEmail'])->name('sys.dashboard.test-email');
-        Route::post('/dashboard/test-notification', [DashboardController::class, 'testNotification'])->name('sys.dashboard.test-notification');
-        Route::post('/dashboard/test-pdf-export', [DashboardController::class, 'testPdfExport'])->name('sys.dashboard.test-pdf-export');
-
         // Activity Log Routes - accessible via /sys/activity-log
         Route::prefix('activity-log')->name('activity-log.')->group(function () {
             Route::get('/', [ActivityLogController::class, 'index'])->name('index');
@@ -49,7 +44,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         });
 
         // Send test notification to authenticated user
-        Route::post('/send-test-notification', [NotificationsController::class, 'sendTestNotification'])->name('send.test.notification');
+        Route::post('/send-test-notification', [NotificationsController::class, 'sendTestNotification'])->name('send.sys.test.notification');
 
         // Send notification to specific user
         Route::post('/users/{user}/send-notification', [NotificationsController::class, 'sendToUser'])->name('users.send.notification');
@@ -64,7 +59,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::post('/app-config/optimize', [AppConfigController::class, 'optimize'])->name('app-config.optimize');
 
         // Backup Management - accessible via /sys/backup
-        Route::prefix('backup')->name('admin.backup.')->group(function () {
+        Route::prefix('backup')->name('sys.backup.')->group(function () {
             Route::get('/', [BackupController::class, 'index'])->name('index');
             Route::post('/create', [BackupController::class, 'create'])->name('create');
             Route::get('/download/{filename}', [BackupController::class, 'download'])->where('filename', '.*')->name('download');
@@ -84,7 +79,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Roles & Permissions
         Route::resource('roles', RoleController::class);
 
-        Route::prefix('permissions')->name('permissions.')->group(function () {
+        Route::prefix('permissions')->name('sys.permissions.')->group(function () {
             Route::get('api', [PermissionController::class, 'paginate'])->name('data');
             Route::get('create-modal', [PermissionController::class, 'createModal'])->name('create-modal');
             Route::get('edit-modal/{permissionId?}', [PermissionController::class, 'editModal'])->name('edit-modal.show');
@@ -92,7 +87,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::resource('permissions', PermissionController::class);
 
         // Testing Dashboard - accessible via /sys/test
-        Route::prefix('test')->name('test.')->group(function () {
+        Route::prefix('test')->name('sys.test.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Sys\TestController::class, 'index'])->name('index');
             Route::post('/email', [\App\Http\Controllers\Sys\TestController::class, 'testEmail'])->name('email');
             Route::post('/notification', [\App\Http\Controllers\Sys\TestController::class, 'testNotification'])->name('notification');

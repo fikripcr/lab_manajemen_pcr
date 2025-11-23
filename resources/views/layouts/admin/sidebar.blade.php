@@ -89,18 +89,19 @@
                 <div data-i18n="Software Requests">Software Requests</div>
             </a>
         </li>
-        <!-- Users Menu -->
-        <li class="menu-item {{ request()->routeIs('admin.software-requests.*') ? 'active' : '' }}">
-            <a href="{{ route('software-requests.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-extension"></i>
-                <div data-i18n="Users">Users</div>
-            </a>
-        </li>
+
 
 
         <!-- System Management -->
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">System Management</span>
+            <span class="menu-header-text">Others</span>
+        </li>
+        <!-- Users Menu -->
+        <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
+            <a href="{{ route('users.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user"></i>
+                <div data-i18n="Users">Users</div>
+            </a>
         </li>
 
         <!-- System Dashboard -->

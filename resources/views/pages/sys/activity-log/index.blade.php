@@ -1,8 +1,8 @@
 @extends('layouts.sys.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System /</span> Activity Log</h4>
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
+        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Log/</span> Activity</h4>
     </div>
 
     <div class="card">
@@ -16,15 +16,10 @@
                         <x-sys.datatable-search-filter :dataTableId="'activity-log-table'" />
                     </div>
                 </div>
-                <div class="d-flex flex-wrap gap-2">
-
-                </div>
             </div>
         </div>
 
         <div class="card-body">
-            <x-sys.flash-message />
-
             <x-sys.datatable
                 id="activity-log-table"
                 route="{{ route('activity-log.data') }}"

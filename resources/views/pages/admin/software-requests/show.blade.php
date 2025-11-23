@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Software Request Details</h4>
         <div class="d-flex gap-2">
             <a href="{{ route('software-requests.edit', $softwareRequest->encrypted_request_software_id) }}" class="btn btn-primary">
