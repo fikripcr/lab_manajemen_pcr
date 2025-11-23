@@ -95,8 +95,12 @@
                 layout: {
                     topStart: null,
                     topEnd: null,
-                    bottomStart: ['info'],
-                    bottomEnd: ['paging'],
+                    bottomStart: null,
+                    bottomEnd: null,
+                    bottom: [
+                        'info',
+                        'paging'
+                    ]
                 },
                 // // Restore state as early as possible
                 stateLoadCallback: function(settings, callback) {
