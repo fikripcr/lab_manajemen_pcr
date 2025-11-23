@@ -66,12 +66,6 @@ return new class extends Migration
             $table->index(['published_at']); // For ordering by publication date
         });
 
-        // Add indexes to users table
-        Schema::table('users', function (Blueprint $table) {
-            $table->index(['nim']); // For student lookups
-            $table->index(['nip']); // For employee lookups
-        });
-
         // Add indexes to semesters table
         Schema::table('semesters', function (Blueprint $table) {
             $table->index(['is_active']); // For getting current semester
@@ -86,21 +80,6 @@ return new class extends Migration
             $table->index(['lab_id']);
             $table->index(['user_id']);
         });
-
-        // For sys_activity_log, sys_notifications, and sys_sessions,
-        // morphs() and explicit indexes were already added in original migrations
-        Schema::table('sys_activity_log', function (Blueprint $table) {
-            // 'subject_type', 'subject_id' already indexed by morphs()
-            $table->index(['causer_type', 'causer_id']); // For querying activities by specific user types
-            $table->index(['created_at']); // For ordering by activity time
-        });
-
-        Schema::table('sys_notifications', function (Blueprint $table) {
-            // 'notifiable_type', 'notifiable_id' already indexed by morphs()
-            $table->index(['read_at']); // For filtering read/unread notifications
-        });
-
-        // sys_sessions already has indexes on 'user_id' and 'last_activity' from original migration
     }
 
     /**
@@ -167,11 +146,6 @@ return new class extends Migration
             $table->dropIndex(['pengumuman_published_at_index']);
         });
 
-        // Remove indexes from users table
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['users_nim_index']);
-            $table->dropIndex(['users_nip_index']);
-        });
 
         // Remove indexes from semesters table
         Schema::table('semesters', function (Blueprint $table) {
@@ -183,18 +157,5 @@ return new class extends Migration
             $table->dropIndex(['lab_teams_lab_id_index']);
             $table->dropIndex(['lab_teams_user_id_index']);
         });
-
-        // Remove indexes from sys_activity_log table
-        Schema::table('sys_activity_log', function (Blueprint $table) {
-            $table->dropIndex(['sys_activity_log_causer_type_causer_id_index']);
-            $table->dropIndex(['sys_activity_log_created_at_index']);
-        });
-
-        // Remove indexes from sys_notifications table
-        Schema::table('sys_notifications', function (Blueprint $table) {
-            $table->dropIndex(['sys_notifications_read_at_index']);
-        });
-
-        // sys_sessions indexes were from original migration, no need to drop in this migration
     }
 };

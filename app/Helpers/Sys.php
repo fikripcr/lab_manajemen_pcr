@@ -279,6 +279,7 @@ if (!function_exists('validation_messages_id')) {
             'not_regex'       => 'Format :attribute tidak valid.',
             'numeric'         => ':attribute harus berupa angka.',
             'password'        => 'Kata sandi salah.',
+            'password.user'   => 'Alamat email yang Anda masukkan tidak terdaftar.',
             'present'         => ':attribute harus ada.',
             'regex'           => 'Format :attribute tidak valid.',
             'required'        => ':attribute wajib diisi.',
@@ -302,6 +303,10 @@ if (!function_exists('validation_messages_id')) {
             'uploaded'        => ':attribute gagal diunggah.',
             'url'             => 'Format :attribute tidak valid.',
             'uuid'            => ':attribute harus berupa UUID yang valid.',
+
+            // Authentication specific messages
+            'failed'          => 'Kredensial yang Anda masukkan tidak valid.',
+            'throttle'        => 'Terlalu banyak percobaan login. Silakan coba lagi dalam :seconds detik.',
 
             // Custom attributes (opsional)
             'attributes' => [],

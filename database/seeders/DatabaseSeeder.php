@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\Sys\SysSeeder;
-use Database\Seeders\Sys\SysSuperAdminSeeder;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\Sys\SysSeeder;
+use Database\Seeders\Sys\SysRoleSuperAdminSeeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,16 +19,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SysSeeder::class,
-            SysSuperAdminSeeder::class,
-            LabSeeder::class,
+            SysRoleSuperAdminSeeder::class,
             UserSeeder::class,
-            AdminUserSeeder::class,
+            LabSeeder::class,
             InventorySeeder::class,
             PengumumanSeeder::class,
             AcademicDataSeeder::class,
         ]);
-
-        // Create some test users if needed
-        // User::factory(10)->create();
     }
 }

@@ -18,7 +18,7 @@ return new class extends Migration
                 $table->string('name');
                 $table->string('email')->unique();
                 $table->timestamp('email_verified_at')->nullable();
-                $table->timestamp('expired_at')->nullable()->after('email_verified_at');
+                $table->timestamp('expired_at')->nullable();
                 $table->string('password');
                 $table->string('google_id')->nullable();
                 $table->string('avatar')->nullable();
@@ -41,11 +41,11 @@ return new class extends Migration
         if (! Schema::hasTable('sys_sessions')) {
             Schema::create('sys_sessions', function (Blueprint $table) {
                 $table->string('id')->primary();
-                $table->foreignId('user_id')->nullable()->index();
+                $table->foreignId('user_id')->nullable();
                 $table->string('ip_address', 45)->nullable();
                 $table->text('user_agent')->nullable();
                 $table->longText('payload');
-                $table->integer('last_activity')->index();
+                $table->integer('last_activity');
             });
         }
 
@@ -78,7 +78,6 @@ return new class extends Migration
                 $table->string('model_type');
                 $table->unsignedBigInteger('model_id'); // Changed from uuid to integer
 
-                $table->index(['model_type', 'model_id']);
                 $table->foreign('role_id')->references('id')->on('sys_roles')->onDelete('cascade');
                 $table->primary(['role_id', 'model_type', 'model_id']);
             });
@@ -91,7 +90,6 @@ return new class extends Migration
                 $table->string('model_type');
                 $table->unsignedBigInteger('model_id'); // Changed from uuid to integer
 
-                $table->index(['model_type', 'model_id']);
                 $table->foreign('permission_id')->references('id')->on('sys_permissions')->onDelete('cascade');
                 $table->primary(['permission_id', 'model_type', 'model_id']);
             });
@@ -128,7 +126,7 @@ return new class extends Migration
                 $table->json('custom_properties');
                 $table->json('generated_conversions');
                 $table->json('responsive_images');
-                $table->unsignedInteger('order_column')->nullable()->index();
+                $table->unsignedInteger('order_column')->nullable();
 
                 $table->nullableTimestamps();
             });
@@ -163,8 +161,6 @@ return new class extends Migration
                 $table->string('ip_address', 45)->nullable();
                 $table->text('user_agent')->nullable();
                 $table->timestamps();
-
-                $table->index(['log_name', 'subject_type', 'subject_id']);
             });
         }
 
@@ -198,11 +194,36 @@ return new class extends Migration
                 $table->unsignedBigInteger('user_id')->nullable(); // User that encountered the error
                 $table->timestamps();
                 $table->softDeletes();
+            });
+        }
 
-                // Indexes for performance
-                $table->index(['created_at']);
-                $table->index(['level']);
-                $table->index(['user_id']);
+        if(! Schema::hasTable('sys_hosts')) {
+            Schema::create('sys_hosts', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('ssh_user')->nullable();
+                $table->integer('port')->nullable();
+                $table->string('ip')->nullable();
+                $table->json('custom_properties')->nullable();
+                $table->timestamps();
+            });
+        }
+
+        if(! Schema::hasTable('sys_checks')) {
+            Schema::create('sys_checks', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('host_id')->unsigned();
+                $table->foreign('host_id')->references('id')->on('sys_hosts')->onDelete('cascade');
+                $table->string('type');
+                $table->string('status')->nullable();
+                $table->boolean('enabled')->default(true);
+                $table->text('last_run_message')->nullable();
+                $table->json('last_run_output')->nullable();
+                $table->timestamp('last_ran_at')->nullable();
+                $table->integer('next_run_in_minutes')->nullable();
+                $table->timestamp('started_throttling_failing_notifications_at')->nullable();
+                $table->json('custom_properties')->nullable();
+                $table->timestamps();
             });
         }
     }
@@ -225,6 +246,8 @@ return new class extends Migration
         Schema::dropIfExists('sys_notifications');
         Schema::dropIfExists('sys_cache');
         Schema::dropIfExists('sys_cache_locks');
+        Schema::dropIfExists('sys_hosts');
+        Schema::dropIfExists('sys_checks');
         Schema::dropIfExists('users');
     }
 };

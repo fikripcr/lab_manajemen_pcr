@@ -2,11 +2,13 @@
 
 namespace Database\Seeders\Sys;
 
-use App\Models\Sys\Permission;
+use App\Models\User;
 use App\Models\Sys\Role;
+use App\Models\Sys\Permission;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
-class SysSuperAdminSeeder extends Seeder
+class SysRoleSuperAdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -26,5 +28,18 @@ class SysSuperAdminSeeder extends Seeder
 
         // Assign all sys and impersonate permissions to the super admin role
         $superAdminRole->syncPermissions($sysPermissions->pluck('name')->toArray());
+
+        // Create or update the admin user
+        $admin = User::create(
+            [
+                'name' => 'Super Administrator',
+                'email' => 'admin@gmail.com',
+                'password' => Hash::make('password'), // Use a strong password in production
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Assign the super admin role to the user
+        $admin->assignRole('super_admin');
     }
 }
