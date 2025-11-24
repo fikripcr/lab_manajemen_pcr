@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
-use App\Services\ActivityLogsService;
+use App\Services\Sys\ActivityLogsService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
