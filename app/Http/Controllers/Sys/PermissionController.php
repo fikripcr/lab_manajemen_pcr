@@ -35,29 +35,8 @@ class PermissionController extends Controller
     public function paginate(Request $request)
     {
         try {
-            // Include parameters from DataTable filtering, including form filters (prefixed with f_)
-            $filters = $request->only(['name', 'category', 'sub_category']);
-
-            // Extract form-based filters (typically prefixed with f_)
-            $formFilters = collect($request->all())
-                ->filter(function ($value, $key) {
-                    return strpos($key, 'f_') === 0;
-                })
-                ->mapWithKeys(function ($value, $key) {
-                    // Remove the 'f_' prefix to get the actual filter name
-                    return [substr($key, 2) => $value];
-                })
-                ->toArray();
-
-            // Merge form filters with regular filters
-            $filters = array_merge($filters, $formFilters);
-
-            // Also explicitly get category and sub_category from request (for filter dropdowns)
-            $filters['category'] = $request->get('category', $filters['category'] ?? null);
-            $filters['sub_category'] = $request->get('sub_category', $filters['sub_category'] ?? null);
-
-            // Debug logging
-            \Log::info('PermissionController paginate - filters received:', $filters);
+            // Get all request parameters and use them as filters
+            $filters = $request->all();
 
             // Use the service to get the filtered query
             $permissions = $this->permissionService->getFilteredQuery($filters);

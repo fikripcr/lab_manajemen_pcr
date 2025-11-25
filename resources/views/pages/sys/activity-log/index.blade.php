@@ -15,7 +15,7 @@
                         <x-sys.datatable-page-length :dataTableId="'activity-log-table'" />
                     </div>
                     <div>
-                        <x-sys.datatable-search-filter :dataTableId="'activity-log-table'" />
+                        <x-sys.datatable-search :dataTableId="'activity-log-table'" />
                     </div>
                 </div>
             </div>

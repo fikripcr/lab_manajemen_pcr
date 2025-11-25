@@ -15,29 +15,27 @@
                     <x-sys.datatable-page-length :dataTableId="'permissions-table'" />
                 </div>
                 <div>
-                    <x-sys.datatable-search-filter :dataTableId="'permissions-table'" />
+                    <x-sys.datatable-search :dataTableId="'permissions-table'" />
                 </div>
                 <div>
-                    <form id="permissions-table-filter">
-                        <div class="d-flex flex-wrap gap-2">
-                            <div>
-                                <select name="f_category" class="form-select">
-                                    <option value="">All Categories</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category }}">{{ $category }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <select name="f_sub_category" class="form-select">
-                                    <option value="">All Sub Categories</option>
-                                    @foreach($subCategories as $subCategory)
-                                        <option value="{{ $subCategory }}">{{ $subCategory }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    <x-sys.datatable-filter :dataTableId="'permissions-table'" >
+                        <div>
+                            <select name="category" class="form-select">
+                                <option value="">All Categories</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category }}">{{ $category }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                    </form>
+                        <div>
+                            <select name="sub_category" class="form-select">
+                                <option value="">All Sub Categories</option>
+                                @foreach($subCategories as $subCategory)
+                                    <option value="{{ $subCategory }}">{{ $subCategory }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </x-sys.datatable-filter>
                 </div>
             </div>
         </div>
@@ -45,7 +43,7 @@
         <div class="card-body">
             <x-sys.flash-message />
 
-            <x-sys.datatable id="permissions-table" route="{{ route('sys.permissions.data') }}" checkbox="true" checkbox-key="id" :columns="[
+            <x-sys.datatable id="permissions-table" route="{{ route('sys.permissions.data') }}" checkbox="true"  :columns="[
                 [
                     'title' => '#',
                     'data' => 'DT_RowIndex',

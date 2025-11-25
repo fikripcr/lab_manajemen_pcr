@@ -29,6 +29,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const TABLE_ID = '{{ $id }}';
+            const FILTER_FORM_ID = `${TABLE_ID}-filter`;
             const stateName = 'DataTables_' + TABLE_ID + '_' + window.location.pathname;
             const SELECTOR = {
                 table: `#${TABLE_ID}`,
@@ -36,7 +37,7 @@
                 pageLength: `#${TABLE_ID}-pageLength`,
                 selectAll: `#selectAll-${TABLE_ID}`,
                 body: `#${TABLE_ID} tbody`,
-                filterForm: `#${TABLE_ID}-filter`,
+                filterForm: `#${FILTER_FORM_ID}`,
                 rowCheckbox: '.select-row',
             };
 
@@ -142,9 +143,7 @@
             // Handle form filter changes if form exists
             const filterForm = document.querySelector(SELECTOR.filterForm);
             if (filterForm) {
-                // Add event listener for filter form changes
                 filterForm.addEventListener('change', function() {
-                    // Reload the DataTable when filter values change
                     table.ajax.reload();
                 });
             }

@@ -7,4 +7,4 @@
     id="{{ $id }}"
     @if($checked) checked @endif
     @if($disabled) disabled @endif
-    class="form-check-input dt-checkboxes select-row">
+    class="form-check-input dt-checkboxes select-row"/>

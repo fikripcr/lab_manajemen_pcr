@@ -63,7 +63,7 @@
                         <x-sys.datatable-page-length :dataTableId="'notifications-table'" />
                     </div>
                     <div>
-                        <x-sys.datatable-search-filter :dataTableId="'notifications-table'" />
+                        <x-sys.datatable-search :dataTableId="'notifications-table'" />
                     </div>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="card-body">
-            <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" Checkbox="true" checkboxKey="id"
+            <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" Checkbox="true"
             :columns="[
                 [
                     'title' => 'Status',
