@@ -61,6 +61,21 @@
                                 d[key] = value;
                             }
                         }
+
+                        // Also check if we have saved state with filter values
+                        // (This ensures filters are applied even on first load if state exists)
+                        const storedState = localStorage.getItem(stateName);
+                        if (storedState) {
+                            const state = JSON.parse(storedState);
+                            if (state.customFilter) {
+                                for (const [key, value] of Object.entries(state.customFilter)) {
+                                    // Only override if not already set by form
+                                    if (d[key] === undefined || d[key] === '') {
+                                        d[key] = value;
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 columns: [
@@ -130,12 +145,30 @@
                                     searchInput.val(state.search.search);
                                 }
                             @endif
+
+                            // Sync filter form values if exists
+                            const filterForm = document.getElementById('{{ $id }}-filter');
+                            if (filterForm && state.customFilter) {
+                                for (const [key, value] of Object.entries(state.customFilter)) {
+                                    const element = filterForm.querySelector(`[name="${key}"]`);
+                                    if (element) {
+                                        element.value = value;
+                                    }
+                                }
+                            }
                         }, 0); // Delay kecil agar DataTable selesai render
                     } else {
                         callback(null);
                     }
                 },
                 stateSaveCallback: function(settings, data) {
+                    // Save custom filter values
+                    const filterForm = document.getElementById('{{ $id }}-filter');
+                    if (filterForm) {
+                        const formData = new FormData(filterForm);
+                        data.customFilter = Object.fromEntries(formData.entries());
+                    }
+
                     localStorage.setItem(stateName, JSON.stringify(data));
                 }
             });
