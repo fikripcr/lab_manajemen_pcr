@@ -20,25 +20,7 @@ class DocumentationController extends Controller
 
     public function index()
     {
-        $indexPath = $this->docsPath . 'index.md';
-
-        if (!file_exists($indexPath)) {
-            $htmlContent = '<h1>Documentation Not Found</h1><p>Documentation index file could not be found in the docs directory.</p>';
-        } else {
-            $indexContent = file_get_contents($indexPath);
-
-            if ($indexContent === false) {
-                $htmlContent = '<h1>Error Reading Documentation</h1><p>Could not read the documentation index file.</p>';
-            } else {
-                $htmlContent = $this->convertMarkdownToHtml($indexContent);
-            }
-        }
-
-        $lastUpdated = file_exists($indexPath) ? filemtime($indexPath) : null;
-
         return view('pages.sys.documentation.index', [
-            'htmlContent' => $htmlContent,
-            'lastUpdated' => $lastUpdated,
             'pageTitle' => 'Documentation Index'
         ]);
     }
