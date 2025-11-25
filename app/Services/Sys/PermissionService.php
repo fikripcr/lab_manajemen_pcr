@@ -123,7 +123,7 @@ class PermissionService
     public function getFilteredQuery(array $filters = [])
     {
         return $this->applyFilters(Permission::query(), $filters)
-            ->with('roles')
+            ->select('id','name', 'category', 'sub_category', 'created_at')
             ->orderBy('created_at', 'desc');
     }
 
@@ -156,8 +156,34 @@ class PermissionService
             $query->where('category', $filters['category']);
         }
 
+        if (!empty($filters['sub_category'])) {
+            $query->where('sub_category', $filters['sub_category']);
+        }
+
         return $query;
     }
+
+    /**
+     * Get unique categories for filtering
+     */
+    public function getUniqueCategories(): array
+    {
+        return Permission::select('category')
+            ->whereNotNull('category')
+            ->distinct()
+            ->pluck('category')
+            ->toArray();
+    }
+
+    public function getUniqueSubCategories(): array
+    {
+        return Permission::select('sub_category')
+            ->whereNotNull('sub_category')
+            ->distinct()
+            ->pluck('sub_category')
+            ->toArray();
+    }
+
 
     /**
      * Find model by ID or throw exception

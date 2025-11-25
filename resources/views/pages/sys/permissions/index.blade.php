@@ -17,8 +17,31 @@
                 <div>
                     <x-sys.datatable-search-filter :dataTableId="'permissions-table'" />
                 </div>
+                <div>
+                    <form id="permissions-table-filter">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div>
+                                <select name="f_category" class="form-select">
+                                    <option value="">All Categories</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category }}">{{ $category }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <select name="f_sub_category" class="form-select">
+                                    <option value="">All Sub Categories</option>
+                                    @foreach($subCategories as $subCategory)
+                                        <option value="{{ $subCategory }}">{{ $subCategory }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+
         <div class="card-body">
             <x-sys.flash-message />
 
@@ -27,7 +50,7 @@
                     'title' => '#',
                     'data' => 'DT_RowIndex',
                     'name' => 'DT_RowIndex',
-                    'orderable' => true,
+                    'orderable' => false,
                     'searchable' => false,
                 ],
                 [
@@ -35,6 +58,18 @@
                     'data' => 'name',
                     'orderable' => true,
                     'name' => 'name',
+                ],
+                [
+                    'title' => 'Category',
+                    'data' => 'category',
+                    'orderable' => true,
+                    'name' => 'category',
+                ],
+                [
+                    'title' => 'Sub Category',
+                    'data' => 'sub_category',
+                    'orderable' => true,
+                    'name' => 'sub_category',
                 ],
                 [
                     'title' => 'Created At',
@@ -119,5 +154,7 @@
             });
 
         });
+
+
     </script>
 @endpush

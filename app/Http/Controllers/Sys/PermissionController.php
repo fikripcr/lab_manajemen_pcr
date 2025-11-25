@@ -22,7 +22,11 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        return view('pages.sys.permissions.index');
+        // Get unique categories for the filter
+        $categories = $this->permissionService->getUniqueCategories();
+        $subCategories = $this->permissionService->getUniqueSubCategories();
+
+        return view('pages.sys.permissions.index', compact('categories', 'subCategories'));
     }
 
     /**
@@ -31,24 +35,46 @@ class PermissionController extends Controller
     public function paginate(Request $request)
     {
         try {
+            // Include parameters from DataTable filtering, including form filters (prefixed with f_)
             $filters = $request->only(['name', 'category', 'sub_category']);
+
+            // Extract form-based filters (typically prefixed with f_)
+            $formFilters = collect($request->all())
+                ->filter(function ($value, $key) {
+                    return strpos($key, 'f_') === 0;
+                })
+                ->mapWithKeys(function ($value, $key) {
+                    // Remove the 'f_' prefix to get the actual filter name
+                    return [substr($key, 2) => $value];
+                })
+                ->toArray();
+
+            // Merge form filters with regular filters
+            $filters = array_merge($filters, $formFilters);
+
+            // Also explicitly get category and sub_category from request (for filter dropdowns)
+            $filters['category'] = $request->get('category', $filters['category'] ?? null);
+            $filters['sub_category'] = $request->get('sub_category', $filters['sub_category'] ?? null);
+
+            // Debug logging
+            \Log::info('PermissionController paginate - filters received:', $filters);
 
             // Use the service to get the filtered query
             $permissions = $this->permissionService->getFilteredQuery($filters);
 
             return DataTables::of($permissions)
                 ->addIndexColumn()
-                ->order(function ($query) {
-                    $query->latest('sys_permissions.created_at'); // Sort by created_at DESC by default
-                })
-                ->filterColumn('name', function ($query, $keyword) {
-                    $query->where('sys_permissions.name', 'like', "%{$keyword}%");
-                })
-                ->filterColumn('category', function ($query, $keyword) {
-                    $query->where('sys_permissions.category', 'like', "%{$keyword}%");
+                ->editColumn('id', function ($permission) {
+                    return $permission->encryptedId;
                 })
                 ->editColumn('created_at', function ($permission) {
                     return formatTanggalIndo($permission->created_at);
+                })
+                ->addColumn('category', function ($permission) {
+                    return $permission->category ?? '-';
+                })
+                ->addColumn('sub_category', function ($permission) {
+                    return $permission->sub_category ?? '-';
                 })
                 ->addColumn('action', function ($permission) {
                     return '
@@ -71,7 +97,7 @@ class PermissionController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Terjadi kesalahan saat mengambil data izin.'], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

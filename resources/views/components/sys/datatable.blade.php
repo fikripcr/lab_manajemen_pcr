@@ -36,9 +36,9 @@
                 pageLength: `#${TABLE_ID}-pageLength`,
                 selectAll: `#selectAll-${TABLE_ID}`,
                 body: `#${TABLE_ID} tbody`,
-                rowCheckbox: '.select-row'
+                filterForm: `#${TABLE_ID}-filter`,
+                rowCheckbox: '.select-row',
             };
-
 
             // Initialize DataTable
             const table = $(SELECTOR.table).DataTable({
@@ -50,7 +50,17 @@
                     [0, 'desc']
                 ],
                 ajax: {
-                    url: '{{ $route }}'
+                    url: '{{ $route }}',
+                    data: function(d) {
+                        // Add form filter data if filter form exists
+                        const filterForm = document.querySelector(SELECTOR.filterForm);
+                        if (filterForm) {
+                            const formData = new FormData(filterForm);
+                            for (const [key, value] of formData.entries()) {
+                                d[key] = value;
+                            }
+                        }
+                    }
                 },
                 columns: [
                     @if ($Checkbox)
@@ -128,6 +138,16 @@
                     localStorage.setItem(stateName, JSON.stringify(data));
                 }
             });
+
+            // Handle form filter changes if form exists
+            const filterForm = document.querySelector(SELECTOR.filterForm);
+            if (filterForm) {
+                // Add event listener for filter form changes
+                filterForm.addEventListener('change', function() {
+                    // Reload the DataTable when filter values change
+                    table.ajax.reload();
+                });
+            }
 
             // === SEARCH DENGAN DEBOUNCE ===
             @if ($search)
