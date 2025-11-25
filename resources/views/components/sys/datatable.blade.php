@@ -6,7 +6,7 @@
 @endpush
 
 <div class="table-responsive">
-    <table id="{{ $id }}" class="table" style="width:100%">
+    <table id="{{ $id }}" class="table" style="width:100%;">
         <thead>
             <tr>
                 @if ($Checkbox)
@@ -173,24 +173,275 @@
                 }
             });
 
+            // Function to update pagination and info
+            function updatePagination() {
+                const pageInfo = document.getElementById(`${TABLE_ID}-info`);
+                const paginationContainer = document.getElementById(`${TABLE_ID}-pagination`);
+
+                if (pageInfo && paginationContainer) {
+                    // Get current table info
+                    const info = table.page.info();
+
+                    // Debug: log the info object to see its properties
+                    console.log('DataTable info:', info);
+
+                    // Update page info text using values directly from DataTables info object
+                    // Check if properties exist in the info object to prevent "undefined"
+                    const start = (info.start !== undefined && info.start !== null) ? info.start + 1 : 0;
+                    const end = (info.end !== undefined && info.end !== null) ? info.end : 0;
+                    const total = (info.recordsTotal !== undefined && info.recordsTotal !== null) ? info.recordsTotal : 0;
+                    const filtered = (info.recordsFiltered !== undefined && info.recordsFiltered !== null) ? info.recordsFiltered : 0;
+                    const pageLength = (info.length !== undefined && info.length !== null) ? info.length : 0;
+
+                    // Sometimes DataTables returns -1 when there's no data
+                    const actualStart = (info.start === -1) ? 0 : info.start + 1;
+                    const actualEnd = (info.end === -1) ? 0 : info.end;
+
+                    if (table.context[0]._draw > 0) {
+                        // Table has drawn at least once
+                        if (filtered > 0 && actualStart > 0) {
+                            if (total === filtered) {
+                                pageInfo.innerHTML = `Showing ${actualStart} to ${actualEnd} of ${filtered} entries`;
+                            } else {
+                                pageInfo.innerHTML = `Showing ${actualStart} to ${actualEnd} of ${filtered} entries (filtered from ${total} total entries)`;
+                            }
+                        } else {
+                            // No records match the filter
+                            pageInfo.innerHTML = 'Showing 0 to 0 of 0 entries';
+                        }
+                    } else {
+                        // Table hasn't drawn yet
+                        pageInfo.innerHTML = 'Loading...';
+                    }
+
+                    // Clear current pagination
+                    paginationContainer.innerHTML = '';
+
+                    // Create pagination controls
+                    const ul = document.createElement('ul');
+                    ul.className = 'pagination';
+
+                    // Previous button
+                    const prevLi = document.createElement('li');
+                    prevLi.className = `page-item ${info.page === 0 ? 'disabled' : ''}`;
+                    prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${info.page - 1}, '${TABLE_ID}'); return false;">Previous</a>`;
+                    ul.appendChild(prevLi);
+
+                    // Page buttons
+                    const totalPages = info.pages;
+                    const currentPage = info.page;
+
+                    // Calculate page range to display
+                    let startPage = Math.max(0, currentPage - 2);
+                    let endPage = Math.min(totalPages - 1, currentPage + 2);
+
+                    // If range is too small, expand it
+                    if (endPage - startPage < 4) {
+                        if (startPage === 0) {
+                            endPage = Math.min(totalPages - 1, startPage + 4);
+                        } else if (endPage === totalPages - 1) {
+                            startPage = Math.max(0, endPage - 4);
+                        }
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        const li = document.createElement('li');
+                        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                        li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i}, '${TABLE_ID}'); return false;">${i + 1}</a>`;
+                        ul.appendChild(li);
+                    }
+
+                    // Next button
+                    const nextLi = document.createElement('li');
+                    nextLi.className = `page-item ${info.page === totalPages - 1 || totalPages === 0 ? 'disabled' : ''}`;
+                    nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${info.page + 1}, '${TABLE_ID}'); return false;">Next</a>`;
+                    ul.appendChild(nextLi);
+
+                    paginationContainer.appendChild(ul);
+                }
+            }
+
+            // Function to change page
+            window.changePage = function(page, tableId) {
+                const dataTable = $(`#${tableId}`).DataTable();
+                if (page >= 0 && page < dataTable.page.info().pages) {
+                    dataTable.page(page).draw('page');
+                }
+            };
+
+            // Function to update the custom info element
+            function updateInfo() {
+                const infoElement = document.getElementById(`${TABLE_ID}-info`);
+                if (infoElement) {
+                    const info = table.page.info();
+
+                    const start = (info.start === -1) ? 0 : info.start + 1;
+                    const end = (info.end === -1) ? 0 : info.end;
+                    const total = (info.recordsTotal !== undefined && info.recordsTotal !== null) ? info.recordsTotal : 0;
+                    const filtered = (info.recordsFiltered !== undefined && info.recordsFiltered !== null) ? info.recordsFiltered : 0;
+
+                    if (filtered > 0 && start > 0) {
+                        if (total === filtered) {
+                            infoElement.innerHTML = `Showing ${start} to ${end} of ${filtered} entries`;
+                        } else {
+                            infoElement.innerHTML = `Showing ${start} to ${end} of ${filtered} entries (filtered from ${total} total entries)`;
+                        }
+                    } else {
+                        infoElement.innerHTML = 'Showing 0 to 0 of 0 entries';
+                    }
+                }
+            }
+
+            // Update table after draw
+            table.on('draw', function() {
+                // Hide placeholder row in case it appears again
+                const placeholderRows = $(SELECTOR.table).find('tbody tr.placeholder-row');
+                if (placeholderRows.length > 0) {
+                    placeholderRows.hide();
+                }
+
+                // Update the custom info
+                updateInfo();
+            });
+
+            // Initialize the info after table is ready
+            table.one('init', function() {
+                updateInfo();
+            });
+
+
             // Handle form filter changes if form exists
             const filterForm = document.querySelector(SELECTOR.filterForm);
             if (filterForm) {
+                // Function to update active filter badges
+                function updateActiveFilterBadges() {
+                    const activeFiltersContainer = document.getElementById(`${TABLE_ID}-active-filters`);
+                    if (!activeFiltersContainer) return;
+
+                    // Clear existing badges
+                    activeFiltersContainer.innerHTML = '';
+
+                    // Get current filter values from the form
+                    const formData = new FormData(filterForm);
+                    let hasActiveFilters = false;
+
+                    for (const [key, value] of formData.entries()) {
+                        if (value !== '') {
+                            hasActiveFilters = true;
+
+                            // Create badge element
+                            const badge = document.createElement('span');
+                            badge.className = 'badge badge-sm bg-primary me-1 mb-1';
+                            badge.innerHTML = `
+                                ${key}: ${value}
+                                <button type="button" class="btn-close btn-close-white ms-1"
+                                    style="font-size: 0.6em;"
+                                    onclick="clearFilter('${key}', '${TABLE_ID}')"
+                                    aria-label="Remove"></button>
+                            `;
+
+                            activeFiltersContainer.appendChild(badge);
+                        }
+                    }
+
+                }
+
+                // Function to clear a specific filter
+                window.clearFilter = function(filterName, tableId) {
+                    const filterForm = document.getElementById(`${tableId}-filter`);
+                    if (filterForm) {
+                        const filterElement = filterForm.querySelector(`[name="${filterName}"]`);
+                        if (filterElement) {
+                            filterElement.value = '';
+
+                            // Trigger change event to update the table
+                            const event = new Event('change', { bubbles: true });
+                            filterForm.dispatchEvent(event);
+                        }
+                    }
+                };
+
+                // Function to clear all filters
+                window.clearAllFilters = function(tableId) {
+                    const filterForm = document.getElementById(`${tableId}-filter`);
+                    if (filterForm) {
+                        // Reset all form elements
+                        const selects = filterForm.querySelectorAll('select');
+                        selects.forEach(select => {
+                            select.value = '';
+                        });
+
+                        const inputs = filterForm.querySelectorAll('input');
+                        inputs.forEach(input => {
+                            if (input.type === 'text' || input.type === 'search') {
+                                input.value = '';
+                            }
+                        });
+
+                        // Trigger change event to update the table
+                        const event = new Event('change', { bubbles: true });
+                        filterForm.dispatchEvent(event);
+                    }
+                };
+
+                // Add event listener for filter form changes
                 filterForm.addEventListener('change', function() {
+                    // Update the active filter badges
+                    updateActiveFilterBadges();
+
+                    // Reload the DataTable when filter values change
                     table.ajax.reload();
                 });
+
+                // Initialize the active filter badges after a short delay
+                setTimeout(updateActiveFilterBadges, 100);
             }
 
             // === SEARCH DENGAN DEBOUNCE ===
             @if ($search)
                 let searchTimeout;
-                document.querySelector(SELECTOR.search)?.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    const query = this.value.trim();
-                    searchTimeout = setTimeout(() => {
-                        table.search(query).draw();
-                    }, 300); // 300ms debounce
-                });
+                const searchInput = document.querySelector(SELECTOR.search);
+                const clearSearchBtn = document.getElementById(`${TABLE_ID}-clear-search`);
+
+                if (searchInput && clearSearchBtn) {
+                    // Add event listener for search input
+                    searchInput.addEventListener('input', function() {
+                        clearTimeout(searchTimeout);
+                        const query = this.value.trim();
+
+                        // Show/hide clear button based on input
+                        if (query !== '') {
+                            clearSearchBtn.classList.remove('d-none');
+                        } else {
+                            clearSearchBtn.classList.add('d-none');
+                        }
+
+                        searchTimeout = setTimeout(() => {
+                            table.search(query).draw();
+                        }, 300); // 300ms debounce
+                    });
+
+                    // Initialize clear button visibility
+                    if (searchInput.value.trim() !== '') {
+                        clearSearchBtn.classList.remove('d-none');
+                    } else {
+                        clearSearchBtn.classList.add('d-none');
+                    }
+                }
+
+                // Function to clear search
+                window.clearSearch = function(tableId) {
+                    const searchInput = document.getElementById(`${tableId}-search`);
+                    const clearSearchBtn = document.getElementById(`${tableId}-clear-search`);
+
+                    if (searchInput) {
+                        searchInput.value = '';
+                        if (clearSearchBtn) {
+                            clearSearchBtn.classList.add('d-none');
+                        }
+                        table.search('').draw();
+                    }
+                };
             @endif
 
             // === PAGE LENGTH HANDLER ===

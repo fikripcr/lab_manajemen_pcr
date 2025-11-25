@@ -83,6 +83,15 @@
                     'searchable' => false,
                 ],
             ]" />
+
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mt-2">
+                <div class="mb-2 mb-md-0">
+                    <x-sys.datatable-info :dataTableId="'permissions-table'" />
+                </div>
+                <div>
+                    <x-sys.datatable-pagination :dataTableId="'permissions-table'" />
+                </div>
+            </div>
         </div>
     </div>
 

@@ -2,18 +2,21 @@
     'dataTableId' => null,
 ])
 
-<div class="input-group">
-    <span class="input-group-text"><i class="bx bx-search"></i></span>
+<div class="position-relative">
     <input type="text" id="{{$dataTableId . '-search'}}"
         class="form-control"
         placeholder="Search..."
+        style="padding-left: 2.5rem; padding-right: 2rem;"
     />
-    {{-- <button
-        type="button"
-        class="btn btn-sm btn-outline-secondary"
-        id="{{ $dataTableId }}-refresh"
-        title="Refresh data"
+    <span class="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted">
+        <i class="bx bx-search"></i>
+    </span>
+    <button type="button"
+        class="btn position-absolute end-0 top-50 translate-middle-y me-2 btn-sm d-none"
+        id="{{ $dataTableId . '-clear-search' }}"
+        title="Clear search"
+        onclick="clearSearch('{{ $dataTableId }}')"
     >
-        <i class="bx bx-refresh"></i>
-    </button> --}}
+        <i class="bx bx-x"></i>
+    </button>
 </div>
