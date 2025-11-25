@@ -7,7 +7,7 @@
             <i class="bx bx-plus"></i> Add New Role
         </a>
     </div>
-
+<x-sys.flash-message />
     <div class="row">
         @forelse($roles as $role)
         <div class="col-md-6 col-lg-4 mb-4">
@@ -36,6 +36,9 @@
                                         <i class="bx bx-trash me-1"></i> Delete
                                     </button>
                                 </form>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('sys.roles.destroy', $role->encryptedId) . '\')">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
                             </div>
                         </div>
                     </div>

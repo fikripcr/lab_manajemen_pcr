@@ -7,26 +7,13 @@
     <input type="text" id="{{$dataTableId . '-search'}}"
         class="form-control"
         placeholder="Search..."
-        onkeyup="handleDataTableSearch(this, '{{ $dataTableId }}')"
     />
+    {{-- <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        id="{{ $dataTableId }}-refresh"
+        title="Refresh data"
+    >
+        <i class="bx bx-refresh"></i>
+    </button> --}}
 </div>
-
-@push('scripts')
-    <script>
-        function handleDataTableSearch(element, tableId) {
-            const searchTerm = element.value;
-
-            if (tableId) {
-                // Target specific table
-                const table = $('#' + tableId).DataTable();
-                table.search(searchTerm).draw();
-            } else {
-                // Search across all tables on the page
-                $('table.dataTable').each(function() {
-                    const dataTable = $(this).DataTable();
-                    dataTable.search(searchTerm).draw();
-                });
-            }
-        }
-    </script>
-@endpush

@@ -22,7 +22,7 @@ class ActivityLogController extends Controller
     public function list(Request $request): JsonResponse
     {
         try {
-            $filters = $this->activityLogsService->buildFiltersFromRequest($request, 'api');
+            $filters = $this->activityLogsService->buildFiltersFromRequest($request);
             $activities = $this->activityLogsService->getActivitiesList($filters);
 
             return apiSuccess([

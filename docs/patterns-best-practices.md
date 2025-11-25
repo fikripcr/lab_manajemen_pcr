@@ -51,12 +51,34 @@ class CreateUserRequest extends FormRequest
 
 ### Authorization Checks
 
-Use proper authorization:
+Use proper authorization through multiple approaches:
 
+**1. Route-level authorization:**
 ```php
 // In routes
 Route::resource('users', UserController::class)->middleware('can:manage-users');
+```
 
+**2. Constructor-level middleware (recommended for consistent authorization):**
+```php
+class UserController extends Controller
+{
+    public function __construct()
+    {
+        // Apply authorization rules to the entire controller
+        $this->middleware('can:view users')->only(['index', 'show']);
+        $this->middleware('can:create users')->only(['create', 'store']);
+        $this->middleware('can:edit users')->only(['edit', 'update']);
+        $this->middleware('can:delete users')->only(['destroy']);
+
+        // Or apply to all methods
+        $this->middleware('auth'); // Ensure user is authenticated
+    }
+}
+```
+
+**3. Method-level authorization (for specific checks):**
+```php
 // In controller methods
 public function store(CreateUserRequest $request)
 {
@@ -67,6 +89,8 @@ public function store(CreateUserRequest $request)
     // ... rest of method
 }
 ```
+
+The constructor approach is recommended for consistent authorization across all methods in a controller, as it centralizes permission checks and ensures authorization is applied consistently without duplicating checks in each method.
 
 ### ID Encryption
 
@@ -203,6 +227,114 @@ public function registerUser(array $userData): User
 }
 ```
 
+## Service Layer Pattern
+
+The system implements a service layer pattern to separate business logic from HTTP request handling. All business logic should be contained within services rather than controllers.
+
+### Flow Diagram
+
+```
+Request → Route → Controller → Validate → Service → Model → Response
+```
+
+### Service Organization
+
+Services are organized by domain:
+
+- `app/Services/` - General application services
+- `app/Services/Sys/` - System-specific services (monitoring, logs, configurations, etc.)
+
+### Architecture Pattern
+
+- **Controllers**: Handle HTTP requests/responses, validation, and orchestration
+- **Services**: Contain all business logic and database operations
+- **Models**: Represent data structures only
+
+### Controller Implementation
+
+Controllers should be thin and only handle HTTP requests/responses:
+
+```php
+public function store(RoleRequest $request)
+{
+    try {
+        // Extract validated data from request
+        $data = $request->validated();
+        $data['permissions'] = $request->has('permissions') ? $request->permissions : [];
+
+        // Pass data array to service (not Request object)
+        $this->roleService->createRole($data);
+
+        return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil dibuat.');
+    } catch (\Exception $e) {
+        \Log::error('Error in RoleController@store: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Gagal membuat peran: ' . $e->getMessage());
+    }
+}
+```
+
+### Service Implementation
+
+Services contain all business logic and return data only:
+
+```php
+public function createRole(array $data): Role
+{
+    return DB::transaction(function() use ($data) {
+        $role = Role::create(['name' => $data['name']]);
+
+        // Assign permissions if provided
+        if (isset($data['permissions']) && is_array($data['permissions'])) {
+            $role->givePermissionTo($data['permissions']);
+        }
+
+        return $role;
+    });
+}
+```
+
+### Request Handling
+
+Controllers extract data from Request objects and pass arrays to services:
+
+- Controllers: `$data = $request->validated(); $this->service->method($data);`
+- Services: `public function method(array $data) { ... }`
+- Exception: Complex filtering where service needs request context
+
+### Service Reusability
+
+Services work across different contexts (UI, API, export) because they:
+
+- Receive simple data arrays instead of HTTP Request objects
+- Don't depend on HTTP-specific functionality
+- Focus solely on business logic and data operations
+
+### API and Export Compatibility
+
+The same service methods can be used across different interfaces:
+
+- **Web UI**: `Controller → Service → View`
+- **API**: `API Controller → Service → JSON Response`
+- **Export**: `Export Class → Service → File`
+
+Example showing the same service used in both UI and API:
+
+UI Controller:
+```php
+public function store(RoleRequest $request) {
+    $data = $request->validated();
+    $this->roleService->createRole($data); // Uses same service
+}
+```
+
+API Controller:
+```php
+public function store(Request $request) {
+    $data = $request->validate([...]);
+    $this->roleService->createRole($data); // Uses same service
+}
+```
+
 ## Helper Functions Classification
 
 The system implements a classification system for helper functions to maintain code quality and prevent accidental modifications to critical system functions.
@@ -261,4 +393,12 @@ class UserController extends Controller
         return view('pages.admin.users.show', compact('user'));
     }
 }
-```
+``` 
+ 
+## Database Views  
+  
+Database views provide a way to simplify complex queries and present aggregated data in a structured format. They're especially useful for dashboards and reporting.  
+  
+### Creating Views  
+  
+Use migrations to create database views: 

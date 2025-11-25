@@ -1,4 +1,4 @@
-@props(['id', 'route', 'columns', 'search' => true, 'pageLengthSelector' => '#pageLength', 'withCheckbox' => false, 'checkboxKey' => 'id'])
+@props(['id', 'route', 'columns', 'search' => true, 'pageLength' => true, 'Checkbox' => false, 'checkboxKey' => 'id'])
 
 @push('css')
     <!-- DataTables CSS - using sys assets -->
@@ -9,7 +9,7 @@
     <table id="{{ $id }}" class="table" style="width:100%">
         <thead>
             <tr>
-                @if ($withCheckbox)
+                @if ($Checkbox)
                     <th style="min-width: 30px;">
                         <input type="checkbox" id="selectAll-{{ $id }}" class="form-check-input dt-checkboxes">
                     </th>
@@ -19,7 +19,7 @@
                 @endforeach
             </tr>
         </thead>
-        @if ($withCheckbox)
+        @if ($Checkbox)
             <tbody></tbody>
         @endif
     </table>
@@ -29,38 +29,31 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const TABLE_ID = '{{ $id }}';
+            const stateName = 'DataTables_' + TABLE_ID + '_' + window.location.pathname;
             const SELECTOR = {
                 table: `#${TABLE_ID}`,
                 search: `#${TABLE_ID}-search`,
-                pageLength: `{{ $pageLengthSelector }}`,
+                pageLength: `#${TABLE_ID}-pageLength`,
                 selectAll: `#selectAll-${TABLE_ID}`,
                 body: `#${TABLE_ID} tbody`,
                 rowCheckbox: '.select-row'
             };
-            const stateName = 'DataTables_' + TABLE_ID + '_' + window.location.pathname;
 
 
             // Initialize DataTable
-            const table = $('#{{ $id }}').DataTable({
+            const table = $(SELECTOR.table).DataTable({
                 processing: true,
                 serverSide: true,
                 stateSave: true,
-                searchDelay: 1000,
                 responsive: true,
                 order: [
                     [0, 'desc']
                 ],
                 ajax: {
-                    url: '{{ $route }}',
-                    data: function(d) {
-                        @if ($search)
-                            const searchValue = document.querySelector(SELECTOR.search)?.value || '';
-                            if (searchValue) d.search.value = searchValue;
-                        @endif
-                    }
+                    url: '{{ $route }}'
                 },
                 columns: [
-                    @if ($withCheckbox)
+                    @if ($Checkbox)
                         {
                             data: null,
                             name: 'checkbox',
@@ -73,6 +66,7 @@
                             }
                         },
                     @endif
+
                     @foreach ($columns as $index => $column)
                         {
                             data: '{!! $column['data'] !!}',
@@ -108,18 +102,24 @@
 
                     if (storedState) {
                         const state = JSON.parse(storedState);
-                        // Update the page length selector with saved value
-                        const savedPageLength = state.length;
-                        $('#{{ $id }}-pagelength').val(savedPageLength);
+                        callback(state); // ← Biarkan DataTables restore state internalnya dulu
 
-                        // Update the search input with saved value from DataTable's internal search
-                        @if ($search)
-                            const savedSearch = state.search && state.search.search;
-                            if (savedSearch) {
-                                $('#{{ $id }}-search').val(savedSearch);
+                        // Baru set UI setelah state dipulihkan
+                        setTimeout(() => {
+                            // Sync page length selector
+                            const pageLengthEl = $('#{{ $id }}-pagelength');
+                            if (pageLengthEl.length) {
+                                pageLengthEl.val(state.length);
                             }
-                        @endif
-                        callback(state);
+
+                            // Sync search input
+                            @if ($search)
+                                const searchInput = $('#{{ $id }}-search');
+                                if (searchInput.length && state.search?.search) {
+                                    searchInput.val(state.search.search);
+                                }
+                            @endif
+                        }, 0); // Delay kecil agar DataTable selesai render
                     } else {
                         callback(null);
                     }
@@ -129,23 +129,35 @@
                 }
             });
 
-            // Sync page length selector on draw
-            table.on('draw', function() {
-                const pageLengthEl = document.querySelector(SELECTOR.pageLength);
-                if (pageLengthEl) {
-                    pageLengthEl.value = table.page.len();
-                }
-            });
-
-            // === SEARCH ===
+            // === SEARCH DENGAN DEBOUNCE ===
             @if ($search)
+                let searchTimeout;
                 document.querySelector(SELECTOR.search)?.addEventListener('input', function() {
-                    table.search(this.value).draw();
+                    clearTimeout(searchTimeout);
+                    const query = this.value.trim();
+                    searchTimeout = setTimeout(() => {
+                        table.search(query).draw();
+                    }, 300); // 300ms debounce
                 });
             @endif
 
+            // === PAGE LENGTH HANDLER ===
+            @if ($pageLength)
+                const pageLengthEl = document.querySelector(SELECTOR.pageLength);
+                if (pageLengthEl) {
+                    // Set nilai awal sesuai DataTable
+                    pageLengthEl.value = table.page.len();
+
+                    // Event listener untuk perubahan
+                    pageLengthEl.addEventListener('change', function() {
+                        const newLength = parseInt(this.value, 10);
+                        table.page.len(newLength).draw();
+                    });
+                }
+            @endif
+
             // Handle "Select All" checkbox
-            @if ($withCheckbox)
+            @if ($Checkbox)
                 const selectedIds = new Set();
 
                 // Select All
@@ -200,8 +212,12 @@
                 }
             @endif
 
-            // Simpan instance ke window untuk akses eksternal
-            window['DT_' + TABLE_ID] = table;
+            const refreshBtn = document.querySelector(`#${TABLE_ID}-refresh`);
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    table.draw();
+                });
+            }
         });
     </script>
 @endpush

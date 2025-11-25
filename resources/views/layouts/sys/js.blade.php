@@ -1,4 +1,3 @@
-{{-- <script src="{{ asset('assets-sys') }}/vendor/libs/perfect-scrollbar/perfect-scrollbar.min.js"></script> --}}
 <script src="{{ asset('assets-sys') }}/vendor/js/menu.min.js"></script>
 
 <script src="{{ asset('assets-sys') }}/js/main.js"></script>

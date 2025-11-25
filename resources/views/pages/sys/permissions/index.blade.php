@@ -22,8 +22,7 @@
         <div class="card-body">
             <x-sys.flash-message />
 
-            <x-sys.datatable id="permissions-table" route="{{ route('sys.permissions.data') }}" with-checkbox="true" checkbox-key="id"
-             :columns="[
+            <x-sys.datatable id="permissions-table" route="{{ route('sys.permissions.data') }}" checkbox="true" checkbox-key="id" :columns="[
                 [
                     'title' => '#',
                     'data' => 'DT_RowIndex',
@@ -36,13 +35,6 @@
                     'data' => 'name',
                     'orderable' => true,
                     'name' => 'name',
-                ],
-                [
-                    'title' => 'Roles Assigned',
-                    'data' => 'roles_count',
-                    'name' => 'roles_count',
-                    'orderable' => true,
-                    'searchable' => false,
                 ],
                 [
                     'title' => 'Created At',
@@ -72,16 +64,30 @@
         </div>
     </div>
 @endsection
+
 @push('scripts')
     <script>
+        const editPermissionUrl = "{{ route('sys.permissions.edit', ['id' => '__id__']) }}";
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle create permission button click
+            // Function to show loading spinner in modal
+            function showLoadingSpinner() {
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="text-center p-5">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Handle create permission
             document.getElementById('createPermissionBtn').addEventListener('click', function() {
-                // 1. Buka modal
+                // Show loading spinner initially
+                showLoadingSpinner();
                 const modal = new bootstrap.Modal(document.getElementById('modalAction'));
                 modal.show();
 
-                axios.get('{{ route('sys.permissions.create-modal') }}')
+                axios.get("{{ route('sys.permissions.create') }}")
                     .then(response => {
                         document.getElementById('modalContent').innerHTML = response.data;
                     })
@@ -92,25 +98,24 @@
 
             // Handle edit permission (event delegation)
             document.addEventListener('click', function(e) {
-                if (e.target.closest('.edit-permission')) {
-                    const btn = e.target.closest('.edit-permission');
-                    const id = btn.dataset.id;
+                const btn = e.target.closest('.edit-permission');
+                if (!btn) return;
 
-                    const modal = new bootstrap.Modal(document.getElementById('modalAction'));
-                    modal.show();
+                const id = btn.dataset.id;
 
-                    axios.get(`/sys/permissions/${id}/edit`, {
-                            params: {
-                                id: id
-                            }
-                        })
-                        .then(response => {
-                            document.getElementById('modalContent').innerHTML = response.data;
-                        })
-                        .catch(() => {
-                            showErrorMessage('Error!', 'Could not load form');
-                        });
-                }
+                // Show loading spinner initially
+                showLoadingSpinner();
+                const modal = new bootstrap.Modal(document.getElementById('modalAction'));
+                modal.show();
+
+                axios.get(editPermissionUrl.replace('__id__', id))
+                    .then(response => {
+                        document.getElementById('modalContent').innerHTML = response.data;
+                    })
+                    .catch((e) => {
+                        modal.hide()
+                        showErrorMessage('Error!', 'Could not load form');
+                    });
             });
 
         });

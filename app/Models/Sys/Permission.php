@@ -17,6 +17,10 @@ class Permission extends SpatiePermission implements \Spatie\Searchable\Searchab
         'sub_category'
     ];
 
+    protected $casts = [
+        'id' => 'string',
+    ];
+
     /**
      * Accessor to get encrypted ID
      */

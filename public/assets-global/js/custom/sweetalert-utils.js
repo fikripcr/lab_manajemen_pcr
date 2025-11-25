@@ -159,37 +159,36 @@ function confirmAction(title, text, confirmText = 'Yes', callback) {
 function confirmDelete(url, tableId = null, title = 'Delete this item??', text = 'Are you sure you want to delete this item? This action cannot be undone.') {
     showDeleteConfirmation(title, text).then((result) => {
         if (result.isConfirmed) {
-            $.ajax({
+            axios({
+                method: 'POST',
                 url: url,
-                type: 'POST',
                 data: {
                     '_method': 'DELETE',
-                },
-                success: function (response) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        html: response.message || 'Item deleted successfully!',
-                        icon: 'success',
-                        timer: 1000,
-                        timerProgressBar: true,
-                        showConfirmButton: false
-                    }).then(() => {
-                        // Reload DataTable if tableId is provided
-                        if (tableId) {
-                            let tableInstance = window['DT_' + tableId]
-                            tableInstance.ajax.reload(null, false);
-                        } else {
-                            location.reload();
-                        }
-                    });
-                },
-                error: function (xhr) {
-                    let errorMessage = 'An error occurred while deleting the item.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    }
-                    showErrorMessage('Error!', errorMessage);
                 }
+            })
+            .then(function (response) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    html: response.data.message || 'Item deleted successfully!',
+                    icon: 'success',
+                    timer: 1000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                }).then(() => {
+                    if (tableId) {
+                        let tableInstance = window['DT_' + tableId]
+                        tableInstance.ajax.reload(null, false);
+                    } else {
+                        location.reload();
+                    }
+                });
+            })
+            .catch(function (error) {
+                let errorMessage = 'An error occurred while deleting the item.';
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+                showErrorMessage('Error!', errorMessage);
             });
         }
     });

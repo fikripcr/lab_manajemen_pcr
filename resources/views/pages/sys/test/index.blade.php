@@ -4,6 +4,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Others /</span> Test Features</h4>
     </div>
+
     <div class="row">
         <!-- Test Email Card -->
         <div class="col-md-4 mb-4">
@@ -72,21 +73,7 @@
 @endsection
 
 @push('scripts')
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
     <script>
-        function showLoading(message = 'Processing...') {
-            Swal.fire({
-                title: 'Please wait...',
-                text: message,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showConfirmButton: false,
-                willOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-        }
-
         function testEmail() {
             Swal.fire({
                 title: 'Send Test Email?',
@@ -99,7 +86,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    showLoading('Sending email...');
+                    showLoadingMessage('Sending email...');
 
                     fetch('{{ route('sys.test.email') }}', {
                             method: 'POST',
@@ -155,7 +142,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    showLoading('Sending notification...');
+                    showLoadingMessage('Sending notification...');
 
                     fetch('{{ route('sys.test.notification') }}', {
                             method: 'POST',
@@ -211,7 +198,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    showLoading('Generating PDF...');
+                    showLoadingMessage('Generating PDF...');
 
                     fetch('{{ route('sys.test.pdf-export') }}', {
                             method: 'POST',

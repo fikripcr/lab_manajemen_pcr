@@ -1,11 +1,12 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
-use App\Http\Controllers\Controller;
-use App\Services\ActivityLogsService;
 use Illuminate\Http\Request;
-use Spatie\Activitylog\Models\Activity;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Services\Sys\ActivityLogsService;
+
 
 class ActivityLogController extends Controller
 {
@@ -20,12 +21,7 @@ class ActivityLogController extends Controller
      */
     public function index(Request $request)
     {
-        try {
-            return view('pages.sys.activity-log.index');
-        } catch (\Exception $e) {
-            \Log::error('Error in ActivityLogController@index: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat halaman log aktivitas.');
-        }
+        return view('pages.sys.activity-log.index');
     }
 
     /**
@@ -34,34 +30,31 @@ class ActivityLogController extends Controller
     public function paginate(Request $request)
     {
         try {
+            // Build filters from request
             $filters = $this->activityLogService->buildFiltersFromRequest($request);
-            $query   = $this->activityLogService->getFilteredQuery();
 
-            return DataTables::of($query)
+            // Use the service to get the filtered query
+            $activities = $this->activityLogService->getFilteredQuery($filters);
+
+            return DataTables::of($activities)
                 ->addIndexColumn()
                 ->order(function ($query) {
-                    $query->latest('created_at');
+                    $query->latest('sys_activity_log.created_at'); // Sort by created_at DESC by default
                 })
                 ->editColumn('created_at', function ($activity) {
                     return formatTanggalIndo($activity->created_at);
                 })
-                ->editColumn('causer.name', function ($activity) {
+                ->editColumn('causer_name', function ($activity) {
                     return $activity->causer_name ?? 'System';
                 })
                 ->editColumn('description', function ($activity) {
-                    $desc = htmlspecialchars($activity->description, ENT_QUOTES, 'UTF-8');
-                    return '<span title="' . $desc . '">' .
-                    substr($desc, 0, 100) . (strlen($desc) > 100 ? '...' : '') .
-                        '</span>';
+                    $description = htmlspecialchars($activity->description, ENT_QUOTES, 'UTF-8');
+                    return '<span title="' . $description . '">' . substr($description, 0, 100) . (strlen($description) > 100 ? '...' : '') . '</span>';
                 })
                 ->addColumn('action', function ($activity) {
                     return '
                         <div class="d-flex align-items-center">
-                            <a class="text-success me-2" href="#"
-                               data-bs-toggle="modal"
-                               data-bs-target="#activityDetailModal"
-                               data-activity-id="' . $activity->id . '"
-                               title="View Details">
+                            <a class="text-success me-2" href="#" data-bs-toggle="modal" data-bs-target="#activityDetailModal" data-activity-id="' . $activity->id . '" title="View Details">
                                 <i class="bx bx-show"></i>
                             </a>
                         </div>';
@@ -70,10 +63,7 @@ class ActivityLogController extends Controller
                 ->make(true);
 
         } catch (\Exception $e) {
-            logError($e, 'error', $e->getMessage());
-            return response()->json([
-                'error' => 'Terjadi kesalahan saat mengambil data log aktivitas.',
-            ], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -122,14 +112,6 @@ class ActivityLogController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $activity = Activity::findOrFail($id);
-            $activity->delete();
-
-            return apiSuccess([], 'Log aktivitas berhasil dihapus.', 200);
-
-        } catch (\Exception $e) {
-            return apiError($e->getMessage(), $e->getCode());
-        }
+        //
     }
 }

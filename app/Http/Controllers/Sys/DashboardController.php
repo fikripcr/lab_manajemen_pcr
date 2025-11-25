@@ -2,154 +2,96 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sys\ServerMonitorCheck;
-use App\Models\User;
+use App\Services\Sys\DashboardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Spatie\Activitylog\Models\Activity;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        protected DashboardService $dashboardService
+    ) {
+    }
+
     public function index()
     {
-        // Get statistics
-        $totalUsers       = User::count();
-        $totalRoles       = Role::count();
-        $totalPermissions = Permission::count();
-        $todayActivities  = Activity::whereDate('created_at', today())->count();
+        try {
+            // Get statistics
+            $stats = $this->dashboardService->getDashboardStats();
+            $totalUsers = $stats['totalUsers'];
+            $totalRoles = $stats['totalRoles'];
+            $totalPermissions = $stats['totalPermissions'];
+            $todayActivities = $stats['todayActivities'];
 
-        // Get application name from config
-        $appName = config('app.name', 'Laravel');
+            // Get application name from config
+            $appName = config('app.name', 'Laravel');
 
-        // Get the current server time
-        $serverTime = now()->format('Y-m-d H:i:s');
+            // Get the current server time
+            $serverTime = now()->format('Y-m-d H:i:s');
 
-        // Get recent activities for the dashboard
-        $recentActivities = Activity::with(['causer:id,name', 'subject'])
-            ->latest()
-            ->limit(5)
-            ->get();
+            // Get recent activities for the dashboard
+            $recentActivities = $this->dashboardService->getRecentActivities(5);
 
-        // Get application environment
-        $appEnvironment = app()->environment();
-        $appDebug       = config('app.debug') ? 'Enabled' : 'Disabled';
-        $appUrl         = config('app.url');
+            // Get application environment
+            $appEnvironment = app()->environment();
+            $appDebug = config('app.debug') ? 'Enabled' : 'Disabled';
+            $appUrl = config('app.url');
 
-        // Get recent activities (last 10)
-        $recentLogs = Activity::with(['causer:id,name', 'subject'])
-            ->latest()
-            ->limit(10)
-            ->get();
+            // Get recent activities (last 10)
+            $recentLogs = $this->dashboardService->getRecentLogs(10);
 
-        // Get user role distribution data for list
-        $roleUserCounts = [];
-        $roles = Role::all();
-        foreach ($roles as $role) {
-            $roleUserCounts[] = [
-                'name' => $role->name,
-                'count' => $role->users()->count()
-            ];
+            // Get user role distribution data for list
+            $roleUserCounts = $this->dashboardService->getUserRoleDistribution();
+
+            $activityData = $this->dashboardService->getActivitiesByDate();
+            $errorData = $this->dashboardService->getErrorLogsByDate();
+
+            // Format activity data for ApexCharts
+            $activityChartData = json_encode([
+                'series' => [[
+                    'name' => 'Activities',
+                    'data' => $activityData['data'],
+                ]],
+                'categories' => $activityData['categories'],
+            ]);
+
+            // Format error data for ApexCharts
+            $errorChartData = json_encode([
+                'series' => [[
+                    'name' => 'Errors',
+                    'data' => $errorData['data'],
+                ]],
+                'categories' => $errorData['categories'],
+            ]);
+
+            // Check if we need to run server monitoring
+            if (request()->has('refresh_monitoring')) {
+                Artisan::call('server:monitor');
+                logActivity('sys_dashboard', 'Server monitoring refreshed manually', auth()->user());
+            }
+
+            // Retrieve server monitoring data
+            $serverMonitoringData = $this->dashboardService->getServerMonitoringData();
+
+            return view('pages.sys.dashboard.index', compact(
+                'totalUsers',
+                'totalRoles',
+                'totalPermissions',
+                'todayActivities',
+                'appName',
+                'serverTime',
+                'recentActivities',
+                'appEnvironment',
+                'appDebug',
+                'appUrl',
+                'recentLogs',
+                'roleUserCounts',
+                'activityChartData',
+                'errorChartData',
+                'serverMonitoringData'
+            ));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        // Get activities by date for the last 14 days
-        $activityByDate = [];
-        $dates          = [];
-
-        for ($i = 13; $i >= 0; $i--) {
-            $date  = now()->subDays($i);
-            $count = Activity::whereDate('created_at', $date)->count();
-
-            $activityByDate[] = $count;
-            $dates[]          = $date->format('M d');
-        }
-
-        // Get error log data for chart (last 14 days)
-        $errorByDate = [];
-        $errorDates = [];
-
-        for ($i = 13; $i >= 0; $i--) {
-            $date = now()->subDays($i);
-            $count = \App\Models\Sys\ErrorLog::whereDate('created_at', $date)->count();
-
-            $errorByDate[] = $count;
-            $errorDates[] = $date->format('M d');
-        }
-
-        // Format activity data for ApexCharts
-        $activityChartData = json_encode([
-            'series'     => [[
-                'name' => 'Activities',
-                'data' => $activityByDate,
-            ]],
-            'categories' => $dates,
-        ]);
-
-        // Format error data for ApexCharts
-        $errorChartData = json_encode([
-            'series'     => [[
-                'name' => 'Errors',
-                'data' => $errorByDate,
-            ]],
-            'categories' => $errorDates,
-        ]);
-
-        // Check if we need to run server monitoring
-        if (request()->has('refresh_monitoring')) {
-            Artisan::call('server:monitor');
-            logActivity('sys_dashboard', 'Server monitoring refreshed manually', auth()->user());
-        }
-
-        // Retrieve server monitoring data
-        $serverMonitoringData = [];
-
-        $diskSpaceCheck = ServerMonitorCheck::where('type', 'diskspace')->latest()->first();
-        if ($diskSpaceCheck) {
-            $diskSpaceData                      = json_decode($diskSpaceCheck->last_run_output, true);
-            $serverMonitoringData['disk_space'] = [
-                'last_check' => $diskSpaceCheck->last_ran_at,
-                'data'       => $diskSpaceData,
-                'message'    => $diskSpaceCheck->last_run_message,
-            ];
-        }
-
-        $databaseSizeCheck = ServerMonitorCheck::where('type', 'databasesize')->latest()->first();
-        if ($databaseSizeCheck) {
-            $databaseSizeData                      = json_decode($databaseSizeCheck->last_run_output, true);
-            $serverMonitoringData['database_size'] = [
-                'last_check' => $databaseSizeCheck->last_ran_at,
-                'data'       => $databaseSizeData,
-                'message'    => $databaseSizeCheck->last_run_message,
-            ];
-        }
-
-        $projectSizeCheck = ServerMonitorCheck::where('type', 'projectsize')->latest()->first();
-        if ($projectSizeCheck) {
-            $projectSizeData                      = json_decode($projectSizeCheck->last_run_output, true);
-            $serverMonitoringData['project_size'] = [
-                'last_check' => $projectSizeCheck->last_ran_at,
-                'data'       => $projectSizeData,
-                'message'    => $projectSizeCheck->last_run_message,
-            ];
-        }
-
-        return view('pages.sys.dashboard.index', compact(
-            'totalUsers',
-            'totalRoles',
-            'totalPermissions',
-            'todayActivities',
-            'appName',
-            'serverTime',
-            'recentActivities',
-            'appEnvironment',
-            'appDebug',
-            'appUrl',
-            'recentLogs',
-            'roleUserCounts',
-            'activityChartData',
-            'errorChartData',
-            'serverMonitoringData'
-        ));
     }
 }

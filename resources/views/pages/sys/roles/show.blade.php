@@ -8,7 +8,7 @@
                 <i class="bx bx-edit me-1"></i> Edit Role
             </a>
             <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
-                <i class="bx bx-arrow-back me-1"></i> Back to Roles
+                <i class="bx bx-arrow-back me-1"></i> Back
             </a>
         </div>
     </div>

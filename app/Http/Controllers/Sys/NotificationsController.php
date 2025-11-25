@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\SysTestNotification;
-use App\Services\NotificationService;
+use App\Services\Sys\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -31,9 +31,16 @@ class NotificationsController extends Controller
      */
     public function paginate(Request $request)
     {
-        $notifications = Auth::user()->notifications();
+        $filters = [
+            'read_status' => $request->get('read_status'),
+            'type'        => $request->get('type'),
+            'date_from'   => $request->get('date_from'),
+            'date_to'     => $request->get('date_to'),
+        ];
 
-        return DataTables::of($notifications)
+        $query = $this->notificationService->getFilteredQueryForUser($filters);
+
+        return DataTables::of($query)
             ->addColumn('checkbox', function ($notification) {
                 return '<div class="form-check">
                             <input class="form-check-input notification-checkbox" type="checkbox" value="' . $notification->id . '" id="checkbox_' . $notification->id . '">
@@ -82,12 +89,13 @@ class NotificationsController extends Controller
      */
     public function markAsRead($id)
     {
-        $notification = Auth::user()->notifications()->where('id', $id)->firstOrFail();
+        $result = $this->notificationService->markAsReadById($id);
 
-        $notification->markAsRead();
+        if (! $result) {
+            return redirect()->back()->with('error', 'Notifikasi tidak ditemukan.');
+        }
 
-        // Log the notification marking as read
-        logActivity('notification', 'Notification marked as read', $notification);
+        logActivity('notification', 'Notification marked as read');
 
         return redirect()->back()->with('success', 'Notifikasi telah ditandai sebagai telah dibaca.');
     }
@@ -97,15 +105,15 @@ class NotificationsController extends Controller
      */
     public function markAllAsRead()
     {
-        $count = Auth::user()->unreadNotifications->count();
-        $this->notificationService->markAllAsRead();
+        $userId       = auth()->id();
+        $count        = Auth::user()->unreadNotifications->count();
+        $updatedCount = $this->notificationService->markAllAsReadForUser($userId);
 
-        // Log the notification marking as read
-        logActivity('notification', 'All notifications marked as read: ' . $count . ' notifications by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
+        logActivity('notification', $updatedCount . ' notifications marked as read by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
         return response()->json([
             'success' => true,
-            'message' => 'Semua notifikasi telah ditandai sebagai telah dibaca!',
+            'message' => 'Semua notifikasi (' . $updatedCount . ') telah ditandai sebagai telah dibaca!',
         ]);
     }
 
@@ -117,31 +125,15 @@ class NotificationsController extends Controller
         $selectedIds = $request->input('ids', []);
 
         if (empty($selectedIds)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tidak ada notifikasi yang dipilih.',
-            ]);
+            return apiResponse(null, 'Tidak ada notifikasi yang dipilih.', 400, 'error');
         }
 
-        // Validate that the selected notifications belong to the authenticated user
-        $notifications = Auth::user()
-            ->notifications()
-            ->whereIn('id', $selectedIds)
-            ->get();
+        $userId       = auth()->id();
+        $updatedCount = $this->notificationService->markSelectedAsRead($selectedIds, $userId);
 
-        foreach ($notifications as $notification) {
-            $notification->markAsRead();
-        }
+        logActivity('notification', $updatedCount . ' selected notifications marked as read by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
-        $count = count($notifications);
-
-        // Log the notification marking as read
-        logActivity('notification', $count . ' selected notifications marked as read by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
-
-        return response()->json([
-            'success' => true,
-            'message' => $count . ' notifikasi telah ditandai sebagai telah dibaca.',
-        ]);
+        return apiSuccess(['updated_count' => $updatedCount], $updatedCount . ' notifikasi telah ditandai sebagai telah dibaca.');
     }
 
     /**
@@ -149,54 +141,10 @@ class NotificationsController extends Controller
      */
     public function getUnreadCount()
     {
-        $count = $this->notificationService->getUnreadCount();
+        $userId = auth()->id();
+        $count  = $this->notificationService->getUnreadCount($userId);
 
-        return response()->json(['count' => $count]);
-    }
-
-    /**
-     * Handle the incoming request to send a test notification to the authenticated user.
-     */
-    public function sendTestNotification(Request $request)
-    {
-        $user = Auth::user();
-
-        // Send the test notification to the authenticated user (database channel)
-        $user->notify(new SysTestNotification('database'));
-
-        // Log the notification sending
-        logActivity('notification', 'Test notification sent to user: ' . $user->name . ' (ID: ' . $user->id . ')', $user);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Notifikasi berhasil dikirim!',
-        ]);
-    }
-
-    /**
-     * Send notification to a specific user.
-     */
-    public function sendToUser(Request $request, $user)
-    {
-                                                // Attempt to decrypt the ID first
-        $decryptedId = decryptId($user, false); // Don't throw exception on failure
-        if ($decryptedId !== null) {
-            $recipient = User::findOrFail($decryptedId);
-        } else {
-            // If decryption failed, try to find by the original value
-            $recipient = User::findOrFail($user);
-        }
-
-                                                                 // Send the test notification to the specific user
-        $recipient->notify(new SysTestNotification('database')); // Default to database notification
-
-        // Log the notification sending
-        logActivity('notification', 'Test notification sent to user: ' . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')', $recipient);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Notifikasi berhasil dikirim ke ' . $recipient->name . '!',
-        ]);
+        return apiSuccess(['count' => $count]);
     }
 
     /**
@@ -204,31 +152,12 @@ class NotificationsController extends Controller
      */
     public function getDropdownData(Request $request)
     {
-        $limit = $request->get('limit', 5);
-        $user  = Auth::user();
+        $limit  = $request->get('limit', 5);
+        $userId = auth()->id();
 
-        // Get only the fields we need to optimize performance
-        $notifications = $user->notifications()
-            ->select('id', 'data', 'read_at', 'created_at')
-            ->latest()
-            ->limit($limit)
-            ->get();
+        $notifications = $this->notificationService->getDropdownData($userId, $limit);
 
-        $formattedNotifications = $notifications->map(function ($notification) {
-            return [
-                'id'         => $notification->id,
-                'title'      => $notification->data['title'] ?? 'Notification',
-                'body'       => $notification->data['body'] ?? 'New notification',
-                'created_at' => formatTanggalIndo($notification->created_at),
-                'is_unread'  => is_null($notification->read_at),
-                'action_url' => route('notifications.mark-as-read', $notification->id),
-            ];
-        });
-
-        return response()->json([
-            'success' => true,
-            'data'    => $formattedNotifications,
-        ]);
+        return apiSuccess(['data' => $notifications]);
     }
 
     /**
@@ -236,20 +165,10 @@ class NotificationsController extends Controller
      */
     public function getNotificationCounts()
     {
-        $user = Auth::user();
+        $userId = auth()->id();
+        $counts = $this->notificationService->getNotificationCounts($userId);
 
-        $total  = $user->notifications()->count();
-        $unread = $user->unreadNotifications->count();
-        $read   = $total - $unread;
-
-        return response()->json([
-            'success' => true,
-            'counts'  => [
-                'total'  => $total,
-                'unread' => $unread,
-                'read'   => $read,
-            ],
-        ]);
+        return apiSuccess(['counts' => $counts]);
     }
 
     /**
@@ -257,75 +176,7 @@ class NotificationsController extends Controller
      */
     public function update(Request $request, $id = null)
     {
-        // Currently not implemented - notifications are read/unread only
-        return response()->json([
-            'success' => false,
-            'message' => 'Update operation is not supported for notifications. Use mark-as-read to update status.',
-        ], 405); // Method not allowed
-    }
-
-    /**
-     * Test notification function that can send to database or email based on parameters
-     */
-    public function testNotification(Request $request)
-    {
-        $request->validate([
-            'type'    => 'required|in:database,email',
-            'user_id' => 'nullable',
-        ]);
-
-        $type = $request->input('type');
-
-        // Check if user_id was provided and if it's an encrypted ID
-        if ($request->has('user_id')) {
-            // If user_id is passed, it's likely an encrypted ID
-            $decryptedId = decryptId($request->input('user_id'), false);
-            if ($decryptedId === null) {
-                // If decryptId failed, treat the value as a plain ID
-                $user = User::find($request->input('user_id'));
-            } else {
-                $user = User::find($decryptedId);
-            }
-        } else {
-            // Use authenticated user if no user_id provided
-            $user = auth()->user();
-        }
-
-        if (! $user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found',
-            ], 404);
-        }
-
-        try {
-            // Determine channel based on type
-            $channel      = $type === 'email' ? 'mail' : 'database';
-            $notification = new SysTestNotification($channel);
-
-            if ($type === 'email') {
-                // Send email notification
-                $user->notify($notification);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Email notification sent successfully to ' . $user->email,
-                ]);
-            } else {
-                // Send database notification (default)
-                $user->notify($notification);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Database notification sent successfully to ' . $user->name,
-                ]);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to send notification: ' . $e->getMessage(),
-            ], 500);
-        }
+        //
     }
 
     /**
@@ -378,10 +229,7 @@ class NotificationsController extends Controller
             if ($type === 'email') {
                 // Verify the recipient has an email address
                 if (empty($recipient->email)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Recipient does not have an email address.',
-                    ], 400);
+                    return apiError('Recipient does not have an email address.', 400);
                 }
 
                 $recipient->notify($notification);
@@ -394,16 +242,10 @@ class NotificationsController extends Controller
             // Log the notification sending
             logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
-            return response()->json([
-                'success' => true,
-                'message' => $message,
-            ]);
+            return apiSuccess(null, $message);
         } catch (\Exception $e) {
             \Log::error('Notification sending failed: ' . $e->getMessage() . ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to send notification: ' . $e->getMessage(),
-            ], 500);
+            return apiError('Failed to send notification: ' . $e->getMessage(), 500);
         }
     }
 }

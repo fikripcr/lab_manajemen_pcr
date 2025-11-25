@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NotificationResource;
-use App\Services\NotificationService;
+use App\Services\Sys\NotificationService;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -21,7 +21,7 @@ class NotificationController extends Controller
      */
     public function getCount()
     {
-        $count = $this->notificationService->getUnreadCount();
+        $count = $this->notificationService->getUnreadCount(auth()->id());
         return response()->json([
             'count' => $count
         ]);
@@ -36,6 +36,9 @@ class NotificationController extends Controller
             'read_status' => $request->get('read_status'),
             'per_page' => $request->get('per_page', 10)
         ];
+
+        // Add user ID to filter for user-specific notifications
+        $filters['user_id'] = auth()->id();
 
         $notifications = $this->notificationService->getNotificationList($filters);
 

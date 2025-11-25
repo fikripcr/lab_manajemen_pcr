@@ -1,7 +1,5 @@
 @extends('layouts.sys.app')
 
-
-
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Others/</span> Development Guide</h4>

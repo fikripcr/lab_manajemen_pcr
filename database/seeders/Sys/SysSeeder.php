@@ -28,7 +28,6 @@ class SysSeeder extends Seeder
             ['name' => 'sys.activity-log.view', 'category' => 'System Management', 'sub_category' => 'Activity Log'],
             ['name' => 'sys.activity-log.create', 'category' => 'System Management', 'sub_category' => 'Activity Log'],
             ['name' => 'sys.activity-log.update', 'category' => 'System Management', 'sub_category' => 'Activity Log'],
-            ['name' => 'sys.activity-log.delete', 'category' => 'System Management', 'sub_category' => 'Activity Log'],
             ['name' => 'sys.backup.view', 'category' => 'System Management', 'sub_category' => 'Backup'],
             ['name' => 'sys.backup.create', 'category' => 'System Management', 'sub_category' => 'Backup'],
             ['name' => 'sys.backup.update', 'category' => 'System Management', 'sub_category' => 'Backup'],

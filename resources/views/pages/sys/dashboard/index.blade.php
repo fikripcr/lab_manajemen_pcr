@@ -442,7 +442,6 @@
             </div>
         </div>
 
-
         <!-- Recent Logs and Errors -->
         <div class="col-12 mb-4">
             <div class="row">

@@ -1,11 +1,9 @@
 @props([
     'dataTableId' => null,
-    'options' => ['10', '25', '50', '100'],
+    'options' => ['10', '25', '50', 'All'],
 ])
 
-<select id="{{ $dataTableId }}-pagelength"
-     class="form-select"
-     onchange="handlePageLengthChange(this, '{{ $dataTableId }}')"
+<select id="{{ $dataTableId }}-pageLength" class="form-select"
      {{ $attributes->merge(['class' => '']) }}>
     @foreach ($options as $option)
         <option value="{{ $option }}">
@@ -14,21 +12,3 @@
     @endforeach
 </select>
 
-@push('scripts')
-    <script>
-        function handlePageLengthChange(element, tableId) {
-            const length = parseInt(element.value);
-
-            if (tableId) {
-                const table = $('#' + tableId).DataTable();
-                table.page.len(length).draw();
-            } else {
-                // Search across all tables on the page
-                $('table.dataTable').each(function() {
-                    const dataTable = $(this).DataTable();
-                    dataTable.search(searchTerm).draw();
-                });
-            }
-        }
-    </script>
-@endpush

@@ -5,18 +5,12 @@
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Others/</span> App Configuration</h4>
     </div>
 
+    <x-sys.flash-message />
+
     <div class="row">
         <div class="col-12">
             <div class="card">
-
-                <div class="card-body tab-content">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
+                <div class="card-body ">
                     <form action="{{ route('app-config.update') }}" method="POST">
                         @csrf
                         @method('POST')

@@ -33,7 +33,7 @@ class BackupController extends Controller
                 'success' => true,
                 'message' => $message,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Log the error to the ErrorLog model
             logError($e, 'error', [
                 'backup_type' => $type,

@@ -1,7 +1,5 @@
 @extends('layouts.sys.app')
 
-@section('title', 'Error Logs')
-
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Log/</span> Error</h4>

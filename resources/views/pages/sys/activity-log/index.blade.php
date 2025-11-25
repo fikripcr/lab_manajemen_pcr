@@ -5,6 +5,8 @@
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Log/</span> Activity</h4>
     </div>
 
+    <x-sys.flash-message />
+
     <div class="card">
         <div class="card-header">
             <div class="d-flex flex-wrap justify-content-between">
@@ -38,8 +40,8 @@
                     ],
                     [
                         'title' => 'User',
-                        'data' => 'causer.name',
-                        'name' => 'causer.name'
+                        'data' => 'causer_name',
+                        'name' => 'causer_name'
                     ],
                     [
                         'title' => 'Log Name',
@@ -65,7 +67,7 @@
 
     <!-- Activity Detail Modal -->
     <div class="modal fade" id="activityDetailModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Activity Details</h5>

@@ -1,17 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Sys\RoleController;
-use App\Http\Controllers\Sys\TestController;
-use App\Http\Controllers\Sys\BackupController;
-use App\Http\Controllers\Sys\ErrorLogController;
-use App\Http\Controllers\Sys\AppConfigController;
-use App\Http\Controllers\Sys\DashboardController;
-use App\Http\Controllers\Sys\PermissionController;
 use App\Http\Controllers\Sys\ActivityLogController;
+use App\Http\Controllers\Sys\AppConfigController;
+use App\Http\Controllers\Sys\BackupController;
+use App\Http\Controllers\Sys\DashboardController;
 use App\Http\Controllers\Sys\DocumentationController;
+use App\Http\Controllers\Sys\ErrorLogController;
 use App\Http\Controllers\Sys\NotificationsController;
+use App\Http\Controllers\Sys\PermissionController;
+use App\Http\Controllers\Sys\RoleController;
 use App\Http\Controllers\Sys\SysGlobalSearchController;
+use App\Http\Controllers\Sys\TestController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'check.expired'])->group(function () {
     // ==========================
@@ -65,7 +65,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/', [ErrorLogController::class, 'index'])->name('index');
             Route::get('data', [ErrorLogController::class, 'paginate'])->name('data');
             Route::get('{id}', [ErrorLogController::class, 'show'])->name('show');
-            Route::delete('{id}', [ErrorLogController::class, 'destroy'])->name('destroy');
             Route::post('clear-all', [ErrorLogController::class, 'clearAll'])->name('clear-all');
             Route::get('test', [ErrorLogController::class, 'testErrorLog'])->name('test');
         });
@@ -88,12 +87,9 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/api', [PermissionController::class, 'paginate'])->name('data');
             Route::get('/create', [PermissionController::class, 'create'])->name('create');
             Route::post('/', [PermissionController::class, 'store'])->name('store');
-            Route::get('/{permissionId}', [PermissionController::class, 'show'])->name('show');
-            Route::get('/{permissionId}/edit', [PermissionController::class, 'edit'])->name('edit');
-            Route::put('/{permissionId}', [PermissionController::class, 'update'])->name('update');
-            Route::delete('/{permissionId}', [PermissionController::class, 'destroy'])->name('destroy');
-            Route::get('/create-modal', [PermissionController::class, 'createModal'])->name('create-modal');
-            Route::get('/edit-modal/{permissionId}', [PermissionController::class, 'editModal'])->name('edit-modal.show');
+            Route::get('/{id}/edit', [PermissionController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [PermissionController::class, 'update'])->name('update');
+            Route::delete('/{id}', [PermissionController::class, 'destroy'])->name('destroy');
         });
 
         // Testing Dashboard - accessible via /sys/test
@@ -104,7 +100,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::post('/pdf-export', [TestController::class, 'testPdfExport'])->name('pdf-export');
         });
 
-
         // Documentation Routes - accessible via /sys/documentation
         Route::prefix('documentation')->name('sys.documentation.')->group(function () {
             Route::get('/', [DocumentationController::class, 'index'])->name('index');
@@ -114,9 +109,9 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         });
 
         // Get current server time
-        Route::get('/server-time', function() {
+        Route::get('/server-time', function () {
             return response()->json([
-                'server_time' => \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm:ss')
+                'server_time' => \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm:ss'),
             ]);
         })->name('sys.server-time');
     });

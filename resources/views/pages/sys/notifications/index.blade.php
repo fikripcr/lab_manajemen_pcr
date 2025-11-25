@@ -74,9 +74,8 @@
             </div>
         </div>
         <div class="card-body">
-            <x-sys.flash-message />
-
-            <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" withCheckbox="true" checkboxKey="id" :columns="[
+            <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" Checkbox="true" checkboxKey="id"
+            :columns="[
                 [
                     'title' => 'Status',
                     'data' => 'status',
@@ -215,66 +214,6 @@
                     })
                     .catch(error => console.error('Error updating stats:', error));
             }
-
-            // Function to send test notification to current user
-            window.sendTestNotification = function() {
-                // Show loading indicator
-                Swal.fire({
-                    title: 'Processing...',
-                    text: 'Sending test notification...',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                fetch('{{ route('notifications.test') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            type: 'database'
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        Swal.close();
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Sukses!',
-                                text: data.message,
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                // Reload the table to show the new notification
-                                $('#notifications-table').DataTable().ajax.reload();
-                                // Update stats
-                                updateNotificationStats();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message || 'Gagal mengirim notifikasi',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        Swal.close();
-                        console.error('Error:', error);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat mengirim notifikasi',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    });
-            };
         });
     </script>
 @endpush
