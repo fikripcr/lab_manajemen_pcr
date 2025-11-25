@@ -152,22 +152,14 @@
                     'Ya, tandai sebagai telah dibaca'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                        fetch('{{ route('notifications.mark-selected-as-read') }}', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                },
-                                body: JSON.stringify({
-                                    ids: selectedIds
-                                })
+                        axios.post('{{ route('notifications.mark-selected-as-read') }}', {
+                                ids: selectedIds
                             })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
+                            .then(function(response) {
+                                if (response.data.success) {
                                     Swal.fire({
                                         title: 'Sukses!',
-                                        text: data.message,
+                                        text: response.data.message,
                                         icon: 'success',
                                         confirmButtonText: 'OK'
                                     });
@@ -186,7 +178,7 @@
                                     });
                                 }
                             })
-                            .catch(error => {
+                            .catch(function(error) {
                                 console.error('Error:', error);
                                 Swal.fire({
                                     title: 'Error!',
@@ -201,18 +193,19 @@
 
             function updateNotificationStats() {
                 // Update notification counts
-                fetch('{{ route('notifications.counts') }}')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const counts = data.counts;
+                axios.get('{{ route('notifications.counts') }}')
+                    .then(function(response) {
+                        if (response.data.success) {
+                            const counts = response.data.counts;
 
                             $('#totalNotifications').text(counts.total);
                             $('#unreadNotifications').text(counts.unread);
                             $('#readNotifications').text(counts.read);
                         }
                     })
-                    .catch(error => console.error('Error updating stats:', error));
+                    .catch(function(error) {
+                        console.error('Error updating stats:', error);
+                    });
             }
         });
     </script>

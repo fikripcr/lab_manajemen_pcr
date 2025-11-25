@@ -83,26 +83,17 @@
                 }
             });
 
-            fetch('{{ route('sys.backup.create') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        type: type
-                    })
+            axios.post('{{ route('sys.backup.create') }}', {
+                    type: type
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(function(response) {
                     // Close the loading Swal
                     Swal.close();
 
-                    if (data.success) {
+                    if (response.data.success) {
                         Swal.fire({
                             title: 'Success!',
-                            text: data.message,
+                            text: response.data.message,
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
@@ -112,13 +103,13 @@
                     } else {
                         Swal.fire({
                             title: 'Error!',
-                            text: data.message,
+                            text: response.data.message,
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
                     }
                 })
-                .catch(error => {
+                .catch(function(error) {
                     // Close the loading Swal
                     Swal.close();
                     console.error('Error creating backup:', error);

@@ -307,23 +307,15 @@
     document.getElementById('markAllAsReadBtn')?.addEventListener('click', function(e) {
         e.preventDefault();
 
-        fetch('{{ route('notifications.mark-all-as-read') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+        axios.post('{{ route('notifications.mark-all-as-read') }}')
+        .then(function(response) {
+            if (response.data.success) {
                 // Refresh the notification UI after marking as read
                 loadNotificationCount();
                 loadNotifications();
             }
         })
-        .catch(error => {
+        .catch(function(error) {
             console.error('Error marking all as read:', error);
         });
     });

@@ -84,19 +84,12 @@
                     cancelButtonText: 'Cancel'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch('{{ route('sys.error-log.clear-all') }}', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
+                        axios.post('{{ route('sys.error-log.clear-all') }}')
+                            .then(function(response) {
+                                if (response.data.success) {
                                     Swal.fire({
                                         title: 'Cleared!',
-                                        text: data.message,
+                                        text: response.data.message,
                                         icon: 'success'
                                     }).then(() => {
                                         // Reload the DataTable to reflect changes
@@ -105,12 +98,12 @@
                                 } else {
                                     Swal.fire({
                                         title: 'Error!',
-                                        text: data.message || 'Failed to clear error logs',
+                                        text: response.data.message || 'Failed to clear error logs',
                                         icon: 'error'
                                     });
                                 }
                             })
-                            .catch(error => {
+                            .catch(function(error) {
                                 console.error('Error:', error);
                                 Swal.fire({
                                     title: 'Error!',

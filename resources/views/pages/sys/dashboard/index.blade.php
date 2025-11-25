@@ -648,20 +648,13 @@
 
         // Update server time by fetching from server endpoint
         function updateServerTime() {
-            fetch('{{ route('sys.server-time') }}', {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
+            axios.get('{{ route('sys.server-time') }}')
+                .then(function(response) {
+                    if (response.data.server_time) {
+                        document.getElementById('serverTime').textContent = response.data.server_time;
                     }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.server_time) {
-                        document.getElementById('serverTime').textContent = data.server_time;
-                    }
-                })
-                .catch(error => {
+                .catch(function(error) {
                     console.error('Error fetching server time:', error);
                 });
         }

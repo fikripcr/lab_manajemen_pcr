@@ -50,12 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             function performSearch(query) {
-                fetch(`${window.appRoutes.globalSearch}?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        displaySearchResults(data);
+                axios.get(`${window.appRoutes.globalSearch}?q=${encodeURIComponent(query)}`)
+                    .then(function(response) {
+                        displaySearchResults(response.data);
                     })
-                    .catch(error => {
+                    .catch(function(error) {
                         console.error('Global search error:', error);
                         modalResultsContainer.innerHTML = '<p class="text-center text-danger mb-0 py-5">Error performing search</p>';
                     });

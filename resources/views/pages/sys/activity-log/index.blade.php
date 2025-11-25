@@ -101,11 +101,10 @@
             });
 
             function loadActivityDetails(activityId) {
-                fetch('/api/activity-logs/' + activityId)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success' && data.data) {
-                            var activity = data.data.activity;
+                axios.get('/api/activity-logs/' + activityId)
+                    .then(function(response) {
+                        if (response.data.status === 'success' && response.data.data) {
+                            var activity = response.data.data.activity;
                             var properties = activity.properties || {};
 
                             var content = '<div class="row">';
@@ -140,7 +139,7 @@
                             document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
                         }
                     })
-                    .catch(error => {
+                    .catch(function(error) {
                         console.error('Error:', error);
                         document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
                     });

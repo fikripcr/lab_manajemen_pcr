@@ -103,39 +103,33 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Saving...';
 
-            // Submit form using AJAX
             const formData = new FormData(form);
-            const xhr = new XMLHttpRequest();
 
-            xhr.open('POST', form.action);
-            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-            xhr.setRequestHeader('X-HTTP-Method-Override', 'PUT'); // Laravel needs this for PUT via form
-
-            const params = new URLSearchParams(formData).toString();
-
-            xhr.onload = function() {
+            axios.post(form.action, formData, {
+                headers: {
+                    'X-HTTP-Method-Override': 'PUT' // Laravel needs this for PUT via form
+                }
+            })
+            .then(function(response) {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
 
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        showSuccessMessage('Success!', response.message);
-                    } else {
-                        showErrorMessage('Error!', response.message);
-                    }
+                if (response.data.success) {
+                    showSuccessMessage('Success!', response.data.message);
+                } else {
+                    showErrorMessage('Error!', response.data.message);
+                }
+            })
+            .catch(function(error) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+
+                if (error.response && error.response.data && error.response.data.message) {
+                    showErrorMessage('Error!', error.response.data.message);
                 } else {
                     showErrorMessage('Error!', 'An error occurred while saving permissions.');
                 }
-            };
-
-            xhr.onerror = function() {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-                showErrorMessage('Error!', 'An error occurred while saving permissions.');
-            };
-
-            xhr.send(params);
+            });
         });
 
         // Update select all checkbox state when individual checkboxes are checked/unchecked

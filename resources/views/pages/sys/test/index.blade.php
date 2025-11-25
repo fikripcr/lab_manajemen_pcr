@@ -88,22 +88,15 @@
                 if (result.isConfirmed) {
                     showLoadingMessage('Sending email...');
 
-                    fetch('{{ route('sys.test.email') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
+                    axios.post('{{ route('sys.test.email') }}')
+                        .then(function(response) {
                             Swal.close();
 
-                            if (data.success) {
+                            if (response.data.success) {
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Email Sent!',
-                                    text: data.message,
+                                    text: response.data.message,
                                     timer: 2000,
                                     showConfirmButton: false
                                 }).then(() => {
@@ -114,11 +107,11 @@
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error!',
-                                    text: data.message
+                                    text: response.data.message
                                 });
                             }
                         })
-                        .catch(error => {
+                        .catch(function(error) {
                             Swal.close();
                             Swal.fire({
                                 icon: 'error',
@@ -144,22 +137,15 @@
                 if (result.isConfirmed) {
                     showLoadingMessage('Sending notification...');
 
-                    fetch('{{ route('sys.test.notification') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
+                    axios.post('{{ route('sys.test.notification') }}')
+                        .then(function(response) {
                             Swal.close();
 
-                            if (data.success) {
+                            if (response.data.success) {
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Notification Sent!',
-                                    text: data.message,
+                                    text: response.data.message,
                                     timer: 2000,
                                     showConfirmButton: false
                                 }).then(() => {
@@ -170,11 +156,11 @@
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error!',
-                                    text: data.message
+                                    text: response.data.message
                                 });
                             }
                         })
-                        .catch(error => {
+                        .catch(function(error) {
                             Swal.close();
                             Swal.fire({
                                 icon: 'error',
@@ -200,58 +186,69 @@
                 if (result.isConfirmed) {
                     showLoadingMessage('Generating PDF...');
 
-                    fetch('{{ route('sys.test.pdf-export') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                // If it's a PDF response, create a link to download it
-                                return response.blob().then(blob => {
-                                    const url = window.URL.createObjectURL(blob);
-                                    const a = document.createElement('a');
-                                    a.href = url;
-                                    a.download = 'test-report-' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.pdf';
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    window.URL.revokeObjectURL(url);
-                                    document.body.removeChild(a);
+                    axios({
+                        method: 'POST',
+                        url: '{{ route('sys.test.pdf-export') }}',
+                        responseType: 'blob' // Important: tell axios to handle the response as a blob
+                    })
+                    .then(function(response) {
+                        // If it's a PDF response, create a link to download it
+                        const blob = new Blob([response.data], { type: 'application/pdf' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'test-report-' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
 
-                                    Swal.close();
+                        Swal.close();
 
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'PDF Generated!',
-                                        text: 'Your test PDF has been downloaded successfully.',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    }).then(() => {
-                                        // Auto-reload after success
-                                        location.reload();
-                                    });
-                                });
-                            } else {
-                                return response.json().then(data => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'PDF Generated!',
+                            text: 'Your test PDF has been downloaded successfully.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Auto-reload after success
+                            location.reload();
+                        });
+                    })
+                    .catch(function(error) {
+                        // Check if error response is available
+                        if (error.response) {
+                            // If there's JSON error response
+                            if (error.response.headers['content-type'] && error.response.headers['content-type'].includes('application/json')) {
+                                error.response.data.text().then(function(text) {
+                                    const jsonData = JSON.parse(text);
                                     Swal.close();
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error!',
-                                        text: data.message
+                                        text: jsonData.message
                                     });
                                 });
+                            } else {
+                                // For other error responses
+                                Swal.close();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'An error occurred while generating the PDF.'
+                                });
                             }
-                        })
-                        .catch(error => {
+                        } else {
+                            // For network errors
                             Swal.close();
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
                                 text: 'An error occurred while generating the PDF.'
                             });
-                        });
+                        }
+                    });
                 }
             });
         }

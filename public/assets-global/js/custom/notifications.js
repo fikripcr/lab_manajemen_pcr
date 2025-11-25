@@ -1,8 +1,8 @@
 // More efficient notification loading using API
 function loadNotificationsApi() {
-    fetch(window.appRoutes.notificationsDropdownData)
-        .then(response => response.json())
-        .then(data => {
+    axios.get(window.appRoutes.notificationsDropdownData)
+        .then(function(response) {
+            const data = response.data;
             const notificationsList = document.getElementById('notifications-list');
             if (data.data && data.data.length > 0) {
                 notificationsList.innerHTML = '';
@@ -30,7 +30,7 @@ function loadNotificationsApi() {
                 notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">No notifications found</p></a></li>';
             }
         })
-        .catch(error => {
+        .catch(function(error) {
             console.error('Error loading notifications via API:', error);
             const notificationsList = document.getElementById('notifications-list');
             notificationsList.innerHTML = '<li><a class="dropdown-item" href="javascript:void(0);"><p class="text-center mb-0">Failed to load notifications</p></a></li>';
@@ -48,14 +48,15 @@ document.addEventListener('DOMContentLoaded', function() {
         !path.includes('/api/') &&
         !path.includes('/unread-count')) {
 
-        fetch(window.appRoutes.notificationsUnreadCount)
-            .then(response => response.json())
-            .then(data => {
+        axios.get(window.appRoutes.notificationsUnreadCount)
+            .then(function(response) {
                 if (countElement) {
-                    countElement.textContent = data.count;
+                    countElement.textContent = response.data.count;
                 }
             })
-            .catch(error => console.error('Error loading initial notification count:', error));
+            .catch(function(error) {
+                console.error('Error loading initial notification count:', error);
+            });
     }
 
     // Load notifications when dropdown is shown
@@ -83,19 +84,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch(window.appRoutes.notificationsMarkAllAsRead, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
+                    axios.post(window.appRoutes.notificationsMarkAllAsRead)
+                    .then(function(response) {
+                        if (response.data.success) {
                             Swal.fire({
                                 title: 'Sukses!',
-                                text: data.message,
+                                text: response.data.message,
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {
@@ -119,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
                         }
                     })
-                    .catch(error => {
+                    .catch(function(error) {
                         console.error('Error:', error);
                         Swal.fire({
                             title: 'Error!',
@@ -138,11 +132,12 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateNotificationCount() {
     const countElement = document.getElementById('notification-count');
     if (countElement) {
-        fetch(window.appRoutes.notificationsUnreadCount)
-            .then(response => response.json())
-            .then(data => {
-                countElement.textContent = data.count;
+        axios.get(window.appRoutes.notificationsUnreadCount)
+            .then(function(response) {
+                countElement.textContent = response.data.count;
             })
-            .catch(error => console.error('Error updating notification count:', error));
+            .catch(function(error) {
+                console.error('Error updating notification count:', error);
+            });
     }
 }
