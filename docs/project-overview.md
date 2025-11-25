@@ -8,70 +8,79 @@ This repository serves as a comprehensive Laravel base template that implements 
 
 This template includes preconfigured implementations for:
 
-- **Authentication System** with Laravel Breeze & Google OAuth
-- **Role-Based Access Control** using spatie/laravel-permission
-- **User Management** with profiles and impersonation
-- **CRUD Operations** with Resource Controllers
-- **Form Validation** with Custom Request Classes
-- **Frontend Architecture** with Blade Components & Layouts
-- **Data Export/Import** with Maatwebsite/Excel
-- **Dynamic Tables** with Yajra DataTables
-- **ID Encryption** with vinkla/hashids
-- **Media Management** with Spatie Media Library
-- **Activity Logging** with spatie/activity-log
-- **Notifications** with Database Channel
-- **Performance Optimization** with local libraries and caching
-- **Custom Error Pages** for better UX
-- **Soft Delete** for data integrity
-- **Debugging Tools** with Laravel Debugbar
-- **Security** with environment files and encryption
+* **Authentication System** with Laravel Breeze & Google OAuth
+* **Role-Based Access Control** using spatie/laravel-permission
+* **User Management** with profiles and impersonation
+* **CRUD Operations** with Resource Controllers
+* **Form Validation** with Custom Request Classes
+* **Frontend Architecture** with Blade Components & Layouts
+* **Data Export/Import** with Maatwebsite/Excel
+* **Dynamic Tables** with Yajra DataTables
+* **ID Encryption** with vinkla/hashids
+* **Media Management** with Spatie Media Library
+* **Activity Logging** with spatie/activity-log
+* **Notifications** with Database Channel
+* **Performance Optimization** with local libraries and caching
+* **Custom Error Pages** for better UX
+* **Soft Delete** for data integrity
+* **Debugging Tools** with Laravel Debugbar
+* **Security** with environment files and encryption
 
 ## System Requirements
 
-- PHP >= 8.2
-- Laravel 12
-- Composer
-- Node.js & npm
-- MySQL 8.0+ or PostgreSQL
-- Git
+* PHP >= 8.2
+* Laravel 12
+* Composer
+* Node.js & npm
+* MySQL 8.0+ or PostgreSQL
+* Git
 
 ### Additional Requirements
-- MySQL dump utility (for database backups)
-- ZIP utility (for file backups)
+
+* MySQL dump utility (for database backups)
+* ZIP utility (for file backups)
 
 ## Installation
 
-### 1. Clone the Repository
+### 1\. Clone the Repository
+
 ```bash
 git clone <repository-url>
 cd lab_manajemen_pcr
 ```
 
-### 2. Install PHP Dependencies
+### 2\. Install PHP Dependencies
+
 ```bash
 composer install
 ```
 
-### 3. Install Frontend Dependencies
+### 3\. Install Frontend Dependencies
+
 ```bash
 npm install
 ```
 
-### 4. Environment Configuration
-- Copy `.env.example` to `.env`
-- Generate application key:
+### 4\. Environment Configuration
+
+* Copy `.env.example` to `.env`
+* Generate application key:
+
 ```bash
 php artisan key:generate
 ```
 
-### 5. Database Setup
-- Configure your database credentials in `.env`
-- Run migrations with seeders:
+### 5\. Database Setup
+
+* Configure your database credentials in `.env`
+* Run migrations with seeders:
+
 ```bash
 php artisan migrate --seed
 ```
 
-### 6. Build Assets
+### 6\. Build Assets
+
 ```bash
 npm run build
 ```
@@ -79,110 +88,55 @@ npm run build
 ## Project Structure
 
 ### Controller Organization
-- `app/Http/Controllers/Admin/` - Administrative functionality
-- `app/Http/Controllers/Auth/` - Authentication functionality
-- `app/Http/Controllers/Guest/` - Public functionality
-- `app/Http/Controllers/Sys/` - System functionality (monitoring, backups, logs, etc.)
+
+* `app/Http/Controllers/Admin/` \- Administrative functionality
+* `app/Http/Controllers/Auth/` \- Authentication functionality
+* `app/Http/Controllers/Guest/` \- Public functionality
+* `app/Http/Controllers/Sys/` \- System functionality \(monitoring\, backups\, logs\, etc\.\)
 
 ### Route Structure
-- `routes/admin.php` - Administrative routes
-- `routes/auth.php` - Authentication routes
-- `routes/guest.php` - Public routes
-- `routes/web.php` - Main route configuration
-- `routes/sys.php` - System routes (monitoring, backups, etc.)
+
+* `routes/admin.php` \- Administrative routes
+* `routes/auth.php` \- Authentication routes
+* `routes/guest.php` \- Public routes
+* `routes/web.php` \- Main route configuration
+* `routes/sys.php` \- System routes \(monitoring\, backups\, etc\.\)
 
 ### Frontend Assets
-- `public/assets-admin/` - Administrative UI assets
-- `public/assets-guest/` - Public UI assets
+
+* `public/assets-admin/` \- Administrative UI assets
+* `public/assets-guest/` \- Public UI assets
 
 ### View Organization
-- `resources/views/components/` - Reusable Blade components
-- `resources/views/layouts/` - Layout files (admin/auth/guest)
-- `resources/views/pages/` - Page-specific views (admin/auth/guest/sys)
+
+* `resources/views/components/` \- Reusable Blade components
+* `resources/views/layouts/` \- Layout files \(admin/auth/guest\)
+* `resources/views/pages/` \- Page\-specific views \(admin/auth/guest/sys\)
 
 ### Request Validation
-- `app/Http/Requests/` - Custom request validation classes
-- `app/Http/Requests/Sys/` - System-level validation requests
 
-## Initial Setup
+* `app/Http/Requests/` \- Custom request validation classes
+* `app/Http/Requests/Sys/` \- System\-level validation requests
 
-### Environment Configuration
-
-After setting up the environment, ensure the following configuration in your `.env` file:
-
-```bash
-APP_NAME="Laboratory Management System"
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=your_database_name
-DB_USERNAME=your_database_username
-DB_PASSWORD=your_database_password
-
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT=http://localhost/auth/google/callback
-
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.googlemail.com
-MAIL_PORT=587
-MAIL_USERNAME=your_email@gmail.com
-MAIL_PASSWORD=your_app_password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=your_email@gmail.com
-MAIL_FROM_NAME="${APP_NAME}"
-
-BACKUP_MYSQLDUMP_PATH=/usr/bin/mysqldump
-```
-
-### Running Initial Commands
-
-1. **Clear caches** (optional but recommended):
-```bash
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
-```
-
-2. **Cache configuration** (for production):
-```bash
-php artisan config:cache
-php artisan route:cache
-```
-
-3. **Run migrations with seeders**:
-```bash
-php artisan migrate --seed
-```
-
-4. **Seed specific data** (if needed):
-```bash
-php artisan db:seed --class=UserSeeder
-```
+## 
 
 ### Key Seeders
 
 The project includes several important seeders:
 
-- `DatabaseSeeder` - Main seeder that orchestrates all others
-- `UserSeeder` - Creates default users
-- `PermissionSeeder` - Sets up all permissions
-- `RoleSeeder` - Creates default roles
-- `RolePermissionSeeder` - Assigns permissions to roles
-- `SysSeeder` - System-level permissions and configurations
-- `SysSuperAdminSeeder` - Super admin user and role
+* `DatabaseSeeder` \- Main seeder that orchestrates all others
+* `UserSeeder` \- Creates default users
+* `PermissionSeeder` \- Sets up all permissions
+* `RoleSeeder` \- Creates default roles
+* `RolePermissionSeeder` \- Assigns permissions to roles
+* `SysSeeder` \- System\-level permissions and configurations
+* `SysSuperAdminSeeder` \- Super admin user and role
 
 ## Security Best Practices
 
-- Never commit `.env` files to Git
-- Always set `APP_DEBUG=false` in production
-- Regenerate the application key during deployment
-- Secure sensitive configuration values
-- Use environment-specific configurations
-- Implement proper access controls and permissions
+* Never commit `.env` files to Git
+* Always set `APP_DEBUG=false` in production
+* Regenerate the application key during deployment
+* Secure sensitive configuration values
+* Use environment-specific configurations
+* Implement proper access controls and permissions
