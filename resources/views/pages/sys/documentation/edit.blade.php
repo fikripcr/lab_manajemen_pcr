@@ -30,9 +30,6 @@
                 <a href="{{ route('sys.documentation.show', $page) }}" class="btn btn-secondary me-2">
                     <i class="bx bx-arrow-back"></i> Back to View
                 </a>
-                <a href="{{ route('sys.documentation.index') }}" class="btn btn-outline-secondary">
-                    <i class="bx bx-book"></i> Documentation Index
-                </a>
             </div>
         </div>
         <div class="card-body">
@@ -41,8 +38,7 @@
                 @method('PUT')
 
                 <div class="mb-3">
-                    <label for="content" class="form-label">Documentation Content</label>
-                    <div id="editor" style="height: 500px;"></div>
+                    <div id="editor"></div>
                     <textarea id="content" name="content" class="d-none">{{ old('content', $content) }}</textarea>
                 </div>
 
@@ -83,8 +79,7 @@
             });
 
             // Sync content back to textarea when form is submitted
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function() {
+            editor.on('change', function() {
                 contentTextarea.value = editor.getMarkdown();
             });
         });
