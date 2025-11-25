@@ -539,9 +539,75 @@ Individual error pages can extend the layout and customize the content:
 @section('message', 'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.')
 ```
 
-## Custom Components
+## HTTP Requests with Axios
 
-### DataTable Component with Search and Filters
+### Migration from AJAX/fetch API to Axios
+
+As of November 2025, all AJAX and fetch API implementations have been migrated to use Axios for better HTTP request handling. This change standardizes how HTTP requests are made across the application.
+
+#### Key Benefits of Axios
+- **Request Interception**: Ability to intercept requests and responses
+- **Automatic JSON parsing**: No need for manual `response.json()` calls
+- **Error handling**: Better error response handling
+- **Request/response transformation**: Automatic transformation of request/response data
+- **Promise-based**: Consistent with modern JavaScript practices
+
+#### Migration Examples
+
+**Before (fetch API):**
+```javascript
+fetch('/api/some-endpoint', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify(data)
+})
+.then(response => response.json())
+.then(data => {
+    // Handle success
+})
+.catch(error => {
+    // Handle error
+});
+```
+
+**After (Axios):**
+```javascript
+axios.post('/api/some-endpoint', data)
+    .then(function(response) {
+        // Handle success (no need for response.json())
+    })
+    .catch(function(error) {
+        // Handle error
+    });
+```
+
+#### Configuration
+
+Axios is configured in `resources/js/sys.js` with default settings:
+```javascript
+import axios from 'axios';
+window.axios = axios;
+window.axios.defaults.withCredentials = true; // for Sanctum/session
+window.axios.defaults.withXSRFToken = true;
+```
+
+#### Best Practices
+
+1. **Always use Axios for HTTP requests** - Do not revert to fetch API or XMLHttpRequest
+2. **Handle errors consistently** - Check `error.response` for server errors
+3. **Use appropriate HTTP methods** - Use `axios.get`, `axios.post`, etc. methods appropriately
+4. **Include CSRF token** - For POST/PUT/PATCH/DELETE requests, ensure CSRF token is included (already configured in defaults)
+
+#### Exceptions
+
+DataTable functionality using `ajax` option should remain unchanged as these are handled by the DataTables library directly and not part of this migration.
+
+### Custom Components
+
+#### DataTable Component with Search and Filters
 
 ```blade
 <div class="card">

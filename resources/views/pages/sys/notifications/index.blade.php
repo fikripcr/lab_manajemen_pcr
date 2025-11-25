@@ -193,19 +193,42 @@
 
             function updateNotificationStats() {
                 // Update notification counts
-                axios.get('{{ route('notifications.counts') }}')
-                    .then(function(response) {
-                        if (response.data.success) {
-                            const counts = response.data.counts;
+                // Check if global notification state exists and use it if recently updated
+                if (window.notificationState && window.notificationState.cache) {
+                    // Use cached data from header to prevent duplicate requests
+                    const cachedCount = window.notificationState.cache.count;
+                    $('#totalNotifications').text(cachedCount); // This is a simplification
 
-                            $('#totalNotifications').text(counts.total);
-                            $('#unreadNotifications').text(counts.unread);
-                            $('#readNotifications').text(counts.read);
-                        }
-                    })
-                    .catch(function(error) {
-                        console.error('Error updating stats:', error);
-                    });
+                    // For detailed stats, we still need to call the specific endpoint
+                    axios.get('{{ route('notifications.counts') }}')
+                        .then(function(response) {
+                            if (response.data.success) {
+                                const counts = response.data.counts;
+
+                                $('#totalNotifications').text(counts.total);
+                                $('#unreadNotifications').text(counts.unread);
+                                $('#readNotifications').text(counts.read);
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error updating stats:', error);
+                        });
+                } else {
+                    // If no global state, make direct request
+                    axios.get('{{ route('notifications.counts') }}')
+                        .then(function(response) {
+                            if (response.data.success) {
+                                const counts = response.data.counts;
+
+                                $('#totalNotifications').text(counts.total);
+                                $('#unreadNotifications').text(counts.unread);
+                                $('#readNotifications').text(counts.read);
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error updating stats:', error);
+                        });
+                }
             }
         });
     </script>
