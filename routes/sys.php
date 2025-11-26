@@ -98,6 +98,14 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::post('/email', [TestController::class, 'testEmail'])->name('email');
             Route::post('/notification', [TestController::class, 'testNotification'])->name('notification');
             Route::post('/pdf-export', [TestController::class, 'testPdfExport'])->name('pdf-export');
+            Route::post('/excel-export', [TestController::class, 'testExcelExport'])->name('excel-export');
+            Route::post('/word-export', [TestController::class, 'testWordExport'])->name('word-export');
+            Route::post('/generate-qrcode', [TestController::class, 'generateQrCode'])->name('generate-qrcode');
+            Route::get('/qrcode/show', [TestController::class, 'showQrCode'])->name('qrcode.show');
+            Route::get('/qrcode', [TestController::class, 'qrCode'])->name('qrcode');
+            Route::get('/qrcode/download/{filename}', [TestController::class, 'downloadQrCode'])->name('qrcode.download');
+
+            Route::get('/features', [TestController::class, 'features'])->name('features');
         });
 
         // Documentation Routes - accessible via /sys/documentation

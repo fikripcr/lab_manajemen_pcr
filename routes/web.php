@@ -1,5 +1,6 @@
 <?php
-
+// echo phpinfo();
+// die;
 use Illuminate\Support\Facades\Route;
 
 // 🔹 Route untuk Guest (tanpa login)

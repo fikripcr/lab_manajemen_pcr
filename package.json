@@ -26,6 +26,9 @@
         "@toast-ui/editor": "^3.2.2",
         "boostrap": "^2.0.0",
         "datatables.net": "^2.3.5",
+        "filepond": "^4.32.10",
+        "filepond-plugin-image-preview": "^4.6.12",
+        "flatpickr": "^4.6.13",
         "sweetalert2": "^11.26.3",
         "tinymce": "^8.2.2"
     }

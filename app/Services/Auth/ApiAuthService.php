@@ -14,9 +14,10 @@ class ApiAuthService
      */
     public function createApiToken(string $email, string $password, string $deviceName = 'api-token'): ?array
     {
-        $user = User::where('email', $email)->first();
+        $authService = new AuthService();
+        $user = $authService->verifyCredentials(['email' => $email, 'password' => $password]);
 
-        if (!$user || !Hash::check($password, $user->password)) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -36,9 +37,10 @@ class ApiAuthService
      */
     public function loginAndCreateToken(array $credentials, string $deviceName = 'api-token'): ?array
     {
-        $user = User::where('email', $credentials['email'])->first();
+        $authService = new AuthService();
+        $user = $authService->verifyCredentials($credentials);
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -58,13 +60,8 @@ class ApiAuthService
      */
     public function authenticateApiUser(array $credentials): ?User
     {
-        $user = User::where('email', $credentials['email'])->first();
-
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            return $user;
-        }
-
-        return null;
+        $authService = new AuthService();
+        return $authService->verifyCredentials($credentials);
     }
 
     /**

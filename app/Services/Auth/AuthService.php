@@ -13,15 +13,25 @@ use Laravel\Sanctum\PersonalAccessToken;
 class AuthService
 {
     /**
+     * Verify user credentials without starting a session or creating a token
+     */
+    public function verifyCredentials(array $credentials): ?User
+    {
+        $user = User::where('email', $credentials['email'])->first();
+
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            return $user;
+        }
+
+        return null;
+    }
+
+    /**
      * Authenticate a user with email and password for web login
      */
     public function webLogin(array $credentials, bool $remember = false): bool
     {
-        if (Auth::attempt($credentials, $remember)) {
-            return true;
-        }
-
-        return false;
+        return Auth::attempt($credentials, $remember);
     }
 
     /**
@@ -61,9 +71,9 @@ class AuthService
      */
     public function createApiToken(string $email, string $password, string $deviceName = 'api-token'): ?array
     {
-        $user = User::where('email', $email)->first();
+        $user = $this->verifyCredentials(['email' => $email, 'password' => $password]);
 
-        if (!$user || !Hash::check($password, $user->password)) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -83,9 +93,9 @@ class AuthService
      */
     public function loginAndCreateToken(array $credentials, string $deviceName = 'api-token'): ?array
     {
-        $user = User::where('email', $credentials['email'])->first();
+        $user = $this->verifyCredentials($credentials);
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -101,48 +111,11 @@ class AuthService
     }
 
     /**
-     * Revoke a specific Sanctum token
-     */
-    public function revokeToken(string $tokenId, int $userId): bool
-    {
-        $token = PersonalAccessToken::findToken($tokenId);
-
-        if ($token && $token->tokenable_id === $userId) {
-            $token->delete();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Revoke all tokens for a specific user
-     */
-    public function revokeAllUserTokens(int $userId): bool
-    {
-        $user = User::find($userId);
-
-        if (!$user) {
-            throw new \Exception("User with ID {$userId} not found.");
-        }
-
-        $user->tokens()->delete();
-
-        return true;
-    }
-
-    /**
      * Authenticate user for API (validate credentials without creating token)
      */
     public function authenticateApiUser(array $credentials): ?User
     {
-        $user = User::where('email', $credentials['email'])->first();
-
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            return $user;
-        }
-
-        return null;
+        return $this->verifyCredentials($credentials);
     }
 
     /**

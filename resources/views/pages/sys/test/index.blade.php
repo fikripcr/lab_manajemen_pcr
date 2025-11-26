@@ -14,7 +14,7 @@
                         <i class="bx bx-envelope bx-lg text-primary"></i>
                     </div>
                     <h5 class="card-title">Test Email</h5>
-                    <p class="card-text text-muted">Send a test notification via email channel to your account <b>({{ auth()->user()->email }})</b></p>
+                    <p class="card-text text-muted">Send a notification via email to <b>({{ auth()->user()->email }})</b></p>
                     <button type="button" class="btn btn-primary" onclick="testEmail()">
                         Send Test Email
                     </button>
@@ -30,10 +30,28 @@
                         <i class="bx bx-bell bx-lg text-success"></i>
                     </div>
                     <h5 class="card-title">Test Notification</h5>
-                    <p class="card-text text-muted">Send a test notification via database channel to your account <b>({{ auth()->user()->email }})</b></p>
+                    <p class="card-text text-muted">Send a notification via database to <b>({{ auth()->user()->email }})</b></p>
                     <button type="button" class="btn btn-success" onclick="testNotification()">
                         Send Test Notification
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test JS Library Features Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
+                        <i class="bx bx-code bx-lg text-info"></i>
+                    </div>
+                    <h5 class="card-title">Test JS Library Features</h5>
+                    <p class="card-text text-muted">Test various JS library features such as Flatpicker, TinyMCE, etc.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('sys.test.features') }}" class="btn btn-info">
+                            Test JS Features
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,30 +63,71 @@
                     <div class="avatar mx-auto mb-3  bg-opacity-10">
                         <i class="bx bx-file bx-lg text-danger"></i>
                     </div>
-                    <h5 class="card-title">Test PDF Export</h5>
-                    <p class="card-text text-muted">Generate a test PDF report with sample system data</p>
-                    <button type="button" class="btn btn-danger" onclick="testPdfExport()">
-                        Generate Test PDF
-                    </button>
+                    <h5 class="card-title">Test PDF Export <a href="https://github.com/barryvdh/laravel-dompdf" target="_blank" class="ms-1 text-decoration-none" title="PDF Documentation"><i class="bx bx-link-external"></i></a></h5>
+                    <p class="card-text text-muted">Generate a test PDF report with sample system data and QR code</p>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-danger" onclick="testPdfExport()">
+                            Generate Test PDF
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Test Notification API Card -->
+        <!-- Test Excel Export Card -->
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
                     <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bx-data bx-lg text-info"></i>
+                        <i class="bx bx-file-blank bx-lg text-success"></i>
                     </div>
-                    <h5 class="card-title">Test Notification API</h5>
-                    <p class="card-text text-muted">Test the notification API endpoints for count and list operations</p>
-                    <button type="button" class="btn btn-info" onclick="testNotificationAPI()">
-                        Test Notification API
-                    </button>
+                    <h5 class="card-title">Test Excel Export <a href="https://docs.laravel-excel.com/" target="_blank" class="ms-1 text-decoration-none" title="Excel Documentation"><i class="bx bx-link-external"></i></a></h5>
+                    <p class="card-text text-muted">Generate a test Excel report with sample system data and QR code</p>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success" onclick="testExcelExport()">
+                            Generate Test Excel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Test Word Export Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
+                        <i class="bx bxl-microsoft bx-lg text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Test Word Export <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-decoration-none" title="Word Documentation"><i class="bx bx-link-external"></i></a></h5>
+                    <p class="card-text text-muted">Generate a test Word document with sample system data and QR code</p>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" onclick="testWordExport()">
+                            Generate Test Word
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test QR Code Generator Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
+                        <i class="bx bx-qr bx-lg text-secondary"></i>
+                    </div>
+                    <h5 class="card-title">Test QR Code Generator <a href="https://github.com/SimpleSoftwareIO/simple-qrcode" target="_blank" class="ms-1 text-decoration-none" title="QR Code Documentation"><i class="bx bx-link-external"></i></a></h5>
+                    <p class="card-text text-muted">Generate QR codes with system data</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('sys.test.qrcode') }}" class="btn btn-secondary">
+                            Test QR Code Features
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -253,6 +312,168 @@
             });
         }
 
+        function testExcelExport() {
+            Swal.fire({
+                title: 'Generate Test Excel?',
+                text: 'Are you sure you want to generate a test Excel with system data (Activity Logs)?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, generate it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoadingMessage('Generating Excel...');
+
+                    axios({
+                        method: 'POST',
+                        url: '{{ route('sys.test.excel-export') }}',
+                        responseType: 'blob' // Important: tell axios to handle the response as a blob
+                    })
+                    .then(function(response) {
+                        // If it's an Excel response, create a link to download it
+                        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'activity-logs-' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.xlsx';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+
+                        Swal.close();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Excel Generated!',
+                            text: 'Your test Excel has been downloaded successfully.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Auto-reload after success
+                            location.reload();
+                        });
+                    })
+                    .catch(function(error) {
+                        // Check if error response is available
+                        if (error.response) {
+                            // If there's JSON error response
+                            if (error.response.headers['content-type'] && error.response.headers['content-type'].includes('application/json')) {
+                                error.response.data.text().then(function(text) {
+                                    const jsonData = JSON.parse(text);
+                                    Swal.close();
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: jsonData.message
+                                    });
+                                });
+                            } else {
+                                // For other error responses
+                                Swal.close();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'An error occurred while generating the Excel.'
+                                });
+                            }
+                        } else {
+                            // For network errors
+                            Swal.close();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while generating the Excel.'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function testWordExport() {
+            Swal.fire({
+                title: 'Generate Test Word?',
+                text: 'Are you sure you want to generate a test Word document with system data and QR code?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#007bff',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, generate it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoadingMessage('Generating Word...');
+
+                    axios({
+                        method: 'POST',
+                        url: '{{ route('sys.test.word-export') }}',
+                        responseType: 'blob' // Important: tell axios to handle the response as a blob
+                    })
+                    .then(function(response) {
+                        // If it's a Word response, create a link to download it
+                        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'test-report-' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.docx';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+
+                        Swal.close();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Word Document Generated!',
+                            text: 'Your test Word document has been downloaded successfully.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Auto-reload after success
+                            location.reload();
+                        });
+                    })
+                    .catch(function(error) {
+                        // Check if error response is available
+                        if (error.response) {
+                            // If there's JSON error response
+                            if (error.response.headers['content-type'] && error.response.headers['content-type'].includes('application/json')) {
+                                error.response.data.text().then(function(text) {
+                                    const jsonData = JSON.parse(text);
+                                    Swal.close();
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: jsonData.message
+                                    });
+                                });
+                            } else {
+                                // For other error responses
+                                Swal.close();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'An error occurred while generating the Word document.'
+                                });
+                            }
+                        } else {
+                            // For network errors
+                            Swal.close();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while generating the Word document.'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
         function testNotificationAPI() {
             // Open a modal or new window to show API testing interface
             Swal.fire({
@@ -302,18 +523,16 @@
                 const response = await axios.get('/api/notifications/count');
 
                 resultsDiv.innerHTML = `
-            <div class="alert alert-success">
-                <h6>Count API Response:</h6>
-                <pre>${JSON.stringify(response.data, null, 2)}</pre>
-            </div>
-        `;
+                    <div class="alert alert-success">
+                        <h6>Count API Response:</h6>
+                        <pre>${JSON.stringify(response.data, null, 2)}</pre>
+                    </div> `;
             } catch (error) {
                 resultsDiv.innerHTML = `
-            <div class="alert alert-danger">
-                <h6>Error:</h6>
-                <pre>${error.response?.data?.message || error.message}</pre>
-            </div>
-        `;
+                <div class="alert alert-danger">
+                    <h6>Error:</h6>
+                    <pre>${error.response?.data?.message || error.message}</pre>
+                </div> `;
             }
         }
 

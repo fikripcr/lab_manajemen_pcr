@@ -15,19 +15,6 @@ window.axios.defaults.withXSRFToken = true
 // --- DataTables (dynamic import – hanya load saat dipanggil)
 import 'datatables.net';
 
-// --- TinyMCE (dynamic import)
-window.initTinyMCE = function(selector, config = {}) {
-    import('tinymce/tinymce').then(() => {
-        import('tinymce/themes/silver').then(() => {
-            window.tinymce.init({
-                selector: selector,
-                skin: 'oxide',
-                content_css: 'default',
-                ...config
-            });
-        });
-    });
-};
 
 // --- TOAST UI Editor (dynamic import)
 window.initToastEditor = function(selector, config = {}) {
@@ -42,3 +29,6 @@ window.initToastEditor = function(selector, config = {}) {
 // --- SweetAlert2 (dynamic import)
 import Swal from 'sweetalert2';
 window.Swal = Swal;
+
+// --- Import additional sys features (flatpickr, filepond, lodash)
+import './sys-features';

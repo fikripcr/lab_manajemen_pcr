@@ -9,6 +9,7 @@ export default defineConfig({
                 // 'resources/js/auth.js',
                 // 'resources/js/guest.js',
                 'resources/js/sys.js',
+                'resources/js/sys-features.js',
             ],
             refresh: true,
         }),

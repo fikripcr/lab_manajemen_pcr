@@ -83,11 +83,11 @@
                 <div data-i18n="App Config">App Configuration</div>
             </a>
         </li>
-        <!-- System Guide -->
+        <!-- System Test -->
         <li class="menu-item {{ request()->routeIs('sys.test.*') ? 'active' : '' }}">
             <a href="{{ route('sys.test.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-wrench"></i>
-                <div data-i18n="Documentation">Test Features</div>
+                <div data-i18n="Test Features">Test Features</div>
             </a>
         </li>
 
