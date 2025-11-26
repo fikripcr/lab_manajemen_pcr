@@ -106,6 +106,10 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/qrcode/download/{filename}', [TestController::class, 'downloadQrCode'])->name('qrcode.download');
 
             Route::get('/features', [TestController::class, 'features'])->name('features');
+
+            // DOCX Template Routes
+            Route::post('/docx-template', [TestController::class, 'testDocxTemplate'])->name('docx-template');
+            Route::post('/upload-docx-template', [TestController::class, 'uploadDocxTemplate'])->name('upload-docx-template');
         });
 
         // Documentation Routes - accessible via /sys/documentation

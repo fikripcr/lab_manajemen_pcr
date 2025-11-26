@@ -389,6 +389,8 @@ if (!function_exists('validation_messages_id')) {
     }
 }
 
+use BaconQrCode\Writer;
+use BaconQrCode\Renderer\GDLibRenderer;
 use Illuminate\Support\Facades\Session;
 
 if (!function_exists('setActiveRole')) {
@@ -438,5 +440,59 @@ if (!function_exists('formatTanggalWaktuIndo')) {
     function formatTanggalWaktuIndo($tanggal)
     {
         return \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm');
+    }
+}
+
+if (!function_exists('generateQrCodeImage')) {
+    /**
+     * Generate QR code image and save to file
+     *
+     * @param string $text Text to encode in QR code
+     * @param string $filename Filename to save the QR code image
+     * @param string|null $directory Directory to save the image (default: storage/app/qrcodes)
+     * @return string Path to the saved QR code image
+     */
+    function generateQrCodeImage($text, $filename, $directory = null)
+    {
+        if (!$directory) {
+            $directory = storage_path('app/qrcodes');
+        }
+
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $filePath = $directory . '/' . $filename;
+
+        // Generate QR code using BaconQrCode (as used in TestController)
+        $renderer  = new GDLibRenderer(200);
+        $writer    = new Writer($renderer);
+        $qrCodeSvg = $writer->writeString($text);
+
+        // Save the PNG data to file
+        file_put_contents($filePath, $qrCodePng);
+
+        return $filePath;
+    }
+}
+
+if (!function_exists('generateQrCodeBase64')) {
+    /**
+     * Generate QR code as base64 encoded image
+     *
+     * @param string $text Text to encode in QR code
+     * @return string Base64 encoded QR code image
+     */
+    function generateQrCodeBase64($text)
+    {
+        // Generate QR code using BaconQrCode (as used in TestController)
+        $renderer  = new GDLibRenderer(200);
+        $writer    = new Writer($renderer);
+        $qrCodeSvg = $writer->writeString($text);
+
+        // Encode to base64
+        $base64Image = base64_encode($qrCodeSvg);
+
+        return $base64Image;
     }
 }

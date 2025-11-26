@@ -128,6 +128,24 @@
             </div>
         </div>
 
+        <!-- Test DOCX Template Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3  bg-opacity-10">
+                        <i class="bx bxl-microsoft bx-lg text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Test DOCX Template <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-decoration-none" title="PHPWord Documentation"><i class="bx bx-link-external"></i></a></h5>
+                    <p class="card-text text-muted">Upload DOCX template with variables</p>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" onclick="testDocxTemplate()">
+                            Upload & Process DOCX
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -562,6 +580,102 @@
                         </div>
                     `;
                 });
+        }
+
+        function testDocxTemplate() {
+            // Create a modal dialog for DOCX template testing
+            Swal.fire({
+                title: 'Test DOCX Template',
+                html: `
+                    <div class="text-start">
+                        <div class="alert alert-info">
+                            <h6>Template Documentation:</h6>
+                            <p class="mb-2">Your DOCX template can contain special variables that will be replaced with actual data:</p>
+                            <ul class="mb-3">
+                                <li>\${nama}</li>
+                                <li>\${tanggal_lahir}</li>
+                                <li>\${deskripsi}</li>
+                                <li>\${pekerjaan}</li>
+                                <li>\${perusahaan}</li>
+                                <li>\${waktu_pembuatan}</li>
+                                <li>\${keterangan}</li>
+                            </ul>
+                            <p>Example: "Employee: \${nama}, Position: \${pekerjaan} at \${perusahaan}"</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="docxTemplateFile" class="form-label">Upload DOCX Template:</label>
+                            <input type="file" id="docxTemplateFile" class="form-control" accept=".doc,.docx">
+                            <div class="form-text">
+                                Upload your DOCX template file with variables.
+                                <a href="{{ asset('assets-sys/template/template-docx-variable.docx') }}"
+                                   class="btn btn-sm btn-outline-primary mt-1"
+                                   target="_blank">
+                                    <i class="bx bx-download"></i> Download Template Example
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                width: '70%',
+                showCancelButton: true,
+                confirmButtonText: 'Process DOCX',
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    const templateFile = document.getElementById('docxTemplateFile').files[0];
+
+                    // Validate inputs
+                    if (!templateFile) {
+                        Swal.showValidationMessage('Please upload a DOCX template file');
+                        return false;
+                    }
+
+                    // Check file type
+                    if (!templateFile.type.match('application/vnd.openxmlformats-officedocument.wordprocessingml.document') &&
+                        !templateFile.name.toLowerCase().endsWith('.docx') &&
+                        !templateFile.name.toLowerCase().endsWith('.doc')) {
+                        Swal.showValidationMessage('Please upload a valid DOCX or DOC file');
+                        return false;
+                    }
+
+                    // Create form data to send file
+                    const formData = new FormData();
+                    formData.append('template', templateFile);
+
+                    return formData;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoadingMessage('Processing DOCX template...');
+
+                    // Send the request to the server using form data
+                    axios.post('{{ route('sys.test.docx-template') }}', result.value, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    .then(response => {
+                        Swal.close();
+
+                        // Show success message with download link
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'DOCX Processed!',
+                            html: 'Your DOCX document has been processed successfully.<br>' +
+                                  '<a href="' + response.data.data.download_url + '" target="_blank" class="btn btn-primary mt-2">Download Document</a>',
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: error.response?.data?.message || 'An error occurred while processing the DOCX document.'
+                        });
+                    });
+                }
+            });
         }
     </script>
 @endpush

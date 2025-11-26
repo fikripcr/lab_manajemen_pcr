@@ -1,18 +1,24 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
-use App\Exports\Sys\ActivityLogExport;
-use App\Http\Controllers\Controller;
+use BaconQrCode\Writer;
 use App\Models\Sys\Activity;
 use App\Models\Sys\ErrorLog;
-use App\Models\Sys\ServerMonitorCheck;
-use BaconQrCode\Renderer\GDLibRenderer;
-use BaconQrCode\Writer;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\Sys\ActivityLogExport;
+use App\Models\Sys\ServerMonitorCheck;
+use BaconQrCode\Renderer\GDLibRenderer;
+use BaconQrCode\Renderer\ImageRenderer;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpWord\TemplateProcessor;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use BaconQrCode\Renderer\Color\BackgroundColor;
+use BaconQrCode\Renderer\Color\ForegroundColor;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 
 class TestController extends Controller
 {
@@ -276,7 +282,6 @@ class TestController extends Controller
             // Verify if QR code file was generated before adding to document
             if (file_exists($qrCodePath)) {
                 // Add QR code image to document
-                dd($qrCodePath);
                 $section->addImage($qrCodePath, [
                     'width'     => 150,
                     'height'    => 150,
@@ -357,12 +362,8 @@ class TestController extends Controller
         $size = $request->input('size', 200);
 
         // Generate QR code as SVG using BaconQrCode
-        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
-            new \BaconQrCode\Renderer\RendererStyle\RendererStyle($size),
-            new \BaconQrCode\Renderer\Color\ForegroundColor(0, 0, 0),
-            new \BaconQrCode\Renderer\Color\BackgroundColor(255, 255, 255)
-        );
-        $writer    = new \BaconQrCode\Writer($renderer);
+       $renderer  = new GDLibRenderer($size);
+        $writer    = new Writer($renderer);
         $qrCodeSvg = $writer->writeString($text);
 
         return view('pages.sys.test.qrcode-display', compact('qrCodeSvg', 'text', 'size'));
@@ -377,4 +378,147 @@ class TestController extends Controller
     {
         return view('pages.sys.test.features');
     }
+
+    public function testDocxTemplate(Request $request)
+    {
+        $user = auth()->user();
+
+        try {
+            // Validate request - now accepts uploaded file
+            $request->validate([
+                'template' => 'required|file|mimes:doc,docx|max:10240', // Max 10MB
+            ]);
+
+            $file = $request->file('template');
+
+            // Get the temporary path of the uploaded file
+            $fullTemplatePath = $file->getRealPath();
+            if (!$fullTemplatePath || !file_exists($fullTemplatePath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Temporary file not created properly'
+                ], 400);
+            }
+
+            // Define replacement variables directly in the controller
+            $variables = [
+                'nama' => 'John Doe',
+                'email' => 'john@example.com',
+                'tanggal_lahir' => '1990-01-01',
+                'alamat' => 'Jl. Contoh No. 123',
+                'telepon' => '+62 123 4567',
+                'pekerjaan' => 'Software Engineer',
+                'perusahaan' => 'ABC Company',
+                'tanggal_pembuatan' => now()->format('Y-m-d'),
+                'waktu_pembuatan' => now()->format('H:i:s'),
+                'keterangan' => 'Contoh keterangan',
+                'judul' => 'Contoh Judul Dokumen',
+                'deskripsi' => 'Contoh deskripsi dokumen',
+            ];
+
+            // Create a temporary file for processing
+            $tempPath = storage_path('app/temp/' . uniqid() . '.docx');
+            $tempDir = dirname($tempPath);
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+
+            // Copy the original template to the temporary location
+            if (!copy($fullTemplatePath, $tempPath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to copy template file'
+                ], 500);
+            }
+
+            // Use TemplateProcessor to safely replace variables
+            $templateProcessor = new TemplateProcessor($tempPath);
+
+            // Replace variables using setValue method
+            foreach ($variables as $key => $value) {
+                $templateProcessor->setValue($key, $value);
+            }
+
+            // Save the processed template using saveAs for more explicit file handling
+            $templateProcessor->saveAs($tempPath);
+
+            // Generate the processed DOCX file
+            $fileName = 'processed-' . time() . '.docx';
+            $publicPath = storage_path('app/public/uploads/docx/' . $fileName);
+            $publicDir = dirname($publicPath);
+
+            if (!file_exists($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+
+            // Move the processed file from temp to public folder
+            if (!copy($tempPath, $publicPath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to move processed file to public folder'
+                ], 500);
+            }
+
+            // Clean up temporary file
+            if (file_exists($tempPath)) {
+                unlink($tempPath);
+            }
+
+            // Generate the public URL for download
+            $downloadUrl = asset('storage/uploads/docx/' . $fileName);
+
+            logActivity('test_dashboard', 'Test DOCX template processed and saved successfully by ' . $user->name, $user);
+
+            // Return a JSON response with the download URL
+            return response()->json([
+                'success' => true,
+                'message' => 'DOCX template processed successfully',
+                'data' => [
+                    'download_url' => $downloadUrl,
+                    'file_name' => $fileName,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            logActivity('test_dashboard', 'Error processing test DOCX template: ' . $e->getMessage(), $user);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error processing DOCX template: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function uploadDocxTemplate(Request $request)
+    {
+        $user = auth()->user();
+
+        try {
+            $request->validate([
+                'template' => 'required|file|mimes:doc,docx|max:10240', // Max 10MB
+            ]);
+
+            $file = $request->file('template');
+            $fileName = $file->getClientOriginalName();
+            $filePath = $file->storeAs('docx-templates', $fileName, 'local');
+
+            logActivity('test_dashboard', 'DOCX template uploaded successfully by ' . $user->name, $user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Template uploaded successfully',
+                'data' => [
+                    'file_path' => $filePath,
+                    'file_name' => $fileName,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            logActivity('test_dashboard', 'Error uploading DOCX template: ' . $e->getMessage(), $user);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error uploading template: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
