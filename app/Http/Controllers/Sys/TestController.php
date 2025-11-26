@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Sys\Activity;
 use App\Models\Sys\ErrorLog;
 use App\Models\Sys\ServerMonitorCheck;
+use BaconQrCode\Renderer\GDLibRenderer;
+use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -90,11 +92,19 @@ class TestController extends Controller
             // Get the 10 most recent server monitoring records
             $monitoringLogs = ServerMonitorCheck::orderBy('created_at', 'desc')->limit(10)->get();
 
+            // Generate QR code as PNG using BaconQrCode
+            $renderer = new GDLibRenderer(400);
+            $writer   = new Writer($renderer);
+            $pngData  = $writer->writeString('test'); // ini string biner
+                                                      // Encode ke base64 untuk embed di HTML
+            $base64Image = base64_encode($pngData);
+
             $data = [
                 'user'           => $user,
                 'errorLogs'      => $errorLogs,
                 'activityLogs'   => $activityLogs,
                 'monitoringLogs' => $monitoringLogs,
+                'qrcode'         => $base64Image,
                 'reportDate'     => now()->format('d M Y H:i'),
             ];
 
@@ -258,14 +268,15 @@ class TestController extends Controller
                 mkdir($tempDir, 0755, true);
             }
 
-            $qrCodePath = $tempDir . '/qrcode_' . uniqid() . '.png';
+            $qrCodePath = $tempDir . '/qrcode_' . uniqid() . '.svg';
 
-            // Generate QR code image
-            QrCode::format('png')->size(200)->generate($qrCodeText, $qrCodePath);
+            // Generate QR code as SVG
+            QrCode::format('svg')->size(200)->generate($qrCodeText, $qrCodePath);
 
             // Verify if QR code file was generated before adding to document
             if (file_exists($qrCodePath)) {
                 // Add QR code image to document
+                dd($qrCodePath);
                 $section->addImage($qrCodePath, [
                     'width'     => 150,
                     'height'    => 150,
@@ -273,7 +284,7 @@ class TestController extends Controller
                 ]);
             } else {
                 // Fallback if QR code wasn't generated properly
-                $section->addText('QR Code image could not be generated.', ['italic' => true]);
+                $section->addText('QR Code could not be generated.', ['italic' => true]);
             }
 
             $section->addText('Kode QR ini berisi URL ke halaman Test Features: ' . $qrCodeText);
@@ -318,8 +329,10 @@ class TestController extends Controller
         $text = $request->input('text');
         $size = $request->input('size', 200);
 
-        // Generate QR code as SVG using BaconQrCode
-        $qrCodeSvg = QrCode::size($size)->generate($text);
+        // Generate QR code as PNG using BaconQrCode
+        $renderer  = new GDLibRenderer($size);
+        $writer    = new Writer($renderer);
+        $qrCodeSvg = $writer->writeString($text);
 
         return response()->json([
             'success' => true,
@@ -353,15 +366,6 @@ class TestController extends Controller
         $qrCodeSvg = $writer->writeString($text);
 
         return view('pages.sys.test.qrcode-display', compact('qrCodeSvg', 'text', 'size'));
-    }
-
-    public function downloadQrCode($filename)
-    {
-        // Since we're no longer saving files, this function becomes unnecessary
-        return response()->json([
-            'success' => false,
-            'message' => 'QR code file download is deprecated in favor of SVG output',
-        ], 404);
     }
 
     public function tinymce()

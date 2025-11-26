@@ -28,7 +28,7 @@
 
                         <div id="qrCodeContainer" class="mt-4 text-center" style="display: none;">
                             <h6>Generated QR Code:</h6>
-                            <div id="qrCodeDisplay" class="d-inline-block p-3 bg-white border rounded"></div>
+                            <div id="qrCodeDisplay" class="d-inline-block bg-white border rounded"></div>
                             <div class="mt-2">
                                 <button type="button" class="btn btn-outline-secondary btn-sm" id="downloadQrPngBtn">Download PNG</button>
                             </div>
@@ -98,7 +98,7 @@
             const qrContent = document.getElementById('qrContent');
 
             // Current QR code SVG content
-            let currentSvgContent = '';
+            let qrdataUrl = '';
 
             // Generate QR Code functionality
             generateQrBtn.addEventListener('click', function() {
@@ -121,14 +121,11 @@
                     })
                     .then(function(response) {
                         if (response.data.success) {
-                            currentSvgContent = atob(response.data.svg);
+                            qrdataUrl = `data:image/png+xml;base64,${response.data.svg}`;
 
                             // Display the QR code
-                            qrCodeDisplay.innerHTML = currentSvgContent;
+                            qrCodeDisplay.innerHTML = `<img src="${qrdataUrl}" alt="QR Code" />`;
                             qrCodeContainer.style.display = 'block';
-
-                            // Success message
-                            showSuccessMessage('Success!', response.data.message);
                         } else {
                             // Error message
                             showErrorMessage('Error!', response.data.message || 'Failed to generate QR code');
@@ -149,42 +146,10 @@
 
             // Download QR Code as PNG
             downloadQrPngBtn.addEventListener('click', function() {
-                // Create an in-memory canvas to convert SVG to PNG
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-
-                // Create an image from the SVG content
-                const img = new Image();
-                const svgBlob = new Blob([currentSvgContent], {type: 'image/svg+xml'});
-                const url = URL.createObjectURL(svgBlob);
-
-                img.onload = function() {
-                    // Set canvas dimensions to match the image
-                    canvas.width = img.width || 300;
-                    canvas.height = img.height || 300;
-
-                    // Draw the image on the canvas
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    // Convert to PNG and download
-                    const pngUrl = canvas.toDataURL('image/png');
-
-                    const a = document.createElement('a');
-                    a.href = pngUrl;
-                    a.download = 'qrcode-' + new Date().getTime() + '.png';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-
-                    URL.revokeObjectURL(url);
-                };
-
-                img.onerror = function() {
-                    showErrorMessage('Error!', 'Failed to convert QR code to PNG');
-                    URL.revokeObjectURL(url);
-                };
-
-                img.src = url;
+                const a = document.createElement('a');
+                a.href = qrdataUrl;
+                a.download = 'qrcode.png';
+                a.click();
             });
 
             // Scan uploaded QR code
