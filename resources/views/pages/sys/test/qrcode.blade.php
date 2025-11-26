@@ -30,8 +30,7 @@
                             <h6>Generated QR Code:</h6>
                             <div id="qrCodeDisplay" class="d-inline-block p-3 bg-white border rounded"></div>
                             <div class="mt-2">
-                                <button type="button" class="btn btn-outline-secondary btn-sm" id="downloadQrBtn">Download SVG</button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" id="copyQrBtn">Copy SVG</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="downloadQrPngBtn">Download PNG</button>
                             </div>
                         </div>
                     </div>
@@ -86,8 +85,7 @@
             const generateQrBtn = document.getElementById('generateQrBtn');
             const qrCodeContainer = document.getElementById('qrCodeContainer');
             const qrCodeDisplay = document.getElementById('qrCodeDisplay');
-            const downloadQrBtn = document.getElementById('downloadQrBtn');
-            const copyQrBtn = document.getElementById('copyQrBtn');
+            const downloadQrPngBtn = document.getElementById('downloadQrPngBtn');
 
             // QR Scanner elements
             const qrScannerFile = document.getElementById('qrScannerFile');
@@ -107,12 +105,7 @@
                 const size = qrSizeInput.value || 200;
 
                 if (!text) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please enter text or URL to encode',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
+                    showErrorMessage('Error!', 'Please enter text or URL to encode');
                     return;
                 }
 
@@ -134,32 +127,17 @@
                             qrCodeContainer.style.display = 'block';
 
                             // Success message
-                            Swal.fire({
-                                title: 'Success!',
-                                text: response.data.message,
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            });
+                            showSuccessMessage('Success!', response.data.message);
                         } else {
                             // Error message
-                            Swal.fire({
-                                title: 'Error!',
-                                text: response.data.message || 'Failed to generate QR code',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
+                            showErrorMessage('Error!', response.data.message || 'Failed to generate QR code');
                         }
                     })
                     .catch(function(error) {
                         console.error('Error generating QR code:', error);
 
                         // Error message
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to generate QR code: ' + (error.response?.data?.message || error.message),
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
+                        showErrorMessage('Error!', 'Failed to generate QR code: ' + (error.response?.data?.message || error.message));
                     })
                     .finally(function() {
                         // Reset button state
@@ -168,8 +146,8 @@
                     });
             });
 
-            // Download QR Code as SVG
-            downloadQrBtn.addEventListener('click', function() {
+            // Download QR Code as PNG
+            downloadQrPngBtn.addEventListener('click', function() {
                 if (!currentSvgContent) {
                     Swal.fire({
                         title: 'Error!',
@@ -180,61 +158,48 @@
                     return;
                 }
 
-                const blob = new Blob([currentSvgContent], {
-                    type: 'image/svg+xml'
-                });
-                const url = URL.createObjectURL(blob);
+                // Create an in-memory canvas to convert SVG to PNG
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
 
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'qrcode-' + new Date().getTime() + '.svg';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
+                // Create an image from the SVG content
+                const img = new Image();
+                const svgBlob = new Blob([currentSvgContent], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(svgBlob);
 
-            // Copy QR Code SVG to clipboard
-            copyQrBtn.addEventListener('click', function() {
-                if (!currentSvgContent) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'No QR code to copy',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    return;
-                }
+                img.onload = function() {
+                    // Set canvas dimensions to match the image
+                    canvas.width = img.width || 300;
+                    canvas.height = img.height || 300;
 
-                navigator.clipboard.writeText(currentSvgContent)
-                    .then(() => {
-                        Swal.fire({
-                            title: 'Copied!',
-                            text: 'QR code SVG copied to clipboard',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Failed to copy: ', err);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to copy QR code SVG to clipboard',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    });
+                    // Draw the image on the canvas
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // Convert to PNG and download
+                    const pngUrl = canvas.toDataURL('image/png');
+
+                    const a = document.createElement('a');
+                    a.href = pngUrl;
+                    a.download = 'qrcode-' + new Date().getTime() + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    URL.revokeObjectURL(url);
+                };
+
+                img.onerror = function() {
+                    showErrorMessage('Error!', 'Failed to convert QR code to PNG');
+                    URL.revokeObjectURL(url);
+                };
+
+                img.src = url;
             });
 
             // Scan uploaded QR code
             scanUploadedQrBtn.addEventListener('click', function() {
                 if (!qrScannerFile.files.length) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please select a QR code image to scan',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
+                    showErrorMessage('Error!', 'Please select a QR code image to scan');
                     return;
                 }
 
@@ -257,22 +222,12 @@
                             qrContent.textContent = code.data;
                             qrContent.className = 'text-success';
 
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'QR code decoded successfully!',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            });
+                            showSuccessMessage('Success!', 'QR code decoded successfully!');
                         } else {
                             qrContent.textContent = 'Could not decode QR code';
                             qrContent.className = 'text-danger';
 
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Could not decode QR code',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
+                            showErrorMessage('Error!', 'Could not decode QR code');
                         }
                     };
                     img.src = event.target.result;
@@ -308,12 +263,7 @@
                     })
                     .catch(function(err) {
                         console.error("Error accessing camera: ", err);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Could not access camera: ' + err.message,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
+                        showErrorMessage('Error!', 'Could not access camera: ' + err.message);
                     });
             });
 
@@ -345,12 +295,7 @@
                     videoStream.getTracks().forEach(track => track.stop());
                     videoStream = null;
 
-                    Swal.fire({
-                        title: 'QR Code Scanned!',
-                        text: 'Successfully decoded QR code: ' + code.data,
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    });
+                    showSuccessMessage('QR Code Scanned!', 'Successfully decoded QR code: ' + code.data);
                 } else {
                     // Continue scanning
                     requestAnimationFrame(scanVideoFrame);

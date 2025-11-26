@@ -157,12 +157,7 @@
                             })
                             .then(function(response) {
                                 if (response.data.success) {
-                                    Swal.fire({
-                                        title: 'Sukses!',
-                                        text: response.data.message,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    });
+                                    showSuccessMessage('Sukses!', response.data.message);
 
                                     // Reload the table to reflect changes
                                     $('#notifications-table').DataTable().ajax.reload();
@@ -170,22 +165,12 @@
                                     // Update stats
                                     updateNotificationStats();
                                 } else {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Gagal menandai notifikasi sebagai telah dibaca',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
+                                    showErrorMessage('Error!', 'Gagal menandai notifikasi sebagai telah dibaca');
                                 }
                             })
                             .catch(function(error) {
                                 console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Terjadi kesalahan saat menandai notifikasi sebagai telah dibaca',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
+                                showErrorMessage('Error!', 'Terjadi kesalahan saat menandai notifikasi sebagai telah dibaca');
                             });
                     }
                 });

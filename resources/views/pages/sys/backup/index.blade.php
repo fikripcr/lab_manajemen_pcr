@@ -71,54 +71,30 @@
 @push('scripts')
     <script>
         function createBackup(type) {
-            // Show loading Swal
-            Swal.fire({
-                title: 'Processing Backup...',
-                text: type === 'db' ? 'Creating database backup, please wait...' : 'Creating web files backup, please wait...',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+            // Show loading message
+            showLoadingMessage('Processing Backup...', type === 'db' ? 'Creating database backup, please wait...' : 'Creating web files backup, please wait...');
 
             axios.post('{{ route('sys.backup.create') }}', {
                     type: type
                 })
                 .then(function(response) {
-                    // Close the loading Swal
+                    // Close the loading message
                     Swal.close();
 
                     if (response.data.success) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: response.data.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
+                        showSuccessMessage('Success!', response.data.message).then(() => {
                             // Reload the page to show the new backup
                             location.reload();
                         });
                     } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: response.data.message,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
+                        showErrorMessage('Error!', response.data.message);
                     }
                 })
                 .catch(function(error) {
-                    // Close the loading Swal
+                    // Close the loading message
                     Swal.close();
                     console.error('Error creating backup:', error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'An error occurred while creating the backup',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
+                    showErrorMessage('Error!', 'An error occurred while creating the backup');
                 });
         }
     </script>

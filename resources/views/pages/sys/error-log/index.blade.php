@@ -73,43 +73,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Confirm before clearing all error logs
             window.confirmClearAll = function() {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'This will permanently delete all error logs. This action cannot be undone.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, clear all!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
+                showDeleteConfirmation(
+                    'Are you sure?',
+                    'This will permanently delete all error logs. This action cannot be undone.',
+                    'Yes, clear all!'
+                ).then((result) => {
                     if (result.isConfirmed) {
                         axios.post('{{ route('sys.error-log.clear-all') }}')
                             .then(function(response) {
                                 if (response.data.success) {
-                                    Swal.fire({
-                                        title: 'Cleared!',
-                                        text: response.data.message,
-                                        icon: 'success'
-                                    }).then(() => {
+                                    showSuccessMessage('Cleared!', response.data.message).then(() => {
                                         // Reload the DataTable to reflect changes
                                         $('#error-logs-table').DataTable().ajax.reload();
                                     });
                                 } else {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: response.data.message || 'Failed to clear error logs',
-                                        icon: 'error'
-                                    });
+                                    showErrorMessage('Error!', response.data.message || 'Failed to clear error logs');
                                 }
                             })
                             .catch(function(error) {
                                 console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'An error occurred while clearing error logs',
-                                    icon: 'error'
-                                });
+                                showErrorMessage('Error!', 'An error occurred while clearing error logs');
                             });
                     }
                 });
