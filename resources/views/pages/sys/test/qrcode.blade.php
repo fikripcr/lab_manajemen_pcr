@@ -77,6 +77,7 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // QR Code Generator elements
@@ -148,16 +149,6 @@
 
             // Download QR Code as PNG
             downloadQrPngBtn.addEventListener('click', function() {
-                if (!currentSvgContent) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'No QR code to download',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    return;
-                }
-
                 // Create an in-memory canvas to convert SVG to PNG
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -209,26 +200,35 @@
                 reader.onload = function(event) {
                     const img = new Image();
                     img.onload = function() {
+                        // Create a canvas with appropriate dimensions
                         const canvas = document.createElement('canvas');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
                         const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, img.width, img.height);
 
+                        // Set canvas dimensions to match the image
+                        canvas.width = img.naturalWidth || img.width;
+                        canvas.height = img.naturalHeight || img.height;
+
+                        // Draw the image on the canvas
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // Get image data from the canvas
                         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                        // Use the jsQR library to decode the image
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
 
                         if (code) {
                             qrContent.textContent = code.data;
                             qrContent.className = 'text-success';
-
-                            showSuccessMessage('Success!', 'QR code decoded successfully!');
                         } else {
                             qrContent.textContent = 'Could not decode QR code';
                             qrContent.className = 'text-danger';
-
-                            showErrorMessage('Error!', 'Could not decode QR code');
                         }
+                    };
+                    img.onerror = function() {
+                        qrContent.textContent = 'Error loading image';
+                        qrContent.className = 'text-danger';
+                        showErrorMessage('Error!', 'Could not load image file');
                     };
                     img.src = event.target.result;
                 };
@@ -278,22 +278,32 @@
             function scanVideoFrame() {
                 if (!videoStream) return;
 
+                // Create a canvas to capture video frame for scanning
                 const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Set canvas dimensions to match video
                 canvas.width = cameraPreview.videoWidth;
                 canvas.height = cameraPreview.videoHeight;
-                const ctx = canvas.getContext('2d');
+
+                // Draw current video frame to the canvas
                 ctx.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
 
+                // Get image data from the canvas
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                // Scan for QR code in the image data
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
 
                 if (code) {
                     qrContent.textContent = code.data;
                     qrContent.className = 'text-success';
 
                     // Stop scanning after successful scan
-                    videoStream.getTracks().forEach(track => track.stop());
-                    videoStream = null;
+                    if (videoStream) {
+                        videoStream.getTracks().forEach(track => track.stop());
+                        videoStream = null;
+                    }
 
                     showSuccessMessage('QR Code Scanned!', 'Successfully decoded QR code: ' + code.data);
                 } else {
