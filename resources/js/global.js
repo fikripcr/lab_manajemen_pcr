@@ -2,6 +2,9 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 
+// --- DataTables (Core library, needs jQuery)
+import 'datatables.net';
+
 // --- Bootstrap 5 JS (untuk Modal, Dropdown, Tooltip, dll)
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
@@ -16,4 +19,8 @@ window.axios.defaults.withXSRFToken = true
 import Swal from 'sweetalert2';
 window.Swal = Swal;
 
-
+// --- Shared Components ---
+import './components/FormFeatures.js';
+import './components/CustomSweetAlerts.js';
+import CustomDataTables from './components/CustomDataTables.js';
+window.CustomDataTables = CustomDataTables;

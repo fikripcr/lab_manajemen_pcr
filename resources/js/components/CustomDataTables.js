@@ -222,8 +222,8 @@ export default class CustomDataTables {
             if (selectAll) {
                 selectAll.addEventListener('change', (e) => {
                     const checked = e.target.checked;
-                    this.table.rows({ search: 'applied' }).every(() => {
-                        const row = this.table.row(this).node();
+                    this.table.rows({ search: 'applied' }).every((rowIdx, tableLoop, rowLoop) => { // Modified here
+                        const row = this.table.row(rowIdx).node(); // Modified here
                         const cb = row.querySelector(SELECTOR.rowCheckbox);
                         if (cb) {
                             cb.checked = checked;
@@ -274,8 +274,8 @@ export default class CustomDataTables {
     onDraw(SELECTOR) {
         // Restore checkboxes
         if (this.options.checkbox) {
-            this.table.rows().every(() => {
-                const row = this.table.row(this).node();
+            this.table.rows().every((rowIdx, tableLoop, rowLoop) => { // Modified here
+                const row = this.table.row(rowIdx).node(); // Modified here
                 const cb = row.querySelector(SELECTOR.rowCheckbox);
                 if (cb) cb.checked = this.selectedIds.has(cb.dataset.id);
             });

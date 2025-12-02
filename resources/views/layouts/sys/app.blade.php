@@ -11,7 +11,7 @@
 
 =========================================================
 -->
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="{{ asset('assets-sys') }}/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -21,17 +21,22 @@
 
     <meta name="description" content="" />
 
+    {{-- TODO: Move favicon to a location that is not dependent on the old asset structure. --}}
     <link rel="icon" type="image/x-icon" href="{{ asset('assets-sys') }}/img/favicon/favicon.ico" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('layouts.sys.css')
+    @vite([
+        'resources/css/sys.css', 
+        'resources/js/sys/vendor/helpers.min.js',
+        'resources/js/sys/config.js',
+        'resources/js/sys/vendor/menu.min.js', 
+        'resources/js/sys/main.js',
+        'resources/js/sys.js'
+    ])
 
     @stack('css')
-
-    <script src="{{ asset('assets-sys') }}/vendor/js/helpers.min.js"></script>
-    <script src="{{ asset('assets-sys') }}/js/config.js"></script>
 </head>
 
 <body>
@@ -58,12 +63,8 @@
             <div class="layout-overlay layout-menu-toggle"></div>
         </div>
 
-        @vite(['resources/js/sys.js'])
-
         <!-- Global Search Modal Component -->
         <x-sys.modal-global-search />
-
-        @include('layouts.sys.js')
 
         @stack('scripts')
 

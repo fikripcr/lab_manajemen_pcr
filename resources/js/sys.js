@@ -1,11 +1,4 @@
 import './global.js';
-import './components/FormFeatures.js';
-import './components/CustomSweetAlerts.js';
-
-// --- Custom DataTable Component
-import 'datatables.net';
-import CustomDataTables from './components/CustomDataTables.js';
-window.CustomDataTables = CustomDataTables;
 
 // --- Choices.js
 import Choices from 'choices.js';
@@ -28,7 +21,3 @@ window.initToastEditor = function(selector, config = {}) {
         });
     });
 };
-
-
-
-
