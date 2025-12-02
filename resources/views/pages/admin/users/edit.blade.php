@@ -109,8 +109,7 @@
                                          height="60"
                                          alt="Avatar">
                                 </div>
-                                <input class="form-control @error('avatar') is-invalid @enderror"
-                                       type="file" id="avatar" name="avatar" accept="image/*">
+                                <input type="file" id="avatar" name="avatar" accept="image/*">
                                 <div class="form-text">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.
                                     Leave empty to keep current avatar</div>
                                 @error('avatar')
@@ -161,8 +160,20 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endsection
 
+@push('css')
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+@endpush
+
 @push('scripts')
+    <!-- Load FilePond library -->
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+
     <script>
+        // Register the plugin
+        FilePond.registerPlugin(FilePondPluginImagePreview);
+
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Choices.js on the role multiselect
             const roleChoices = new Choices('#role', {
@@ -171,6 +182,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 placeholderValue: 'Select roles...',
                 searchPlaceholderValue: 'Search roles...'
             });
+
+            // Initialize FilePond for avatar upload
+            if (typeof FilePond !== 'undefined') {
+                // Wait for a moment to ensure DOM is ready
+                setTimeout(() => {
+                    const inputElement = document.querySelector('input#avatar');
+                    if (inputElement) {
+                        // Create FilePond instance
+                        const pond = FilePond.create(inputElement, {
+                            allowMultiple: false,
+                            maxFiles: 1,
+                            acceptedFileTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
+                            labelIdle: 'Drag & Drop your avatar or <span class="filepond--label-action"> Browse </span>',
+                            onaddfile: (error, file) => {
+                                if (error) {
+                                    console.error('FilePond error:', error);
+                                }
+                            }
+                        });
+
+                        // The FilePond element will replace the input automatically
+                    } else {
+                        console.error('Avatar input element not found');
+                    }
+                }, 100); // Delay to ensure DOM is completely loaded
+            } else {
+                console.log('FilePond is not available');
+            }
         });
     </script>
 @endpush

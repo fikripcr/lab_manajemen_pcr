@@ -58,6 +58,13 @@
             <div class="layout-overlay layout-menu-toggle"></div>
         </div>
 
+        @vite(['resources/js/global.js'])
+
+        @vite(['resources/js/admin.js'])
+
+        @vite(['resources/js/components/CustomSweetAlerts.js'])
+
+
         <!-- Global Search Modal Component -->
         <x-admin.global-search-modal />
 

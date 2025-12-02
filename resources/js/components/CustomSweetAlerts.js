@@ -60,7 +60,7 @@ function showErrorMessage(title = 'Error!', text = '') {
 function showInfoMessage(title = 'Info', text = '') {
     return Swal.fire({
         title: title,
-        text: text,
+        html: text,
         icon: 'info',
         timer: 2000,
         timerProgressBar: true,
@@ -171,17 +171,30 @@ function confirmDelete(url, tableId = null, title = 'Delete this item??', text =
                     title: 'Deleted!',
                     html: response.data.message || 'Item deleted successfully!',
                     icon: 'success',
-                    timer: 1000,
+                    timer: 750,
                     timerProgressBar: true,
                     showConfirmButton: false
-                }).then(() => {
-                    if (tableId) {
-                        let tableInstance = window['DT_' + tableId]
+                });
+
+                if (tableId) {
+                    // Coba berbagai format nama tabel untuk kompatibilitas
+                    let tableInstance = window['DT_' + tableId];
+
+                    // Check if it's an instance of CustomDataTables
+                    if (tableInstance && typeof tableInstance.table !== 'undefined') {
+                        // Use the DataTables instance from CustomDataTables
+                        tableInstance.table.ajax.reload(null, false);
+                    } else if (tableInstance && typeof tableInstance.ajax !== 'undefined') {
+                        // If it's a direct DataTables instance
                         tableInstance.ajax.reload(null, false);
                     } else {
+                        // Fallback: reload the page if table instance is not found
+                        console.warn(`Table instance DT_${tableId} or its variants not found or invalid`);
                         location.reload();
                     }
-                });
+                } else {
+                    location.reload();
+                }
             })
             .catch(function (error) {
                 let errorMessage = 'An error occurred while deleting the item.';
@@ -193,3 +206,17 @@ function confirmDelete(url, tableId = null, title = 'Delete this item??', text =
         }
     });
 }
+
+// Mendaftarkan fungsi-fungsi ke window object agar bisa diakses secara global
+window.showDeleteConfirmation = showDeleteConfirmation;
+window.showConfirmation = showConfirmation;
+window.showSuccessMessage = showSuccessMessage;
+window.showErrorMessage = showErrorMessage;
+window.showInfoMessage = showInfoMessage;
+window.showWarningMessage = showWarningMessage;
+window.showLoadingMessage = showLoadingMessage;
+window.showFormErrors = showFormErrors;
+window.handleAjaxResponse = handleAjaxResponse;
+window.showBulkActionConfirmation = showBulkActionConfirmation;
+window.confirmAction = confirmAction;
+window.confirmDelete = confirmDelete;

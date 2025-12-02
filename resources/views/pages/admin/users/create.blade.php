@@ -27,7 +27,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="email">Email</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                <input type="text" class="form-control @error('email') is-invalid @enderror"
                                        id="email" name="email" value="{{ old('email') }}"
                                        placeholder="john@example.com" >
                                 @error('email')
@@ -99,8 +99,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="avatar">Avatar (Optional)</label>
                             <div class="col-sm-10">
-                                <input class="form-control @error('avatar') is-invalid @enderror"
-                                       type="file" id="avatar" name="avatar" accept="image/*">
+                                <input type="file" id="avatar" name="avatar" accept="image/*">
                                 <div class="form-text">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.</div>
                                 @error('avatar')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -150,8 +149,20 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endsection
 
+@push('css')
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+@endpush
+
 @push('scripts')
+    <!-- Load FilePond library -->
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+
     <script>
+        // Register the plugin
+        FilePond.registerPlugin(FilePondPluginImagePreview);
+
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Choices.js on the role multiselect
             const roleChoices = new Choices('#role', {
@@ -181,6 +192,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     passwordConfirmationInput.setAttribute('type', type);
                     this.innerHTML = type === 'password' ? '<i class="bx bx-hide"></i>' : '<i class="bx bx-show"></i>';
                 });
+            }
+
+            // Initialize FilePond for avatar upload
+            if (typeof FilePond !== 'undefined') {
+                // Wait for a moment to ensure DOM is ready
+                setTimeout(() => {
+                    const inputElement = document.querySelector('input#avatar');
+                    if (inputElement) {
+                        // Create FilePond instance
+                        const pond = FilePond.create(inputElement, {
+                            allowMultiple: false,
+                            maxFiles: 1,
+                            acceptedFileTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
+                            labelIdle: 'Drag & Drop your avatar or <span class="filepond--label-action"> Browse </span>',
+                            onaddfile: (error, file) => {
+                                if (error) {
+                                    console.error('FilePond error:', error);
+                                }
+                            }
+                        });
+
+                        // The FilePond element will replace the input automatically
+                    } else {
+                        console.error('Avatar input element not found');
+                    }
+                }, 100); // Delay to ensure DOM is completely loaded
+            } else {
+                console.log('FilePond is not available');
             }
         });
     </script>

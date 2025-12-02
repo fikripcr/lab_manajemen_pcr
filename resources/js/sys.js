@@ -1,20 +1,23 @@
-// --- jQuery (dibutuhkan oleh DataTables dan plugin lama)
-import $ from 'jquery';
-window.$ = window.jQuery = $;
+import './global.js';
+import './components/FormFeatures.js';
+import './components/CustomSweetAlerts.js';
 
-// --- Bootstrap 5 JS (untuk Modal, Dropdown, Tooltip, dll)
-import * as bootstrap from 'bootstrap';
-window.bootstrap = bootstrap;
-
-// --- Axios (untuk AJAX modern)
-import axios from 'axios';
-window.axios = axios;
-window.axios.defaults.withCredentials = true; // untuk Sanctum/session
-window.axios.defaults.withXSRFToken = true
-
-// --- DataTables (dynamic import – hanya load saat dipanggil)
+// --- Custom DataTable Component
 import 'datatables.net';
+import CustomDataTables from './components/CustomDataTables.js';
+window.CustomDataTables = CustomDataTables;
 
+// --- Choices.js
+import Choices from 'choices.js';
+window.Choices = Choices;
+
+// --- Global Search
+import { GlobalSearch } from './components/GlobalSearch.js';
+window.GlobalSearch = GlobalSearch;
+
+// --- Notification Manager
+import { NotificationManager } from './components/Notification.js';
+window.NotificationManager = NotificationManager;
 
 // --- TOAST UI Editor (dynamic import)
 window.initToastEditor = function(selector, config = {}) {
@@ -26,9 +29,6 @@ window.initToastEditor = function(selector, config = {}) {
     });
 };
 
-// --- SweetAlert2 (dynamic import)
-import Swal from 'sweetalert2';
-window.Swal = Swal;
 
-// --- Import additional sys features (flatpickr, filepond, lodash)
-import './sys-features';
+
+

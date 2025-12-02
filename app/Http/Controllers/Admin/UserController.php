@@ -1,28 +1,43 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
 use App\Exports\UserExport;
-use App\Imports\UserImport;
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Yajra\DataTables\DataTables;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UserRequest;
+use App\Imports\UserImport;
+use App\Models\User;
+use App\Services\Sys\UserService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\Admin\UserRequest;
+use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Permission\Models\Role;
+use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
+    public function __construct(
+        UserService $userService
+    ) {
+        $this->userService = $userService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         return view('pages.admin.users.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $roles = Role::all();
+        return view('pages.admin.users.create', compact('roles'));
     }
 
     /**
@@ -38,22 +53,20 @@ class UserController extends Controller
             ->order(function ($query) {
                 $query->latest('created_at'); // Sort by created_at DESC by default
             })
-            ->filterColumn('roles', function($query, $keyword) {
-                $query->whereHas('roles', function($q) use ($keyword) {
+            ->filterColumn('roles', function ($query, $keyword) {
+                $query->whereHas('roles', function ($q) use ($keyword) {
                     $q->where('name', 'like', "%{$keyword}%");
                 });
             })
             ->editColumn('name', function ($user) {
-                // Ensure we're getting the actual user name, not processed content
-                $userName      = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
                 $userCreatedAt = formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
 
                 $html = '<div class="d-flex align-items-center">';
                 $html .= '<div class="avatar flex-shrink-0 me-3">';
-                $html .= '<img src="' . $user->avatar_small_url . '" alt="' . $userName . '" class="rounded-circle w-px-40 h-40">';
+                $html .= '<img src="' . $user->avatar_small_url . '" alt="' . $user->name . '" class="rounded-circle w-px-40 h-40">';
                 $html .= '</div>';
                 $html .= '<div class="d-flex flex-column">';
-                $html .= '<span class="text-nowrap">' . $userName . '</span>';
+                $html .= '<span class="text-nowrap">' . $user->name . '</span>';
                 $html .= '<small class="text-muted">' . $userCreatedAt . '</small>';
                 $html .= '</div>';
                 $html .= '</div>';
@@ -62,10 +75,10 @@ class UserController extends Controller
             })
             ->editColumn('expired_at', function ($user) {
                 if ($user->expired_at) {
-                    $isExpired = $user->isExpired();
+                    $isExpired     = $user->isExpired();
                     $formattedDate = formatTanggalIndo($user->expired_at);
-                    $badgeClass = $isExpired ? 'bg-label-danger' : 'bg-label-warning';
-                    $statusText = $isExpired ? 'Expired' : 'Active';
+                    $badgeClass    = $isExpired ? 'bg-label-danger' : 'bg-label-warning';
+                    $statusText    = $isExpired ? 'Expired' : 'Active';
 
                     return '<span class="badge ' . $badgeClass . '">' . $formattedDate . ' (' . $statusText . ')</span>';
                 }
@@ -102,24 +115,15 @@ class UserController extends Controller
                                 <a href="javascript:void(0)" class="dropdown-item" onclick="loginAsUser(\'' . route('users.login.as', $encryptedId) . '\', \'' . addslashes($user->name) . '\')">
                                     <i class="bx bx-log-in me-1"></i> Login As
                                 </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\')">
+                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\',\'users-table\')">
                                     <i class="bx bx-trash me-1"></i> Delete
                                 </a>
                             </div>
                         </div>
                     </div>';
             })
-            ->rawColumns(['name', 'roles','expired_at', 'action'])
+            ->rawColumns(['name', 'roles', 'expired_at', 'action'])
             ->make(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $roles = Role::all();
-        return view('pages.admin.users.create', compact('roles'));
     }
 
     /**
@@ -128,32 +132,15 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $validated = $request->validated();
-
-        $user = User::create([
-            'name'       => $validated['name'],
-            'email'      => $validated['email'],
-            'password'   => Hash::make($validated['password']),
-            'expired_at' => $validated['expired_at'] ?? null,
-        ]);
-
-        // Handle avatar upload using Spatie Media Library
-        if ($request->hasFile('avatar')) {
-            $user->addMedia($request->file('avatar'))->toMediaCollection('avatar');
+        try {
+            $this->userService->createUser($validated);
+            return redirect()->route('users.index')
+                ->with('success', 'Pengguna berhasil dibuat.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        // Assign the selected role(s) to the user
-        if (is_array($validated['role'])) {
-            $user->syncRoles($validated['role']); // syncRoles replaces all roles with new set
-        } else {
-            $user->assignRole($validated['role']);
-        }
-
-
-        // Log the activity
-        logActivity('user', 'Membuat pengguna ' . $user->name, $user);
-
-        return redirect()->route('users.index')
-            ->with('success', 'Pengguna berhasil dibuat.');
     }
 
     /**
@@ -219,7 +206,6 @@ class UserController extends Controller
             $user->syncRoles([$validated['role']]);
         }
 
-
         // Log the activity
         logActivity('user', 'Memperbarui pengguna ' . $user->name, $user, [
             'old'        => $oldAttributes,
@@ -235,24 +221,20 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
 
-        $user = User::findOrFail($realId);
+        try {
+            $realId = decryptId($id);
+            $this->userService->deleteUser($realId);
 
-        // Log the activity before deletion
-        logActivity('user', 'Menghapus pengguna ' . $user->name, $user);
-
-        $user->delete();
-
-        if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Pengguna berhasil dihapus.',
+                'message' => 'Data berhasil dihapus.',
             ]);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        return redirect()->route('users.index')
-            ->with('success', 'Pengguna berhasil dihapus.');
     }
 
     /**
@@ -279,10 +261,10 @@ class UserController extends Controller
         if ($id) {
             // Detail report for specific user
             $realId = decryptId($id);
-            $user = User::with('roles')->findOrFail($realId);
+            $user   = User::with('roles')->findOrFail($realId);
 
             $data = [
-                'user' => $user,
+                'user'       => $user,
                 'reportType' => 'detail',
                 'reportDate' => now()->format('d M Y H:i'),
             ];
@@ -291,43 +273,43 @@ class UserController extends Controller
             return $pdf->download('user-detail-' . $user->name . '-' . now()->format('Y-m-d-H-i') . '.pdf');
         } else {
             // Summary report for all users
-            $type = $request->get('type', 'summary');
+            $type    = $request->get('type', 'summary');
             $filters = [
-                'search' => $request->get('search'),
-                'role' => $request->get('role'),
+                'search'    => $request->get('search'),
+                'role'      => $request->get('role'),
                 'date_from' => $request->get('date_from'),
-                'date_to' => $request->get('date_to'),
+                'date_to'   => $request->get('date_to'),
             ];
 
             $users = User::with('roles');
 
             // Apply filters
-            if (!empty($filters['search'])) {
+            if (! empty($filters['search'])) {
                 $users = $users->where('name', 'LIKE', '%' . $filters['search'] . '%')
-                               ->orWhere('email', 'LIKE', '%' . $filters['search'] . '%');
+                    ->orWhere('email', 'LIKE', '%' . $filters['search'] . '%');
             }
 
-            if (!empty($filters['role'])) {
-                $users = $users->whereHas('roles', function($query) use ($filters) {
+            if (! empty($filters['role'])) {
+                $users = $users->whereHas('roles', function ($query) use ($filters) {
                     $query->where('name', $filters['role']);
                 });
             }
 
-            if (!empty($filters['date_from'])) {
+            if (! empty($filters['date_from'])) {
                 $users = $users->whereDate('created_at', '>=', $filters['date_from']);
             }
 
-            if (!empty($filters['date_to'])) {
+            if (! empty($filters['date_to'])) {
                 $users = $users->whereDate('created_at', '<=', $filters['date_to']);
             }
 
             $users = $users->get();
 
             $data = [
-                'users' => $users,
+                'users'       => $users,
                 'summaryType' => $type,
-                'reportDate' => now()->format('d M Y H:i'),
-                'filters' => $filters,
+                'reportDate'  => now()->format('d M Y H:i'),
+                'filters'     => $filters,
             ];
 
             $pdf = Pdf::loadView('pages.admin.users.pdf.export', $data);
@@ -377,8 +359,8 @@ class UserController extends Controller
      */
     public function loginAs(Request $request, $user)
     {
-        // Only allow high-privilege users to use this feature
-        $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to impersonate other users
+                                                                   // Only allow high-privilege users to use this feature
+        $allowedRoles  = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to impersonate other users
         $hasPermission = false;
 
         foreach ($allowedRoles as $role) {
@@ -394,7 +376,7 @@ class UserController extends Controller
 
         // Decrypt the user ID if necessary
         try {
-            $userId = decryptId($user);
+            $userId     = decryptId($user);
             $targetUser = User::findOrFail($userId);
         } catch (\Exception $e) {
             $targetUser = User::findOrFail($user);
@@ -407,8 +389,8 @@ class UserController extends Controller
         logActivity('impersonation', 'User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')', $targetUser);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Impersonation successful',
+            'success'  => true,
+            'message'  => 'Impersonation successful',
             'redirect' => route('dashboard'),
         ]);
     }
@@ -418,7 +400,7 @@ class UserController extends Controller
      */
     public function switchBack()
     {
-        if (!app('impersonate')->isImpersonating()) {
+        if (! app('impersonate')->isImpersonating()) {
             return redirect()->route('dashboard')->with('error', 'Not currently impersonating anyone.');
         }
 
@@ -444,7 +426,7 @@ class UserController extends Controller
 
         // Verify that the user has this role
         $userRoles = $user->getRoleNames();
-        if (!$userRoles->contains($role)) {
+        if (! $userRoles->contains($role)) {
             return redirect()->back()->with('error', 'You do not have permission to switch to this role.');
         }
 

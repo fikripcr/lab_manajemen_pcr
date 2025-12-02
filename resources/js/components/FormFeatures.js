@@ -1,6 +1,10 @@
 // Import flatpickr
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+window.flatpickr = flatpickr;
+
+import Choices from 'choices.js';
+window.Choices = Choices;
 
 // Import filepond
 import * as FilePond from 'filepond';
@@ -12,11 +16,5 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css
 
 // Register the plugin
 FilePond.registerPlugin(FilePondPluginImagePreview);
-
-// Import lodash
-import _ from 'lodash';
-
-// Make these libraries available globally
-window.flatpickr = flatpickr;
 window.FilePond = FilePond;
-window._ = _;
+

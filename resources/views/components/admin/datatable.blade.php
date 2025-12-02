@@ -29,7 +29,6 @@
 @push('scripts')
     <script src="{{ asset('assets-admin/libs/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets-admin/js/custom/datatable-utils.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -5,10 +5,6 @@
 
 <script src="{{ asset('assets-sys/libs/github-buttons/buttons.min.js') }}"></script>
 
-<!-- Choice.js -->
-<script src="{{ asset('assets-sys/libs/choicesjs/choices.min.js') }}"></script>
-
-
 
 
 <!-- Define application routes for JavaScript -->
@@ -21,9 +17,3 @@
         globalSearch: '{{ route('global-search') }}',
     };
 </script>
-
-<!-- Custom JavaScript files -->
-<script src="{{ asset('assets-sys/js/custom/notifications.js') }}"></script>
-<script src="{{ asset('assets-sys/js/custom/global-search.js') }}"></script>
-<script src="{{ asset('assets-global/js/custom/datatable-utils.js') }}"></script>
-<script src="{{ asset('assets-global/js/custom/sweetalert-utils.js') }}"></script>

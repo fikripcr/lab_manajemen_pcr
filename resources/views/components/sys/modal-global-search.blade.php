@@ -17,6 +17,4 @@
     </div>
 </div>
 
-@push('scripts')
-    <script src="{{ asset('assets-sys/js/global-search.js') }}"></script>
-@endpush
+{{-- Global search functionality is now included in the sys.js bundle --}}

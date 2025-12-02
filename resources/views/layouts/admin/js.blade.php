@@ -1,7 +1,4 @@
 <script src="{{ asset('assets-admin') }}/vendor/libs/jquery/jquery.min.js"></script>
-<script src="{{ asset('assets-admin') }}/vendor/libs/popper/popper.min.js"></script>
-<script src="{{ asset('assets-admin') }}/vendor/js/bootstrap.min.js"></script>
-<script src="{{ asset('assets-admin') }}/vendor/libs/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="{{ asset('assets-admin') }}/vendor/js/menu.min.js"></script>
 
 <script src="{{ asset('assets-admin') }}/js/main.js"></script>
@@ -11,11 +8,6 @@
 
 <!-- Choice.js -->
 <script src="{{ asset('assets-admin/libs/choicesjs/choices.min.js') }}"></script>
-
-
-<!-- SweetAlert2 JS -->
-<script src="{{ asset('assets-global/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
-<script src="{{ asset('assets-global/js/custom/sweetalert-utils.js') }}"></script>
 
 
 <!-- Define application routes for JavaScript -->

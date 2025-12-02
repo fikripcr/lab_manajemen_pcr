@@ -20,12 +20,17 @@
 
     <div class="card">
         <div class="card-header">
+            <div class="d-flex flex-wrap gap-2">
+                <div>
+                    <x-sys.datatable-page-length :dataTableId="'users-table'" />
+                </div>
+                <div>
+                    <x-sys.datatable-search :dataTableId="'users-table'" />
+                </div>
+            </div>
             <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <h5 class="mb-2 mb-sm-0">User List</h5>
                 <div class="d-flex flex-wrap gap-2">
-                    <div class="me-3 mb-2 mb-sm-0">
-                        <x-admin.datatable-page-length id="pageLength" selected="10" />
-                    </div>
+
                     <!-- Action buttons for selected users -->
                     <div id="bulk-actions-users-table" class="d-none">
                         <button type="button" class="btn btn-sm btn-primary" onclick="bulkAction('send-notification')">
@@ -37,50 +42,45 @@
                     </div>
                 </div>
             </div>
-            <x-admin.datatable-search-filter :dataTableId="'users-table'" />
         </div>
         <div class="card-body">
             <x-admin.flash-message />
 
-            <x-admin.datatable
-                id="users-table"
-                route="{{ route('users.data') }}"
-                :columns="[
-                    [
-                        'title' => 'Name',
-                        'data' => 'name',
-                        'name' => 'name'
-                    ],
-                    [
-                        'title' => 'Email',
-                        'data' => 'email',
-                        'name' => 'email'
-                    ],
-                    [
-                        'title' => 'Role',
-                        'data' => 'roles',
-                        'name' => 'roles'
-                    ],
-                    [
-                        'title' => 'Expiration',
-                        'data' => 'expired_at',
-                        'name' => 'expired_at'
-                    ],
-                    [
-                        'title' => 'Actions',
-                        'data' => 'action',
-                        'name' => 'action',
-                        'orderable' => false,
-                        'searchable' => false
-                    ]
-                ]"
-                with-checkbox="true"
-                checkbox-key="id"
-                search="true"
-                page-length-selector="#pageLength"
-            />
+            <x-sys.datatable
+                id="users-table" route="{{ route('users.data') }}" :columns="[
+                [
+                    'title' => 'Name',
+                    'data' => 'name',
+                    'name' => 'name',
+                ],
+                [
+                    'title' => 'Email',
+                    'data' => 'email',
+                    'name' => 'email',
+                ],
+                [
+                    'title' => 'Role',
+                    'data' => 'roles',
+                    'name' => 'roles',
+                ],
+                [
+                    'title' => 'Expiration',
+                    'data' => 'expired_at',
+                    'name' => 'expired_at',
+                ],
+                [
+                    'title' => 'Actions',
+                    'data' => 'action',
+                    'name' => 'action',
+                    'orderable' => false,
+                    'searchable' => false,
+                ],
+            ]" with-checkbox="true" checkbox-key="id"/>
         </div>
     </div>
+@endsection
+
+@push('scripts')
     <script>
         // Function to show/hide bulk action buttons based on whether any rows are selected
         function updateBulkActionVisibility() {
@@ -116,7 +116,7 @@
             let actionText = '';
             let actionColor = 'primary';
 
-            switch(action) {
+            switch (action) {
                 case 'send-notification':
                     actionText = 'Send Notification';
                     actionColor = 'primary';
@@ -150,11 +150,6 @@
                 }
             });
         }
-    </script>
-@endsection
-
-@push('scripts')
-    <script>
 
         // Function to login as a specific user
         function loginAsUser(url, userName) {
@@ -170,59 +165,44 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Sukses!',
-                                text: data.message,
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                // Redirect to dashboard
-                                window.location.href = data.redirect;
-                            });
-                        } else {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Sukses!',
+                                    text: data.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    // Redirect to dashboard
+                                    window.location.href = data.redirect;
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Gagal login sebagai ' + userName,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
                             Swal.fire({
                                 title: 'Error!',
-                                text: 'Gagal login sebagai ' + userName,
+                                text: 'Terjadi kesalahan saat login sebagai user',
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat login sebagai user',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
                         });
-                    });
                 }
             });
         }
-
-    </script>
-    <script>
-        // Add additional functionality after the DataTable initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wait for DataTable to be initialized
-            setTimeout(function() {
-                if ($('#users-table').DataTable()) {
-                    // Update visibility when table is redrawn (pagination, sorting, etc.)
-                    $('#users-table').on('draw.dt', function() {
-                        setTimeout(updateBulkActionVisibility, 100);
-                    });
-                }
-            }, 500); // Slight delay to ensure DataTable is initialized
-        });
     </script>
 @endpush
