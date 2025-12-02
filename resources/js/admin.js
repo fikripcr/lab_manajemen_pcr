@@ -1,7 +1,5 @@
 import './global.js';
 import './components/FormFeatures.js';
 
-// --- Custom DataTable Component
+// --- Custom DataTable Component - already imported through global.js
 import 'datatables.net';
-import CustomDataTables from './components/CustomDataTables.js';
-window.CustomDataTables = CustomDataTables;
