@@ -23,7 +23,7 @@ return new class extends Migration
 
     private function createView(): string
     {
-        return "CREATE VIEW vw_sys_dashboard AS
+        return "CREATE OR REPLACE VIEW vw_sys_dashboard AS
             SELECT
                 -- User Statistics
                 (SELECT COUNT(*) FROM users WHERE deleted_at IS NULL) AS total_users,

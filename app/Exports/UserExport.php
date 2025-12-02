@@ -44,7 +44,7 @@ class UserExport implements FromQuery, WithHeadings, WithMapping, WithColumnWidt
             $query->where(function ($q) use ($search) {
                 $q->where('users.name', 'LIKE', "%{$search}%")
                     ->orWhere('users.email', 'LIKE', "%{$search}%")
-                    ->orWhere('sys_roles.name', 'LIKE', "%{$search}%")
+                    ->orWhere('sys_roles.name', 'LIKE', "%{$search}%");
             });
         }
 
