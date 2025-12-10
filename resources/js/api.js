@@ -4,11 +4,10 @@
 // Routes are defined in a mapping that can be populated server-side if needed later
 const routes = {
     notifications: {
-        unreadCount: '/sys/notifications/unread-count',
-        dropdownData: '/sys/notifications/dropdown-data',
-        markAllAsRead: '/sys/notifications/mark-all-as-read',
-        index: '/sys/notifications',
-        markAsRead: '/sys/notifications/mark-as-read/'  // + id
+        unreadCount: '/api/notifications/count',
+        dropdownData: '/api/notifications/list',
+        markAllAsRead: '/api/notifications/mark-all-as-read',
+        markAsRead: '/api/notifications/mark-as-read/'  // + id
     },
     globalSearch: '/global-search'
 };

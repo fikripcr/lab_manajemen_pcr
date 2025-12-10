@@ -4,6 +4,9 @@ import './sys/config.js';
 import './sys/vendor/menu.min.js';
 import './sys/main.js';
 
+// --- Notification Manager (direct import - needs to load on every page)
+import './components/Notification.js';
+
 // Import global dependencies
 import './global.js';
 
@@ -17,16 +20,6 @@ window.loadGlobalSearch = function () {
             window.GlobalSearch = GlobalSearch;
         }
         return GlobalSearch;
-    });
-};
-
-// --- Notification Manager (lazy loading)
-window.loadNotificationManager = function () {
-    return import('./components/Notification.js').then(({ NotificationManager }) => {
-        if (!window.NotificationManager) {
-            window.NotificationManager = NotificationManager;
-        }
-        return NotificationManager;
     });
 };
 
@@ -46,15 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {
             window.globalSearch = new GlobalSearch();
-        });
-    }
-
-    // Initialize notification manager if notification elements exist on the page
-    // The dropdown is always present in sys layout, so this should always run
-    if (document.querySelector('.dropdown-notification') || document.getElementById('notification-count')) {
-        // Load notification manager (no longer requires appRoutes)
-        window.loadNotificationManager().then((NotificationManager) => {
-            window.notificationManager = new NotificationManager();
         });
     }
 });
