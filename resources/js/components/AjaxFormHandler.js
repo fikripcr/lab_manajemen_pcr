@@ -206,6 +206,68 @@ function initAjaxFormHandler() {
     });
 
     /**
+     * Handle Generic AJAX Modal
+     * Usage: <a href="#" class="ajax-modal-btn" data-url="/path/to/content">Open Modal</a>
+     */
+    $(document).on('click', '.ajax-modal-btn', function (e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const url = $btn.data('url');
+        const target = $btn.data('modal-target') || '#modalAction';
+        const title = $btn.data('modal-title');
+
+        const $modal = $(target);
+        const $modalContent = $modal.find('#modalContent');
+
+        // Initialize modal if not already initialized
+        let bootstrapModal = bootstrap.Modal.getInstance($modal[0]);
+        if (!bootstrapModal) {
+            bootstrapModal = new bootstrap.Modal($modal[0]);
+        }
+
+        // Show modal with loading state
+        bootstrapModal.show();
+        $modalContent.html(`
+            <div class="modal-header">
+                <h5 class="modal-title">${title || 'Loading...'}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        `);
+
+        // Fetch content
+        axios.get(url)
+            .then(function (response) {
+                $modalContent.html(response.data);
+            })
+            .catch(function (error) {
+                console.error(error);
+                let errorMessage = 'Failed to load content';
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+
+                $modalContent.html(`
+                    <div class="modal-header">
+                        <h5 class="modal-title">Error</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-5">
+                        <div class="text-danger mb-3">
+                            <i class="bx bx-error-circle bx-lg"></i>
+                        </div>
+                        <p class="text-danger mb-0">${errorMessage}</p>
+                    </div>
+                `);
+            });
+    });
+
+    /**
      * Handle modal form reset when modal is hidden
      */
     $(document).on('hidden.bs.modal', '.modal', function () {

@@ -58,7 +58,7 @@ class PermissionController extends Controller
                 ->addColumn('action', function ($permission) {
                     return '
                         <div class="d-flex align-items-center">
-                            <a class="btn btn-sm btn-icon btn-outline-primary me-1 edit-permission"  href="javascript:void(0)" data-id="' . $permission->encryptedId . '" title="Edit">
+                            <a class="btn btn-sm btn-icon btn-outline-primary me-1 ajax-modal-btn"  href="#" data-url="' . route('sys.permissions.edit', $permission->encryptedId) . '" data-modal-title="Edit Permission" title="Edit">
                                 <i class="bx bx-edit"></i>
                             </a>
                             <div class="dropdown">
@@ -66,7 +66,7 @@ class PermissionController extends Controller
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('sys.permissions.destroy', $permission->encryptedId) . '\', \'permissions-table\')" >
+                                    <a href="javascript:void(0)" class="dropdown-item text-danger ajax-delete" data-url="' . route('sys.permissions.destroy', $permission->encryptedId) . '" data-title="Hapus Izin?" data-text="Aksi ini tidak dapat dibatalkan!">
                                         <i class="bx bx-trash me-1"></i> Delete
                                     </a>
                                 </div>
@@ -97,9 +97,9 @@ class PermissionController extends Controller
             $data = $request->validated();
             $this->permissionService->createPermission($data);
 
-            return redirect()->route('sys.permissions.index')->with('success', 'Izin berhasil dibuat.');
+            return jsonSuccess('Izin berhasil dibuat.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -132,9 +132,9 @@ class PermissionController extends Controller
             $data   = $request->validated();
             $this->permissionService->updatePermission($realId, $data);
 
-            return redirect()->route('sys.permissions.index')->with('success', 'Izin berhasil diperbarui.');
+            return jsonSuccess('Izin berhasil diperbarui.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -145,15 +145,12 @@ class PermissionController extends Controller
     {
         try {
             $realId = decryptId($permissionId);
-            $result = $this->permissionService->deletePermission($realId);
+            $this->permissionService->deletePermission($realId);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Izin berhasil dihapus.',
-            ]);
+            return jsonSuccess('Izin berhasil dihapus.');
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

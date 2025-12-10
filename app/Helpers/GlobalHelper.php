@@ -161,3 +161,65 @@ if (! function_exists('generateKodeInventaris')) {
         return sprintf('%s-%s-%04d', $labCode, $invCode, $count);
     }
 }
+
+if (! function_exists('jsonResponse')) {
+    /**
+     * Create standardized JSON response
+     * 
+     * @param bool $success
+     * @param string $message
+     * @param array $data
+     * @param int $code
+     * @param string|null $redirect
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function jsonResponse($success = true, $message = '', $data = [], $code = 200, $redirect = null)
+    {
+        $response = [
+            'success' => $success,
+            'message' => $message,
+        ];
+
+        if (!empty($data)) {
+            $response['data'] = $data;
+        }
+
+        if ($redirect) {
+            $response['redirect'] = $redirect;
+        }
+
+        return response()->json($response, $code);
+    }
+}
+
+if (! function_exists('jsonSuccess')) {
+    /**
+     * Create standardized success JSON response
+     * 
+     * @param string $message
+     * @param string|null $redirect
+     * @param array $data
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function jsonSuccess($message = 'Success', $redirect = null, $data = [], $code = 200)
+    {
+        return jsonResponse(true, $message, $data, $code, $redirect);
+    }
+}
+
+if (! function_exists('jsonError')) {
+    /**
+     * Create standardized error JSON response
+     * 
+     * @param string $message
+     * @param int $code
+     * @param array $data
+     * @param string|null $redirect
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function jsonError($message = 'Error', $code = 500, $data = [], $redirect = null)
+    {
+        return jsonResponse(false, $message, $data, $code, $redirect);
+    }
+}

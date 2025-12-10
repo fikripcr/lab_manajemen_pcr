@@ -3,7 +3,7 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Access Control /</span> Permission</h4>
-        <button type="button" class="btn btn-primary" id="createPermissionBtn">
+        <button type="button" class="btn btn-primary ajax-modal-btn" data-url="{{ route('sys.permissions.create') }}">
             <i class="bx bx-plus"></i> Add New Permission
         </button>
     </div>
@@ -95,73 +95,4 @@
         </div>
     </div>
 
-    <!-- Modal container for create/edit operations -->
-    <div class="modal fade" id="modalAction" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div id="modalContent">
-                    <!-- Modal content will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
-
-@push('scripts')
-    <script>
-        const editPermissionUrl = "{{ route('sys.permissions.edit', ['id' => '__id__']) }}";
-        document.addEventListener('DOMContentLoaded', function() {
-            // Function to show loading spinner in modal
-            function showLoadingSpinner() {
-                document.getElementById('modalContent').innerHTML = `
-                    <div class="text-center p-5">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Handle create permission
-            document.getElementById('createPermissionBtn').addEventListener('click', function() {
-                // Show loading spinner initially
-                showLoadingSpinner();
-                const modal = new bootstrap.Modal(document.getElementById('modalAction'));
-                modal.show();
-
-                axios.get("{{ route('sys.permissions.create') }}")
-                    .then(response => {
-                        document.getElementById('modalContent').innerHTML = response.data;
-                    })
-                    .catch(() => {
-                        showErrorMessage('Error!', 'Could not load form');
-                    });
-            });
-
-            // Handle edit permission (event delegation)
-            document.addEventListener('click', function(e) {
-                const btn = e.target.closest('.edit-permission');
-                if (!btn) return;
-
-                const id = btn.dataset.id;
-
-                // Show loading spinner initially
-                showLoadingSpinner();
-                const modal = new bootstrap.Modal(document.getElementById('modalAction'));
-                modal.show();
-
-                axios.get(editPermissionUrl.replace('__id__', id))
-                    .then(response => {
-                        document.getElementById('modalContent').innerHTML = response.data;
-                    })
-                    .catch((e) => {
-                        modal.hide()
-                        showErrorMessage('Error!', 'Could not load form');
-                    });
-            });
-
-        });
-
-
-    </script>
-@endpush

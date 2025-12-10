@@ -47,17 +47,10 @@ class PermissionController extends Controller
                 ];
             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $results,
-                'total' => $results->count()
-            ]);
+            return jsonSuccess('Permissions found', null, $results);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error searching permissions: ' . $e->getMessage()
-            ], 500);
+            return jsonError('Error searching permissions: ' . $e->getMessage(), 500);
         }
     }
 
@@ -82,16 +75,10 @@ class PermissionController extends Controller
                 ];
             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $results
-            ]);
+            return jsonSuccess('Permissions found', null, $results);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching permissions: ' . $e->getMessage()
-            ], 500);
+            return jsonError('Error fetching permissions: ' . $e->getMessage(), 500);
         }
     }
 }

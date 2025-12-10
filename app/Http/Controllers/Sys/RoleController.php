@@ -31,8 +31,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = $this->permissionService->getAllPermissions();
-        return view('pages.sys.roles.create', compact('permissions'));
+        return view('pages.sys.roles.create');
     }
 
     /**
@@ -42,12 +41,12 @@ class RoleController extends Controller
     {
         try {
             $data                = $request->validated();
-            $data['permissions'] = $request->has('permissions') ? $request->permissions : [];
+            $data['permissions'] = $request->permissions ?? [];
             $this->roleService->createRole($data);
 
-            return redirect()->route('sys.roles.index')->with('success', 'Peran berhasil dibuat.');
+            return jsonSuccess('Peran berhasil dibuat.', route('sys.roles.index'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -82,12 +81,12 @@ class RoleController extends Controller
         try {
             $roleId              = decryptId($id);
             $data                = $request->validated();
-            $data['permissions'] = $request->has('permissions') ? $request->permissions : [];
+            $data['permissions'] = $request->input('permissions', []);
             $this->roleService->updateRole($roleId, $data);
 
-            return redirect()->route('sys.roles.index')->with('success', 'Data berhasil diperbarui.');
+            return jsonSuccess('Data berhasil diperbarui.', route('sys.roles.index'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -99,9 +98,9 @@ class RoleController extends Controller
         try {
             $this->roleService->deleteRole($role->id);
 
-            return redirect()->route('sys.roles.index')->with('success', 'Data berhasil dihapus.');
+            return jsonSuccess('Data berhasil dihapus.', route('sys.roles.index'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 }
