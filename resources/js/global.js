@@ -20,7 +20,6 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Shared Components ---
-import './components/FormFeatures.js';
 import './components/CustomSweetAlerts.js';
 
 // --- CustomDataTables (essential for datatables component)

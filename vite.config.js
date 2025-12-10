@@ -14,13 +14,7 @@ export default defineConfig({
 
                 // JS Entry Points
                 'resources/js/admin.js',
-                'resources/js/sys.js',
-
-                // Legacy 'sys' scripts that must be loaded manually
-                'resources/js/sys/main.js',
-                'resources/js/sys/vendor/menu.min.js',
-                'resources/js/sys/vendor/helpers.min.js',
-                'resources/js/sys/config.js'
+                'resources/js/sys.js'
             ],
             refresh: true,
         }),

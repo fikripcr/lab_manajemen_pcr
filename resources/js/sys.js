@@ -1,7 +1,17 @@
+// Import legacy sys vendor files to bundle them together
+import './sys/vendor/helpers.min.js';
+import './sys/config.js';
+import './sys/vendor/menu.min.js';
+import './sys/main.js';
+
+// Import global dependencies
 import './global.js';
 
+// Import FormFeatures to make loadFormFeatures available
+import './components/FormFeatures.js';
+
 // --- Global Search (lazy loading)
-window.loadGlobalSearch = function() {
+window.loadGlobalSearch = function () {
     return import('./components/GlobalSearch.js').then(({ GlobalSearch }) => {
         if (!window.GlobalSearch) {
             window.GlobalSearch = GlobalSearch;
@@ -11,7 +21,7 @@ window.loadGlobalSearch = function() {
 };
 
 // --- Notification Manager (lazy loading)
-window.loadNotificationManager = function() {
+window.loadNotificationManager = function () {
     return import('./components/Notification.js').then(({ NotificationManager }) => {
         if (!window.NotificationManager) {
             window.NotificationManager = NotificationManager;
@@ -21,7 +31,7 @@ window.loadNotificationManager = function() {
 };
 
 // --- TOAST UI Editor (dynamic import)
-window.initToastEditor = function(selector, config = {}) {
+window.initToastEditor = function (selector, config = {}) {
     import('@toast-ui/editor').then(({ Editor }) => {
         new Editor({
             el: document.querySelector(selector),

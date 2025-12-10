@@ -29,10 +29,6 @@
 
     @vite([
         'resources/css/sys.css',
-        'resources/js/sys/vendor/helpers.min.js',
-        'resources/js/sys/config.js',
-        'resources/js/sys/vendor/menu.min.js',
-        'resources/js/sys/main.js',
         'resources/js/sys.js'
     ])
 
