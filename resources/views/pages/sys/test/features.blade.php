@@ -101,9 +101,13 @@
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-md-12">
-                            <label for="searchSelect" class="form-label">Search Permissions by API</label>
+                        <div class="col-md-6">
+                            <label for="searchSelect" class="form-label">Search Permissions by API (Single)</label>
                             <select id="searchSelect" class="form-select"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="searchSelectMulti" class="form-label">Search Permissions by API (Multiple)</label>
+                            <select id="searchSelectMulti" class="form-select" multiple></select>
                         </div>
                     </div>
 
@@ -245,7 +249,7 @@
             }
 
             // Initialize Choices.js after checking dependencies
-            let singleSelect, multiSelect, searchSelect;
+            let singleSelect, multiSelect, searchSelect, searchSelectMulti;
 
             if (typeof Choices !== 'undefined') {
                 singleSelect = new Choices('#singleSelect', {
@@ -262,7 +266,17 @@
                 });
 
 
-                searchSelect = new Choices('#searchSelect', {
+                    searchSelect = new Choices('#searchSelect', {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Search for permissions...',
+                    loadingText: 'Loading permissions...',
+                    noResultsText: 'No permissions found',
+                    noChoicesText: 'No permissions to choose from',
+                    itemSelectText: 'Press to select',
+                });
+
+                searchSelectMulti = new Choices('#searchSelectMulti', {
+                    removeItemButton: true,
                     searchEnabled: true,
                     searchPlaceholderValue: 'Search for permissions...',
                     loadingText: 'Loading permissions...',
@@ -280,90 +294,124 @@
                     const singleValue = singleSelect.getValue(true);
                     const multiValues = multiSelect.getValue(true);
                     const searchValue = searchSelect.getValue(true);
+                    const searchMultiValue = searchSelectMulti.getValue(true);
 
                     const preview = document.getElementById('choicesPreview');
                     preview.innerHTML = `
                         <strong>Single Select Value:</strong> ${singleValue || 'None'}<br>
                         <strong>Multi Select Values:</strong> ${Array.isArray(multiValues) ? multiValues.join(', ') : multiValues || 'None'}<br>
                         <strong>Search Select Value:</strong> ${searchValue || 'None'}<br>
+                        <strong>Search Multi Select Values:</strong> ${Array.isArray(searchMultiValue) ? searchMultiValue.join(', ') : searchMultiValue || 'None'}<br>
                     `;
                 });
             }
 
             // Initialize searchSelect and setup event listeners
             async function initSearchSelect() {
-                if (typeof axios !== 'undefined' && typeof searchSelect !== 'undefined') {
-                    // Initially set placeholder option
-                    searchSelect.setChoices([
+                if (typeof axios !== 'undefined') {
+                    // --- Single Select Configuration ---
+                    if (typeof searchSelect !== 'undefined') {
+                        // Initially set placeholder option
+                        searchSelect.setChoices([
+                            {
+                                value: '',
+                                label: 'Search for permissions...',
+                                disabled: true
+                            }
+                        ], 'value', 'label', true);
+
+                        // Listen to the search event from Choices.js
+                        searchSelect.passedElement.element.addEventListener('search', async function(event) {
+                            handleSearch(event, searchSelect);
+                        });
+                    }
+
+                    // --- Multi Select Configuration ---
+                    if (typeof searchSelectMulti !== 'undefined') {
+                        // Initially set placeholder option - Note: for multi-select we might not need an initial placeholder option as strict as single select if it causes issues with selection, assuming placeholder attribute handles display.
+                        // But to be consistent with API search behavior:
+                         searchSelectMulti.setChoices([
+                            {
+                                value: '',
+                                label: 'Search for permissions...',
+                                disabled: true
+                            }
+                        ], 'value', 'label', true);
+
+
+                        searchSelectMulti.passedElement.element.addEventListener('search', async function(event) {
+                             handleSearch(event, searchSelectMulti);
+                        });
+                    }
+
+                } else {
+                    console.error('Axios is not available');
+                }
+            }
+
+            async function handleSearch(event, choicesInstance) {
+                const searchTerm = event.detail.value;
+
+                if (!searchTerm) {
+                    choicesInstance.setChoices([
                         {
                             value: '',
                             label: 'Search for permissions...',
                             disabled: true
                         }
                     ], 'value', 'label', true);
+                    return;
+                }
 
-                    // Listen to the search event from Choices.js
-                    searchSelect.passedElement.element.addEventListener('search', async function(event) {
-                        const searchTerm = event.detail.value;
-
-                        if (!searchTerm) {
-                            searchSelect.setChoices([
-                                {
-                                    value: '',
-                                    label: 'Search for permissions...',
-                                    disabled: true
-                                }
-                            ], 'value', 'label', true);
-                            return;
+                if (searchTerm.length < 2) {
+                    // Don't clear choices immediately for better UX while typing, or clear if you strictly want min 2 chars
+                     choicesInstance.setChoices([
+                        {
+                            value: '',
+                            label: 'Type 2+ characters...',
+                            disabled: true
                         }
+                    ], 'value', 'label', true);
+                    return;
+                }
 
-                        if (searchTerm.length < 2) {
-                            searchSelect.clearChoices();
-                            return;
-                        }
-
-                        try {
-                            // Use internal permission search API
-                            const response = await axios.get('/api/permissions/search', {
-                                params: {
-                                    q: searchTerm,
-                                    limit: 20
-                                }
-                            });
-
-                            if (response.data.success && response.data.data.length > 0) {
-                                const permissions = response.data.data;
-
-                                // Format for Choices.js
-                                const newOptions = permissions.map(permission => ({
-                                    value: permission.value,
-                                    label: permission.label
-                                }));
-
-                                searchSelect.clearChoices();
-                                searchSelect.setChoices(newOptions, 'value', 'label', true);
-                            } else {
-                                searchSelect.setChoices([
-                                    {
-                                        value: '',
-                                        label: 'No permissions found',
-                                        disabled: true
-                                    }
-                                ], 'value', 'label', true);
-                            }
-                        } catch (error) {
-                            console.error('Error fetching permissions:', error);
-                            searchSelect.setChoices([
-                                {
-                                    value: '',
-                                    label: 'Error loading permissions',
-                                    disabled: true
-                                }
-                            ], 'value', 'label', true);
+                try {
+                    // Use internal permission search API
+                    const response = await axios.get('/api/permissions/search', {
+                        params: {
+                            q: searchTerm,
+                            limit: 20
                         }
                     });
-                } else {
-                    console.error('Axios or searchSelect is not available');
+
+                    if (response.data.success && response.data.data.length > 0) {
+                        const permissions = response.data.data;
+
+                        // Format for Choices.js
+                        const newOptions = permissions.map(permission => ({
+                            value: permission.value,
+                            label: permission.label
+                        }));
+
+                        choicesInstance.setChoices(newOptions, 'value', 'label', true); // true = replaceChoices
+                    } else {
+                        choicesInstance.setChoices([
+                            {
+                                value: '',
+                                label: 'No permissions found',
+                                disabled: true
+                            }
+                        ], 'value', 'label', true);
+                    }
+                } catch (error) {
+                    console.error('Error fetching permissions:', error);
+                    choicesInstance.setChoices([
+                        {
+                            value: '',
+                            label: 'Error loading permissions',
+                            disabled: true
+                        }
+                    ], 'value', 'label', true);
                 }
             }
 
