@@ -30,7 +30,7 @@ window.initToastEditor = function(selector, config = {}) {
     });
 };
 
-// Initialize global search only when DOM is ready and if it's needed on the page
+// Initialize global search and notifications only when DOM is ready and if they're needed on the page
 document.addEventListener('DOMContentLoaded', () => {
     // Check if global search elements exist on the page
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
@@ -39,8 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Check if notification elements exist on the page
+    // Initialize notification manager if notification elements exist on the page
+    // The dropdown is always present in sys layout, so this should always run
     if (document.querySelector('.dropdown-notification') || document.getElementById('notification-count')) {
+        // Load notification manager (no longer requires appRoutes)
         window.loadNotificationManager().then((NotificationManager) => {
             window.notificationManager = new NotificationManager();
         });

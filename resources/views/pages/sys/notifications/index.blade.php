@@ -113,23 +113,21 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle select all checkboxes
-            $('#selectAllCheckbox').on('change', function() {
-                $('.notification-checkbox').prop('checked', this.checked);
+            // Use CustomDataTables instance for checkbox tracking
+            const notificationsTable = window['DT_notifications-table'];
+
+            // Update button state when checkboxes change
+            $(document).on('change', '.select-row', function() {
                 toggleMarkSelectedButton();
             });
 
-            // Handle individual checkbox changes
-            $(document).on('change', '.notification-checkbox', function() {
-                if (!this.checked) {
-                    $('#selectAllCheckbox').prop('checked', false);
-                }
+            $(document).on('change', '#selectAll-notifications-table', function() {
                 toggleMarkSelectedButton();
             });
 
             // Enable/disable "Mark Selected as Read" button
             function toggleMarkSelectedButton() {
-                const checkedCount = $('.notification-checkbox:checked').length;
+                const checkedCount = $('.select-row:checked').length;
                 $('#markSelectedAsReadBtn').prop('disabled', checkedCount === 0);
             }
 
@@ -137,8 +135,8 @@
             $(document).on('click', '#markSelectedAsReadBtn', function(e) {
                 e.preventDefault();
 
-                const selectedIds = $('.notification-checkbox:checked').map(function() {
-                    return this.value;
+                const selectedIds = $('.select-row:checked').map(function() {
+                    return $(this).data('id');
                 }).get();
 
                 if (selectedIds.length === 0) {
@@ -160,7 +158,9 @@
                                     showSuccessMessage('Sukses!', response.data.message);
 
                                     // Reload the table to reflect changes
-                                    $('#notifications-table').DataTable().ajax.reload();
+                                    if (notificationsTable && notificationsTable.table) {
+                                        notificationsTable.table.ajax.reload();
+                                    }
 
                                     // Update stats
                                     updateNotificationStats();

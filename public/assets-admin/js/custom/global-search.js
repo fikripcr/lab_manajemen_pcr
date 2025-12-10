@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             function performSearch(query) {
-                fetch(`${window.appRoutes.globalSearch}?q=${encodeURIComponent(query)}`)
+                fetch(`/global-search?q=${encodeURIComponent(query)}`)
                     .then(response => response.json())
                     .then(data => {
                         displaySearchResults(data);

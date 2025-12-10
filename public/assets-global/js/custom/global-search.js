@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             function performSearch(query) {
-                axios.get(`${window.appRoutes.globalSearch}?q=${encodeURIComponent(query)}`)
+                axios.get(`/global-search?q=${encodeURIComponent(query)}`)
                     .then(function(response) {
                         displaySearchResults(response.data);
                     })

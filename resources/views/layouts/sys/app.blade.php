@@ -28,13 +28,24 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @vite([
-        'resources/css/sys.css', 
+        'resources/css/sys.css',
         'resources/js/sys/vendor/helpers.min.js',
         'resources/js/sys/config.js',
-        'resources/js/sys/vendor/menu.min.js', 
+        'resources/js/sys/vendor/menu.min.js',
         'resources/js/sys/main.js',
         'resources/js/sys.js'
     ])
+
+    <!-- Define application routes for JavaScript -->
+    <script>
+        window.appRoutes = {
+            notificationsUnreadCount: '{{ route('notifications.unread-count') }}',
+            notificationsIndex: '{{ route('notifications.index') }}',
+            notificationsDropdownData: '{{ route('notifications.dropdown-data') }}',
+            notificationsMarkAllAsRead: '{{ route('notifications.mark-all-as-read') }}',
+            globalSearch: '{{ route('global-search') }}',
+        };
+    </script>
 
     @stack('css')
 </head>

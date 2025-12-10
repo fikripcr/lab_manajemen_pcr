@@ -67,6 +67,7 @@ Transform the laboratory management system into a comprehensive Laravel base tem
 43. [DONE] Consolidated notification model to Sys namespace
 44. [DONE] Implemented lazy loading for non-essential JavaScript components in sys template
 45. [DONE] Corrected CustomDataTables import to maintain global availability for Blade components
+46. [DONE] Fixed NotificationManager to properly connect to server endpoints via appRoutes
 
 ## Current Plan
 1. [COMPLETED] Enhanced error logging system to capture all errors including AJAX requests and exceptions in all environments
@@ -114,6 +115,7 @@ Transform the laboratory management system into a comprehensive Laravel base tem
 43. [COMPLETED] Consolidated notification model to Sys namespace
 44. [COMPLETED] Implemented lazy loading for non-essential JavaScript components in sys template
 45. [COMPLETED] Corrected CustomDataTables import to maintain global availability for Blade components
+46. [COMPLETED] Fixed NotificationManager to properly connect to server endpoints via appRoutes
 
 ## Next Steps
 - Continue enhancing system monitoring capabilities

@@ -1,7 +1,9 @@
+import { api } from '../api.js';
+
 // Global search functionality using ES6 modules and vanilla JavaScript
 export class GlobalSearch {
-    constructor(endpoint = '/global-search') {
-        this.endpoint = endpoint;
+    constructor() {
+        this.endpoint = '/global-search'; // fallback only
         this.timer = null;
         this.currentSearchTerm = '';
         this.searchResultConfig = {
@@ -235,13 +237,8 @@ export class GlobalSearch {
         this.showLoadingIndicator();
 
         try {
-            const response = await fetch(`${this.endpoint}?q=${encodeURIComponent(term)}`);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const results = await response.json();
+            const response = await api.globalSearch(term);
+            const results = response.data;
             this.displaySearchResults(results, term);
         } catch (error) {
             console.error('Global search error:', error);

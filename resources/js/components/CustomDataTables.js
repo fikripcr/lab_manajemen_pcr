@@ -65,11 +65,11 @@ export default class CustomDataTables {
     addFilterData(d, filterFormSelector) {
         const filterForm = document.querySelector(filterFormSelector);
         if (filterForm && filterForm instanceof HTMLFormElement) {
-                const formData = new FormData(filterForm);
-                for (const [key, value] of formData.entries()) {
-                    d[key] = value;
-                }
+            const formData = new FormData(filterForm);
+            for (const [key, value] of formData.entries()) {
+                d[key] = value;
             }
+        }
 
         const storedState = localStorage.getItem(this.stateName);
         if (storedState) {
@@ -235,13 +235,16 @@ export default class CustomDataTables {
                 });
             }
 
-            document.querySelector(SELECTOR.body).addEventListener('change', (e) => {
-                if (e.target.matches(SELECTOR.rowCheckbox)) {
-                    const id = e.target.dataset.id;
-                    e.target.checked ? this.selectedIds.add(id) : this.selectedIds.delete(id);
-                    this.updateSelectAllState(SELECTOR);
-                }
-            });
+            const tbody = document.querySelector(SELECTOR.body);
+            if (tbody) {
+                tbody.addEventListener('change', (e) => {
+                    if (e.target.matches(SELECTOR.rowCheckbox)) {
+                        const id = e.target.dataset.id;
+                        e.target.checked ? this.selectedIds.add(id) : this.selectedIds.delete(id);
+                        this.updateSelectAllState(SELECTOR);
+                    }
+                });
+            }
         }
     }
 

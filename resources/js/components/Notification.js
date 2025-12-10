@@ -1,3 +1,5 @@
+import { api } from '../api.js';
+
 // Notification component using ES6 modules and vanilla JavaScript
 export class NotificationManager {
     constructor() {
@@ -24,7 +26,22 @@ export class NotificationManager {
             this.fetchUnreadCount()
                 .then(response => {
                     if (countElement) {
-                        const count = response.data.count;
+                        // Handle different possible response structures
+                        let count;
+                        if (response.count !== undefined) {
+                            // Direct count property
+                            count = response.count;
+                        } else if (response.data && response.data.count !== undefined) {
+                            // Wrapped in data property
+                            count = response.data.count;
+                        } else if (response.unread_count !== undefined) {
+                            // Alternative property name
+                            count = response.unread_count;
+                        } else {
+                            console.warn('Unexpected response structure for unread count:', response);
+                            count = 0;
+                        }
+
                         countElement.textContent = count;
                         this.toggleCountBadge(countElement, count);
                     }
@@ -55,17 +72,17 @@ export class NotificationManager {
     }
 
     async fetchUnreadCount() {
-        const response = await window.axios.get(window.appRoutes.notificationsUnreadCount);
+        const response = await api.notifications.unreadCount();
         return response.data;
     }
 
     async fetchNotificationData() {
-        const response = await window.axios.get(window.appRoutes.notificationsDropdownData);
+        const response = await api.notifications.dropdownData();
         return response.data;
     }
 
     async markAllAsRead() {
-        const response = await window.axios.post(window.appRoutes.notificationsMarkAllAsRead);
+        const response = await api.notifications.markAllAsRead();
         return response.data;
     }
 
@@ -180,7 +197,22 @@ export class NotificationManager {
             this.fetchUnreadCount()
                 .then(response => {
                     if (countElement) {
-                        const count = response.data.count;
+                        // Handle different possible response structures
+                        let count;
+                        if (response.count !== undefined) {
+                            // Direct count property
+                            count = response.count;
+                        } else if (response.data && response.data.count !== undefined) {
+                            // Wrapped in data property
+                            count = response.data.count;
+                        } else if (response.unread_count !== undefined) {
+                            // Alternative property name
+                            count = response.unread_count;
+                        } else {
+                            console.warn('Unexpected response structure for unread count:', response);
+                            count = 0;
+                        }
+
                         countElement.textContent = count;
                         this.toggleCountBadge(countElement, count);
                     }
