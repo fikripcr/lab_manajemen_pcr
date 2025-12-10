@@ -38,4 +38,10 @@ Route::middleware(['web','auth:sanctum'])->group(function () {
         Route::get('/', [ActivityLogController::class, 'list'])->name('list');
         Route::get('/{id}', [ActivityLogController::class, 'detail'])->name('detail');
     });
+
+    // Permission API routes
+    Route::prefix('permissions')->name('api.permissions.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\Sys\PermissionController::class, 'index'])->name('index');
+        Route::get('/search', [\App\Http\Controllers\Api\Sys\PermissionController::class, 'search'])->name('search');
+    });
 });

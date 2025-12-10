@@ -102,7 +102,7 @@
 
                     <div class="row mt-3">
                         <div class="col-md-12">
-                            <label for="searchSelect" class="form-label">Search by API (GitHub Users)</label>
+                            <label for="searchSelect" class="form-label">Search Permissions by API</label>
                             <select id="searchSelect" class="form-select"></select>
                         </div>
                     </div>
@@ -158,7 +158,16 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Lazy load form features first
+            if (typeof window.loadFormFeatures === 'function') {
+                await window.loadFormFeatures();
+                console.log('Form features loaded successfully');
+            } else {
+                console.error('loadFormFeatures is not available');
+                return;
+            }
+
             // Initialize Flatpickr
             flatpickr("#datePicker", {
                 dateFormat: "Y-m-d",
@@ -238,7 +247,7 @@
             }
 
             // Initialize Choices.js after checking dependencies
-            let singleSelect, multiSelect, searchSelect, remoteSearch;
+            let singleSelect, multiSelect, searchSelect;
 
             if (typeof Choices !== 'undefined') {
                 singleSelect = new Choices('#singleSelect', {
@@ -254,25 +263,14 @@
                     searchPlaceholderValue: 'Search for options...',
                 });
 
+
                 searchSelect = new Choices('#searchSelect', {
                     searchEnabled: true,
-                    searchPlaceholderValue: 'Search for users...',
-                    loadingText: 'Loading users...',
-                    noResultsText: 'No users found',
-                    noChoicesText: 'No users to choose from',
+                    searchPlaceholderValue: 'Search for permissions...',
+                    loadingText: 'Loading permissions...',
+                    noResultsText: 'No permissions found',
+                    noChoicesText: 'No permissions to choose from',
                     itemSelectText: 'Press to select',
-                });
-
-                // Remote search input
-                remoteSearch = new Choices('#remoteSearch', {
-                    searchEnabled: true,
-                    searchResultLimit: 5,
-                    loadingText: 'Searching...',
-                    noResultsText: 'No users found',
-                    noChoicesText: 'Start typing to search',
-                    itemSelectText: 'Press to select',
-                    // Enable async search
-                    searchFields: ['label'],
                 });
             } else {
                 console.error('Choices.js is not loaded');
@@ -284,14 +282,12 @@
                     const singleValue = singleSelect.getValue(true);
                     const multiValues = multiSelect.getValue(true);
                     const searchValue = searchSelect.getValue(true);
-                    const remoteValue = remoteSearch.getValue(true);
 
                     const preview = document.getElementById('choicesPreview');
                     preview.innerHTML = `
                         <strong>Single Select Value:</strong> ${singleValue || 'None'}<br>
                         <strong>Multi Select Values:</strong> ${Array.isArray(multiValues) ? multiValues.join(', ') : multiValues || 'None'}<br>
                         <strong>Search Select Value:</strong> ${searchValue || 'None'}<br>
-                        <strong>Remote Search Value:</strong> ${remoteValue || 'None'}<br>
                     `;
                 });
 
@@ -324,21 +320,20 @@
                     searchSelect.setChoices([
                         {
                             value: '',
-                            label: 'Search for users...',
+                            label: 'Search for permissions...',
                             disabled: true
                         }
                     ], 'value', 'label', true);
 
-                    // Listen to the search event from Choices.js (this triggers as the user types)
+                    // Listen to the search event from Choices.js
                     searchSelect.passedElement.element.addEventListener('search', async function(event) {
-                        const searchTerm = event.detail.value; // Get the user's search input
+                        const searchTerm = event.detail.value;
 
                         if (!searchTerm) {
-                            // If search term is empty, show placeholder
                             searchSelect.setChoices([
                                 {
                                     value: '',
-                                    label: 'Search for users...',
+                                    label: 'Search for permissions...',
                                     disabled: true
                                 }
                             ], 'value', 'label', true);
@@ -346,46 +341,45 @@
                         }
 
                         if (searchTerm.length < 2) {
-                            // If search term is too short, don't make API call, just clear options
                             searchSelect.clearChoices();
                             return;
                         }
 
                         try {
-                            // Using GitHub API to search for users with the 'q' parameter
-                            // This is a real API that supports keyword search with 'q' parameter
-                            const response = await axios.get(`https://api.github.com/search/users?q=${encodeURIComponent(searchTerm)}`);
-                            const data = response.data;
-                            const users = data.items || [];
+                            // Use internal permission search API
+                            const response = await axios.get('/api/permissions/search', {
+                                params: {
+                                    q: searchTerm,
+                                    limit: 20
+                                }
+                            });
 
-                            if (users.length > 0) {
-                                // Process the data received from the server
-                                const newOptions = users.map(user => ({
-                                    value: user.id,
-                                    label: `${user.login} (${user.type})`
+                            if (response.data.success && response.data.data.length > 0) {
+                                const permissions = response.data.data;
+
+                                // Format for Choices.js
+                                const newOptions = permissions.map(permission => ({
+                                    value: permission.value,
+                                    label: permission.label
                                 }));
 
-                                // Clear existing options and add the new ones
                                 searchSelect.clearChoices();
                                 searchSelect.setChoices(newOptions, 'value', 'label', true);
                             } else {
-                                // Show no results found only when there was a search term that yielded no results
                                 searchSelect.setChoices([
                                     {
                                         value: '',
-                                        label: 'No users found',
+                                        label: 'No permissions found',
                                         disabled: true
                                     }
                                 ], 'value', 'label', true);
                             }
                         } catch (error) {
-                            console.error('Error fetching data:', error);
-
-                            // Show error message
+                            console.error('Error fetching permissions:', error);
                             searchSelect.setChoices([
                                 {
                                     value: '',
-                                    label: 'Error loading users',
+                                    label: 'Error loading permissions',
                                     disabled: true
                                 }
                             ], 'value', 'label', true);
