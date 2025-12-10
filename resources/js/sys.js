@@ -1,7 +1,7 @@
 // Import legacy sys vendor files to bundle them together
 import './sys/vendor/helpers.min.js';
-import './sys/config.js';
 import './sys/vendor/menu.min.js';
+import './sys/config.js';
 import './sys/main.js';
 
 // --- Notification Manager (direct import - needs to load on every page)

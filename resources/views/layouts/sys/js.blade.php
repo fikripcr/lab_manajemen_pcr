@@ -1,1 +1,0 @@
-{{-- This file is deprecated and its content is now handled by Vite. See resources/js/sys.js --}}

@@ -109,8 +109,6 @@
 
                     <div class="mt-3">
                         <button type="button" class="btn btn-primary" id="getChoicesValue">Get Selected Values</button>
-                        <button type="button" class="btn btn-secondary" id="addChoice">Add New Option</button>
-                        <button type="button" class="btn btn-warning" id="removeChoice">Remove Selected</button>
                     </div>
 
                     <div class="mt-3">
@@ -289,27 +287,6 @@
                         <strong>Multi Select Values:</strong> ${Array.isArray(multiValues) ? multiValues.join(', ') : multiValues || 'None'}<br>
                         <strong>Search Select Value:</strong> ${searchValue || 'None'}<br>
                     `;
-                });
-
-                // Add new option to single select
-                document.getElementById('addChoice').addEventListener('click', function() {
-                    const value = 'option' + (Math.floor(Math.random() * 100) + 5);
-                    singleSelect.setChoices([
-                        {
-                            value: value,
-                            label: 'Option ' + (Number(value.replace('option', ''))),
-                            selected: false,
-                            disabled: false
-                        }
-                    ], 'value', 'label', false);
-                });
-
-                // Remove selected option
-                document.getElementById('removeChoice').addEventListener('click', function() {
-                    const selected = singleSelect.getValue(true);
-                    if (selected) {
-                        singleSelect.removeActiveItemsByValue(selected);
-                    }
                 });
             }
 

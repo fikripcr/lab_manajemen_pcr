@@ -29,19 +29,8 @@
 
     @vite([
         'resources/css/sys.css',
-        'resources/js/sys.js'
     ])
 
-    <!-- Define application routes for JavaScript -->
-    <script>
-        window.appRoutes = {
-            notificationsUnreadCount: '{{ route('notifications.unread-count') }}',
-            notificationsIndex: '{{ route('notifications.index') }}',
-            notificationsDropdownData: '{{ route('notifications.dropdown-data') }}',
-            notificationsMarkAllAsRead: '{{ route('notifications.mark-all-as-read') }}',
-            globalSearch: '{{ route('global-search') }}',
-        };
-    </script>
 
     @stack('css')
 </head>
@@ -89,6 +78,11 @@
                 </div>
             </div>
         </div>
+
+            @vite([
+                'resources/js/sys.js'
+            ])
+
 
         @stack('scripts')
 

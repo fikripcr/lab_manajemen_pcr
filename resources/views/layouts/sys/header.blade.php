@@ -146,48 +146,51 @@
     </div>
 </nav>
 
-<style>
-.dropdown-submenu {
-    position: relative;
-}
+@push('css')
+    <style>
+    .dropdown-submenu {
+        position: relative;
+    }
 
-.dropdown-submenu .dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -6px;
-    margin-left: -1px;
-    border-radius: 0.375rem;
-}
+    .dropdown-submenu .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -6px;
+        margin-left: -1px;
+        border-radius: 0.375rem;
+    }
 
-.dropdown-submenu:hover .dropdown-menu {
-    display: block;
-}
+    .dropdown-submenu:hover .dropdown-menu {
+        display: block;
+    }
 
-.dropdown-submenu > a:after {
-    display: block;
-    content: " ";
-    float: right;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 5px 0 5px 5px;
-    border-left-color: #ccc;
-    margin-top: 5px;
-    margin-right: -10px;
-}
+    .dropdown-submenu > a:after {
+        display: block;
+        content: " ";
+        float: right;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: 5px 0 5px 5px;
+        border-left-color: #ccc;
+        margin-top: 5px;
+        margin-right: -10px;
+    }
 
-.dropdown-submenu.pull-left {
-    float: none;
-}
+    .dropdown-submenu.pull-left {
+        float: none;
+    }
 
-.dropdown-submenu.pull-left .dropdown-menu {
-    left: -100%;
-    margin-left: 10px;
-    border-radius: 0.375rem;
-}
-</style>
+    .dropdown-submenu.pull-left .dropdown-menu {
+        left: -100%;
+        margin-left: 10px;
+        border-radius: 0.375rem;
+    }
+    </style>
+@endpush
 
+@push('scripts')
 <script>
     function switchRole(role) {
         // Create a form and submit it via POST
@@ -206,7 +209,4 @@
         document.body.appendChild(form);
         form.submit();
     }
-
-    // Notification functionality is handled by global notifications.js
-    // See public/assets-global/js/custom/notifications.js for implementation
 </script>
