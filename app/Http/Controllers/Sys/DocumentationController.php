@@ -27,9 +27,9 @@ class DocumentationController extends Controller
 
     public function show($page = 'index')
     {
-        // Sanitize the page parameter to prevent directory traversal
-        $page = basename($page);
-
+        // Allow subdirectories (e.g., archive/filename)
+        $page = str_replace('..', '', $page); // Prevent directory traversal
+        
         // Ensure the file has .md extension
         if (!str_ends_with($page, '.md')) {
             $page .= '.md';
@@ -46,7 +46,7 @@ class DocumentationController extends Controller
         $htmlContent = $this->convertMarkdownToHtml($content);
 
         // Generate page title from filename
-        $pageTitle = $this->generatePageTitle($page);
+        $pageTitle = $this->generatePageTitle(basename($page));
 
         $lastUpdated = filemtime($filePath);
 

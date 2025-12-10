@@ -21,6 +21,7 @@ window.Swal = Swal;
 
 // --- Shared Components ---
 import './components/CustomSweetAlerts.js';
+import './components/AjaxFormHandler.js';
 
 // --- CustomDataTables (essential for datatables component)
 import CustomDataTables from './components/CustomDataTables.js';
