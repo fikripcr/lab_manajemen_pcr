@@ -6,7 +6,7 @@
     </div>
 
     @push('css')
-        <link rel="stylesheet" href="{{ asset('assets-sys/css/documentation.css') }}">
+        <link rel="stylesheet" href="{{ Vite::asset('resources/assets/sys/css/documentation.css') }}">
     @endpush
 
     <div class="alert alert-info mb-4">

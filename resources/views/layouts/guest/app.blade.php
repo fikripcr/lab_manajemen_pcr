@@ -16,6 +16,7 @@
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   @include('layouts.guest.css')
+  @vite(['resources/css/guest.css', 'resources/js/guest.js'])
 
   <!-- =======================================================
   * Template Name: TheProperty

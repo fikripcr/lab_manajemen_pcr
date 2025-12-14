@@ -11,7 +11,7 @@
 
 =========================================================
 -->
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="{{ asset('assets-admin') }}/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="{{ url('build/assets/') }}/" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -21,18 +21,17 @@
 
     <meta name="description" content="" />
 
-    <link rel="icon" type="image/x-xicon" href="{{ asset('assets-admin') }}/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-xicon" href="{{ Vite::asset('resources/assets/admin/img/favicon/favicon.ico') }}" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @include('layouts.admin.css')
 
+    <!-- Vite Entry Points -->
+    @vite(['resources/css/admin.css', 'resources/js/admin.js'])
+
     @stack('css')
-
-
-    <script src="{{ asset('assets-admin') }}/vendor/js/helpers.min.js"></script>
-    <script src="{{ asset('assets-admin') }}/js/config.js"></script>
 </head>
 <body>
     <div class="layout-wrapper layout-content-navbar">
@@ -57,8 +56,6 @@
 
             <div class="layout-overlay layout-menu-toggle"></div>
         </div>
-
-        @vite(['resources/js/admin.js'])
 
         <!-- Global Search Modal Component -->
         <x-admin.global-search-modal />

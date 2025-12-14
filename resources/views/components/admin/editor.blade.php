@@ -19,7 +19,7 @@
 </div>
 
 @push('scripts')
-    <script src="{{ asset('assets-admin/js/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ Vite::asset('resources/assets/admin/js/tinymce/tinymce.min.js') }}"></script>
     <script>
         // Initialize TinyMCE only if the element exists
         document.addEventListener('DOMContentLoaded', function() {

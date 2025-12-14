@@ -1,0 +1,20 @@
+/* Font Imports */
+/* Note: Fonts from googleapis are loaded in blade for performance, but local fonts can be imported here if needed */
+/* @import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap'); */
+
+/* Icons */
+@import '../assets/admin/vendor/fonts/boxicons.min.css';
+
+/* Core CSS */
+@import '../assets/admin/vendor/css/core.min.css';
+@import '../assets/admin/vendor/css/theme-default.css';
+@import '../assets/admin/css/demo.css';
+
+/* Vendors CSS */
+@import 'perfect-scrollbar/css/perfect-scrollbar.css';
+
+/* SweetAlert2 CSS */
+@import 'sweetalert2/dist/sweetalert2.min.css';
+
+/* Choices.js CSS */
+@import '../assets/admin/libs/choicesjs/choices.min.css';

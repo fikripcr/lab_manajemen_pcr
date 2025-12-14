@@ -11,10 +11,15 @@ export default defineConfig({
             input: [
                 // CSS Entry Points
                 'resources/css/sys.css',
+                'resources/css/admin.css',
+                'resources/css/auth.css',
+                'resources/css/guest.css',
 
                 // JS Entry Points
                 'resources/js/admin.js',
-                'resources/js/sys.js'
+                'resources/js/sys.js',
+                'resources/js/auth.js',
+                'resources/js/guest.js'
             ],
             refresh: true,
         }),

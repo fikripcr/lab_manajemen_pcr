@@ -25,7 +25,7 @@
                             <li><strong>Password:</strong> Sandi pengguna (opsional, akan di-generate jika kosong)</li>
                             <li><strong>Role:</strong> Nama role pengguna (contoh: admin, dosen, mahasiswa, dll)</li>
                         </ul>
-                        <a href="{{ asset('assets-admin/import/template_import_user.xlsx') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ Vite::asset('resources/assets/admin/import/template_import_user.xlsx') }}" class="btn btn-primary btn-sm">
                             <i class='bx bx-download me-1'></i> Download Template
                         </a>
                     </div>

@@ -1,0 +1,4 @@
+/* Core CSS */
+@import '../assets/auth/vendor/css/core.css';
+@import '../assets/auth/vendor/css/pages/page-auth.css';
+@import '../assets/auth/vendor/css/theme-default.css';

@@ -1,16 +1,6 @@
-<script src="{{ asset('assets-admin') }}/vendor/libs/jquery/jquery.min.js"></script>
-<script src="{{ asset('assets-admin') }}/vendor/js/menu.min.js"></script>
+<!-- Core/Vendor JS are now bundled via Vite in resources/js/admin.js -->
 
-<script src="{{ asset('assets-admin') }}/js/main.js"></script>
-
-
-<script src="{{ asset('assets-admin/libs/github-buttons/buttons.min.js') }}"></script>
-
-<!-- Choice.js -->
-<script src="{{ asset('assets-admin/libs/choicesjs/choices.min.js') }}"></script>
-
-
-<!-- Define application routes for JavaScript -->
+<!-- Define application routes for JavaScript (Required by bundled scripts) -->
 <script>
     window.appRoutes = {
         notificationsUnreadCount: '{{ route('notifications.unread-count') }}',
@@ -20,7 +10,3 @@
         globalSearch: '{{ route('global-search') }}',
     };
 </script>
-
-<!-- Custom JavaScript files -->
-<script src="{{ asset('assets-admin/js/custom/notifications.js') }}"></script>
-<script src="{{ asset('assets-admin/js/custom/global-search.js') }}"></script>

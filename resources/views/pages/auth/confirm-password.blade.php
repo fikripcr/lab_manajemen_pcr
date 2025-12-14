@@ -9,7 +9,7 @@
                 <!-- Logo -->
                 <div class="app-brand justify-content-center mb-4">
                     <a href="{{ url('/') }}" class="app-brand-link gap-2">
-                        <img src="{{ asset('assets-global/img/digilab-crop.png') }}" class="img-fluid " style="height: 100px; " alt="Logo" />
+                        <img src="{{ Vite::asset('resources/assets/auth/img/digilab-crop.png') }}" class="img-fluid " style="height: 100px; " alt="Logo" />
                     </a>
                 </div>
                 <!-- /Logo -->
@@ -42,3 +42,4 @@
     </div>
 </div>
 @endsection
+

@@ -22,7 +22,7 @@
     <meta name="description" content="" />
 
     {{-- TODO: Move favicon to a location that is not dependent on the old asset structure. --}}
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets-sys') }}/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="{{ Vite::asset('resources/assets/sys/img/favicon/favicon.ico') }}" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">

@@ -2,7 +2,7 @@
 
 @section('content')
     @push('css')
-        <link rel="stylesheet" href="{{ asset('assets-sys/css/documentation-show.css') }}">
+        <link rel="stylesheet" href="{{ Vite::asset('resources/assets/sys/css/documentation-show.css') }}">
     @endpush
 
     <x-sys.flash-message />

@@ -2,8 +2,7 @@
 
 @push('css')
        <!-- DataTables CSS -->
-    <link rel="stylesheet" href="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets-admin') }}/css/custom-datatable.css" />
+    @vite(['resources/assets/admin/libs/datatables/dataTables.bootstrap5.min.css', 'resources/assets/admin/css/custom-datatable.css'])
 @endpush
 
 <div class="table-responsive">
@@ -27,8 +26,7 @@
 </div>
 
 @push('scripts')
-    <script src="{{ asset('assets-admin/libs/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets-admin/libs/datatables/dataTables.bootstrap5.min.js') }}"></script>
+    @vite(['resources/assets/admin/libs/datatables/jquery.dataTables.min.js', 'resources/assets/admin/libs/datatables/dataTables.bootstrap5.min.js'])
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

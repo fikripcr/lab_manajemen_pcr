@@ -20,7 +20,7 @@
           <div class="post">
 
             <div class="post-img">
-              <img src="{{ asset('assets-guest/img/real-estate/property-exterior-3.webp') }}" alt="{{ e($pengumuman->judul) }}" class="img-fluid">
+              <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-3.webp') }}" alt="{{ e($pengumuman->judul) }}" class="img-fluid">
             </div>
 
             <div class="meta-top d-flex">

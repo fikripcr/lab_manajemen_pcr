@@ -18,5 +18,5 @@
 </div>
 
 @push('scripts')
-    <script src="{{ asset('assets-admin/js/global-search.js') }}"></script>
+    @vite(['resources/assets/admin/js/global-search.js'])
 @endpush
