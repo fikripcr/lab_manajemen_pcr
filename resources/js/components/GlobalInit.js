@@ -2,6 +2,10 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 
+// --- Popper.js (REQUIRED by Bootstrap 5 for dropdowns, popovers, tooltips)
+import { createPopper } from '@popperjs/core';
+window.Popper = { createPopper }; // Expose globally for Bootstrap
+
 // --- Bootstrap 5 JS (untuk Modal, Dropdown, Tooltip, dll)
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
@@ -12,8 +16,8 @@ window.axios = axios;
 window.axios.defaults.withCredentials = true; // untuk Sanctum/session
 window.axios.defaults.withXSRFToken = true
 
-// --- DataTables (Core library, needs jQuery)
-import 'datatables.net';
+// --- DataTables (Bootstrap 5 Styling)
+import 'datatables.net-bs5';
 
 // --- SweetAlert2
 import Swal from 'sweetalert2';

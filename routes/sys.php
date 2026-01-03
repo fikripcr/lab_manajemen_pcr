@@ -11,15 +11,21 @@ use App\Http\Controllers\Sys\PermissionController;
 use App\Http\Controllers\Sys\RoleController;
 use App\Http\Controllers\Sys\SysGlobalSearchController;
 use App\Http\Controllers\Sys\TestController;
+use App\Http\Middleware\InjectLayoutData;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'check.expired'])->group(function () {
+Route::middleware(['auth', 'check.expired', InjectLayoutData::class])->group(function () {
     // ==========================
     // 🔹 System Management Routes (require authentication)
     // All routes are prefixed with /sys/
     // ==========================
     Route::prefix('sys')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('sys.dashboard');
+
+        // Layout & Theme Settings Routes (via AppConfig)
+        Route::prefix('layout')->name('sys.layout.')->group(function () {
+            Route::post('/apply', [AppConfigController::class, 'applyThemeSettings'])->name('apply');
+        });
 
         // Activity Log Routes - accessible via /sys/activity-log
         Route::prefix('activity-log')->name('activity-log.')->group(function () {

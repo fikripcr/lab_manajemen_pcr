@@ -1,14 +1,22 @@
-/* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+/* 
+ * Sys Section - Tabler UI Theme
+ * This CSS entry point is for the System Management section only.
+ */
 
-/* Vendors */
-@import '../assets/sys/vendor/fonts/boxicons.min.css';
-@import '../assets/sys/vendor/core.min.css';
-@import '../assets/sys/vendor/theme-default.css';
+/* Inter Font (Tabler's default sans-serif) */
+@import url('https://rsms.me/inter/inter.css');
+
+/* Tabler Core CSS */
+@import '@tabler/core/dist/css/tabler.min.css';
+
+/* Tabler Vendors (for third-party integrations) */
+@import '@tabler/core/dist/css/tabler-vendors.min.css';
+
+/* Tabler Themes (for theme customization) */
+@import '@tabler/core/dist/css/tabler-themes.css';
+
+/* Boxicons - Keep for existing icons in views */
+/* @import '../assets/sys/vendor/fonts/boxicons.min.css'; */
+
+/* Choices.js CSS for select dropdowns */
 @import '../assets/sys/vendor/choices.min.css';
-
-/* Perfect Scrollbar (from original assets-sys) */
-@import '../assets/sys/vendor/libs/perfect-scrollbar/perfect-scrollbar.css';
-
-/* Custom */
-@import '../assets/sys/demo.css';

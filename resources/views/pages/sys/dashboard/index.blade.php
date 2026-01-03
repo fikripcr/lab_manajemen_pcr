@@ -176,34 +176,16 @@
         <!-- Stats Cards -->
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
             <div class="card h-100">
-                <div class="card-body d-flex justify-content-between">
-                    <div class="me-4">
-                        <div class="text-muted">Total Users</div>
-                        <div class="d-flex align-items-end mt-1">
-                            <div class="fs-3 text-primary fw-bold me-2">{{ $totalUsers }}</div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-muted mb-1">Total Users</div>
+                            <div class="h2 mb-0">{{ $totalUsers }}</div>
                         </div>
-                    </div>
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial rounded-circle bg-transparent text-primary">
-                            <i class="bx bx-user bx-lg"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
-                <div class="card-body d-flex justify-content-between">
-                    <div class="me-4">
-                        <div class="text-muted">Total Roles</div>
-                        <div class="d-flex align-items-end mt-1">
-                            <div class="fs-3 text-success fw-bold me-2">{{ $totalRoles }}</div>
-                        </div>
-                    </div>
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial rounded-circle bg-transparent text-success">
-                            <i class="bx bx-shield-alt bx-lg"></i>
+                        <div class="col-auto">
+                            <div class="bg-primary-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-primary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -212,16 +194,16 @@
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
             <div class="card h-100">
-                <div class="card-body d-flex justify-content-between">
-                    <div class="me-4">
-                        <div class="text-muted">Total Permissions</div>
-                        <div class="d-flex align-items-end mt-1">
-                            <div class="fs-3 text-warning fw-bold me-2">{{ $totalPermissions }}</div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-muted mb-1">Total Roles</div>
+                            <div class="h2 mb-0">{{ $totalRoles }}</div>
                         </div>
-                    </div>
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial rounded-circle bg-transparent text-warning">
-                            <i class="bx bx-key bx-lg"></i>
+                        <div class="col-auto">
+                            <div class="bg-green-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /></svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -230,16 +212,34 @@
 
         <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
             <div class="card h-100">
-                <div class="card-body d-flex justify-content-between">
-                    <div class="me-4">
-                        <div class="text-muted">Today's Activities</div>
-                        <div class="d-flex align-items-end mt-1">
-                            <div class="fs-3 text-info fw-bold me-2">{{ $todayActivities }}</div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-muted mb-1">Total Permissions</div>
+                            <div class="h2 mb-0">{{ $totalPermissions }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-danger-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-danger-lt" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+                            </div>
                         </div>
                     </div>
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial rounded-circle bg-transparent text-info">
-                            <i class="bx bx-history bx-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-muted mb-1">Today's Activities</div>
+                            <div class="h2 mb-0">{{ $todayActivities }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-cyan-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-cyan" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -251,147 +251,156 @@
             <h5 class="mb-4 text-center">System Management Functions</h5>
             <div class="row g-4">
                 <!-- Activity Log -->
+                <!-- Activity Log -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('activity-log.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-primary">
-                                <i class="bx bx-history bx-lg"></i>
+                    <a href="{{ route('activity-log.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-primary-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">Activity Log</h6>
+                                <small class="text-muted">Track all system activities and user actions</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">Activity Log</h6>
-                            <small class="text-muted">Track all system activities and user actions</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Roles -->
+                <!-- Roles -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.roles.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-success">
-                                <i class="bx bx-shield-alt bx-lg"></i>
+                    <a href="{{ route('sys.roles.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-green-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">User Roles</h6>
+                                <small class="text-muted">Manage user roles and permissions</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">User Roles</h6>
-                            <small class="text-muted">Manage user roles and permissions</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Permissions -->
+                <!-- Permissions -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.permissions.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-success">
-                                <i class="bx bx-key bx-lg"></i>
+                    <a href="{{ route('sys.permissions.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-yellow-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">Permissions</h6>
+                                <small class="text-muted">Manage system permissions</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">Permissions</h6>
-                            <small class="text-muted">Manage system permissions</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- App Configuration -->
+                <!-- App Configuration -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('app-config') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-warning">
-                                <i class="bx bx-cog bx-lg"></i>
+                    <a href="{{ route('app-config') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-orange-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">App Configuration</h6>
+                                <small class="text-muted">Configure application settings</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">App Configuration</h6>
-                            <small class="text-muted">Configure application settings</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Backup Management -->
+                <!-- Backup Management -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.backup.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-info">
-                                <i class="bx bx-data bx-lg"></i>
+                    <a href="{{ route('sys.backup.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-cyan-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6c0 1.657 3.582 3 8 3s8 -1.343 8 -3s-3.582 -3 -8 -3s-8 1.343 -8 3" /><path d="M4 6v6c0 1.657 3.582 3 8 3s8 -1.343 8 -3v-6" /><path d="M4 12v6c0 1.657 3.582 3 8 3s8 -1.343 8 -3v-6" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">Backup Management</h6>
+                                <small class="text-muted">Create and manage system backups</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">Backup Management</h6>
-                            <small class="text-muted">Create and manage system backups</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Notifications -->
+                <!-- Notifications -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('notifications.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-danger">
-                                <i class="bx bx-bell bx-lg"></i>
+                    <a href="{{ route('notifications.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-red-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">Notifications</h6>
+                                <small class="text-muted">Manage system notifications</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">Notifications</h6>
-                            <small class="text-muted">Manage system notifications</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Error Log -->
+                <!-- Error Log -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.error-log.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-danger">
-                                <i class="bx bx-error bx-lg"></i>
+                    <a href="{{ route('sys.error-log.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-red-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">Error Log</h6>
+                                <small class="text-muted">View and manage system errors</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">Error Log</h6>
-                            <small class="text-muted">View and manage system errors</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Testing -->
+                <!-- Testing -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.test.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-primary">
-                                <i class="bx bx-wrench bx-lg"></i>
+                    <a href="{{ route('sys.test.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-purple-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 10h3v-3l-3.5 -3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1 -3 3l-6 -6a6 6 0 0 1 -8 -8l3.5 3.5" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">Test Features</h6>
+                                <small class="text-muted">Test system functionality</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">Test Features</h6>
-                            <small class="text-muted">Test system functionality</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Documentation -->
+                <!-- Documentation -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center p-3 bg-white rounded hover-pointer" onclick="window.location='{{ route('sys.documentation.index') }}'">
-                        <div class="avatar me-3">
-                            <div class="avatar-initial rounded-circle bg-transparent text-secondary">
-                                <i class="bx bx-book bx-lg"></i>
+                    <a href="{{ route('sys.documentation.index') }}" class="card card-link text-decoration-none">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-gray-lt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
                             </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-reset">Documentation</h6>
+                                <small class="text-muted">System documentation and guides</small>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">Documentation</h6>
-                            <small class="text-muted">System documentation and guides</small>
-                        </div>
-                        <i class="bx bx-chevron-right text-muted"></i>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -402,13 +411,13 @@
             <div class="mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">User Distribution by Role</h5>
-                        <div class="role-list-container d-flex flex-wrap gap-2">
+                        <h3 class="card-title">User Distribution by Role</h3>
+                        <div class="badges-list">
                             @forelse($roleUserCounts as $roleData)
-                                <div class="role-item d-flex justify-content-between align-items-center px-2 py-1 bg-primary text-white rounded">
-                                    <span class="fw-medium me-2">{{ Str::ucfirst($roleData['name']) }}</span>
-                                    <span class="badge bg-label-primary rounded-pill">{{ $roleData['count'] }}</span>
-                                </div>
+                                <span class="badge bg-azure-lt p-2">
+                                    {{ Str::ucfirst($roleData['name']) }}
+                                    <span class="badge badge-outline text-reset ms-2">{{ $roleData['count'] }}</span>
+                                </span>
                             @empty
                                 <div class="text-center w-100">
                                     <p class="text-muted py-4 mb-0">No roles found</p>
@@ -419,144 +428,135 @@
                 </div>
             </div>
             <div class="row">
-
-                <!-- Activity Trend Chart -->
+                <!-- Combined Recent Activity Card -->
                 <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Activity</h3>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title">Activity Trend (Last 14 Days)</h5>
-                            <div id="activityTrendChart"></div>
+                            <!-- Summary Stats -->
+                            @php
+                                $todayCount = $recentLogs->where('created_at', '>=', now()->startOfDay())->count();
+                                $yesterdayCount = \App\Models\Sys\Activity::whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])->count();
+                                $percentChange = $yesterdayCount > 0 ? round((($todayCount - $yesterdayCount) / $yesterdayCount) * 100) : 0;
+                            @endphp
+                            <div class="mb-3">
+                                <div class="text-muted">Today's Activity</div>
+                                <div class="d-flex align-items-baseline">
+                                    <h2 class="mb-0 me-2">{{ $todayCount }}</h2>
+                                    @if($percentChange != 0)
+                                        <span class="text-{{ $percentChange > 0 ? 'green' : 'red' }} d-inline-flex align-items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                @if($percentChange > 0)
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7l10 10m0 -10v10h-10"/>
+                                                @else
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 17l10 -10m0 10v-10h-10"/>
+                                                @endif
+                                            </svg>
+                                            {{ abs($percentChange) }}%
+                                        </span>
+                                    @endif
+                                </div>
+                                <small class="text-muted">{{ abs($percentChange) }}% {{ $percentChange >= 0 ? 'more' : 'less' }} than yesterday</small>
+                            </div>
+
+                            <!-- Mini Sparkline Chart -->
+                            <div id="activitySparkline" style="height: 100px; margin-bottom: 1.5rem;"></div>
+                        </div>
+
+                        <!-- Activity List -->
+                        <div class="list-group list-group-flush">
+                            @forelse($recentLogs->take(5) as $log)
+                                <div class="list-group-item">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="avatar avatar-sm" style="background-image: url('{{ $log->causer && $log->causer->avatar_url ? $log->causer->avatar_url : 'https://ui-avatars.com/api/?name=' . urlencode($log->causer ? $log->causer->name : 'System') . '&color=7F9CF5' }}')"></span>
+                                        </div>
+                                        <div class="col text-truncate">
+                                            <span class="text-reset d-block">{{ Str::limit($log->description, 50) }}</span>
+                                            <div class="d-block text-muted text-truncate mt-n1">
+                                                {{ $log->causer ? $log->causer->name : 'System' }}
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="text-muted">{{ $log->created_at->format('d M Y') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="list-group-item text-center text-muted py-4">
+                                    No recent activities
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
 
-                <!-- Error Log Trend Chart -->
+                <!-- Combined Recent Error Card -->
                 <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Errors</h3>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title">Error Trend (Last 14 Days)</h5>
-                            <div id="errorTrendChart"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Logs and Errors -->
-        <div class="col-12 mb-4">
-            <div class="row">
-                <!-- Recent Logs -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Recent Activities</h5>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive text-nowrap">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Activity</th>
-                                            <th>Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-border-bottom-0">
-                                        @forelse($recentLogs as $log)
-                                            <tr>
-                                                <td>
-
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar-xs me-2">
-                                                            <span class="avatar-title rounded-circle bg-label-info text-info">
-                                                                @if (str_contains(strtolower($log->description), 'create'))
-                                                                    <i class="bx bx-plus bx-xs"></i>
-                                                                @elseif(str_contains(strtolower($log->description), 'update'))
-                                                                    <i class="bx bx-edit bx-xs"></i>
-                                                                @elseif(str_contains(strtolower($log->description), 'delete') || str_contains(strtolower($log->description), 'destroy'))
-                                                                    <i class="bx bx-trash bx-xs"></i>
-                                                                @elseif(str_contains(strtolower($log->description), 'login'))
-                                                                    <i class="bx bx-log-in bx-xs"></i>
-                                                                @elseif(str_contains(strtolower($log->description), 'logout'))
-                                                                    <i class="bx bx-log-out bx-xs"></i>
-                                                                @else
-                                                                    <i class="bx bx-cog bx-xs"></i>
-                                                                @endif
-                                                            </span>
-                                                        </div>
-                                                        <span>
-                                                            {{ $log->description }}
-                                                            <div class="d-flex flex-column text-muted text-sm">
-                                                                <small>({{ $log->causer ? $log->causer->name : 'System' }})</small>
-                                                            </div>
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="text-muted">{{ $log->created_at->diffForHumans() }}</span>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="3" class="text-center text-muted py-4">
-                                                    No recent activities
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
+                            <!-- Summary Stats -->
+                            @php
+                                $recentErrors = \App\Models\Sys\ErrorLog::with('user')->latest()->limit(10)->get();
+                                $todayErrorCount = $recentErrors->where('created_at', '>=', now()->startOfDay())->count();
+                                $yesterdayErrorCount = \App\Models\Sys\ErrorLog::whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])->count();
+                                $errorPercentChange = $yesterdayErrorCount > 0 ? round((($todayErrorCount - $yesterdayErrorCount) / $yesterdayErrorCount) * 100) : 0;
+                            @endphp
+                            <div class="mb-3">
+                                <div class="text-muted">Today's Errors</div>
+                                <div class="d-flex align-items-baseline">
+                                    <h2 class="mb-0 me-2">{{ $todayErrorCount }}</h2>
+                                    @if($errorPercentChange != 0)
+                                        <span class="text-{{ $errorPercentChange > 0 ? 'red' : 'green' }} d-inline-flex align-items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                @if($errorPercentChange > 0)
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7l10 10m0 -10v10h-10"/>
+                                                @else
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 17l10 -10m0 10v-10h-10"/>
+                                                @endif
+                                            </svg>
+                                            {{ abs($errorPercentChange) }}%
+                                        </span>
+                                    @endif
+                                </div>
+                                <small class="text-muted">{{ abs($errorPercentChange) }}% {{ $errorPercentChange >= 0 ? 'more' : 'less' }} than yesterday</small>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Recent Errors -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Recent Errors</h5>
+                            <!-- Mini Sparkline Chart -->
+                            <div id="errorSparkline" style="height: 100px; margin-bottom: 1.5rem;"></div>
                         </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive text-nowrap">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Error</th>
-                                            <th>Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-border-bottom-0">
-                                        @php
-                                            $recentErrors = \App\Models\Sys\ErrorLog::with('user')->latest()->limit(10)->get();
-                                        @endphp
-                                        @forelse($recentErrors as $error)
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar-xs me-3">
-                                                            <span class="avatar-title rounded-circle bg-label-danger text-danger">
-                                                                <i class="bx bx-error bx-xs"></i>
-                                                            </span>
-                                                        </div>
-                                                       <div class="d-flex flex-column">
-                                                        <span>{{ \Illuminate\Support\Str::limit(strip_tags($error->message), 50) }}</span>
-                                                        <small class="text-muted">{{ $error->exception_class ?? 'Unknown Error' }}</small>
-                                                    </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="text-muted">{{ $error->created_at->diffForHumans() }}</span>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="3" class="text-center text-muted py-4">
-                                                    No recent errors
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
+
+                        <!-- Error List -->
+                        <div class="list-group list-group-flush">
+                            @forelse($recentErrors->take(5) as $error)
+                                <div class="list-group-item">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="avatar avatar-sm bg-red-lt">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
+                                            </span>
+                                        </div>
+                                        <div class="col text-truncate">
+                                            <span class="text-reset d-block">{{ Str::limit(strip_tags($error->message), 50) }}</span>
+                                            <div class="d-block text-muted text-truncate mt-n1">
+                                                {{ $error->exception_class ?? 'Unknown Error' }}
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="text-muted">{{ $error->created_at->format('d M Y') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="list-group-item text-center text-muted py-4">
+                                    No recent errors
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -576,74 +576,116 @@
         const activityChartData = {!! $activityChartData !!};
         const errorChartData = {!! $errorChartData !!};
 
-        // Activity Trend Chart (Line)
-        const activityTrendChart = {
+        // Activity Sparkline Chart (Mini Area Chart)
+        const activitySparkline = {
             chart: {
-                height: 350,
-                type: 'line',
-                zoom: {
-                    enabled: false
+                height: 100,
+                type: 'area',
+                sparkline: {
+                    enabled: true
+                },
+                toolbar: {
+                    show: false
                 }
             },
             dataLabels: {
                 enabled: false
             },
             stroke: {
-                curve: 'straight',
+                curve: 'smooth',
                 width: 2
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.45,
+                    opacityTo: 0.05,
+                    stops: [50, 100, 100, 100]
+                },
             },
             series: activityChartData.series,
-            grid: {
-                row: {
-                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                    opacity: 0.5
-                },
-            },
-            xaxis: {
-                categories: activityChartData.categories,
-            },
-            colors: ['#0d6efd'] // Blue color for activities
-        }
-
-        const activityTrendChartEl = document.querySelector('#activityTrendChart');
-        if (activityTrendChartEl) {
-            const activityTrendChartObj = new ApexCharts(activityTrendChartEl, activityTrendChart);
-            activityTrendChartObj.render();
-        }
-
-        // Error Trend Chart (Line) - Using red color to differentiate from activity chart
-        const errorTrendChart = {
-            chart: {
-                height: 350,
-                type: 'line',
-                zoom: {
+            colors: ['#0d6efd'],
+            tooltip: {
+                fixed: {
                     enabled: false
+                },
+                x: {
+                    show: false
+                },
+                y: {
+                    title: {
+                        formatter: function (seriesName) {
+                            return ''
+                        }
+                    }
+                },
+                marker: {
+                    show: false
+                }
+            }
+        }
+
+        const activitySparklineEl = document.querySelector('#activitySparkline');
+        if (activitySparklineEl) {
+            const activitySparklineObj = new ApexCharts(activitySparklineEl, activitySparkline);
+            activitySparklineObj.render();
+        }
+
+        // Error Sparkline Chart (Mini Area Chart) - Red theme
+        const errorSparkline = {
+            chart: {
+                height: 100,
+                type: 'area',
+                sparkline: {
+                    enabled: true
+                },
+                toolbar: {
+                    show: false
                 }
             },
             dataLabels: {
                 enabled: false
             },
             stroke: {
-                curve: 'straight',
+                curve: 'smooth',
                 width: 2
             },
-            series: errorChartData.series,
-            grid: {
-                row: {
-                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                    opacity: 0.5
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.45,
+                    opacityTo: 0.05,
+                    stops: [50, 100, 100, 100]
                 },
             },
-            xaxis: {
-                categories: errorChartData.categories,
-            },
-            colors: ['#dc3545'] // Red color for errors to differentiate from activity chart
+            series: errorChartData.series,
+            colors: ['#dc3545'],
+            tooltip: {
+                fixed: {
+                    enabled: false
+                },
+                x: {
+                    show: false
+                },
+                y: {
+                    title: {
+                        formatter: function (seriesName) {
+                            return ''
+                        }
+                    }
+                },
+                marker: {
+                    show: false
+                }
+            }
         }
 
-        const errorTrendChartEl = document.querySelector('#errorTrendChart');
-        if (errorTrendChartEl) {
-            const errorTrendChartObj = new ApexCharts(errorTrendChartEl, errorTrendChart);
-            errorTrendChartObj.render();
+        const errorSparklineEl = document.querySelector('#errorSparkline');
+        if (errorSparklineEl) {
+            const errorSparklineObj = new ApexCharts(errorSparklineEl, errorSparkline);
+            errorSparklineObj.render();
         }
 
         // Update server time by fetching from server endpoint

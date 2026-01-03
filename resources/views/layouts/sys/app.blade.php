@@ -1,92 +1,123 @@
 <!DOCTYPE html>
-
-<!--
-* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
-==============================================================
-
-* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
-* Created by: ThemeSelection
-* License: You must have a valid license purchased in order to legally use the theme for your project.
-* Copyright ThemeSelection (https://themeselection.com)
-
-=========================================================
--->
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-template="vertical-menu-template-free">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <title>{{ config('app.name') }}</title>
+    <title>{{ config('app.name') }} - System</title>
 
-    <meta name="description" content="" />
+    <meta name="description" content="System Management Dashboard" />
 
-    {{-- TODO: Move favicon to a location that is not dependent on the old asset structure. --}}
+    {{-- Favicon --}}
     <link rel="icon" type="image/x-icon" href="{{ Vite::asset('resources/assets/sys/img/favicon/favicon.ico') }}" />
 
-    <!-- CSRF Token -->
+    {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @vite([
         'resources/css/sys.css',
     ])
 
-
     @stack('css')
 </head>
 
-<body>
-    <div class="layout-wrapper layout-content-navbar">
-        <div class="layout-container">
+<body class="{{ $layoutData['bodyClass'] ?? '' }}">
+    {{-- Tabler Theme Script - Must load before body content to prevent flash --}}
+    <script>
+        (function() {
+            const serverDefaults = {
+                "theme": "{{ $themeData['theme'] ?? 'light' }}",
+                "theme-base": "{{ $themeData['themeBase'] ?? 'gray' }}",
+                "theme-font": "{{ $themeData['themeFont'] ?? 'sans-serif' }}",
+                "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
+                "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
+            }
 
-            @include('layouts.sys.sidebar')
-
-            <div class="layout-page">
-
-                @include('layouts.sys.header')
-
-                <div class="content-wrapper">
-
-                    <div class="container-xxl flex-grow-1 container-p-y">
-
-                        @yield('content')
-
-                    </div>
-                    @include('layouts.sys.footer')
-                </div>
-            </div>
-
-            <div class="layout-overlay layout-menu-toggle"></div>
-        </div>
-
-        <!-- Global Search Modal Component -->
-        <x-sys.modal-global-search />
-
-        <!-- Global Generic Modal -->
-        <div class="modal fade" id="modalAction" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content" id="modalContent">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Loading...</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center py-5">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-            @vite([
-                'resources/js/sys.js'
+            for (const key in serverDefaults) {
+                const storedTheme = localStorage.getItem('tabler-' + key)
+                const value = storedTheme || serverDefaults[key]
+                if (value !== 'light' && value !== 'gray' && value !== 'sans-serif' && value !== 'blue' && value !== '1') {
+                    document.documentElement.setAttribute('data-bs-' + key, value)
+                }
+            }
+        })();
+    </script>
+    
+    <div class="page">
+        {{-- SIDEBAR: only shown when layoutSidebar is true --}}
+        @if($layoutData['layoutSidebar'] ?? false)
+            @include('layouts.sys.sidebar', [
+                'dark' => $layoutData['layoutSidebarDark'] ?? true
             ])
+        @endif
 
+        {{-- NAVBAR/HEADER: shown unless layoutHideTopbar is true --}}
+        @unless($layoutData['layoutHideTopbar'] ?? false)
+            @include('layouts.sys.header', [
+                'condensed' => $layoutData['layoutNavbarCondensed'] ?? false,
+                'sticky' => $layoutData['layoutNavbarSticky'] ?? false,
+                'stickyWrapper' => $layoutData['layoutNavbarStickyWrapper'] ?? false,
+                'dark' => $layoutData['layoutNavbarDark'] ?? false,
+                'hideBrand' => $layoutData['layoutNavbarHideBrand'] ?? false,
+                'hideMenu' => $layoutData['layoutSidebar'] ?? false, // Hide menu in navbar if sidebar exists
+                'navbarClass' => $layoutData['layoutNavbarClass'] ?? '',
+            ])
+        @endunless
+        
 
-        @stack('scripts')
+        <div class="page-wrapper">
+            {{-- Page Header: Optional, define @section('header') in pages --}}
+            @hasSection('header')
+            <div class="page-header d-print-none {{ $layoutData['pageHeaderClass'] ?? '' }}">
+                <div class="container-xl">
+                    @yield('header')
+                </div>
+            </div>
+            @endif
 
+            {{-- Page Body --}}
+            <div class="page-body">
+                {{-- Boxed layout uses container at .page level, others use container-xl here --}}
+                <div class="{{ $layoutData['containerClass'] ?? 'container-xl' }}">
+                    @yield('content')
+                </div>
+            </div>
 
+            {{-- Footer --}}
+            @include('layouts.sys.footer')
+        </div>
+    </div>
+
+    {{-- Theme Settings Component --}}
+    <x-sys.theme-settings />
+
+    {{-- Global Search Modal Component --}}
+    <x-sys.modal-global-search />
+
+    {{-- Global Generic Modal --}}
+    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" id="modalContent">
+                <div class="modal-header">
+                    <h5 class="modal-title">Loading...</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @vite([
+        'resources/js/sys.js'
+    ])
+
+    @stack('scripts')
 </body>
 
 </html>

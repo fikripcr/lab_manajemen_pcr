@@ -74,6 +74,27 @@ class AppConfigController extends Controller
             case 'backup':
                 $envContent = $this->updateEnvValue($envContent, 'MYSQLDUMP_PATH=', 'MYSQLDUMP_PATH=' . $request->mysqldump_path);
                 break;
+
+            case 'theme':
+                if ($request->filled('theme')) {
+                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME=', 'TABLER_THEME=' . $request->theme);
+                }
+                if ($request->filled('theme_primary')) {
+                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_PRIMARY=', 'TABLER_THEME_PRIMARY=' . $request->theme_primary);
+                }
+                if ($request->filled('theme_font')) {
+                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_FONT=', 'TABLER_THEME_FONT=' . $request->theme_font);
+                }
+                if ($request->filled('theme_base')) {
+                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_BASE=', 'TABLER_THEME_BASE=' . $request->theme_base);
+                }
+                if ($request->filled('theme_radius')) {
+                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_RADIUS=', 'TABLER_THEME_RADIUS=' . $request->theme_radius);
+                }
+                if ($request->filled('layout')) {
+                    $envContent = $this->updateEnvValue($envContent, 'TABLER_LAYOUT=', 'TABLER_LAYOUT=' . $request->layout);
+                }
+                break;
         }
 
         // Write the updated content back to .env
@@ -120,6 +141,77 @@ class AppConfigController extends Controller
         logActivity('config', 'Application optimized: config, routes, and views cached', auth()->user());
 
         return redirect()->back()->with('success', 'Application optimized successfully!');
+    }
+
+    /**
+     * Get theme settings for AJAX requests (used by theme settings panel)
+     */
+    public function getThemeSettings()
+    {
+        return response()->json([
+            'success' => true,
+            'settings' => [
+                'theme' => env('TABLER_THEME', 'light'),
+                'theme_primary' => env('TABLER_THEME_PRIMARY', 'blue'),
+                'theme_font' => env('TABLER_THEME_FONT', 'sans-serif'),
+                'theme_base' => env('TABLER_THEME_BASE', 'gray'),
+                'theme_radius' => env('TABLER_THEME_RADIUS', '1'),
+                'layout' => env('TABLER_LAYOUT', 'vertical'),
+            ],
+        ]);
+    }
+
+    /**
+     * Apply theme settings from AJAX request
+     */
+    public function applyThemeSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'theme' => 'nullable|in:light,dark',
+            'theme_primary' => 'nullable|in:blue,azure,indigo,purple,pink,red,orange,yellow,lime,green,teal,cyan',
+            'theme_font' => 'nullable|in:sans-serif,serif,monospace,comic',
+            'theme_base' => 'nullable|in:slate,gray,zinc,neutral,stone',
+            'theme_radius' => 'nullable|in:0,0.5,1,1.5,2',
+            'layout' => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
+        ]);
+
+        try {
+            $envPath = base_path('.env');
+            $envContent = file_get_contents($envPath);
+
+            $envMapping = [
+                'theme' => 'TABLER_THEME',
+                'theme_primary' => 'TABLER_THEME_PRIMARY',
+                'theme_font' => 'TABLER_THEME_FONT',
+                'theme_base' => 'TABLER_THEME_BASE',
+                'theme_radius' => 'TABLER_THEME_RADIUS',
+                'layout' => 'TABLER_LAYOUT',
+            ];
+
+            foreach ($validated as $key => $value) {
+                if ($value === null) continue;
+                
+                $envKey = $envMapping[$key] ?? null;
+                if (!$envKey) continue;
+
+                $envContent = $this->updateEnvValue($envContent, "{$envKey}=", "{$envKey}={$value}");
+            }
+
+            file_put_contents($envPath, $envContent);
+            Artisan::call('config:clear');
+
+            logActivity('config', 'Theme & Layout settings updated', auth()->user());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Settings applied!',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     private function updateEnvValue($content, $key, $newValue)

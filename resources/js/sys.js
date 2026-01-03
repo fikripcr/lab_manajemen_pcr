@@ -1,15 +1,7 @@
-// Import legacy sys vendor files to bundle them together
-// Copied from Admin to Sys assets to decouple
-// Reverting to Admin assets because local copy causes build crash (side effects/eval issues)
-import '../assets/admin/vendor/js/helpers.min.js';
-import '../assets/admin/vendor/js/menu.min.js';
-
-import '../assets/sys/js/config.js';
 
 // Global Dependencies (NPM - jQuery, Bootstrap, Axios, SweetAlert2)
 import './components/GlobalInit.js';
 
-import '../assets/sys/js/main.js';
 
 // --- Notification Manager (direct import - needs to load on every page)
 import './components/Notification.js';

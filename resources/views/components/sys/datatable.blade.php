@@ -1,9 +1,6 @@
 <!-- resources/views/components/custom-datatable.blade.php -->
 @props(['id', 'route', 'columns', 'search' => true, 'pageLength' => true, 'checkbox' => false, 'checkboxKey' => 'id'])
 
-@push('css')
-    @vite(['resources/assets/sys/css/custom-datatable.css'])
-@endpush
 
 <div class="table-responsive">
     <table id="{{ $id }}" class="table" style="width:100%;">

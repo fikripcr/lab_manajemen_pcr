@@ -1,9 +1,15 @@
 @extends('layouts.sys.app')
 
-@section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Others /</span> Test Features</h4>
+@section('header')
+<div class="row g-2 align-items-center">
+    <div class="col">
+        <div class="page-pretitle">Others</div>
+        <h2 class="page-title">Test Features</h2>
     </div>
+</div>
+@endsection
+
+@section('content')
 
     <div class="row">
         <!-- Test Email Card -->

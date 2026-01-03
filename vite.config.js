@@ -4,13 +4,14 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     server: {
         host: 'localhost',
-        port: 3000,
+        port: 3003,
     },
     plugins: [
         laravel({
             input: [
                 // CSS Entry Points
                 'resources/css/sys.css',
+                'resources/assets/sys/css/custom-datatable.css',
                 'resources/css/admin.css',
                 'resources/css/auth.css',
                 'resources/css/guest.css',

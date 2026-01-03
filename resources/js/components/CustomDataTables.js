@@ -35,21 +35,16 @@ export default class CustomDataTables {
             processing: true,
             serverSide: true,
             stateSave: true,
-            responsive: true,
+            responsive: false, // Disable DT responsive to use native scrolling
             order: [[0, 'desc']],
-            pageLength: this.options.pageLengthValue || 10, // Gunakan nilai dari state jika tersedia
+            pageLength: this.options.pageLengthValue || 10,
             ajax: {
                 url: this.options.route,
                 data: (d) => this.addFilterData(d, SELECTOR.filterForm),
             },
             columns: this.buildColumns(),
-            layout: {
-                topStart: null,
-                topEnd: null,
-                bottomStart: null,
-                bottomEnd: null,
-                bottom: ['info', 'paging']
-            },
+            dom: "<'table-responsive'tr>" +
+                "<'card-footer d-flex align-items-center'<'text-muted'i><'ms-auto'p>>",
             stateLoadCallback: (settings, callback) => this.loadState(callback, SELECTOR),
             stateSaveCallback: (settings, data) => this.saveState(data, SELECTOR.filterForm),
         });

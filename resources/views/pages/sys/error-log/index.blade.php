@@ -1,70 +1,76 @@
 @extends('layouts.sys.app')
 
-@section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Log/</span> Error</h4>
+@section('header')
+<div class="row g-2 align-items-center">
+    <div class="col">
+        <div class="page-pretitle">System Log</div>
+        <h2 class="page-title">Error Log</h2>
     </div>
+    <div class="col-auto ms-auto d-print-none">
+        <div class="btn-list">
+            <button type="button" class="btn btn-danger" onclick="confirmClearAll()" title="Clear All Error Logs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                Clear All
+            </button>
+        </div>
+    </div>
+</div>
+@endsection
 
-    <x-sys.flash-message />
+@section('content')
+<x-sys.flash-message />
 
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex flex-wrap justify-content-between">
-                <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
-                    <div>
-                        <x-sys.datatable-page-length :dataTableId="'error-logs-table'" />
-                    </div>
-                    <div>
-                        <x-sys.datatable-search :dataTableId="'error-logs-table'" />
-                    </div>
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex flex-wrap justify-content-between">
+            <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
+                <div>
+                    <x-sys.datatable-page-length :dataTableId="'error-logs-table'" />
                 </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-danger btn-sm me-2" onclick="confirmClearAll()" title="Clear All Error Logs">
-                        <i class='bx bx-trash me-1'></i> Clear All
-                    </button>
+                <div>
+                    <x-sys.datatable-search :dataTableId="'error-logs-table'" />
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <x-sys.flash-message />
-
-            <x-sys.datatable id="error-logs-table" route="{{ route('sys.error-log.data') }}" :columns="[
-                [
-                    'title' => '#',
-                    'data' => 'DT_RowIndex',
-                    'name' => 'id',
-                    'orderable' => false,
-                ],
-                [
-                    'title' => 'Message',
-                    'data' => 'message',
-                    'name' => 'message',
-                ],
-                [
-                    'title' => 'Error Type',
-                    'data' => 'error_type',
-                    'name' => 'exception_class',
-                ],
-                [
-                    'title' => 'User',
-                    'data' => 'user_info',
-                    'name' => 'user.name',
-                ],
-                [
-                    'title' => 'Date',
-                    'data' => 'created_at',
-                    'name' => 'created_at',
-                ],
-                [
-                    'title' => 'Actions',
-                    'data' => 'actions',
-                    'name' => 'actions',
-                    'orderable' => false,
-                    'searchable' => false,
-                ],
-            ]" />
-        </div>
     </div>
+    <div class="card-body">
+        <x-sys.datatable id="error-logs-table" route="{{ route('sys.error-log.data') }}" :columns="[
+            [
+                'title' => '#',
+                'data' => 'DT_RowIndex',
+                'name' => 'id',
+                'orderable' => false,
+            ],
+            [
+                'title' => 'Message',
+                'data' => 'message',
+                'name' => 'message',
+            ],
+            [
+                'title' => 'Error Type',
+                'data' => 'error_type',
+                'name' => 'exception_class',
+            ],
+            [
+                'title' => 'User',
+                'data' => 'user_info',
+                'name' => 'user.name',
+            ],
+            [
+                'title' => 'Date',
+                'data' => 'created_at',
+                'name' => 'created_at',
+            ],
+            [
+                'title' => 'Actions',
+                'data' => 'actions',
+                'name' => 'actions',
+                'orderable' => false,
+                'searchable' => false,
+            ],
+        ]" />
+    </div>
+</div>
 
 @endsection
 
