@@ -194,12 +194,13 @@ class InjectLayoutData
     {
         // Theme settings from config
         $themeData = [
-            'theme'        => env('TABLER_THEME', 'light'),
-            'themePrimary' => env('TABLER_THEME_PRIMARY', 'blue'),
-            'themeFont'    => env('TABLER_THEME_FONT', 'sans-serif'),
-            'themeBase'    => env('TABLER_THEME_BASE', 'gray'),
-            'themeRadius'  => env('TABLER_THEME_RADIUS', '1'),
-            'themeBg'      => env('TABLER_THEME_BG', ''),
+            'theme'          => env('TABLER_THEME', 'light'),
+            'themePrimary'   => env('TABLER_THEME_PRIMARY', 'blue'),
+            'themeFont'      => env('TABLER_THEME_FONT', 'sans-serif'),
+            'themeBase'      => env('TABLER_THEME_BASE', 'gray'),
+            'themeRadius'    => env('TABLER_THEME_RADIUS', '1'),
+            'themeBg'        => env('TABLER_THEME_BG', ''),
+            'themeCardStyle' => env('TABLER_CARD_STYLE', 'default'),
         ];
 
         // Get layout preset

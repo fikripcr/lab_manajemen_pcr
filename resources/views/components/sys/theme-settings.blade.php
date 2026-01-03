@@ -1,4 +1,3 @@
-{{-- Theme Settings Floating Button & Offcanvas --}}
 <div class="settings">
 		<a href="#" class="btn btn-floating btn-icon btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings" aria-controls="offcanvasSettings" aria-label="Theme Settings">
 			<!-- Download SVG icon from http://tabler.io/icons/icon/brush -->
@@ -12,7 +11,7 @@
 			</svg>
 		</a>
 
-    <form class="offcanvas offcanvas-start offcanvas-narrow" tabindex="-1" id="offcanvasSettings">
+    <form class="offcanvas offcanvas-end offcanvas-narrow" tabindex="-1" id="offcanvasSettings">
         <div class="offcanvas-header border-bottom">
             <h2 class="offcanvas-title">Theme Settings</h2>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -53,7 +52,6 @@
                     </div>
 
                     {{-- Theme Base & Radius --}}
-                    {{-- Theme Base & Radius --}}
                     <div class="col-6">
                         <label class="form-label">Theme Base</label>
                         <select name="theme-base" class="form-select">
@@ -67,6 +65,21 @@
                          <select name="theme-radius" class="form-select">
                             @foreach(['0', '0.5', '1', '1.5', '2'] as $radius)
                             <option value="{{ $radius }}" {{ ($themeData['themeRadius'] ?? '1') === $radius ? 'selected' : '' }}>{{ $radius }}rem</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Card Style --}}
+                    <div class="col-12">
+                        <label class="form-label">Card Style</label>
+                        <select name="theme-card-style" class="form-select">
+                            @foreach([
+                                'flat' => 'Flat (Minimalist)',
+                                'shadow' => 'Shadow (Floating)',
+                                'border' => 'Bordered (High Contrast)',
+                                'modern' => 'Modern (Soft Shadow)'
+                            ] as $val => $label)
+                            <option value="{{ $val }}" {{ ($themeData['themeCardStyle'] ?? 'flat') === $val ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -163,9 +176,8 @@ document.addEventListener("DOMContentLoaded", function () {
         "theme": "{{ $themeData['theme'] ?? 'light' }}",
         "theme-base": "{{ $themeData['themeBase'] ?? 'gray' }}",
         "theme-font": "{{ $themeData['themeFont'] ?? 'sans-serif' }}",
-        "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
-        "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
         "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
+        "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'flat' }}",
     }
 
     var form = document.getElementById("offcanvasSettings")
@@ -181,7 +193,6 @@ document.addEventListener("DOMContentLoaded", function () {
             
             if (inputs.length > 0) {
                 if (key === 'theme-bg') {
-                    // If no value, default to light gray just for the picker visual
                     inputs[0].value = value || '#f4f6fa'
                 } else if (inputs[0].tagName === 'SELECT') {
                     inputs[0].value = value
@@ -199,11 +210,18 @@ document.addEventListener("DOMContentLoaded", function () {
         var target = event.target, name = target.name, value = target.value
 
         if (name === 'theme-bg') {
-             // Handle background color separately (CSS variable)
              document.documentElement.style.setProperty('--tblr-body-bg', value)
              window.localStorage.setItem("tabler-" + name, value)
+
+        } else if (name === 'theme-card-style') {
+             if (value === 'default') {
+                 document.documentElement.removeAttribute("data-bs-card-style")
+             } else {
+                 document.documentElement.setAttribute("data-bs-card-style", value)
+             }
+             window.localStorage.setItem("tabler-" + name, value)
+             
         } else {
-             // Theme properties (live preview via data attributes)
             for (var key in themeConfig) {
                 if (name === key) {
                     document.documentElement.setAttribute("data-bs-" + key, value)
@@ -212,29 +230,37 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         
-        // Layout preview (calls global function from sys.js)
+        // Layout preview
         if (name === 'layout' && typeof window.previewLayout === 'function') {
             window.previewLayout(value)
         }
     })
 
-    // Reset Background Color
-    resetBgButton.addEventListener("click", function() {
-        var bgInput = form.querySelector('input[name="theme-bg"]');
-        bgInput.value = '#f4f6fa'; // Visual reset
-        document.documentElement.style.removeProperty('--tblr-body-bg'); // Remove CSS override
-        window.localStorage.removeItem("tabler-theme-bg"); // Remove from local storage
-    });
+    // Reset Background Color (Simple)
+    if(resetBgButton){
+        resetBgButton.addEventListener("click", function() {
+            var bgInput = form.querySelector('input[name="theme-bg"]');
+            bgInput.value = '#f4f6fa'; 
+            document.documentElement.style.removeProperty('--tblr-body-bg'); 
+            window.localStorage.removeItem("tabler-theme-bg"); 
+        });
+    }
 
-    // Reset preview to server defaults
+    // Reset All
     resetButton.addEventListener("click", function () {
         for (var key in themeConfig) {
             if (key === 'theme-bg') {
-                 // Reset BG
                  document.documentElement.style.removeProperty('--tblr-body-bg')
                  window.localStorage.removeItem("tabler-" + key)
                  var bgInput = form.querySelector('input[name="theme-bg"]');
                  if(bgInput) bgInput.value = themeConfig[key] || '#f4f6fa';
+
+            } else if (key === 'theme-card-style') {
+                 document.documentElement.removeAttribute("data-bs-card-style")
+                 if (themeConfig[key] && themeConfig[key] !== 'default') {
+                     document.documentElement.setAttribute("data-bs-card-style", themeConfig[key])
+                 }
+                 window.localStorage.removeItem("tabler-" + key)
             } else {
                 document.documentElement.setAttribute("data-bs-" + key, themeConfig[key])
                 window.localStorage.removeItem("tabler-" + key)
@@ -247,8 +273,8 @@ document.addEventListener("DOMContentLoaded", function () {
     applyButton.addEventListener("click", function () {
         var formData = new FormData()
 
-        // Theme settings
-        var themeFields = ['theme', 'theme-primary', 'theme-font', 'theme-base', 'theme-radius']
+        // Regular inputs
+        var themeFields = ['theme', 'theme-primary', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style']
         themeFields.forEach(function(field) {
             var selected = form.querySelector(`input[name="${field}"]:checked`) || form.querySelector(`select[name="${field}"]`)
             if (selected) {
@@ -256,33 +282,15 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         })
 
-        // Background Color
-        var bgInput = form.querySelector('input[name="theme-bg"]')
-        // Only send if it's set in localStorage (meaning user changed it) or it has a value different from default
-        // Actually, simplest is to check if the CSS var is active or localStorage is present.
-        // Let's just always send the picker value if it's not empty, OR send empty string if they reset.
-        // Better strategy: Check if user interacted. If localStorage has value, send it. If reset button clicked, maybe send empty?
-        // Let's use the input value directly.
-        if (bgInput) {
-             // Logic check: if we want to "unset", we need a way.
-             // Currently, if the user picks a color, we save it. If they want default, they should use Reset button which clears localStorage.
-             // But to persistent save "Empty", we need to know if they want empty.
-             // The Reset BG button clears localStorage.
-             // If localStorage has tabler-theme-bg, use that.
-             var storedBg = window.localStorage.getItem("tabler-theme-bg");
-             if (storedBg) {
-                 formData.append('theme_bg', storedBg);
-             } else {
-                 // If no local storage (meaning reset or untouched), check if server had a value we want to keep?
-                 // Or if user clicked Reset, we want to clear server value.
-                 // Let's assume Apply saves CURRENT state.
-                 // If style property --tblr-body-bg is set, save that. Else save empty.
-                 var currentBg = document.documentElement.style.getPropertyValue('--tblr-body-bg');
-                 formData.append('theme_bg', currentBg ? currentBg.trim() : '');
-             }
+        // Background input
+        var bgInput = form.querySelector('input[name="theme-bg"]');
+        if(bgInput) {
+            // Priority: LocalStorage (Changed) -> Computed Style
+            var currentBg = document.documentElement.style.getPropertyValue('--tblr-body-bg');
+            formData.append('theme_bg', currentBg ? currentBg.trim() : '');
         }
 
-        // Layout (single selection)
+        // Layout
         var layout = form.querySelector('input[name="layout"]:checked')
         if (layout) {
             formData.append('layout', layout.value)
@@ -304,9 +312,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.reload();
                 }
             })
+            .catch(function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.response?.data?.message || 'Failed to apply settings.',
+                });
+            });
     })
 
     checkItems()
 })
 </script>
+
+
 @endpush

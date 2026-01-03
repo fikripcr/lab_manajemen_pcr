@@ -39,17 +39,21 @@
                 "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
                 "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
                 "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
+                "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'default' }}",
             }
 
             for (const key in serverDefaults) {
                 const storedTheme = localStorage.getItem('tabler-' + key)
                 const value = storedTheme || serverDefaults[key]
                 
-                // Special handling for background color
-                if (key === 'theme-bg') {
-                    if (value) {
-                        document.documentElement.style.setProperty('--tblr-body-bg', value)
-                    }
+                // Special handling for background colors
+                if (key === 'theme-bg' && value) {
+                    document.documentElement.style.setProperty('--tblr-body-bg', value)
+                } else if (key === 'theme-card-style') {
+                     // Always apply if valid
+                     if (value && value !== 'default') {
+                         document.documentElement.setAttribute('data-bs-card-style', value)
+                     }
                 } else if (value !== 'light' && value !== 'gray' && value !== 'sans-serif' && value !== 'blue' && value !== '1') {
                     document.documentElement.setAttribute('data-bs-' + key, value)
                 }

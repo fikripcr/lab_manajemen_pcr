@@ -65,3 +65,34 @@ div.dt-processing>div:last-child>div {
     background: var(--tblr-primary) !important;
     animation-timing-function: cubic-bezier(0, 1, 1, 0)
 }
+
+/* --- Card Style Overrides --- */
+
+/* Flat: No shadow, standard border */
+[data-bs-card-style="flat"] .card {
+    box-shadow: none !important;
+    border: 1px solid var(--tblr-border-color) !important;
+}
+
+/* Shadow: Floating effect, no border */
+[data-bs-card-style="shadow"] .card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    border: none !important;
+}
+
+/* Border: Prominent border, no shadow */
+[data-bs-card-style="border"] .card {
+    box-shadow: none !important;
+    border: 1px solid rgba(var(--tblr-body-color-rgb), 0.16) !important;
+}
+
+/* Modern: Soft large shadow, rounded corners */
+[data-bs-card-style="modern"] .card {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    border: none !important;
+    border-radius: 12px !important;
+}
+
+[data-bs-card-style="modern"] .card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
