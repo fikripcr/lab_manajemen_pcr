@@ -86,7 +86,7 @@
                 'orderable' => false,
                 'searchable' => false,
             ],
-        ]" />
+        ]" :order="[[4, 'desc']]" />
     </div>
 </div>
 @endsection

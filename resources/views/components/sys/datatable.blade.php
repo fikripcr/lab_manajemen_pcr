@@ -3,7 +3,7 @@
 
 
 <div class="table-responsive">
-    <table id="{{ $id }}" class="table" style="width:100%;">
+    <table id="{{ $id }}" class="table table-sm table-striped">
         <thead>
             <tr>
                 @if ($checkbox)

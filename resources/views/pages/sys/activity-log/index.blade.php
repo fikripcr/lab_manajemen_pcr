@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body p-0">
         <x-sys.datatable
             id="activity-log-table"
             route="{{ route('activity-log.data') }}"
@@ -62,12 +62,13 @@
                     'searchable' => false
                 ]
             ]"
+            :order="[[1, 'desc']]"
         />
     </div>
 </div>
 
 <!-- Activity Detail Modal -->
-<div class="modal fade" id="activityDetailModal" tabindex="-1" aria-hidden="true">
+<div class="modal modal-blur" id="activityDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">

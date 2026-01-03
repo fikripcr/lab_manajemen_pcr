@@ -34,14 +34,14 @@
                         </div>
                         <div>
                             <p class="mb-0">Unread</p>
-                            <h4 class="mb-0" id="unreadNotifications">{{ Auth::user()->unreadNotifications->count() }}</h4>
+                            <h4 class="mb-0" id="unreadNotifications">{{ auth()->user()->unreadNotifications->count() }}</h4>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
+            <div class="card overflow-hidden">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3 bg-label-success rounded">
@@ -49,7 +49,7 @@
                         </div>
                         <div>
                             <p class="mb-0">Read</p>
-                            <h4 class="mb-0" id="readNotifications">{{ Auth::user()->notifications()->count() - Auth::user()->unreadNotifications->count() }}</h4>
+                            <h4 class="mb-0" id="readNotifications">{{ auth()->user()->notifications()->count() - auth()->user()->unreadNotifications->count() }}</h4>
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" Checkbox="true"
             :columns="[
                 [
@@ -105,7 +105,7 @@
                     'orderable' => false,
                     'searchable' => false,
                 ],
-            ]" />
+            ]" :order="[[3, 'desc']]" />
         </div>
     </div>
 @endsection

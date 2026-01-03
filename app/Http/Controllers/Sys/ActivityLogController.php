@@ -1,12 +1,11 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\Sys\ActivityLogsService;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\DataTables;
 
 class ActivityLogController extends Controller
 {

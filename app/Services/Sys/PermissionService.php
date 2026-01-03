@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Services\Sys;
 
 use App\Models\Sys\Permission;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class PermissionService
 {
@@ -36,8 +35,8 @@ class PermissionService
     {
         return DB::transaction(function () use ($data) {
             $permission = Permission::create([
-                'name' => $data['name'],
-                'category' => $data['category'] ?? null,
+                'name'         => $data['name'],
+                'category'     => $data['category'] ?? null,
                 'sub_category' => $data['sub_category'] ?? null,
             ]);
 
@@ -59,12 +58,12 @@ class PermissionService
         return DB::transaction(function () use ($permissionId, $data) {
             $permission = $this->findOrFail($permissionId);
 
-            $oldName = $permission->name;
+            $oldName     = $permission->name;
             $oldCategory = $permission->category;
 
             $permission->update([
-                'name' => $data['name'],
-                'category' => $data['category'] ?? $permission->category,
+                'name'         => $data['name'],
+                'category'     => $data['category'] ?? $permission->category,
                 'sub_category' => $data['sub_category'] ?? $permission->sub_category,
             ]);
 
@@ -77,7 +76,7 @@ class PermissionService
                 $changes[] = "kategori dari '{$oldCategory}' menjadi '{$permission->category}'";
             }
 
-            if (!empty($changes)) {
+            if (! empty($changes)) {
                 logActivity(
                     'permission_management',
                     "Memperbarui izin '{$oldName}': " . implode(', ', $changes)
@@ -123,8 +122,8 @@ class PermissionService
     public function getFilteredQuery(array $filters = [])
     {
         return $this->applyFilters(Permission::query(), $filters)
-            ->select('id','name', 'category', 'sub_category', 'created_at')
-            ->orderBy('created_at', 'desc');
+            ->select('id', 'name', 'category', 'sub_category', 'created_at')
+            ->select('id', 'name', 'category', 'sub_category', 'created_at');
     }
 
     /**
@@ -148,15 +147,15 @@ class PermissionService
      */
     protected function applyFilters($query, array $filters): \Illuminate\Database\Eloquent\Builder
     {
-        if (!empty($filters['name'])) {
+        if (! empty($filters['name'])) {
             $query->where('name', 'like', '%' . $filters['name'] . '%');
         }
 
-        if (!empty($filters['category'])) {
+        if (! empty($filters['category'])) {
             $query->where('category', $filters['category']);
         }
 
-        if (!empty($filters['sub_category'])) {
+        if (! empty($filters['sub_category'])) {
             $query->where('sub_category', $filters['sub_category']);
         }
 
@@ -184,14 +183,13 @@ class PermissionService
             ->toArray();
     }
 
-
     /**
      * Find model by ID or throw exception
      */
     protected function findOrFail(int $id): \App\Models\Sys\Permission
     {
         $model = $this->getPermissionById($id);
-        if (!$model) {
+        if (! $model) {
             throw new \Exception("Izin dengan ID {$id} tidak ditemukan.");
         }
         return $model;
