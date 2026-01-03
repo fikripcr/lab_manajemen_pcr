@@ -23,6 +23,7 @@
 /* Choices.js CSS for select dropdowns */
 @import '../assets/sys/vendor/choices.min.css';
 
+
 /* Fix issue with margin-left on scroll window */
 @media (min-width: 992px) {
 
@@ -31,4 +32,15 @@
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
+}
+
+/* Override DataTable Processing Indicator to match Theme Primary */
+div.dt-processing>div:last-child>div {
+    position: absolute;
+    top: 0;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--tblr-primary) !important;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0)
 }
