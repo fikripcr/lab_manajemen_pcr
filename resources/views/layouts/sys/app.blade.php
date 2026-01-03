@@ -39,6 +39,9 @@
                 "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
                 "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
                 "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
+                "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
+                "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
+                "theme-header-top-bg": "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
                 "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'default' }}",
             }
 
@@ -49,6 +52,12 @@
                 // Special handling for background colors
                 if (key === 'theme-bg' && value) {
                     document.documentElement.style.setProperty('--tblr-body-bg', value)
+                } else if (key === 'theme-sidebar-bg' && value) {
+                    document.documentElement.style.setProperty('--tblr-sidebar-bg', value)
+                    document.documentElement.setAttribute('data-bs-has-sidebar-bg', '')
+                } else if (key === 'theme-header-top-bg' && value) {
+                    document.documentElement.style.setProperty('--tblr-header-top-bg', value)
+                    document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
                 } else if (key === 'theme-card-style') {
                      // Always apply if valid
                      if (value && value !== 'default') {

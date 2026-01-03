@@ -86,12 +86,51 @@
 
                     {{-- Custom Background --}}
                     <div class="col-12">
-                        <label class="form-label">Background Color</label>
-                        <div class="input-group">
-                            <input type="color" class="form-control form-control-color" name="theme-bg" value="{{ $themeData['themeBg'] ?: '#f4f6fa' }}" title="Choose your color">
-                            <button class="btn btn-outline-secondary" type="button" id="reset-bg">Reset</button>
+                        <label class="form-label">Custom Backgrounds</label>
+                        
+                        {{-- Body --}}
+                        <div class="row g-2 mb-2 align-items-center">
+                            <div class="col-4"><small>Body</small></div>
+                            <div class="col-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="color-picker-component" data-target="theme-bg" data-default="#f4f6fa"></div>
+                                    <input type="hidden" name="theme-bg" value="{{ $themeData['themeBg'] ?: '#f4f6fa' }}">
+                                    <button class="btn btn-icon btn-sm btn-outline-secondary ms-2" type="button" data-reset-bg="theme-bg" title="Reset">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5" /><path d="M5.63 7.16l0 .01" /><path d="M4.06 11l0 .01" /><path d="M4.63 15.1l0 .01" /><path d="M7.16 18.37l0 .01" /><path d="M11 19.94l0 .01" /></svg>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-text small">Override theme background</div>
+
+                        {{-- Sidebar / Menu --}}
+                        <div class="row g-2 mb-2 align-items-center">
+                            <div class="col-4"><small>Sidebar / Menu</small></div>
+                            <div class="col-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="color-picker-component" data-target="theme-sidebar-bg" data-default="#ffffff"></div>
+                                    <input type="hidden" name="theme-sidebar-bg" value="{{ $themeData['themeSidebarBg'] ?: '#ffffff' }}">
+                                    <button class="btn btn-icon btn-sm btn-outline-secondary ms-2" type="button" data-reset-bg="theme-sidebar-bg" title="Reset">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5" /><path d="M5.63 7.16l0 .01" /><path d="M4.06 11l0 .01" /><path d="M4.63 15.1l0 .01" /><path d="M7.16 18.37l0 .01" /><path d="M11 19.94l0 .01" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Header Top --}}
+                        <div class="row g-2 align-items-center">
+                            <div class="col-4"><small>Header (Top)</small></div>
+                            <div class="col-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="color-picker-component" data-target="theme-header-top-bg" data-default="#ffffff"></div>
+                                    <input type="hidden" name="theme-header-top-bg" value="{{ $themeData['themeHeaderTopBg'] ?: '#ffffff' }}">
+                                    <button class="btn btn-icon btn-sm btn-outline-secondary ms-2" type="button" data-reset-bg="theme-header-top-bg" title="Reset">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5" /><path d="M5.63 7.16l0 .01" /><path d="M4.06 11l0 .01" /><path d="M4.63 15.1l0 .01" /><path d="M7.16 18.37l0 .01" /><path d="M11 19.94l0 .01" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-text small mt-1">Override background colors. Use Reset to restore defaults.</div>
                     </div>
 
                     {{-- Color Scheme --}}
@@ -174,16 +213,77 @@
 document.addEventListener("DOMContentLoaded", function () {
     var themeConfig = {
         "theme": "{{ $themeData['theme'] ?? 'light' }}",
+        "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
         "theme-base": "{{ $themeData['themeBase'] ?? 'gray' }}",
         "theme-font": "{{ $themeData['themeFont'] ?? 'sans-serif' }}",
+        "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
         "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
+        "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
+        "theme-header-top-bg": "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
         "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'flat' }}",
     }
 
     var form = document.getElementById("offcanvasSettings")
     var resetButton = document.getElementById("reset-changes")
     var applyButton = document.getElementById("apply-settings")
-    var resetBgButton = document.getElementById("reset-bg")
+
+    // Initialize Pickr instances
+    var pickrInstances = {};
+
+    document.querySelectorAll('.color-picker-component').forEach(el => {
+        var targetName = el.getAttribute('data-target');
+        var defaultValue = el.getAttribute('data-default');
+        
+        // Get initial value from hidden input
+        var hiddenInput = form.querySelector(`input[name="${targetName}"]`);
+        var initialValue = hiddenInput ? hiddenInput.value : defaultValue;
+
+        const pickr = Pickr.create({
+            el: el,
+            theme: 'nano', // or 'monolith', or 'classic'
+            default: initialValue,
+            swatches: [
+                'rgba(244, 246, 250, 1)',
+                'rgba(255, 255, 255, 1)',
+                'rgba(0, 0, 0, 1)',
+                'rgba(255, 0, 0, 0.5)',
+                'rgba(32, 107, 196, 1)'
+            ],
+            components: {
+                // Main components
+                preview: true,
+                opacity: true,
+                hue: true,
+
+                // Input / output Options
+                interaction: {
+                    hex: true,
+                    rgba: true,
+                    input: true,
+                    save: true
+                }
+            }
+        });
+
+        pickrInstances[targetName] = pickr;
+
+        // Sync Pickr -> Hidden Input -> Live Preview
+        pickr.on('change', (color, source, instance) => {
+            var rgbaColor = color.toRGBA().toString(0); // 0 decimal places for alpha if 1, else precision
+            
+            // Update hidden input
+            if(hiddenInput) {
+                hiddenInput.value = rgbaColor;
+                // Manually trigger handleThemeChange
+                handleThemeChange({ target: hiddenInput });
+            }
+        });
+        
+        // Optional: on save
+        pickr.on('save', (color, instance) => {
+             pickr.hide();
+        });
+    });
 
     // Sync inputs with localStorage on load
     var checkItems = function () {
@@ -192,8 +292,13 @@ document.addEventListener("DOMContentLoaded", function () {
             var inputs = form.querySelectorAll(`[name="${key}"]`)
             
             if (inputs.length > 0) {
-                if (key === 'theme-bg') {
-                    inputs[0].value = value || '#f4f6fa'
+                if (key.includes('-bg')) {
+                     var finalVal = value || (key === 'theme-bg' ? '#f4f6fa' : '#ffffff');
+                     inputs[0].value = finalVal;
+                     // Update Pickr if exists
+                     if(pickrInstances[key]) {
+                         pickrInstances[key].setColor(finalVal);
+                     }
                 } else if (inputs[0].tagName === 'SELECT') {
                     inputs[0].value = value
                 } else {
@@ -206,11 +311,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Handle theme changes (live preview)
-    form.addEventListener("change", function (event) {
+    function handleThemeChange(event) {
         var target = event.target, name = target.name, value = target.value
 
         if (name === 'theme-bg') {
              document.documentElement.style.setProperty('--tblr-body-bg', value)
+             window.localStorage.setItem("tabler-" + name, value)
+
+        } else if (name === 'theme-sidebar-bg') {
+             document.documentElement.style.setProperty('--tblr-sidebar-bg', value)
+             document.documentElement.setAttribute('data-bs-has-sidebar-bg', '')
+             window.localStorage.setItem("tabler-" + name, value)
+
+        } else if (name === 'theme-header-top-bg') {
+             document.documentElement.style.setProperty('--tblr-header-top-bg', value)
+             document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
              window.localStorage.setItem("tabler-" + name, value)
 
         } else if (name === 'theme-card-style') {
@@ -234,26 +349,67 @@ document.addEventListener("DOMContentLoaded", function () {
         if (name === 'layout' && typeof window.previewLayout === 'function') {
             window.previewLayout(value)
         }
-    })
-
-    // Reset Background Color (Simple)
-    if(resetBgButton){
-        resetBgButton.addEventListener("click", function() {
-            var bgInput = form.querySelector('input[name="theme-bg"]');
-            bgInput.value = '#f4f6fa'; 
-            document.documentElement.style.removeProperty('--tblr-body-bg'); 
-            window.localStorage.removeItem("tabler-theme-bg"); 
-        });
     }
+
+    // Listen to both 'change' (for select/radio) and 'input' (for color picker dragging)
+    form.addEventListener("change", handleThemeChange);
+    // form.addEventListener("input", handleThemeChange); // Not needed for hidden inputs driven by Pickr
+
+    // Universal Reset Bg Button
+    var resetBgButtons = form.querySelectorAll('button[data-reset-bg]');
+    resetBgButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var targetName = this.getAttribute('data-reset-bg');
+            var bgInput = form.querySelector(`input[name="${targetName}"]`);
+            var defaultVal = (targetName === 'theme-bg') ? '#f4f6fa' : '#ffffff';
+            
+            // Visual Reset Input
+            bgInput.value = defaultVal;
+
+            // Visual Reset Pickr
+            if(pickrInstances[targetName]) {
+                pickrInstances[targetName].setColor(defaultVal);
+            }
+            
+            // Logic Reset
+            if(targetName === 'theme-bg') document.documentElement.style.removeProperty('--tblr-body-bg');
+            if(targetName === 'theme-sidebar-bg') {
+                document.documentElement.style.removeProperty('--tblr-sidebar-bg');
+                document.documentElement.removeAttribute('data-bs-has-sidebar-bg');
+            }
+            if(targetName === 'theme-header-top-bg') {
+                document.documentElement.style.removeProperty('--tblr-header-top-bg');
+                document.documentElement.removeAttribute('data-bs-has-header-top-bg');
+            }
+
+            window.localStorage.removeItem("tabler-" + targetName);
+        });
+    });
 
     // Reset All
     resetButton.addEventListener("click", function () {
         for (var key in themeConfig) {
-            if (key === 'theme-bg') {
-                 document.documentElement.style.removeProperty('--tblr-body-bg')
+            if (key.includes('-bg')) {
+                 if(key === 'theme-bg') document.documentElement.style.removeProperty('--tblr-body-bg');
+                 if(key === 'theme-sidebar-bg') {
+                     document.documentElement.style.removeProperty('--tblr-sidebar-bg');
+                     document.documentElement.removeAttribute('data-bs-has-sidebar-bg');
+                 }
+                 if(key === 'theme-header-top-bg') {
+                     document.documentElement.style.removeProperty('--tblr-header-top-bg');
+                     document.documentElement.removeAttribute('data-bs-has-header-top-bg');
+                 }
+                 
                  window.localStorage.removeItem("tabler-" + key)
-                 var bgInput = form.querySelector('input[name="theme-bg"]');
-                 if(bgInput) bgInput.value = themeConfig[key] || '#f4f6fa';
+                 // Input visual reset
+                 var bgInput = form.querySelector(`input[name="${key}"]`);
+                 var defaultVal = (key === 'theme-bg') ? '#f4f6fa' : '#ffffff';
+                 if(bgInput) bgInput.value = defaultVal;
+                 
+                  // Pickr visual reset
+                 if(pickrInstances[key]) {
+                     pickrInstances[key].setColor(defaultVal);
+                 }
 
             } else if (key === 'theme-card-style') {
                  document.documentElement.removeAttribute("data-bs-card-style")
@@ -282,13 +438,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         })
 
-        // Background input
-        var bgInput = form.querySelector('input[name="theme-bg"]');
-        if(bgInput) {
-            // Priority: LocalStorage (Changed) -> Computed Style
-            var currentBg = document.documentElement.style.getPropertyValue('--tblr-body-bg');
-            formData.append('theme_bg', currentBg ? currentBg.trim() : '');
-        }
+        // Background inputs
+        var bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg'];
+        bgFields.forEach(function(bg) {
+            var input = form.querySelector(`input[name="${bg}"]`);
+            var cssVar;
+            if (bg === 'theme-bg') cssVar = '--tblr-body-bg';
+            else if (bg === 'theme-sidebar-bg') cssVar = '--tblr-sidebar-bg';
+            else if (bg === 'theme-header-top-bg') cssVar = '--tblr-header-top-bg';
+            
+            var currentVal = document.documentElement.style.getPropertyValue(cssVar);
+            formData.append(bg.replace(/-/g, '_'), currentVal ? currentVal.trim() : '');
+        });
 
         // Layout
         var layout = form.querySelector('input[name="layout"]:checked')

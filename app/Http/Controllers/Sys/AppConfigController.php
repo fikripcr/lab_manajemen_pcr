@@ -150,14 +150,16 @@ class AppConfigController extends Controller
         return response()->json([
             'success'  => true,
             'settings' => [
-                'theme'            => env('TABLER_THEME', 'light'),
-                'theme_primary'    => env('TABLER_THEME_PRIMARY', 'blue'),
-                'theme_font'       => env('TABLER_THEME_FONT', 'sans-serif'),
-                'theme_base'       => env('TABLER_THEME_BASE', 'gray'),
-                'theme_radius'     => env('TABLER_THEME_RADIUS', '1'),
-                'theme_bg'         => env('TABLER_THEME_BG', ''),
-                'theme_card_style' => env('TABLER_CARD_STYLE', 'default'),
-                'layout'           => env('TABLER_LAYOUT', 'vertical'),
+                'theme'               => env('TABLER_THEME', 'light'),
+                'theme_primary'       => env('TABLER_THEME_PRIMARY', 'blue'),
+                'theme_font'          => env('TABLER_THEME_FONT', 'sans-serif'),
+                'theme_base'          => env('TABLER_THEME_BASE', 'gray'),
+                'theme_radius'        => env('TABLER_THEME_RADIUS', '1'),
+                'theme_bg'            => env('TABLER_THEME_BG', ''),
+                'theme_sidebar_bg'    => env('TABLER_SIDEBAR_BG', ''),
+                'theme_header_top_bg' => env('TABLER_HEADER_TOP_BG', ''),
+                'theme_card_style'    => env('TABLER_CARD_STYLE', 'default'),
+                'layout'              => env('TABLER_LAYOUT', 'vertical'),
             ],
         ]);
     }
@@ -168,14 +170,17 @@ class AppConfigController extends Controller
     public function applyThemeSettings(Request $request)
     {
         $validated = $request->validate([
-            'theme'            => 'nullable|in:light,dark',
-            'theme_primary'    => 'nullable|in:blue,azure,indigo,purple,pink,red,orange,yellow,lime,green,teal,cyan',
-            'theme_font'       => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
-            'theme_base'       => 'nullable|in:slate,gray,zinc,neutral,stone',
-            'theme_radius'     => 'nullable|in:0,0.5,1,1.5,2',
-            'theme_bg'         => 'nullable|string', // Allow hex color or empty
-            'theme_card_style' => 'nullable|in:default,flat,shadow,border,modern',
-            'layout'           => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
+            'theme'                => 'nullable|in:light,dark',
+            'theme_primary'        => 'nullable|in:blue,azure,indigo,purple,pink,red,orange,yellow,lime,green,teal,cyan',
+            'theme_font'           => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
+            'theme_base'           => 'nullable|in:slate,gray,zinc,neutral,stone',
+            'theme_radius'         => 'nullable|in:0,0.5,1,1.5,2',
+            'theme_bg'             => 'nullable|string', // Allow hex color or empty
+            'theme_sidebar_bg'     => 'nullable|string',
+            'theme_header_top_bg'  => 'nullable|string', // New
+            'theme_header_menu_bg' => 'nullable|string', // New
+            'theme_card_style'     => 'nullable|in:default,flat,shadow,border,modern',
+            'layout'               => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
         ]);
 
         try {
@@ -183,14 +188,16 @@ class AppConfigController extends Controller
             $envContent = file_get_contents($envPath);
 
             $envMapping = [
-                'theme'            => 'TABLER_THEME',
-                'theme_primary'    => 'TABLER_THEME_PRIMARY',
-                'theme_font'       => 'TABLER_THEME_FONT',
-                'theme_base'       => 'TABLER_THEME_BASE',
-                'theme_radius'     => 'TABLER_THEME_RADIUS',
-                'theme_bg'         => 'TABLER_THEME_BG',
-                'theme_card_style' => 'TABLER_CARD_STYLE',
-                'layout'           => 'TABLER_LAYOUT',
+                'theme'               => 'TABLER_THEME',
+                'theme_primary'       => 'TABLER_THEME_PRIMARY',
+                'theme_font'          => 'TABLER_THEME_FONT',
+                'theme_base'          => 'TABLER_THEME_BASE',
+                'theme_radius'        => 'TABLER_THEME_RADIUS',
+                'theme_bg'            => 'TABLER_THEME_BG',
+                'theme_sidebar_bg'    => 'TABLER_SIDEBAR_BG',
+                'theme_header_top_bg' => 'TABLER_HEADER_TOP_BG',
+                'theme_card_style'    => 'TABLER_CARD_STYLE',
+                'layout'              => 'TABLER_LAYOUT',
             ];
 
             foreach ($validated as $key => $value) {

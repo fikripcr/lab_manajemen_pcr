@@ -152,6 +152,19 @@
                         <span class="nav-link-title">Development Guide</span>
                     </a>
                 </li>
+
+                {{-- DUMMY MENUS FOR SCROLL TESTING --}}
+                <li class="nav-item mt-3"><span class="nav-link disabled text-uppercase text-muted small">Scroll Test</span></li>
+                 @foreach(range(1, 10) as $i)
+                 <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /></svg>
+                        </span>
+                        <span class="nav-link-title">Dummy Item {{ $i }}</span>
+                    </a>
+                </li>
+                 @endforeach
             </ul>
         </div>
     </div>

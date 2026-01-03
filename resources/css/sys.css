@@ -96,3 +96,40 @@ div.dt-processing>div:last-child>div {
 [data-bs-card-style="modern"] .card-header {
     border-radius: 12px 12px 0 0 !important;
 }
+
+/* --- Sidebar Background Override --- */
+/* Forces the sidebar to use the custom variable if the attribute is present on the root */
+:root[data-bs-has-sidebar-bg] .navbar-vertical {
+    background-color: var(--tblr-sidebar-bg) !important;
+    box-shadow: none !important;
+    /* Removes the default right border/shadow line */
+}
+
+/* --- Header Top Background Override --- */
+:root[data-bs-has-header-top-bg] header.navbar.d-print-none {
+    background-color: var(--tblr-header-top-bg) !important;
+}
+
+/* --- Header Menu Background Override (Linked to Sidebar) --- */
+/* Reuse sidebar configuration for the menu bar */
+:root[data-bs-has-sidebar-bg] header.navbar-expand-md .navbar {
+    background-color: var(--tblr-sidebar-bg) !important;
+}
+
+/* --- Sidebar Scrollbar Customization --- */
+/* Hide native scrollbar for Perfect Scrollbar container */
+.navbar-vertical .navbar-collapse {
+    position: relative;
+    /* Required for PS */
+    overflow: hidden !important;
+    /* Hide native scroll */
+}
+
+/* Optional: Tweaking Perfect Scrollbar rail visibility */
+.ps__rail-y {
+    opacity: 0.6;
+}
+
+.ps__thumb-y {
+    background-color: rgba(var(--tblr-body-color-rgb), 0.3) !important;
+}
