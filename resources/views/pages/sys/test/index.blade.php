@@ -11,143 +11,156 @@
 
 @section('content')
 
-    <div class="row">
+    <div class="row row-cards">
         <!-- Test Email Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bx-envelope bx-lg text-primary"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-mail text-primary icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test Email</h5>
-                    <p class="card-text text-muted">Send a notification via email to <b>({{ auth()->user()->email }})</b></p>
-                    <button type="button" class="btn btn-primary" onclick="testEmail()">
-                        Send Test Email
+                    <h3 class="card-title">Test Email</h3>
+                    <p class="text-secondary small">Send a notification via email to <strong>{{ auth()->user()->email }}</strong></p>
+                    <button type="button" class="btn btn-primary w-100" onclick="testEmail()">
+                        <i class="ti ti-send me-2"></i> Send Test Email
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Test Notification Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bx-bell bx-lg text-success"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-bell text-success icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test Notification</h5>
-                    <p class="card-text text-muted">Send a notification via database to <b>({{ auth()->user()->email }})</b></p>
-                    <button type="button" class="btn btn-success" onclick="testNotification()">
-                        Send Test Notification
+                    <h3 class="card-title">Test Notification</h3>
+                    <p class="text-secondary small">Send a notification via database to <strong>{{ auth()->user()->email }}</strong></p>
+                    <button type="button" class="btn btn-success w-100" onclick="testNotification()">
+                        <i class="ti ti-bell-ringing me-2"></i> Send Test Notification
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Test JS Library Features Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bx-code bx-lg text-info"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-code text-info icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test JS Library Features</h5>
-                    <p class="card-text text-muted">Test various JS library features such as Flatpicker, TinyMCE, etc.</p>
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('sys.test.features') }}" class="btn btn-info">
-                            Test JS Features
-                        </a>
-                    </div>
+                    <h3 class="card-title">JS Library Features</h3>
+                    <p class="text-secondary small">Test various JS library features such as Flatpicker, TinyMCE, etc.</p>
+                    <a href="{{ route('sys.test.features') }}" class="btn btn-info w-100">
+                        <i class="ti ti-eye me-2"></i> View Features
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Test PDF Export Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bx-file bx-lg text-danger"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-file-type-pdf text-danger icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test PDF Export <a href="https://github.com/barryvdh/laravel-dompdf" target="_blank" class="ms-1 text-decoration-none" title="PDF Documentation"><i class="bx bx-link-external"></i></a></h5>
-                    <p class="card-text text-muted">Generate a test PDF report with sample system data and QR code</p>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-danger" onclick="testPdfExport()">
-                            Generate Test PDF
-                        </button>
-                    </div>
+                    <h3 class="card-title">
+                        PDF Export
+                        <a href="https://github.com/barryvdh/laravel-dompdf" target="_blank" class="ms-1 text-muted" title="Documentation">
+                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
+                        </a>
+                    </h3>
+                    <p class="text-secondary small">Generate a test PDF report with sample system data and QR code</p>
+                    <button type="button" class="btn btn-danger w-100" onclick="testPdfExport()">
+                        <i class="ti ti-download me-2"></i> Generate PDF
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Test Excel Export Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bx-file-blank bx-lg text-success"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-file-type-xls text-success icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test Excel Export <a href="https://docs.laravel-excel.com/" target="_blank" class="ms-1 text-decoration-none" title="Excel Documentation"><i class="bx bx-link-external"></i></a></h5>
-                    <p class="card-text text-muted">Generate a test Excel report with sample system data and QR code</p>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-success" onclick="testExcelExport()">
-                            Generate Test Excel
-                        </button>
-                    </div>
+                    <h3 class="card-title">
+                        Excel Export
+                        <a href="https://docs.laravel-excel.com/" target="_blank" class="ms-1 text-muted" title="Documentation">
+                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
+                        </a>
+                    </h3>
+                    <p class="text-secondary small">Generate a test Excel report with sample system data and QR code</p>
+                    <button type="button" class="btn btn-success w-100" onclick="testExcelExport()">
+                        <i class="ti ti-download me-2"></i> Generate Excel
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Test Word Export Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bxl-microsoft bx-lg text-primary"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-file-type-doc text-primary icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test Word Export <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-decoration-none" title="Word Documentation"><i class="bx bx-link-external"></i></a></h5>
-                    <p class="card-text text-muted">Generate a test Word document with sample system data and QR code</p>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-primary" onclick="testWordExport()">
-                            Generate Test Word
-                        </button>
-                    </div>
+                    <h3 class="card-title">
+                        Word Export
+                        <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-muted" title="Documentation">
+                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
+                        </a>
+                    </h3>
+                    <p class="text-secondary small">Generate a test Word document with sample system data and QR code</p>
+                    <button type="button" class="btn btn-primary w-100" onclick="testWordExport()">
+                        <i class="ti ti-download me-2"></i> Generate Word
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Test QR Code Generator Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bx-qr bx-lg text-secondary"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-qrcode text-secondary icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test QR Code Generator <a href="https://github.com/SimpleSoftwareIO/simple-qrcode" target="_blank" class="ms-1 text-decoration-none" title="QR Code Documentation"><i class="bx bx-link-external"></i></a></h5>
-                    <p class="card-text text-muted">Generate QR codes with system data</p>
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('sys.test.qrcode') }}" class="btn btn-secondary">
-                            Test QR Code Features
+                    <h3 class="card-title">
+                        QR Code Generator
+                        <a href="https://github.com/SimpleSoftwareIO/simple-qrcode" target="_blank" class="ms-1 text-muted" title="Documentation">
+                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
                         </a>
-                    </div>
+                    </h3>
+                    <p class="text-secondary small">Generate QR codes with system data</p>
+                    <a href="{{ route('sys.test.qrcode') }}" class="btn btn-secondary w-100">
+                        <i class="ti ti-qrcode me-2"></i> Test QR Codes
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Test DOCX Template Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-sm">
                 <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3  bg-opacity-10">
-                        <i class="bx bxl-microsoft bx-lg text-primary"></i>
+                    <div class="mb-3">
+                        <i class="ti ti-template text-warning icon-lg" style="font-size: 3rem;"></i>
                     </div>
-                    <h5 class="card-title">Test DOCX Template <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-decoration-none" title="PHPWord Documentation"><i class="bx bx-link-external"></i></a></h5>
-                    <p class="card-text text-muted">Upload DOCX template with variables</p>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-primary" onclick="testDocxTemplate()">
-                            Upload & Process DOCX
-                        </button>
-                    </div>
+                    <h3 class="card-title">
+                        DOCX Template
+                        <a href="https://phpword.readthedocs.io/" target="_blank" class="ms-1 text-muted" title="Documentation">
+                            <i class="ti ti-external-link" style="font-size: 1rem;"></i>
+                        </a>
+                    </h3>
+                    <p class="text-secondary small">Upload DOCX template with variables</p>
+                    <button type="button" class="btn btn-warning w-100" onclick="testDocxTemplate()">
+                        <i class="ti ti-upload me-2"></i> Process DOCX
+                    </button>
                 </div>
             </div>
         </div>

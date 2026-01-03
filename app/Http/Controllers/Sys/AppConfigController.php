@@ -155,6 +155,7 @@ class AppConfigController extends Controller
                 'theme_font'    => env('TABLER_THEME_FONT', 'sans-serif'),
                 'theme_base'    => env('TABLER_THEME_BASE', 'gray'),
                 'theme_radius'  => env('TABLER_THEME_RADIUS', '1'),
+                'theme_bg'      => env('TABLER_THEME_BG', ''),
                 'layout'        => env('TABLER_LAYOUT', 'vertical'),
             ],
         ]);
@@ -171,6 +172,7 @@ class AppConfigController extends Controller
             'theme_font'    => 'nullable|in:sans-serif,serif,monospace,comic',
             'theme_base'    => 'nullable|in:slate,gray,zinc,neutral,stone',
             'theme_radius'  => 'nullable|in:0,0.5,1,1.5,2',
+            'theme_bg'      => 'nullable|string', // Allow hex color or empty
             'layout'        => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
         ]);
 
@@ -184,6 +186,7 @@ class AppConfigController extends Controller
                 'theme_font'    => 'TABLER_THEME_FONT',
                 'theme_base'    => 'TABLER_THEME_BASE',
                 'theme_radius'  => 'TABLER_THEME_RADIUS',
+                'theme_bg'      => 'TABLER_THEME_BG',
                 'layout'        => 'TABLER_LAYOUT',
             ];
 

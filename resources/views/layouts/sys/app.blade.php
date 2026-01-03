@@ -38,12 +38,19 @@
                 "theme-font": "{{ $themeData['themeFont'] ?? 'sans-serif' }}",
                 "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
                 "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
+                "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
             }
 
             for (const key in serverDefaults) {
                 const storedTheme = localStorage.getItem('tabler-' + key)
                 const value = storedTheme || serverDefaults[key]
-                if (value !== 'light' && value !== 'gray' && value !== 'sans-serif' && value !== 'blue' && value !== '1') {
+                
+                // Special handling for background color
+                if (key === 'theme-bg') {
+                    if (value) {
+                        document.documentElement.style.setProperty('--tblr-body-bg', value)
+                    }
+                } else if (value !== 'light' && value !== 'gray' && value !== 'sans-serif' && value !== 'blue' && value !== '1') {
                     document.documentElement.setAttribute('data-bs-' + key, value)
                 }
             }

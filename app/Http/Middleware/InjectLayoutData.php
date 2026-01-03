@@ -199,6 +199,7 @@ class InjectLayoutData
             'themeFont'    => env('TABLER_THEME_FONT', 'sans-serif'),
             'themeBase'    => env('TABLER_THEME_BASE', 'gray'),
             'themeRadius'  => env('TABLER_THEME_RADIUS', '1'),
+            'themeBg'      => env('TABLER_THEME_BG', ''),
         ];
 
         // Get layout preset

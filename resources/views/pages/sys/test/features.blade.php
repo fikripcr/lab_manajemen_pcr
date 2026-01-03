@@ -18,80 +18,50 @@
 @endsection
 
 @section('content')
-
-    <div class="row">
-        <div class="col-12">
-            <!-- Flatpickr Date Picker Section -->
-            <div class="card mb-4">
+    <div class="row row-cards">
+        {{-- Left Column: Form Inputs --}}
+        <div class="col-lg-6">
+            
+            {{-- Flatpickr Date Picker --}}
+            <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="card-title">Flatpickr Date Picker</h5>
+                    <h3 class="card-title">
+                        <i class="ti ti-calendar me-2"></i> Flatpickr Date Picker
+                    </h3>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="datePicker" class="form-label">Date Picker</label>
                             <input type="text" id="datePicker" class="form-control" placeholder="Select date">
                         </div>
                         <div class="col-md-6">
-                            <label for="dateTimePicker" class="form-label">Date & Time Picker</label>
-                            <input type="text" id="dateTimePicker" class="form-control" placeholder="Select date and time">
+                            <label for="dateTimePicker" class="form-label">Date & Time</label>
+                            <input type="text" id="dateTimePicker" class="form-control" placeholder="Select date & time">
                         </div>
                     </div>
-                    <div class="row mt-3">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="rangePicker" class="form-label">Date Range Picker</label>
-                            <input type="text" id="rangePicker" class="form-control" placeholder="Select date range">
+                            <label for="rangePicker" class="form-label">Date Range</label>
+                            <input type="text" id="rangePicker" class="form-control" placeholder="Select range">
                         </div>
                         <div class="col-md-6">
-                            <label for="multiplePicker" class="form-label">Multiple Dates Picker</label>
-                            <input type="text" id="multiplePicker" class="form-control" placeholder="Select multiple dates">
+                            <label for="multiplePicker" class="form-label">Multiple Dates</label>
+                            <input type="text" id="multiplePicker" class="form-control" placeholder="Select multiple">
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FilePond Section -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title">FilePond File Upload</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="filepond" class="form-label">Upload Files</label>
-                        <input type="file" id="filepond" class="form-control" multiple>
-                    </div>
-                </div>
-            </div>
-
-            {{-- TinyMCE Editor Test --}}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title">TinyMCE Editor Test</h5>
-                </div>
-                <div class="card-body">
-                    <form id="tinymceTestForm">
-                        <div class="mb-3">
-                            <label for="editorContent" class="form-label">Editor Content</label>
-                            <x-sys.editor id="editorContent" name="isi" :value="old('isi')" height="200" required />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button type="button" class="btn btn-secondary" id="getContentBtn">Get Content</button>
-                    </form>
-
-                    <div class="mt-3">
-                        <h6>Content Preview:</h6>
-                        <div id="contentPreview" class="border p-3 bg-light"></div>
                     </div>
                 </div>
             </div>
 
             {{-- Choices.js Test --}}
-            <div class="card mb-4">
+            <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="card-title">Choices.js Test</h5>
+                    <h3 class="card-title">
+                        <i class="ti ti-list-check me-2"></i> Choices.js Advanced Select
+                    </h3>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="singleSelect" class="form-label">Single Select</label>
                             <select id="singleSelect" class="form-select">
@@ -114,60 +84,118 @@
                         </div>
                     </div>
 
-                    <div class="row mt-3">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="searchSelect" class="form-label">Search Permissions by API (Single)</label>
+                            <label for="searchSelect" class="form-label">API Search (Single)</label>
                             <select id="searchSelect" class="form-select"></select>
                         </div>
                         <div class="col-md-6">
-                            <label for="searchSelectMulti" class="form-label">Search Permissions by API (Multiple)</label>
+                            <label for="searchSelectMulti" class="form-label">API Search (Multiple)</label>
                             <select id="searchSelectMulti" class="form-select" multiple></select>
                         </div>
                     </div>
 
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-primary" id="getChoicesValue">Get Selected Values</button>
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                        <button type="button" class="btn btn-primary" id="getChoicesValue">
+                            <i class="ti ti-code me-1"></i> Get Values
+                        </button>
                     </div>
 
                     <div class="mt-3">
-                        <h6>Selection Preview:</h6>
-                        <div id="choicesPreview" class="border p-3 bg-light"></div>
+                        <div class="form-label">Selection Preview</div>
+                        <div id="choicesPreview" class="border p-2 bg-light rounded small text-muted font-monospace">
+                            No values selected yet.
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {{-- SweetAlert Utilities Test --}}
-            <div class="card">
+        </div>
+
+        {{-- Right Column: Rich Content --}}
+        <div class="col-lg-6">
+
+            {{-- FilePond Section --}}
+            <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="card-title">SweetAlert Utilities Test</h5>
+                    <h3 class="card-title">
+                        <i class="ti ti-upload me-2"></i> FilePond Upload
+                    </h3>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Basic Alerts</h6>
-                            <button type="button" class="btn btn-primary mb-2" id="showSuccessBtn">Success Message</button>
-                            <button type="button" class="btn btn-danger mb-2" id="showErrorBtn">Error Message</button>
-                            <button type="button" class="btn btn-warning mb-2" id="showWarningBtn">Warning Message</button>
-                            <button type="button" class="btn btn-info mb-2" id="showInfoBtn">Info Message</button>
-                            <button type="button" class="btn btn-secondary mb-2" id="showLoadingBtn">Loading Message</button>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Confirmation & Advanced Alerts</h6>
-                            <button type="button" class="btn btn-success mb-2" id="showConfirmationBtn">Confirmation</button>
-                            <button type="button" class="btn btn-danger mb-2" id="showDeleteConfirmationBtn">Delete Confirmation</button>
-                            <button type="button" class="btn btn-primary mb-2" id="showFormErrorsBtn">Form Errors</button>
-                            <button type="button" class="btn btn-info mb-2" id="handleAjaxResponseBtn">Handle AJAX Response</button>
-                            <button type="button" class="btn btn-warning mb-2" id="showBulkActionBtn">Bulk Action Confirmation</button>
-                        </div>
-                    </div>
+                    <label for="filepond" class="form-label">Upload Files</label>
+                    <input type="file" id="filepond" class="form-control" multiple>
+                    <div class="form-hint">Supports multiple file upload with preview.</div>
+                </div>
+            </div>
 
-                    <div class="mt-4">
-                        <h6>Custom Content Example:</h6>
-                        <button type="button" class="btn btn-primary" id="showHtmlContentBtn">Alert with HTML Content</button>
+            {{-- TinyMCE Editor Test --}}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="ti ti-edit me-2"></i> TinyMCE Editor
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form id="tinymceTestForm">
+                        <div class="mb-3">
+                            <x-sys.editor id="editorContent" name="isi" :value="old('isi')" height="250" required />
+                        </div>
+                        <div class="btn-list">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti ti-device-floppy me-1"></i> Submit
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="getContentBtn">
+                                <i class="ti ti-eye me-1"></i> Get Content
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-3">
+                        <div class="form-label">Content Preview</div>
+                        <div id="contentPreview" class="border p-3 bg-light rounded" style="min-height: 100px;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- Bottom Full Width: Alerts --}}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="ti ti-bell me-2"></i> SweetAlert2 Utilities
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h4 class="card-subtitle mb-3">Basic Alerts</h4>
+                            <div class="btn-list">
+                                <button type="button" class="btn btn-success" id="showSuccessBtn">Success</button>
+                                <button type="button" class="btn btn-danger" id="showErrorBtn">Error</button>
+                                <button type="button" class="btn btn-warning" id="showWarningBtn">Warning</button>
+                                <button type="button" class="btn btn-info" id="showInfoBtn">Info</button>
+                                <button type="button" class="btn btn-secondary" id="showLoadingBtn">Loading</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="card-subtitle mb-3">Advanced Interactions</h4>
+                            <div class="btn-list">
+                                <button type="button" class="btn btn-outline-success" id="showConfirmationBtn">Confirm</button>
+                                <button type="button" class="btn btn-outline-danger" id="showDeleteConfirmationBtn">Delete</button>
+                                <button type="button" class="btn btn-outline-primary" id="showFormErrorsBtn">Form Errors</button>
+                                <button type="button" class="btn btn-outline-info" id="handleAjaxResponseBtn">Ajax Response</button>
+                                <button type="button" class="btn btn-outline-warning" id="showBulkActionBtn">Bulk Action</button>
+                                <button type="button" class="btn btn-outline-dark" id="showHtmlContentBtn">HTML Content</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 @endsection
 

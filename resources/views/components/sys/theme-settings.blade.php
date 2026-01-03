@@ -40,7 +40,7 @@
                         <label class="form-label">Font Family</label>
                         <select name="theme-font" class="form-select">
                             @foreach([
-                                'inter' => 'Inter (Default)', 
+                                'inter' => 'Inter', 
                                 'roboto' => 'Roboto', 
                                 'poppins' => 'Poppins', 
                                 'public-sans' => 'Public Sans', 
@@ -69,6 +69,16 @@
                             <option value="{{ $radius }}" {{ ($themeData['themeRadius'] ?? '1') === $radius ? 'selected' : '' }}>{{ $radius }}rem</option>
                             @endforeach
                         </select>
+                    </div>
+
+                    {{-- Custom Background --}}
+                    <div class="col-12">
+                        <label class="form-label">Background Color</label>
+                        <div class="input-group">
+                            <input type="color" class="form-control form-control-color" name="theme-bg" value="{{ $themeData['themeBg'] ?: '#f4f6fa' }}" title="Choose your color">
+                            <button class="btn btn-outline-secondary" type="button" id="reset-bg">Reset</button>
+                        </div>
+                        <div class="form-text small">Override theme background</div>
                     </div>
 
                     {{-- Color Scheme --}}
@@ -155,13 +165,14 @@ document.addEventListener("DOMContentLoaded", function () {
         "theme-font": "{{ $themeData['themeFont'] ?? 'sans-serif' }}",
         "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
         "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
+        "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
     }
 
     var form = document.getElementById("offcanvasSettings")
     var resetButton = document.getElementById("reset-changes")
     var applyButton = document.getElementById("apply-settings")
+    var resetBgButton = document.getElementById("reset-bg")
 
-    // Sync radio buttons with localStorage on load
     // Sync inputs with localStorage on load
     var checkItems = function () {
         for (var key in themeConfig) {
@@ -169,7 +180,10 @@ document.addEventListener("DOMContentLoaded", function () {
             var inputs = form.querySelectorAll(`[name="${key}"]`)
             
             if (inputs.length > 0) {
-                if (inputs[0].tagName === 'SELECT') {
+                if (key === 'theme-bg') {
+                    // If no value, default to light gray just for the picker visual
+                    inputs[0].value = value || '#f4f6fa'
+                } else if (inputs[0].tagName === 'SELECT') {
                     inputs[0].value = value
                 } else {
                     inputs.forEach((input) => {
@@ -184,11 +198,17 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("change", function (event) {
         var target = event.target, name = target.name, value = target.value
 
-        // Theme properties (live preview)
-        for (var key in themeConfig) {
-            if (name === key) {
-                document.documentElement.setAttribute("data-bs-" + key, value)
-                window.localStorage.setItem("tabler-" + key, value)
+        if (name === 'theme-bg') {
+             // Handle background color separately (CSS variable)
+             document.documentElement.style.setProperty('--tblr-body-bg', value)
+             window.localStorage.setItem("tabler-" + name, value)
+        } else {
+             // Theme properties (live preview via data attributes)
+            for (var key in themeConfig) {
+                if (name === key) {
+                    document.documentElement.setAttribute("data-bs-" + key, value)
+                    window.localStorage.setItem("tabler-" + key, value)
+                }
             }
         }
         
@@ -198,11 +218,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     })
 
+    // Reset Background Color
+    resetBgButton.addEventListener("click", function() {
+        var bgInput = form.querySelector('input[name="theme-bg"]');
+        bgInput.value = '#f4f6fa'; // Visual reset
+        document.documentElement.style.removeProperty('--tblr-body-bg'); // Remove CSS override
+        window.localStorage.removeItem("tabler-theme-bg"); // Remove from local storage
+    });
+
     // Reset preview to server defaults
     resetButton.addEventListener("click", function () {
         for (var key in themeConfig) {
-            document.documentElement.setAttribute("data-bs-" + key, themeConfig[key])
-            window.localStorage.removeItem("tabler-" + key)
+            if (key === 'theme-bg') {
+                 // Reset BG
+                 document.documentElement.style.removeProperty('--tblr-body-bg')
+                 window.localStorage.removeItem("tabler-" + key)
+                 var bgInput = form.querySelector('input[name="theme-bg"]');
+                 if(bgInput) bgInput.value = themeConfig[key] || '#f4f6fa';
+            } else {
+                document.documentElement.setAttribute("data-bs-" + key, themeConfig[key])
+                window.localStorage.removeItem("tabler-" + key)
+            }
         }
         checkItems()
     })
@@ -214,11 +250,37 @@ document.addEventListener("DOMContentLoaded", function () {
         // Theme settings
         var themeFields = ['theme', 'theme-primary', 'theme-font', 'theme-base', 'theme-radius']
         themeFields.forEach(function(field) {
-            var selected = form.querySelector(`input[name="${field}"]:checked`)
+            var selected = form.querySelector(`input[name="${field}"]:checked`) || form.querySelector(`select[name="${field}"]`)
             if (selected) {
                 formData.append(field.replace(/-/g, '_'), selected.value)
             }
         })
+
+        // Background Color
+        var bgInput = form.querySelector('input[name="theme-bg"]')
+        // Only send if it's set in localStorage (meaning user changed it) or it has a value different from default
+        // Actually, simplest is to check if the CSS var is active or localStorage is present.
+        // Let's just always send the picker value if it's not empty, OR send empty string if they reset.
+        // Better strategy: Check if user interacted. If localStorage has value, send it. If reset button clicked, maybe send empty?
+        // Let's use the input value directly.
+        if (bgInput) {
+             // Logic check: if we want to "unset", we need a way.
+             // Currently, if the user picks a color, we save it. If they want default, they should use Reset button which clears localStorage.
+             // But to persistent save "Empty", we need to know if they want empty.
+             // The Reset BG button clears localStorage.
+             // If localStorage has tabler-theme-bg, use that.
+             var storedBg = window.localStorage.getItem("tabler-theme-bg");
+             if (storedBg) {
+                 formData.append('theme_bg', storedBg);
+             } else {
+                 // If no local storage (meaning reset or untouched), check if server had a value we want to keep?
+                 // Or if user clicked Reset, we want to clear server value.
+                 // Let's assume Apply saves CURRENT state.
+                 // If style property --tblr-body-bg is set, save that. Else save empty.
+                 var currentBg = document.documentElement.style.getPropertyValue('--tblr-body-bg');
+                 formData.append('theme_bg', currentBg ? currentBg.trim() : '');
+             }
+        }
 
         // Layout (single selection)
         var layout = form.querySelector('input[name="layout"]:checked')
@@ -239,8 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     for (var key in themeConfig) {
                         window.localStorage.removeItem("tabler-" + key)
                     }
-                        // Simply reload immediately
-                        window.location.reload();
+                    window.location.reload();
                 }
             })
     })
