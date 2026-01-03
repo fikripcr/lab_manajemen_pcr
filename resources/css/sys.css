@@ -10,6 +10,7 @@
 @import '@tabler/core/dist/css/tabler.min.css';
 
 /* Tabler Vendors (for third-party integrations) */
+@import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
 @import '@tabler/core/dist/css/tabler-vendors.min.css';
 
 /* Tabler Themes (for theme customization) */
@@ -18,8 +19,16 @@
 /* Tabler Icons Webfont */
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
-/* Boxicons - Keep for existing icons in views */
-/* @import '../assets/sys/vendor/fonts/boxicons.min.css'; */
 
 /* Choices.js CSS for select dropdowns */
 @import '../assets/sys/vendor/choices.min.css';
+
+/* Fix issue with margin-left on scroll window */
+@media (min-width: 992px) {
+
+    :host,
+    :root {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
