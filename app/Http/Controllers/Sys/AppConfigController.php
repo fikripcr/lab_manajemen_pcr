@@ -1,37 +1,36 @@
 <?php
-
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\AppConfigurationRequest;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class AppConfigController extends Controller
 {
     public function index()
     {
         $config = [
-            'app_name' => config('app.name'),
-            'app_debug' => $this->getBooleanEnvValue('APP_DEBUG', config('app.debug')),
-            'app_url' => config('app.url'),
+            'app_name'             => config('app.name'),
+            'app_debug'            => $this->getBooleanEnvValue('APP_DEBUG', config('app.debug')),
+            'app_url'              => config('app.url'),
             // Mail configuration
-            'mail_mailer' => $this->getCurrentEnvValue('MAIL_MAILER'),
-            'mail_host' => $this->getCurrentEnvValue('MAIL_HOST'),
-            'mail_port' => $this->getCurrentEnvValue('MAIL_PORT'),
-            'mail_username' => $this->getCurrentEnvValue('MAIL_USERNAME'),
-            'mail_password' => $this->getCurrentEnvValue('MAIL_PASSWORD'),
-            'mail_encryption' => $this->getCurrentEnvValue('MAIL_ENCRYPTION'),
-            'mail_from_address' => $this->getCurrentEnvValue('MAIL_FROM_ADDRESS'),
-            'mail_from_name' => $this->getCurrentEnvValue('MAIL_FROM_NAME'),
+            'mail_mailer'          => $this->getCurrentEnvValue('MAIL_MAILER'),
+            'mail_host'            => $this->getCurrentEnvValue('MAIL_HOST'),
+            'mail_port'            => $this->getCurrentEnvValue('MAIL_PORT'),
+            'mail_username'        => $this->getCurrentEnvValue('MAIL_USERNAME'),
+            'mail_password'        => $this->getCurrentEnvValue('MAIL_PASSWORD'),
+            'mail_encryption'      => $this->getCurrentEnvValue('MAIL_ENCRYPTION'),
+            'mail_from_address'    => $this->getCurrentEnvValue('MAIL_FROM_ADDRESS'),
+            'mail_from_name'       => $this->getCurrentEnvValue('MAIL_FROM_NAME'),
             // Google configuration
-            'google_client_id' => $this->getCurrentEnvValue('GOOGLE_CLIENT_ID'),
+            'google_client_id'     => $this->getCurrentEnvValue('GOOGLE_CLIENT_ID'),
             'google_client_secret' => $this->getCurrentEnvValue('GOOGLE_CLIENT_SECRET'),
-            'google_redirect_uri' => $this->getCurrentEnvValue('GOOGLE_REDIRECT_URI'),
+            'google_redirect_uri'  => $this->getCurrentEnvValue('GOOGLE_REDIRECT_URI'),
             // Mysqldump configuration
-            'mysqldump_path' => $this->getCurrentEnvValue('MYSQLDUMP_PATH'),
+            'mysqldump_path'       => $this->getCurrentEnvValue('MYSQLDUMP_PATH'),
         ];
 
         return view('pages.sys.app-config.index', compact('config'));
@@ -42,11 +41,11 @@ class AppConfigController extends Controller
         $configSection = $request->input('config_section', 'app');
 
         // Read the current .env file
-        $envPath = base_path('.env');
+        $envPath    = base_path('.env');
         $envContent = File::get($envPath);
 
         // Update values based on the section
-        switch($configSection) {
+        switch ($configSection) {
             case 'app':
                 $envContent = $this->updateEnvValue($envContent, 'APP_NAME=', 'APP_NAME=' . $request->app_name);
                 $envContent = $this->updateEnvValue($envContent, 'APP_DEBUG=', 'APP_DEBUG=' . ($request->app_debug ? 'true' : 'false'));
@@ -59,7 +58,7 @@ class AppConfigController extends Controller
                 $envContent = $this->updateEnvValue($envContent, 'MAIL_HOST=', 'MAIL_HOST=' . $request->mail_host);
                 $envContent = $this->updateEnvValue($envContent, 'MAIL_PORT=', 'MAIL_PORT=' . $request->mail_port);
                 $envContent = $this->updateEnvValue($envContent, 'MAIL_USERNAME=', 'MAIL_USERNAME=' . $request->mail_username);
-                $envContent = $this->updateEnvValue($envContent, 'MAIL_PASSWORD=', 'MAIL_PASSWORD="' . $request->mail_password.'"');
+                $envContent = $this->updateEnvValue($envContent, 'MAIL_PASSWORD=', 'MAIL_PASSWORD="' . $request->mail_password . '"');
                 $envContent = $this->updateEnvValue($envContent, 'MAIL_ENCRYPTION=', 'MAIL_ENCRYPTION=' . $request->mail_encryption);
                 $envContent = $this->updateEnvValue($envContent, 'MAIL_FROM_ADDRESS=', 'MAIL_FROM_ADDRESS=' . $request->mail_from_address);
                 $envContent = $this->updateEnvValue($envContent, 'MAIL_FROM_NAME=', 'MAIL_FROM_NAME=' . $request->mail_from_name);
@@ -105,8 +104,8 @@ class AppConfigController extends Controller
 
         // Log the configuration update with appropriate message based on section
         $sectionNames = [
-            'app' => 'Application',
-            'mail' => 'Mail',
+            'app'    => 'Application',
+            'mail'   => 'Mail',
             'google' => 'Google OAuth',
             'backup' => 'Database Backup',
         ];
@@ -149,14 +148,14 @@ class AppConfigController extends Controller
     public function getThemeSettings()
     {
         return response()->json([
-            'success' => true,
+            'success'  => true,
             'settings' => [
-                'theme' => env('TABLER_THEME', 'light'),
+                'theme'         => env('TABLER_THEME', 'light'),
                 'theme_primary' => env('TABLER_THEME_PRIMARY', 'blue'),
-                'theme_font' => env('TABLER_THEME_FONT', 'sans-serif'),
-                'theme_base' => env('TABLER_THEME_BASE', 'gray'),
-                'theme_radius' => env('TABLER_THEME_RADIUS', '1'),
-                'layout' => env('TABLER_LAYOUT', 'vertical'),
+                'theme_font'    => env('TABLER_THEME_FONT', 'sans-serif'),
+                'theme_base'    => env('TABLER_THEME_BASE', 'gray'),
+                'theme_radius'  => env('TABLER_THEME_RADIUS', '1'),
+                'layout'        => env('TABLER_LAYOUT', 'vertical'),
             ],
         ]);
     }
@@ -167,32 +166,36 @@ class AppConfigController extends Controller
     public function applyThemeSettings(Request $request)
     {
         $validated = $request->validate([
-            'theme' => 'nullable|in:light,dark',
+            'theme'         => 'nullable|in:light,dark',
             'theme_primary' => 'nullable|in:blue,azure,indigo,purple,pink,red,orange,yellow,lime,green,teal,cyan',
-            'theme_font' => 'nullable|in:sans-serif,serif,monospace,comic',
-            'theme_base' => 'nullable|in:slate,gray,zinc,neutral,stone',
-            'theme_radius' => 'nullable|in:0,0.5,1,1.5,2',
-            'layout' => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
+            'theme_font'    => 'nullable|in:sans-serif,serif,monospace,comic',
+            'theme_base'    => 'nullable|in:slate,gray,zinc,neutral,stone',
+            'theme_radius'  => 'nullable|in:0,0.5,1,1.5,2',
+            'layout'        => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
         ]);
 
         try {
-            $envPath = base_path('.env');
+            $envPath    = base_path('.env');
             $envContent = file_get_contents($envPath);
 
             $envMapping = [
-                'theme' => 'TABLER_THEME',
+                'theme'         => 'TABLER_THEME',
                 'theme_primary' => 'TABLER_THEME_PRIMARY',
-                'theme_font' => 'TABLER_THEME_FONT',
-                'theme_base' => 'TABLER_THEME_BASE',
-                'theme_radius' => 'TABLER_THEME_RADIUS',
-                'layout' => 'TABLER_LAYOUT',
+                'theme_font'    => 'TABLER_THEME_FONT',
+                'theme_base'    => 'TABLER_THEME_BASE',
+                'theme_radius'  => 'TABLER_THEME_RADIUS',
+                'layout'        => 'TABLER_LAYOUT',
             ];
 
             foreach ($validated as $key => $value) {
-                if ($value === null) continue;
-                
+                if ($value === null) {
+                    continue;
+                }
+
                 $envKey = $envMapping[$key] ?? null;
-                if (!$envKey) continue;
+                if (! $envKey) {
+                    continue;
+                }
 
                 $envContent = $this->updateEnvValue($envContent, "{$envKey}=", "{$envKey}={$value}");
             }
@@ -234,12 +237,12 @@ class AppConfigController extends Controller
     private function getCurrentEnvValue($key, $default = null)
     {
         $envPath = base_path('.env');
-        if (!file_exists($envPath)) {
+        if (! file_exists($envPath)) {
             return $default;
         }
 
         $content = file_get_contents($envPath);
-        $lines = explode("\n", $content);
+        $lines   = explode("\n", $content);
 
         foreach ($lines as $line) {
             if (strpos($line, $key . '=') === 0) {

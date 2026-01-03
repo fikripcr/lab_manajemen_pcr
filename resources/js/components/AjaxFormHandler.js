@@ -76,22 +76,31 @@ function initAjaxFormHandler() {
                 }
 
                 // Success
+                // Reload DataTable immediately
+                if ($.fn.DataTable && $('.dataTable').length) {
+                    $('.dataTable').DataTable().ajax.reload(null, false);
+                }
+
+                // Reset form immediately
+                $form[0].reset();
+                $form.find('.is-invalid').removeClass('is-invalid'); // Clean validation states
+                $form.find('.invalid-feedback').remove();
+
+                // Success (Toast)
                 Swal.fire({
+                    toast: true,
+                    position: 'top-end',
                     icon: 'success',
-                    title: 'Success!',
-                    text: response.data.message || 'Operation completed successfully',
-                    timer: 2000,
-                    timerProgressBar: true
-                }).then(() => {
-                    // Reload DataTable if exists
-                    if ($.fn.DataTable && $('.dataTable').length) {
-                        $('.dataTable').DataTable().ajax.reload(null, false);
+                    title: response.data.message || 'Success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
                     }
-
-                    // Reset form
-                    $form[0].reset();
-
-                    // Redirect if specified in response
+                }).then(() => {
+                    // Redirect if specified in response (wait for toast)
                     if (response.data.redirect) {
                         window.location.href = response.data.redirect;
                     }
@@ -153,54 +162,60 @@ function initAjaxFormHandler() {
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
+            cancelButtonText: 'Cancel',
+            showLoaderOnConfirm: true,
+            allowOutsideClick: () => !Swal.isLoading(),
+            preConfirm: () => {
+                return axios.delete(url)
+                    .then(response => {
+                        return response;
+                    })
+                    .catch(error => {
+                        return { error: error };
+                    });
+            }
         }).then((result) => {
             if (result.isConfirmed) {
-                // Show loading
-                Swal.fire({
-                    title: 'Deleting...',
-                    text: 'Please wait',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    showConfirmButton: false,
-                    didOpen: () => Swal.showLoading()
-                });
-
-                // Send delete request
-                axios.delete(url)
-                    .then(function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted!',
-                            text: response.data.message || 'Item has been deleted',
-                            timer: 2000,
-                            timerProgressBar: true
-                        }).then(() => {
-                            // Reload DataTable if exists
-                            if ($.fn.DataTable && $('.dataTable').length) {
-                                $('.dataTable').DataTable().ajax.reload(null, false);
-                            }
-
-                            // Redirect if specified
-                            if (response.data.redirect) {
-                                window.location.href = response.data.redirect;
-                            }
-                        });
-                    })
-                    .catch(function (error) {
-                        let errorMessage = 'Failed to delete item';
-
-                        if (error.response && error.response.data.message) {
-                            errorMessage = error.response.data.message;
-                        }
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: errorMessage,
-                            confirmButtonText: 'OK'
-                        });
+                // Handle Error
+                if (result.value && result.value.error) {
+                    const error = result.value.error;
+                    console.error(error);
+                    let errorMessage = 'Failed to delete item';
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        html: errorMessage,
+                        confirmButtonText: 'OK'
                     });
+                    return;
+                }
+
+                // Handle Success
+                const response = result.value;
+
+                // Reload DataTable immediately
+                if ($.fn.DataTable && $('.dataTable').length) {
+                    $('.dataTable').DataTable().ajax.reload(null, false);
+                }
+
+                // Show Success Toast
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: response.data.message || 'Deleted!',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true
+                }).then(() => {
+                    // Redirect if specified
+                    if (response.data.redirect) {
+                        window.location.href = response.data.redirect;
+                    }
+                });
             }
         });
     });

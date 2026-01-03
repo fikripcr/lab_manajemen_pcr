@@ -15,6 +15,9 @@
 /* Tabler Themes (for theme customization) */
 @import '@tabler/core/dist/css/tabler-themes.css';
 
+/* Tabler Icons Webfont */
+@import '@tabler/icons-webfont/dist/tabler-icons.min.css';
+
 /* Boxicons - Keep for existing icons in views */
 /* @import '../assets/sys/vendor/fonts/boxicons.min.css'; */
 

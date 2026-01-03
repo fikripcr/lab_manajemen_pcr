@@ -1,17 +1,16 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Error Log')
+
+@section('header')
+    <x-sys.page-header title="Error Log" pretitle="System Log">
+        <x-slot:actions>
+            <x-sys.button type="back" url="{{ route('sys.error-log.index') }}" />
+        </x-slot:actions>
+    </x-sys.page-header>
+@endsection
+
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Log/ Error/ </span> Detail</h4>
-        <div class="d-flex gap-2">
-            <a href="{{ route('sys.error-log.index') }}" class="btn btn-secondary">
-                <i class="bx bx-arrow-back me-1"></i> Back
-            </a>
-        </div>
-    </div>
-
-    <x-sys.flash-message />
-
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4">

@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@tabler/core": "^1.4.0",
+        "@tabler/icons-webfont": "^3.36.1",
         "@toast-ui/editor": "^3.2.2",
         "aos": "^2.3.4",
         "apexcharts": "^5.3.6",

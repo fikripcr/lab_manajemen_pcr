@@ -1,16 +1,12 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Activity Log')
+
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">System Log</div>
-        <h2 class="page-title">Activity Log</h2>
-    </div>
-</div>
+<x-sys.page-header title="Activity Log" pretitle="System Log" />
 @endsection
 
 @section('content')
-<x-sys.flash-message />
 
 <div class="card">
     <div class="card-header">
@@ -86,7 +82,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <x-sys.button type="cancel" data-bs-dismiss="modal" class="btn-secondary" />
             </div>
         </div>
     </div>

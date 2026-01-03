@@ -1,24 +1,16 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Roles')
+
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">Access Control</div>
-        <h2 class="page-title">Roles</h2>
-    </div>
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-            <a href="#" class="btn btn-primary ajax-modal-btn" data-url="{{ route('sys.roles.create') }}" data-modal-title="Create New Role">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                Add New Role
-            </a>
-        </div>
-    </div>
-</div>
+<x-sys.page-header title="Roles" pretitle="Access Control">
+    <x-slot:actions>
+        <x-sys.button type="create" :modal-url="route('sys.roles.create')" />
+    </x-slot:actions>
+</x-sys.page-header>
 @endsection
 
 @section('content')
-<x-sys.flash-message />
 
 <div class="row">
     @forelse($roles as $role)
@@ -30,21 +22,12 @@
                         <h5 class="card-title mb-1">{{ $role->name }}</h5>
                         <p class="text-muted mb-2">{{ $role->users_count }} users assigned</p>
                     </div>
-                    <div class="dropdown">
-                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ route('sys.roles.show', $role) }}">
-                                <i class="bx bx-show me-1"></i> View
-                            </a>
-                            <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('sys.roles.edit', $role) }}" data-modal-title="Edit Role">
-                                <i class="bx bx-edit me-1"></i> Edit
-                            </a>
-                            <a href="#" class="dropdown-item text-danger ajax-delete" data-url="{{ route('sys.roles.destroy', $role) }}" data-title="Delete Role?" data-text="This action cannot be undone!">
-                                <i class="bx bx-trash me-1"></i> Delete
-                            </a>
-                        </div>
+                    <div class="d-flex align-items-center">
+                        <x-sys.datatables-actions
+                            :view-url="route('sys.roles.show', $role)"
+                            :edit-url="route('sys.roles.edit', $role)"
+                            :delete-url="route('sys.roles.destroy', $role)"
+                        />
                     </div>
                 </div>
 
@@ -69,7 +52,7 @@
     @empty
     <div class="col-12">
         <div class="text-center py-5">
-            <i class="bx bx-shield bx-lg text-muted mb-3"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-muted mb-3" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /></svg>
             <h5 class="text-muted">No roles found</h5>
             <p class="text-muted">Get started by creating a new role</p>
             <a href="#" class="btn btn-primary ajax-modal-btn" data-url="{{ route('sys.roles.create') }}" data-modal-title="Create New Role">Create Role</a>

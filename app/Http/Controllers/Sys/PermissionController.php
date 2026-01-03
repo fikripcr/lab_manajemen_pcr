@@ -23,7 +23,7 @@ class PermissionController extends Controller
     public function index()
     {
         // Get unique categories for the filter
-        $categories = $this->permissionService->getUniqueCategories();
+        $categories    = $this->permissionService->getUniqueCategories();
         $subCategories = $this->permissionService->getUniqueSubCategories();
 
         return view('pages.sys.permissions.index', compact('categories', 'subCategories'));
@@ -56,22 +56,10 @@ class PermissionController extends Controller
                     return $permission->sub_category ?? '-';
                 })
                 ->addColumn('action', function ($permission) {
-                    return '
-                        <div class="d-flex align-items-center">
-                            <a class="btn btn-sm btn-icon btn-outline-primary me-1 ajax-modal-btn"  href="#" data-url="' . route('sys.permissions.edit', $permission->encryptedId) . '" data-modal-title="Edit Permission" title="Edit">
-                                <i class="bx bx-edit"></i>
-                            </a>
-                            <div class="dropdown">
-                                <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a href="javascript:void(0)" class="dropdown-item text-danger ajax-delete" data-url="' . route('sys.permissions.destroy', $permission->encryptedId) . '" data-title="Hapus Izin?" data-text="Aksi ini tidak dapat dibatalkan!">
-                                        <i class="bx bx-trash me-1"></i> Delete
-                                    </a>
-                                </div>
-                            </div>
-                        </div>';
+                    return view('components.sys.datatables-actions', [
+                        'editUrl'   => route('sys.permissions.edit', $permission->encryptedId),
+                        'deleteUrl' => route('sys.permissions.destroy', $permission->encryptedId),
+                    ])->render();
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -97,7 +85,7 @@ class PermissionController extends Controller
             $data = $request->validated();
             $this->permissionService->createPermission($data);
 
-            return jsonSuccess('Izin berhasil dibuat.');
+            return jsonSuccess('Izin berhasildibuat . ');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -132,7 +120,7 @@ class PermissionController extends Controller
             $data   = $request->validated();
             $this->permissionService->updatePermission($realId, $data);
 
-            return jsonSuccess('Izin berhasil diperbarui.');
+            return jsonSuccess();
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -147,7 +135,7 @@ class PermissionController extends Controller
             $realId = decryptId($permissionId);
             $this->permissionService->deletePermission($realId);
 
-            return jsonSuccess('Izin berhasil dihapus.');
+            return jsonSuccess('Izin berhasildihapus . ');
 
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

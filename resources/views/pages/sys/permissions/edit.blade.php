@@ -1,4 +1,4 @@
-<form class="ajax-form" action="{{route('sys.permissions.update',$permission->id)}}" method="POST">
+<form class="ajax-form" action="{{route('sys.permissions.update',$permission->encryptedId)}}" method="POST">
     @csrf
     @method('PUT')
     <div class="modal-header">
@@ -13,7 +13,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Update Permission</button>
+        <x-sys.button type="cancel" data-bs-dismiss="modal" />
+        <x-sys.button type="submit" />
     </div>
 </form>

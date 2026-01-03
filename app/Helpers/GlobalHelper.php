@@ -11,95 +11,30 @@ if (! function_exists('formatTanggalIndo')) {
      */
     function formatTanggalIndo($tanggal)
     {
-        if (!$tanggal) {
+        if (! $tanggal) {
             return '-';
         }
 
         // Cek jika ini adalah format waktu murni (HH:ii tanpa tanggal)
         if (is_string($tanggal) && preg_match('/^\d{2}:\d{2}$/', $tanggal)) {
-            // Jika hanya format HH:MM, tampilkan sebagai waktu saja
             return $tanggal;
         }
 
-        // Konversi ke Carbon jika bukan Carbon instance
-        if (!($tanggal instanceof Carbon)) {
-            $tanggal = Carbon::parse($tanggal);
-        }
+        // Parse date using Carbon
+        $date = Carbon::parse($tanggal);
 
-        // Jika hanya waktu (tanpa tanggal valid), tampilkan sebagai waktu saja
-        $formatted = $tanggal->format('Y-m-d H:i:s');
-        if ($formatted === $tanggal->format('0000-00-00 H:i:s')) {
-            // Ini adalah nilai waktu tanpa tanggal, tampilkan hanya jam
-            return $tanggal->format('H:i');
+                               // Jika hanya waktu (tanpa tanggal valid 0000-00-00), tampilkan sebagai waktu saja
+        if ($date->year < 1) { // This condition checks if the year is effectively zero or invalid, indicating a time-only value
+            return $date->format('H:i');
         }
 
         // Jika hanya tanggal (00:00:00), tampilkan sebagai tanggal saja
-        if ($tanggal->format('H:i:s') === '00:00:00') {
-            $hariList = [
-                'Sunday' => 'Minggu',
-                'Monday' => 'Senin',
-                'Tuesday' => 'Selasa',
-                'Wednesday' => 'Rabu',
-                'Thursday' => 'Kamis',
-                'Friday' => 'Jumat',
-                'Saturday' => 'Sabtu',
-            ];
-
-            $bulanList = [
-                'January' => 'Januari',
-                'February' => 'Februari',
-                'March' => 'Maret',
-                'April' => 'April',
-                'May' => 'Mei',
-                'June' => 'Juni',
-                'July' => 'Juli',
-                'August' => 'Agustus',
-                'September' => 'September',
-                'October' => 'Oktober',
-                'November' => 'November',
-                'December' => 'Desember',
-            ];
-
-            $tanggalNum = $tanggal->format('d');
-            $bulan = $bulanList[$tanggal->format('F')];
-            $tahun = $tanggal->format('Y');
-
-            return "$tanggalNum $bulan $tahun";
+        if ($date->format('H:i:s') === '00:00:00') {
+            return $date->translatedFormat('d F Y');
         }
 
-        // Tampilkan tanggal dan waktu lengkap
-        $hariList = [
-            'Sunday' => 'Minggu',
-            'Monday' => 'Senin',
-            'Tuesday' => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday' => 'Kamis',
-            'Friday' => 'Jumat',
-            'Saturday' => 'Sabtu',
-        ];
-
-        $bulanList = [
-            'January' => 'Januari',
-            'February' => 'Februari',
-            'March' => 'Maret',
-            'April' => 'April',
-            'May' => 'Mei',
-            'June' => 'Juni',
-            'July' => 'Juli',
-            'August' => 'Agustus',
-            'September' => 'September',
-            'October' => 'Oktober',
-            'November' => 'November',
-            'December' => 'Desember',
-        ];
-
-        $hari = $hariList[$tanggal->format('l')];
-        $tanggalNum = $tanggal->format('d');
-        $bulan = $bulanList[$tanggal->format('F')];
-        $tahun = $tanggal->format('Y');
-        $waktu = $tanggal->format('H:i');
-
-        return "$hari, $tanggalNum $bulan $tahun $waktu";
+        // Tampilkan tanggal dan waktu lengkap (Hari, dd Bulan YYYY HH:ii)
+        return $date->translatedFormat('l, d F Y H:i');
     }
 }
 
@@ -112,24 +47,21 @@ if (! function_exists('formatWaktuSaja')) {
      */
     function formatWaktuSaja($waktu)
     {
-        if (!$waktu) {
+        if (! $waktu) {
             return '-';
         }
 
         // Cek jika ini adalah format waktu murni (HH:ii tanpa tanggal)
         if (is_string($waktu) && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $waktu)) {
-            // Jika hanya format HH:MM atau HH:MM:SS, tampilkan hanya jam dan menit
             $parts = explode(':', $waktu);
-            return $parts[0] . ':' . $parts[1];
+            return $parts[0] . ':' . $parts[1]; // Return HH:ii
         }
 
-        // Konversi ke Carbon jika bukan Carbon instance
-        if (!($waktu instanceof Carbon)) {
-            $waktu = Carbon::parse($waktu);
-        }
+        // Parse date using Carbon
+        $date = Carbon::parse($waktu);
 
         // Kembalikan hanya format jam:menit
-        return $waktu->format('H:i');
+        return $date->format('H:i');
     }
 }
 
@@ -143,10 +75,10 @@ if (! function_exists('generateKodeInventaris')) {
      */
     function generateKodeInventaris($labId, $inventarisId)
     {
-        $lab = \App\Models\Lab::find($labId);
+        $lab        = \App\Models\Lab::find($labId);
         $inventaris = \App\Models\Inventaris::find($inventarisId);
 
-        if (!$lab || !$inventaris) {
+        if (! $lab || ! $inventaris) {
             return null;
         }
 
@@ -155,8 +87,8 @@ if (! function_exists('generateKodeInventaris')) {
 
         // Ambil jumlah inventaris yang sudah ada di lab ini untuk urutan
         $count = \App\Models\LabInventaris::where('lab_id', $labId)
-                    ->where('inventaris_id', $inventarisId)
-                    ->count() + 1;
+            ->where('inventaris_id', $inventarisId)
+            ->count() + 1;
 
         return sprintf('%s-%s-%04d', $labCode, $invCode, $count);
     }
@@ -165,7 +97,7 @@ if (! function_exists('generateKodeInventaris')) {
 if (! function_exists('jsonResponse')) {
     /**
      * Create standardized JSON response
-     * 
+     *
      * @param bool $success
      * @param string $message
      * @param array $data
@@ -180,7 +112,7 @@ if (! function_exists('jsonResponse')) {
             'message' => $message,
         ];
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $response['data'] = $data;
         }
 
@@ -195,23 +127,51 @@ if (! function_exists('jsonResponse')) {
 if (! function_exists('jsonSuccess')) {
     /**
      * Create standardized success JSON response
-     * 
-     * @param string $message
-     * @param string|null $redirect
-     * @param array $data
-     * @param int $code
+     *
+     * Handles two modes:
+     * 1. Smart Array: jsonSuccess(['data' => ..., 'redirect' => ...])
+     * 2. Legacy: jsonSuccess('Message', '/url', ['data'])
+     *
+     * @param mixed $arg1
+     * @param mixed $arg2
+     * @param mixed $arg3
+     * @param int $arg4
      * @return \Illuminate\Http\JsonResponse
      */
-    function jsonSuccess($message = 'Success', $redirect = null, $data = [], $code = 200)
+    function jsonSuccess($arg1 = 'Success', $arg2 = null, $arg3 = [], $arg4 = 200)
     {
-        return jsonResponse(true, $message, $data, $code, $redirect);
+        // MODE 1: Smart Array Input
+        if (is_array($arg1)) {
+            $params   = $arg1;
+            $reserved = ['message', 'data', 'redirect', 'code'];
+
+            // Check if array contains any reserved control keys
+            $hasControlKeys = ! empty(array_intersect_key($params, array_flip($reserved)));
+
+            if ($hasControlKeys) {
+                // It is a Config Array
+                return jsonResponse(
+                    true,
+                    $params['message'] ?? 'Success',
+                    $params['data'] ?? [],
+                    $params['code'] ?? 200,
+                    $params['redirect'] ?? null
+                );
+            }
+
+            // It is just a Raw Data Array
+            return jsonResponse(true, 'Success', $params);
+        }
+
+        // MODE 2: Legacy / Standard Input ($message, $redirect, $data, $code)
+        return jsonResponse(true, $arg1, $arg3, $arg4, $arg2);
     }
 }
 
 if (! function_exists('jsonError')) {
     /**
      * Create standardized error JSON response
-     * 
+     *
      * @param string $message
      * @param int $code
      * @param array $data

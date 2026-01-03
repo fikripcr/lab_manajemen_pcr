@@ -1,19 +1,19 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Documentation: ' . $fileName)
+
 @section('content')
     @push('css')
         <link rel="stylesheet" href="{{ Vite::asset('resources/assets/sys/css/documentation-show.css') }}">
     @endpush
 
-    <x-sys.flash-message />
+
 
     <div class="row">
         <div class="col-md-3 ">
             <div class=" sticky-top">
                 <div class="mb-1">
-                    <a href="{{ route('sys.documentation.index') }}" class="btn btn-secondary w-100">
-                        <i class="bx bx-arrow-back"></i> Back to Documentation
-                    </a>
+                    <x-sys.button type="back" :href="route('sys.documentation.index')" class="w-100" />
                 </div>
 
                 <div class="card" style="top: 1rem;">
@@ -31,7 +31,7 @@
                         </nav>
                     </div>
                     <div class="card-footer d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Last updated: {{ \Carbon\Carbon::parse($lastUpdated)->format('d M Y H:i') }}</small>
+                        <small class="text-muted">Last updated: {{ formatTanggalIndo($lastUpdated) }}</small>
                     </div>
                 </div>
 

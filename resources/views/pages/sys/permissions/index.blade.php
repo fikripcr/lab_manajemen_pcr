@@ -1,27 +1,14 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Permissions')
+
 @section('header')
 {{-- Page Header Content --}}
-<div class="row g-2 align-items-center">
-    <div class="col">
-        {{-- Page pre-title --}}
-        <div class="page-pretitle">
-            Access Control
-        </div>
-        <h2 class="page-title">
-            Permissions
-        </h2>
-    </div>
-    {{-- Page title actions --}}
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-            <button type="button" class="btn btn-primary ajax-modal-btn" data-url="{{ route('sys.permissions.create') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                Add New Permission
-            </button>
-        </div>
-    </div>
-</div>
+    <x-sys.page-header title="Permissions" pretitle="Access Control">
+        <x-slot:actions>
+            <x-sys.button type="create" :modal-url="route('sys.permissions.create')" />
+        </x-slot:actions>
+    </x-sys.page-header>
 @endsection
 
 @section('content')
@@ -59,7 +46,6 @@
     </div>
 
     <div class="card-body p-0">
-        <x-sys.flash-message />
 
         <x-sys.datatable id="permissions-table" route="{{ route('sys.permissions.data') }}" checkbox="true"  :columns="[
             [

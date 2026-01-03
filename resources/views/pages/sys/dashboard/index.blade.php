@@ -1,26 +1,28 @@
 @extends('layouts.sys.app')
 
-@section('title', 'System Dashboard')
+@section('title', 'Dashboard')
+
+@section('header')
+<x-sys.page-header title="Dashboard" pretitle="Overview">
+    <x-slot:actions>
+        <div class="d-flex gap-2">
+            <div class="input-icon">
+                <span class="input-icon-addon">
+                    <i class="ti ti-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Search..." aria-label="Search" onclick="openGlobalSearchModal('{{ route('sys-search') }}')">
+            </div>
+            <button class="btn btn-primary" onclick="window.location.reload();">
+                <i class="ti ti-refresh me-2"></i>
+                Refresh
+            </button>
+        </div>
+    </x-slot:actions>
+</x-sys.page-header>
+@endsection
 
 @section('content')
     <div class="row">
-        <!-- Page Title and Search -->
-        <div class="col-12 mb-4">
-            <div class="text-center mb-4">
-                <h4 class="fw-bold">System Management Dashboard</h4>
-                <p class="text-muted">Manage system configurations, user roles, and application settings</p>
-            </div>
-
-            <!-- Prominent Search Bar -->
-            <div class="d-flex justify-content-center mb-4">
-                <div class="col-12 col-lg-8">
-                    <div class="position-relative">
-                        <i class="bx bx-search fs-4 position-absolute" style="left: 15px; top: 50%; transform: translateY(-50%); z-index: 10;"></i>
-                        <input type="text" class="form-control ps-5 fs-5 py-3 border-2 search-input" placeholder="Search across all system functions..." aria-label="Search across all system functions..." onclick="openGlobalSearchModal('{{ route('sys-search') }}')" />
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Application Environment & Server Stats -->
         <div class="col-12 mb-4">
@@ -31,12 +33,12 @@
                             <div class="d-flex align-items-center">
                                 <div class="avatar me-3">
                                     <div class="avatar-initial rounded-circle bg-transparent text-primary">
-                                        <i class="bx bx-layout bx-lg"></i>
+                                        <i class="ti ti-server-2 fs-1"></i>
                                     </div>
                                 </div>
                                 <div>
                                     <h5 class="mb-0">{{ $appName }}</h5>
-                                    <p class="mb-0 text-muted">Server Time: <span id="serverTime">{{ \Carbon\Carbon::parse($serverTime)->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm:ss') }}</span></p>
+                                    <p class="mb-0 text-muted">Server Time: <span id="serverTime">{{ formatTanggalIndo($serverTime) }}</span></p>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +46,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="avatar me-3">
                                     <div class="avatar-initial rounded-circle bg-transparent text-info">
-                                        <i class="bx bx-server bx-lg"></i>
+                                        <i class="ti ti-box fs-1"></i>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-wrap gap-3">
@@ -114,8 +116,8 @@
                                         <small class="text-muted d-block text-center">Never checked</small>
                                     @endif
                                 </div>
-                                <a href="{{ route('sys.dashboard', ['refresh_monitoring' => true]) }}" class="btn btn-xs btn-outline-primary" title="Refresh Server Monitoring">
-                                    <i class="bx bx-refresh"></i>
+                                <a href="{{ route('sys.dashboard', ['refresh_monitoring' => true]) }}" class="btn btn-action btn-outline-primary" title="Refresh Server Monitoring">
+                                    <i class="ti ti-refresh"></i>
                                 </a>
                             </div>
                         </div>
@@ -184,7 +186,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="bg-primary-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-primary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                                <i class="ti ti-users icon-lg text-primary"></i>
                             </div>
                         </div>
                     </div>
@@ -202,7 +204,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="bg-green-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /></svg>
+                                <i class="ti ti-shield-lock icon-lg text-green"></i>
                             </div>
                         </div>
                     </div>
@@ -220,7 +222,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="bg-danger-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-danger-lt" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+                                <i class="ti ti-lock icon-lg text-danger-lt"></i>
                             </div>
                         </div>
                     </div>
@@ -238,7 +240,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="bg-cyan-lt rounded-circle p-3" style="width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-cyan" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                                <i class="ti ti-activity icon-lg text-cyan"></i>
                             </div>
                         </div>
                     </div>
@@ -256,13 +258,13 @@
                     <a href="{{ route('activity-log.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-primary-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                                <i class="ti ti-activity"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">Activity Log</h6>
                                 <small class="text-muted">Track all system activities and user actions</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -273,13 +275,13 @@
                     <a href="{{ route('sys.roles.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-green-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /></svg>
+                                <i class="ti ti-shield-lock"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">User Roles</h6>
                                 <small class="text-muted">Manage user roles and permissions</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -290,13 +292,13 @@
                     <a href="{{ route('sys.permissions.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-yellow-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+                                <i class="ti ti-lock"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">Permissions</h6>
                                 <small class="text-muted">Manage system permissions</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -307,13 +309,13 @@
                     <a href="{{ route('app-config') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-orange-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
+                                <i class="ti ti-settings"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">App Configuration</h6>
                                 <small class="text-muted">Configure application settings</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -324,13 +326,13 @@
                     <a href="{{ route('sys.backup.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-cyan-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6c0 1.657 3.582 3 8 3s8 -1.343 8 -3s-3.582 -3 -8 -3s-8 1.343 -8 3" /><path d="M4 6v6c0 1.657 3.582 3 8 3s8 -1.343 8 -3v-6" /><path d="M4 12v6c0 1.657 3.582 3 8 3s8 -1.343 8 -3v-6" /></svg>
+                                <i class="ti ti-database"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">Backup Management</h6>
                                 <small class="text-muted">Create and manage system backups</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -341,13 +343,13 @@
                     <a href="{{ route('notifications.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-red-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+                                <i class="ti ti-bell"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">Notifications</h6>
                                 <small class="text-muted">Manage system notifications</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -358,13 +360,13 @@
                     <a href="{{ route('sys.error-log.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-red-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
+                                <i class="ti ti-bug"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">Error Log</h6>
                                 <small class="text-muted">View and manage system errors</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -375,13 +377,13 @@
                     <a href="{{ route('sys.test.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-purple-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 10h3v-3l-3.5 -3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1 -3 3l-6 -6a6 6 0 0 1 -8 -8l3.5 3.5" /></svg>
+                                <i class="ti ti-flask"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">Test Features</h6>
                                 <small class="text-muted">Test system functionality</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -392,13 +394,13 @@
                     <a href="{{ route('sys.documentation.index') }}" class="card card-link text-decoration-none">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-gray-lt">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
+                                <i class="ti ti-file-text"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 text-reset">Documentation</h6>
                                 <small class="text-muted">System documentation and guides</small>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                            <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
@@ -449,9 +451,9 @@
                                         <span class="text-{{ $percentChange > 0 ? 'green' : 'red' }} d-inline-flex align-items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 @if($percentChange > 0)
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7l10 10m0 -10v10h-10"/>
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" />
                                                 @else
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 17l10 -10m0 10v-10h-10"/>
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" />
                                                 @endif
                                             </svg>
                                             {{ abs($percentChange) }}%
@@ -480,7 +482,7 @@
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <span class="text-muted">{{ $log->created_at->format('d M Y') }}</span>
+                                            <span class="text-muted">{{ \Carbon\Carbon::parse($log->created_at)->translatedFormat('d M Y') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -515,9 +517,9 @@
                                         <span class="text-{{ $errorPercentChange > 0 ? 'red' : 'green' }} d-inline-flex align-items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 @if($errorPercentChange > 0)
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7l10 10m0 -10v10h-10"/>
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" />
                                                 @else
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 17l10 -10m0 10v-10h-10"/>
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" />
                                                 @endif
                                             </svg>
                                             {{ abs($errorPercentChange) }}%
@@ -538,7 +540,7 @@
                                     <div class="row align-items-center">
                                         <div class="col-auto">
                                             <span class="avatar avatar-sm bg-red-lt">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
+                                                <i class="ti ti-bug"></i>
                                             </span>
                                         </div>
                                         <div class="col text-truncate">
@@ -548,7 +550,7 @@
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <span class="text-muted">{{ $error->created_at->format('d M Y') }}</span>
+                                            <span class="text-muted">{{ \Carbon\Carbon::parse($error->created_at)->translatedFormat('d M Y') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -576,16 +578,32 @@
         const activityChartData = {!! $activityChartData !!};
         const errorChartData = {!! $errorChartData !!};
 
+        // Helper function to get Tabler colors from CSS variables
+        function getTablerColor(colorName, defaultColor) {
+            const root = getComputedStyle(document.documentElement);
+            const colorVar = '--tblr-' + colorName;
+            const colorValue = root.getPropertyValue(colorVar).trim();
+            
+            if (colorValue) {
+                return colorValue;
+            }
+            // Fallback for primary/danger if not found
+            if (colorName === 'primary') return '#0054a6'; 
+            if (colorName === 'danger') return '#d63939';
+            
+            return defaultColor || '#000000';
+        }
+
         // Activity Sparkline Chart (Mini Area Chart)
         const activitySparkline = {
             chart: {
-                height: 100,
+                height: 140, // Reduced height for Area Chart
                 type: 'area',
-                sparkline: {
-                    enabled: true
-                },
                 toolbar: {
                     show: false
+                },
+                zoom: {
+                    enabled: false
                 }
             },
             dataLabels: {
@@ -599,30 +617,70 @@
                 type: 'gradient',
                 gradient: {
                     shadeIntensity: 1,
-                    opacityFrom: 0.45,
-                    opacityTo: 0.05,
-                    stops: [50, 100, 100, 100]
+                    opacityFrom: 0.6, // Adjusted opacity logic
+                    opacityTo: 0.2, // Adjusted opacity logic
+                    stops: [0, 90, 100]
                 },
             },
             series: activityChartData.series,
-            colors: ['#0d6efd'],
-            tooltip: {
-                fixed: {
-                    enabled: false
-                },
-                x: {
-                    show: false
-                },
-                y: {
-                    title: {
-                        formatter: function (seriesName) {
-                            return ''
-                        }
+            xaxis: {
+                categories: activityChartData.labels,
+                labels: {
+                    show: true,
+                    style: {
+                        colors: '#64748b',
+                        fontSize: '11px',
+                        fontFamily: 'inherit',
                     }
                 },
-                marker: {
+                axisBorder: {
                     show: false
+                },
+                axisTicks: {
+                    show: false
+                },
+                 tooltip: {
+                    enabled: false
                 }
+            },
+            yaxis: {
+                show: true,
+                 labels: {
+                    show: true,
+                    style: {
+                         colors: '#64748b',
+                         fontSize: '11px',
+                         fontFamily: 'inherit',
+                    }
+                }
+            },
+             grid: {
+                strokeDashArray: 4,
+                xaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                yaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                 padding: {
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 10
+                }
+            },
+            colors: [getTablerColor("primary", "#0054a6")],
+            tooltip: {
+                theme: 'dark',
+                 y: {
+                     formatter: function (val) {
+                         return val;
+                     }
+                 }
             }
         }
 
@@ -635,13 +693,13 @@
         // Error Sparkline Chart (Mini Area Chart) - Red theme
         const errorSparkline = {
             chart: {
-                height: 100,
+                height: 140, // Reduced height for Area Chart
                 type: 'area',
-                sparkline: {
-                    enabled: true
-                },
                 toolbar: {
                     show: false
+                },
+                 zoom: {
+                    enabled: false
                 }
             },
             dataLabels: {
@@ -651,34 +709,74 @@
                 curve: 'smooth',
                 width: 2
             },
-            fill: {
+             fill: {
                 type: 'gradient',
                 gradient: {
                     shadeIntensity: 1,
-                    opacityFrom: 0.45,
-                    opacityTo: 0.05,
-                    stops: [50, 100, 100, 100]
+                    opacityFrom: 0.6,
+                    opacityTo: 0.2,
+                    stops: [0, 90, 100]
                 },
             },
             series: errorChartData.series,
-            colors: ['#dc3545'],
-            tooltip: {
-                fixed: {
-                    enabled: false
-                },
-                x: {
-                    show: false
-                },
-                y: {
-                    title: {
-                        formatter: function (seriesName) {
-                            return ''
-                        }
+            xaxis: {
+                categories: errorChartData.labels,
+                labels: {
+                    show: true,
+                    style: {
+                        colors: '#64748b', // Text Muted Color
+                         fontSize: '11px',
+                        fontFamily: 'inherit',
                     }
                 },
-                marker: {
+                axisBorder: {
+                     show: false
+                },
+                axisTicks: {
                     show: false
+                },
+                tooltip: {
+                    enabled: false
                 }
+            },
+             yaxis: {
+                show: true,
+                labels: {
+                    show: true,
+                    style: {
+                         colors: '#64748b',
+                         fontSize: '11px',
+                         fontFamily: 'inherit',
+                    }
+                }
+            },
+            grid: {
+                strokeDashArray: 4,
+                xaxis: {
+                    lines: {
+                         show: true
+                    }
+                },
+                 yaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                 padding: {
+                     top: 0,
+                     right: 0,
+                     bottom: 0,
+                     left: 10
+                }
+            },
+            colors: [getTablerColor("danger", "#d63939")],
+            tooltip: {
+                 theme: 'dark',
+                 y: {
+                     formatter: function (val) {
+                         return val;
+                     }
+                 }
             }
         }
 

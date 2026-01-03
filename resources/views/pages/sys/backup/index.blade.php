@@ -1,28 +1,17 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Backup Management')
+
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">Others</div>
-        <h2 class="page-title">Backup Management</h2>
-    </div>
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-            <button type="button" class="btn btn-primary" onclick="createBackup('files')">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" /></svg>
-                Web Files Backup
-            </button>
-            <button type="button" class="btn btn-success" onclick="createBackup('db')">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" /><path d="M4 6v6a8 3 0 0 0 16 0v-6" /><path d="M4 12v6a8 3 0 0 0 16 0v-6" /></svg>
-                Database Backup
-            </button>
-        </div>
-    </div>
-</div>
+<x-sys.page-header title="Backup Management" pretitle="Others">
+    <x-slot:actions>
+        <x-sys.button type="create" onclick="createBackup('files')" text="Web Files Backup" icon="ti ti-files" />
+        <x-sys.button type="success" onclick="createBackup('db')" text="Database Backup" icon="ti ti-database" />
+    </x-slot:actions>
+</x-sys.page-header>
 @endsection
 
 @section('content')
-<x-sys.flash-message />
 
 <div class="card overflow-hidden">
     <div class="card-body p-0">

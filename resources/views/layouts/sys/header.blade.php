@@ -1,14 +1,10 @@
-{{--
-    Tabler Header (Horizontal Layout)
-    Pure Tabler structure with custom features preserved
---}}
 @php
-    $condensed = $condensed ?? false;
-    $sticky = $sticky ?? false;
-    $stickyWrapper = $stickyWrapper ?? false; // NEW: Wrap navbar in sticky-top div
-    $dark = $dark ?? false;
-    $hideBrand = $hideBrand ?? false;
-    $hideMenu = $hideMenu ?? false;
+    $condensed    = $condensed ?? false;
+    $sticky       = $sticky ?? false;
+    $stickyWrapper= $stickyWrapper ?? false; 
+    $dark         = $dark ?? false;
+    $hideBrand    = $hideBrand ?? false;
+    $hideMenu     = $hideMenu ?? false;
     $navbarClass = $navbarClass ?? '';
 @endphp
 
@@ -67,7 +63,7 @@
                                     <div class="col-4">
                                         <a href="{{ route('app-config') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" /><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M17 10h2a2 2 0 0 1 2 2v1" /><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M3 13v-1a2 2 0 0 1 2 -2h2" /></svg>
-                                            <div class="small">App Configurations</div>
+                                            <div class="small">App Config</div>
                                         </a>
                                     </div>
                                     <div class="col-4">

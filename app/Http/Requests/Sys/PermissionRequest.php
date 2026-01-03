@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Sys;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,11 +18,11 @@ class PermissionRequest extends FormRequest
      */
     public function rules(): array
     {
-        $permissionId = $this->route('permission'); // Get the permission ID from the route for update operations
+        $permissionId = $this->route('id'); // Get the permission ID from the route for update operations
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             // For update requests, get the decrypted ID
-            $realId = decryptId($permissionId);
+            $realId       = decryptId($permissionId);
             $permissionId = $realId;
         }
 

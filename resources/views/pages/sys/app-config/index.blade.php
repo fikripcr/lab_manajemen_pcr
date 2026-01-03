@@ -1,16 +1,12 @@
 @extends('layouts.sys.app')
 
+@section('title', 'App Configuration')
+
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">Others</div>
-        <h2 class="page-title">App Configuration</h2>
-    </div>
-</div>
+<x-sys.page-header title="App Configuration" pretitle="Others" />
 @endsection
 
 @section('content')
-<x-sys.flash-message />
 
 <div class="card">
     <div class="card-body ">
@@ -57,8 +53,8 @@
             </div>
 
             <div class="pt-4">
-                <button type="submit" class="btn btn-primary me-sm-3 me-1">Update Configuration</button>
-                <button type="reset" class="btn btn-label-secondary">Reset</button>
+                <x-sys.button type="submit" class="me-sm-3 me-1" />
+                <x-sys.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -145,8 +141,8 @@
             </div>
 
             <div class="pt-4">
-                <button type="submit" class="btn btn-primary me-sm-3 me-1">Update Mail Configuration</button>
-                <button type="reset" class="btn btn-label-secondary">Reset</button>
+                <x-sys.button type="submit" class="me-sm-3 me-1" />
+                <x-sys.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -187,8 +183,8 @@
             </div>
 
             <div class="pt-4">
-                <button type="submit" class="btn btn-primary me-sm-3 me-1">Update Google Configuration</button>
-                <button type="reset" class="btn btn-label-secondary">Reset</button>
+                <x-sys.button type="submit" class="me-sm-3 me-1" />
+                <x-sys.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -212,8 +208,8 @@
             </div>
 
             <div class="pt-4">
-                <button type="submit" class="btn btn-primary me-sm-3 me-1">Update Backup Configuration</button>
-                <button type="reset" class="btn btn-label-secondary">Reset</button>
+                <x-sys.button type="submit" class="me-sm-3 me-1" />
+                <x-sys.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -225,7 +221,7 @@
                 <p class="text-muted">Clear application cache to refresh configuration and other cached data.</p>
                 <form action="{{ route('app-config.clear-cache') }}" method="POST" class="d-inline">
                     @csrf
-                    <button type="submit" class="btn btn-warning me-2">Clear Cache</button>
+                    <x-sys.button type="submit" text="Clear Cache" class="btn-warning me-2" icon="ti ti-trash" />
                 </form>
             </div>
 
@@ -234,7 +230,7 @@
                 <p class="text-muted">Optimize application performance by caching configuration, routes, and views.</p>
                 <form action="{{ route('app-config.optimize') }}" method="POST" class="d-inline">
                     @csrf
-                    <button type="submit" class="btn btn-success">Optimize Application</button>
+                    <x-sys.button type="submit" text="Optimize Application" class="btn-success" icon="ti ti-rocket" />
                 </form>
             </div>
         </div>

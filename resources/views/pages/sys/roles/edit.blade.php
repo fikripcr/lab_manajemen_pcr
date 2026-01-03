@@ -8,7 +8,6 @@
     </div>
 
     <div class="modal-body">
-        <x-sys.flash-message />
         
         <!-- Role Name -->
         <div class="mb-4">
@@ -79,8 +78,8 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Update Role</button>
+        <x-sys.button type="cancel" data-bs-dismiss="modal" />
+        <x-sys.button type="submit" />
     </div>
 </form>
 
@@ -145,9 +144,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Edit Role: {{ $role->name }}</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
-                <i class="bx bx-arrow-back"></i> Back
-            </a>
+            <x-sys.button type="back" :href="route('sys.roles.index')" />
         </div>
     </div>
 
@@ -292,12 +289,8 @@
                         @endpush
 
                         <div class="d-flex justify-content-start gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bx bx-save me-1"></i> Update Role
-                            </button>
-                            <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
-                                <i class="bx bx-arrow-back me-1"></i> Cancel
-                            </a>
+                            <x-sys.button type="submit" />
+                            <x-sys.button type="back" :href="route('sys.roles.index')" />
                         </div>
             </form>
         </div>

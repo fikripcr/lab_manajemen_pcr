@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <title>{{ config('app.name') }} - System</title>
+    <title>@yield('title') - {{ config('app.name') }}</title>
 
     <meta name="description" content="System Management Dashboard" />
 
@@ -56,13 +56,13 @@
         {{-- NAVBAR/HEADER: shown unless layoutHideTopbar is true --}}
         @unless($layoutData['layoutHideTopbar'] ?? false)
             @include('layouts.sys.header', [
-                'condensed' => $layoutData['layoutNavbarCondensed'] ?? false,
-                'sticky' => $layoutData['layoutNavbarSticky'] ?? false,
-                'stickyWrapper' => $layoutData['layoutNavbarStickyWrapper'] ?? false,
-                'dark' => $layoutData['layoutNavbarDark'] ?? false,
-                'hideBrand' => $layoutData['layoutNavbarHideBrand'] ?? false,
-                'hideMenu' => $layoutData['layoutSidebar'] ?? false, // Hide menu in navbar if sidebar exists
-                'navbarClass' => $layoutData['layoutNavbarClass'] ?? '',
+                'condensed'    => $layoutData['layoutNavbarCondensed'] ?? false,
+                'sticky'       => $layoutData['layoutNavbarSticky'] ?? false,
+                'stickyWrapper'=> $layoutData['layoutNavbarStickyWrapper'] ?? false,
+                'dark'         => $layoutData['layoutNavbarDark'] ?? false,
+                'hideBrand'    => $layoutData['layoutNavbarHideBrand'] ?? false,
+                'hideMenu'     => $layoutData['layoutSidebar'] ?? false, // Hide menu in navbar if sidebar exists
+                'navbarClass'  => $layoutData['layoutNavbarClass'] ?? '',
             ])
         @endunless
         
@@ -81,6 +81,7 @@
             <div class="page-body">
                 {{-- Boxed layout uses container at .page level, others use container-xl here --}}
                 <div class="{{ $layoutData['containerClass'] ?? 'container-xl' }}">
+                    <x-sys.flash-message />
                     @yield('content')
                 </div>
             </div>

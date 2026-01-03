@@ -1,12 +1,9 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Documentation')
+
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">Others</div>
-        <h2 class="page-title">Development Guide</h2>
-    </div>
-</div>
+<x-sys.page-header title="Development Guide" pretitle="Others" />
 @endsection
 
 @section('content')

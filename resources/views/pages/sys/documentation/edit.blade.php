@@ -1,6 +1,6 @@
 @extends('layouts.sys.app')
 
-@section('title', $pageTitle)
+@section('title', 'Edit Documentation: ' . $page)
 
 @push('css')
     <!-- Toast UI Editor CSS -->
@@ -27,9 +27,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Edit Documentation: {{ $page }}</h5>
             <div>
-                <a href="{{ route('sys.documentation.show', $page) }}" class="btn btn-secondary me-2">
-                    <i class="bx bx-arrow-back"></i> Back to View
-                </a>
+                <x-sys.button type="back" :href="route('sys.documentation.show', $page)" class="me-2" />
             </div>
         </div>
         <div class="card-body">
@@ -43,10 +41,8 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('sys.documentation.show', $page) }}" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bx bx-save"></i> Save Changes
-                    </button>
+                    <x-sys.button type="back" :href="route('sys.documentation.show', $page)" />
+                    <x-sys.button type="submit" />
                 </div>
             </form>
         </div>

@@ -1,5 +1,7 @@
 @extends('layouts.sys.app')
 
+@section('title', 'Details Role')
+
 @section('header')
 <div class="row g-2 align-items-center">
     <div class="col">
@@ -22,7 +24,6 @@
 @endsection
 
 @section('content')
-<div class="card mb-4">
     <div class="card-body">
         <x-sys.flash-message />
 
