@@ -10,22 +10,22 @@
     'customActions' => []
 ])
 
-<div class="d-flex align-items-center">
+<div class="btn-actions">
     {{-- Edit Button (Direct Action) --}}
     @if($editUrl)
         <a href="#" 
-           class="text-primary me-2 ajax-modal-btn" 
+           class="btn btn-action text-primary btn-animate-icon ajax-modal-btn" 
            data-url="{{ $editUrl }}" 
            data-modal-title="{{ $editTitle }}" 
            title="Edit">
-            <i class="ti ti-edit"></i>
+            <i class="ti ti-edit fs-2"></i>
         </a>
     @endif
 
     {{-- Dropdown for extra actions --}}
     <div class="dropdown">
-        <button type="button" class="btn btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="ti ti-dots-vertical"></i>
+        <button type="button" class="btn dropdown-toggle btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="ti ti-dots-vertical fs-3"></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end">
             @if($viewUrl)

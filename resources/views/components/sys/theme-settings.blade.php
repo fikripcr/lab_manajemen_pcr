@@ -39,8 +39,15 @@
                     <div class="col-6">
                         <label class="form-label">Font Family</label>
                         <select name="theme-font" class="form-select">
-                            @foreach(['sans-serif', 'serif', 'monospace', 'comic'] as $font)
-                            <option value="{{ $font }}" {{ ($themeData['themeFont'] ?? 'sans-serif') === $font ? 'selected' : '' }}>{{ ucfirst($font) }}</option>
+                            @foreach([
+                                'inter' => 'Inter (Default)', 
+                                'roboto' => 'Roboto', 
+                                'poppins' => 'Poppins', 
+                                'public-sans' => 'Public Sans', 
+                                'nunito' => 'Nunito',
+                                'sans-serif' => 'Sans Serif', 
+                            ] as $val => $label)
+                            <option value="{{ $val }}" {{ ($themeData['themeFont'] ?? 'inter') === $val ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach
                         </select>
                     </div>

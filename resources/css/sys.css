@@ -34,6 +34,27 @@
     }
 }
 
+/* Font Family Overrides */
+[data-bs-theme-font="inter"] {
+    --tblr-font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="roboto"] {
+    --tblr-font-sans-serif: 'Roboto', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="poppins"] {
+    --tblr-font-sans-serif: 'Poppins', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="public-sans"] {
+    --tblr-font-sans-serif: 'Public Sans', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="nunito"] {
+    --tblr-font-sans-serif: 'Nunito', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
 /* Override DataTable Processing Indicator to match Theme Primary */
 div.dt-processing>div:last-child>div {
     position: absolute;

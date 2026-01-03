@@ -3,7 +3,7 @@
 
 
 <div class="table-responsive">
-    <table id="{{ $id }}" class="table table-sm table-striped">
+    <table id="{{ $id }}" class="table table-sm table-striped table-vcenter card-table mb-0">
         <thead>
             <tr>
                 @if ($checkbox)

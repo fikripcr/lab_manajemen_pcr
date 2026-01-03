@@ -34,7 +34,7 @@
             $defaultText = 'Save';
             break;
         case 'cancel':
-            $colorClass = 'btn-link link-secondary';
+            $colorClass = 'btn-outline-secondary';
             $defaultIcon = 'ti ti-x';
             $defaultText = 'Cancel';
             break;

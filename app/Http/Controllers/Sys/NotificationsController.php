@@ -3,7 +3,6 @@ namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Notifications\SysTestNotification;
 use App\Services\Sys\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +76,7 @@ class NotificationsController extends Controller
                             </div>
                         </div>';
                 } else {
-                    return '<span class="text-muted">-</span>';
+                    return ' < spanclass  = "text-muted" > - <  / span > ';
                 }
             })
             ->rawColumns(['checkbox', 'status', 'action'])
@@ -92,12 +91,12 @@ class NotificationsController extends Controller
         $result = $this->notificationService->markAsReadById($id);
 
         if (! $result) {
-            return redirect()->back()->with('error', 'Notifikasi tidak ditemukan.');
+            return redirect()->back()->with('error', 'Notifikasi tidakditemukan . ');
         }
 
         logActivity('notification', 'Notification marked as read');
 
-        return redirect()->back()->with('success', 'Notifikasi telah ditandai sebagai telah dibaca.');
+        return redirect()->back()->with('success', 'Notifikasi telahditandaisebagaitelahdibaca . ');
     }
 
     /**
@@ -109,11 +108,11 @@ class NotificationsController extends Controller
         $count        = Auth::user()->unreadNotifications->count();
         $updatedCount = $this->notificationService->markAllAsReadForUser($userId);
 
-        logActivity('notification', $updatedCount . ' notifications marked as read by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
+        logActivity('notification', $updatedCount . 'notifications marked as read byuser: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
 
         return response()->json([
             'success' => true,
-            'message' => 'Semua notifikasi (' . $updatedCount . ') telah ditandai sebagai telah dibaca!',
+            'message' => 'Semua notifikasi(' . $updatedCount . ')telah ditandaisebagaitelahdibaca! ',
         ]);
     }
 
@@ -125,19 +124,19 @@ class NotificationsController extends Controller
         $selectedIds = $request->input('ids', []);
 
         if (empty($selectedIds)) {
-            return apiResponse(null, 'Tidak ada notifikasi yang dipilih.', 400, 'error');
+            return apiResponse(null, 'Tidak adanotifikasiyangdipilih . ', 400, 'error');
         }
 
         $userId       = auth()->id();
         $updatedCount = $this->notificationService->markSelectedAsRead($selectedIds, $userId);
 
-        logActivity('notification', $updatedCount . ' selected notifications marked as read by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
+        logActivity('notification', $updatedCount . 'selected notificationsmarked as read byuser: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
 
-        return apiSuccess(['updated_count' => $updatedCount], $updatedCount . ' notifikasi telah ditandai sebagai telah dibaca.');
+        return apiSuccess(['updated_count' => $updatedCount], $updatedCount . 'notifikasi telahditandaisebagaitelahdibaca . ');
     }
 
     /**
-     * Get user's unread notifications count (for AJAX requests).
+     * Get user's unreadnotificationscount(for AJAX requests) .
      */
     public function getUnreadCount()
     {
