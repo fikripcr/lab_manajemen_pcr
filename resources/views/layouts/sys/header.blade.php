@@ -16,10 +16,9 @@
     $wrapperStickyClass = ($sticky && !$isOverlap) ? 'sticky-top' : '';
     $headerStickyClass = ($sticky && $isOverlap) ? 'sticky-top' : '';
     
-    // Remove 'navbar-overlap' from the actual navbar classes if we are manually handling it
-    if ($isOverlap) {
-        $navbarClass = str_replace('navbar-overlap', '', $navbarClass);
-    }
+    // We now WANT the native 'navbar-overlap' class on the header
+    // so we simply ensure it passes through from $layoutData
+
 @endphp
 
 <div id="header-sticky-wrapper" class="{{ $wrapperStickyClass }} w-100">
@@ -206,10 +205,7 @@
         </div>
     </header>
 
-    {{-- Overlap Background Decoration --}}
-    @if($isOverlap)
-    <div class="navbar-overlap" style="position: absolute; top: 0; left: 0; width: 100%; height: 6.25rem; z-index: -1; background-color: var(--tblr-header-top-bg, var(--tblr-bg-surface-dark));"></div>
-    @endif
+
 
     {{-- Secondary Menu Bar (non-condensed only, and NO Sidebar) --}}
     {{-- If sidebar is present (e.g. combo layout), menu is likely there, so don't show secondary top bar --}}

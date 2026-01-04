@@ -175,22 +175,29 @@ body.layout-boxed .page {
 
 /* --- Header Top Background Logic --- */
 /* Apply custom header color when set via Theme Settings */
-[data-bs-has-header-top-bg] .navbar,
-[data-bs-has-header-top-bg] .navbar-overlap {
+[data-bs-has-header-top-bg] .navbar {
     background-color: var(--tblr-header-top-bg) !important;
     background-image: none !important;
 }
 
-/* Ensure standard navbar overlap background (split div) has a default style if no custom color */
-.navbar-overlap {
-    background-color: var(--tblr-bg-surface-dark);
-    color: #fff;
+/* Ensure the overlap pseudo-element inherits the custom color */
+[data-bs-has-header-top-bg] .navbar-overlap::after {
+    background-color: var(--tblr-header-top-bg) !important;
+    background-image: none !important;
+}
+
+/* Default Tabler Overlap (Dark) if no custom color */
+/* Tabler sets this via .navbar-dark usually, but we ensure defaults here */
+.navbar-overlap::after {
+    /* If no custom variable, it falls back to Tabler's default or we enforce dark padding */
+    /* Usually handled by Tabler's own CSS, but we can enforce if needed */
 }
 
 /* Specific Overrides for Sticky Header in Overlap Mode */
-/* If sticky, ensure it has a background so content doesn't show through */
+/* If sticky, ensure the header itself has background so content doesn't show through */
 body.layout-navbar-overlap header.navbar.sticky-top {
     background-color: var(--tblr-bg-surface-dark);
+    /* Default dark */
 }
 
 body.layout-navbar-overlap[data-bs-has-header-top-bg] header.navbar.sticky-top {
