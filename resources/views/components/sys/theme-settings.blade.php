@@ -436,6 +436,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.previewLayout(value)
             }
         } 
+        // Handle Container Width (Instant Preview)
+        else if (name === 'container-width') {
+            document.body.setAttribute('data-container-width', value);
+            if (value === 'boxed') {
+                document.body.classList.add('layout-boxed');
+            } else {
+                document.body.classList.remove('layout-boxed');
+            }
+            window.localStorage.setItem("tabler-container-width", value);
+        }
         // Fallback for general theme settings (theme, font, radius, etc.)
         else {
             for (var key in themeConfig) {
