@@ -4,7 +4,8 @@
  */
 
 /* Inter Font (Tabler's default sans-serif) */
-@import url('https://rsms.me/inter/inter.css');
+/* Optimized: Removed external import to prevent loading loops. Using system fonts/local fallback. */
+/* @import url('https://rsms.me/inter/inter.css'); */
 
 /* Tabler Core CSS */
 @import '@tabler/core/dist/css/tabler.min.css';

@@ -12,10 +12,6 @@ window.axios.defaults.withXSRFToken = true
 import { createPopper } from '@popperjs/core';
 window.Popper = { createPopper }; // Expose globally for Bootstrap
 
-// --- Bootstrap 5 JS (untuk Modal, Dropdown, Tooltip, dll)
-import * as bootstrap from 'bootstrap';
-window.bootstrap = bootstrap;
-
 
 
 // --- DataTables (Bootstrap 5 Styling)
