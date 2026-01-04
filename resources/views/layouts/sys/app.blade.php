@@ -41,8 +41,9 @@
                 "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
                 "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
                 "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
-                "theme-header-top-bg": "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
-                "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'default' }}",
+                'theme-header-top-bg': "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
+                'theme-header-sticky': "{{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}",
+                'theme-card-style': "{{ $themeData['themeCardStyle'] ?? 'default' }}",
             }
 
             for (const key in serverDefaults) {
@@ -58,6 +59,13 @@
                 } else if (key === 'theme-header-top-bg' && value) {
                     document.documentElement.style.setProperty('--tblr-header-top-bg', value)
                     document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
+                } else if (key === 'theme-header-sticky') {
+                     const isSticky = (value === 'true');
+                     const header = document.querySelector('header.navbar');
+                     if (header) {
+                         if(isSticky) header.classList.add('sticky-top');
+                         else header.classList.remove('sticky-top');
+                     }
                 } else if (key === 'theme-card-style') {
                      // Always apply if valid
                      if (value && value !== 'default') {
@@ -82,7 +90,7 @@
         @unless($layoutData['layoutHideTopbar'] ?? false)
             @include('layouts.sys.header', [
                 'condensed'    => $layoutData['layoutNavbarCondensed'] ?? false,
-                'sticky'       => $layoutData['layoutNavbarSticky'] ?? false,
+                'sticky'       => filter_var($themeData['themeHeaderSticky'] ?? ($layoutData['layoutNavbarSticky'] ?? false), FILTER_VALIDATE_BOOLEAN),
                 'stickyWrapper'=> $layoutData['layoutNavbarStickyWrapper'] ?? false,
                 'dark'         => $layoutData['layoutNavbarDark'] ?? false,
                 'hideBrand'    => $layoutData['layoutNavbarHideBrand'] ?? false,

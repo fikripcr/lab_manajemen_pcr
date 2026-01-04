@@ -158,6 +158,7 @@ class AppConfigController extends Controller
                 'theme_bg'            => env('TABLER_THEME_BG', ''),
                 'theme_sidebar_bg'    => env('TABLER_SIDEBAR_BG', ''),
                 'theme_header_top_bg' => env('TABLER_HEADER_TOP_BG', ''),
+                'theme_header_sticky' => env('TABLER_HEADER_STICKY', 'false'),
                 'theme_card_style'    => env('TABLER_CARD_STYLE', 'default'),
                 'layout'              => env('TABLER_LAYOUT', 'vertical'),
             ],
@@ -171,14 +172,15 @@ class AppConfigController extends Controller
     {
         $validated = $request->validate([
             'theme'                => 'nullable|in:light,dark',
-            'theme_primary'        => 'nullable|in:blue,azure,indigo,purple,pink,red,orange,yellow,lime,green,teal,cyan',
+            'theme_primary'        => 'nullable|string',
             'theme_font'           => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
             'theme_base'           => 'nullable|in:slate,gray,zinc,neutral,stone',
             'theme_radius'         => 'nullable|in:0,0.5,1,1.5,2',
             'theme_bg'             => 'nullable|string', // Allow hex color or empty
             'theme_sidebar_bg'     => 'nullable|string',
-            'theme_header_top_bg'  => 'nullable|string', // New
-            'theme_header_menu_bg' => 'nullable|string', // New
+            'theme_header_top_bg'  => 'nullable|string',        // New
+            'theme_header_sticky'  => 'nullable|in:true,false', // New
+            'theme_header_menu_bg' => 'nullable|string',        // New
             'theme_card_style'     => 'nullable|in:default,flat,shadow,border,modern',
             'layout'               => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
         ]);
@@ -196,6 +198,7 @@ class AppConfigController extends Controller
                 'theme_bg'            => 'TABLER_THEME_BG',
                 'theme_sidebar_bg'    => 'TABLER_SIDEBAR_BG',
                 'theme_header_top_bg' => 'TABLER_HEADER_TOP_BG',
+                'theme_header_sticky' => 'TABLER_HEADER_STICKY',
                 'theme_card_style'    => 'TABLER_CARD_STYLE',
                 'layout'              => 'TABLER_LAYOUT',
             ];
@@ -210,7 +213,9 @@ class AppConfigController extends Controller
                     continue;
                 }
 
-                $envContent = $this->updateEnvValue($envContent, "{$envKey}=", "{$envKey}={$value}");
+                // Escape double quotes and wrap value in quotes
+                $safeValue  = str_replace('"', '\"', $value);
+                $envContent = $this->updateEnvValue($envContent, "{$envKey}=", "{$envKey}=\"{$safeValue}\"");
             }
 
             file_put_contents($envPath, $envContent);

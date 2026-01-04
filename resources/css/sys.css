@@ -115,21 +115,3 @@ div.dt-processing>div:last-child>div {
 :root[data-bs-has-sidebar-bg] header.navbar-expand-md .navbar {
     background-color: var(--tblr-sidebar-bg) !important;
 }
-
-/* --- Sidebar Scrollbar Customization --- */
-/* Hide native scrollbar for Perfect Scrollbar container */
-.navbar-vertical .navbar-collapse {
-    position: relative;
-    /* Required for PS */
-    overflow: hidden !important;
-    /* Hide native scroll */
-}
-
-/* Optional: Tweaking Perfect Scrollbar rail visibility */
-.ps__rail-y {
-    opacity: 0.6;
-}
-
-.ps__thumb-y {
-    background-color: rgba(var(--tblr-body-color-rgb), 0.3) !important;
-}

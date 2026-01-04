@@ -84,6 +84,26 @@
                         </select>
                     </div>
 
+                    <div class="col-12">
+                        <label class="form-label">Navigation Mode</label>
+                        <div class="form-selectgroup">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="theme-header-sticky" value="false" class="form-selectgroup-input" {{ !filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'checked' : '' }}>
+                                <span class="form-selectgroup-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-vertical me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12h18" /><path d="M12 3v18" /><path d="M15 6l-3 -3l-3 3" /><path d="M15 18l-3 3l-3 -3" /></svg>
+                                    Scrollable
+                                </span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="theme-header-sticky" value="true" class="form-selectgroup-input" {{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'checked' : '' }}>
+                                <span class="form-selectgroup-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pin me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4" /><path d="M9 15l-4.5 4.5" /><path d="M14.5 4l5.5 5.5" /></svg>
+                                    Fixed
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
                     {{-- Custom Background --}}
                     <div class="col-12">
                         <label class="form-label">Custom Backgrounds</label>
@@ -137,7 +157,10 @@
                     <div class="col-12">
                         <label class="form-label">Color Scheme</label>
                         <div class="row g-2">
-                            @foreach(['blue', 'azure', 'indigo', 'purple', 'pink', 'red', 'orange', 'yellow', 'lime', 'green', 'teal', 'cyan'] as $color)
+                        <label class="form-label">Color Scheme</label>
+                        <div class="row g-2">
+                             {{-- Presets --}}
+                            @foreach(['blue', 'purple', 'red', 'orange', 'green'] as $color)
                             <div class="col-auto">
                                 <label class="form-colorinput">
                                     <input name="theme-primary" type="radio" value="{{ $color }}" class="form-colorinput-input" {{ ($themeData['themePrimary'] ?? 'blue') === $color ? 'checked' : '' }} />
@@ -145,6 +168,28 @@
                                 </label>
                             </div>
                             @endforeach
+                            
+                            {{-- Custom Picker --}}
+                             <div class="col-auto">
+                                <label class="form-colorinput" id="custom-primary-picker-wrapper">
+                                    {{-- If current val is not in presets, check this --}}
+                                    @php 
+                                        $curr = $themeData['themePrimary'] ?? 'blue';
+                                        $isCustom = !in_array($curr, ['blue', 'purple', 'red', 'orange', 'green']);
+                                    @endphp
+                                    <input name="theme-primary" type="radio" value="custom" class="form-colorinput-input" {{ $isCustom ? 'checked' : '' }} />
+                                    <span class="form-colorinput-color" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgY2xhc3M9Imljb24gaWNvbi10YWJsZXIgaWNvbi10YWJsZXItcGFsZXR0ZSI+PHBhdGggc3Ryb2tlPSJub25lIiBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTEyIDIxYTkgOSAwIDAgMSAwIC0xOGE5IDggMCAwIDEgNi44di4wMmEyIDIgMCAwIDEgMCAzLjk4dmwwYTkgOSAwIDAgMSAwIC0xOGo3Nzc3Nzc3NzcnbiAvPjwvc3ZnPg=='); background-size: 16px; background-repeat: no-repeat; background-position: center; {{ $isCustom ? 'background-color:' . $curr : 'background-color: #555' }}">
+                                        {{-- Icon injected via bg image or inner text --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8; color: white;"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" /><path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg>
+                                    </span>
+                                </label>
+                                {{-- Hidden Input for Custom Value --}}
+                                <input type="hidden" name="theme-primary-custom" value="{{ $isCustom ? $curr : '#206bc4' }}">
+                                {{-- Pickr Container (Hidden visually but active) --}}
+                                <div style="height: 0; width: 0; overflow: hidden; position: absolute;">
+                                    <div id="primary-color-picker"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -220,6 +265,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
         "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
         "theme-header-top-bg": "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
+        "theme-header-sticky": "{{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}",
         "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'flat' }}",
     }
 
@@ -285,6 +331,66 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+
+    // --- Primary Color Picker Logic ---
+    var primaryPickrEl = document.getElementById('primary-color-picker');
+    var customPrimaryRadio = form.querySelector('input[name="theme-primary"][value="custom"]');
+    var customPrimaryInput = form.querySelector('input[name="theme-primary-custom"]');
+    var primaryRadios = form.querySelectorAll('input[name="theme-primary"]');
+    var customPrimaryIndicator = customPrimaryRadio.nextElementSibling; // The span
+
+    const primaryPickr = Pickr.create({
+        el: primaryPickrEl,
+        theme: 'nano',
+        default: customPrimaryInput.value,
+        swatches: ['#206bc4', '#4299e1', '#4263eb', '#ae3ec9', '#d6336c', '#d63939', '#f76707', '#74b816', '#0ca678'],
+        components: {
+            preview: true,
+            opacity: false, // Primary usually solid
+            hue: true,
+            interaction: { hex: true, input: true, save: true }
+        }
+    });
+    
+    // Helper to apply primary color
+    function applyPrimary(val) {
+        if (val.startsWith('#') || val.startsWith('rgb')) {
+             // Custom Color
+             document.documentElement.setAttribute('data-bs-theme-primary', 'custom'); // Dummy or remove? Tabler needs generic class maybe?
+             // Actually, remove the attribute and set var
+             document.documentElement.removeAttribute('data-bs-theme-primary');
+             document.documentElement.style.setProperty('--tblr-primary', val);
+        } else {
+            // Preset
+            document.documentElement.style.removeProperty('--tblr-primary');
+            document.documentElement.setAttribute('data-bs-theme-primary', val);
+        }
+    }
+
+    // On Pickr Change
+    primaryPickr.on('change', (color) => {
+        var hex = color.toHEXA().toString();
+        customPrimaryInput.value = hex;
+        customPrimaryRadio.checked = true;
+        customPrimaryIndicator.style.backgroundColor = hex;
+        
+        applyPrimary(hex);
+        window.localStorage.setItem("tabler-theme-primary", hex);
+    });
+
+    // On Radio Click
+    primaryRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                 primaryPickr.show();
+            } else {
+                 applyPrimary(this.value);
+                 window.localStorage.setItem("tabler-theme-primary", this.value);
+                 // Reset custom indicator style if needed, or leave it
+            }
+        });
+    });
+
     // Sync inputs with localStorage on load
     var checkItems = function () {
         for (var key in themeConfig) {
@@ -292,7 +398,22 @@ document.addEventListener("DOMContentLoaded", function () {
             var inputs = form.querySelectorAll(`[name="${key}"]`)
             
             if (inputs.length > 0) {
-                if (key.includes('-bg')) {
+                if (key === 'theme-primary') {
+                     // Check if value is hex
+                     if (value.startsWith('#') || value.startsWith('rgb')) {
+                         customPrimaryRadio.checked = true;
+                         customPrimaryInput.value = value;
+                         customPrimaryIndicator.style.backgroundColor = value;
+                         primaryPickr.setColor(value);
+                         applyPrimary(value);
+                     } else {
+                         // Preset
+                         var radio = form.querySelector(`input[name="theme-primary"][value="${value}"]`);
+                         if(radio) radio.checked = true;
+                         applyPrimary(value);
+                     }
+                } else if (key.includes('-bg')) {
+// ... existing bg logic ...
                      var finalVal = value || (key === 'theme-bg' ? '#f4f6fa' : '#ffffff');
                      inputs[0].value = finalVal;
                      // Update Pickr if exists
@@ -326,6 +447,16 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (name === 'theme-header-top-bg') {
              document.documentElement.style.setProperty('--tblr-header-top-bg', value)
              document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
+             window.localStorage.setItem("tabler-" + name, value)
+
+        } else if (name === 'theme-header-sticky') {
+             const header = document.querySelector('header.navbar');
+             var isSticky = (value === 'true');
+             
+             if(header) {
+                 if (isSticky) header.classList.add('sticky-top');
+                 else header.classList.remove('sticky-top');
+             }
              window.localStorage.setItem("tabler-" + name, value)
 
         } else if (name === 'theme-card-style') {
@@ -429,8 +560,8 @@ document.addEventListener("DOMContentLoaded", function () {
     applyButton.addEventListener("click", function () {
         var formData = new FormData()
 
-        // Regular inputs
-        var themeFields = ['theme', 'theme-primary', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style']
+        // Regular inputs (exclude primary from auto-loop, handle manually)
+        var themeFields = ['theme', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style']
         themeFields.forEach(function(field) {
             var selected = form.querySelector(`input[name="${field}"]:checked`) || form.querySelector(`select[name="${field}"]`)
             if (selected) {
@@ -438,11 +569,23 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         })
 
+        // Theme Primary
+        var selectedPrimary = form.querySelector('input[name="theme-primary"]:checked');
+        if (selectedPrimary) {
+             if (selectedPrimary.value === 'custom') {
+                 formData.append('theme_primary', form.querySelector('input[name="theme-primary-custom"]').value);
+             } else {
+                 formData.append('theme_primary', selectedPrimary.value);
+             }
+        }
+
+
         // Background inputs
         var bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg'];
         bgFields.forEach(function(bg) {
-            var input = form.querySelector(`input[name="${bg}"]`);
-            var cssVar;
+             var input = form.querySelector(`input[name="${bg}"]`);
+             // ...
+             var cssVar;
             if (bg === 'theme-bg') cssVar = '--tblr-body-bg';
             else if (bg === 'theme-sidebar-bg') cssVar = '--tblr-sidebar-bg';
             else if (bg === 'theme-header-top-bg') cssVar = '--tblr-header-top-bg';
@@ -450,6 +593,10 @@ document.addEventListener("DOMContentLoaded", function () {
             var currentVal = document.documentElement.style.getPropertyValue(cssVar);
             formData.append(bg.replace(/-/g, '_'), currentVal ? currentVal.trim() : '');
         });
+
+        // Sticky Header
+        var stickyInput = form.querySelector('input[name="theme-header-sticky"]:checked');
+        formData.append('theme_header_sticky', stickyInput ? stickyInput.value : 'false');
 
         // Layout
         var layout = form.querySelector('input[name="layout"]:checked')
