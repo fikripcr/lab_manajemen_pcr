@@ -1,4 +1,3 @@
-/* Core CSS */
-@import '../assets/auth/vendor/css/core.css';
-@import '../assets/auth/vendor/css/pages/page-auth.css';
-@import '../assets/auth/vendor/css/theme-default.css';
+/* Tabler Core CSS for Auth Section */
+@import '@tabler/core/dist/css/tabler.min.css';
+@import '@tabler/core/dist/css/tabler-vendors.min.css';

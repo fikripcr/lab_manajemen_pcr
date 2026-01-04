@@ -2,8 +2,9 @@
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 
-// --- Tabler Core ---
-import '@tabler/core/dist/js/tabler.esm.js';
+// --- Popper.js (Required by Bootstrap for dropdowns) ---
+import { createPopper } from '@popperjs/core';
+window.Popper = { createPopper };
 
 // --- Pickr (Color Picker) ---
 import Pickr from '@simonwep/pickr';
