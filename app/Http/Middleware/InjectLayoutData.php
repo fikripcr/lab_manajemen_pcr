@@ -77,22 +77,6 @@ class InjectLayoutData
             'navbarContainerClass'  => 'container-xl',
         ],
 
-        // === BODY CLASS VARIATIONS (based on horizontal) ===
-        'boxed'          => [
-            'layoutSidebar'         => false,
-            'layoutSidebarDark'     => false,
-            'layoutHideTopbar'      => false,
-            'layoutNavbarCondensed' => false,
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => 'layout-boxed',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container',
-            'navbarContainerClass'  => 'container-xl',
-        ],
-
         // === NAVBAR VARIATIONS (based on horizontal) ===
 
         'navbar-overlap' => [
@@ -107,7 +91,7 @@ class InjectLayoutData
             'bodyClass'             => '',
             'pageHeaderClass'       => 'text-white',
             'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-fluid', // Fluid for overlap
+            'navbarContainerClass'  => 'container-xl', // Fluid for overlap
         ],
 
     ];
@@ -129,18 +113,27 @@ class InjectLayoutData
             'themeHeaderTopBg'  => env('TABLER_HEADER_TOP_BG', ''),
             'themeHeaderSticky' => env('TABLER_HEADER_STICKY', false),
             'themeCardStyle'    => env('TABLER_CARD_STYLE', 'default'),
-            'themeBoxedBg'      => env('TABLER_BOXED_BG', '#e2e8f0'), // NEW
+            'themeBoxedBg'      => env('TABLER_BOXED_BG', '#e2e8f0'),
         ];
 
         // Get layout preset
         $layoutKey = env('TABLER_LAYOUT', 'vertical');
         $preset    = $this->layoutPresets[$layoutKey] ?? $this->layoutPresets['vertical'];
 
+        $containerWidth = env('TABLER_CONTAINER_WIDTH', 'standard');
+
         // Layout data - using Tabler's exact variable names
         $layoutData = array_merge([
             'layout'         => $layoutKey,
-            'containerWidth' => env('TABLER_CONTAINER_WIDTH', 'standard'),
+            'containerWidth' => $containerWidth,
         ], $preset);
+
+        // Override for Boxed Container Width
+        if ($containerWidth === 'boxed') {
+            $layoutData['bodyClass']      = trim(($layoutData['bodyClass'] ?? '') . ' layout-boxed');
+            $layoutData['containerClass'] = 'container';
+            // Also ensure some padding or alignment if needed, but 'layout-boxed' on body usually handles it.
+        }
 
         // Share with all views
         View::share('themeData', $themeData);

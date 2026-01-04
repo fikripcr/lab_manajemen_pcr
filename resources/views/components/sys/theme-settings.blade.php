@@ -84,6 +84,22 @@
                         </select>
                     </div>
 
+                    {{-- Page Layout (Moved UI) --}}
+                    <div class="col-12">
+                        <label class="form-label">Page Layout</label>
+                        <select name="layout" class="form-select">
+                            @foreach([
+                                'combo' => 'Vertical With Header',
+                                'vertical' => 'Vertical Without Header',
+                                'horizontal' => 'Horizontal',
+                                'condensed' => 'Condensed',
+                                'navbar-overlap' => 'Navbar Overlap',
+                            ] as $value => $label)
+                            <option value="{{ $value }}" {{ ($layoutData['layout'] ?? 'vertical') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="col-12">
                         <label class="form-label">Navigation Mode</label>
                         <div class="form-selectgroup">
@@ -122,12 +138,33 @@
                                     Fluid
                                 </span>
                             </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="container-width" value="boxed" class="form-selectgroup-input" {{ ($layoutData['containerWidth'] ?? 'standard') === 'boxed' ? 'checked' : '' }}>
+                                <span class="form-selectgroup-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-box-padding me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4h16v16h-16z" /><path d="M8 16v-8h8" /></svg>
+                                    Boxed
+                                </span>
+                            </label>
                         </div>
                     </div>
 
                     {{-- Custom Backgrounds --}}
                     <div class="col-12">
-                        <label class="form-label">Custom Backgrounds</label>
+                        <label class="form-label">Custom Presets</label>
+                        
+                        {{-- Colour Preset --}}
+                        <div class="row g-2 mb-2 align-items-center">
+                            <div class="col-4"><small>Colour Primary</small></div>
+                            <div class="col-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="color-picker-component" data-target="theme-primary" data-default="#206bc4"></div>
+                                    <input type="hidden" name="theme-primary" value="{{ $themeData['themePrimary'] ?? '#206bc4' }}">
+                                    <button class="btn btn-icon btn-sm btn-outline-secondary ms-2" type="button" data-reset-bg="theme-primary" title="Reset">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5" /><path d="M5.63 7.16l0 .01" /><path d="M4.06 11l0 .01" /><path d="M4.63 15.1l0 .01" /><path d="M7.16 18.37l0 .01" /><path d="M11 19.94l0 .01" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         
                         {{-- Body --}}
                         <div class="row g-2 mb-2 align-items-center">
@@ -185,57 +222,12 @@
                             </div>
                         </div>
 
-                        <div class="form-text small mt-1">Override background colors. Use Reset to restore defaults.</div>
-                    </div>
-
-                    {{-- Color Primary --}}
-                    <div class="col-12">
-                        <label class="form-label">Color Primary</label>
-                        <div class="row g-2 align-items-center">
-                            <div class="col-4"><small>Primary Color</small></div>
-                            <div class="col-8">
-                                <div class="d-flex align-items-center">
-                                    <div class="color-picker-component" data-target="theme-primary" data-default="#206bc4"></div>
-                                    <input type="hidden" name="theme-primary" value="{{ $themeData['themePrimary'] ?? '#206bc4' }}">
-                                    <button class="btn btn-icon btn-sm btn-outline-secondary ms-2" type="button" data-reset-bg="theme-primary" title="Reset">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5" /><path d="M5.63 7.16l0 .01" /><path d="M4.06 11l0 .01" /><path d="M4.63 15.1l0 .01" /><path d="M7.16 18.37l0 .01" /><path d="M11 19.94l0 .01" /></svg>
-                                    </button>
-                                </div>
                             </div>
                         </div>
-                        <div class="form-text small mt-1">Choose your theme primary color. Presets available in color picker.</div>
-                    </div>
 
-                    <div class="col-12"><hr class="my-1"></div>
 
-                    {{-- Page Layout (changed to radio list) --}}
-                    <div class="col-12">
-                        <label class="form-label">Page Layout</label>
-                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
-                             @php
-                                $layouts = [
-                                    'vertical' => 'Vertical Without Header',
-                                    'combo' => 'Vertical With Header',
 
-                                    'horizontal' => 'Horizontal',
-                                    'condensed' => 'Condensed',
-                                    'navbar-overlap' => 'Navbar Overlap',
-                                    'boxed' => 'Boxed',
-                                ];
-                            @endphp
-                            @foreach($layouts as $value => $label)
-                            <label class="form-selectgroup-item flex-fill">
-                                <input type="radio" name="layout" value="{{ $value }}" class="form-selectgroup-input" {{ ($layoutData['layout'] ?? 'vertical') === $value ? 'checked' : '' }} />
-                                <div class="form-selectgroup-label d-flex align-items-center">
-                                    <div class="me-3">
-                                        <span class="form-selectgroup-check"></span>
-                                    </div>
-                                    <div>{{ $label }}</div>
-                                </div>
-                            </label>
-                            @endforeach
-                        </div>
-                    </div>
+                    {{-- Page Layout Removed (Moved up) --}}
 
                 </div> <!-- End Row -->
             </div>
@@ -303,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     hex: true,
                     rgba: true,
                     input: true,
-                    save: true
+                    save: false // Auto-save mode
                 }
             }
         });
@@ -314,6 +306,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pickr.on('change', (color, source, instance) => {
             var rgbaColor = color.toRGBA().toString(0); // 0 decimal places for alpha if 1, else precision
             
+            // Auto update the button color (live)
+            instance.applyColor(true);
+
             // Update hidden input
             if(hiddenInput) {
                 hiddenInput.value = rgbaColor;
@@ -354,6 +349,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Helper to apply sticky logic based on layout
+    function applyStickyState() {
+        var layoutInput = form.querySelector('[name="layout"]');
+        var layout = layoutInput ? layoutInput.value : 'vertical';
+        
+        var stickyInput = form.querySelector('input[name="theme-header-sticky"]:checked');
+        var isSticky = stickyInput ? (stickyInput.value === 'true') : false;
+
+        var wrapper = document.getElementById('header-sticky-wrapper');
+        // Primary header is the first child header or .navbar inside wrapper
+        var topHeader = wrapper ? wrapper.querySelector('header.navbar') : null;
+
+        if (!wrapper || !topHeader) return;
+
+        // Reset
+        wrapper.classList.remove('sticky-top');
+        topHeader.classList.remove('sticky-top');
+
+        if (isSticky) {
+            if (layout === 'navbar-overlap') {
+                topHeader.classList.add('sticky-top');
+            } else {
+                wrapper.classList.add('sticky-top');
+            }
+        }
+    }
+
     // Handle theme changes (live preview)
     function handleThemeChange(event) {
         var target = event.target, name = target.name, value = target.value
@@ -372,14 +394,16 @@ document.addEventListener("DOMContentLoaded", function () {
              document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
              window.localStorage.setItem("tabler-" + name, value)
 
+        } else if (name === 'theme-primary') {
+             document.documentElement.style.setProperty('--tblr-primary', value)
+             window.localStorage.setItem("tabler-" + name, value)
+
+        } else if (name === 'theme-boxed-bg') {
+             document.documentElement.style.setProperty('--tblr-boxed-bg', value)
+             window.localStorage.setItem("tabler-" + name, value)
+
         } else if (name === 'theme-header-sticky') {
-             const headerWrapper = document.getElementById('header-sticky-wrapper');
-             var isSticky = (value === 'true');
-             
-             if(headerWrapper) {
-                 if (isSticky) headerWrapper.classList.add('sticky-top');
-                 else headerWrapper.classList.remove('sticky-top');
-             }
+             applyStickyState();
              window.localStorage.setItem("tabler-" + name, value)
 
         } else if (name === 'theme-card-style') {
@@ -400,8 +424,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         // Layout preview
-        if (name === 'layout' && typeof window.previewLayout === 'function') {
-            window.previewLayout(value)
+        if (name === 'layout') {
+            applyStickyState(); // Re-evaluate sticky when layout changes
+            if (typeof window.previewLayout === 'function') {
+                window.previewLayout(value)
+            }
         }
     }
 
@@ -422,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Visual Reset Pickr
             if(pickrInstances[targetName]) {
-                pickrInstances[targetName].setColor(defaultVal);
+                pickrInstances[targetName].setColor(defaultVal, true); // true = silent (no events)
             }
             
             // Logic Reset
@@ -439,7 +466,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 defaultVal = '#e2e8f0';
                 bgInput.value = defaultVal;
                 if(pickrInstances[targetName]) {
-                    pickrInstances[targetName].setColor(defaultVal);
+                    pickrInstances[targetName].setColor(defaultVal, true);
                 }
                 document.documentElement.style.removeProperty('--tblr-boxed-bg');
             }
@@ -447,7 +474,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 defaultVal = '#206bc4';
                 bgInput.value = defaultVal;
                 if(pickrInstances[targetName]) {
-                    pickrInstances[targetName].setColor(defaultVal);
+                    pickrInstances[targetName].setColor(defaultVal, true);
                 }
             }
 
@@ -471,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var formData = new FormData()
 
         // Regular inputs (exclude primary from auto-loop, handle manually)
-        var themeFields = ['theme', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style']
+        var themeFields = ['theme', 'layout', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style']
         themeFields.forEach(function(field) {
             var selected = form.querySelector(`input[name="${field}"]:checked`) || form.querySelector(`select[name="${field}"]`)
             if (selected) {
@@ -499,11 +526,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var stickyInput = form.querySelector('input[name="theme-header-sticky"]:checked');
         formData.append('theme_header_sticky', stickyInput ? stickyInput.value : 'false');
 
-        // Layout
-        var layout = form.querySelector('input[name="layout"]:checked')
-        if (layout) {
-            formData.append('layout', layout.value)
-        }
+        // Layout (Handled in themeFields loop now)
 
         // Container Width
         var containerWidth = form.querySelector('input[name="container-width"]:checked')

@@ -40,9 +40,9 @@
                 "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
                 "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
                 "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
-                "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
                 'theme-header-top-bg': "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
                 'theme-header-sticky': "{{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}",
+                'theme-boxed-bg': "{{ $themeData['themeBoxedBg'] ?? '#e2e8f0' }}",
                 'theme-card-style': "{{ $themeData['themeCardStyle'] ?? 'default' }}",
             }
 
@@ -61,6 +61,8 @@
                     document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
                 } else if (key === 'theme-boxed-bg' && value) {
                     document.documentElement.style.setProperty('--tblr-boxed-bg', value)
+                } else if (key === 'theme-primary' && value && value !== 'blue') {
+                    document.documentElement.style.setProperty('--tblr-primary', value)
                 } else if (key === 'theme-header-sticky') {
                      const isSticky = (value === 'true');
                      // Target the Unified Wrapper

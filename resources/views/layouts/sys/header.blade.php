@@ -6,12 +6,26 @@
     $hideBrand    = $hideBrand ?? false;
     $hideMenu     = $hideMenu ?? false;
     $navbarClass = $navbarClass ?? '';
+
+    // Logic for sticky header in overlap vs other layouts
+    $layout = $layoutData['layout'] ?? '';
+    $isOverlap = $layout === 'navbar-overlap';
+    
+    // If overlap, handle sticky on the HEADER itself, BUT remove the true 'navbar-overlap' class 
+    // from the header so it doesn't become huge. We will render a background div instead.
+    $wrapperStickyClass = ($sticky && !$isOverlap) ? 'sticky-top' : '';
+    $headerStickyClass = ($sticky && $isOverlap) ? 'sticky-top' : '';
+    
+    // Remove 'navbar-overlap' from the actual navbar classes if we are manually handling it
+    if ($isOverlap) {
+        $navbarClass = str_replace('navbar-overlap', '', $navbarClass);
+    }
 @endphp
 
-<div id="header-sticky-wrapper" class="{{ $sticky ? 'sticky-top' : '' }} w-100">
+<div id="header-sticky-wrapper" class="{{ $wrapperStickyClass }} w-100">
 
     {{-- Primary Header --}}
-    <header class="navbar navbar-expand-md{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
+    <header class="navbar navbar-expand-md{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} {{ $headerStickyClass }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
         <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
             {{-- Mobile Toggle --}}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
@@ -192,8 +206,14 @@
         </div>
     </header>
 
-    {{-- Secondary Menu Bar (non-condensed only) --}}
-    @unless($condensed)
+    {{-- Overlap Background Decoration --}}
+    @if($isOverlap)
+    <div class="navbar-overlap" style="position: absolute; top: 0; left: 0; width: 100%; height: 6.25rem; z-index: -1; background-color: var(--tblr-header-top-bg, var(--tblr-bg-surface-dark));"></div>
+    @endif
+
+    {{-- Secondary Menu Bar (non-condensed only, and NO Sidebar) --}}
+    {{-- If sidebar is present (e.g. combo layout), menu is likely there, so don't show secondary top bar --}}
+    @if(!$condensed && empty($layoutData['layoutSidebar']))
     <header class="navbar-expand-md">
         <div class="collapse navbar-collapse" id="navbar-menu">
             <div class="navbar"{{ isset($darkSecondary) && $darkSecondary ? ' data-bs-theme="dark"' : '' }}>
@@ -205,7 +225,7 @@
             </div>
         </div>
     </header>
-    @endunless
+    @endif
 
 </div>
 
