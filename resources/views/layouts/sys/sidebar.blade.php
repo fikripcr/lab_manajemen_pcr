@@ -1,9 +1,5 @@
-@php
-    $dark = $dark ?? ($layoutData['layoutSidebarDark'] ?? true);
 
-@endphp
-
-<aside class="navbar navbar-vertical navbar-expand-lg"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
+<aside class="navbar navbar-vertical navbar-expand-lg">
     <div class="container-fluid">
         {{-- 1. NAVBAR TOGGLER (for mobile collapse) --}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" 

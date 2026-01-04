@@ -28,7 +28,7 @@
     @stack('css')
 </head>
 
-<body class="{{ $layoutData['bodyClass'] ?? '' }}">
+<body class="{{ $layoutData['bodyClass'] ?? '' }}" data-container-width="{{ $layoutData['containerWidth'] ?? 'standard' }}">
     {{-- Tabler Theme Script - Must load before body content to prevent flash --}}
     <script>
         (function() {
@@ -59,6 +59,8 @@
                 } else if (key === 'theme-header-top-bg' && value) {
                     document.documentElement.style.setProperty('--tblr-header-top-bg', value)
                     document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
+                } else if (key === 'theme-boxed-bg' && value) {
+                    document.documentElement.style.setProperty('--tblr-boxed-bg', value)
                 } else if (key === 'theme-header-sticky') {
                      const isSticky = (value === 'true');
                      const header = document.querySelector('header.navbar');

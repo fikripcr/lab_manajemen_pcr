@@ -182,7 +182,9 @@ class AppConfigController extends Controller
             'theme_header_sticky'  => 'nullable|in:true,false', // New
             'theme_header_menu_bg' => 'nullable|string',        // New
             'theme_card_style'     => 'nullable|in:default,flat,shadow,border,modern',
-            'layout'               => 'nullable|in:vertical,vertical-transparent,horizontal,combo,condensed,boxed,fluid,fluid-vertical,navbar-sticky,navbar-overlap,navbar-dark',
+            'theme_boxed_bg'       => 'nullable|string', // NEW - boxed layout background
+            'layout'               => 'nullable|in:vertical,combo,vertical-transparent,horizontal,condensed,navbar-overlap,boxed',
+            'container_width'      => 'nullable|in:standard,fluid',
         ]);
 
         try {
@@ -200,7 +202,9 @@ class AppConfigController extends Controller
                 'theme_header_top_bg' => 'TABLER_HEADER_TOP_BG',
                 'theme_header_sticky' => 'TABLER_HEADER_STICKY',
                 'theme_card_style'    => 'TABLER_CARD_STYLE',
+                'theme_boxed_bg'      => 'TABLER_BOXED_BG', // NEW
                 'layout'              => 'TABLER_LAYOUT',
+                'container_width'     => 'TABLER_CONTAINER_WIDTH',
             ];
 
             foreach ($validated as $key => $value) {

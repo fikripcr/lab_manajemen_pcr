@@ -1,3 +1,6 @@
+// CRITICAL: Load GlobalInit FIRST to ensure axios, jQuery, Bootstrap are available
+import './components/GlobalInit.js';
+
 // Tabler Core
 import '@tabler/core/dist/js/tabler.esm.js';
 import '@tabler/core/dist/css/tabler.css';
@@ -13,7 +16,6 @@ import '@simonwep/pickr/dist/themes/nano.min.css'; // 'classic', 'monolith', 'na
 window.Pickr = Pickr;
 
 import '../css/sys.css';
-import './components/GlobalInit.js';
 
 
 

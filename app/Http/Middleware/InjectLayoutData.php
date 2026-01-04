@@ -18,7 +18,6 @@ class InjectLayoutData
         // === SIDEBAR LAYOUTS (hide topbar/navbar) ===
         'vertical'             => [
             'layoutSidebar'         => true,
-            'layoutSidebarDark'     => true,
             'layoutHideTopbar'      => true,
             'layoutNavbarCondensed' => false,
             'layoutNavbarHideBrand' => false,
@@ -63,16 +62,15 @@ class InjectLayoutData
             'navbarContainerClass'  => 'container-xl',
         ],
 
-        // === COMBO: sidebar + condensed navbar (navbar desktop only) ===
+        // === COMBO: sidebar + header top (non-condensed) ===
         'combo'                => [
             'layoutSidebar'         => true,
-            'layoutSidebarDark'     => true,
             'layoutHideTopbar'      => false,
-            'layoutNavbarCondensed' => true,
-            'layoutNavbarHideBrand' => true,
+            'layoutNavbarCondensed' => false, // Show full header top + separate menu
+            'layoutNavbarHideBrand' => false,
             'layoutNavbarSticky'    => false,
             'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => 'd-none d-lg-flex',
+            'layoutNavbarClass'     => '',
             'bodyClass'             => '',
             'pageHeaderClass'       => '',
             'containerClass'        => 'container-xl',
@@ -94,37 +92,9 @@ class InjectLayoutData
             'containerClass'        => 'container',
             'navbarContainerClass'  => 'container-xl',
         ],
-        'fluid'                => [
-            'layoutSidebar'         => false,
-            'layoutSidebarDark'     => false,
-            'layoutHideTopbar'      => false,
-            'layoutNavbarCondensed' => false,
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => 'layout-fluid',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
-        ],
 
         // === NAVBAR VARIATIONS (based on horizontal) ===
-        'navbar-sticky'        => [
-            'layoutSidebar'             => false,
-            'layoutSidebarDark'         => false,
-            'layoutHideTopbar'          => false,
-            'layoutNavbarCondensed'     => false,
-            'layoutNavbarHideBrand'     => false,
-            'layoutNavbarSticky'        => true,
-            'layoutNavbarStickyWrapper' => true, // IMPORTANT: Wrap navbar in sticky-top div
-            'layoutNavbarDark'          => false,
-            'layoutNavbarClass'         => '',
-            'bodyClass'                 => '',
-            'pageHeaderClass'           => '',
-            'containerClass'            => 'container-xl',
-            'navbarContainerClass'      => 'container-xl',
-        ],
+
         'navbar-overlap'       => [
             'layoutSidebar'         => false,
             'layoutSidebarDark'     => false,
@@ -139,41 +109,10 @@ class InjectLayoutData
             'containerClass'        => 'container-xl',
             'navbarContainerClass'  => 'container-fluid', // Fluid for overlap
         ],
-        'navbar-dark'          => [
-            'layoutSidebar'         => false,
-            'layoutSidebarDark'     => false,
-            'layoutHideTopbar'      => false,
-            'layoutNavbarCondensed' => false, // Menu in separate navbar below
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => true,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => '',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
-        ],
-
-        // === VERTICAL + FLUID COMBO ===
-        'fluid-vertical'       => [
-            'layoutSidebar'         => true,
-            'layoutSidebarDark'     => true,
-            'layoutHideTopbar'      => true,
-            'layoutNavbarCondensed' => false,
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => 'layout-fluid',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
-        ],
 
         // === VERTICAL TRANSPARENT (light sidebar) ===
         'vertical-transparent' => [
             'layoutSidebar'         => true,
-            'layoutSidebarDark'     => false, // Light sidebar for transparent effect
             'layoutHideTopbar'      => true,
             'layoutNavbarCondensed' => false,
             'layoutNavbarHideBrand' => false,
@@ -185,6 +124,7 @@ class InjectLayoutData
             'containerClass'        => 'container-xl',
             'navbarContainerClass'  => 'container-xl',
         ],
+
     ];
 
     /**
@@ -204,6 +144,7 @@ class InjectLayoutData
             'themeHeaderTopBg'  => env('TABLER_HEADER_TOP_BG', ''),
             'themeHeaderSticky' => env('TABLER_HEADER_STICKY', false),
             'themeCardStyle'    => env('TABLER_CARD_STYLE', 'default'),
+            'themeBoxedBg'      => env('TABLER_BOXED_BG', '#e2e8f0'), // NEW
         ];
 
         // Get layout preset
@@ -211,7 +152,10 @@ class InjectLayoutData
         $preset    = $this->layoutPresets[$layoutKey] ?? $this->layoutPresets['vertical'];
 
         // Layout data - using Tabler's exact variable names
-        $layoutData = array_merge(['layout' => $layoutKey], $preset);
+        $layoutData = array_merge([
+            'layout'         => $layoutKey,
+            'containerWidth' => env('TABLER_CONTAINER_WIDTH', 'standard'),
+        ], $preset);
 
         // Share with all views
         View::share('themeData', $themeData);
