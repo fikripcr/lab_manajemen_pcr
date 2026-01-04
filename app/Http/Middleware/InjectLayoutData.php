@@ -14,86 +14,58 @@ class InjectLayoutData
      * Tabler's default layout = horizontal (navbar visible, no sidebar)
      * Sidebar only appears when layout-sidebar: true
      */
+    /**
+     * Default layout configuration (Base).
+     * These values are used unless overridden by a specific preset.
+     */
+    protected array $defaultLayout = [
+        'layoutSidebar'         => false,
+        'layoutSidebarDark'     => false,
+        'layoutHideTopbar'      => false,
+        'layoutNavbarCondensed' => false,
+        'layoutNavbarHideBrand' => false,
+        'layoutNavbarSticky'    => false,
+        'layoutNavbarDark'      => false,
+        'layoutNavbarClass'     => '',
+        'bodyClass'             => '',
+        'pageHeaderClass'       => '',
+        'containerClass'        => 'container-xl',
+        'navbarContainerClass'  => 'container-xl',
+    ];
+
+    /**
+     * Layout presets (Overrides).
+     * Only define values that differ from $defaultLayout.
+     */
     protected array $layoutPresets = [
-        // === SIDEBAR LAYOUTS (hide topbar/navbar) ===
+        // === VERTICAL (Sidebar, No Topbar) ===
         'vertical'       => [
-            'layoutSidebar'         => true,
-            'layoutHideTopbar'      => true,
-            'layoutNavbarCondensed' => false,
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => '',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
+            'layoutSidebar'    => true,
+            'layoutHideTopbar' => true,
         ],
 
-        // === HORIZONTAL LAYOUTS (navbar visible, no sidebar) ===
+        // === HORIZONTAL (Topbar, No Sidebar) ===
         'horizontal'     => [
-            'layoutSidebar'         => false,
-            'layoutSidebarDark'     => false,
-            'layoutHideTopbar'      => false,
-            'layoutNavbarCondensed' => false,
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => '',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
+            // Uses defaults
         ],
 
-        // === CONDENSED LAYOUT (horizontal condensed navbar) ===
+        // === CONDENSED (Horizontal Condensed) ===
         'condensed'      => [
-            'layoutSidebar'         => false,
-            'layoutSidebarDark'     => false,
-            'layoutHideTopbar'      => false,
             'layoutNavbarCondensed' => true,
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => '',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
         ],
 
-        // === COMBO: sidebar + header top (non-condensed) ===
+        // === COMBO (Sidebar + Header Top) ===
         'combo'          => [
-            'layoutSidebar'         => true,
-            'layoutHideTopbar'      => false,
-            'layoutNavbarCondensed' => false, // Show full header top + separate menu
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => '',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
+            'layoutSidebar' => true,
         ],
 
-        // === NAVBAR VARIATIONS (based on horizontal) ===
-
+        // === NAVBAR OVERLAP (Dark overlap header) ===
         'navbar-overlap' => [
-            'layoutSidebar'         => false,
-            'layoutSidebarDark'     => false,
-            'layoutHideTopbar'      => false,
-            'layoutNavbarCondensed' => true, // Menu inside navbar, not separate bar
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => true, // Dark navbar like Tabler reference
+            'layoutNavbarCondensed' => true,
+            'layoutNavbarDark'      => true,
             'layoutNavbarClass'     => 'navbar-overlap',
-            'bodyClass'             => '',
             'pageHeaderClass'       => 'text-white',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl', // Fluid for overlap
         ],
-
     ];
 
     /**
@@ -101,7 +73,7 @@ class InjectLayoutData
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Theme settings from config
+        // ... (Theme Data Loading - Unchanged) ...
         $themeData = [
             'theme'                => env('TABLER_THEME', 'light'),
             'themePrimary'         => env('TABLER_THEME_PRIMARY', 'blue'),
@@ -111,23 +83,23 @@ class InjectLayoutData
             'themeBg'              => env('TABLER_THEME_BG', ''),
             'themeSidebarBg'       => env('TABLER_SIDEBAR_BG', ''),
             'themeHeaderTopBg'     => env('TABLER_HEADER_TOP_BG', ''),
-            'themeHeaderOverlapBg' => env('TABLER_HEADER_OVERLAP_BG', ''), // New
+            'themeHeaderOverlapBg' => env('TABLER_HEADER_OVERLAP_BG', ''),
             'themeHeaderSticky'    => env('TABLER_HEADER_STICKY', false),
             'themeCardStyle'       => env('TABLER_CARD_STYLE', 'default'),
             'themeBoxedBg'         => env('TABLER_BOXED_BG', '#e2e8f0'),
         ];
 
-        // Get layout preset
+        // Get layout preset and merge with defaults
         $layoutKey = env('TABLER_LAYOUT', 'vertical');
         $preset    = $this->layoutPresets[$layoutKey] ?? $this->layoutPresets['vertical'];
 
         $containerWidth = env('TABLER_CONTAINER_WIDTH', 'standard');
 
-        // Layout data - using Tabler's exact variable names
-        $layoutData = array_merge([
+        // Merge Default + Preset + Runtime Config
+        $layoutData = array_merge($this->defaultLayout, $preset, [
             'layout'         => $layoutKey,
             'containerWidth' => $containerWidth,
-        ], $preset);
+        ]);
 
         // Override for Boxed Container Width
         if ($containerWidth === 'boxed') {

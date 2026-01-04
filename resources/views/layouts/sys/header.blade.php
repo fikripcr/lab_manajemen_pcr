@@ -1,27 +1,19 @@
 @php
     $condensed    = $condensed ?? false;
     $sticky       = $sticky ?? false;
-    $stickyWrapper= $stickyWrapper ?? false; 
+ 
     $dark         = $dark ?? false;
     $hideBrand    = $hideBrand ?? false;
     $hideMenu     = $hideMenu ?? false;
     $navbarClass = $navbarClass ?? '';
 
-    // Logic for sticky header in overlap vs other layouts
-    $layout = $layoutData['layout'] ?? '';
-    $isOverlap = $layout === 'navbar-overlap';
-    
-    // If overlap, handle sticky on the HEADER itself, BUT remove the true 'navbar-overlap' class 
-    // from the header so it doesn't become huge. We will render a background div instead.
-    $wrapperStickyClass = ($sticky && !$isOverlap) ? 'sticky-top' : '';
-    $headerStickyClass = ($sticky && $isOverlap) ? 'sticky-top' : '';
-    
-    // We now WANT the native 'navbar-overlap' class on the header
-    // so we simply ensure it passes through from $layoutData
+
+    // Apply sticky-top directly to the header if enabled
+    $headerStickyClass = $sticky ? 'sticky-top' : '';
 
 @endphp
 
-<div id="header-sticky-wrapper" class="{{ $wrapperStickyClass }} w-100">
+
 
     {{-- Primary Header --}}
     <header class="navbar navbar-expand-md{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} {{ $headerStickyClass }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
@@ -223,13 +215,7 @@
     </header>
     @endif
 
-</div>
 
-
-
-@if($stickyWrapper)
-</div>
-@endif
 
 @push('scripts')
 <script>

@@ -391,63 +391,58 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Configuration Map (Mirrors app.blade.php)
+    const themeMap = {
+        'theme-bg':                { var: '--tblr-body-bg' },
+        'theme-sidebar-bg':        { var: '--tblr-sidebar-bg', attr: 'data-bs-has-sidebar-bg' },
+        'theme-header-top-bg':     { var: '--tblr-header-top-bg', attr: 'data-bs-has-header-top-bg' },
+        'theme-header-overlap-bg': { var: '--tblr-header-overlap-bg', attr: 'data-bs-has-header-overlap-bg' },
+        'theme-boxed-bg':          { var: '--tblr-boxed-bg' },
+        'theme-primary':           { var: '--tblr-primary' },
+        'theme-card-style':        { attr: 'data-bs-card-style' },
+    };
+
     // Handle theme changes (live preview)
     function handleThemeChange(event) {
         var target = event.target, name = target.name, value = target.value
 
-        if (name === 'theme-bg') {
-             document.documentElement.style.setProperty('--tblr-body-bg', value)
-             window.localStorage.setItem("tabler-" + name, value)
+        // Handle Mapped Settings
+        if (themeMap[name]) {
+            const rule = themeMap[name];
+            
+            // Special case for card style 'default' -> remove attribute
+            if (name === 'theme-card-style' && value === 'default') {
+                document.documentElement.removeAttribute("data-bs-card-style");
+            } 
+            // Standard attribute setting
+            else if (rule.attr) {
+                document.documentElement.setAttribute(rule.attr, (value === true || value === 'true') ? '' : value);
+            }
 
-        } else if (name === 'theme-sidebar-bg') {
-             document.documentElement.style.setProperty('--tblr-sidebar-bg', value)
-             document.documentElement.setAttribute('data-bs-has-sidebar-bg', '')
-             window.localStorage.setItem("tabler-" + name, value)
+            // CSS Variable setting
+            if (rule.var) {
+                document.documentElement.style.setProperty(rule.var, value);
+            }
 
-        } else if (name === 'theme-header-top-bg') {
-             document.documentElement.style.setProperty('--tblr-header-top-bg', value)
-             document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
-             window.localStorage.setItem("tabler-" + name, value)
-
-        } else if (name === 'theme-header-overlap-bg') {
-             document.documentElement.style.setProperty('--tblr-header-overlap-bg', value)
-             document.documentElement.setAttribute('data-bs-has-header-overlap-bg', '')
-             window.localStorage.setItem("tabler-" + name, value)
-
-        } else if (name === 'theme-primary') {
-             document.documentElement.style.setProperty('--tblr-primary', value)
-             window.localStorage.setItem("tabler-" + name, value)
-
-        } else if (name === 'theme-boxed-bg') {
-             document.documentElement.style.setProperty('--tblr-boxed-bg', value)
-             window.localStorage.setItem("tabler-" + name, value)
+            window.localStorage.setItem("tabler-" + name, value);
 
         } else if (name === 'theme-header-sticky') {
              applyStickyState();
              window.localStorage.setItem("tabler-" + name, value)
 
-        } else if (name === 'theme-card-style') {
-             if (value === 'default') {
-                 document.documentElement.removeAttribute("data-bs-card-style")
-             } else {
-                 document.documentElement.setAttribute("data-bs-card-style", value)
-             }
-             window.localStorage.setItem("tabler-" + name, value)
-             
-        } else {
+        } else if (name === 'layout') {
+            applyStickyState(); // Re-evaluate sticky when layout changes
+            if (typeof window.previewLayout === 'function') {
+                window.previewLayout(value)
+            }
+        } 
+        // Fallback for general theme settings (theme, font, radius, etc.)
+        else {
             for (var key in themeConfig) {
                 if (name === key) {
                     document.documentElement.setAttribute("data-bs-" + key, value)
                     window.localStorage.setItem("tabler-" + key, value)
                 }
-            }
-        }
-        
-        // Layout preview
-        if (name === 'layout') {
-            applyStickyState(); // Re-evaluate sticky when layout changes
-            if (typeof window.previewLayout === 'function') {
-                window.previewLayout(value)
             }
         }
     }
