@@ -19,21 +19,24 @@
 </div>
 
 @push('scripts')
-    <script src="{{ Vite::asset('resources/assets/admin/js/tinymce/tinymce.min.js') }}"></script>
+    {{-- HugeRTE is bundled in sys.js via NPM --}}
     <script>
-        // Initialize TinyMCE only if the element exists
         document.addEventListener('DOMContentLoaded', function() {
-            const editorElement = document.getElementById('{{ $id }}');
+            const editorId = '{{ $id }}';
+            const editorElement = document.getElementById(editorId);
+            
             if (editorElement) {
-                tinymce.init({
-                    selector: '#{{ $id }}',
+                hugerte.init({
+                    selector: '#' + editorId,
                     height: {{ $height }},
                     menubar: false,
-                    license_key:'gpl',
+                    statusbar: false, /* Tabler cleaner look */
                     plugins: '{{ $plugins }}',
                     toolbar: '{{ $toolbar }}',
-                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                    init_instance_callback: function (editor) {
+                    skin: false,       /* Bundled in sys.js */
+                    content_css: false, /* Bundled in sys.js */
+                    content_style: (window.hugerteContentCss || '') + ' body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }',
+                    setup: function (editor) {
                         editor.on('change', function () {
                             editor.save();
                         });

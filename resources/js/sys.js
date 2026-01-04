@@ -25,6 +25,38 @@ import './components/Notification.js';
 // Import FormFeatures to make loadFormFeatures available
 import './components/FormFeatures.js';
 
+// Import HoverDropdown for desktop hover interactions
+import './components/HoverDropdown.js';
+
+// Import HugeRTE (Tabler's Editor) and expose globally
+// Import HugeRTE (Tabler's Editor) and expose globally
+import hugerte from 'hugerte';
+
+// Bundle HugeRTE Assets to prevent 404s
+import 'hugerte/themes/silver/theme';
+import 'hugerte/icons/default/icons';
+import 'hugerte/models/dom/model';
+
+// Bundle HugeRTE Plugins
+import 'hugerte/plugins/lists/plugin';
+import 'hugerte/plugins/link/plugin';
+import 'hugerte/plugins/image/plugin';
+import 'hugerte/plugins/anchor/plugin';
+import 'hugerte/plugins/searchreplace/plugin';
+import 'hugerte/plugins/code/plugin';
+import 'hugerte/plugins/fullscreen/plugin';
+import 'hugerte/plugins/insertdatetime/plugin';
+import 'hugerte/plugins/media/plugin';
+import 'hugerte/plugins/table/plugin';
+import 'hugerte/plugins/wordcount/plugin';
+
+// Bundle HugeRTE Skins (prevents 404s)
+import 'hugerte/skins/ui/oxide/skin.min.css';
+import contentCss from 'hugerte/skins/content/default/content.min.css?inline';
+
+window.hugerte = hugerte;
+window.hugerteContentCss = contentCss;
+
 // --- Global Search (lazy loading)
 window.loadGlobalSearch = function () {
     return import('./components/GlobalSearch.js').then(({ GlobalSearch }) => {
