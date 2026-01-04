@@ -150,17 +150,18 @@ class AppConfigController extends Controller
         return response()->json([
             'success'  => true,
             'settings' => [
-                'theme'               => env('TABLER_THEME', 'light'),
-                'theme_primary'       => env('TABLER_THEME_PRIMARY', 'blue'),
-                'theme_font'          => env('TABLER_THEME_FONT', 'sans-serif'),
-                'theme_base'          => env('TABLER_THEME_BASE', 'gray'),
-                'theme_radius'        => env('TABLER_THEME_RADIUS', '1'),
-                'theme_bg'            => env('TABLER_THEME_BG', ''),
-                'theme_sidebar_bg'    => env('TABLER_SIDEBAR_BG', ''),
-                'theme_header_top_bg' => env('TABLER_HEADER_TOP_BG', ''),
-                'theme_header_sticky' => env('TABLER_HEADER_STICKY', 'false'),
-                'theme_card_style'    => env('TABLER_CARD_STYLE', 'default'),
-                'layout'              => env('TABLER_LAYOUT', 'vertical'),
+                'theme'                   => env('TABLER_THEME', 'light'),
+                'theme_primary'           => env('TABLER_THEME_PRIMARY', 'blue'),
+                'theme_font'              => env('TABLER_THEME_FONT', 'sans-serif'),
+                'theme_base'              => env('TABLER_THEME_BASE', 'gray'),
+                'theme_radius'            => env('TABLER_THEME_RADIUS', '1'),
+                'theme_bg'                => env('TABLER_THEME_BG', ''),
+                'theme_sidebar_bg'        => env('TABLER_SIDEBAR_BG', ''),
+                'theme_header_top_bg'     => env('TABLER_HEADER_TOP_BG', ''),
+                'theme_header_overlap_bg' => env('TABLER_HEADER_OVERLAP_BG', ''), // New
+                'theme_header_sticky'     => env('TABLER_HEADER_STICKY', 'false'),
+                'theme_card_style'        => env('TABLER_CARD_STYLE', 'default'),
+                'layout'                  => env('TABLER_LAYOUT', 'vertical'),
             ],
         ]);
     }
@@ -171,20 +172,21 @@ class AppConfigController extends Controller
     public function applyThemeSettings(Request $request)
     {
         $validated = $request->validate([
-            'theme'                => 'nullable|in:light,dark',
-            'theme_primary'        => 'nullable|string',
-            'theme_font'           => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
-            'theme_base'           => 'nullable|in:slate,gray,zinc,neutral,stone',
-            'theme_radius'         => 'nullable|in:0,0.5,1,1.5,2',
-            'theme_bg'             => 'nullable|string', // Allow hex color or empty
-            'theme_sidebar_bg'     => 'nullable|string',
-            'theme_header_top_bg'  => 'nullable|string',        // New
-            'theme_header_sticky'  => 'nullable|in:true,false', // New
-            'theme_header_menu_bg' => 'nullable|string',        // New
-            'theme_card_style'     => 'nullable|in:default,flat,shadow,border,modern',
-            'theme_boxed_bg'       => 'nullable|string', // NEW - boxed layout background
-            'layout'               => 'nullable|in:vertical,combo,horizontal,condensed,navbar-overlap',
-            'container_width'      => 'nullable|in:standard,fluid,boxed',
+            'theme'                   => 'nullable|in:light,dark',
+            'theme_primary'           => 'nullable|string',
+            'theme_font'              => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
+            'theme_base'              => 'nullable|in:slate,gray,zinc,neutral,stone',
+            'theme_radius'            => 'nullable|in:0,0.5,1,1.5,2',
+            'theme_bg'                => 'nullable|string', // Allow hex color or empty
+            'theme_sidebar_bg'        => 'nullable|string',
+            'theme_header_top_bg'     => 'nullable|string',
+            'theme_header_overlap_bg' => 'nullable|string',        // New
+            'theme_header_sticky'     => 'nullable|in:true,false', // New
+            'theme_header_menu_bg'    => 'nullable|string',        // New
+            'theme_card_style'        => 'nullable|in:default,flat,shadow,border,modern',
+            'theme_boxed_bg'          => 'nullable|string', // NEW - boxed layout background
+            'layout'                  => 'nullable|in:vertical,combo,horizontal,condensed,navbar-overlap',
+            'container_width'         => 'nullable|in:standard,fluid,boxed',
         ]);
 
         try {
@@ -192,19 +194,20 @@ class AppConfigController extends Controller
             $envContent = file_get_contents($envPath);
 
             $envMapping = [
-                'theme'               => 'TABLER_THEME',
-                'theme_primary'       => 'TABLER_THEME_PRIMARY',
-                'theme_font'          => 'TABLER_THEME_FONT',
-                'theme_base'          => 'TABLER_THEME_BASE',
-                'theme_radius'        => 'TABLER_THEME_RADIUS',
-                'theme_bg'            => 'TABLER_THEME_BG',
-                'theme_sidebar_bg'    => 'TABLER_SIDEBAR_BG',
-                'theme_header_top_bg' => 'TABLER_HEADER_TOP_BG',
-                'theme_header_sticky' => 'TABLER_HEADER_STICKY',
-                'theme_card_style'    => 'TABLER_CARD_STYLE',
-                'theme_boxed_bg'      => 'TABLER_BOXED_BG', // NEW
-                'layout'              => 'TABLER_LAYOUT',
-                'container_width'     => 'TABLER_CONTAINER_WIDTH',
+                'theme'                   => 'TABLER_THEME',
+                'theme_primary'           => 'TABLER_THEME_PRIMARY',
+                'theme_font'              => 'TABLER_THEME_FONT',
+                'theme_base'              => 'TABLER_THEME_BASE',
+                'theme_radius'            => 'TABLER_THEME_RADIUS',
+                'theme_bg'                => 'TABLER_THEME_BG',
+                'theme_sidebar_bg'        => 'TABLER_SIDEBAR_BG',
+                'theme_header_top_bg'     => 'TABLER_HEADER_TOP_BG',
+                'theme_header_overlap_bg' => 'TABLER_HEADER_OVERLAP_BG', // New
+                'theme_header_sticky'     => 'TABLER_HEADER_STICKY',
+                'theme_card_style'        => 'TABLER_CARD_STYLE',
+                'theme_boxed_bg'          => 'TABLER_BOXED_BG', // NEW
+                'layout'                  => 'TABLER_LAYOUT',
+                'container_width'         => 'TABLER_CONTAINER_WIDTH',
             ];
 
             foreach ($validated as $key => $value) {

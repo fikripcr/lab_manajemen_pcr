@@ -41,6 +41,7 @@
                 "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
                 "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
                 'theme-header-top-bg': "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
+                'theme-header-overlap-bg': "{{ $themeData['themeHeaderOverlapBg'] ?? '' }}", // New
                 'theme-header-sticky': "{{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}",
                 'theme-boxed-bg': "{{ $themeData['themeBoxedBg'] ?? '#e2e8f0' }}",
                 'theme-card-style': "{{ $themeData['themeCardStyle'] ?? 'default' }}",
@@ -59,6 +60,9 @@
                 } else if (key === 'theme-header-top-bg' && value) {
                     document.documentElement.style.setProperty('--tblr-header-top-bg', value)
                     document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
+                } else if (key === 'theme-header-overlap-bg' && value) {
+                    document.documentElement.style.setProperty('--tblr-header-overlap-bg', value)
+                    document.documentElement.setAttribute('data-bs-has-header-overlap-bg', '')
                 } else if (key === 'theme-boxed-bg' && value) {
                     document.documentElement.style.setProperty('--tblr-boxed-bg', value)
                 } else if (key === 'theme-primary' && value && value !== 'blue') {

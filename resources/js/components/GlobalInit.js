@@ -2,6 +2,12 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 
+// --- Axios (untuk AJAX modern)
+import axios from 'axios';
+window.axios = axios;
+window.axios.defaults.withCredentials = true; // untuk Sanctum/session
+window.axios.defaults.withXSRFToken = true
+
 // --- Popper.js (REQUIRED by Bootstrap 5 for dropdowns, popovers, tooltips)
 import { createPopper } from '@popperjs/core';
 window.Popper = { createPopper }; // Expose globally for Bootstrap
@@ -10,11 +16,7 @@ window.Popper = { createPopper }; // Expose globally for Bootstrap
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 
-// --- Axios (untuk AJAX modern)
-import axios from 'axios';
-window.axios = axios;
-window.axios.defaults.withCredentials = true; // untuk Sanctum/session
-window.axios.defaults.withXSRFToken = true
+
 
 // --- DataTables (Bootstrap 5 Styling)
 import 'datatables.net-bs5';

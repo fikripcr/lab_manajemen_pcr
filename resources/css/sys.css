@@ -180,9 +180,9 @@ body.layout-boxed .page {
     background-image: none !important;
 }
 
-/* Ensure the overlap pseudo-element inherits the custom color */
-[data-bs-has-header-top-bg] .navbar-overlap::after {
-    background-color: var(--tblr-header-top-bg) !important;
+/* Apply custom overlap background color when set via Theme Settings */
+[data-bs-has-header-overlap-bg] .navbar-overlap::after {
+    background-color: var(--tblr-header-overlap-bg) !important;
     background-image: none !important;
 }
 
@@ -202,4 +202,6 @@ body.layout-navbar-overlap header.navbar.sticky-top {
 
 body.layout-navbar-overlap[data-bs-has-header-top-bg] header.navbar.sticky-top {
     background-color: var(--tblr-header-top-bg) !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    /* Add slight shadow for separation */
 }

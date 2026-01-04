@@ -103,17 +103,18 @@ class InjectLayoutData
     {
         // Theme settings from config
         $themeData = [
-            'theme'             => env('TABLER_THEME', 'light'),
-            'themePrimary'      => env('TABLER_THEME_PRIMARY', 'blue'),
-            'themeFont'         => env('TABLER_THEME_FONT', 'sans-serif'),
-            'themeBase'         => env('TABLER_THEME_BASE', 'gray'),
-            'themeRadius'       => env('TABLER_THEME_RADIUS', '1'),
-            'themeBg'           => env('TABLER_THEME_BG', ''),
-            'themeSidebarBg'    => env('TABLER_SIDEBAR_BG', ''),
-            'themeHeaderTopBg'  => env('TABLER_HEADER_TOP_BG', ''),
-            'themeHeaderSticky' => env('TABLER_HEADER_STICKY', false),
-            'themeCardStyle'    => env('TABLER_CARD_STYLE', 'default'),
-            'themeBoxedBg'      => env('TABLER_BOXED_BG', '#e2e8f0'),
+            'theme'                => env('TABLER_THEME', 'light'),
+            'themePrimary'         => env('TABLER_THEME_PRIMARY', 'blue'),
+            'themeFont'            => env('TABLER_THEME_FONT', 'sans-serif'),
+            'themeBase'            => env('TABLER_THEME_BASE', 'gray'),
+            'themeRadius'          => env('TABLER_THEME_RADIUS', '1'),
+            'themeBg'              => env('TABLER_THEME_BG', ''),
+            'themeSidebarBg'       => env('TABLER_SIDEBAR_BG', ''),
+            'themeHeaderTopBg'     => env('TABLER_HEADER_TOP_BG', ''),
+            'themeHeaderOverlapBg' => env('TABLER_HEADER_OVERLAP_BG', ''), // New
+            'themeHeaderSticky'    => env('TABLER_HEADER_STICKY', false),
+            'themeCardStyle'       => env('TABLER_CARD_STYLE', 'default'),
+            'themeBoxedBg'         => env('TABLER_BOXED_BG', '#e2e8f0'),
         ];
 
         // Get layout preset

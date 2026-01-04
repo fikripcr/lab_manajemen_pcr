@@ -208,6 +208,20 @@
                             </div>
                         </div>
 
+                        {{-- Header Overlap (NEW) --}}
+                        <div class="row g-2 mb-2 align-items-center">
+                            <div class="col-4"><small>Header (Overlap)</small></div>
+                            <div class="col-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="color-picker-component" data-target="theme-header-overlap-bg" data-default="#1e293b"></div>
+                                    <input type="hidden" name="theme-header-overlap-bg" value="{{ $themeData['themeHeaderOverlapBg'] ?? '#1e293b' }}">
+                                    <button class="btn btn-icon btn-sm btn-outline-secondary ms-2" type="button" data-reset-bg="theme-header-overlap-bg" title="Reset">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5" /><path d="M5.63 7.16l0 .01" /><path d="M4.06 11l0 .01" /><path d="M4.63 15.1l0 .01" /><path d="M7.16 18.37l0 .01" /><path d="M11 19.94l0 .01" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- Boxed Background (NEW) --}}
                         <div class="row g-2 align-items-center">
                             <div class="col-4"><small>Boxed Background</small></div>
@@ -259,6 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
         "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
         "theme-header-top-bg": "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
+        "theme-header-overlap-bg": "{{ $themeData['themeHeaderOverlapBg'] ?? '' }}",
         "theme-header-sticky": "{{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}",
         "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'flat' }}",
     }
@@ -394,6 +409,11 @@ document.addEventListener("DOMContentLoaded", function () {
              document.documentElement.setAttribute('data-bs-has-header-top-bg', '')
              window.localStorage.setItem("tabler-" + name, value)
 
+        } else if (name === 'theme-header-overlap-bg') {
+             document.documentElement.style.setProperty('--tblr-header-overlap-bg', value)
+             document.documentElement.setAttribute('data-bs-has-header-overlap-bg', '')
+             window.localStorage.setItem("tabler-" + name, value)
+
         } else if (name === 'theme-primary') {
              document.documentElement.style.setProperty('--tblr-primary', value)
              window.localStorage.setItem("tabler-" + name, value)
@@ -462,6 +482,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.documentElement.style.removeProperty('--tblr-header-top-bg');
                 document.documentElement.removeAttribute('data-bs-has-header-top-bg');
             }
+            if(targetName === 'theme-header-overlap-bg') {
+                defaultVal = '#1e293b'; // Default dark
+                bgInput.value = defaultVal;
+                if(pickrInstances[targetName]) {
+                    pickrInstances[targetName].setColor(defaultVal, true);
+                }
+                document.documentElement.style.removeProperty('--tblr-header-overlap-bg');
+                document.documentElement.removeAttribute('data-bs-has-header-overlap-bg');
+            }
             if(targetName === 'theme-boxed-bg') {
                 defaultVal = '#e2e8f0';
                 bgInput.value = defaultVal;
@@ -514,7 +543,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // Background inputs
-        var bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-boxed-bg'];
+        var bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
         bgFields.forEach(function(bg) {
             var input = form.querySelector(`input[name="${bg}"]`);
             if (input) {
