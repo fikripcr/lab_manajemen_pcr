@@ -1,6 +1,20 @@
+// Tabler Core
+import '@tabler/core/dist/js/tabler.esm.js';
+import '@tabler/core/dist/css/tabler.css';
+import '@tabler/core/dist/css/tabler-vendors.css'; // Good to have for plugins
 
-// Global Dependencies (NPM - jQuery, Bootstrap, Axios, SweetAlert2)
+// Tabler Icon
+import '@tabler/icons-webfont/dist/tabler-icons.css';
+
+
+// Pickr (Color Picker)
+import Pickr from '@simonwep/pickr';
+import '@simonwep/pickr/dist/themes/nano.min.css'; // 'classic', 'monolith', 'nano'
+window.Pickr = Pickr;
+
+import '../css/sys.css';
 import './components/GlobalInit.js';
+
 
 
 // --- Notification Manager (direct import - needs to load on every page)
