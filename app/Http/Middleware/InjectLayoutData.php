@@ -16,7 +16,7 @@ class InjectLayoutData
      */
     protected array $layoutPresets = [
         // === SIDEBAR LAYOUTS (hide topbar/navbar) ===
-        'vertical'             => [
+        'vertical'       => [
             'layoutSidebar'         => true,
             'layoutHideTopbar'      => true,
             'layoutNavbarCondensed' => false,
@@ -31,7 +31,7 @@ class InjectLayoutData
         ],
 
         // === HORIZONTAL LAYOUTS (navbar visible, no sidebar) ===
-        'horizontal'           => [
+        'horizontal'     => [
             'layoutSidebar'         => false,
             'layoutSidebarDark'     => false,
             'layoutHideTopbar'      => false,
@@ -47,7 +47,7 @@ class InjectLayoutData
         ],
 
         // === CONDENSED LAYOUT (horizontal condensed navbar) ===
-        'condensed'            => [
+        'condensed'      => [
             'layoutSidebar'         => false,
             'layoutSidebarDark'     => false,
             'layoutHideTopbar'      => false,
@@ -63,7 +63,7 @@ class InjectLayoutData
         ],
 
         // === COMBO: sidebar + header top (non-condensed) ===
-        'combo'                => [
+        'combo'          => [
             'layoutSidebar'         => true,
             'layoutHideTopbar'      => false,
             'layoutNavbarCondensed' => false, // Show full header top + separate menu
@@ -78,7 +78,7 @@ class InjectLayoutData
         ],
 
         // === BODY CLASS VARIATIONS (based on horizontal) ===
-        'boxed'                => [
+        'boxed'          => [
             'layoutSidebar'         => false,
             'layoutSidebarDark'     => false,
             'layoutHideTopbar'      => false,
@@ -95,7 +95,7 @@ class InjectLayoutData
 
         // === NAVBAR VARIATIONS (based on horizontal) ===
 
-        'navbar-overlap'       => [
+        'navbar-overlap' => [
             'layoutSidebar'         => false,
             'layoutSidebarDark'     => false,
             'layoutHideTopbar'      => false,
@@ -108,21 +108,6 @@ class InjectLayoutData
             'pageHeaderClass'       => 'text-white',
             'containerClass'        => 'container-xl',
             'navbarContainerClass'  => 'container-fluid', // Fluid for overlap
-        ],
-
-        // === VERTICAL TRANSPARENT (light sidebar) ===
-        'vertical-transparent' => [
-            'layoutSidebar'         => true,
-            'layoutHideTopbar'      => true,
-            'layoutNavbarCondensed' => false,
-            'layoutNavbarHideBrand' => false,
-            'layoutNavbarSticky'    => false,
-            'layoutNavbarDark'      => false,
-            'layoutNavbarClass'     => '',
-            'bodyClass'             => '',
-            'pageHeaderClass'       => '',
-            'containerClass'        => 'container-xl',
-            'navbarContainerClass'  => 'container-xl',
         ],
 
     ];

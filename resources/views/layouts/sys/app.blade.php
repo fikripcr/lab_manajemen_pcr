@@ -63,10 +63,11 @@
                     document.documentElement.style.setProperty('--tblr-boxed-bg', value)
                 } else if (key === 'theme-header-sticky') {
                      const isSticky = (value === 'true');
-                     const header = document.querySelector('header.navbar');
-                     if (header) {
-                         if(isSticky) header.classList.add('sticky-top');
-                         else header.classList.remove('sticky-top');
+                     // Target the Unified Wrapper
+                     const headerWrapper = document.getElementById('header-sticky-wrapper');
+                     if (headerWrapper) {
+                         if(isSticky) headerWrapper.classList.add('sticky-top');
+                         else headerWrapper.classList.remove('sticky-top');
                      }
                 } else if (key === 'theme-card-style') {
                      // Always apply if valid

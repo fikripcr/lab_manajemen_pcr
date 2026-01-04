@@ -216,7 +216,7 @@
                                 $layouts = [
                                     'vertical' => 'Vertical Without Header',
                                     'combo' => 'Vertical With Header',
-                                    'vertical-transparent' => 'Vertical Transparent',
+
                                     'horizontal' => 'Horizontal',
                                     'condensed' => 'Condensed',
                                     'navbar-overlap' => 'Navbar Overlap',
@@ -242,22 +242,14 @@
 
             {{-- Action Buttons --}}
             <div class="mt-auto pt-3 border-top">
-                <div class="row g-2">
-                    <div class="col-6">
-                        <button type="button" class="btn btn-primary w-100" id="apply-settings">
+                <button type="button" class="btn btn-primary w-100" id="apply-settings">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M5 12l5 5l10 -10"></path>
                             </svg>
                             Apply
                         </button>
-                    </div>
-                    <div class="col-6">
-                        <button type="button" class="btn btn-outline-secondary w-100" id="reset-changes">
-                            Reset
-                        </button>
-                    </div>
-                </div>
+                </button>
             </div>
         </div>
     </form>
@@ -280,7 +272,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     var form = document.getElementById("offcanvasSettings")
-    var resetButton = document.getElementById("reset-changes")
     var applyButton = document.getElementById("apply-settings")
 
     // Initialize Pickr instances
@@ -299,11 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
             theme: 'nano', // or 'monolith', or 'classic'
             default: initialValue,
             swatches: [
-                'rgba(244, 246, 250, 1)',
-                'rgba(255, 255, 255, 1)',
-                'rgba(0, 0, 0, 1)',
-                'rgba(255, 0, 0, 0.5)',
-                'rgba(32, 107, 196, 1)'
+                '#f4f6fa', '#ffffff', '#206bc4', '#a55eea', '#d63939', '#fd7e14', '#2fb344'
             ],
             components: {
                 // Main components
@@ -386,12 +373,12 @@ document.addEventListener("DOMContentLoaded", function () {
              window.localStorage.setItem("tabler-" + name, value)
 
         } else if (name === 'theme-header-sticky') {
-             const header = document.querySelector('header.navbar');
+             const headerWrapper = document.getElementById('header-sticky-wrapper');
              var isSticky = (value === 'true');
              
-             if(header) {
-                 if (isSticky) header.classList.add('sticky-top');
-                 else header.classList.remove('sticky-top');
+             if(headerWrapper) {
+                 if (isSticky) headerWrapper.classList.add('sticky-top');
+                 else headerWrapper.classList.remove('sticky-top');
              }
              window.localStorage.setItem("tabler-" + name, value)
 
@@ -468,62 +455,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Preset Color Buttons for Primary Color
-    var presetButtons = form.querySelectorAll('button[data-preset-color]');
-    presetButtons.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var color = this.getAttribute('data-preset-color');
-            var input = form.querySelector('input[name="theme-primary"]');
-            if (input) {
-                input.value = color;
-                if(pickrInstances['theme-primary']) {
-                    pickrInstances['theme-primary'].setColor(color);
-                }
-            }
-        });
-    });
-
-    // Reset All
-    resetButton.addEventListener("click", function () {
-        for (var key in themeConfig) {
-            if (key.includes('-bg')) {
-                 if(key === 'theme-bg') document.documentElement.style.removeProperty('--tblr-body-bg');
-                 if(key === 'theme-sidebar-bg') {
-                     document.documentElement.style.removeProperty('--tblr-sidebar-bg');
-                     document.documentElement.removeAttribute('data-bs-has-sidebar-bg');
-                 }
-                 if(key === 'theme-header-top-bg') {
-                     document.documentElement.style.removeProperty('--tblr-header-top-bg');
-                     document.documentElement.removeAttribute('data-bs-has-header-top-bg');
-                 }
-                 
-                 window.localStorage.removeItem("tabler-" + key)
-                 // Input visual reset
-                 var bgInput = form.querySelector(`input[name="${key}"]`);
-                 var defaultVal = (key === 'theme-bg') ? '#f4f6fa' : '#ffffff';
-                 if(bgInput) bgInput.value = defaultVal;
-                 
-                  // Pickr visual reset
-                 if(pickrInstances[key]) {
-                     pickrInstances[key].setColor(defaultVal);
-                 }
-
-            } else if (key === 'theme-card-style') {
-                 document.documentElement.removeAttribute("data-bs-card-style")
-                 if (themeConfig[key] && themeConfig[key] !== 'default') {
-                     document.documentElement.setAttribute("data-bs-card-style", themeConfig[key])
-                 }
-                 window.localStorage.removeItem("tabler-" + key)
-            } else {
-                document.documentElement.setAttribute("data-bs-" + key, themeConfig[key])
-                window.localStorage.removeItem("tabler-" + key)
-            }
-        }
-        checkItems()
-    })
-
     // Apply settings to .env
     applyButton.addEventListener("click", function () {
+        // Check if axios is available
+        if (typeof window.axios === 'undefined') {
+            console.error('Axios is not loaded yet');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Dependencies not loaded. Please refresh the page.',
+            });
+            return;
+        }
+
         var formData = new FormData()
 
         // Regular inputs (exclude primary from auto-loop, handle manually)
@@ -535,14 +479,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         })
 
-        // Theme Primary
-        var selectedPrimary = form.querySelector('input[name="theme-primary"]:checked');
-        if (selectedPrimary) {
-             if (selectedPrimary.value === 'custom') {
-                 formData.append('theme_primary', form.querySelector('input[name="theme-primary-custom"]').value);
-             } else {
-                 formData.append('theme_primary', selectedPrimary.value);
-             }
+        // Theme Primary - now a simple hidden input
+        var primaryInput = form.querySelector('input[name="theme-primary"]');
+        if (primaryInput && primaryInput.value) {
+            formData.append('theme_primary', primaryInput.value);
         }
 
 

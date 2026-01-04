@@ -8,12 +8,10 @@
     $navbarClass = $navbarClass ?? '';
 @endphp
 
-@if($stickyWrapper)
-<div class="sticky-top">
-@endif
+<div id="header-sticky-wrapper" class="{{ $sticky ? 'sticky-top' : '' }} w-100">
 
     {{-- Primary Header --}}
-    <header class="navbar navbar-expand-md{{ $dark ? ' navbar-dark text-white' : '' }}{{ $sticky ? ' sticky-top' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
+    <header class="navbar navbar-expand-md{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
         <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
             {{-- Mobile Toggle --}}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
@@ -208,6 +206,10 @@
         </div>
     </header>
     @endunless
+
+</div>
+
+
 
 @if($stickyWrapper)
 </div>

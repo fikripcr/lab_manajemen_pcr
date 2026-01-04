@@ -183,7 +183,7 @@ class AppConfigController extends Controller
             'theme_header_menu_bg' => 'nullable|string',        // New
             'theme_card_style'     => 'nullable|in:default,flat,shadow,border,modern',
             'theme_boxed_bg'       => 'nullable|string', // NEW - boxed layout background
-            'layout'               => 'nullable|in:vertical,combo,vertical-transparent,horizontal,condensed,navbar-overlap,boxed',
+            'layout'               => 'nullable|in:vertical,combo,horizontal,condensed,navbar-overlap,boxed',
             'container_width'      => 'nullable|in:standard,fluid',
         ]);
 
