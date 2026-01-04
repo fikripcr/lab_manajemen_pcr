@@ -14,6 +14,8 @@
  * </form>
  */
 
+import * as bootstrap from 'bootstrap';
+
 // Wait for both DOM and jQuery to be ready
 if (typeof window.jQuery !== 'undefined') {
     initAjaxFormHandler();

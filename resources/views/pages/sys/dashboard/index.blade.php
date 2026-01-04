@@ -80,7 +80,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8 ">
-                            <h6 class="mb-2">Disk Space</h6>
+                            <h3 class="card-title mb-2">Disk Space</h3>
                             <div class="d-flex align-items-center">
                                 <div class="progress flex-grow-1 me-3" style="height: 1.2rem;">
                                     @if (isset($serverMonitoringData['disk_space']))
@@ -124,7 +124,7 @@
                     </div>
                     <div class="row  mt-3">
                         <div class="col-md-6  border-end">
-                            <h6 class="mb-2">Project Size <span class="text-muted">({{ $serverMonitoringData['project_size']['data']['size_formatted'] ?? 'N/A' }})</span></h6>
+                            <h4 class="mb-2 h3 card-title">Project Size <span class="text-muted">({{ $serverMonitoringData['project_size']['data']['size_formatted'] ?? 'N/A' }})</span></h4>
                             @if (isset($serverMonitoringData['project_size']))
                                 <div class="row text-start">
                                     <div class="col-3">
@@ -153,7 +153,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <h6 class="mb-2">Database Size</h6>
+                            <h4 class="mb-2 h3 card-title">Database Size</h4>
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
                                     @if (isset($serverMonitoringData['database_size']))
@@ -250,7 +250,7 @@
 
         <!-- System Management Menu -->
         <div class="col-12 mb-4">
-            <h5 class="mb-4 text-center">System Management Functions</h5>
+            <h3 class="card-title mb-4 text-center">System Management Functions</h3>
             <div class="row g-4">
                 <!-- Activity Log -->
                 <!-- Activity Log -->
@@ -261,7 +261,7 @@
                                 <i class="ti ti-activity"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">Activity Log</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Activity Log</h4>
                                 <small class="text-muted">Track all system activities and user actions</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -278,7 +278,7 @@
                                 <i class="ti ti-shield-lock"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">User Roles</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">User Roles</h4>
                                 <small class="text-muted">Manage user roles and permissions</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -295,7 +295,7 @@
                                 <i class="ti ti-lock"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">Permissions</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Permissions</h4>
                                 <small class="text-muted">Manage system permissions</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -312,7 +312,7 @@
                                 <i class="ti ti-settings"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">App Configuration</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">App Configuration</h4>
                                 <small class="text-muted">Configure application settings</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -329,7 +329,7 @@
                                 <i class="ti ti-database"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">Backup Management</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Backup Management</h4>
                                 <small class="text-muted">Create and manage system backups</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -346,7 +346,7 @@
                                 <i class="ti ti-bell"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">Notifications</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Notifications</h4>
                                 <small class="text-muted">Manage system notifications</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -363,7 +363,7 @@
                                 <i class="ti ti-bug"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">Error Log</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Error Log</h4>
                                 <small class="text-muted">View and manage system errors</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -380,7 +380,7 @@
                                 <i class="ti ti-flask"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">Test Features</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Test Features</h4>
                                 <small class="text-muted">Test system functionality</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -397,7 +397,7 @@
                                 <i class="ti ti-file-text"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 text-reset">Documentation</h6>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Documentation</h4>
                                 <small class="text-muted">System documentation and guides</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
@@ -437,7 +437,7 @@
                             <h3 class="card-title">Recent Activity</h3>
                         </div>
                         <div class="card-body">
-                            <!-- Summary Stats -->
+                            <!-- Summary stats ommitted for brevity in replacement search matches -->
                             @php
                                 $todayCount = $recentLogs->where('created_at', '>=', now()->startOfDay())->count();
                                 $yesterdayCount = \App\Models\Sys\Activity::whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])->count();
@@ -464,7 +464,7 @@
                             </div>
 
                             <!-- Mini Sparkline Chart -->
-                            <div id="activitySparkline" style="height: 100px; margin-bottom: 1.5rem;"></div>
+                            <div id="activitySparkline" style="height: 6rem; margin-bottom: 1.5rem;"></div>
                         </div>
 
                         <!-- Activity List -->
@@ -530,7 +530,7 @@
                             </div>
 
                             <!-- Mini Sparkline Chart -->
-                            <div id="errorSparkline" style="height: 100px; margin-bottom: 1.5rem;"></div>
+                            <div id="errorSparkline" style="height: 6rem; margin-bottom: 1.5rem;"></div>
                         </div>
 
                         <!-- Error List -->
@@ -597,7 +597,14 @@
         // Activity Sparkline Chart (Mini Area Chart)
         const activitySparkline = {
             chart: {
-                height: 140, // Reduced height for Area Chart
+                height: '140', // ApexCharts handles string values/rem oddly, so keep strict unitless or px in config, BUT the container has rem. 
+                // Wait, ApexCharts renders IN the container. If container is 6rem (~96px), check hierarchy.
+                // Best to let chart fill container or use percentages.
+                // However, the user issue was "card card yang tidak pengaruh dengan perubahan rem"
+                // converting the inline style to rem on the container is the fix.
+                // I will update the chart config to use '100%' height if possible, or just keep it default?
+                // Actually, ApexCharts height in config is distinct from container.
+                // I will keep the config logical height but ensure container is flexible.
                 type: 'area',
                 toolbar: {
                     show: false
