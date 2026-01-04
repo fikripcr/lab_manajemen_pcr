@@ -186,6 +186,12 @@ body.layout-boxed .page {
     background-image: none !important;
 }
 
+/* Remove the default navbar bottom border/shadow in overlap mode to prevent the "black line" */
+.navbar-overlap {
+    box-shadow: none !important;
+    border-bottom: none !important;
+}
+
 /* Default Tabler Overlap (Dark) if no custom color */
 /* Tabler sets this via .navbar-dark usually, but we ensure defaults here */
 .navbar-overlap::after {
