@@ -1,50 +1,51 @@
 @extends('layouts.auth.app')
 
 @section('content')
-<div class="authentication-wrapper authentication-basic container-p-y">
-    <div class="authentication-inner py-4">
-        <!-- Forgot Password -->
-        <div class="card">
-            <div class="card-body">
-                <!-- Logo -->
-                <div class="app-brand justify-content-center mb-4">
-                    <a href="{{ url('/') }}" class="app-brand-link gap-2">
-                        <img src="{{ asset('assets/img/digilab-crop.png') }}" class="img-fluid " style="height: 100px; " alt="Logo" />
-                    </a>
-                </div>
-                <!-- /Logo -->
-                <h4 class="mb-2">Forgot Password? 🔒</h4>
-                <p class="mb-4">Enter your email and we'll send you instructions to reset your password</p>
-
-                @if (session('status'))
-                    <div class="alert alert-success mb-4">
+<div class="card card-md">
+    <div class="card-body">
+        <h2 class="h2 text-center mb-4">Forgot password</h2>
+        <p class="text-secondary mb-4">Enter your email address and your password will be reset and emailed to you.</p>
+        
+        @if (session('status'))
+            <div class="alert alert-success mb-3" role="alert">
+                <div class="d-flex">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                    </div>
+                    <div>
                         {{ session('status') }}
                     </div>
-                @endif
-
-                <form method="POST" action="{{ route('password.email') }}" class="mb-3">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ old('email') }}"  autofocus />
-                        @error('email')
-                            <div class="text-danger mt-1">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <button class="btn btn-primary d-grid w-100">Send Reset Link</button>
-                </form>
-                <div class="text-center">
-                    <a href="{{ route('login') }}" class="d-flex align-items-center justify-content-center">
-                        <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
-                        Back to login
-                    </a>
                 </div>
             </div>
-        </div>
-        <!-- /Forgot Password -->
+        @endif
+        
+        <form method="POST" action="{{ route('password.email') }}" autocomplete="off">
+            @csrf
+            
+            <div class="mb-3">
+                <label class="form-label">Email address</label>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                       name="email" 
+                       placeholder="Enter email" 
+                       value="{{ old('email') }}" 
+                       required 
+                       autofocus>
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            
+            <div class="form-footer">
+                <button type="submit" class="btn btn-primary w-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
+                    Send me new password
+                </button>
+            </div>
+        </form>
     </div>
 </div>
-@endsection
 
+<div class="text-center text-secondary mt-3">
+    Forget it, <a href="{{ route('login') }}">send me back</a> to the sign in screen.
+</div>
+@endsection

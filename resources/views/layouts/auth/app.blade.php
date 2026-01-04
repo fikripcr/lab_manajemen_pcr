@@ -7,13 +7,20 @@
 
     <title>{{ config('app.name') }}</title>
 
-    @vite(['resources/css/auth.css'])
+    @vite(['resources/css/auth.css', 'resources/js/auth.js'])
 </head>
-<body class="font-sans bg-gray-50">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
-        @yield('content')
+<body class="d-flex flex-column">
+    
+    <div class="page page-center">
+        <div class="container container-tight py-4">
+            <div class="text-center mb-4">
+                <a href="." class="navbar-brand navbar-brand-autodark">
+                    <img src="{{ asset('assets/img/digilab-crop.png') }}" height="36" alt="">
+                </a>
+            </div>
+            @yield('content')
+        </div>
     </div>
 
-    @vite(['resources/js/auth.js'])
 </body>
 </html>
