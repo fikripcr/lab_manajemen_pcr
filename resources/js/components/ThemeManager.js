@@ -97,7 +97,7 @@ class ThemeManager {
      * @param {string} value - Setting value
      * @param {boolean} save - Whether to save to localStorage (default: true)
      */
-    applySetting(name, value, mode, save = true) {
+    applySetting(name, value, save = true) {
         const root = document.documentElement;
 
         // Handle mapped settings (CSS vars + data attributes)
@@ -142,7 +142,7 @@ class ThemeManager {
             root.setAttribute('data-bs-' + name, value);
         }
         // Handle container width
-        else if (name === 'container-width' && mode === 'sys') {
+        else if (name === 'container-width' && this.mode === 'sys') {
             document.body.setAttribute('data-container-width', value);
             if (value === 'boxed') {
                 document.body.classList.add('layout-boxed');
@@ -151,7 +151,7 @@ class ThemeManager {
             }
         }
         // Handle sticky header
-        else if (name === 'theme-header-sticky' && mode === 'sys') {
+        else if (name === 'theme-header-sticky' && this.mode === 'sys') {
             this.applySticky(value === 'true' || value === true);
         }
 
@@ -195,7 +195,7 @@ class ThemeManager {
      */
     resetSetting(name) {
         const defaultValue = this.defaults[name] || '';
-        this.applySetting(name, defaultValue, this.mode);
+        this.applySetting(name, defaultValue);
         this.removeSetting(name);
         return defaultValue;
     }
