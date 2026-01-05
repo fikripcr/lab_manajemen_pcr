@@ -1,3 +1,14 @@
+{{-- 
+    Auth Layout Selection: 
+    Change $authLayout value to switch layouts:
+    - 'basic' = Centered card (default)
+    - 'cover' = Split screen with background image
+    - 'illustration' = Side-by-side with illustration
+--}}
+@php
+    $authLayout = 'cover'; // Try: 'cover' or 'illustration'
+@endphp
+
 @extends('layouts.auth.app')
 
 @section('content')
