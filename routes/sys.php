@@ -14,6 +14,10 @@ use App\Http\Controllers\Sys\TestController;
 use App\Http\Middleware\InjectLayoutData;
 use Illuminate\Support\Facades\Route;
 
+// 🔹 Public System Routes (Accessible by Guest)
+// Theme Settings Apply (Must be public to work on Login page)
+Route::post('/sys/layout/apply', [AppConfigController::class, 'applyThemeSettings'])->name('sys.layout.apply');
+
 Route::middleware(['auth', 'check.expired', InjectLayoutData::class])->group(function () {
     // ==========================
     // 🔹 System Management Routes (require authentication)
@@ -23,9 +27,7 @@ Route::middleware(['auth', 'check.expired', InjectLayoutData::class])->group(fun
         Route::get('/', [DashboardController::class, 'index'])->name('sys.dashboard');
 
         // Layout & Theme Settings Routes (via AppConfig)
-        Route::prefix('layout')->name('sys.layout.')->group(function () {
-            Route::post('/apply', [AppConfigController::class, 'applyThemeSettings'])->name('apply');
-        });
+        // Moved to public scope (see top of file) for Auth pages access
 
         // Activity Log Routes - accessible via /sys/activity-log
         Route::prefix('activity-log')->name('activity-log.')->group(function () {

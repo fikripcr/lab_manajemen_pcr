@@ -1,3 +1,131 @@
-/* Tabler Core CSS for Auth Section */
+/* 
+ * Auth Section - Tabler UI Theme
+ * This CSS entry point is for the Authentication section (login, register, forgot password).
+ * Includes all theme customization rules for live preview support.
+ */
+
+/* Tabler Core CSS */
 @import '@tabler/core/dist/css/tabler.min.css';
 @import '@tabler/core/dist/css/tabler-vendors.min.css';
+
+/* Tabler Themes (for theme-base support like slate, zinc, etc) */
+@import '@tabler/core/dist/css/tabler-themes.css';
+
+/* Tabler Icons Webfont */
+@import '@tabler/icons-webfont/dist/tabler-icons.min.css';
+
+/* Fix issue with margin-left on scroll window */
+@media (min-width: 992px) {
+
+    :host,
+    :root {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
+/* ============================================================
+   THEME CUSTOMIZATION RULES
+   These rules enable live preview for theme settings
+   ============================================================ */
+
+/* --- Font Family Overrides --- */
+[data-bs-theme-font="inter"] {
+    --tblr-font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="roboto"] {
+    --tblr-font-sans-serif: 'Roboto', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="poppins"] {
+    --tblr-font-sans-serif: 'Poppins', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="public-sans"] {
+    --tblr-font-sans-serif: 'Public Sans', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
+[data-bs-theme-font="nunito"] {
+    --tblr-font-sans-serif: 'Nunito', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+}
+
+
+/* --- Card Border Radius (Apply CSS Variable) --- */
+.card {
+    border-radius: var(--tblr-border-radius, 0.5rem) !important;
+}
+
+.card-header {
+    border-radius: var(--tblr-border-radius, 0.5rem) var(--tblr-border-radius, 0.5rem) 0 0 !important;
+}
+
+
+/* --- Card Style Overrides --- */
+
+/* Flat: No shadow, standard border */
+[data-bs-card-style="flat"] .card {
+    box-shadow: none !important;
+    border: 1px solid var(--tblr-border-color) !important;
+}
+
+/* Shadow: Floating effect, no border */
+[data-bs-card-style="shadow"] .card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    border: none !important;
+}
+
+/* Border: Prominent border, no shadow */
+[data-bs-card-style="border"] .card {
+    box-shadow: none !important;
+    border: 1px solid rgba(var(--tblr-body-color-rgb), 0.16) !important;
+}
+
+/* Modern: Soft large shadow, rounded corners */
+[data-bs-card-style="modern"] .card {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    border: none !important;
+    border-radius: 12px !important;
+}
+
+[data-bs-card-style="modern"] .card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+
+/* --- Auth Layout Background (Dark Mode Support) --- */
+
+/* Light mode: white background for page */
+[data-bs-theme="light"] body {
+    background-color: var(--tblr-body-bg, #ffffff);
+}
+
+/* Dark mode: dark background for page */
+[data-bs-theme="dark"] body {
+    background-color: var(--tblr-body-bg, #1e293b);
+}
+
+/* Auth Cover Layout: Full background coverage */
+.page-cover {
+    background-color: var(--tblr-body-bg, #ffffff);
+}
+
+/* Auth Illustration Layout: Full background coverage */
+.page-illustration {
+    background-color: var(--tblr-body-bg, #ffffff);
+}
+
+/* Basic Layout: Full background coverage */
+.page-center {
+    background-color: var(--tblr-body-bg, #ffffff);
+}
+
+/* --- FORCE Card Border Radius (Moved to bottom) --- */
+body .card,
+.card {
+    border-radius: var(--tblr-border-radius, 0.5rem) !important;
+}
+
+.card-header {
+    border-radius: var(--tblr-border-radius, 0.5rem) var(--tblr-border-radius, 0.5rem) 0 0 !important;
+}

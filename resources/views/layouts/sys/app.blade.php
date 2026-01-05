@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -29,68 +29,6 @@
 </head>
 
 <body class="{{ $layoutData['bodyClass'] ?? '' }}" data-container-width="{{ $layoutData['containerWidth'] ?? 'standard' }}">
-    {{-- Tabler Theme Script - Must load before body content to prevent flash --}}
-    <script>
-        (function() {
-            // 1. Define Server Defaults
-            const serverDefaults = {
-                "theme": "{{ $themeData['theme'] ?? 'light' }}",
-                "theme-base": "{{ $themeData['themeBase'] ?? 'gray' }}",
-                "theme-font": "{{ $themeData['themeFont'] ?? 'sans-serif' }}",
-                "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
-                "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
-                "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
-                "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
-                'theme-header-top-bg': "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
-                'theme-header-overlap-bg': "{{ $themeData['themeHeaderOverlapBg'] ?? '' }}",
-                'theme-header-sticky': "{{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}",
-                'theme-boxed-bg': "{{ $themeData['themeBoxedBg'] ?? '#e2e8f0' }}",
-                'theme-card-style': "{{ $themeData['themeCardStyle'] ?? 'default' }}",
-            };
-
-            // 2. Configuration Map (Key -> Action)
-            const themeMap = {
-                'theme-bg':                { var: '--tblr-body-bg' },
-                'theme-sidebar-bg':        { var: '--tblr-sidebar-bg', attr: 'data-bs-has-sidebar-bg' },
-                'theme-header-top-bg':     { var: '--tblr-header-top-bg', attr: 'data-bs-has-header-top-bg' },
-                'theme-header-overlap-bg': { var: '--tblr-header-overlap-bg', attr: 'data-bs-has-header-overlap-bg' },
-                'theme-boxed-bg':          { var: '--tblr-boxed-bg' },
-                'theme-primary':           { var: '--tblr-primary', exclude: ['blue'] },
-                'theme-card-style':        { attr: 'data-bs-card-style', exclude: ['default'] },
-            };
-
-            // 3. Apply Settings
-            for (const key in serverDefaults) {
-                const storedValue = localStorage.getItem('tabler-' + key);
-                const value = storedValue || serverDefaults[key];
-
-                if (!value) continue;
-
-                // Handle mapped settings
-                if (themeMap[key]) {
-                    const rule = themeMap[key];
-                    // Skip if value matches exclusion list
-                    if (rule.exclude && rule.exclude.includes(value)) continue;
-
-                    if (rule.var && value) document.documentElement.style.setProperty(rule.var, value);
-                    if (rule.attr) document.documentElement.setAttribute(rule.attr, value === true ? '' : value);
-                } 
-                // Handle Special Logic: Sticky Header
-                else if (key === 'theme-header-sticky') {
-                     const isSticky = (value === 'true');
-                     // Note: DOM elements might not be ready here, but we set the class on the wrapper if possible
-                     // Since this runs in head, we might miss elements. But sticky state is usually handled by JS later or CSS.
-                     // IMPORTANT: For FOUC prevention, we rely on sys.js to re-apply sticky classes if needed, 
-                     // or we wait for DOMContentLoaded. Sticky isn't visual color, so it's less critical for FOUC.
-                } 
-                // Handle General Attributes (theme, font, radius, etc.)
-                else if (!['light', 'gray', 'sans-serif', '1'].includes(value)) {
-                    document.documentElement.setAttribute('data-bs-' + key, value);
-                }
-            }
-        })();
-    </script>
-    
     <div class="page">
         {{-- SIDEBAR: only shown when layoutSidebar is true --}}
         @if($layoutData['layoutSidebar'] ?? false)
@@ -138,7 +76,7 @@
     </div>
 
     {{-- Theme Settings Component --}}
-    <x-sys.theme-settings />
+    <x-sys.theme-settings mode="sys" />
 
     {{-- Global Search Modal Component --}}
     <x-sys.modal-global-search />

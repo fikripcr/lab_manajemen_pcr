@@ -17,6 +17,9 @@ window.Pickr = Pickr;
 
 // import '../css/sys.css';
 
+// Theme Management System
+import ThemeManager from './components/ThemeManager.js';
+import ThemeSettings from './components/ThemeSettings.js';
 
 
 // --- Notification Manager (direct import - needs to load on every page)
@@ -79,6 +82,16 @@ window.initToastEditor = function (selector, config = {}) {
 
 // Initialize global search and notifications only when DOM is ready and if they're needed on the page
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Theme Manager
+    const themeManager = new ThemeManager('sys');
+    themeManager.loadTheme();
+
+    // Initialize Settings Panel (if present)
+    if (document.getElementById('offcanvasSettings')) {
+        const themeSettings = new ThemeSettings(themeManager);
+        themeSettings.init();
+    }
+
     // Check if global search elements exist on the page
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {

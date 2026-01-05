@@ -1,9 +1,36 @@
+﻿@php
+    $mode = $mode ?? 'sys'; // 'sys' or 'auth'
+    $isAuthMode = $mode === 'auth';
+
+    // Initialize defaults if variables are missing (e.g. outside sys routes)
+    $themeData = $themeData ?? [
+        'theme' => env('TABLER_THEME', 'light'),
+        'themePrimary' => env('TABLER_THEME_PRIMARY', '#206bc4'),
+        'themeFont' => env('TABLER_THEME_FONT', 'inter'),
+        'themeBase' => env('TABLER_THEME_BASE', 'gray'),
+        'themeRadius' => env('TABLER_THEME_RADIUS', '1'),
+        'themeBg' => env('TABLER_THEME_BG', ''),
+        'themeSidebarBg' => env('TABLER_SIDEBAR_BG', ''),
+        'themeHeaderTopBg' => env('TABLER_HEADER_TOP_BG', ''),
+        'themeHeaderOverlapBg' => env('TABLER_HEADER_OVERLAP_BG', ''),
+        'themeHeaderSticky' => env('TABLER_HEADER_STICKY', 'false'),
+        'themeCardStyle' => env('TABLER_CARD_STYLE', 'flat'),
+        'themeBoxedBg' => env('TABLER_BOXED_BG', ''),
+        'authLayout' => env('AUTH_LAYOUT', 'basic'),
+        'authFormPosition' => env('AUTH_FORM_POSITION', 'left'),
+    ];
+
+    $layoutData = $layoutData ?? [
+        'layout' => env('TABLER_LAYOUT', 'vertical'),
+        'containerWidth' => env('TABLER_CONTAINER_WIDTH', 'standard'),
+    ];
+@endphp
+
 <div class="settings">
 		<a href="#" class="btn btn-floating btn-icon btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings" aria-controls="offcanvasSettings" aria-label="Theme Settings">
-			<!-- Download SVG icon from http://tabler.io/icons/icon/brush -->
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
 				stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-				class="icon icon-1">
+				class="icon icon-tabler icon-tabler-brush">
 				<path d="M3 21v-4a4 4 0 1 1 4 4h-4" />
 				<path d="M21 3a16 16 0 0 0 -12.8 10.2" />
 				<path d="M21 3a16 16 0 0 1 -10.2 12.8" />
@@ -17,9 +44,37 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body d-flex flex-column">
-            <div class="settings-content" style="overflow-y: auto; overflow-x: hidden; flex: 1;">
+            <div class="settings-content" style="">
                 
                 <div class="row g-3">
+                    @if($isAuthMode)
+                    {{-- Auth Layout Mode --}}
+                    <div class="col-12">
+                        <label class="form-label">Auth Layout</label>
+                        <select name="auth-layout" class="form-select">
+                            <option value="basic">Basic (Centered)</option>
+                            <option value="cover">Cover (With Image)</option>
+                            <option value="illustration">Illustration (With SVG)</option>
+                        </select>
+                    </div>
+
+                    {{-- Form Position --}}
+                    <div class="col-12">
+                        <label class="form-label">Form Position</label>
+                        <div class="form-selectgroup">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="auth-form-position" value="left" class="form-selectgroup-input">
+                                <span class="form-selectgroup-label">Left</span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="auth-form-position" value="right" class="form-selectgroup-input">
+                                <span class="form-selectgroup-label">Right</span>
+                            </label>
+                        </div>
+                        <small class="form-hint">For Cover & Illustration layouts</small>
+                    </div>
+                    @endif
+
                     {{-- Color Mode & Font Family --}}
                     <div class="col-6">
                         <label class="form-label">Color Mode</label>
@@ -63,7 +118,7 @@
                     <div class="col-6">
                         <label class="form-label">Corner Radius</label>
                          <select name="theme-radius" class="form-select">
-                            @foreach(['0', '0.5', '1', '1.5', '2'] as $radius)
+                            @foreach(['0', '0.25', '0.5', '0.75', '1'] as $radius)
                             <option value="{{ $radius }}" {{ ($themeData['themeRadius'] ?? '1') === $radius ? 'selected' : '' }}>{{ $radius }}rem</option>
                             @endforeach
                         </select>
@@ -84,6 +139,7 @@
                         </select>
                     </div>
 
+                    @unless($isAuthMode)
                     {{-- Page Layout (Moved UI) --}}
                     <div class="col-12">
                         <label class="form-label">Page Layout</label>
@@ -147,6 +203,7 @@
                             </label>
                         </div>
                     </div>
+                    @endunless
 
                     {{-- Custom Backgrounds --}}
                     <div class="col-12">
@@ -180,6 +237,7 @@
                             </div>
                         </div>
 
+                        @unless($isAuthMode)
                         {{-- Sidebar / Menu --}}
                         <div class="row g-2 mb-2 align-items-center">
                             <div class="col-4"><small>Sidebar / Menu</small></div>
@@ -235,6 +293,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endunless
 
                             </div>
                         </div>
@@ -247,8 +306,8 @@
             </div>
 
             {{-- Action Buttons --}}
-            <div class="mt-auto pt-3 border-top">
-                <button type="button" class="btn btn-primary w-100" id="apply-settings">
+            <div class="mt-auto pt-3 border-top text-center">
+                <button type="button" class="btn btn-primary  m-2" id="apply-settings">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M5 12l5 5l10 -10"></path>
@@ -260,360 +319,3 @@
         </div>
     </form>
 </div>
-
-@push('scripts')
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    var themeConfig = {
-        "theme": "{{ $themeData['theme'] ?? 'light' }}",
-        "theme-primary": "{{ $themeData['themePrimary'] ?? 'blue' }}",
-        "theme-base": "{{ $themeData['themeBase'] ?? 'gray' }}",
-        "theme-font": "{{ $themeData['themeFont'] ?? 'sans-serif' }}",
-        "theme-radius": "{{ $themeData['themeRadius'] ?? '1' }}",
-        "theme-bg": "{{ $themeData['themeBg'] ?? '' }}",
-        "theme-sidebar-bg": "{{ $themeData['themeSidebarBg'] ?? '' }}",
-        "theme-header-top-bg": "{{ $themeData['themeHeaderTopBg'] ?? '' }}",
-        "theme-header-overlap-bg": "{{ $themeData['themeHeaderOverlapBg'] ?? '' }}",
-        "theme-header-sticky": "{{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}",
-        "theme-card-style": "{{ $themeData['themeCardStyle'] ?? 'flat' }}",
-    }
-
-    var form = document.getElementById("offcanvasSettings")
-    var applyButton = document.getElementById("apply-settings")
-
-    // Initialize Pickr instances
-    var pickrInstances = {};
-
-    document.querySelectorAll('.color-picker-component').forEach(el => {
-        var targetName = el.getAttribute('data-target');
-        var defaultValue = el.getAttribute('data-default');
-        
-        // Get initial value from hidden input
-        var hiddenInput = form.querySelector(`input[name="${targetName}"]`);
-        var initialValue = hiddenInput ? hiddenInput.value : defaultValue;
-
-        const pickr = Pickr.create({
-            el: el,
-            theme: 'nano', // or 'monolith', or 'classic'
-            default: initialValue,
-            swatches: [
-                '#f4f6fa', '#ffffff', '#206bc4', '#a55eea', '#d63939', '#fd7e14', '#2fb344'
-            ],
-            components: {
-                // Main components
-                preview: true,
-                opacity: true,
-                hue: true,
-
-                // Input / output Options
-                interaction: {
-                    hex: true,
-                    rgba: true,
-                    input: true,
-                    save: false // Auto-save mode
-                }
-            }
-        });
-
-        pickrInstances[targetName] = pickr;
-
-        // Sync Pickr -> Hidden Input -> Live Preview
-        pickr.on('change', (color, source, instance) => {
-            var rgbaColor = color.toRGBA().toString(0); // 0 decimal places for alpha if 1, else precision
-            
-            // Auto update the button color (live)
-            instance.applyColor(true);
-
-            // Update hidden input
-            if(hiddenInput) {
-                hiddenInput.value = rgbaColor;
-                // Manually trigger handleThemeChange
-                handleThemeChange({ target: hiddenInput });
-            }
-        });
-        
-        // Optional: on save
-        pickr.on('save', (color, instance) => {
-             pickr.hide();
-        });
-    });
-
-
-    // Sync inputs with localStorage on load
-    var checkItems = function () {
-        for (var key in themeConfig) {
-            var value = window.localStorage["tabler-" + key] || themeConfig[key]
-            var inputs = form.querySelectorAll(`[name="${key}"]`)
-            
-            if (inputs.length > 0) {
-                if (key.includes('-bg') || key === 'theme-primary') {
-                     var finalVal = value || (key === 'theme-bg' ? '#f4f6fa' : (key === 'theme-primary' ? '#206bc4' : '#ffffff'));
-                     inputs[0].value = finalVal;
-                     // Update Pickr if exists
-                     if(pickrInstances[key]) {
-                         pickrInstances[key].setColor(finalVal);
-                     }
-                } else if (inputs[0].tagName === 'SELECT') {
-                    inputs[0].value = value
-                } else {
-                    inputs.forEach((input) => {
-                        input.checked = input.value === value
-                    })
-                }
-            }
-        }
-    }
-
-    // Helper to apply sticky logic based on layout
-    function applyStickyState() {
-        var layoutInput = form.querySelector('[name="layout"]');
-        var layout = layoutInput ? layoutInput.value : 'vertical';
-        
-        var stickyInput = form.querySelector('input[name="theme-header-sticky"]:checked');
-        var isSticky = stickyInput ? (stickyInput.value === 'true') : false;
-
-        var wrapper = document.getElementById('header-sticky-wrapper');
-        // Primary header is the first child header or .navbar inside wrapper
-        var topHeader = wrapper ? wrapper.querySelector('header.navbar') : null;
-
-        if (!wrapper || !topHeader) return;
-
-        // Reset
-        wrapper.classList.remove('sticky-top');
-        topHeader.classList.remove('sticky-top');
-
-        if (isSticky) {
-            if (layout === 'navbar-overlap') {
-                topHeader.classList.add('sticky-top');
-            } else {
-                wrapper.classList.add('sticky-top');
-            }
-        }
-    }
-
-    // Configuration Map (Mirrors app.blade.php)
-    const themeMap = {
-        'theme-bg':                { var: '--tblr-body-bg' },
-        'theme-sidebar-bg':        { var: '--tblr-sidebar-bg', attr: 'data-bs-has-sidebar-bg' },
-        'theme-header-top-bg':     { var: '--tblr-header-top-bg', attr: 'data-bs-has-header-top-bg' },
-        'theme-header-overlap-bg': { var: '--tblr-header-overlap-bg', attr: 'data-bs-has-header-overlap-bg' },
-        'theme-boxed-bg':          { var: '--tblr-boxed-bg' },
-        'theme-primary':           { var: '--tblr-primary' },
-        'theme-card-style':        { attr: 'data-bs-card-style' },
-    };
-
-    // Handle theme changes (live preview)
-    function handleThemeChange(event) {
-        var target = event.target, name = target.name, value = target.value
-
-        // Handle Mapped Settings
-        if (themeMap[name]) {
-            const rule = themeMap[name];
-            
-            // Special case for card style 'default' -> remove attribute
-            if (name === 'theme-card-style' && value === 'default') {
-                document.documentElement.removeAttribute("data-bs-card-style");
-            } 
-            // Standard attribute setting
-            else if (rule.attr) {
-                document.documentElement.setAttribute(rule.attr, (value === true || value === 'true') ? '' : value);
-            }
-
-            // CSS Variable setting
-            if (rule.var) {
-                document.documentElement.style.setProperty(rule.var, value);
-            }
-
-            window.localStorage.setItem("tabler-" + name, value);
-
-        } else if (name === 'theme-header-sticky') {
-             applyStickyState();
-             window.localStorage.setItem("tabler-" + name, value)
-
-        } else if (name === 'layout') {
-            applyStickyState(); // Re-evaluate sticky when layout changes
-            if (typeof window.previewLayout === 'function') {
-                window.previewLayout(value)
-            }
-        } 
-        // Handle Container Width (Instant Preview)
-        else if (name === 'container-width') {
-            document.body.setAttribute('data-container-width', value);
-            if (value === 'boxed') {
-                document.body.classList.add('layout-boxed');
-            } else {
-                document.body.classList.remove('layout-boxed');
-            }
-            window.localStorage.setItem("tabler-container-width", value);
-        }
-        // Fallback for general theme settings (theme, font, radius, etc.)
-        else {
-            for (var key in themeConfig) {
-                if (name === key) {
-                    document.documentElement.setAttribute("data-bs-" + key, value)
-                    window.localStorage.setItem("tabler-" + key, value)
-                }
-            }
-        }
-    }
-
-    // Listen to both 'change' (for select/radio) and 'input' (for color picker dragging)
-    form.addEventListener("change", handleThemeChange);
-    // form.addEventListener("input", handleThemeChange); // Not needed for hidden inputs driven by Pickr
-
-    // Universal Reset Bg Button
-    var resetBgButtons = form.querySelectorAll('button[data-reset-bg]');
-    resetBgButtons.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var targetName = this.getAttribute('data-reset-bg');
-            var bgInput = form.querySelector(`input[name="${targetName}"]`);
-            var defaultVal = (targetName === 'theme-bg') ? '#f4f6fa' : '#ffffff';
-            
-            // Visual Reset Input
-            bgInput.value = defaultVal;
-
-            // Visual Reset Pickr
-            if(pickrInstances[targetName]) {
-                pickrInstances[targetName].setColor(defaultVal, true); // true = silent (no events)
-            }
-            
-            // Logic Reset
-            if(targetName === 'theme-bg') document.documentElement.style.removeProperty('--tblr-body-bg');
-            if(targetName === 'theme-sidebar-bg') {
-                document.documentElement.style.removeProperty('--tblr-sidebar-bg');
-                document.documentElement.removeAttribute('data-bs-has-sidebar-bg');
-            }
-            if(targetName === 'theme-header-top-bg') {
-                document.documentElement.style.removeProperty('--tblr-header-top-bg');
-                document.documentElement.removeAttribute('data-bs-has-header-top-bg');
-            }
-            if(targetName === 'theme-header-overlap-bg') {
-                defaultVal = '#1e293b'; // Default dark
-                bgInput.value = defaultVal;
-                if(pickrInstances[targetName]) {
-                    pickrInstances[targetName].setColor(defaultVal, true);
-                }
-                document.documentElement.style.removeProperty('--tblr-header-overlap-bg');
-                document.documentElement.removeAttribute('data-bs-has-header-overlap-bg');
-            }
-            if(targetName === 'theme-boxed-bg') {
-                defaultVal = '#e2e8f0';
-                bgInput.value = defaultVal;
-                if(pickrInstances[targetName]) {
-                    pickrInstances[targetName].setColor(defaultVal, true);
-                }
-                document.documentElement.style.removeProperty('--tblr-boxed-bg');
-            }
-            if(targetName === 'theme-primary') {
-                defaultVal = '#206bc4';
-                bgInput.value = defaultVal;
-                if(pickrInstances[targetName]) {
-                    pickrInstances[targetName].setColor(defaultVal, true);
-                }
-            }
-
-            window.localStorage.removeItem("tabler-" + targetName);
-        });
-    });
-
-    // Apply settings to .env
-    applyButton.addEventListener("click", function () {
-        // Check if axios is available
-        if (typeof window.axios === 'undefined') {
-            console.error('Axios is not loaded yet');
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Dependencies not loaded. Please refresh the page.',
-            });
-            return;
-        }
-
-        var formData = new FormData()
-
-        // Regular inputs (exclude primary from auto-loop, handle manually)
-        var themeFields = ['theme', 'layout', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style']
-        themeFields.forEach(function(field) {
-            var selected = form.querySelector(`input[name="${field}"]:checked`) || form.querySelector(`select[name="${field}"]`)
-            if (selected) {
-                formData.append(field.replace(/-/g, '_'), selected.value)
-            }
-        })
-
-        // Theme Primary - now a simple hidden input
-        var primaryInput = form.querySelector('input[name="theme-primary"]');
-        if (primaryInput && primaryInput.value) {
-            formData.append('theme_primary', primaryInput.value);
-        }
-
-
-        // Background inputs
-        var bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
-        bgFields.forEach(function(bg) {
-            var input = form.querySelector(`input[name="${bg}"]`);
-            if (input) {
-                formData.append(bg.replace(/-/g, '_'), input.value || '');
-            }
-        });
-
-        // Sticky Header
-        var stickyInput = form.querySelector('input[name="theme-header-sticky"]:checked');
-        formData.append('theme_header_sticky', stickyInput ? stickyInput.value : 'false');
-
-        // Layout (Handled in themeFields loop now)
-
-        // Container Width
-        var containerWidth = form.querySelector('input[name="container-width"]:checked')
-        if (containerWidth) {
-            formData.append('container_width', containerWidth.value)
-        }
-
-
-        // Debug: Log FormData content
-        console.log('Sending settings to backend:');
-        for (let pair of formData.entries()) {
-            console.log(`  ${pair[0]}: ${pair[1]}`);
-        }
-
-        Swal.fire({
-            title: 'Applying...',
-            text: 'Writing to .env',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        })
-
-        axios.post('{{ route("sys.layout.apply") }}', formData)
-            .then(function (response) {
-                console.log('Backend response:', response.data);
-                if (response.data.success) {
-                    for (var key in themeConfig) {
-                        window.localStorage.removeItem("tabler-" + key)
-                    }
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: response.data.message || 'Settings saved!',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                }
-            })
-            .catch(function (error) {
-                console.error('Error saving settings:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: error.response?.data?.message || error.message || 'Failed to apply settings.',
-                });
-            });
-    })
-
-    checkItems()
-})
-</script>
-
-
-@endpush

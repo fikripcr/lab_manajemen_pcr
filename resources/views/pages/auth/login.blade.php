@@ -6,7 +6,7 @@
     - 'illustration' = Side-by-side with illustration
 --}}
 @php
-    $authLayout = 'cover'; // Try: 'cover' or 'illustration'
+    // $authLayout is now handled by the layout or global view composer, with fallback in the layout file.
 @endphp
 
 @extends('layouts.auth.app')

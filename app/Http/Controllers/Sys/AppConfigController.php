@@ -176,7 +176,7 @@ class AppConfigController extends Controller
             'theme_primary'           => 'nullable|string',
             'theme_font'              => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
             'theme_base'              => 'nullable|in:slate,gray,zinc,neutral,stone',
-            'theme_radius'            => 'nullable|in:0,0.5,1,1.5,2',
+            'theme_radius'            => 'nullable|in:0,0.25,0.5,0.75,1',
             'theme_bg'                => 'nullable|string', // Allow hex color or empty
             'theme_sidebar_bg'        => 'nullable|string',
             'theme_header_top_bg'     => 'nullable|string',
@@ -187,6 +187,8 @@ class AppConfigController extends Controller
             'theme_boxed_bg'          => 'nullable|string', // NEW - boxed layout background
             'layout'                  => 'nullable|in:vertical,combo,horizontal,condensed,navbar-overlap',
             'container_width'         => 'nullable|in:standard,fluid,boxed',
+            'auth_layout'             => 'nullable|in:basic,cover,illustration',
+            'auth_form_position'      => 'nullable|in:left,right',
         ]);
 
         try {
@@ -208,6 +210,8 @@ class AppConfigController extends Controller
                 'theme_boxed_bg'          => 'TABLER_BOXED_BG', // NEW
                 'layout'                  => 'TABLER_LAYOUT',
                 'container_width'         => 'TABLER_CONTAINER_WIDTH',
+                'auth_layout'             => 'AUTH_LAYOUT',
+                'auth_form_position'      => 'AUTH_FORM_POSITION',
             ];
 
             foreach ($validated as $key => $value) {
@@ -228,7 +232,7 @@ class AppConfigController extends Controller
             file_put_contents($envPath, $envContent);
             Artisan::call('config:clear');
 
-            logActivity('config', 'Theme & Layout settings updated', auth()->user());
+            logActivity('config', 'Theme & Layout settings updated', auth()->user() ?? null);
 
             return response()->json([
                 'success' => true,
