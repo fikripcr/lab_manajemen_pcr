@@ -21,7 +21,6 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Kirim konfigurasi dari Blade ke JS
             const options = {
                 route: '{{ $route }}',
                 checkbox: {{ $checkbox ? 'true' : 'false' }},
@@ -31,11 +30,12 @@
                 columns: @json($columns)
             };
 
-            // Inisialisasi DataTable custom
-            const dataTableInstance = new CustomDataTables('{{ $id }}', options);
-
-            // Simpan instance ke window object untuk diakses oleh fungsi lain
-            window['DT_{{ $id }}'] = dataTableInstance;
+            if (window.loadDataTables) {
+                window.loadDataTables().then((CustomDataTables) => {
+                    const dataTableInstance = new CustomDataTables('{{ $id }}', options);
+                    window['DT_{{ $id }}'] = dataTableInstance;
+                });
+            }
         });
     </script>
 @endpush

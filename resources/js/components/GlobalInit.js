@@ -14,8 +14,7 @@ window.Popper = { createPopper }; // Expose globally for Bootstrap
 
 
 
-// --- DataTables (Bootstrap 5 Styling)
-import 'datatables.net-bs5';
+
 
 // --- SweetAlert2
 import Swal from 'sweetalert2';
@@ -29,9 +28,6 @@ import './AjaxFormHandler.js';
 import PerfectScrollbar from 'perfect-scrollbar';
 window.PerfectScrollbar = PerfectScrollbar;
 
-// --- ApexCharts
-import ApexCharts from 'apexcharts';
-window.ApexCharts = ApexCharts;
 
 // --- Masonry
 import Masonry from 'masonry-layout';
@@ -41,6 +37,3 @@ window.Masonry = Masonry;
 import hljs from 'highlight.js';
 window.hljs = hljs;
 
-// --- CustomDataTables (essential for datatables component)
-import CustomDataTables from './CustomDataTables.js';
-window.CustomDataTables = CustomDataTables;

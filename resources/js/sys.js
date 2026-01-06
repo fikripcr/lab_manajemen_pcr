@@ -46,6 +46,29 @@ window.loadHugeRTE = function (selector, config = {}) {
     });
 };
 
+// DataTables - Lazy loaded
+window.loadDataTables = function () {
+    if (window.DataTablesLoaded) return Promise.resolve(window.CustomDataTables);
+
+    return import('datatables.net-bs5').then(() => {
+        return import('./components/CustomDataTables.js').then(({ default: CustomDataTables }) => {
+            window.CustomDataTables = CustomDataTables;
+            window.DataTablesLoaded = true;
+            return CustomDataTables;
+        });
+    });
+};
+
+// ApexCharts - Lazy loaded
+window.loadApexCharts = function () {
+    if (window.ApexCharts) return Promise.resolve(window.ApexCharts);
+
+    return import('apexcharts').then(({ default: ApexCharts }) => {
+        window.ApexCharts = ApexCharts;
+        return ApexCharts;
+    });
+};
+
 // Global Search
 window.loadGlobalSearch = function () {
     return import('./components/GlobalSearch.js').then(({ GlobalSearch }) => {

@@ -570,41 +570,31 @@
 @endsection
 
 @push('scripts')
-    <!-- Apex Charts JS -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
     <script>
-        // Parse chart data from JSON
-        const activityChartData = {!! $activityChartData !!};
-        const errorChartData = {!! $errorChartData !!};
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parse chart data from JSON
+            const activityChartData = {!! $activityChartData !!};
+            const errorChartData = {!! $errorChartData !!};
 
-        // Helper function to get Tabler colors from CSS variables
-        function getTablerColor(colorName, defaultColor) {
-            const root = getComputedStyle(document.documentElement);
-            const colorVar = '--tblr-' + colorName;
-            const colorValue = root.getPropertyValue(colorVar).trim();
-            
-            if (colorValue) {
-                return colorValue;
+            // Helper function to get Tabler colors from CSS variables
+            function getTablerColor(colorName, defaultColor) {
+                const root = getComputedStyle(document.documentElement);
+                const colorVar = '--tblr-' + colorName;
+                const colorValue = root.getPropertyValue(colorVar).trim();
+                
+                if (colorValue) {
+                    return colorValue;
+                }
+                if (colorName === 'primary') return '#0054a6'; 
+                if (colorName === 'danger') return '#d63939';
+                
+                return defaultColor || '#000000';
             }
-            // Fallback for primary/danger if not found
-            if (colorName === 'primary') return '#0054a6'; 
-            if (colorName === 'danger') return '#d63939';
-            
-            return defaultColor || '#000000';
-        }
 
-        // Activity Sparkline Chart (Mini Area Chart)
-        const activitySparkline = {
+            // Activity Sparkline Chart (Mini Area Chart)
+            const activitySparkline = {
             chart: {
-                height: '140', // ApexCharts handles string values/rem oddly, so keep strict unitless or px in config, BUT the container has rem. 
-                // Wait, ApexCharts renders IN the container. If container is 6rem (~96px), check hierarchy.
-                // Best to let chart fill container or use percentages.
-                // However, the user issue was "card card yang tidak pengaruh dengan perubahan rem"
-                // converting the inline style to rem on the container is the fix.
-                // I will update the chart config to use '100%' height if possible, or just keep it default?
-                // Actually, ApexCharts height in config is distinct from container.
-                // I will keep the config logical height but ensure container is flexible.
+                height: '140', 
                 type: 'area',
                 toolbar: {
                     show: false
@@ -624,8 +614,8 @@
                 type: 'gradient',
                 gradient: {
                     shadeIntensity: 1,
-                    opacityFrom: 0.6, // Adjusted opacity logic
-                    opacityTo: 0.2, // Adjusted opacity logic
+                    opacityFrom: 0.6, 
+                    opacityTo: 0.2, 
                     stops: [0, 90, 100]
                 },
             },
@@ -691,21 +681,15 @@
             }
         }
 
-        const activitySparklineEl = document.querySelector('#activitySparkline');
-        if (activitySparklineEl) {
-            const activitySparklineObj = new ApexCharts(activitySparklineEl, activitySparkline);
-            activitySparklineObj.render();
-        }
-
         // Error Sparkline Chart (Mini Area Chart) - Red theme
         const errorSparkline = {
             chart: {
-                height: 140, // Reduced height for Area Chart
+                height: 140,
                 type: 'area',
                 toolbar: {
                     show: false
                 },
-                 zoom: {
+                zoom: {
                     enabled: false
                 }
             },
@@ -787,10 +771,21 @@
             }
         }
 
-        const errorSparklineEl = document.querySelector('#errorSparkline');
-        if (errorSparklineEl) {
-            const errorSparklineObj = new ApexCharts(errorSparklineEl, errorSparkline);
-            errorSparklineObj.render();
+
+        if (window.loadApexCharts) {
+            window.loadApexCharts().then((ApexCharts) => {
+                const activitySparklineEl = document.querySelector('#activitySparkline');
+                if (activitySparklineEl) {
+                    const activitySparklineObj = new ApexCharts(activitySparklineEl, activitySparkline);
+                    activitySparklineObj.render();
+                }
+
+                const errorSparklineEl = document.querySelector('#errorSparkline');
+                if (errorSparklineEl) {
+                    const errorSparklineObj = new ApexCharts(errorSparklineEl, errorSparkline);
+                    errorSparklineObj.render();
+                }
+            });
         }
 
         // Update server time by fetching from server endpoint
@@ -810,6 +805,7 @@
         setInterval(updateServerTime, 30000);
 
         // Initial call to update time immediately
-        setTimeout(updateServerTime, 1000); // Wait 1 second to allow initial render
+        setTimeout(updateServerTime, 1000);
+        });
     </script>
 @endpush
