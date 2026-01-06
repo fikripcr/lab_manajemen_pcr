@@ -28,7 +28,7 @@
             @unless($hideBrand)
             <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
                 <a href="{{ route('sys.dashboard') }}">
-                    <img src="{{ asset('assets/img/digilab-crop.png') }}" alt="{{ config('app.name') }}" class="navbar-brand-image">
+                    <img src="{{ asset('assets/img/digilab-crop.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
                 </a>
             </div>
             @endunless
