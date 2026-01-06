@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Only enable on desktop/large screens
     const isDesktop = () => window.innerWidth >= 992;
 
-    const dropdowns = document.querySelectorAll('.navbar .dropdown');
+    // Only target dropdowns in horizontal navbars (exclude sidebar/vertical)
+    const dropdowns = document.querySelectorAll('.navbar:not(.navbar-vertical) .dropdown');
 
     dropdowns.forEach(dropdown => {
         const toggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');

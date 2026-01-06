@@ -189,9 +189,9 @@
             {{-- Condensed: menu inside same collapse --}}
             @if($condensed)
             <div class="collapse navbar-collapse" id="navbar-menu">
-                @unless($hideMenu)
-                    @include('layouts.sys.list-menu')
-                @endunless
+                    @unless($hideMenu)
+                        <x-sys.menu-renderer type="navbar" />
+                    @endunless
             </div>
             @endif
         </div>
@@ -207,7 +207,7 @@
             <div class="navbar"{{ isset($darkSecondary) && $darkSecondary ? ' data-bs-theme="dark"' : '' }}>
                 <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
                     @unless($hideMenu)
-                        @include('layouts.sys.list-menu')
+                        <x-sys.menu-renderer type="navbar" />
                     @endunless
                 </div>
             </div>
