@@ -215,6 +215,38 @@
 
         <hr class="my-4">
 
+        <!-- Theme Customization Configuration Form -->
+        <form action="{{ route('app-config.update') }}" method="POST">
+            @csrf
+            @method('POST')
+            <input type="hidden" name="config_section" value="customization">
+            <h5>Theme Customization</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="theme_customization_enabled">Theme Settings Panel</label>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input @error('theme_customization_enabled') is-invalid @enderror" type="checkbox" id="theme_customization_enabled" name="theme_customization_enabled" value="1" {{ old('theme_customization_enabled', $config['theme_customization_enabled']) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="theme_customization_enabled">Enable Theme Customization</label>
+                    </div>
+                    @error('theme_customization_enabled')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                    <div class="form-text">When enabled, users will see the floating Theme Settings button that allows them to customize colors, fonts, layouts, and other appearance options in both sys and auth sections.</div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <!-- Empty column to maintain layout -->
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <x-sys.button type="submit" class="me-sm-3 me-1" />
+                <x-sys.button type="reset" class="btn-label-secondary" />
+            </div>
+        </form>
+
+        <hr class="my-4">
+
         <div class="row">
             <div class="col-md-6">
                 <h6>Cache Management</h6>

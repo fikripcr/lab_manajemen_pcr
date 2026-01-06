@@ -77,7 +77,9 @@
         </div>
     @endif
     {{-- Theme Settings Component (Unified with sys) --}}
-    <x-sys.theme-settings mode="auth" />
+    @if(env('THEME_CUSTOMIZATION_ENABLED', true))
+        <x-sys.theme-settings mode="auth" />
+    @endif
 </body>
 
 

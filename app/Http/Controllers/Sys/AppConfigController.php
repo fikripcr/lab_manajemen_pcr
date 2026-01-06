@@ -13,24 +13,26 @@ class AppConfigController extends Controller
     public function index()
     {
         $config = [
-            'app_name'             => config('app.name'),
-            'app_debug'            => $this->getBooleanEnvValue('APP_DEBUG', config('app.debug')),
-            'app_url'              => config('app.url'),
+            'app_name'                    => config('app.name'),
+            'app_debug'                   => $this->getBooleanEnvValue('APP_DEBUG', config('app.debug')),
+            'app_url'                     => config('app.url'),
             // Mail configuration
-            'mail_mailer'          => $this->getCurrentEnvValue('MAIL_MAILER'),
-            'mail_host'            => $this->getCurrentEnvValue('MAIL_HOST'),
-            'mail_port'            => $this->getCurrentEnvValue('MAIL_PORT'),
-            'mail_username'        => $this->getCurrentEnvValue('MAIL_USERNAME'),
-            'mail_password'        => $this->getCurrentEnvValue('MAIL_PASSWORD'),
-            'mail_encryption'      => $this->getCurrentEnvValue('MAIL_ENCRYPTION'),
-            'mail_from_address'    => $this->getCurrentEnvValue('MAIL_FROM_ADDRESS'),
-            'mail_from_name'       => $this->getCurrentEnvValue('MAIL_FROM_NAME'),
+            'mail_mailer'                 => $this->getCurrentEnvValue('MAIL_MAILER'),
+            'mail_host'                   => $this->getCurrentEnvValue('MAIL_HOST'),
+            'mail_port'                   => $this->getCurrentEnvValue('MAIL_PORT'),
+            'mail_username'               => $this->getCurrentEnvValue('MAIL_USERNAME'),
+            'mail_password'               => $this->getCurrentEnvValue('MAIL_PASSWORD'),
+            'mail_encryption'             => $this->getCurrentEnvValue('MAIL_ENCRYPTION'),
+            'mail_from_address'           => $this->getCurrentEnvValue('MAIL_FROM_ADDRESS'),
+            'mail_from_name'              => $this->getCurrentEnvValue('MAIL_FROM_NAME'),
             // Google configuration
-            'google_client_id'     => $this->getCurrentEnvValue('GOOGLE_CLIENT_ID'),
-            'google_client_secret' => $this->getCurrentEnvValue('GOOGLE_CLIENT_SECRET'),
-            'google_redirect_uri'  => $this->getCurrentEnvValue('GOOGLE_REDIRECT_URI'),
+            'google_client_id'            => $this->getCurrentEnvValue('GOOGLE_CLIENT_ID'),
+            'google_client_secret'        => $this->getCurrentEnvValue('GOOGLE_CLIENT_SECRET'),
+            'google_redirect_uri'         => $this->getCurrentEnvValue('GOOGLE_REDIRECT_URI'),
             // Mysqldump configuration
-            'mysqldump_path'       => $this->getCurrentEnvValue('MYSQLDUMP_PATH'),
+            'mysqldump_path'              => $this->getCurrentEnvValue('MYSQLDUMP_PATH'),
+            // Theme customization
+            'theme_customization_enabled' => $this->getBooleanEnvValue('THEME_CUSTOMIZATION_ENABLED', true),
         ];
 
         return view('pages.sys.app-config.index', compact('config'));
@@ -74,6 +76,10 @@ class AppConfigController extends Controller
                 $envContent = $this->updateEnvValue($envContent, 'MYSQLDUMP_PATH=', 'MYSQLDUMP_PATH=' . $request->mysqldump_path);
                 break;
 
+            case 'customization':
+                $envContent = $this->updateEnvValue($envContent, 'THEME_CUSTOMIZATION_ENABLED=', 'THEME_CUSTOMIZATION_ENABLED=' . ($request->theme_customization_enabled ? 'true' : 'false'));
+                break;
+
             case 'theme':
                 if ($request->filled('theme')) {
                     $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME=', 'TABLER_THEME=' . $request->theme);
@@ -104,10 +110,11 @@ class AppConfigController extends Controller
 
         // Log the configuration update with appropriate message based on section
         $sectionNames = [
-            'app'    => 'Application',
-            'mail'   => 'Mail',
-            'google' => 'Google OAuth',
-            'backup' => 'Database Backup',
+            'app'           => 'Application',
+            'mail'          => 'Mail',
+            'google'        => 'Google OAuth',
+            'backup'        => 'Database Backup',
+            'customization' => 'Theme Customization',
         ];
 
         $sectionName = $sectionNames[$configSection] ?? 'Configuration';

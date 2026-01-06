@@ -76,7 +76,9 @@
     </div>
 
     {{-- Theme Settings Component --}}
-    <x-sys.theme-settings mode="sys" />
+    @if(env('THEME_CUSTOMIZATION_ENABLED', true))
+        <x-sys.theme-settings mode="sys" />
+    @endif
 
     {{-- Global Search Modal Component --}}
     <x-sys.modal-global-search />
