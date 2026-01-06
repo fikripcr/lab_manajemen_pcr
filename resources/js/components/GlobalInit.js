@@ -12,10 +12,6 @@ window.axios.defaults.withXSRFToken = true
 import { createPopper } from '@popperjs/core';
 window.Popper = { createPopper }; // Expose globally for Bootstrap
 
-
-
-
-
 // --- SweetAlert2
 import Swal from 'sweetalert2';
 window.Swal = Swal;
@@ -29,11 +25,4 @@ import PerfectScrollbar from 'perfect-scrollbar';
 window.PerfectScrollbar = PerfectScrollbar;
 
 
-// --- Masonry
-import Masonry from 'masonry-layout';
-window.Masonry = Masonry;
-
-// --- Highlight.js
-import hljs from 'highlight.js';
-window.hljs = hljs;
 
