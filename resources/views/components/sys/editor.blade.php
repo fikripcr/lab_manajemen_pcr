@@ -19,22 +19,20 @@
 </div>
 
 @push('scripts')
-    {{-- HugeRTE is bundled in sys.js via NPM --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const editorId = '{{ $id }}';
             const editorElement = document.getElementById(editorId);
             
-            if (editorElement) {
-                hugerte.init({
-                    selector: '#' + editorId,
+            if (editorElement && window.loadHugeRTE) {
+                window.loadHugeRTE('#' + editorId, {
                     height: {{ $height }},
                     menubar: false,
-                    statusbar: false, /* Tabler cleaner look */
+                    statusbar: false,
                     plugins: '{{ $plugins }}',
                     toolbar: '{{ $toolbar }}',
-                    skin: false,       /* Bundled in sys.js */
-                    content_css: false, /* Bundled in sys.js */
+                    skin: false,
+                    content_css: false,
                     content_style: (window.hugerteContentCss || '') + ' body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }',
                     setup: function (editor) {
                         editor.on('change', function () {
@@ -46,3 +44,4 @@
         });
     </script>
 @endpush
+

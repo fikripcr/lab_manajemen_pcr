@@ -1,66 +1,52 @@
-// CRITICAL: Load GlobalInit FIRST to ensure axios, jQuery, Bootstrap are available
 import './components/GlobalInit.js';
 
-// Tabler Core
-// import '@tabler/core/dist/js/tabler.esm.js';
-// import '@tabler/core/dist/css/tabler.css';
-// import '@tabler/core/dist/css/tabler-vendors.css'; // Good to have for plugins
-
-// Tabler Icon
-// import '@tabler/icons-webfont/dist/tabler-icons.css';
-
-
-// Pickr (Color Picker)
 import Pickr from '@simonwep/pickr';
-import '@simonwep/pickr/dist/themes/nano.min.css'; // 'classic', 'monolith', 'nano'
+import '@simonwep/pickr/dist/themes/nano.min.css';
 window.Pickr = Pickr;
 
-// import '../css/sys.css';
-
-// Theme Management System
 import ThemeManager from './components/ThemeManager.js';
 import ThemeSettings from './components/ThemeSettings.js';
-
-
-// --- Notification Manager (direct import - needs to load on every page)
 import './components/Notification.js';
-
-// Import FormFeatures to make loadFormFeatures available
 import './components/FormFeatures.js';
-
-// Import HoverDropdown for desktop hover interactions
 import './components/HoverDropdown.js';
 
-// Import HugeRTE (Tabler's Editor) and expose globally
-// Import HugeRTE (Tabler's Editor) and expose globally
-import hugerte from 'hugerte';
+// HugeRTE - Lazy loaded to reduce initial bundle size
+window.loadHugeRTE = function (selector, config = {}) {
+    return import('hugerte').then((module) => {
+        const hugerte = module.default;
+        return Promise.all([
+            import('hugerte/themes/silver/theme'),
+            import('hugerte/icons/default/icons'),
+            import('hugerte/models/dom/model'),
+            import('hugerte/plugins/lists/plugin'),
+            import('hugerte/plugins/link/plugin'),
+            import('hugerte/plugins/image/plugin'),
+            import('hugerte/plugins/anchor/plugin'),
+            import('hugerte/plugins/searchreplace/plugin'),
+            import('hugerte/plugins/code/plugin'),
+            import('hugerte/plugins/fullscreen/plugin'),
+            import('hugerte/plugins/insertdatetime/plugin'),
+            import('hugerte/plugins/media/plugin'),
+            import('hugerte/plugins/table/plugin'),
+            import('hugerte/plugins/wordcount/plugin'),
+            import('hugerte/skins/ui/oxide/skin.min.css'),
+            import('hugerte/skins/content/default/content.min.css?inline')
+        ]).then(([, , , , , , , , , , , , , , , contentCssModule]) => {
+            window.hugerte = hugerte;
+            window.hugerteContentCss = contentCssModule.default;
+            if (selector) {
+                hugerte.init({
+                    selector: selector,
+                    ...config
+                });
+            }
 
-// Bundle HugeRTE Assets to prevent 404s
-import 'hugerte/themes/silver/theme';
-import 'hugerte/icons/default/icons';
-import 'hugerte/models/dom/model';
+            return hugerte;
+        });
+    });
+};
 
-// Bundle HugeRTE Plugins
-import 'hugerte/plugins/lists/plugin';
-import 'hugerte/plugins/link/plugin';
-import 'hugerte/plugins/image/plugin';
-import 'hugerte/plugins/anchor/plugin';
-import 'hugerte/plugins/searchreplace/plugin';
-import 'hugerte/plugins/code/plugin';
-import 'hugerte/plugins/fullscreen/plugin';
-import 'hugerte/plugins/insertdatetime/plugin';
-import 'hugerte/plugins/media/plugin';
-import 'hugerte/plugins/table/plugin';
-import 'hugerte/plugins/wordcount/plugin';
-
-// Bundle HugeRTE Skins (prevents 404s)
-import 'hugerte/skins/ui/oxide/skin.min.css';
-import contentCss from 'hugerte/skins/content/default/content.min.css?inline';
-
-window.hugerte = hugerte;
-window.hugerteContentCss = contentCss;
-
-// --- Global Search (lazy loading)
+// Global Search
 window.loadGlobalSearch = function () {
     return import('./components/GlobalSearch.js').then(({ GlobalSearch }) => {
         if (!window.GlobalSearch) {
@@ -70,7 +56,7 @@ window.loadGlobalSearch = function () {
     });
 };
 
-// --- TOAST UI Editor (dynamic import)
+// TOAST UI Editor
 window.initToastEditor = function (selector, config = {}) {
     import('@toast-ui/editor').then(({ Editor }) => {
         new Editor({
@@ -80,19 +66,15 @@ window.initToastEditor = function (selector, config = {}) {
     });
 };
 
-// Initialize global search and notifications only when DOM is ready and if they're needed on the page
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Theme Manager
     const themeManager = new ThemeManager('sys');
     themeManager.loadTheme();
-
-    // Initialize Settings Panel (if present)
     if (document.getElementById('offcanvasSettings')) {
         const themeSettings = new ThemeSettings(themeManager);
         themeSettings.init();
     }
 
-    // Check if global search elements exist on the page
+
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {
             window.globalSearch = new GlobalSearch();
