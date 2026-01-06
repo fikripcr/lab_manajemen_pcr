@@ -14,7 +14,7 @@
             const font = localStorage.getItem('tabler-theme-font') || 'inter';
             const radius = localStorage.getItem('tabler-theme-radius') || '1';
             const primary = localStorage.getItem('tabler-theme-primary') || '#206bc4';
-            const bg = localStorage.getItem('tabler-theme-bg') || '';
+            const bg = localStorage.getItem('tabler-theme-bg');
             const cardStyle = localStorage.getItem('tabler-theme-card-style') || 'flat';
             
             const root = document.documentElement;
@@ -23,8 +23,12 @@
             root.setAttribute('data-bs-card-style', cardStyle);
             root.style.setProperty('--tblr-border-radius', radius + 'rem');
             root.style.setProperty('--tblr-primary', primary);
-            if (bg) {
+            
+            // Background: remove if empty/null, set if has value
+            if (bg && bg !== '') {
                 root.style.setProperty('--tblr-body-bg', bg);
+            } else {
+                root.style.removeProperty('--tblr-body-bg');
             }
         })();
     </script>
@@ -46,7 +50,7 @@
 <body class="d-flex flex-column">
     @if($authLayout === 'basic')
         {{-- BASIC LAYOUT: Centered card --}}
-        <div class="page page-center">
+        <main class="page page-center">
             <div class="container container-tight py-4">
                 <div class="text-center mb-4">
                     <a href="." class="navbar-brand navbar-brand-autodark">
@@ -55,11 +59,11 @@
                 </div>
                 @yield('content')
             </div>
-        </div>
+        </main>
 
     @elseif($authLayout === 'cover')
         {{-- COVER LAYOUT: Split screen with background image --}}
-        <div class="row g-0 flex-fill">
+        <main class="row g-0 flex-fill">
             <div class="col-12 col-lg-6 col-xl-5  d-flex flex-column justify-content-center" data-form-column>
                 <div class="container container-tight my-5 px-lg-5">
                     <div class="text-center mb-4">
@@ -74,11 +78,11 @@
                 {{-- Background cover image --}}
                 <div class="bg-cover h-100 min-vh-100" style="background-image: url({{ asset('assets/img/auth/bg-cover.jpg') }})"></div>
             </div>
-        </div>
+        </main>
 
-    @elseif($authLayout === 'illustration')
-        {{-- ILLUSTRATION LAYOUT: Side-by-side with SVG illustration --}}
-        <div class="page page-center">
+    @else
+        {{-- ILLUSTRATION LAYOUT: Content with decorative illustration --}}
+        <main class="page page-center">
             <div class="container container-normal py-4">
                 <div class="row align-items-center g-4">
                     <div class="col-lg" data-form-column>
@@ -96,7 +100,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     @endif
     {{-- Theme Settings Component (Unified with sys) --}}
     @if(env('THEME_CUSTOMIZATION_ENABLED', true))

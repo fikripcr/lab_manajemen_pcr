@@ -16,7 +16,7 @@
             const font = localStorage.getItem('tabler-theme-font') || 'inter';
             const radius = localStorage.getItem('tabler-theme-radius') || '1';
             const primary = localStorage.getItem('tabler-theme-primary') || '#206bc4';
-            const bg = localStorage.getItem('tabler-theme-bg') || '';
+            const bg = localStorage.getItem('tabler-theme-bg');
             const cardStyle = localStorage.getItem('tabler-theme-card-style') || 'flat';
             
             const root = document.documentElement;
@@ -25,8 +25,12 @@
             root.setAttribute('data-bs-card-style', cardStyle);
             root.style.setProperty('--tblr-border-radius', radius + 'rem');
             root.style.setProperty('--tblr-primary', primary);
-            if (bg) {
+            
+            // Background: remove if empty/null, set if has value
+            if (bg && bg !== '') {
                 root.style.setProperty('--tblr-body-bg', bg);
+            } else {
+                root.style.removeProperty('--tblr-body-bg');
             }
         })();
     </script>
