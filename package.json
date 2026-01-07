@@ -34,7 +34,6 @@
         "filepond-plugin-image-preview": "^4.6.12",
         "flatpickr": "^4.6.13",
         "hugerte": "^1.0.9",
-        "perfect-scrollbar": "^1.5.1",
         "sweetalert2": "^11.26.3"
     }
 }

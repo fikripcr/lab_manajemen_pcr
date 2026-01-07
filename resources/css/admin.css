@@ -10,8 +10,6 @@
 @import '../assets/admin/vendor/css/theme-default.css';
 @import '../assets/admin/css/demo.css';
 
-/* Vendors CSS */
-@import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
 /* SweetAlert2 CSS */
 @import 'sweetalert2/dist/sweetalert2.min.css';

@@ -20,9 +20,7 @@ window.Swal = Swal;
 import './CustomSweetAlerts.js';
 import './AjaxFormHandler.js';
 
-// --- Perfect Scrollbar
-import PerfectScrollbar from 'perfect-scrollbar';
-window.PerfectScrollbar = PerfectScrollbar;
+
 
 
 
