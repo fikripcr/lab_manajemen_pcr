@@ -64,19 +64,18 @@ class NotificationsController extends Controller
             })
             ->addColumn('action', function ($notification) {
                 if (is_null($notification->read_at)) {
-                    return '
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('notifications.mark-as-read', $notification->id) . '">
-                                    <i class="bx bx-check me-1"></i> Mark as Read
-                                </a>
-                            </div>
-                        </div>';
+                    return view('components.sys.datatables-actions', [
+                        'customActions' => [
+                            [
+                                'label' => 'Mark as Read',
+                                'url'   => route('notifications.mark-as-read', $notification->id),
+                                'icon'  => 'check',
+                                'class' => '',
+                            ],
+                        ],
+                    ])->render();
                 } else {
-                    return ' < spanclass  = "text-muted" > - <  / span > ';
+                    return '<span class="text-muted">-</span>';
                 }
             })
             ->rawColumns(['checkbox', 'status', 'action'])

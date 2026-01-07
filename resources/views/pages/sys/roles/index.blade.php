@@ -23,11 +23,28 @@
                         <p class="text-muted mb-2">{{ $role->users_count }} users assigned</p>
                     </div>
                     <div class="d-flex align-items-center">
-                        <x-sys.datatables-actions
-                            :view-url="route('sys.roles.show', $role)"
-                            :edit-url="route('sys.roles.edit', $role)"
-                            :delete-url="route('sys.roles.destroy', $role)"
-                        />
+                        {{-- Edit Button (Direct Link) --}}
+                        <a href="{{ route('sys.roles.edit', $role) }}" class="btn btn-action text-primary btn-animate-icon" title="Edit">
+                            <i class="ti ti-edit fs-2"></i>
+                        </a>
+                        
+                        {{-- Dropdown for extra actions --}}
+                        <div class="dropdown">
+                            <button type="button" class="btn dropdown-toggle btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ti ti-dots-vertical fs-3"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="{{ route('sys.roles.show', $role) }}">
+                                    <i class="ti ti-eye me-1"></i> View
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item text-danger ajax-delete" 
+                                   data-url="{{ route('sys.roles.destroy', $role) }}" 
+                                   data-title="Delete Role?" 
+                                   data-text="Are you sure? This action cannot be undone!">
+                                    <i class="ti ti-trash me-1"></i> Delete
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
