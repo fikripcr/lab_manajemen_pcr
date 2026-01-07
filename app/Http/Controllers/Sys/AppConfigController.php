@@ -187,9 +187,9 @@ class AppConfigController extends Controller
             'theme_bg'                => 'nullable|string', // Allow hex color or empty
             'theme_sidebar_bg'        => 'nullable|string',
             'theme_header_top_bg'     => 'nullable|string',
-            'theme_header_overlap_bg' => 'nullable|string',        // New
-            'theme_header_sticky'     => 'nullable|in:true,false', // New
-            'theme_header_menu_bg'    => 'nullable|string',        // New
+            'theme_header_overlap_bg' => 'nullable|string',               // New
+            'theme_header_sticky'     => 'nullable|in:true,false,hidden', // Scrollable, Fixed, or Hidden
+            'theme_header_menu_bg'    => 'nullable|string',               // New
             'theme_card_style'        => 'nullable|in:default,flat,shadow,border,modern',
             'theme_boxed_bg'          => 'nullable|string', // NEW - boxed layout background
             'layout'                  => 'nullable|in:vertical,combo,horizontal,condensed,navbar-overlap',

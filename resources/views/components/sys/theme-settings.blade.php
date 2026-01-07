@@ -145,9 +145,9 @@
                         <label class="form-label">Page Layout</label>
                         <select name="layout" class="form-select">
                             @foreach([
-                                'combo' => 'Vertical With Header',
-                                'vertical' => 'Vertical Without Header',
-                                'horizontal' => 'Horizontal',
+                                'vertical' => 'Vertical (Sidebar)',
+                                'combo' => 'Combo (Sidebar + Header)',
+                                'horizontal' => 'Horizontal (Top Navbar)',
                                 'condensed' => 'Condensed',
                                 'navbar-overlap' => 'Navbar Overlap',
                             ] as $value => $label)
@@ -156,21 +156,29 @@
                         </select>
                     </div>
 
+                    {{-- Header Mode (Sticky/Scrollable/Hidden) --}}
                     <div class="col-12">
-                        <label class="form-label">Navigation Mode</label>
+                        <label class="form-label">Header Mode</label>
                         <div class="form-selectgroup">
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="theme-header-sticky" value="false" class="form-selectgroup-input" {{ !filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'checked' : '' }}>
+                                <input type="radio" name="theme-header-sticky" value="false" class="form-selectgroup-input" {{ ($themeData['themeHeaderSticky'] ?? 'false') === 'false' ? 'checked' : '' }}>
                                 <span class="form-selectgroup-label">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-vertical me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12h18" /><path d="M12 3v18" /><path d="M15 6l-3 -3l-3 3" /><path d="M15 18l-3 3l-3 -3" /></svg>
                                     Scrollable
                                 </span>
                             </label>
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="theme-header-sticky" value="true" class="form-selectgroup-input" {{ filter_var($themeData['themeHeaderSticky'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'checked' : '' }}>
+                                <input type="radio" name="theme-header-sticky" value="true" class="form-selectgroup-input" {{ ($themeData['themeHeaderSticky'] ?? 'false') === 'true' ? 'checked' : '' }}>
                                 <span class="form-selectgroup-label">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pin me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4" /><path d="M9 15l-4.5 4.5" /><path d="M14.5 4l5.5 5.5" /></svg>
                                     Fixed
+                                </span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="theme-header-sticky" value="hidden" class="form-selectgroup-input" {{ ($themeData['themeHeaderSticky'] ?? 'false') === 'hidden' ? 'checked' : '' }}>
+                                <span class="form-selectgroup-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-off me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" /><path d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.055 9.055 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87" /><path d="M3 3l18 18" /></svg>
+                                    Hidden
                                 </span>
                             </label>
                         </div>

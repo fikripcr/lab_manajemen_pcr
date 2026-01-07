@@ -101,6 +101,12 @@ class InjectLayoutData
             'containerWidth' => $containerWidth,
         ]);
 
+        // Check for Hidden Header Mode
+        $headerMode = env('TABLER_HEADER_STICKY', 'false');
+        if ($headerMode === 'hidden') {
+            $layoutData['layoutHideTopbar'] = true;
+        }
+
         // Override for Boxed Container Width
         if ($containerWidth === 'boxed') {
             $layoutData['bodyClass']      = trim(($layoutData['bodyClass'] ?? '') . ' layout-boxed');
