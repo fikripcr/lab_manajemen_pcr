@@ -14,41 +14,57 @@
 @section('content')
 
 <div class="card overflow-hidden">
+    {{-- Card Header with Search and Page Length --}}
+
+
+    <div class="card-header">
+        <div class="d-flex flex-wrap gap-2">
+            <div>
+                <x-sys.datatable-page-length :dataTableId="'backups-table'" />
+            </div>
+            <div>
+                <x-sys.datatable-search :dataTableId="'backups-table'" />
+            </div>
+        </div>
+    </div>
+
     <div class="card-body p-0">
         @if (count($backups) > 0)
-            <div class="table-responsive">
-                <table class="table table-striped mb-0">
-                    <thead>
-                        <tr>
-                            <th>Filename</th>
-                            <th>Size</th>
-                            <th>Date Modified</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($backups as $backup)
-                            <tr>
-                                <td>{{ basename($backup['name']) }}</td>
-                                <td>{{ $backup['formatted_size'] }}</td>
-                                <td>{{ $backup['formatted_date'] }}</td>
-                                <td>
-                                    <a href="{{ route('sys.backup.download', $backup['name']) }}" class="btn btn-outline-primary btn-sm">
-                                        <i class="bx bx-download"></i> Download
-                                    </a>
-                                    <form action="{{ route('sys.backup.delete', $backup['name']) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this backup?')">
-                                            <i class="bx bx-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            <x-sys.datatable-client 
+                id="backups-table" 
+                :columns="[
+                    ['title' => 'Filename'],
+                    ['title' => 'Size'],
+                    ['title' => 'Date Modified'],
+                    ['title' => 'Actions', 'orderable' => false, 'searchable' => false],
+                ]"
+                :search="true" 
+                :pageLength="10"
+                :order="[[2, 'desc']]">
+                
+                {{-- User controls the loop and variable names --}}
+                @foreach ($backups as $backup)
+                    <tr>
+                        <td>{{ basename($backup['name']) }}</td>
+                        <td>{{ $backup['formatted_size'] }}</td>
+                        <td>{{ $backup['formatted_date'] }}</td>
+                        <td>
+                            <a href="{{ route('sys.backup.download', $backup['name']) }}" 
+                               class="btn btn-icon btn-outline-primary btn-sm" 
+                               title="Download">
+                                <i class="bx bx-download"></i>
+                            </a>
+                            <button type="button" 
+                                    class="btn btn-icon btn-outline-danger btn-sm delete-backup" 
+                                    data-filename="{{ $backup['name'] }}" 
+                                    title="Delete">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+                
+            </x-sys.datatable-client>
         @else
             <div class="text-center py-5">
                 <i class="bx bx-data mb-3" style="font-size: 3rem;"></i>
@@ -89,5 +105,41 @@
                     showErrorMessage('Error!', 'An error occurred while creating the backup');
                 });
         }
+
+        // Handle delete backup with confirmation
+        $(document).on('click', '.delete-backup', function(e) {
+            e.preventDefault();
+            const filename = $(this).data('filename');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Build URL with filename parameter
+                    const deleteUrl = '{{ route('sys.backup.delete', ':filename') }}'.replace(':filename', encodeURIComponent(filename));
+                    
+                    axios.delete(deleteUrl)
+                        .then(function(response) {
+                            if (response.data.success) {
+                                showSuccessMessage('Deleted!', response.data.message).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                showErrorMessage('Error!', response.data.message);
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error deleting backup:', error);
+                            showErrorMessage('Error!', 'An error occurred while deleting the backup');
+                        });
+                }
+            });
+        });
     </script>
 @endpush
