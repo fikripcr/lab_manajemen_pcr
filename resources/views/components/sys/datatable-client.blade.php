@@ -1,13 +1,18 @@
 @props(['id', 'columns' => [], 'search' => true, 'pageLength' => true, 'order' => []])
 
+@php
+    // Normalize column titles
+    $normalizedColumns = array_map(fn($col) => array_merge($col, [
+        'title' => $col['title'] ?? $col['label'] ?? $col['name'] ?? ''
+    ]), $columns);
+@endphp
+
 <div class="table-responsive">
     <table id="{{ $id }}" class="table table-sm table-striped table-vcenter card-table mb-0">
         <thead>
             <tr>
-                @foreach ($columns as $column)
-                    <th @if(isset($column['orderable']) && $column['orderable'] === false) data-orderable="false" @endif>
-                        {{ $column['title'] ?? $column['label'] ?? $column['name'] }}
-                    </th>
+                @foreach ($normalizedColumns as $column)
+                    <th>{{ $column['title'] }}</th>
                 @endforeach
             </tr>
         </thead>
@@ -20,107 +25,66 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Use same pattern as server-side datatable - lazy load
-            if (window.loadDataTables) {
-                window.loadDataTables().then(() => {
-                    // jQuery and DataTables are now loaded
-                    if (typeof $ !== 'undefined' && typeof $.fn.dataTable !== 'undefined') {
-                        const table = $('#{{ $id }}').DataTable({
-                            // Client-side processing
-                            serverSide: false,
-                            processing: false,
-                            
-                            // Features
-                            searching: {{ $search ? 'true' : 'false' }},
-                            ordering: true,
-                            paging: true,
-                            info: true,
-                            pageLength: {{ is_numeric($pageLength) ? $pageLength : 10 }},
-                            
-                            // Responsive - disable DT responsive, use native scrolling
-                            responsive: false,
-                            
-                            // DOM layout - match server-side styling
-                            dom: "<'table-responsive'tr>" +
-                                 "<'card-footer d-flex align-items-center'<'text-muted'i><'ms-auto'p>>",
-                            
-                            // Language
-                            language: {
-                                search: "_INPUT_",
-                                searchPlaceholder: "Search...",
-                                lengthMenu: "_MENU_",
-                                info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                                infoEmpty: "No entries available",
-                                infoFiltered: "(filtered from _MAX_ total entries)",
-                                paginate: {
-                                    first: "First",
-                                    last: "Last",
-                                    next: "Next",
-                                    previous: "Previous"
-                                }
-                            },
-                            
-                            // Column definitions from props
-                            columnDefs: [
-                                @foreach ($columns as $index => $column)
-                                    @if (isset($column['orderable']) && $column['orderable'] === false)
-                                        { targets: {{ $index }}, orderable: false },
-                                    @endif
-                                    @if (isset($column['searchable']) && $column['searchable'] === false)
-                                        { targets: {{ $index }}, searchable: false },
-                                    @endif
-                                @endforeach
-                            ],
-                            
-                            @if (!empty($order))
-                            // Default ordering
-                            order: @json($order),
-                            @else
-                            // Default order by first column descending if not specified
-                            order: [[0, 'desc']],
-                            @endif
-                        });
+            if (!window.loadDataTables) return;
 
-                        // Bind search input
-                        @if ($search)
-                        const searchInput = document.getElementById('{{ $id }}-search');
-                        const clearBtn = document.getElementById('{{ $id }}-clear-search');
-                        if (searchInput) {
-                            let timeout;
-                            searchInput.addEventListener('input', function(e) {
-                                clearTimeout(timeout);
-                                const query = e.target.value.trim();
-                                
-                                // Toggle clear button
-                                if (clearBtn) {
-                                    clearBtn.classList.toggle('d-none', !query);
-                                }
-                                
-                                // Debounce search
-                                timeout = setTimeout(() => {
-                                    table.search(query).draw();
-                                }, 300);
-                            });
-                        }
-                        @endif
+            window.loadDataTables().then(() => {
+                if (typeof $ === 'undefined' || typeof $.fn.dataTable === 'undefined') return;
 
-                        // Bind page length selector
-                        @if ($pageLength)
-                        const pageLengthSelect = document.getElementById('{{ $id }}-pageLength');
-                        if (pageLengthSelect) {
-                            pageLengthSelect.addEventListener('change', function(e) {
-                                const value = e.target.value;
-                                if (value === 'All') {
-                                    table.page.len(-1).draw();
-                                } else {
-                                    table.page.len(parseInt(value)).draw();
-                                }
-                            });
-                        }
-                        @endif
-                    }
+                // Build column definitions
+                const columnDefs = @json(collect($normalizedColumns)->map(function($col, $i) {
+                    $defs = [];
+                    if (isset($col['orderable']) && $col['orderable'] === false) $defs['orderable'] = false;
+                    if (isset($col['searchable']) && $col['searchable'] === false) $defs['searchable'] = false;
+                    return count($defs) ? array_merge(['targets' => $i], $defs) : null;
+                })->filter()->values());
+
+                // Initialize DataTable
+                const table = $('#{{ $id }}').DataTable({
+                    serverSide: false,
+                    processing: false,
+                    searching: {{ $search ? 'true' : 'false' }},
+                    ordering: true,
+                    paging: true,
+                    info: true,
+                    pageLength: {{ is_numeric($pageLength) ? $pageLength : 10 }},
+                    responsive: false,
+                    dom: "<'table-responsive'tr><'card-footer d-flex align-items-center'<'text-muted'i><'ms-auto'p>>",
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search...",
+                        lengthMenu: "_MENU_",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                        infoEmpty: "No entries available",
+                        infoFiltered: "(filtered from _MAX_ total entries)"
+                    },
+                    columnDefs: columnDefs,
+                    order: @json(!empty($order) ? $order : [[0, 'desc']])
                 });
-            }
+
+                // Search handler
+                @if ($search)
+                const searchInput = document.getElementById('{{ $id }}-search');
+                const clearBtn = document.getElementById('{{ $id }}-clear-search');
+                if (searchInput) {
+                    let timeout;
+                    searchInput.addEventListener('input', (e) => {
+                        clearTimeout(timeout);
+                        const query = e.target.value.trim();
+                        clearBtn?.classList.toggle('d-none', !query);
+                        timeout = setTimeout(() => table.search(query).draw(), 300);
+                    });
+                }
+                @endif
+
+                // Page length handler
+                @if ($pageLength)
+                const pageLengthSelect = document.getElementById('{{ $id }}-pageLength');
+                pageLengthSelect?.addEventListener('change', (e) => {
+                    const len = e.target.value === 'All' ? -1 : parseInt(e.target.value);
+                    table.page.len(len).draw();
+                });
+                @endif
+            });
         });
     </script>
 @endpush

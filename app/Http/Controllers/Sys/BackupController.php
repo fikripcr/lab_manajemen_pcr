@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use Exception;
 use Illuminate\Http\Request;
 
 class BackupController extends Controller
@@ -243,12 +242,16 @@ class BackupController extends Controller
 
         if (file_exists($filePath)) {
             unlink($filePath);
+            return response()->json([
+                'success' => true,
+                'message' => 'Backup deleted successfully',
+            ]);
         } else {
-            abort(404, 'Backup file not found: ' . $filename);
+            return response()->json([
+                'success' => false,
+                'message' => 'Backup file not found: ' . basename($filename),
+            ], 404);
         }
-
-        return redirect()->back()
-            ->with('success', 'Backup deleted successfully');
     }
 
     private function getBackupList()

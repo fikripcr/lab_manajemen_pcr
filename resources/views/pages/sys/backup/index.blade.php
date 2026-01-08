@@ -50,15 +50,15 @@
                         <td>{{ $backup['formatted_date'] }}</td>
                         <td>
                             <a href="{{ route('sys.backup.download', $backup['name']) }}" 
-                               class="btn btn-icon btn-outline-primary btn-sm" 
-                               title="Download">
-                                <i class="bx bx-download"></i>
+                                class="btn btn-action text-primary" 
+                                title="Download">
+                                <i class="ti ti-download fs-2"></i>
                             </a>
                             <button type="button" 
-                                    class="btn btn-icon btn-outline-danger btn-sm delete-backup" 
+                                    class="btn btn-action text-danger delete-backup" 
                                     data-filename="{{ $backup['name'] }}" 
                                     title="Delete">
-                                <i class="bx bx-trash"></i>
+                                <i class="ti ti-trash fs-2"></i>
                             </button>
                         </td>
                     </tr>
@@ -67,7 +67,7 @@
             </x-sys.datatable-client>
         @else
             <div class="text-center py-5">
-                <i class="bx bx-data mb-3" style="font-size: 3rem;"></i>
+                <i class="ti ti-data mb-3" style="font-size: 3rem;"></i>
                 <h5>No backups found</h5>
                 <p class="text-muted">Create your first backup using the button above.</p>
             </div>
@@ -78,67 +78,60 @@
 
 @push('scripts')
     <script>
-        function createBackup(type) {
-            // Show loading message
-            showLoadingMessage('Processing Backup...', type === 'db' ? 'Creating database backup, please wait...' : 'Creating web files backup, please wait...');
+        document.addEventListener('DOMContentLoaded', () => {
+            const createBackup = (type) => {
+                const message = type === 'db' 
+                    ? 'Creating database backup, please wait...' 
+                    : 'Creating web files backup, please wait...';
+                
+                showLoadingMessage('Processing Backup...', message);
 
-            axios.post('{{ route('sys.backup.create') }}', {
-                    type: type
-                })
-                .then(function(response) {
-                    // Close the loading message
-                    Swal.close();
+                axios.post('{{ route('sys.backup.create') }}', { type })
+                    .then(({ data }) => {
+                        Swal.close();
+                        data.success 
+                            ? showSuccessMessage('Success!', data.message).then(() => location.reload())
+                            : showErrorMessage('Error!', data.message);
+                    })
+                    .catch((error) => {
+                        Swal.close();
+                        console.error('Error creating backup:', error);
+                        showErrorMessage('Error!', 'An error occurred while creating the backup');
+                    });
+            };
 
-                    if (response.data.success) {
-                        showSuccessMessage('Success!', response.data.message).then(() => {
-                            // Reload the page to show the new backup
-                            location.reload();
-                        });
-                    } else {
-                        showErrorMessage('Error!', response.data.message);
-                    }
-                })
-                .catch(function(error) {
-                    // Close the loading message
-                    Swal.close();
-                    console.error('Error creating backup:', error);
-                    showErrorMessage('Error!', 'An error occurred while creating the backup');
-                });
-        }
+            // Expose globally for button onclick
+            window.createBackup = createBackup;
 
-        // Handle delete backup with confirmation
-        $(document).on('click', '.delete-backup', function(e) {
-            e.preventDefault();
-            const filename = $(this).data('filename');
-            
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Build URL with filename parameter
+            // Delete backup with confirmation
+            $(document).on('click', '.delete-backup', function(e) {
+                e.preventDefault();
+                const filename = $(this).data('filename');
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then(({ isConfirmed }) => {
+                    if (!isConfirmed) return;
+
                     const deleteUrl = '{{ route('sys.backup.delete', ':filename') }}'.replace(':filename', encodeURIComponent(filename));
                     
                     axios.delete(deleteUrl)
-                        .then(function(response) {
-                            if (response.data.success) {
-                                showSuccessMessage('Deleted!', response.data.message).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                showErrorMessage('Error!', response.data.message);
-                            }
+                        .then(({ data }) => {
+                            data.success
+                                ? showSuccessMessage('Deleted!', data.message).then(() => location.reload())
+                                : showErrorMessage('Error!', data.message);
                         })
-                        .catch(function(error) {
+                        .catch((error) => {
                             console.error('Error deleting backup:', error);
                             showErrorMessage('Error!', 'An error occurred while deleting the backup');
                         });
-                }
+                });
             });
         });
     </script>
