@@ -157,7 +157,7 @@
                     </div>
 
                     {{-- Header Mode (Sticky/Scrollable/Hidden) --}}
-                    <div class="col-12">
+                    <div class="col-12" id="header-mode-section">
                         <label class="form-label">Header Mode</label>
                         <div class="form-selectgroup">
                             <label class="form-selectgroup-item">
@@ -247,7 +247,7 @@
 
                         @unless($isAuthMode)
                         {{-- Sidebar / Menu --}}
-                        <div class="row g-2 mb-2 align-items-center">
+                        <div class="row g-2 mb-2 align-items-center" id="sidebar-menu-preset">
                             <div class="col-4"><small>Sidebar / Menu</small></div>
                             <div class="col-8">
                                 <div class="d-flex align-items-center">
@@ -275,7 +275,7 @@
                         </div>
 
                         {{-- Header Overlap (NEW) --}}
-                        <div class="row g-2 mb-2 align-items-center">
+                        <div class="row g-2 mb-2 align-items-center" id="header-overlap-preset">
                             <div class="col-4"><small>Header (Overlap)</small></div>
                             <div class="col-8">
                                 <div class="d-flex align-items-center">
@@ -289,7 +289,7 @@
                         </div>
 
                         {{-- Boxed Background (NEW) --}}
-                        <div class="row g-2 align-items-center">
+                        <div class="row g-2 align-items-center" id="boxed-bg-preset">
                             <div class="col-4"><small>Boxed Background</small></div>
                             <div class="col-8">
                                 <div class="d-flex align-items-center">

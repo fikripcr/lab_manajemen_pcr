@@ -1,9 +1,7 @@
 <?php
-
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\NotificationResource;
 use App\Services\Sys\NotificationService;
 use Illuminate\Http\Request;
 
@@ -22,9 +20,7 @@ class NotificationController extends Controller
     public function getCount()
     {
         $count = $this->notificationService->getUnreadCount(auth()->id());
-        return response()->json([
-            'count' => $count
-        ]);
+        return jsonSuccess(['data' => ['count' => $count]]);
     }
 
     /**
@@ -32,33 +28,25 @@ class NotificationController extends Controller
      */
     public function getList(Request $request)
     {
-        $filters = [
-            'read_status' => $request->get('read_status'),
-            'per_page' => $request->get('per_page', 10)
-        ];
+        $limit  = $request->get('limit', 10);
+        $userId = auth()->id();
 
-        // Add user ID to filter for user-specific notifications
-        $filters['user_id'] = auth()->id();
+        $notifications = $this->notificationService->getDropdownData($userId, $limit);
 
-        $notifications = $this->notificationService->getNotificationList($filters);
+        return jsonSuccess(['data' => $notifications]);
+    }
 
-        return response()->json([
-            'data' => NotificationResource::collection($notifications->items()),
-            'links' => [
-                'first' => $notifications->url(1),
-                'last' => $notifications->url($notifications->lastPage()),
-                'prev' => $notifications->previousPageUrl(),
-                'next' => $notifications->nextPageUrl(),
-            ],
-            'meta' => [
-                'current_page' => $notifications->currentPage(),
-                'from' => $notifications->firstItem(),
-                'last_page' => $notifications->lastPage(),
-                'path' => $notifications->path(),
-                'per_page' => $notifications->perPage(),
-                'to' => $notifications->lastItem(),
-                'total' => $notifications->total(),
-            ],
+    /**
+     * Mark all notifications as read
+     */
+    public function markAllAsRead()
+    {
+        $userId       = auth()->id();
+        $updatedCount = $this->notificationService->markAllAsReadForUser($userId);
+
+        return jsonSuccess([
+            'message' => 'All notifications marked as read',
+            'data'    => ['updated_count' => $updatedCount],
         ]);
     }
 }

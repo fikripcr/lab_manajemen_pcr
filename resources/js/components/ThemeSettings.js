@@ -114,6 +114,12 @@ class ThemeSettings {
                 }
             }
         });
+
+        // Apply layout-based visibility
+        const layoutSelect = this.form.querySelector('select[name="layout"]');
+        if (layoutSelect && layoutSelect.value) {
+            this.handleLayoutChange(layoutSelect.value);
+        }
     }
 
     /**
@@ -147,9 +153,73 @@ class ThemeSettings {
         // Apply setting immediately for live preview
         this.themeManager.applySetting(name, value);
 
+        // Handle layout changes (show/hide relevant sections)
+        if (name === 'layout') {
+            this.handleLayoutChange(value);
+        }
+
         // Special handling for layout changes (if preview function exists)
         if (name === 'layout' && typeof window.previewLayout === 'function') {
             window.previewLayout(value);
+        }
+    }
+
+    /**
+     * Handle layout change - show/hide relevant settings
+     */
+    handleLayoutChange(layout) {
+        const sidebarMenuPreset = document.getElementById('sidebar-menu-preset');
+        const headerOverlapPreset = document.getElementById('header-overlap-preset');
+        const boxedBgPreset = document.getElementById('boxed-bg-preset');
+        const headerModeSection = document.getElementById('header-mode-section');
+
+        // Reset all to visible first
+        [sidebarMenuPreset, headerOverlapPreset, boxedBgPreset, headerModeSection].forEach(el => {
+            if (el) el.style.display = '';
+        });
+
+        switch (layout) {
+            case 'vertical':
+                // Hide: Header Overlap, Boxed Background
+                // Show: Sidebar/Menu, Header Mode
+                if (headerOverlapPreset) headerOverlapPreset.style.display = 'none';
+                if (boxedBgPreset) boxedBgPreset.style.display = 'none';
+                break;
+
+            case 'horizontal':
+                // Hide: Sidebar/Menu, Boxed Background, Header Overlap
+                if (sidebarMenuPreset) sidebarMenuPreset.style.display = 'none';
+                if (boxedBgPreset) boxedBgPreset.style.display = 'none';
+                if (headerOverlapPreset) headerOverlapPreset.style.display = 'none';
+                break;
+
+            case 'condensed':
+                // Hide: Sidebar/Menu, Header Overlap, Boxed Background
+                if (sidebarMenuPreset) sidebarMenuPreset.style.display = 'none';
+                if (headerOverlapPreset) headerOverlapPreset.style.display = 'none';
+                if (boxedBgPreset) boxedBgPreset.style.display = 'none';
+                break;
+
+            case 'navbar-overlap':
+                // Hide: Sidebar/Menu, Boxed Background
+                if (sidebarMenuPreset) sidebarMenuPreset.style.display = 'none';
+                if (boxedBgPreset) boxedBgPreset.style.display = 'none';
+
+                // Force Header Mode to Fixed
+                const headerModeFixed = this.form.querySelector('input[name="theme-header-sticky"][value="true"]');
+                if (headerModeFixed) {
+                    headerModeFixed.checked = true;
+                    this.themeManager.applySetting('theme-header-sticky', 'true');
+                }
+                break;
+
+            case 'combo':
+                // Combo - show all (already reset above)
+                break;
+
+            default:
+                // Default - show all
+                break;
         }
     }
 
