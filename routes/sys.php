@@ -63,9 +63,9 @@ Route::middleware(['auth', 'check.expired', InjectLayoutData::class])->group(fun
         // Backup Management - accessible via /sys/backup
         Route::prefix('backup')->name('sys.backup.')->group(function () {
             Route::get('/', [BackupController::class, 'index'])->name('index');
-            Route::post('/create', [BackupController::class, 'create'])->name('create');
+            Route::post('/', [BackupController::class, 'store'])->name('store');
             Route::get('/download/{filename}', [BackupController::class, 'download'])->where('filename', '.*')->name('download');
-            Route::delete('/delete/{filename}', [BackupController::class, 'delete'])->where('filename', '.*')->name('delete');
+            Route::delete('/{filename}', [BackupController::class, 'destroy'])->where('filename', '.*')->name('destroy');
         });
 
         // Error Log Management - accessible via /sys/error-log

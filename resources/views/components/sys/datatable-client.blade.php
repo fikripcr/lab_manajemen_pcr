@@ -1,4 +1,4 @@
-@props(['id', 'columns' => [], 'search' => true, 'pageLength' => true, 'order' => []])
+@props(['id', 'columns' => []])
 
 @php
     // Normalize column titles
@@ -24,7 +24,7 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             if (!window.loadDataTables) return;
 
             window.loadDataTables().then(() => {
@@ -42,11 +42,11 @@
                 const table = $('#{{ $id }}').DataTable({
                     serverSide: false,
                     processing: false,
-                    searching: {{ $search ? 'true' : 'false' }},
+                    searching: true,
                     ordering: true,
                     paging: true,
                     info: true,
-                    pageLength: {{ is_numeric($pageLength) ? $pageLength : 10 }},
+                    pageLength: 10,
                     responsive: false,
                     dom: "<'table-responsive'tr><'card-footer d-flex align-items-center'<'text-muted'i><'ms-auto'p>>",
                     language: {
@@ -58,11 +58,10 @@
                         infoFiltered: "(filtered from _MAX_ total entries)"
                     },
                     columnDefs: columnDefs,
-                    order: @json(!empty($order) ? $order : [[0, 'desc']])
+                    order: [[0, 'desc']]
                 });
 
                 // Search handler
-                @if ($search)
                 const searchInput = document.getElementById('{{ $id }}-search');
                 const clearBtn = document.getElementById('{{ $id }}-clear-search');
                 if (searchInput) {
@@ -74,16 +73,13 @@
                         timeout = setTimeout(() => table.search(query).draw(), 300);
                     });
                 }
-                @endif
 
                 // Page length handler
-                @if ($pageLength)
                 const pageLengthSelect = document.getElementById('{{ $id }}-pageLength');
                 pageLengthSelect?.addEventListener('change', (e) => {
                     const len = e.target.value === 'All' ? -1 : parseInt(e.target.value);
                     table.page.len(len).draw();
                 });
-                @endif
             });
         });
     </script>

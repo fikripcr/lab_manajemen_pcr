@@ -14,9 +14,6 @@
 @section('content')
 
 <div class="card overflow-hidden">
-    {{-- Card Header with Search and Page Length --}}
-
-
     <div class="card-header">
         <div class="d-flex flex-wrap gap-2">
             <div>
@@ -37,10 +34,7 @@
                     ['title' => 'Size'],
                     ['title' => 'Date Modified'],
                     ['title' => 'Actions', 'orderable' => false, 'searchable' => false],
-                ]"
-                :search="true" 
-                :pageLength="10"
-                :order="[[2, 'desc']]">
+                ]">
                 
                 {{-- User controls the loop and variable names --}}
                 @foreach ($backups as $backup)
@@ -86,7 +80,7 @@
                 
                 showLoadingMessage('Processing Backup...', message);
 
-                axios.post('{{ route('sys.backup.create') }}', { type })
+                axios.post('{{ route('sys.backup.store') }}', { type })
                     .then(({ data }) => {
                         Swal.close();
                         data.success 
@@ -119,7 +113,7 @@
                 }).then(({ isConfirmed }) => {
                     if (!isConfirmed) return;
 
-                    const deleteUrl = '{{ route('sys.backup.delete', ':filename') }}'.replace(':filename', encodeURIComponent(filename));
+                    const deleteUrl = '{{ route('sys.backup.destroy', ':filename') }}'.replace(':filename', encodeURIComponent(filename));
                     
                     axios.delete(deleteUrl)
                         .then(({ data }) => {
