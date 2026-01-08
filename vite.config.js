@@ -11,7 +11,6 @@ export default defineConfig({
             input: [
                 // CSS Entry Points
                 'resources/css/sys.css',
-                'resources/assets/sys/css/custom-datatable.css',
                 'resources/css/admin.css',
                 'resources/css/auth.css',
                 'resources/css/guest.css',

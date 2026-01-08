@@ -22,7 +22,7 @@
 
 
 /* Choices.js CSS for select dropdowns */
-@import '../assets/sys/vendor/choices.min.css';
+@import 'choices.js/public/assets/styles/choices.min.css';
 
 /* Shared Theme Customization (fonts, card styles, etc.) */
 @import './theme-customization.css';
