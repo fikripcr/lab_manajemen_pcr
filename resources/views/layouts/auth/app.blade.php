@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div class="col-lg d-none d-lg-block" data-media-column>
-                        <img src="{{ Vite::asset('resources/assets/auth/img/illustration-auth.png') }}"  class="img d-block mx-auto" alt="Illustration">
+                        <img src="{{ asset('assets/img/bg-auth-illustration.png') }}"  class="img d-block mx-auto" alt="Illustration">
                     </div>
                 </div>
             </div>
