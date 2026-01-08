@@ -107,12 +107,9 @@ class NotificationsController extends Controller
         $count        = Auth::user()->unreadNotifications->count();
         $updatedCount = $this->notificationService->markAllAsReadForUser($userId);
 
-        logActivity('notification', $updatedCount . 'notifications marked as read byuser: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
+        logActivity('notification', $updatedCount . 'notifications marked as read by user: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Semua notifikasi(' . $updatedCount . ')telah ditandaisebagaitelahdibaca! ',
-        ]);
+        return jsonSuccess('Semua notifikasi (' . $updatedCount . ') telah ditandai sebagai telah dibaca!');
     }
 
     /**
@@ -123,15 +120,18 @@ class NotificationsController extends Controller
         $selectedIds = $request->input('ids', []);
 
         if (empty($selectedIds)) {
-            return apiResponse(null, 'Tidak adanotifikasiyangdipilih . ', 400, 'error');
+            return jsonError('Tidak ada notifikasi yang dipilih.', 400);
         }
 
         $userId       = auth()->id();
         $updatedCount = $this->notificationService->markSelectedAsRead($selectedIds, $userId);
 
-        logActivity('notification', $updatedCount . 'selected notificationsmarked as read byuser: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
+        logActivity('notification', $updatedCount . 'selected notifications marked as read by user: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
 
-        return apiSuccess(['updated_count' => $updatedCount], $updatedCount . 'notifikasi telahditandaisebagaitelahdibaca . ');
+        return jsonSuccess([
+            'message' => $updatedCount . ' notifikasi telah ditandai sebagai telah dibaca.',
+            'data'    => ['updated_count' => $updatedCount],
+        ]);
     }
 
     /**
@@ -142,7 +142,7 @@ class NotificationsController extends Controller
         $userId = auth()->id();
         $count  = $this->notificationService->getUnreadCount($userId);
 
-        return apiSuccess(['count' => $count]);
+        return jsonSuccess(['data' => ['count' => $count]]);
     }
 
     /**
@@ -155,7 +155,7 @@ class NotificationsController extends Controller
 
         $notifications = $this->notificationService->getDropdownData($userId, $limit);
 
-        return apiSuccess(['data' => $notifications]);
+        return jsonSuccess(['data' => $notifications]);
     }
 
     /**
@@ -166,7 +166,7 @@ class NotificationsController extends Controller
         $userId = auth()->id();
         $counts = $this->notificationService->getNotificationCounts($userId);
 
-        return apiSuccess(['counts' => $counts]);
+        return jsonSuccess(['data' => ['counts' => $counts]]);
     }
 
     /**
@@ -227,7 +227,7 @@ class NotificationsController extends Controller
             if ($type === 'email') {
                 // Verify the recipient has an email address
                 if (empty($recipient->email)) {
-                    return apiError('Recipient does not have an email address.', 400);
+                    return jsonError('Recipient does not have an email address.', 400);
                 }
 
                 $recipient->notify($notification);
@@ -240,10 +240,10 @@ class NotificationsController extends Controller
             // Log the notification sending
             logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
-            return apiSuccess(null, $message);
+            return jsonSuccess($message);
         } catch (\Exception $e) {
             \Log::error('Notification sending failed: ' . $e->getMessage() . ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
-            return apiError('Failed to send notification: ' . $e->getMessage(), 500);
+            return jsonError('Failed to send notification: ' . $e->getMessage(), 500);
         }
     }
 }

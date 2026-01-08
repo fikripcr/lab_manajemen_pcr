@@ -78,20 +78,15 @@ class ErrorLogController extends Controller
                     return formatTanggalIndo($log->created_at);
                 })
                 ->addColumn('actions', function ($log) {
-                    return '
-                    <div class="d-flex">
-                        <a href="' . route('sys.error-log.show', encryptId($log->id)) . '"
-                           class="text-success"
-                           title="View Details">
-                            <i class="bx bx-show"></i>
-                        </a>
-                    </div>';
+                    return view('components.sys.datatables-actions', [
+                        'viewUrl' => route('sys.error-log.show', encryptId($log->id)),
+                    ])->render();
                 })
                 ->rawColumns(['message', 'error_type', 'user_info', 'actions'])
                 ->make(true);
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -107,7 +102,7 @@ class ErrorLogController extends Controller
 
             return view('pages.sys.error-log.show', compact('errorLog'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -127,15 +122,9 @@ class ErrorLogController extends Controller
         try {
             $this->errorLogService->clearAllErrorLogs();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'All error logs cleared successfully',
-            ]);
+            return jsonSuccess('All error logs cleared successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat membersihkan log error.',
-            ], 500);
+            return jsonError('Terjadi kesalahan saat membersihkan log error.', 500);
         }
     }
 }

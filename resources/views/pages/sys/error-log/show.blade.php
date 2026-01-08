@@ -21,10 +21,10 @@
                                 <th width="200">Level</th>
                                 <td>
                                     <span class="badge
-                                        @if ($errorLog->level === 'error') bg-danger
-                                        @elseif($errorLog->level === 'warning') bg-warning
-                                        @elseif($errorLog->level === 'info') bg-info
-                                        @else bg-secondary @endif">
+                                        @if ($errorLog->level === 'error') bg-red text-red-fg
+                                        @elseif($errorLog->level === 'warning') bg-yellow text-yellow-fg
+                                        @elseif($errorLog->level === 'info') bg-blue text-blue-fg
+                                        @else bg-default @endif">
                                         {{ ucfirst($errorLog->level) }}
                                     </span>
                                 </td>
@@ -97,7 +97,7 @@
                         <h5 class="mb-0">Context Information</h5>
                     </div>
                     <div class="card-body">
-                        <pre class="bg-light p-3 rounded">{{ json_encode($errorLog->context, JSON_PRETTY_PRINT) }}</pre>
+                        <pre class="bg-light text-dark p-3 rounded">{{ json_encode($errorLog->context, JSON_PRETTY_PRINT) }}</pre>
                     </div>
                 </div>
             @endif
