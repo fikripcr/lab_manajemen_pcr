@@ -44,6 +44,7 @@
     setRadiusVariants(radius);
 
     // 5. Apply Backgrounds (CSS Var + Boolean Attribute)
+    // IMPORTANT: Skip background colors in dark mode to use Tabler defaults
     const setBg = (prop, val, attr) => {
         if (val && val !== '') {
             root.style.setProperty(prop, val);
@@ -54,11 +55,15 @@
         }
     };
 
-    setBg('--tblr-body-bg', bg);
-    setBg('--tblr-sidebar-bg', sidebarBg, 'data-bs-has-sidebar-bg');
-    setBg('--tblr-header-top-bg', headerTopBg, 'data-bs-has-header-top-bg');
-    setBg('--tblr-header-overlap-bg', headerOverlapBg, 'data-bs-has-header-overlap-bg');
-    setBg('--tblr-boxed-bg', boxedBg);
+    // Only apply custom background colors in LIGHT mode
+    if (theme === 'light') {
+        setBg('--tblr-body-bg', bg);
+        setBg('--tblr-sidebar-bg', sidebarBg, 'data-bs-has-sidebar-bg');
+        setBg('--tblr-header-top-bg', headerTopBg, 'data-bs-has-header-top-bg');
+        setBg('--tblr-header-overlap-bg', headerOverlapBg, 'data-bs-has-header-overlap-bg');
+        setBg('--tblr-boxed-bg', boxedBg);
+    }
+    // Dark mode: Don't apply any custom background colors
 
 })();
 </script>

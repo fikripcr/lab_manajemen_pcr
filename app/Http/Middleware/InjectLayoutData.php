@@ -74,20 +74,33 @@ class InjectLayoutData
     public function handle(Request $request, Closure $next): Response
     {
         // ... (Theme Data Loading - Unchanged) ...
+        $currentTheme = env('TABLER_THEME', 'light');
+
         $themeData = [
-            'theme'                => env('TABLER_THEME', 'light'),
-            'themePrimary'         => env('TABLER_THEME_PRIMARY', 'blue'),
-            'themeFont'            => env('TABLER_THEME_FONT', 'sans-serif'),
-            'themeBase'            => env('TABLER_THEME_BASE', 'gray'),
-            'themeRadius'          => env('TABLER_THEME_RADIUS', '1'),
-            'themeBg'              => env('TABLER_THEME_BG', ''),
-            'themeSidebarBg'       => env('TABLER_SIDEBAR_BG', ''),
-            'themeHeaderTopBg'     => env('TABLER_HEADER_TOP_BG', ''),
-            'themeHeaderOverlapBg' => env('TABLER_HEADER_OVERLAP_BG', ''),
-            'themeHeaderSticky'    => env('TABLER_HEADER_STICKY', false),
-            'themeCardStyle'       => env('TABLER_CARD_STYLE', 'default'),
-            'themeBoxedBg'         => env('TABLER_BOXED_BG', '#e2e8f0'),
+            'theme'             => $currentTheme,
+            'themePrimary'      => env('TABLER_THEME_PRIMARY', 'blue'),
+            'themeFont'         => env('TABLER_THEME_FONT', 'sans-serif'),
+            'themeBase'         => env('TABLER_THEME_BASE', 'gray'),
+            'themeRadius'       => env('TABLER_THEME_RADIUS', '1'),
+            'themeCardStyle'    => env('TABLER_CARD_STYLE', 'default'),
+            'themeHeaderSticky' => env('TABLER_HEADER_STICKY', 'false'), // Always string for consistent comparison
+            'themeBoxedBg'      => env('TABLER_BOXED_BG', '#e2e8f0'),
         ];
+
+        // IMPORTANT: Only inject custom background colors in LIGHT mode
+        // In dark mode, skip these to use Tabler's default dark theme colors
+        if ($currentTheme === 'light') {
+            $themeData['themeBg']              = env('TABLER_THEME_BG', '');
+            $themeData['themeSidebarBg']       = env('TABLER_SIDEBAR_BG', '');
+            $themeData['themeHeaderTopBg']     = env('TABLER_HEADER_TOP_BG', '');
+            $themeData['themeHeaderOverlapBg'] = env('TABLER_HEADER_OVERLAP_BG', '');
+        } else {
+            // Dark mode: set empty values so no custom colors are applied
+            $themeData['themeBg']              = '';
+            $themeData['themeSidebarBg']       = '';
+            $themeData['themeHeaderTopBg']     = '';
+            $themeData['themeHeaderOverlapBg'] = '';
+        }
 
         // Get layout preset and merge with defaults
         $layoutKey = env('TABLER_LAYOUT', 'vertical');

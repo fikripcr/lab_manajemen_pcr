@@ -100,6 +100,20 @@ class ThemeManager {
     applySetting(name, value, save = true) {
         const root = document.documentElement;
 
+        // IMPORTANT: Skip background colors in dark mode (except primary)
+        const bgColorSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
+        const currentTheme = root.getAttribute('data-bs-theme');
+        const isDarkMode = currentTheme === 'dark';
+
+        if (isDarkMode && bgColorSettings.includes(name)) {
+            // In dark mode, don't apply any custom background colors
+            // Just save to localStorage if requested, but don't apply to DOM
+            if (save) {
+                this.saveSetting(name, value);
+            }
+            return; // Skip DOM application
+        }
+
         // Handle mapped settings (CSS vars + data attributes)
         if (this.themeMap[name]) {
             const rule = this.themeMap[name];

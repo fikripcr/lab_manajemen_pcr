@@ -21,7 +21,12 @@ class ThemeSettings {
      */
     init() {
         this.initPickr();
-        this.syncFormWithStorage();
+
+        // Delay sync to ensure Tabler CSS is ready
+        setTimeout(() => {
+            this.syncFormWithStorage();
+        }, 100);
+
         this.bindEvents();
     }
 
@@ -92,6 +97,8 @@ class ThemeSettings {
             const value = allSettings[key];
             const inputs = this.form.querySelectorAll(`[name="${key}"]`);
 
+
+
             if (inputs.length > 0) {
                 // Color picker inputs (hidden)
                 if (key.includes('-bg') || key === 'theme-primary') {
@@ -109,7 +116,13 @@ class ThemeSettings {
                 // Radio buttons
                 else {
                     inputs.forEach(input => {
-                        input.checked = input.value === value;
+                        const shouldCheck = input.value === value;
+                        input.checked = shouldCheck;
+
+                        // Dispatch change event to force Tabler CSS update
+                        if (shouldCheck) {
+                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
                     });
                 }
             }
@@ -193,23 +206,31 @@ class ThemeSettings {
                 if (el) el.style.display = 'none';
             });
 
-            // IMPORTANT: Remove all background color CSS variables so dark mode uses defaults
+            // Save current values to sessionStorage for restoration
             const bgSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
             bgSettings.forEach(setting => {
-                this.themeManager.resetSetting(setting);
+                const input = this.form.querySelector(`input[name="${setting}"]`);
+                if (input && input.value) {
+                    sessionStorage.setItem(`saved_${setting}`, input.value);
+                }
             });
+
+            // ThemeManager.applySetting will now automatically skip bg colors in dark mode
         } else {
             // Light mode - show all color presets, but respect layout settings
             colorPresets.forEach(el => {
                 if (el) el.style.display = '';
             });
 
-            // Restore custom colors from form inputs
+            // Restore custom colors from sessionStorage (instant) or form inputs
             const bgSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
             bgSettings.forEach(setting => {
+                const savedValue = sessionStorage.getItem(`saved_${setting}`);
                 const input = this.form.querySelector(`input[name="${setting}"]`);
-                if (input && input.value) {
-                    this.themeManager.applySetting(setting, input.value);
+                const valueToApply = savedValue || (input ? input.value : '');
+
+                if (valueToApply) {
+                    this.themeManager.applySetting(setting, valueToApply);
                 }
             });
 
@@ -229,6 +250,9 @@ class ThemeSettings {
         const headerOverlapPreset = document.getElementById('header-overlap-preset');
         const boxedBgPreset = document.getElementById('boxed-bg-preset');
         const headerModeSection = document.getElementById('header-mode-section');
+        const headerScrollable = document.getElementById('header-scrollable');
+        const headerFixed = document.getElementById('header-fixed');
+        const headerHidden = document.getElementById('header-hidden');
 
         // Reset all to visible first
         [sidebarMenuPreset, headerOverlapPreset, boxedBgPreset, headerModeSection].forEach(el => {
@@ -261,13 +285,7 @@ class ThemeSettings {
                 // Hide: Sidebar/Menu, Boxed Background
                 if (sidebarMenuPreset) sidebarMenuPreset.style.display = 'none';
                 if (boxedBgPreset) boxedBgPreset.style.display = 'none';
-
-                // Force Header Mode to Fixed
-                const headerModeFixed = this.form.querySelector('input[name="theme-header-sticky"][value="true"]');
-                if (headerModeFixed) {
-                    headerModeFixed.checked = true;
-                    this.themeManager.applySetting('theme-header-sticky', 'true');
-                }
+                if (headerFixed) headerFixed.style.display = 'none';
                 break;
 
             case 'combo':
@@ -346,22 +364,19 @@ class ThemeSettings {
         const selectedTheme = this.form.querySelector('input[name="theme"]:checked');
         const isDarkMode = selectedTheme && selectedTheme.value === 'dark';
 
-        // Background fields - skip if dark mode (except primary which is already added)
+        // Background fields - ONLY send in light mode to preserve .env values
+        // In dark mode, skip sending these entirely so .env keeps the values for later restoration
         if (!isDarkMode) {
             const bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
             bgFields.forEach(bg => {
                 const input = this.form.querySelector(`input[name="${bg}"]`);
                 if (input) {
+                    // Send the value (even if empty) in light mode
                     formData.append(bg.replace(/-/g, '_'), input.value || '');
                 }
             });
-        } else {
-            // Dark mode - send empty strings for all bg colors to clear them
-            const bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
-            bgFields.forEach(bg => {
-                formData.append(bg.replace(/-/g, '_'), '');
-            });
         }
+        // If dark mode: don't send bg colors at all - .env values remain unchanged
 
         // Sticky header
         const stickyInput = this.form.querySelector('input[name="theme-header-sticky"]:checked');
