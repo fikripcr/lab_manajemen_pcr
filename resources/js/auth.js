@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Theme Management System ---
-import ThemeManager from './components/ThemeManager.js';
+import ThemeManager from './custom/ThemeManager.js';
 
 // --- Auth Specific Logic ---
 document.addEventListener('DOMContentLoaded', () => {

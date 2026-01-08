@@ -66,11 +66,11 @@ window.loadFilePond = async function () {
 };
 
 // --- Notification Manager (direct import - needs to load on every page)
-import './components/Notification.js';
+import './custom/Notification.js';
 
 // --- Global Search (lazy loading)
 window.loadGlobalSearch = function () {
-    return import('./components/GlobalSearch.js').then(({ GlobalSearch }) => {
+    return import('./custom/GlobalSearch.js').then(({ GlobalSearch }) => {
         if (!window.GlobalSearch) {
             window.GlobalSearch = GlobalSearch;
         }

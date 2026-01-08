@@ -25,7 +25,7 @@
 @import 'choices.js/public/assets/styles/choices.min.css';
 
 /* Shared Theme Customization (fonts, card styles, etc.) */
-@import './theme-customization.css';
+@import './custom/theme-customization.css';
 
 /* Override DataTable Processing Indicator to match Theme Primary */
 div.dt-processing>div:last-child>div {

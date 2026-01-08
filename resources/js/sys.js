@@ -21,11 +21,11 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Shared Components ---
-import './components/CustomSweetAlerts.js';
-import './components/FormHandlerAjax.js';
+import './custom/CustomSweetAlerts.js';
+import './custom/FormHandlerAjax.js';
 
-import ThemeManager from './components/ThemeManager.js';
-import './components/Notification.js';
+import ThemeManager from './custom/ThemeManager.js';
+import './custom/Notification.js';
 
 window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
@@ -66,7 +66,7 @@ window.loadDataTables = function () {
     if (window.DataTablesLoaded) return Promise.resolve(window.CustomDataTables);
 
     return import('datatables.net-bs5').then(() => {
-        return import('./components/CustomDataTables.js').then(({ default: CustomDataTables }) => {
+        return import('./custom/CustomDataTables.js').then(({ default: CustomDataTables }) => {
             window.CustomDataTables = CustomDataTables;
             window.DataTablesLoaded = true;
             return CustomDataTables;
@@ -84,7 +84,7 @@ window.loadApexCharts = function () {
 };
 
 window.loadGlobalSearch = function () {
-    return import('./components/GlobalSearch.js').then(({ GlobalSearch }) => {
+    return import('./custom/GlobalSearch.js').then(({ GlobalSearch }) => {
         if (!window.GlobalSearch) {
             window.GlobalSearch = GlobalSearch;
         }
