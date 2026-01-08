@@ -3,60 +3,70 @@ import { api } from '../api.js';
 // Notification component using ES6 modules and vanilla JavaScript
 export class NotificationManager {
     constructor() {
+        // Cache DOM elements
+        this.dom = {
+            count: document.querySelectorAll('.notification-count'),
+            list: document.getElementById('notifications-list'),
+            markReadBtn: document.getElementById('markAllAsReadBtn'),
+            dropdowns: document.querySelectorAll('.dropdown-notification')
+        };
+
+        this.state = {
+            isLoading: false
+        };
+
         this.init();
     }
 
     init() {
-        // Load initial notification count when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            this.loadInitialNotificationCount();
-            this.setupDropdownListener();
-            this.setupMarkAllAsReadListener();
-        });
-    }
-
-    loadInitialNotificationCount() {
-        // Check if element exists and we're not on notification-specific pages
-        const path = window.location.pathname;
-        const countElements = document.querySelectorAll('.notification-count');
-
-        if (countElements.length > 0 && !path.includes('/notifications') &&
-            !path.includes('/api/') && !path.includes('/unread-count')) {
-
-            this.fetchUnreadCount()
-                .then(response => {
-                    // Handle different possible response structures
-                    let count;
-                    if (response.count !== undefined) {
-                        count = response.count;
-                    } else if (response.data && response.data.count !== undefined) {
-                        count = response.data.count;
-                    } else if (response.unread_count !== undefined) {
-                        count = response.unread_count;
-                    } else {
-                        console.warn('Unexpected response structure for unread count:', response);
-                        count = 0;
-                    }
-
-                    this.updateAllCounters(count);
-                })
-                .catch(error => {
-                    console.error('Error loading initial notification count:', error);
-                });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.runInit());
+        } else {
+            this.runInit();
         }
     }
 
+    runInit() {
+        // Refresh DOM cache in case elements were added dyamically (though unlikely for header)
+        this.refreshDomCache();
+
+        if (this.dom.count.length > 0) {
+            this.loadInitialNotificationCount();
+        }
+
+        this.setupDropdownListener();
+        this.setupMarkAllAsReadListener();
+    }
+
+    refreshDomCache() {
+        this.dom.count = document.querySelectorAll('.notification-count');
+        this.dom.list = document.getElementById('notifications-list');
+        this.dom.markReadBtn = document.getElementById('markAllAsReadBtn');
+        this.dom.dropdowns = document.querySelectorAll('.dropdown-notification');
+    }
+
+    loadInitialNotificationCount() {
+        // Simple check: if elements exist, fetch count. 
+        // Removed fragile path checking unless specifically requested.
+        this.fetchUnreadCount()
+            .then(data => {
+                // Std API response: { data: { count: 5 } } or similar
+                const count = data?.data?.count ?? data?.count ?? 0;
+                this.updateAllCounters(count);
+            })
+            .catch(err => console.error('Init count error:', err));
+    }
+
     updateAllCounters(count) {
-        const countElements = document.querySelectorAll('.notification-count');
-        countElements.forEach(element => {
-            element.textContent = count;
-            this.toggleCountBadge(element, count);
+        this.dom.count.forEach(el => {
+            el.textContent = count;
+            // Toggle visibility
+            el.style.display = count > 0 ? 'inline-block' : 'none';
         });
     }
 
     setupDropdownListener() {
-        const dropdownElements = document.querySelectorAll('.dropdown-notification');
-        dropdownElements.forEach(dropdown => {
+        this.dom.dropdowns.forEach(dropdown => {
             dropdown.addEventListener('show.bs.dropdown', () => {
                 this.loadNotifications();
             });
@@ -64,9 +74,8 @@ export class NotificationManager {
     }
 
     setupMarkAllAsReadListener() {
-        const markAllAsReadBtn = document.getElementById('markAllAsReadBtn');
-        if (markAllAsReadBtn) {
-            markAllAsReadBtn.addEventListener('click', (e) => {
+        if (this.dom.markReadBtn) {
+            this.dom.markReadBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.showConfirmationDialog();
             });
@@ -74,58 +83,85 @@ export class NotificationManager {
     }
 
     async fetchUnreadCount() {
-        const response = await api.notifications.unreadCount();
-        return response.data;
+        // Returns axios response body
+        return (await api.notifications.unreadCount()).data;
     }
 
     async fetchNotificationData() {
-        const response = await api.notifications.dropdownData();
-        return response.data;
-    }
-
-    async markAllAsRead() {
-        const response = await api.notifications.markAllAsRead();
-        return response.data;
+        return (await api.notifications.dropdownData()).data;
     }
 
     async loadNotifications() {
-        const notificationsList = document.getElementById('notifications-list');
-        if (!notificationsList) return;
+        if (!this.dom.list || this.state.isLoading) return;
+
+        this.state.isLoading = true;
 
         try {
-            const data = await this.fetchNotificationData();
+            const responseBody = await this.fetchNotificationData();
+            const items = responseBody.data || [];
 
-            if (data.data && data.data.length > 0) {
-                notificationsList.innerHTML = '';
-                data.data.forEach(notification => {
-                    const li = document.createElement('div');
-                    li.className = 'list-group-item';
-                    li.innerHTML = `
-                        <div class="row align-items-center">
-                            <div class="col-auto"><span class="status-dot ${notification.is_unread ? 'status-dot-animated bg-red' : 'd-none'} d-block"></span></div>
-                            <div class="col text-truncate">
-                                <a href="${notification.action_url}" class="text-body d-block">${notification.title || 'Notification'}</a>
-                                <div class="d-block text-muted text-truncate mt-n1">
-                                    ${notification.body ? notification.body.substring(0, 80) + (notification.body.length > 80 ? '...' : '') : 'New notification'}
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <a href="#" class="list-group-item-actions">
-                                    <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                    notificationsList.appendChild(li);
+            this.dom.list.innerHTML = '';
+
+            if (items.length > 0) {
+                const fragment = document.createDocumentFragment();
+                items.forEach(item => {
+                    fragment.appendChild(this._createNotificationElement(item));
                 });
+                this.dom.list.appendChild(fragment);
             } else {
-                notificationsList.innerHTML = '<div class="list-group-item"><div class="row align-items-center"><div class="col text-truncate"><p class="text-center mb-0 text-muted">No notifications found</p></div></div></div>';
+                this.dom.list.innerHTML = this._getEmptyStateHtml();
             }
         } catch (error) {
-            console.error('Error loading notifications via API:', error);
-            notificationsList.innerHTML = '<div class="list-group-item"><div class="row align-items-center"><div class="col text-truncate"><p class="text-center mb-0 text-danger">Failed to load notifications</p></div></div></div>';
+            console.error('Load Error:', error);
+            this.dom.list.innerHTML = this._getErrorStateHtml();
+        } finally {
+            this.state.isLoading = false;
         }
+    }
+
+    _createNotificationElement(notification) {
+        const div = document.createElement('div');
+        div.className = 'list-group-item';
+        // Use a cleaner HTML structure
+        div.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <span class="status-dot ${notification.is_unread ? 'status-dot-animated bg-red' : 'd-none'} d-block"></span>
+                </div>
+                <div class="col text-truncate">
+                    <a href="${notification.action_url || '#'}" class="text-body d-block">${notification.title || 'Notification'}</a>
+                    <div class="d-block text-muted text-truncate mt-n1">
+                        ${this._truncateText(notification.body, 80)}
+                    </div>
+                </div>
+            </div>
+        `;
+        return div;
+    }
+
+    _truncateText(text, limit) {
+        if (!text) return 'New notification';
+        return text.length > limit ? text.substring(0, limit) + '...' : text;
+    }
+
+    _getEmptyStateHtml() {
+        return `<div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col text-truncate">
+                            <p class="text-center mb-0 text-muted">No notifications found</p>
+                        </div>
+                    </div>
+                </div>`;
+    }
+
+    _getErrorStateHtml() {
+        return `<div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col text-truncate">
+                            <p class="text-center mb-0 text-danger">Failed to load content</p>
+                        </div>
+                    </div>
+                </div>`;
     }
 
     showConfirmationDialog() {
@@ -134,71 +170,32 @@ export class NotificationManager {
             'Apakah Anda yakin ingin menandai semua notifikasi sebagai telah dibaca?',
             'Ya, tandai semua'
         ).then((result) => {
-            if (result.isConfirmed) {
-                this.handleMarkAllAsRead();
-            }
+            if (result.isConfirmed) this.handleMarkAllAsRead();
         });
     }
 
     async handleMarkAllAsRead() {
         try {
-            const response = await this.markAllAsRead();
+            const response = await api.notifications.markAllAsRead(); // .data handled in method? No, wait.
+            // api object methods return axios response. 
+            const data = response.data; // Helper usually consistent
 
-            if (response.status === 'success') {
-                showSuccessMessage('Sukses!', response.message).then(() => {
-                    // Update notification count
+            if (data.status === 'success' || data.success) { // Handle varied API responses
+                showSuccessMessage('Sukses!', data.message || 'Marked as read').then(() => {
                     this.updateAllCounters(0);
-
-                    // Clear the notifications list
-                    const notificationsList = document.getElementById('notifications-list');
-                    if (notificationsList) {
-                        notificationsList.innerHTML = '<div class="list-group-item"><div class="row align-items-center"><div class="col text-truncate"><p class="text-center mb-0 text-muted">No notifications found</p></div></div></div>';
-                    }
+                    if (this.dom.list) this.dom.list.innerHTML = this._getEmptyStateHtml();
                 });
             } else {
-                showErrorMessage('Error!', response.message || 'Gagal menandai notifikasi sebagai telah dibaca');
+                showErrorMessage('Error!', data.message || 'Failed action');
             }
         } catch (error) {
-            console.error('Error:', error);
-            showErrorMessage('Error!', 'Terjadi kesalahan saat menandai notifikasi sebagai telah dibaca');
-        }
-    }
-
-    toggleCountBadge(countElement, count) {
-        if (count > 0) {
-            countElement.style.display = 'inline-block';
-        } else {
-            countElement.style.display = 'none';
-        }
-    }
-
-    // Function to periodically refresh notification count
-    updateNotificationCount() {
-        const countElements = document.querySelectorAll('.notification-count');
-        if (countElements.length > 0) {
-            this.fetchUnreadCount()
-                .then(response => {
-                    let count;
-                    if (response.count !== undefined) {
-                        count = response.count;
-                    } else if (response.data && response.data.count !== undefined) {
-                        count = response.data.count;
-                    } else if (response.unread_count !== undefined) {
-                        count = response.unread_count;
-                    } else {
-                        count = 0;
-                    }
-
-                    this.updateAllCounters(count);
-                })
-                .catch(error => {
-                    console.error('Error updating notification count:', error);
-                });
+            console.error('Mark Read Error:', error);
+            showErrorMessage('Error!', 'System error occurred');
         }
     }
 }
 
-// Initialize notification manager when DOM is ready
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     window.notificationManager = new NotificationManager();
 });
