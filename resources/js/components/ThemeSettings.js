@@ -120,6 +120,12 @@ class ThemeSettings {
         if (layoutSelect && layoutSelect.value) {
             this.handleLayoutChange(layoutSelect.value);
         }
+
+        // Apply theme mode-based visibility
+        const themeInput = this.form.querySelector('input[name="theme"]:checked');
+        if (themeInput && themeInput.value) {
+            this.handleThemeModeChange(themeInput.value);
+        }
     }
 
     /**
@@ -158,9 +164,60 @@ class ThemeSettings {
             this.handleLayoutChange(value);
         }
 
+        // Handle theme mode changes (show/hide color presets)
+        if (name === 'theme') {
+            this.handleThemeModeChange(value);
+        }
+
         // Special handling for layout changes (if preview function exists)
         if (name === 'layout' && typeof window.previewLayout === 'function') {
             window.previewLayout(value);
+        }
+    }
+
+    /**
+     * Handle theme mode change - show/hide color presets
+     */
+    handleThemeModeChange(theme) {
+        const bodyBgPreset = document.getElementById('body-bg-preset');
+        const sidebarMenuPreset = document.getElementById('sidebar-menu-preset');
+        const headerTopPreset = document.getElementById('header-top-preset');
+        const headerOverlapPreset = document.getElementById('header-overlap-preset');
+        const boxedBgPreset = document.getElementById('boxed-bg-preset');
+
+        const colorPresets = [bodyBgPreset, sidebarMenuPreset, headerTopPreset, headerOverlapPreset, boxedBgPreset];
+
+        if (theme === 'dark') {
+            // Dark mode - hide all color presets except primary
+            colorPresets.forEach(el => {
+                if (el) el.style.display = 'none';
+            });
+
+            // IMPORTANT: Remove all background color CSS variables so dark mode uses defaults
+            const bgSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
+            bgSettings.forEach(setting => {
+                this.themeManager.resetSetting(setting);
+            });
+        } else {
+            // Light mode - show all color presets, but respect layout settings
+            colorPresets.forEach(el => {
+                if (el) el.style.display = '';
+            });
+
+            // Restore custom colors from form inputs
+            const bgSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
+            bgSettings.forEach(setting => {
+                const input = this.form.querySelector(`input[name="${setting}"]`);
+                if (input && input.value) {
+                    this.themeManager.applySetting(setting, input.value);
+                }
+            });
+
+            // Re-apply layout-based visibility
+            const layoutSelect = this.form.querySelector('select[name="layout"]');
+            if (layoutSelect && layoutSelect.value) {
+                this.handleLayoutChange(layoutSelect.value);
+            }
         }
     }
 
@@ -285,14 +342,26 @@ class ThemeSettings {
             formData.append('theme_primary', primaryInput.value);
         }
 
-        // Background fields
-        const bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
-        bgFields.forEach(bg => {
-            const input = this.form.querySelector(`input[name="${bg}"]`);
-            if (input) {
-                formData.append(bg.replace(/-/g, '_'), input.value || '');
-            }
-        });
+        // Check if dark mode is selected
+        const selectedTheme = this.form.querySelector('input[name="theme"]:checked');
+        const isDarkMode = selectedTheme && selectedTheme.value === 'dark';
+
+        // Background fields - skip if dark mode (except primary which is already added)
+        if (!isDarkMode) {
+            const bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
+            bgFields.forEach(bg => {
+                const input = this.form.querySelector(`input[name="${bg}"]`);
+                if (input) {
+                    formData.append(bg.replace(/-/g, '_'), input.value || '');
+                }
+            });
+        } else {
+            // Dark mode - send empty strings for all bg colors to clear them
+            const bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
+            bgFields.forEach(bg => {
+                formData.append(bg.replace(/-/g, '_'), '');
+            });
+        }
 
         // Sticky header
         const stickyInput = this.form.querySelector('input[name="theme-header-sticky"]:checked');

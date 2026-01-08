@@ -232,7 +232,7 @@
                         </div>
                         
                         {{-- Body --}}
-                        <div class="row g-2 mb-2 align-items-center">
+                        <div class="row g-2 mb-2 align-items-center" id="body-bg-preset">
                             <div class="col-4"><small>Body</small></div>
                             <div class="col-8">
                                 <div class="d-flex align-items-center">
@@ -261,7 +261,7 @@
                         </div>
 
                         {{-- Header Top --}}
-                        <div class="row g-2 mb-2 align-items-center">
+                        <div class="row g-2 mb-2 align-items-center" id="header-top-preset">
                             <div class="col-4"><small>Header (Top)</small></div>
                             <div class="col-8">
                                 <div class="d-flex align-items-center">
