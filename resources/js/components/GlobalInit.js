@@ -18,7 +18,7 @@ window.Swal = Swal;
 
 // --- Shared Components ---
 import './CustomSweetAlerts.js';
-import './AjaxFormHandler.js';
+import './FormHandlerAjax.js';
 
 
 

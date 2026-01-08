@@ -49,14 +49,7 @@ function initAjaxFormHandler() {
         $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
 
         // Show loading
-        Swal.fire({
-            title: 'Processing...',
-            text: 'Please wait',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        showLoadingMessage('Processing...', 'Please wait');
 
         // Send request
         axios({
@@ -89,19 +82,7 @@ function initAjaxFormHandler() {
                 $form.find('.invalid-feedback').remove();
 
                 // Success (Toast)
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: response.data.message || 'Success',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                }).then(() => {
+                showSuccessMessage(response.data.message || 'Success').then(() => {
                     // Redirect if specified in response (wait for toast)
                     if (response.data.redirect) {
                         window.location.href = response.data.redirect;
@@ -129,12 +110,7 @@ function initAjaxFormHandler() {
                     errorMessage = error.message;
                 }
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    html: errorMessage,
-                    confirmButtonText: 'OK'
-                });
+                showErrorMessage('Error!', errorMessage);
             })
             .finally(function () {
                 // Re-enable submit button
@@ -156,70 +132,50 @@ function initAjaxFormHandler() {
         const title = $btn.data('title') || 'Are you sure?';
         const text = $btn.data('text') || 'This action cannot be undone!';
 
-        Swal.fire({
-            title: title,
-            text: text,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
-            showLoaderOnConfirm: true,
-            allowOutsideClick: () => !Swal.isLoading(),
-            preConfirm: () => {
-                return axios.delete(url)
-                    .then(response => {
-                        return response;
-                    })
-                    .catch(error => {
-                        return { error: error };
-                    });
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Handle Error
-                if (result.value && result.value.error) {
-                    const error = result.value.error;
-                    console.error(error);
-                    let errorMessage = 'Failed to delete item';
-                    if (error.response && error.response.data && error.response.data.message) {
-                        errorMessage = error.response.data.message;
-                    }
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        html: errorMessage,
-                        confirmButtonText: 'OK'
-                    });
-                    return;
+        showDeleteConfirmation(title, text)
+            .then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading while deleting
+                    showLoadingMessage('Deleting...', 'Please wait');
+
+                    axios.delete(url)
+                        .then(response => {
+                            return { value: response };
+                        })
+                        .catch(error => {
+                            return { value: { error: error } };
+                        })
+                        .then(result => {
+                            if (result.value && result.value.error) {
+                                // Error handling
+                                const error = result.value.error;
+                                console.error(error);
+                                let errorMessage = 'Failed to delete item';
+                                if (error.response && error.response.data && error.response.data.message) {
+                                    errorMessage = error.response.data.message;
+                                }
+                                showErrorMessage('Error!', errorMessage);
+                                return;
+                            }
+
+                            // Success handling
+                            const response = result.value;
+
+                            // Reload DataTable immediately
+                            if ($.fn.DataTable && $('.dataTable').length) {
+                                $('.dataTable').DataTable().ajax.reload(null, false);
+                            }
+
+                            // Show Success Toast
+                            showSuccessMessage(response.data.message || 'Deleted!').then(() => {
+                                // Redirect if specified
+                                if (response.data.redirect) {
+                                    window.location.href = response.data.redirect;
+                                }
+                            });
+                        });
                 }
-
-                // Handle Success
-                const response = result.value;
-
-                // Reload DataTable immediately
-                if ($.fn.DataTable && $('.dataTable').length) {
-                    $('.dataTable').DataTable().ajax.reload(null, false);
-                }
-
-                // Show Success Toast
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: response.data.message || 'Deleted!',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    timerProgressBar: true
-                }).then(() => {
-                    // Redirect if specified
-                    if (response.data.redirect) {
-                        window.location.href = response.data.redirect;
-                    }
-                });
-            }
-        });
+            });
     });
 
     /**

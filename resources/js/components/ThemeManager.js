@@ -48,6 +48,10 @@ class ThemeManager {
         this.listeners = [];
         this.form = null;
         this.pickrInstances = {};
+
+        // Auth Form Positioning Elements
+        this.formColumn = document.querySelector('[data-form-column]');
+        this.mediaColumn = document.querySelector('[data-media-column]');
     }
 
     // ==========================================
@@ -65,6 +69,12 @@ class ThemeManager {
         Object.keys(this.defaults).forEach(key => {
             this.applySetting(key, this.getSetting(key) ?? this.defaults[key], false);
         });
+
+        // Initialize Auth Form Position helper if elements exist
+        if (this.mode === 'auth' && (this.formColumn || this.mediaColumn)) {
+            const pos = this.getSetting('auth-form-position') || this.defaults['auth-form-position'] || 'left';
+            this._applyAuthPosition(pos);
+        }
     }
 
     resetSetting(name) {
@@ -157,6 +167,8 @@ class ThemeManager {
             value === 'boxed' ? document.body.classList.add('layout-boxed') : document.body.classList.remove('layout-boxed');
         } else if (name === 'theme-header-sticky') {
             this._applySticky(value === 'true' || value === true);
+        } else if (name === 'auth-form-position') {
+            this._applyAuthPosition(value);
         }
     }
 
@@ -171,6 +183,18 @@ class ThemeManager {
 
         if (isSticky) {
             layout === 'navbar-overlap' ? topHeader.classList.add('sticky-top') : wrapper.classList.add('sticky-top');
+        }
+    }
+
+    _applyAuthPosition(position) {
+        if (!this.formColumn || !this.mediaColumn) return;
+
+        if (position === 'right') {
+            this.formColumn.style.order = '2';
+            this.mediaColumn.style.order = '1';
+        } else {
+            this.formColumn.style.order = '';
+            this.mediaColumn.style.order = '';
         }
     }
 

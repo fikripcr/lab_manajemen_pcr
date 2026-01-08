@@ -3,7 +3,15 @@
  * Centralized functions to handle all SweetAlert calls in the application
  * Following DRY (Don't Repeat Yourself) principle
  */
+// Imports
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
+// --- Global Assignments for Legacy/External Scripts ---
+if (typeof window !== 'undefined') {
+    window.Swal = Swal;
+    window.axios = axios;
+}
 // Delete Confirmation Alert
 function showDeleteConfirmation(title = 'Are you sure?', text = 'This action cannot be undone!', confirmButtonText = 'Yes, delete it!') {
     return Swal.fire({
@@ -32,15 +40,25 @@ function showConfirmation(title = 'Are you sure?', text = '', confirmButtonText 
     });
 }
 
-// Success Message
+// Toast configuration mixin
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
+
+// Success Message (Toast Mode)
 function showSuccessMessage(title = 'Success!', text = '') {
-    return Swal.fire({
-        title: title,
-        text: text,
+    return Toast.fire({
         icon: 'success',
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false
+        title: title,
+        text: text
     });
 }
 
@@ -166,43 +184,36 @@ function confirmDelete(url, tableId = null, title = 'Delete this item??', text =
                     '_method': 'DELETE',
                 }
             })
-            .then(function (response) {
-                Swal.fire({
-                    title: 'Deleted!',
-                    html: response.data.message || 'Item deleted successfully!',
-                    icon: 'success',
-                    timer: 750,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
+                .then(function (response) {
+                    showSuccessMessage('Deleted!', response.data.message || 'Item deleted successfully!');
 
-                if (tableId) {
-                    // Coba berbagai format nama tabel untuk kompatibilitas
-                    let tableInstance = window['DT_' + tableId];
+                    if (tableId) {
+                        // Coba berbagai format nama tabel untuk kompatibilitas
+                        let tableInstance = window['DT_' + tableId];
 
-                    // Check if it's an instance of CustomDataTables
-                    if (tableInstance && typeof tableInstance.table !== 'undefined') {
-                        // Use the DataTables instance from CustomDataTables
-                        tableInstance.table.ajax.reload(null, false);
-                    } else if (tableInstance && typeof tableInstance.ajax !== 'undefined') {
-                        // If it's a direct DataTables instance
-                        tableInstance.ajax.reload(null, false);
+                        // Check if it's an instance of CustomDataTables
+                        if (tableInstance && typeof tableInstance.table !== 'undefined') {
+                            // Use the DataTables instance from CustomDataTables
+                            tableInstance.table.ajax.reload(null, false);
+                        } else if (tableInstance && typeof tableInstance.ajax !== 'undefined') {
+                            // If it's a direct DataTables instance
+                            tableInstance.ajax.reload(null, false);
+                        } else {
+                            // Fallback: reload the page if table instance is not found
+                            console.warn(`Table instance DT_${tableId} or its variants not found or invalid`);
+                            location.reload();
+                        }
                     } else {
-                        // Fallback: reload the page if table instance is not found
-                        console.warn(`Table instance DT_${tableId} or its variants not found or invalid`);
                         location.reload();
                     }
-                } else {
-                    location.reload();
-                }
-            })
-            .catch(function (error) {
-                let errorMessage = 'An error occurred while deleting the item.';
-                if (error.response && error.response.data && error.response.data.message) {
-                    errorMessage = error.response.data.message;
-                }
-                showErrorMessage('Error!', errorMessage);
-            });
+                })
+                .catch(function (error) {
+                    let errorMessage = 'An error occurred while deleting the item.';
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    }
+                    showErrorMessage('Error!', errorMessage);
+                });
         }
     });
 }

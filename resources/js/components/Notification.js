@@ -129,16 +129,11 @@ export class NotificationManager {
     }
 
     showConfirmationDialog() {
-        window.Swal.fire({
-            title: 'Konfirmasi',
-            text: 'Apakah Anda yakin ingin menandai semua notifikasi sebagai telah dibaca?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, tandai semua',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
+        showConfirmation(
+            'Konfirmasi',
+            'Apakah Anda yakin ingin menandai semua notifikasi sebagai telah dibaca?',
+            'Ya, tandai semua'
+        ).then((result) => {
             if (result.isConfirmed) {
                 this.handleMarkAllAsRead();
             }
@@ -150,12 +145,7 @@ export class NotificationManager {
             const response = await this.markAllAsRead();
 
             if (response.status === 'success') {
-                window.Swal.fire({
-                    title: 'Sukses!',
-                    text: response.message,
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
+                showSuccessMessage('Sukses!', response.message).then(() => {
                     // Update notification count
                     this.updateAllCounters(0);
 
@@ -166,21 +156,11 @@ export class NotificationManager {
                     }
                 });
             } else {
-                window.Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'Gagal menandai notifikasi sebagai telah dibaca',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
+                showErrorMessage('Error!', response.message || 'Gagal menandai notifikasi sebagai telah dibaca');
             }
         } catch (error) {
             console.error('Error:', error);
-            window.Swal.fire({
-                title: 'Error!',
-                text: 'Terjadi kesalahan saat menandai notifikasi sebagai telah dibaca',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
+            showErrorMessage('Error!', 'Terjadi kesalahan saat menandai notifikasi sebagai telah dibaca');
         }
     }
 

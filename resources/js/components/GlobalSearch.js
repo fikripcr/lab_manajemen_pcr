@@ -6,6 +6,15 @@ export class GlobalSearch {
         this.endpoint = '/global-search'; // fallback only
         this.timer = null;
         this.currentSearchTerm = '';
+
+        // Cache DOM elements
+        this.elements = {
+            input: document.getElementById('global-search-input'),
+            results: document.getElementById('search-results-container'),
+            modal: document.getElementById('globalSearchModal'),
+            clearBtn: document.getElementById('clear-search-btn')
+        };
+
         this.searchResultConfig = {
             // Default configuration for search results
             users: {
@@ -67,6 +76,7 @@ export class GlobalSearch {
             },
             // Default templates for other categories can be added here
         };
+
         this.init();
     }
 
@@ -79,44 +89,30 @@ export class GlobalSearch {
             this.openModal();
         };
 
-        // Set up event listeners after DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            this.setupEventListeners();
-        });
+        this.setupEventListeners();
     }
 
     openModal() {
-        const modalElement = document.getElementById('globalSearchModal');
+        const { modal: modalElement, input: searchInput } = this.elements;
+
         if (modalElement) {
             // Bootstrap 5 modal implementation
             if (window.bootstrap && window.bootstrap.Modal) {
-                const modal = new window.bootstrap.Modal(modalElement);
+                const modal = window.bootstrap.Modal.getOrCreateInstance(modalElement);
                 modal.show();
-
-                // Focus on search input after modal is shown
-                modalElement.addEventListener('shown.bs.modal', () => {
-                    const searchInput = document.getElementById('global-search-input');
-                    if (searchInput) {
-                        searchInput.focus();
-                    }
-                }, { once: true });
             } else {
                 // Fallback if Bootstrap modal is not available
                 modalElement.classList.add('show');
                 modalElement.style.display = 'block';
                 document.body.classList.add('modal-open');
 
-                const searchInput = document.getElementById('global-search-input');
-                if (searchInput) {
-                    searchInput.focus();
-                }
+                if (searchInput) searchInput.focus();
             }
         }
     }
 
     setupEventListeners() {
-        const searchInput = document.getElementById('global-search-input');
-        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const { input: searchInput, clearBtn: clearSearchBtn, modal: modalElement } = this.elements;
 
         if (!searchInput) {
             console.error('Global search input not found');
@@ -126,13 +122,13 @@ export class GlobalSearch {
         // Clear search input
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
-                this.clearSearch(searchInput);
+                this.clearSearch();
             });
         }
 
         // Handle search input
         searchInput.addEventListener('input', (e) => {
-            this.handleSearchInput(e.target.value, searchInput);
+            this.handleSearchInput(e.target.value);
         });
 
         // Handle keyboard events
@@ -148,24 +144,31 @@ export class GlobalSearch {
             }
         });
 
-        // Close modal and clear search when modal is hidden
-        const modalElement = document.getElementById('globalSearchModal');
+        // Modal Specific Events
         if (modalElement) {
+            // Auto focus input when modal opens
+            modalElement.addEventListener('shown.bs.modal', () => {
+                if (searchInput) searchInput.focus();
+            });
+
+            // Close modal and clear search when modal is hidden
             modalElement.addEventListener('hidden.bs.modal', () => {
                 this.resetSearch();
             });
         }
     }
 
-    clearSearch(searchInput) {
-        searchInput.value = '';
+    clearSearch() {
+        if (this.elements.input) {
+            this.elements.input.value = '';
+        }
         this.showInitialContent();
     }
 
     showInitialContent() {
-        const resultsContainer = document.getElementById('search-results-container');
-        if (resultsContainer) {
-            resultsContainer.innerHTML = `
+        const { results } = this.elements;
+        if (results) {
+            results.innerHTML = `
                 <div class="text-center py-4">
                     <i class="bx bx-search fs-1"></i>
                     <p class="mb-0">Search for users, roles, permissions...</p>
@@ -174,7 +177,7 @@ export class GlobalSearch {
         }
     }
 
-    handleSearchInput(searchTerm, searchInput) {
+    handleSearchInput(searchTerm) {
         // Clear previous timer
         if (this.timer) {
             clearTimeout(this.timer);
@@ -193,7 +196,7 @@ export class GlobalSearch {
     }
 
     closeModal() {
-        const modalElement = document.getElementById('globalSearchModal');
+        const { modal: modalElement } = this.elements;
         if (modalElement && window.bootstrap && window.bootstrap.Modal) {
             const modal = window.bootstrap.Modal.getInstance(modalElement);
             if (modal) {
@@ -208,8 +211,7 @@ export class GlobalSearch {
     }
 
     resetSearch() {
-        const searchInput = document.getElementById('global-search-input');
-        const resultsContainer = document.getElementById('search-results-container');
+        const { input: searchInput, results: resultsContainer } = this.elements;
 
         if (searchInput) {
             searchInput.value = '';
@@ -239,17 +241,26 @@ export class GlobalSearch {
         try {
             const response = await api.globalSearch(term);
             const results = response.data;
+
+            // Race condition check: Ensure the result matches the current term
+            if (term !== this.currentSearchTerm) {
+                return;
+            }
+
             this.displaySearchResults(results, term);
         } catch (error) {
             console.error('Global search error:', error);
+            // Race condition check
+            if (term !== this.currentSearchTerm) return;
+
             this.showError();
         }
     }
 
     showLoadingIndicator() {
-        const resultsContainer = document.getElementById('search-results-container');
-        if (resultsContainer) {
-            resultsContainer.innerHTML = `
+        const { results } = this.elements;
+        if (results) {
+            results.innerHTML = `
                 <div class="text-center py-4">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
@@ -261,9 +272,9 @@ export class GlobalSearch {
     }
 
     showError() {
-        const resultsContainer = document.getElementById('search-results-container');
-        if (resultsContainer) {
-            resultsContainer.innerHTML = `
+        const { results } = this.elements;
+        if (results) {
+            results.innerHTML = `
                 <div class="alert alert-danger" role="alert">
                     <i class="bx bx-error-circle me-1"></i> An error occurred while searching. Please try again.
                 </div>
@@ -333,7 +344,7 @@ export class GlobalSearch {
 
         html += '</div>';
 
-        const resultsContainer = document.getElementById('search-results-container');
+        const { results: resultsContainer } = this.elements;
         if (resultsContainer) {
             resultsContainer.innerHTML = html;
         }

@@ -22,18 +22,10 @@ window.Swal = Swal;
 
 // --- Theme Management System ---
 import ThemeManager from './components/ThemeManager.js';
-import FormPositioner from './components/FormPositioner.js';
 
 // --- Auth Specific Logic ---
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Theme Manager
     const themeManager = new ThemeManager('auth');
     themeManager.loadTheme();
-
-    // Initialize Form Positioning (for cover/illustration layouts)
-    const formPositioner = new FormPositioner(themeManager);
-    formPositioner.init();
-
-    // Initialize Settings Panel (if present)
-    themeManager.initSettingsPanel();
 });

@@ -203,12 +203,16 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            // Lazy load form features first
-            if (typeof window.loadFormFeatures === 'function') {
-                await window.loadFormFeatures();
+            // Lazy load form features individually
+            try {
+                await Promise.all([
+                    typeof window.loadFlatpickr === 'function' ? window.loadFlatpickr() : Promise.resolve(),
+                    typeof window.loadChoices === 'function' ? window.loadChoices() : Promise.resolve(),
+                    typeof window.loadFilePond === 'function' ? window.loadFilePond() : Promise.resolve()
+                ]);
                 console.log('Form features loaded successfully');
-            } else {
-                console.error('loadFormFeatures is not available');
+            } catch (error) {
+                console.error('Error loading form features:', error);
                 return;
             }
 

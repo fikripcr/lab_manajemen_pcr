@@ -6,10 +6,7 @@ window.Pickr = Pickr;
 
 import ThemeManager from './components/ThemeManager.js';
 import './components/Notification.js';
-import './components/FormFeatures.js';
-import './components/HoverDropdown.js';
 
-// HugeRTE - Lazy loaded to reduce initial bundle size
 window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
         const hugerte = module.default;
@@ -45,7 +42,6 @@ window.loadHugeRTE = function (selector, config = {}) {
     });
 };
 
-// DataTables - Lazy loaded
 window.loadDataTables = function () {
     if (window.DataTablesLoaded) return Promise.resolve(window.CustomDataTables);
 
@@ -58,7 +54,6 @@ window.loadDataTables = function () {
     });
 };
 
-// ApexCharts - Lazy loaded
 window.loadApexCharts = function () {
     if (window.ApexCharts) return Promise.resolve(window.ApexCharts);
 
@@ -68,7 +63,6 @@ window.loadApexCharts = function () {
     });
 };
 
-// Global Search
 window.loadGlobalSearch = function () {
     return import('./components/GlobalSearch.js').then(({ GlobalSearch }) => {
         if (!window.GlobalSearch) {
@@ -78,7 +72,37 @@ window.loadGlobalSearch = function () {
     });
 };
 
-// TOAST UI Editor
+window.loadFlatpickr = async function () {
+    if (window.flatpickr) return window.flatpickr;
+
+    const flatpickr = (await import('flatpickr')).default;
+    await import('flatpickr/dist/flatpickr.min.css');
+    window.flatpickr = flatpickr;
+    return flatpickr;
+};
+
+window.loadChoices = async function () {
+    if (window.Choices) return window.Choices;
+
+    const Choices = (await import('choices.js')).default;
+    window.Choices = Choices;
+    return Choices;
+};
+
+window.loadFilePond = async function () {
+    if (window.FilePond) return window.FilePond;
+
+    const FilePond = await import('filepond');
+    await import('filepond/dist/filepond.min.css');
+
+    const FilePondPluginImagePreview = (await import('filepond-plugin-image-preview')).default;
+    await import('filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css');
+
+    FilePond.registerPlugin(FilePondPluginImagePreview);
+    window.FilePond = FilePond;
+    return FilePond;
+};
+
 window.initToastEditor = function (selector, config = {}) {
     import('@toast-ui/editor').then(({ Editor }) => {
         new Editor({
