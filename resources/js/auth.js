@@ -25,4 +25,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Theme Manager
     const themeManager = new ThemeManager('auth');
     themeManager.loadTheme();
+    themeManager.initSettingsPanel();
 });

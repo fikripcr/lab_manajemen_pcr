@@ -12,8 +12,7 @@ import '../assets/guest/vendor/drift-zoom/Drift.min.js';
    However, SweetAlert2 was cross-referenced from assets-auth/libs.
 */
 
-// SweetAlert2 (Local)
-import '../assets/auth/libs/sweetalert2/sweetalert2.all.min.js';
+
 
 // Make AOS globally available
 if (typeof window !== 'undefined') {
