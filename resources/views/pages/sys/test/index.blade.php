@@ -626,7 +626,7 @@
                             <input type="file" id="docxTemplateFile" class="form-control" accept=".doc,.docx">
                             <div class="form-text">
                                 Upload your DOCX template file with variables.
-                                <a href="{{ Vite::asset('resources/assets/sys/template/template-docx-variable.docx') }}"
+                                <a href="{{ asset('assets/templates/template-docx-variable.docx') }}"
                                    class="btn btn-sm btn-outline-primary mt-1"
                                    target="_blank">
                                     <i class="bx bx-download"></i> Download Template Example

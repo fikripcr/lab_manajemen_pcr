@@ -61,7 +61,7 @@
             </div>
             <div class="col-12 col-lg-6 col-xl-7 {{ $coverOrder }} d-none d-lg-block" data-media-column>
                 {{-- Background cover image with overlay content --}}
-                <div class="bg-cover h-100 min-vh-100 position-relative" style="background-image: url({{ asset('assets/img/auth/bg-cover.jpg') }})">
+                <div class="bg-cover h-100 min-vh-100 position-relative" style="background-image: url({{ Vite::asset('resources/assets/auth/img/bg-auth.jpg') }})">
                     {{-- Dark gradient overlay for text readability --}}
                     <div class="position-absolute top-0 start-0 w-100 h-100" 
                          style="background: linear-gradient({{ $gradientDir }}, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);"></div>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div class="col-lg d-none d-lg-block" data-media-column>
-                        <img src="{{ asset('assets/img/illustrations/auth-illustration.png') }}"  class="img d-block mx-auto" alt="Illustration">
+                        <img src="{{ Vite::asset('resources/assets/auth/img/illustration-auth.png') }}"  class="img d-block mx-auto" alt="Illustration">
                     </div>
                 </div>
             </div>
