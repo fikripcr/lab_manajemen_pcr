@@ -1,24 +1,18 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
-use BaconQrCode\Writer;
+use App\Exports\Sys\ActivityLogExport;
+use App\Http\Controllers\Controller;
 use App\Models\Sys\Activity;
 use App\Models\Sys\ErrorLog;
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Mail;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\Sys\ActivityLogExport;
 use App\Models\Sys\ServerMonitorCheck;
 use BaconQrCode\Renderer\GDLibRenderer;
-use BaconQrCode\Renderer\ImageRenderer;
-use Illuminate\Support\Facades\Storage;
+use BaconQrCode\Writer;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpWord\TemplateProcessor;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use BaconQrCode\Renderer\Color\BackgroundColor;
-use BaconQrCode\Renderer\Color\ForegroundColor;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 
 class TestController extends Controller
 {
@@ -274,10 +268,12 @@ class TestController extends Controller
                 mkdir($tempDir, 0755, true);
             }
 
-            $qrCodePath = $tempDir . '/qrcode_' . uniqid() . '.svg';
+            $qrCodePath = $tempDir . '/qrcode_' . uniqid() . '.png';
 
-            // Generate QR code as SVG
-            QrCode::format('svg')->size(200)->generate($qrCodeText, $qrCodePath);
+            // Generate QR code as PNG using BaconQrCode (consistent with other methods)
+            $renderer = new GDLibRenderer(200);
+            $writer   = new Writer($renderer);
+            $writer->writeFile($qrCodeText, $qrCodePath);
 
             // Verify if QR code file was generated before adding to document
             if (file_exists($qrCodePath)) {
@@ -362,7 +358,7 @@ class TestController extends Controller
         $size = $request->input('size', 200);
 
         // Generate QR code as SVG using BaconQrCode
-       $renderer  = new GDLibRenderer($size);
+        $renderer  = new GDLibRenderer($size);
         $writer    = new Writer($renderer);
         $qrCodeSvg = $writer->writeString($text);
 
@@ -393,41 +389,41 @@ class TestController extends Controller
 
             // Get the temporary path of the uploaded file
             $fullTemplatePath = $file->getRealPath();
-            if (!$fullTemplatePath || !file_exists($fullTemplatePath)) {
+            if (! $fullTemplatePath || ! file_exists($fullTemplatePath)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Temporary file not created properly'
+                    'message' => 'Temporary file not created properly',
                 ], 400);
             }
 
             // Define replacement variables directly in the controller
             $variables = [
-                'nama' => 'John Doe',
-                'email' => 'john@example.com',
-                'tanggal_lahir' => '1990-01-01',
-                'alamat' => 'Jl. Contoh No. 123',
-                'telepon' => '+62 123 4567',
-                'pekerjaan' => 'Software Engineer',
-                'perusahaan' => 'ABC Company',
+                'nama'              => 'John Doe',
+                'email'             => 'john@example.com',
+                'tanggal_lahir'     => '1990-01-01',
+                'alamat'            => 'Jl. Contoh No. 123',
+                'telepon'           => '+62 123 4567',
+                'pekerjaan'         => 'Software Engineer',
+                'perusahaan'        => 'ABC Company',
                 'tanggal_pembuatan' => now()->format('Y-m-d'),
-                'waktu_pembuatan' => now()->format('H:i:s'),
-                'keterangan' => 'Contoh keterangan',
-                'judul' => 'Contoh Judul Dokumen',
-                'deskripsi' => 'Contoh deskripsi dokumen',
+                'waktu_pembuatan'   => now()->format('H:i:s'),
+                'keterangan'        => 'Contoh keterangan',
+                'judul'             => 'Contoh Judul Dokumen',
+                'deskripsi'         => 'Contoh deskripsi dokumen',
             ];
 
             // Create a temporary file for processing
             $tempPath = storage_path('app/temp/' . uniqid() . '.docx');
-            $tempDir = dirname($tempPath);
-            if (!file_exists($tempDir)) {
+            $tempDir  = dirname($tempPath);
+            if (! file_exists($tempDir)) {
                 mkdir($tempDir, 0755, true);
             }
 
             // Copy the original template to the temporary location
-            if (!copy($fullTemplatePath, $tempPath)) {
+            if (! copy($fullTemplatePath, $tempPath)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to copy template file'
+                    'message' => 'Failed to copy template file',
                 ], 500);
             }
 
@@ -443,19 +439,19 @@ class TestController extends Controller
             $templateProcessor->saveAs($tempPath);
 
             // Generate the processed DOCX file
-            $fileName = 'processed-' . time() . '.docx';
+            $fileName   = 'processed-' . time() . '.docx';
             $publicPath = storage_path('app/public/uploads/docx/' . $fileName);
-            $publicDir = dirname($publicPath);
+            $publicDir  = dirname($publicPath);
 
-            if (!file_exists($publicDir)) {
+            if (! file_exists($publicDir)) {
                 mkdir($publicDir, 0755, true);
             }
 
             // Move the processed file from temp to public folder
-            if (!copy($tempPath, $publicPath)) {
+            if (! copy($tempPath, $publicPath)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to move processed file to public folder'
+                    'message' => 'Failed to move processed file to public folder',
                 ], 500);
             }
 
@@ -473,17 +469,17 @@ class TestController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'DOCX template processed successfully',
-                'data' => [
+                'data'    => [
                     'download_url' => $downloadUrl,
-                    'file_name' => $fileName,
-                ]
+                    'file_name'    => $fileName,
+                ],
             ]);
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error processing test DOCX template: ' . $e->getMessage(), $user);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error processing DOCX template: ' . $e->getMessage()
+                'message' => 'Error processing DOCX template: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -497,7 +493,7 @@ class TestController extends Controller
                 'template' => 'required|file|mimes:doc,docx|max:10240', // Max 10MB
             ]);
 
-            $file = $request->file('template');
+            $file     = $request->file('template');
             $fileName = $file->getClientOriginalName();
             $filePath = $file->storeAs('docx-templates', $fileName, 'local');
 
@@ -506,17 +502,17 @@ class TestController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Template uploaded successfully',
-                'data' => [
+                'data'    => [
                     'file_path' => $filePath,
                     'file_name' => $fileName,
-                ]
+                ],
             ]);
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error uploading DOCX template: ' . $e->getMessage(), $user);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error uploading template: ' . $e->getMessage()
+                'message' => 'Error uploading template: ' . $e->getMessage(),
             ], 500);
         }
     }
