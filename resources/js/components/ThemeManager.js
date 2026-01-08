@@ -34,637 +34,317 @@ class ThemeManager {
             'theme-header-sticky': 'false',
             'theme-boxed-bg': '',
             'container-width': 'standard',
+            ...(mode === 'auth' ? { 'auth-layout': 'basic', 'auth-form-position': 'left' } : {})
         };
 
-        // Auth-specific defaults
-        if (mode === 'auth') {
-            this.defaults['auth-layout'] = 'basic';
-            this.defaults['auth-form-position'] = 'left';
-        }
+        // Layout Visibility Config (What to HIDE for each layout)
+        // Vertical acts as "Combo" (all visible), so it's not listed here (default shows all)
+        this.LAYOUT_config = {
+            'horizontal': ['sidebar-menu-preset', 'boxed-bg-preset', 'header-overlap-preset'],
+            'condensed': ['sidebar-menu-preset', 'header-overlap-preset', 'boxed-bg-preset'],
+            'navbar-overlap': ['sidebar-menu-preset', 'boxed-bg-preset', 'header-fixed']
+        };
 
-        // Listeners for setting changes
         this.listeners = [];
-
-        // UI Components
         this.form = null;
-        this.applyButton = null;
         this.pickrInstances = {};
     }
 
-    /**
-     * Subscribe to setting changes
-     * @param {Function} callback - Function(name, value)
-     */
-    subscribe(callback) {
-        this.listeners.push(callback);
-    }
+    // ==========================================
+    // Core Storage & State Logic
+    // ==========================================
 
-    /**
-     * Load and apply theme from localStorage
-     */
+    _k(name) { return this.prefix + name; } // Private key helper
+    getSetting(name) { return localStorage.getItem(this._k(name)); }
+    saveSetting(name, val) { localStorage.setItem(this._k(name), val); }
+    removeSetting(name) { localStorage.removeItem(this._k(name)); }
+
+    subscribe(callback) { this.listeners.push(callback); }
+
     loadTheme() {
-        // Apply each setting from localStorage or defaults
         Object.keys(this.defaults).forEach(key => {
-            const storedValue = this.getSetting(key);
-            const value = storedValue !== null ? storedValue : this.defaults[key];
-            this.applySetting(key, value, false); // false = don't save back to localStorage
+            this.applySetting(key, this.getSetting(key) ?? this.defaults[key], false);
         });
     }
 
-    /**
-     * Get setting from localStorage
-     */
-    getSetting(name) {
-        const key = this.prefix + name;
-        const value = localStorage.getItem(key);
-        return value;
+    resetSetting(name) {
+        const def = this.defaults[name] || '';
+        this.applySetting(name, def);
+        this.removeSetting(name);
+        return def;
     }
 
-    /**
-     * Save setting to localStorage
-     */
-    saveSetting(name, value) {
-        const key = this.prefix + name;
-        localStorage.setItem(key, value);
+    getAllSettings() {
+        return Object.keys(this.defaults).reduce((acc, key) => {
+            acc[key] = this.getSetting(key) || this.defaults[key];
+            return acc;
+        }, {});
     }
 
-    /**
-     * Remove setting from localStorage
-     */
-    removeSetting(name) {
-        const key = this.prefix + name;
-        localStorage.removeItem(key);
-    }
+    // ==========================================
+    // Application Logic
+    // ==========================================
 
-    /**
-     * Apply a single theme setting
-     * @param {string} name - Setting name (e.g., 'theme', 'theme-primary')
-     * @param {string} value - Setting value
-     * @param {boolean} save - Whether to save to localStorage (default: true)
-     */
     applySetting(name, value, save = true) {
         const root = document.documentElement;
 
-        // IMPORTANT: Skip background colors in dark mode (except primary)
-        const bgColorSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
-        const currentTheme = root.getAttribute('data-bs-theme');
-        const isDarkMode = currentTheme === 'dark';
-
-        if (isDarkMode && bgColorSettings.includes(name)) {
-            // In dark mode, don't apply any custom background colors
-            // Just save to localStorage if requested, but don't apply to DOM
-            if (save) {
-                this.saveSetting(name, value);
-            }
-            return; // Skip DOM application
+        // 1. Handle Dark Mode Backgrounds (Skip custom BGs in dark mode)
+        if (this._isDarkMode() && ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].includes(name)) {
+            if (save) this.saveSetting(name, value);
+            return;
         }
 
-        // Handle mapped settings (CSS vars + data attributes)
+        // 2. Handle Mapped Settings (CSS Vars / Data Attrs)
         if (this.themeMap[name]) {
-            const rule = this.themeMap[name];
-
-            // Special case: card style 'default' removes attribute
-            if (name === 'theme-card-style' && value === 'default') {
-                root.removeAttribute('data-bs-card-style');
-            }
-            // Set data attribute
-            else if (rule.attr) {
-                root.setAttribute(rule.attr, value === true || value === 'true' ? '' : value);
-            }
-
-            // Set CSS variable
-            if (rule.var) {
-                if (name === 'theme-radius') {
-                    // Radius needs 'rem' suffix and affects sm/lg variants
-                    const val = parseFloat(value);
-                    if (!isNaN(val)) {
-                        root.style.setProperty(rule.var, val + 'rem');
-                        root.style.setProperty(rule.var + '-sm', (val * 0.75) + 'rem');
-                        root.style.setProperty(rule.var + '-lg', (val * 1.25) + 'rem');
-                        root.style.setProperty(rule.var + '-pill', '100rem'); // Ensure pills stay round
-                    }
-                } else if (value) {
-                    root.style.setProperty(rule.var, value);
-                } else {
-                    // Empty value = remove CSS var and its variants (for radius)
-                    root.style.removeProperty(rule.var);
-                    if (name === 'theme-radius') {
-                        root.style.removeProperty(rule.var + '-sm');
-                        root.style.removeProperty(rule.var + '-lg');
-                        root.style.removeProperty(rule.var + '-pill');
-                    }
-                }
-            }
+            this._applyMappedSetting(root, name, value);
         }
-        // Handle standard data-bs-* attributes
+        // 3. Handle Standard Attributes
         else if (['theme', 'theme-font', 'theme-base'].includes(name)) {
             root.setAttribute('data-bs-' + name, value);
         }
-        // Handle container width
-        else if (name === 'container-width' && this.mode === 'sys') {
-            document.body.setAttribute('data-container-width', value);
-            if (value === 'boxed') {
-                document.body.classList.add('layout-boxed');
-            } else {
-                document.body.classList.remove('layout-boxed');
-            }
-        }
-        // Handle sticky header
-        else if (name === 'theme-header-sticky' && this.mode === 'sys') {
-            this.applySticky(value === 'true' || value === true);
+        // 4. Handle Special Cases
+        else {
+            this._applySpecialCases(name, value);
         }
 
-        // Save to localStorage if requested
-        if (save) {
-            this.saveSetting(name, value);
-        }
-
-        // Notify listeners
-        this.listeners.forEach(callback => callback(name, value));
+        if (save) this.saveSetting(name, value);
+        this.listeners.forEach(cb => cb(name, value));
     }
 
-    /**
-     * Apply sticky header logic
-     */
-    applySticky(isSticky) {
-        const wrapper = document.getElementById('header-sticky-wrapper');
-        const topHeader = wrapper ? wrapper.querySelector('header.navbar') : null;
+    _isDarkMode() {
+        return document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    }
 
+    _applyMappedSetting(root, name, value) {
+        const rule = this.themeMap[name];
+
+        // Attribute Handling
+        if (name === 'theme-card-style' && value === 'default') {
+            root.removeAttribute('data-bs-card-style');
+        } else if (rule.attr) {
+            root.setAttribute(rule.attr, value === true || value === 'true' ? '' : value);
+        }
+
+        // CSS Variable Handling
+        if (rule.var) {
+            if (name === 'theme-radius') {
+                this._applyRadius(root, rule.var, value);
+            } else if (value) {
+                root.style.setProperty(rule.var, value);
+            } else {
+                root.style.removeProperty(rule.var);
+            }
+        }
+    }
+
+    _applyRadius(root, varName, value) {
+        const val = parseFloat(value);
+        if (!isNaN(val)) {
+            root.style.setProperty(varName, val + 'rem');
+            root.style.setProperty(varName + '-sm', (val * 0.75) + 'rem');
+            root.style.setProperty(varName + '-lg', (val * 1.25) + 'rem');
+            root.style.setProperty(varName + '-pill', '100rem');
+        } else {
+            [varName, varName + '-sm', varName + '-lg', varName + '-pill'].forEach(v => root.style.removeProperty(v));
+        }
+    }
+
+    _applySpecialCases(name, value) {
+        if (this.mode !== 'sys') return;
+
+        if (name === 'container-width') {
+            document.body.setAttribute('data-container-width', value);
+            value === 'boxed' ? document.body.classList.add('layout-boxed') : document.body.classList.remove('layout-boxed');
+        } else if (name === 'theme-header-sticky') {
+            this._applySticky(value === 'true' || value === true);
+        }
+    }
+
+    _applySticky(isSticky) {
+        const wrapper = document.getElementById('header-sticky-wrapper');
+        const topHeader = wrapper?.querySelector('header.navbar');
         if (!wrapper || !topHeader) return;
 
-        // Get current layout
         const layout = this.getSetting('layout') || 'vertical';
-
-        // Reset
         wrapper.classList.remove('sticky-top');
         topHeader.classList.remove('sticky-top');
 
         if (isSticky) {
-            if (layout === 'navbar-overlap') {
-                topHeader.classList.add('sticky-top');
-            } else {
-                wrapper.classList.add('sticky-top');
-            }
+            layout === 'navbar-overlap' ? topHeader.classList.add('sticky-top') : wrapper.classList.add('sticky-top');
         }
     }
 
-    /**
-     * Reset a setting to its default value
-     * @param {string} name - Setting name
-     */
-    resetSetting(name) {
-        const defaultValue = this.defaults[name] || '';
-        this.applySetting(name, defaultValue);
-        this.removeSetting(name);
-        return defaultValue;
-    }
-
-    /**
-     * Get all current settings (from localStorage or defaults)
-     */
-    getAllSettings() {
-        const settings = {};
-        Object.keys(this.defaults).forEach(key => {
-            settings[key] = this.getSetting(key) || this.defaults[key];
-        });
-        return settings;
-    }
-
     // ==========================================
-    // UI Settings Panel Methods (Formerly ThemeSettings.js)
+    // UI Logic (Settings Panel)
     // ==========================================
 
-    /**
-     * Initialize settings panel UI
-     */
     initSettingsPanel() {
         this.form = document.getElementById('offcanvasSettings');
-        this.applyButton = document.getElementById('apply-settings');
-
-        if (!this.form) {
-            // Panel might not exist in some views
-            return;
-        }
+        if (!this.form) return;
 
         this.initPickr();
-
-        // Delay sync to ensure Tabler CSS is ready (Fix for visual state sync)
-        setTimeout(() => {
-            this.syncFormWithStorage();
-        }, 100);
-
+        setTimeout(() => this.syncFormWithStorage(), 100);
         this.bindEvents();
     }
 
-    /**
-     * Initialize Pickr color pickers
-     */
     initPickr() {
-        if (typeof window.Pickr === 'undefined') {
-            console.error('ThemeManager: Pickr not loaded');
-            return;
-        }
+        if (typeof window.Pickr === 'undefined') return console.error('Pickr not loaded');
 
         document.querySelectorAll('.color-picker-component').forEach(el => {
-            const targetName = el.getAttribute('data-target');
-            const defaultValue = el.getAttribute('data-default');
-
-            // Get initial value from hidden input
-            const hiddenInput = this.form.querySelector(`input[name="${targetName}"]`);
-            const initialValue = hiddenInput ? hiddenInput.value : defaultValue;
+            const target = el.getAttribute('data-target');
+            const hiddenInput = this.form.querySelector(`input[name="${target}"]`);
+            const defaultVal = el.getAttribute('data-default');
+            const initialVal = hiddenInput ? hiddenInput.value : defaultVal;
 
             const pickr = window.Pickr.create({
-                el: el,
-                theme: 'nano',
-                default: initialValue,
-                swatches: [
-                    '#f4f6fa', '#ffffff', '#206bc4', '#a55eea', '#d63939', '#fd7e14', '#2fb344'
-                ],
-                components: {
-                    preview: true,
-                    opacity: true,
-                    hue: true,
-                    interaction: {
-                        hex: true,
-                        rgba: true,
-                        input: true,
-                        save: false
-                    }
-                }
+                el, theme: 'nano', default: initialVal,
+                swatches: ['#f4f6fa', '#ffffff', '#206bc4', '#a55eea', '#d63939', '#fd7e14', '#2fb344'],
+                components: { preview: true, opacity: true, hue: true, interaction: { hex: true, rgba: true, input: true, save: false } }
             });
 
-            this.pickrInstances[targetName] = pickr;
+            this.pickrInstances[target] = pickr;
 
-            // Sync Pickr → Hidden Input → Live Preview
-            pickr.on('change', (color, source, instance) => {
-                const rgbaColor = color.toRGBA().toString(0);
-                instance.applyColor(true);
-
+            pickr.on('change', (color, source, inst) => {
+                const rgba = color.toRGBA().toString(0);
+                inst.applyColor(true);
                 if (hiddenInput) {
-                    hiddenInput.value = rgbaColor;
-                    // Apply to theme immediately (live preview)
-                    this.applySetting(targetName, rgbaColor);
+                    hiddenInput.value = rgba;
+                    this.applySetting(target, rgba);
                 }
             });
-
-            pickr.on('save', () => {
-                pickr.hide();
-            });
+            pickr.on('save', () => pickr.hide());
         });
     }
 
-    /**
-     * Sync form inputs with localStorage values
-     */
     syncFormWithStorage() {
-        const allSettings = this.getAllSettings();
-
-        Object.keys(allSettings).forEach(key => {
-            const value = allSettings[key];
+        const settings = this.getAllSettings();
+        Object.keys(settings).forEach(key => {
             const inputs = this.form.querySelectorAll(`[name="${key}"]`);
+            if (!inputs.length) return;
 
-            if (inputs.length > 0) {
-                // Color picker inputs (hidden)
-                if (key.includes('-bg') || key === 'theme-primary') {
-                    inputs[0].value = value;
-                    // Update Pickr if exists (with safety check for _options)
-                    if (this.pickrInstances[key] && this.pickrInstances[key]._options) {
-                        const defaultColor = this.pickrInstances[key]._options.default || '#ffffff';
-                        this.pickrInstances[key].setColor(value || defaultColor);
-                    }
+            const value = settings[key];
+            const input = inputs[0];
+
+            if (key.includes('-bg') || key === 'theme-primary') {
+                input.value = value;
+                const pickr = this.pickrInstances[key];
+                if (pickr) {
+                    pickr.setColor(value || pickr._options?.default || '#ffffff');
                 }
-                // Select dropdowns
-                else if (inputs[0].tagName === 'SELECT') {
-                    inputs[0].value = value;
-                }
-                // Radio buttons
-                else {
-                    inputs.forEach(input => {
-                        const shouldCheck = input.value === value;
-                        input.checked = shouldCheck;
-
-                        // Dispatch change event to force Tabler CSS update (Fix for visual state sync)
-                        if (shouldCheck) {
-                            input.dispatchEvent(new Event('change', { bubbles: true }));
-                        }
-                    });
-                }
-            }
-        });
-
-        // Apply layout-based visibility
-        const layoutSelect = this.form.querySelector('select[name="layout"]');
-        if (layoutSelect && layoutSelect.value) {
-            this.handleLayoutChange(layoutSelect.value);
-        }
-
-        // Apply theme mode-based visibility
-        const themeInput = this.form.querySelector('input[name="theme"]:checked');
-        if (themeInput && themeInput.value) {
-            this.handleThemeModeChange(themeInput.value);
-        }
-    }
-
-    /**
-     * Bind event listeners
-     */
-    bindEvents() {
-        // Form change events (live preview)
-        this.form.addEventListener('change', (e) => this.handleChange(e));
-
-        // Apply button
-        if (this.applyButton) {
-            this.applyButton.addEventListener('click', () => this.handleApply());
-        }
-
-        // Reset background buttons
-        this.form.querySelectorAll('button[data-reset-bg]').forEach(btn => {
-            btn.addEventListener('click', (e) => this.handleReset(e));
-        });
-    }
-
-    /**
-     * Handle form input changes (live preview)
-     */
-    handleChange(event) {
-        const target = event.target;
-        const name = target.name;
-        const value = target.value;
-
-        if (!name) return;
-
-        // Apply setting immediately for live preview
-        this.applySetting(name, value);
-
-        // Handle layout changes (show/hide relevant sections)
-        if (name === 'layout') {
-            this.handleLayoutChange(value);
-        }
-
-        // Handle theme mode changes (show/hide color presets)
-        if (name === 'theme') {
-            this.handleThemeModeChange(value);
-        }
-
-        // Special handling for layout changes (if preview function exists)
-        if (name === 'layout' && typeof window.previewLayout === 'function') {
-            window.previewLayout(value);
-        }
-    }
-
-    /**
-     * Handle theme mode change - show/hide color presets
-     */
-    handleThemeModeChange(theme) {
-        const bodyBgPreset = document.getElementById('body-bg-preset');
-        const sidebarMenuPreset = document.getElementById('sidebar-menu-preset');
-        const headerTopPreset = document.getElementById('header-top-preset');
-        const headerOverlapPreset = document.getElementById('header-overlap-preset');
-        const boxedBgPreset = document.getElementById('boxed-bg-preset');
-
-        const colorPresets = [bodyBgPreset, sidebarMenuPreset, headerTopPreset, headerOverlapPreset, boxedBgPreset];
-
-        if (theme === 'dark') {
-            // Dark mode - hide all color presets except primary
-            colorPresets.forEach(el => {
-                if (el) el.style.display = 'none';
-            });
-
-            // Save current values to sessionStorage for restoration
-            const bgSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
-            bgSettings.forEach(setting => {
-                const input = this.form.querySelector(`input[name="${setting}"]`);
-                if (input && input.value) {
-                    sessionStorage.setItem(`saved_${setting}`, input.value);
-                }
-            });
-
-            // applySetting will now automatically skip bg colors in dark mode
-        } else {
-            // Light mode - show all color presets, but respect layout settings
-            colorPresets.forEach(el => {
-                if (el) el.style.display = '';
-            });
-
-            // Restore custom colors from sessionStorage (instant) or form inputs
-            const bgSettings = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
-            bgSettings.forEach(setting => {
-                const savedValue = sessionStorage.getItem(`saved_${setting}`);
-                const input = this.form.querySelector(`input[name="${setting}"]`);
-                const valueToApply = savedValue || (input ? input.value : '');
-
-                if (valueToApply) {
-                    this.applySetting(setting, valueToApply);
-                }
-            });
-
-            // Re-apply layout-based visibility
-            const layoutSelect = this.form.querySelector('select[name="layout"]');
-            if (layoutSelect && layoutSelect.value) {
-                this.handleLayoutChange(layoutSelect.value);
-            }
-        }
-    }
-
-    /**
-     * Handle layout change - show/hide relevant settings
-     */
-    handleLayoutChange(layout) {
-        const sidebarMenuPreset = document.getElementById('sidebar-menu-preset');
-        const headerOverlapPreset = document.getElementById('header-overlap-preset');
-        const boxedBgPreset = document.getElementById('boxed-bg-preset');
-        const headerModeSection = document.getElementById('header-mode-section');
-        const headerScrollable = document.getElementById('header-scrollable');
-        const headerFixed = document.getElementById('header-fixed');
-        const headerHidden = document.getElementById('header-hidden');
-
-        // Reset all to visible first
-        [sidebarMenuPreset, headerOverlapPreset, boxedBgPreset, headerModeSection].forEach(el => {
-            if (el) el.style.display = '';
-        });
-
-        // Ensure header mode options are visible by default
-        if (headerScrollable) headerScrollable.style.display = '';
-        if (headerFixed) headerFixed.style.display = '';
-        if (headerHidden) headerHidden.style.display = '';
-
-        switch (layout) {
-            case 'vertical':
-                // Vertical is now the "Combo" layout (Sidebar + Header + etc)
-                // Show all (do nothing, let reset handle it)
-                break;
-
-            case 'horizontal':
-                // Hide: Sidebar/Menu, Boxed Background, Header Overlap
-                if (sidebarMenuPreset) sidebarMenuPreset.style.display = 'none';
-                if (boxedBgPreset) boxedBgPreset.style.display = 'none';
-                if (headerOverlapPreset) headerOverlapPreset.style.display = 'none';
-                break;
-
-            case 'condensed':
-                // Hide: Sidebar/Menu, Header Overlap, Boxed Background
-                if (sidebarMenuPreset) sidebarMenuPreset.style.display = 'none';
-                if (headerOverlapPreset) headerOverlapPreset.style.display = 'none';
-                if (boxedBgPreset) boxedBgPreset.style.display = 'none';
-                break;
-
-            case 'navbar-overlap':
-                // Hide: Sidebar/Menu, Boxed Background
-                if (sidebarMenuPreset) sidebarMenuPreset.style.display = 'none';
-                if (boxedBgPreset) boxedBgPreset.style.display = 'none';
-                if (headerFixed) headerFixed.style.display = 'none';
-                break;
-
-
-
-            default:
-                // Default - show all
-                break;
-        }
-    }
-
-    /**
-     * Handle reset background button click
-     */
-    handleReset(event) {
-        const btn = event.currentTarget;
-        const targetName = btn.getAttribute('data-reset-bg');
-        const bgInput = this.form.querySelector(`input[name="${targetName}"]`);
-
-        // Determine default value
-        let defaultVal = '#ffffff';
-        if (targetName === 'theme-bg') defaultVal = '#f4f6fa';
-        if (targetName === 'theme-primary') defaultVal = '#206bc4';
-        if (targetName === 'theme-header-overlap-bg') defaultVal = '#1e293b';
-        if (targetName === 'theme-boxed-bg') defaultVal = '#e2e8f0';
-
-        // Reset input value
-        bgInput.value = defaultVal;
-
-        // Reset Pickr
-        if (this.pickrInstances[targetName]) {
-            this.pickrInstances[targetName].setColor(defaultVal, true); // silent
-        }
-
-        // Reset theme manager (removes CSS var and localStorage)
-        this.resetSetting(targetName);
-    }
-
-    /**
-     * Handle apply button click (submit to backend)
-     */
-    async handleApply() {
-        // Check dependencies
-        if (typeof window.axios === 'undefined') {
-            console.error('Axios not loaded');
-            if (typeof window.Swal !== 'undefined') {
-                window.Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'Dependencies not loaded. Please refresh the page.',
+            } else if (input.tagName === 'SELECT') {
+                input.value = value;
+            } else { // Radio
+                inputs.forEach(r => {
+                    r.checked = (r.value === value);
+                    if (r.checked) r.dispatchEvent(new Event('change', { bubbles: true }));
                 });
             }
-            return;
-        }
-
-        // Collect form data
-        const formData = new FormData();
-
-        // Regular fields
-        const themeFields = ['theme', 'layout', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style'];
-        themeFields.forEach(field => {
-            const selected = this.form.querySelector(`input[name="${field}"]:checked`) || this.form.querySelector(`select[name="${field}"]`);
-            if (selected) {
-                formData.append(field.replace(/-/g, '_'), selected.value);
-            }
         });
 
-        // Theme primary
-        const primaryInput = this.form.querySelector('input[name="theme-primary"]');
-        if (primaryInput && primaryInput.value) {
-            formData.append('theme_primary', primaryInput.value);
-        }
+        // Apply Layout & Theme Visibility
+        const layout = this.form.querySelector('select[name="layout"]')?.value;
+        if (layout) this.handleLayoutChange(layout);
 
-        // Check if dark mode is selected
-        const selectedTheme = this.form.querySelector('input[name="theme"]:checked');
-        const isDarkMode = selectedTheme && selectedTheme.value === 'dark';
+        const theme = this.form.querySelector('input[name="theme"]:checked')?.value;
+        if (theme) this.handleThemeModeChange(theme);
+    }
 
-        // Background fields - ONLY send in light mode to preserve .env values
-        if (!isDarkMode) {
-            const bgFields = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
-            bgFields.forEach(bg => {
-                const input = this.form.querySelector(`input[name="${bg}"]`);
-                if (input) {
-                    formData.append(bg.replace(/-/g, '_'), input.value || '');
-                }
+    bindEvents() {
+        this.form.addEventListener('change', (e) => {
+            const { name, value } = e.target;
+            if (!name) return;
+
+            this.applySetting(name, value);
+            if (name === 'layout') this.handleLayoutChange(value);
+            if (name === 'theme') this.handleThemeModeChange(value);
+        });
+
+        document.getElementById('apply-settings')?.addEventListener('click', () => this.handleApply());
+
+        this.form.querySelectorAll('button[data-reset-bg]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget.getAttribute('data-reset-bg');
+                const defaults = { 'theme-bg': '#f4f6fa', 'theme-primary': '#206bc4', 'theme-header-overlap-bg': '#1e293b', 'theme-boxed-bg': '#e2e8f0' };
+                const val = defaults[target] || '#ffffff';
+
+                this.form.querySelector(`input[name="${target}"]`).value = val;
+                this.pickrInstances[target]?.setColor(val, true);
+                this.resetSetting(target);
             });
+        });
+    }
+
+    handleLayoutChange(layout) {
+        // Reset all to visible first
+        const basicElements = ['sidebar-menu-preset', 'header-overlap-preset', 'boxed-bg-preset', 'header-mode-section'];
+        basicElements.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
+
+        // Ensure header mode options are visible
+        ['header-scrollable', 'header-fixed', 'header-hidden'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
+
+        // Hide specific elements based on config
+        const toHide = this.LAYOUT_config[layout] || [];
+        toHide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    }
+
+    handleThemeModeChange(theme) {
+        const presets = ['body-bg-preset', 'sidebar-menu-preset', 'header-top-preset', 'header-overlap-preset', 'boxed-bg-preset'];
+        const isDark = theme === 'dark';
+
+        presets.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = isDark ? 'none' : ''; });
+
+        if (isDark) {
+            // Save current values to session
+            ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
+                const val = this.form.querySelector(`input[name="${key}"]`)?.value;
+                if (val) sessionStorage.setItem(`saved_${key}`, val);
+            });
+        } else {
+            // Restore (Light mode) and re-check layout visibility
+            ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
+                const saved = sessionStorage.getItem(`saved_${key}`);
+                const input = this.form.querySelector(`input[name="${key}"]`);
+                const val = saved || (input ? input.value : '');
+                if (val) this.applySetting(key, val);
+            });
+            const layout = this.form.querySelector('select[name="layout"]')?.value;
+            if (layout) this.handleLayoutChange(layout);
         }
+    }
 
-        // Sticky header
-        const stickyInput = this.form.querySelector('input[name="theme-header-sticky"]:checked');
-        formData.append('theme_header_sticky', stickyInput ? stickyInput.value : 'false');
+    async handleApply() {
+        if (!window.axios) return console.error('Axios missing');
 
-        // Container width
-        const containerWidth = this.form.querySelector('input[name="container-width"]:checked');
-        if (containerWidth) {
-            formData.append('container_width', containerWidth.value);
-        }
+        const loader = window.Swal ? window.Swal.fire({ title: 'Applying...', didOpen: () => window.Swal.showLoading() }) : null;
+        const formData = new FormData();
+        const getInput = (name) => this.form.querySelector(`input[name="${name}"]:checked`)?.value || this.form.querySelector(`select[name="${name}"]`)?.value;
+        const append = (k, v) => v && formData.append(k.replace(/-/g, '_'), v);
 
-        // Auth-specific fields (if in auth mode)
-        const authLayout = this.form.querySelector('select[name="auth-layout"]');
-        if (authLayout) {
-            formData.append('auth_layout', authLayout.value);
-        }
+        // Standard fields
+        ['theme', 'layout', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style', 'auth-layout', 'auth-form-position'].forEach(f => append(f, getInput(f)));
+        append('theme_primary', this.form.querySelector('input[name="theme-primary"]')?.value);
+        append('theme_header_sticky', getInput('theme-header-sticky') || 'false');
+        append('container_width', getInput('container-width'));
 
-        const authFormPosition = this.form.querySelector('input[name="auth-form-position"]:checked');
-        if (authFormPosition) {
-            formData.append('auth_form_position', authFormPosition.value);
-        }
-
-        // Show loading
-        if (typeof window.Swal !== 'undefined') {
-            window.Swal.fire({
-                title: 'Applying...',
-                text: 'Writing to .env',
-                allowOutsideClick: false,
-                didOpen: () => window.Swal.showLoading()
+        // Backgrounds (only in light mode)
+        if (getInput('theme') !== 'dark') {
+            ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(f => {
+                append(f, this.form.querySelector(`input[name="${f}"]`)?.value || '');
             });
         }
 
         try {
-            const response = await window.axios.post('/sys/layout/apply', formData);
-
-            if (response.data.success) {
-                // Clear localStorage (settings now in .env)
-                Object.keys(this.defaults).forEach(key => {
-                    this.removeSetting(key);
-                });
-
-                if (typeof window.Swal !== 'undefined') {
-                    await window.Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: response.data.message || 'Settings saved!',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                }
-
+            const res = await window.axios.post('/sys/layout/apply', formData);
+            if (res.data.success) {
+                Object.keys(this.defaults).forEach(k => this.removeSetting(k));
+                if (window.Swal) await window.Swal.fire({ icon: 'success', title: 'Saved!', timer: 800, showConfirmButton: false });
                 window.location.reload();
             }
-        } catch (error) {
-            console.error('Error saving settings:', error);
-
-            if (typeof window.Swal !== 'undefined') {
-                window.Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: error.response?.data?.message || error.message || 'Failed to apply settings.',
-                });
-            }
+        } catch (e) {
+            console.error(e);
+            if (window.Swal) window.Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to save settings' });
         }
     }
 }
 
-// Export for ES6 modules
 export default ThemeManager;
