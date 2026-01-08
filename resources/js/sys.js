@@ -1,8 +1,28 @@
-import './components/GlobalInit.js';
+// --- jQuery (Required for DataTables & legacy plugins)
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 
-import Pickr from '@simonwep/pickr';
-import '@simonwep/pickr/dist/themes/nano.min.css';
-window.Pickr = Pickr;
+// --- Axios (Modern AJAX)
+import axios from 'axios';
+window.axios = axios;
+window.axios.defaults.withCredentials = true;
+window.axios.defaults.withXSRFToken = true;
+
+// --- Popper.js (Bootstrap 5 Dependency)
+import { createPopper } from '@popperjs/core';
+window.Popper = { createPopper };
+
+// --- Bootstrap 5
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
+
+// --- SweetAlert2
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
+// --- Shared Components ---
+import './components/CustomSweetAlerts.js';
+import './components/FormHandlerAjax.js';
 
 import ThemeManager from './components/ThemeManager.js';
 import './components/Notification.js';

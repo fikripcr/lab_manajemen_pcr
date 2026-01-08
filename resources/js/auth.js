@@ -6,10 +6,7 @@ window.bootstrap = bootstrap;
 import { createPopper } from '@popperjs/core';
 window.Popper = { createPopper };
 
-// --- Pickr (Color Picker) ---
-import Pickr from '@simonwep/pickr';
-import '@simonwep/pickr/dist/themes/nano.min.css';
-window.Pickr = Pickr;
+
 
 // --- Axios (For HTTP requests) ---
 import axios from 'axios';

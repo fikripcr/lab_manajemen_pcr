@@ -211,8 +211,20 @@ class ThemeManager {
         this.bindEvents();
     }
 
-    initPickr() {
-        if (typeof window.Pickr === 'undefined') return console.error('Pickr not loaded');
+    async initPickr() {
+        // Lazy load Pickr if not already available
+        if (typeof window.Pickr === 'undefined') {
+            try {
+                // Determine if we are in admin or Guest/Auth context to resolve path correctly?
+                // Actually Vite handles efficient bundling of node_modules.
+                const module = await import('@simonwep/pickr');
+                window.Pickr = module.default;
+                await import('@simonwep/pickr/dist/themes/nano.min.css');
+            } catch (error) {
+                console.error('Failed to load Pickr:', error);
+                return;
+            }
+        }
 
         document.querySelectorAll('.color-picker-component').forEach(el => {
             const target = el.getAttribute('data-target');
