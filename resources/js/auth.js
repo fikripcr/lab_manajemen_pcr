@@ -22,7 +22,6 @@ window.Swal = Swal;
 
 // --- Theme Management System ---
 import ThemeManager from './components/ThemeManager.js';
-import ThemeSettings from './components/ThemeSettings.js';
 import FormPositioner from './components/FormPositioner.js';
 
 // --- Auth Specific Logic ---
@@ -36,8 +35,5 @@ document.addEventListener('DOMContentLoaded', () => {
     formPositioner.init();
 
     // Initialize Settings Panel (if present)
-    if (document.getElementById('offcanvasSettings')) {
-        const themeSettings = new ThemeSettings(themeManager);
-        themeSettings.init();
-    }
+    themeManager.initSettingsPanel();
 });

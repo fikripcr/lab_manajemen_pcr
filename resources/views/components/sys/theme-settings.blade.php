@@ -145,8 +145,7 @@
                         <label class="form-label">Page Layout</label>
                         <select name="layout" class="form-select">
                             @foreach([
-                                'vertical' => 'Vertical (Sidebar)',
-                                'combo' => 'Combo (Sidebar + Header)',
+                                'vertical' => 'Vertical (Sidebar + Header)',
                                 'horizontal' => 'Horizontal (Top Navbar)',
                                 'condensed' => 'Condensed',
                                 'navbar-overlap' => 'Navbar Overlap',

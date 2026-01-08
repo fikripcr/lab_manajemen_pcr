@@ -38,10 +38,10 @@ class InjectLayoutData
      * Only define values that differ from $defaultLayout.
      */
     protected array $layoutPresets = [
-        // === VERTICAL (Sidebar, No Topbar) ===
+        // === VERTICAL (Sidebar + Optional Topbar) ===
         'vertical'       => [
-            'layoutSidebar'    => true,
-            'layoutHideTopbar' => true,
+            'layoutSidebar' => true,
+            // 'layoutHideTopbar' => true, // Removed: Topbar is now optional via Header Mode
         ],
 
         // === HORIZONTAL (Topbar, No Sidebar) ===
@@ -52,11 +52,6 @@ class InjectLayoutData
         // === CONDENSED (Horizontal Condensed) ===
         'condensed'      => [
             'layoutNavbarCondensed' => true,
-        ],
-
-        // === COMBO (Sidebar + Header Top) ===
-        'combo'          => [
-            'layoutSidebar' => true,
         ],
 
         // === NAVBAR OVERLAP (Dark overlap header) ===

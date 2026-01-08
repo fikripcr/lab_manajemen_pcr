@@ -5,7 +5,6 @@ import '@simonwep/pickr/dist/themes/nano.min.css';
 window.Pickr = Pickr;
 
 import ThemeManager from './components/ThemeManager.js';
-import ThemeSettings from './components/ThemeSettings.js';
 import './components/Notification.js';
 import './components/FormFeatures.js';
 import './components/HoverDropdown.js';
@@ -92,10 +91,7 @@ window.initToastEditor = function (selector, config = {}) {
 document.addEventListener('DOMContentLoaded', () => {
     const themeManager = new ThemeManager('sys');
     themeManager.loadTheme();
-    if (document.getElementById('offcanvasSettings')) {
-        const themeSettings = new ThemeSettings(themeManager);
-        themeSettings.init();
-    }
+    themeManager.initSettingsPanel();
 
 
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
