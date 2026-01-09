@@ -30,6 +30,15 @@ import './custom/Notification.js';
 window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
         const hugerte = module.default;
+
+        // Check if dark mode is enabled
+        const isDarkMode = localStorage.getItem("tabler-theme") === 'dark';
+
+        // Import appropriate skin based on theme
+        const skinImport = isDarkMode
+            ? import('hugerte/skins/ui/oxide-dark/skin.min.css')
+            : import('hugerte/skins/ui/oxide/skin.min.css');
+
         return Promise.all([
             import('hugerte/themes/silver/theme'),
             import('hugerte/icons/default/icons'),
@@ -45,18 +54,23 @@ window.loadHugeRTE = function (selector, config = {}) {
             import('hugerte/plugins/media/plugin'),
             import('hugerte/plugins/table/plugin'),
             import('hugerte/plugins/wordcount/plugin'),
-            import('hugerte/skins/ui/oxide/skin.min.css'),
+            skinImport,
             import('hugerte/skins/content/default/content.min.css?inline')
-        ]).then(([, , , , , , , , , , , , , , , contentCssModule]) => {
+        ]).then(([, , , , , , , , , , , , , , skinModule, contentCssModule]) => {
             window.hugerte = hugerte;
             window.hugerteContentCss = contentCssModule.default;
+
+            // Apply dark content CSS if enabled
+            if (isDarkMode) {
+                config.content_css = 'dark';
+            }
+
             if (selector) {
                 hugerte.init({
                     selector: selector,
                     ...config
                 });
             }
-
             return hugerte;
         });
     });
@@ -101,12 +115,18 @@ window.loadFlatpickr = async function () {
     return flatpickr;
 };
 
-window.loadChoices = async function () {
-    if (window.Choices) return window.Choices;
+window.loadSelect2 = async function () {
+    if (window.jQuery.fn.select2) return window.jQuery.fn.select2;
 
-    const Choices = (await import('choices.js')).default;
-    window.Choices = Choices;
-    return Choices;
+    // Load Select2 library and CSS with Bootstrap 5 theme
+    await import('select2/dist/css/select2.min.css');
+    await import('select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css');
+    const select2 = (await import('select2')).default;
+
+    // Initialize Select2 on jQuery
+    select2($);
+
+    return window.jQuery.fn.select2;
 };
 
 window.loadFilePond = async function () {

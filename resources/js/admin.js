@@ -43,12 +43,18 @@ window.loadFlatpickr = async function () {
     return flatpickr;
 };
 
-window.loadChoices = async function () {
-    if (window.Choices) return window.Choices;
+window.loadSelect2 = async function () {
+    if (window.jQuery.fn.select2) return window.jQuery.fn.select2;
 
-    const Choices = (await import('choices.js')).default;
-    window.Choices = Choices;
-    return Choices;
+    // Load Select2 library and CSS with Bootstrap 5 theme
+    await import('select2/dist/css/select2.min.css');
+    await import('select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css');
+    const select2 = (await import('select2')).default;
+
+    // Initialize Select2 on jQuery
+    select2($);
+
+    return window.jQuery.fn.select2;
 };
 
 window.loadFilePond = async function () {

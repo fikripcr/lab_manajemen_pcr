@@ -57,7 +57,7 @@
             <div class="card mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="ti ti-list-check me-2"></i> Choices.js Advanced Select
+                        <i class="ti ti-list-check me-2"></i> Select2 Advanced Select
                     </h3>
                 </div>
                 <div class="card-body">
@@ -96,14 +96,14 @@
                     </div>
 
                     <div class="mt-3 d-flex justify-content-between align-items-center">
-                        <button type="button" class="btn btn-primary" id="getChoicesValue">
+                        <button type="button" class="btn btn-primary" id="getSelect2Value">
                             <i class="ti ti-code me-1"></i> Get Values
                         </button>
                     </div>
 
                     <div class="mt-3">
                         <div class="form-label">Selection Preview</div>
-                        <div id="choicesPreview" class="border p-2 bg-light rounded small text-muted font-monospace">
+                        <div id="select2Preview" class="border p-2 bg-light rounded small text-muted font-monospace">
                             No values selected yet.
                         </div>
                     </div>
@@ -129,11 +129,11 @@
                 </div>
             </div>
 
-            {{-- TinyMCE Editor Test --}}
+            {{-- HugeRTE Editor Test --}}
             <div class="card mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="ti ti-edit me-2"></i> TinyMCE Editor
+                        <i class="ti ti-edit me-2"></i> HugeRTE Editor
                     </h3>
                 </div>
                 <div class="card-body">
@@ -201,13 +201,25 @@
 
 
 @push('scripts')
+
+
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
+            // Mock permission data for Select2 AJAX demo
+            const MOCK_PERMISSIONS = [
+                { id: 'view_dashboard', text: 'View Dashboard' },
+                { id: 'edit_users', text: 'Edit Users' },
+                { id: 'delete_users', text: 'Delete Users' },
+                { id: 'view_reports', text: 'View Reports' },
+                { id: 'create_posts', text: 'Create Posts' },
+                { id: 'manage_roles', text: 'Manage Roles' }
+            ];
+
             // Lazy load form features individually
             try {
                 await Promise.all([
                     typeof window.loadFlatpickr === 'function' ? window.loadFlatpickr() : Promise.resolve(),
-                    typeof window.loadChoices === 'function' ? window.loadChoices() : Promise.resolve(),
+                    typeof window.loadSelect2 === 'function' ? window.loadSelect2() : Promise.resolve(),
                     typeof window.loadFilePond === 'function' ? window.loadFilePond() : Promise.resolve()
                 ]);
                 console.log('Form features loaded successfully');
@@ -294,55 +306,74 @@
                 console.error('Error initializing TinyMCE:', error);
             }
 
-            // Initialize Choices.js after checking dependencies
-            let singleSelect, multiSelect, searchSelect, searchSelectMulti;
-
-            if (typeof Choices !== 'undefined') {
-                singleSelect = new Choices('#singleSelect', {
-                    searchEnabled: true,
-                    searchPlaceholderValue: 'Search for an option...',
-                    shouldSort: false,
+            // Initialize Select2 (replacing Choices.js)
+            if (typeof $.fn.select2 !== 'undefined') {
+                // Single Select with Search
+                $('#singleSelect').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Select an option...',
+                    allowClear: true,
+                    width: '100%'
                 });
 
-                multiSelect = new Choices('#multiSelect', {
-                    removeItemButton: true,
-                    editItems: true,
-                    allowHTML: true,
-                    searchPlaceholderValue: 'Search for options...',
+                // Multi Select
+                $('#multiSelect').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Select multiple options...',
+                    allowClear: true,
+                    width: '100%',
+                    tags: true
                 });
 
-
-                    searchSelect = new Choices('#searchSelect', {
-                    searchEnabled: true,
-                    searchPlaceholderValue: 'Search for permissions...',
-                    loadingText: 'Loading permissions...',
-                    noResultsText: 'No permissions found',
-                    noChoicesText: 'No permissions to choose from',
-                    itemSelectText: 'Press to select',
+                // Search Select with AJAX (simulated)
+                $('#searchSelect').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Search for permissions...',
+                    allowClear: true,
+                    width: '100%',
+                    ajax: {
+                        delay: 250,
+                        transport: function(params, success, failure) {
+                            setTimeout(() => {
+                                const searchTerm = params.data.term || '';
+                                const filtered = MOCK_PERMISSIONS.filter(item =>
+                                    item.text.toLowerCase().includes(searchTerm.toLowerCase())
+                                );
+                                success({ results: filtered });
+                            }, 300);
+                        }
+                    }
                 });
 
-                searchSelectMulti = new Choices('#searchSelectMulti', {
-                    removeItemButton: true,
-                    searchEnabled: true,
-                    searchPlaceholderValue: 'Search for permissions...',
-                    loadingText: 'Loading permissions...',
-                    noResultsText: 'No permissions found',
-                    noChoicesText: 'No permissions to choose from',
-                    itemSelectText: 'Press to select',
+                // Multi Select with AJAX
+                $('#searchSelectMulti').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Search for permissions...',
+                    allowClear: true,
+                    width: '100%',
+                    multiple: true,
+                    ajax: {
+                        delay: 250,
+                        transport: function(params, success) {
+                            setTimeout(() => {
+                                const searchTerm = params.data.term || '';
+                                const filtered = MOCK_PERMISSIONS.filter(item =>
+                                    item.text.toLowerCase().includes(searchTerm.toLowerCase())
+                                );
+                                success({ results: filtered });
+                            }, 300);
+                        }
+                    }
                 });
-            } else {
-                console.error('Choices.js is not loaded');
-            }
 
-            // Add event listener to get selected values
-            if (typeof Choices !== 'undefined') {
-                document.getElementById('getChoicesValue').addEventListener('click', function() {
-                    const singleValue = singleSelect.getValue(true);
-                    const multiValues = multiSelect.getValue(true);
-                    const searchValue = searchSelect.getValue(true);
-                    const searchMultiValue = searchSelectMulti.getValue(true);
+                // Add event listener to get selected values
+                document.getElementById('getSelect2Value').addEventListener('click', function() {
+                    const singleValue = $('#singleSelect').val();
+                    const multiValues = $('#multiSelect').val();
+                    const searchValue = $('#searchSelect').val();
+                    const searchMultiValue = $('#searchSelectMulti').val();
 
-                    const preview = document.getElementById('choicesPreview');
+                    const preview = document.getElementById('select2Preview');
                     preview.innerHTML = `
                         <strong>Single Select Value:</strong> ${singleValue || 'None'}<br>
                         <strong>Multi Select Values:</strong> ${Array.isArray(multiValues) ? multiValues.join(', ') : multiValues || 'None'}<br>
@@ -350,22 +381,14 @@
                         <strong>Search Multi Select Values:</strong> ${Array.isArray(searchMultiValue) ? searchMultiValue.join(', ') : searchMultiValue || 'None'}<br>
                     `;
                 });
+            } else {
+                console.error('Select2 is not loaded');
             }
 
-            // Initialize searchSelect and setup event listeners
-            async function initSearchSelect() {
+            // SweetAlert Utilities Test Event Listeners
                 if (typeof axios !== 'undefined') {
                     // --- Single Select Configuration ---
                     if (typeof searchSelect !== 'undefined') {
-                        // Initially set placeholder option
-                        searchSelect.setChoices([
-                            {
-                                value: '',
-                                label: 'Search for permissions...',
-                                disabled: true
-                            }
-                        ], 'value', 'label', true);
-
                         // Listen to the search event from Choices.js
                         searchSelect.passedElement.element.addEventListener('search', async function(event) {
                             handleSearch(event, searchSelect);
@@ -374,17 +397,6 @@
 
                     // --- Multi Select Configuration ---
                     if (typeof searchSelectMulti !== 'undefined') {
-                        // Initially set placeholder option - Note: for multi-select we might not need an initial placeholder option as strict as single select if it causes issues with selection, assuming placeholder attribute handles display.
-                        // But to be consistent with API search behavior:
-                         searchSelectMulti.setChoices([
-                            {
-                                value: '',
-                                label: 'Search for permissions...',
-                                disabled: true
-                            }
-                        ], 'value', 'label', true);
-
-
                         searchSelectMulti.passedElement.element.addEventListener('search', async function(event) {
                              handleSearch(event, searchSelectMulti);
                         });
@@ -393,7 +405,6 @@
                 } else {
                     console.error('Axios is not available');
                 }
-            }
 
             async function handleSearch(event, choicesInstance) {
                 const searchTerm = event.detail.value;
@@ -459,14 +470,6 @@
                         }
                     ], 'value', 'label', true);
                 }
-            }
-
-            // Tambahkan pengecekan bahwa semua elemen dan dependencies tersedia
-            if (typeof Choices !== 'undefined') {
-                // Initialize searchSelect with API search capability
-                initSearchSelect();
-            } else {
-                console.error('Choices.js is not loaded');
             }
 
             // SweetAlert Utilities Test Event Listeners

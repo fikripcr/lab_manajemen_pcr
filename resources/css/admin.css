@@ -16,3 +16,6 @@
 
 /* Choices.js CSS */
 @import '../assets/admin/libs/choicesjs/choices.min.css';
+
+/* Select2 Tabler Integration */
+@import './custom/select2-tabler.css';

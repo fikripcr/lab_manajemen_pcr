@@ -40,7 +40,7 @@ export default defineConfig({
                         return 'vendor-charts';
                     }
 
-                    if (id.includes('pickr') || id.includes('choices') || id.includes('flatpickr')) {
+                    if (id.includes('pickr') || id.includes('select2') || id.includes('flatpickr')) {
                         return 'vendor-forms';
                     }
 

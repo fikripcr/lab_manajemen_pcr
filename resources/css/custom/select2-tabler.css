@@ -1,0 +1,128 @@
+/**
+ * Select2 Tabler Integration CSS
+ * 
+ * Custom styles to integrate Select2 with Tabler theme.
+ * This file makes Select2 respect Tabler's CSS variables for:
+ * - Border radius (dynamic theme settings)
+ * - Border colors
+ * - Primary colors
+ * - Focus states
+ * 
+ * Usage: Import this file after Select2 Bootstrap 5 theme
+ */
+
+/* ============================================
+   BASE STYLES - Border Radius & Colors
+   ============================================ */
+
+.select2-container--bootstrap-5 .select2-selection {
+    border-radius: var(--tblr-border-radius, 0.25rem) !important;
+    border-color: var(--tblr-border-color, #d4d9dd) !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    color: var(--tblr-body-color, #1e293b) !important;
+}
+
+.select2-container--bootstrap-5 .select2-dropdown {
+    border-radius: var(--tblr-border-radius, 0.25rem) !important;
+    border-color: var(--tblr-border-color, #d4d9dd) !important;
+    font-size: 0.875rem !important;
+}
+
+.select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+    color: var(--tblr-body-color, #1e293b) !important;
+    line-height: 1.4285714286 !important;
+}
+
+.select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder {
+    color: var(--tblr-secondary, #667382) !important;
+}
+
+.select2-container--bootstrap-5 .select2-results__option {
+    font-size: 0.875rem !important;
+    color: var(--tblr-body-color, #1e293b) !important;
+}
+
+/* ============================================
+   MULTI-SELECT - Tags/Chips
+   ============================================ */
+
+.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+    border-radius: var(--tblr-border-radius-sm, 0.1875rem) !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    padding: 0.125rem 0.5rem !important;
+}
+
+.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+    font-size: 1rem !important;
+}
+
+/* ============================================
+   DROPDOWN SEARCH BOX - Padding Fix
+   ============================================ */
+
+/* Fix search container padding */
+.select2-container--bootstrap-5 .select2-dropdown .select2-search {
+    padding: 0.5rem !important;
+}
+
+/* Fix search input padding and styling */
+.select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field {
+    padding: 0.4375rem 0.625rem !important;
+    border-color: var(--tblr-border-color, #d4d9dd) !important;
+    border-radius: var(--tblr-border-radius, 0.25rem) !important;
+}
+
+/* ============================================
+   FOCUS STATES - Primary Color Integration
+   ============================================ */
+
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+    border-color: var(--tblr-primary, #206bc4) !important;
+    box-shadow: 0 0 0 0.25rem rgba(var(--tblr-primary-rgb, 32, 107, 196), 0.25) !important;
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection {
+    background-color: var(--tblr-bg-surface-dark, #1e293b) !important;
+    border-color: var(--tblr-border-color-dark, rgba(255, 255, 255, 0.12)) !important;
+    color: var(--tblr-body-color, #f8fafc) !important;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown {
+    background-color: var(--tblr-bg-surface-dark, #1e293b) !important;
+    border-color: var(--tblr-border-color-dark, rgba(255, 255, 255, 0.12)) !important;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered,
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option {
+    color: var(--tblr-body-color, #f8fafc) !important;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option--highlighted {
+    background-color: var(--tblr-primary, #206bc4) !important;
+    color: #fff !important;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-search__field {
+    background-color: var(--tblr-bg-forms, #0f172a) !important;
+    border-color: var(--tblr-border-color-dark, rgba(255, 255, 255, 0.12)) !important;
+    color: var(--tblr-body-color, #f8fafc) !important;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+    color: #fff !important;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #fff !important;
+}
