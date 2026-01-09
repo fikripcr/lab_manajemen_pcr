@@ -1,4 +1,4 @@
-import { api } from '../api.js';
+import { api } from './api.js';
 
 // Global search functionality using ES6 modules and vanilla JavaScript
 export class GlobalSearch {

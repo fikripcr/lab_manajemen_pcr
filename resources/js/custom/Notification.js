@@ -1,4 +1,4 @@
-import { api } from '../api.js';
+import { api } from './api.js';
 
 // Notification component using ES6 modules and vanilla JavaScript
 export class NotificationManager {

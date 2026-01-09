@@ -1,1 +1,0 @@
-<!-- JS bundled in resources/js/auth.js -->

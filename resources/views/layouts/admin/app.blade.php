@@ -26,7 +26,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('layouts.admin.css')
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet"/>
 
     <!-- Vite Entry Points -->
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
@@ -60,7 +61,16 @@
         <!-- Global Search Modal Component -->
         <x-admin.global-search-modal />
 
-        @include('layouts.admin.js')
+        <script>
+            window.appRoutes = {
+                notificationsUnreadCount: '{{ route('notifications.unread-count') }}',
+                notificationsIndex: '{{ route('notifications.index') }}',
+                notificationsDropdownData: '{{ route('notifications.dropdown-data') }}',
+                notificationsMarkAllAsRead: '{{ route('notifications.mark-all-as-read') }}',
+                globalSearch: '{{ route('global-search') }}',
+            };
+        </script>
+
 
         @stack('scripts')
 
