@@ -28,11 +28,11 @@
         {{-- BASIC LAYOUT: Centered card --}}
         <main class="page page-center">
             <div class="container container-tight py-4">
-                <div class="text-center mb-4">
-                    <a href="." class="navbar-brand navbar-brand-autodark">
-                        <img src="{{ asset('assets/img/digilab-crop.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
-                    </a>
-                </div>
+                    <div class="text-center mb-4">
+                        <a href="." class="navbar-brand navbar-brand-autodark">
+                            <img src="{{ asset('images/digilab-crop.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
+                        </a>
+                    </div>
                 @yield('content')
             </div>
         </main>
@@ -61,7 +61,7 @@
             </div>
             <div class="col-12 col-lg-6 col-xl-7 {{ $coverOrder }} d-none d-lg-block" data-media-column>
                 {{-- Background cover image with overlay content --}}
-                <div class="bg-cover h-100 min-vh-100 position-relative" style="background-image: url({{ Vite::asset('resources/assets/auth/img/bg-auth.png') }})">
+                <div class="bg-cover h-100 min-vh-100 position-relative" style="background-image: url({{ asset('images/bg-auth-cover.png') }})">
                     {{-- Dark gradient overlay for text readability --}}
                     <div class="position-absolute top-0 start-0 w-100 h-100" 
                          style="background: linear-gradient({{ $gradientDir }}, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);"></div>
@@ -70,7 +70,7 @@
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column {{ $contentAlign }} p-4 p-lg-5">
                         {{-- Logo at top --}}
                         <div class="mb-auto">
-                            <img src="{{ asset('assets/img/digilab-crop.png') }}" 
+                            <img src="{{ asset('images/digilab-crop.png') }}" 
                                  width="180" height="33" alt="{{ config('app.name') }}" >
                         </div>
                         
@@ -111,14 +111,14 @@
                         <div class="container-tight">
                             <div class="text-center mb-4">
                                 <a href="." class="navbar-brand navbar-brand-autodark">
-                                    <img src="{{ asset('assets/img/digilab-crop.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
+                                    <img src="{{ asset('images/digilab-crop.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
                                 </a>
                             </div>
                             @yield('content')
                         </div>
                     </div>
                     <div class="col-lg d-none d-lg-block" data-media-column>
-                        <img src="{{ asset('assets/img/bg-auth-illustration.png') }}"  class="img d-block mx-auto" alt="Illustration">
+                        <img src="{{ asset('images/bg-auth-illustration.png') }}"  class="img d-block mx-auto" alt="Illustration">
                     </div>
                 </div>
             </div>

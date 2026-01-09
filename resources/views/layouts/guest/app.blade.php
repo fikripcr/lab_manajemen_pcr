@@ -12,8 +12,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="{{ asset('images/favicon.png') }}" rel="icon">
+  <link href="{{ asset('images/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
   @include('layouts.guest.css')
   @vite(['resources/css/guest.css', 'resources/js/guest.js'])

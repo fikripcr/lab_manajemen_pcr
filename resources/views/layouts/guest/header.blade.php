@@ -5,7 +5,9 @@
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.webp" alt=""> -->
         <h1 class="sitename">
-          <img class="img rounded-circle" src="{{ asset('assets/img/digilab-crop.png') }}" style="object-fit: cover;" alt="Logo"/>
+            <a href="." class="navbar-brand navbar-brand-autodark">
+                <img src="{{ asset('images/digilab-crop.png') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
+            </a>
         </h1>
       </a>
 

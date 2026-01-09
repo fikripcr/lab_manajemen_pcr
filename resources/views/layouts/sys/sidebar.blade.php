@@ -9,8 +9,8 @@
 
         {{-- 2. NAVBAR BRAND (logo) --}}
         <div class="navbar-brand navbar-brand-autodark">
-            <a href="{{ route('sys.dashboard') }}">
-                <img src="{{ asset('assets/img/digilab-crop.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
+            <a href="." class="navbar-brand navbar-brand-autodark">
+                <img src="{{ asset('images/digilab-crop.png') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
             </a>
         </div>
 
