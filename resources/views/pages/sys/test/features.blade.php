@@ -19,7 +19,6 @@
 
 @section('content')
     <div class="row row-cards">
-        {{-- Left Column: Form Inputs --}}
         <div class="col-lg-6">
             
             {{-- Flatpickr Date Picker --}}
@@ -63,24 +62,23 @@
                 <div class="card-body">
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label for="singleSelect" class="form-label">Single Select</label>
-                            <select id="singleSelect" class="form-select">
-                                <option value="">Select an option</option>
-                                <option value="option1">Option 1</option>
-                                <option value="option2">Option 2</option>
-                                <option value="option3">Option 3</option>
-                                <option value="option4">Option 4</option>
-                            </select>
+                            <x-form.select2 
+                                id="singleSelect" 
+                                name="singleSelect" 
+                                label="Single Select" 
+                                placeholder="Select an option" 
+                                :options="['option1'=>'Option 1', 'option2'=>'Option 2', 'option3'=>'Option 3', 'option4'=>'Option 4']" 
+                            />
                         </div>
                         <div class="col-md-6">
-                            <label for="multiSelect" class="form-label">Multi Select</label>
-                            <select id="multiSelect" class="form-select" multiple>
-                                <option value="option1">Option 1</option>
-                                <option value="option2">Option 2</option>
-                                <option value="option3">Option 3</option>
-                                <option value="option4">Option 4</option>
-                                <option value="option5">Option 5</option>
-                            </select>
+                            <x-form.select2 
+                                id="multiSelect" 
+                                name="multiSelect" 
+                                label="Multi Select" 
+                                placeholder="Select multiple options" 
+                                multiple="true"
+                                :options="['option1'=>'Option 1', 'option2'=>'Option 2', 'option3'=>'Option 3', 'option4'=>'Option 4', 'option5'=>'Option 5']" 
+                            />
                         </div>
                     </div>
 
@@ -112,7 +110,6 @@
 
         </div>
 
-        {{-- Right Column: Rich Content --}}
         <div class="col-lg-6">
 
             {{-- FilePond Section --}}
@@ -160,7 +157,6 @@
 
         </div>
 
-        {{-- Bottom Full Width: Alerts --}}
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -195,14 +191,10 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 
-
 @push('scripts')
-
-
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             // Mock permission data for Select2 AJAX demo
@@ -228,7 +220,72 @@
                 return;
             }
 
-            // Initialize Flatpickr
+            // Initialize Select2 (This fixes the API Search examples)
+            if (typeof $.fn.select2 !== 'undefined') {
+                // Search Select with AJAX (simulated)
+                $('#searchSelect').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Search for permissions...',
+                    allowClear: true,
+                    width: '100%',
+                    ajax: {
+                        delay: 250,
+                        transport: function(params, success, failure) {
+                            setTimeout(() => {
+                                const searchTerm = params.data.term || '';
+                                const filtered = MOCK_PERMISSIONS.filter(item =>
+                                    item.text.toLowerCase().includes(searchTerm.toLowerCase())
+                                );
+                                success({ results: filtered });
+                            }, 300);
+                        }
+                    }
+                });
+
+                // Multi Select with AJAX
+                $('#searchSelectMulti').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Search for permissions...',
+                    allowClear: true,
+                    width: '100%',
+                    multiple: true,
+                    ajax: {
+                        delay: 250,
+                        transport: function(params, success) {
+                            setTimeout(() => {
+                                const searchTerm = params.data.term || '';
+                                const filtered = MOCK_PERMISSIONS.filter(item =>
+                                    item.text.toLowerCase().includes(searchTerm.toLowerCase())
+                                );
+                                success({ results: filtered });
+                            }, 300);
+                        }
+                    }
+                });
+
+                // Get Values Handler
+                const getValBtn = document.getElementById('getSelect2Value');
+                if(getValBtn){
+                    getValBtn.addEventListener('click', function() {
+                        const singleValue = $('#singleSelect').val();
+                        const multiValues = $('#multiSelect').val();
+                        const searchValue = $('#searchSelect').val();
+                        const searchMultiValue = $('#searchSelectMulti').val();
+
+                        const preview = document.getElementById('select2Preview');
+                        preview.innerHTML = `
+                            <strong>Single Select Value:</strong> ${singleValue || 'None'}<br>
+                            <strong>Multi Select Values:</strong> ${Array.isArray(multiValues) ? multiValues.join(', ') : multiValues || 'None'}<br>
+                            <strong>Search Select Value:</strong> ${searchValue || 'None'}<br>
+                            <strong>Search Multi Select Values:</strong> ${Array.isArray(searchMultiValue) ? searchMultiValue.join(', ') : searchMultiValue || 'None'}<br>
+                        `;
+                    });
+                }
+            } else {
+                console.error('Select2 is not loaded');
+            }
+
+            // Flatpickr Initialization
             flatpickr("#datePicker", {
                 dateFormat: "Y-m-d",
             });
@@ -306,200 +363,28 @@
                 console.error('Error initializing TinyMCE:', error);
             }
 
-            // Initialize Select2 (replacing Choices.js)
-            if (typeof $.fn.select2 !== 'undefined') {
-                // Single Select with Search
-                $('#singleSelect').select2({
-                    theme: 'bootstrap-5',
-                    placeholder: 'Select an option...',
-                    allowClear: true,
-                    width: '100%'
-                });
-
-                // Multi Select
-                $('#multiSelect').select2({
-                    theme: 'bootstrap-5',
-                    placeholder: 'Select multiple options...',
-                    allowClear: true,
-                    width: '100%',
-                    tags: true
-                });
-
-                // Search Select with AJAX (simulated)
-                $('#searchSelect').select2({
-                    theme: 'bootstrap-5',
-                    placeholder: 'Search for permissions...',
-                    allowClear: true,
-                    width: '100%',
-                    ajax: {
-                        delay: 250,
-                        transport: function(params, success, failure) {
-                            setTimeout(() => {
-                                const searchTerm = params.data.term || '';
-                                const filtered = MOCK_PERMISSIONS.filter(item =>
-                                    item.text.toLowerCase().includes(searchTerm.toLowerCase())
-                                );
-                                success({ results: filtered });
-                            }, 300);
-                        }
-                    }
-                });
-
-                // Multi Select with AJAX
-                $('#searchSelectMulti').select2({
-                    theme: 'bootstrap-5',
-                    placeholder: 'Search for permissions...',
-                    allowClear: true,
-                    width: '100%',
-                    multiple: true,
-                    ajax: {
-                        delay: 250,
-                        transport: function(params, success) {
-                            setTimeout(() => {
-                                const searchTerm = params.data.term || '';
-                                const filtered = MOCK_PERMISSIONS.filter(item =>
-                                    item.text.toLowerCase().includes(searchTerm.toLowerCase())
-                                );
-                                success({ results: filtered });
-                            }, 300);
-                        }
-                    }
-                });
-
-                // Add event listener to get selected values
-                document.getElementById('getSelect2Value').addEventListener('click', function() {
-                    const singleValue = $('#singleSelect').val();
-                    const multiValues = $('#multiSelect').val();
-                    const searchValue = $('#searchSelect').val();
-                    const searchMultiValue = $('#searchSelectMulti').val();
-
-                    const preview = document.getElementById('select2Preview');
-                    preview.innerHTML = `
-                        <strong>Single Select Value:</strong> ${singleValue || 'None'}<br>
-                        <strong>Multi Select Values:</strong> ${Array.isArray(multiValues) ? multiValues.join(', ') : multiValues || 'None'}<br>
-                        <strong>Search Select Value:</strong> ${searchValue || 'None'}<br>
-                        <strong>Search Multi Select Values:</strong> ${Array.isArray(searchMultiValue) ? searchMultiValue.join(', ') : searchMultiValue || 'None'}<br>
-                    `;
-                });
-            } else {
-                console.error('Select2 is not loaded');
-            }
-
-            // SweetAlert Utilities Test Event Listeners
-                if (typeof axios !== 'undefined') {
-                    // --- Single Select Configuration ---
-                    if (typeof searchSelect !== 'undefined') {
-                        // Listen to the search event from Choices.js
-                        searchSelect.passedElement.element.addEventListener('search', async function(event) {
-                            handleSearch(event, searchSelect);
-                        });
-                    }
-
-                    // --- Multi Select Configuration ---
-                    if (typeof searchSelectMulti !== 'undefined') {
-                        searchSelectMulti.passedElement.element.addEventListener('search', async function(event) {
-                             handleSearch(event, searchSelectMulti);
-                        });
-                    }
-
-                } else {
-                    console.error('Axios is not available');
-                }
-
-            async function handleSearch(event, choicesInstance) {
-                const searchTerm = event.detail.value;
-
-                if (!searchTerm) {
-                    choicesInstance.setChoices([
-                        {
-                            value: '',
-                            label: 'Search for permissions...',
-                            disabled: true
-                        }
-                    ], 'value', 'label', true);
-                    return;
-                }
-
-                if (searchTerm.length < 2) {
-                    // Don't clear choices immediately for better UX while typing, or clear if you strictly want min 2 chars
-                     choicesInstance.setChoices([
-                        {
-                            value: '',
-                            label: 'Type 2+ characters...',
-                            disabled: true
-                        }
-                    ], 'value', 'label', true);
-                    return;
-                }
-
-                try {
-                    // Use internal permission search API
-                    const response = await axios.get('/api/permissions/search', {
-                        params: {
-                            q: searchTerm,
-                            limit: 20
-                        }
-                    });
-
-                    if (response.data.success && response.data.data.length > 0) {
-                        const permissions = response.data.data;
-
-                        // Format for Choices.js
-                        const newOptions = permissions.map(permission => ({
-                            value: permission.value,
-                            label: permission.label
-                        }));
-
-                        choicesInstance.setChoices(newOptions, 'value', 'label', true); // true = replaceChoices
-                    } else {
-                        choicesInstance.setChoices([
-                            {
-                                value: '',
-                                label: 'No permissions found',
-                                disabled: true
-                            }
-                        ], 'value', 'label', true);
-                    }
-                } catch (error) {
-                    console.error('Error fetching permissions:', error);
-                    choicesInstance.setChoices([
-                        {
-                            value: '',
-                            label: 'Error loading permissions',
-                            disabled: true
-                        }
-                    ], 'value', 'label', true);
-                }
-            }
-
             // SweetAlert Utilities Test Event Listeners
             if (typeof showSuccessMessage !== 'undefined') {
-                document.getElementById('showSuccessBtn').addEventListener('click', function() {
-                    showSuccessMessage('Success!', 'This is a success message.');
-                });
+                const btnSuccess = document.getElementById('showSuccessBtn');
+                if(btnSuccess) btnSuccess.addEventListener('click', function() { showSuccessMessage('Success!', 'This is a success message.'); });
 
-                document.getElementById('showErrorBtn').addEventListener('click', function() {
-                    showErrorMessage('Error!', 'This is an error message.');
-                });
+                const btnError = document.getElementById('showErrorBtn');
+                if(btnError) btnError.addEventListener('click', function() { showErrorMessage('Error!', 'This is an error message.'); });
 
-                document.getElementById('showWarningBtn').addEventListener('click', function() {
-                    showWarningMessage('Warning!', 'This is a warning message.');
-                });
+                const btnWarn = document.getElementById('showWarningBtn');
+                if(btnWarn) btnWarn.addEventListener('click', function() { showWarningMessage('Warning!', 'This is a warning message.'); });
 
-                document.getElementById('showInfoBtn').addEventListener('click', function() {
-                    showInfoMessage('Info', 'This is an info message.');
-                });
+                const btnInfo = document.getElementById('showInfoBtn');
+                if(btnInfo) btnInfo.addEventListener('click', function() { showInfoMessage('Info', 'This is an info message.'); });
 
-                document.getElementById('showLoadingBtn').addEventListener('click', function() {
+                const btnLoad = document.getElementById('showLoadingBtn');
+                if(btnLoad) btnLoad.addEventListener('click', function() {
                     const loadingAlert = showLoadingMessage('Processing...', 'Please wait while we process your request.');
-
-                    // Close loading after 3 seconds
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 3000);
+                    setTimeout(() => { Swal.close(); }, 3000);
                 });
 
-                document.getElementById('showConfirmationBtn').addEventListener('click', function() {
+                const btnConfirm = document.getElementById('showConfirmationBtn');
+                if(btnConfirm) btnConfirm.addEventListener('click', function() {
                     showConfirmation('Are you sure?', 'Do you want to proceed with this action?').then((result) => {
                         if (result.isConfirmed) {
                             showSuccessMessage('Confirmed!', 'You confirmed the action.');
@@ -509,73 +394,44 @@
                     });
                 });
 
-                document.getElementById('showDeleteConfirmationBtn').addEventListener('click', function() {
+                const btnDelete = document.getElementById('showDeleteConfirmationBtn');
+                if(btnDelete) btnDelete.addEventListener('click', function() {
                     showDeleteConfirmation('Are you sure?', 'This action cannot be undone!', 'Yes, delete it!').then((result) => {
                         if (result.isConfirmed) {
-                            showSuccessMessage('Deleted!', 'Item has been deleted.');
+                             showSuccessMessage('Deleted!', 'Item has been deleted.');
                         } else {
                             showInfoMessage('Cancelled', 'Item was not deleted.');
                         }
                     });
                 });
 
-                document.getElementById('showFormErrorsBtn').addEventListener('click', function() {
-                    const errors = [
-                        'The name field is required.',
-                        'The email field must be a valid email address.',
-                        'The password must be at least 8 characters.'
-                    ];
-                    showFormErrors(errors);
+                const btnErrors = document.getElementById('showFormErrorsBtn');
+                if(btnErrors) btnErrors.addEventListener('click', function() {
+                    showFormErrors(['The name field is required.', 'The email field must be a valid email address.', 'The password must be at least 8 characters.']);
                 });
 
-                document.getElementById('handleAjaxResponseBtn').addEventListener('click', function() {
-                    // Simulate a successful AJAX response
-                    const successResponse = {
-                        success: true,
-                        title: 'Operation Successful!',
-                        message: 'Your request was processed successfully.',
-                        data: { id: 123 }
-                    };
-
-                    handleAjaxResponse(successResponse,
-                        function(response) {
-                            console.log('Success callback executed with data:', response.data);
-                        },
-                        function(response) {
-                            console.log('Error callback executed with data:', response);
-                        }
+                const btnAjax = document.getElementById('handleAjaxResponseBtn');
+                if(btnAjax) btnAjax.addEventListener('click', function() {
+                    handleAjaxResponse({ success: true, title: 'Operation Successful!', message: 'Your request was processed successfully.', data: { id: 123 } },
+                        function(response) { console.log('Success callback executed with data:', response.data); },
+                        function(response) { console.log('Error callback executed with data:', response); }
                     );
-
-                    // To see error handling, uncomment below after success is shown
-                    /*
-                    setTimeout(() => {
-                        const errorResponse = {
-                            success: false,
-                            title: 'Operation Failed!',
-                            message: 'There was an issue processing your request.',
-                            error: 'Internal server error'
-                        };
-
-                        handleAjaxResponse(errorResponse);
-                    }, 2000);
-                    */
                 });
 
-                document.getElementById('showBulkActionBtn').addEventListener('click', function() {
+                const btnBulk = document.getElementById('showBulkActionBtn');
+                if(btnBulk) btnBulk.addEventListener('click', function() {
                     showBulkActionConfirmation('Delete', 5, 'user').then((result) => {
-                        if (result.isConfirmed) {
-                            showSuccessMessage('Success!', '5 users have been deleted.');
-                        }
+                        if (result.isConfirmed) { showSuccessMessage('Success!', '5 users have been deleted.'); }
                     });
                 });
 
-                document.getElementById('showHtmlContentBtn').addEventListener('click', function() {
+                const btnHtml = document.getElementById('showHtmlContentBtn');
+                if(btnHtml) btnHtml.addEventListener('click', function() {
                     showInfoMessage('HTML Content', '<p>This alert contains <strong>HTML content</strong>!</p><ul><li>It supports lists</li><li><em>Formatting</em></li><li>And other HTML elements</li></ul>');
                 });
             } else {
                 console.error('SweetAlert utilities are not loaded');
             }
-
         });
     </script>
 @endpush

@@ -25,20 +25,10 @@
             <div>
                 <x-sys.datatable-filter :dataTableId="'permissions-table'" >
                     <div>
-                        <select name="category" class="form-select">
-                            <option value="">All Categories</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category }}">{{ $category }}</option>
-                            @endforeach
-                        </select>
+                        <x-form.select2 name="category" placeholder="All Categories" :options="$categories" />
                     </div>
                     <div>
-                        <select name="sub_category" class="form-select">
-                            <option value="">All Sub Categories</option>
-                            @foreach($subCategories as $subCategory)
-                                <option value="{{ $subCategory }}">{{ $subCategory }}</option>
-                            @endforeach
-                        </select>
+                        <x-form.select2 name="sub_category" placeholder="All Sub Categories" :options="$subCategories" />
                     </div>
                 </x-sys.datatable-filter>
             </div>

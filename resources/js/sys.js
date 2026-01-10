@@ -156,6 +156,42 @@ document.addEventListener('DOMContentLoaded', () => {
     themeManager.loadTheme();
     themeManager.initSettingsPanel();
 
+    window.initOfflineSelect2 = function () {
+        const elements = document.querySelectorAll('.select2-offline');
+        if (elements.length > 0) {
+            window.loadSelect2().then(() => {
+                $('.select2-offline').each(function () {
+                    const $el = $(this);
+                    if ($el.data('select2')) return;
+
+                    $el.select2({
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        placeholder: $el.data('placeholder') || 'Select option',
+                        allowClear: true
+                    });
+
+                    // Reactivate native change event for CustomDataTables
+                    $el.on('change', function (e) {
+                        // Check if the event is jQuery-triggered (originalEvent present usually means native, 
+                        // but jQuery trigger doesn't pass it same way. 
+                        // To avoid infinite loop, we check a flag or just ensure dispatch happens if needed)
+                        // Actually, Select2 triggers change. We need vanilla event.
+                        // But dispatching vanilla event triggers jQuery change again? 
+                        // Let's use specific Select2 events
+                    });
+
+                    $el.on('select2:select select2:unselect', function (e) {
+                        // Dispatch native change event so CustomDataTables (vanilla listener) picks it up
+                        this.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                });
+            });
+        }
+    };
+
+    window.initOfflineSelect2();
+
 
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {
