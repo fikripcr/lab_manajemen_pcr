@@ -88,6 +88,8 @@
 
 /* Individual Chips */
 /* Individual Chips */
+/* Individual Chips */
+/* Individual Chips */
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
     font-size: 0.75rem !important;
     padding: 0.125rem 0.5rem !important;
@@ -103,9 +105,11 @@
     position: relative !important;
     /* For absolute positioning of X */
 
+    /* Reverted to Neutral Theme */
     background-color: var(--tblr-bg-surface-secondary, #f1f5f9) !important;
     border: 1px solid var(--tblr-border-color, #e2e8f0) !important;
     color: var(--tblr-body-color, #1e293b) !important;
+
     float: none !important;
 }
 
@@ -127,7 +131,7 @@
     font-size: 0 !important;
     color: transparent !important;
 
-    /* Render SVG Icon via Mask */
+    /* Render SVG Icon via Mask (Muted Color) */
     background-color: var(--tblr-muted, #9aa0ac) !important;
     -webkit-mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='currentColor' fill='none'%3e%3cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3e%3cpath d='M18 6l-12 12' /%3e%3cpath d='M6 6l12 12' /%3e%3c/svg%3e");
     mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='currentColor' fill='none'%3e%3cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3e%3cpath d='M18 6l-12 12' /%3e%3cpath d='M6 6l12 12' /%3e%3c/svg%3e");
@@ -145,6 +149,7 @@
 
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
     background-color: var(--tblr-danger, #d63939) !important;
+    /* Red on hover */
 }
 
 /* The Search Input Item (li) */
@@ -152,8 +157,7 @@
     flex: 1 1 auto !important;
     /* Allow growth */
     margin: 0 !important;
-    margin-left: 0.25rem !important;
-    /* Spacing from chips */
+    /* margin-left removed, handled by gap on container */
     display: inline-flex !important;
     align-items: center !important;
     min-width: 50px;
@@ -195,6 +199,13 @@
 .select2-container--bootstrap-5 .select2-results__option {
     padding: 0.4375rem 0.75rem !important;
     font-size: 0.875rem !important;
+}
+
+/* Selected Option Highlight */
+.select2-container--bootstrap-5 .select2-results__option--selected,
+.select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected="true"] {
+    background-color: var(--tblr-primary, #206bc4) !important;
+    color: #ffffff !important;
 }
 
 /* ============================================
