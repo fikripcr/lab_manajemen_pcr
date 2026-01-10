@@ -38,11 +38,13 @@ class ThemeManager {
         };
 
         // Layout Visibility Config (What to HIDE for each layout)
-        // Vertical acts as "Combo" (all visible), so it's not listed here (default shows all)
+        // Shows only relevant color presets per layout type
+        // NOTE: boxed-bg-preset visibility is controlled by container-width, not layout
         this.LAYOUT_config = {
-            'horizontal': ['sidebar-menu-preset', 'boxed-bg-preset', 'header-overlap-preset'],
-            'condensed': ['sidebar-menu-preset', 'header-overlap-preset', 'boxed-bg-preset'],
-            'navbar-overlap': ['sidebar-menu-preset', 'boxed-bg-preset', 'header-fixed']
+            'vertical': ['header-overlap-preset'],
+            'horizontal': ['header-overlap-preset'],
+            'condensed': ['sidebar-menu-preset', 'header-overlap-preset'],
+            'navbar-overlap': ['sidebar-menu-preset', 'body-bg-preset', 'header-fixed']
         };
 
         this.listeners = [];
@@ -66,8 +68,16 @@ class ThemeManager {
     subscribe(callback) { this.listeners.push(callback); }
 
     loadTheme() {
+        // CRITICAL: Apply theme mode FIRST before any other settings
+        // This ensures _isDarkMode() returns correct value for background handling
+        const themeMode = this.getSetting('theme') ?? this.defaults['theme'];
+        this.applySetting('theme', themeMode, false);
+
+        // Then apply all other settings
         Object.keys(this.defaults).forEach(key => {
-            this.applySetting(key, this.getSetting(key) ?? this.defaults[key], false);
+            if (key !== 'theme') { // Skip theme as it's already applied
+                this.applySetting(key, this.getSetting(key) ?? this.defaults[key], false);
+            }
         });
 
         // Initialize Auth Form Position helper if elements exist
@@ -235,7 +245,7 @@ class ThemeManager {
         if (!this.form) return;
 
         this.initPickr();
-        setTimeout(() => this.syncFormWithStorage(), 100);
+        // setTimeout(() => this.syncFormWithStorage(), 100);
         this.bindEvents();
     }
 
@@ -309,6 +319,9 @@ class ThemeManager {
         const layout = this.form.querySelector('select[name="layout"]')?.value;
         if (layout) this.handleLayoutChange(layout);
 
+        const containerWidth = this.form.querySelector('input[name="container-width"]:checked')?.value;
+        if (containerWidth) this.handleContainerWidthChange(containerWidth);
+
         const theme = this.form.querySelector('input[name="theme"]:checked')?.value;
         if (theme) this.handleThemeModeChange(theme);
     }
@@ -320,6 +333,7 @@ class ThemeManager {
 
             this.applySetting(name, value);
             if (name === 'layout') this.handleLayoutChange(value);
+            if (name === 'container-width') this.handleContainerWidthChange(value);
             if (name === 'theme') this.handleThemeModeChange(value);
         });
 
@@ -339,8 +353,8 @@ class ThemeManager {
     }
 
     handleLayoutChange(layout) {
-        // Reset all to visible first
-        const basicElements = ['sidebar-menu-preset', 'header-overlap-preset', 'boxed-bg-preset', 'header-mode-section'];
+        // Reset all to visible first (except boxed-bg which depends on container-width)
+        const basicElements = ['sidebar-menu-preset', 'header-overlap-preset', 'header-mode-section'];
         basicElements.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
 
         // Ensure header mode options are visible
@@ -349,6 +363,14 @@ class ThemeManager {
         // Hide specific elements based on config
         const toHide = this.LAYOUT_config[layout] || [];
         toHide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    }
+
+    handleContainerWidthChange(width) {
+        // Show/hide boxed background preset based on container width
+        const boxedBgPreset = document.getElementById('boxed-bg-preset');
+        if (boxedBgPreset) {
+            boxedBgPreset.style.display = width === 'boxed' ? '' : 'none';
+        }
     }
 
     handleThemeModeChange(theme) {
@@ -398,20 +420,28 @@ class ThemeManager {
         // Backgrounds (only in light mode)
         if (getInput('theme') !== 'dark') {
             ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(f => {
-                append(f, this.form.querySelector(`input[name="${f}"]`)?.value || '');
+                const inputEl = this.form.querySelector(`input[name="${f}"]`);
+                if (inputEl) {
+                    append(f, inputEl.value || '');
+                }
             });
         }
 
         try {
             const res = await window.axios.post('/sys/layout/apply', formData);
             if (res.data.success) {
-                Object.keys(this.defaults).forEach(k => this.removeSetting(k));
-                if (window.Swal) await window.Swal.fire({ icon: 'success', title: 'Saved!', timer: 800, showConfirmButton: false });
-                window.location.reload();
+                // Don't clear localStorage - we need it to persist settings across reloads
+                // The .env values are now the source of truth, but localStorage provides instant preview
+                if (window.Swal) {
+                    loader?.close();
+                    window.Swal.fire({ icon: 'success', title: 'Settings saved!', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+                }
+                setTimeout(() => window.location.reload(), 500);
             }
         } catch (e) {
             console.error(e);
-            if (window.Swal) window.Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to save settings' });
+            if (loader) loader.close();
+            if (window.Swal) window.Swal.fire({ icon: 'error', title: 'Error', text: e.message, toast: true, position: 'top-end', timer: 3000, showConfirmButton: false });
         }
     }
 }
