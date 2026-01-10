@@ -126,12 +126,37 @@ body.layout-boxed .page {
 [data-bs-has-header-overlap-bg] .navbar-overlap::after {
     background-color: var(--tblr-header-overlap-bg) !important;
     background-image: none !important;
+    /* Keep z-index: -1 as per Tabler design - it should be behind navbar content */
+    z-index: -1 !important;
+    /* Extend height to create proper overlap effect */
+    height: 10rem !important;
 }
 
-/* Remove the default navbar bottom border/shadow in overlap mode to prevent the "black line" */
+/* Fix stacking context for navbar-overlap */
 .navbar-overlap {
     box-shadow: none !important;
     border-bottom: none !important;
+    position: relative;
+}
+
+/* Fix for boxed layout:
+   1. Create stacking context on .page so negative z-index children sit ABOVE .page background
+   2. Remove backgrounds from wrapper/body so overlap is visible through them
+*/
+.layout-boxed .page {
+    /* Restore background using body-bg variable (so presets work), fallback to surface */
+    background-color: var(--tblr-body-bg, var(--tblr-bg-surface, #fff)) !important;
+    /* Create stacking context */
+    position: relative;
+    z-index: 0;
+}
+
+.layout-boxed .page-wrapper {
+    background-color: transparent !important;
+}
+
+.layout-boxed .page-body {
+    background-color: transparent !important;
 }
 
 /* Default Tabler Overlap fallback is handled by Tabler core (inherit) */
