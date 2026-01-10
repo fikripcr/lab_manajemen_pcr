@@ -237,7 +237,6 @@ class AppConfigController extends Controller
             }
 
             file_put_contents($envPath, $envContent);
-            Artisan::call('config:clear');
 
             logActivity('config', 'Theme & Layout settings updated', auth()->user() ?? null);
 
