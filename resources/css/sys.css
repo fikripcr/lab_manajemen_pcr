@@ -73,6 +73,26 @@ div.dt-processing>div:last-child>div {
     color: var(--tblr-muted, #6c757d) !important;
 }
 
+/* --- Auto-Contrast Sidebar Text Override --- */
+/* Applies when a custom sidebar background is set via Theme Settings */
+:root[data-bs-has-sidebar-bg] .navbar-vertical .navbar-brand,
+:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link,
+:root[data-bs-has-sidebar-bg] .navbar-vertical .dropdown-toggle,
+:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link-icon,
+/* Include Submenus */
+:root[data-bs-has-sidebar-bg] .navbar-vertical .dropdown-menu .dropdown-item {
+    color: var(--tblr-sidebar-text) !important;
+}
+
+:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link-title,
+:root[data-bs-has-sidebar-bg] .navbar-vertical .dropdown-menu .dropdown-item-icon {
+    color: var(--tblr-sidebar-text-muted) !important;
+}
+
+:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link-title {
+    color: var(--tblr-sidebar-text-muted) !important;
+}
+
 /* --- Boxed Layout Background --- */
 body.layout-boxed {
     background-color: var(--tblr-boxed-bg, #e2e8f0);
@@ -120,6 +140,34 @@ body.layout-boxed .page {
 [data-bs-has-header-top-bg] .navbar {
     background-color: var(--tblr-header-top-bg) !important;
     background-image: none !important;
+}
+
+/* --- Auto-Contrast Header Top Text --- */
+[data-bs-has-header-top-bg] .navbar .nav-link,
+[data-bs-has-header-top-bg] .navbar .navbar-brand,
+[data-bs-has-header-top-bg] .navbar .btn,
+[data-bs-has-header-top-bg] .navbar .nav-item {
+    color: var(--tblr-header-top-text) !important;
+}
+
+[data-bs-has-header-top-bg] .navbar .text-secondary,
+[data-bs-has-header-top-bg] .navbar .text-muted {
+    color: var(--tblr-header-top-text-muted) !important;
+}
+
+/* --- Auto-Contrast Page Header Text --- */
+/* Applies when a custom body background is set via Theme Settings */
+:root[data-bs-has-theme-bg] .page-header .page-title,
+:root[data-bs-has-theme-bg] .page-header .page-pretitle,
+:root[data-bs-has-theme-bg] .breadcrumb-item,
+:root[data-bs-has-theme-bg] .breadcrumb-item a,
+:root[data-bs-has-theme-bg] .breadcrumb-item.active {
+    color: var(--tblr-body-text) !important;
+}
+
+:root[data-bs-has-theme-bg] .breadcrumb-item+.breadcrumb-item::before {
+    color: var(--tblr-body-text) !important;
+    opacity: 0.7;
 }
 
 /* Apply custom overlap background color when set via Theme Settings */

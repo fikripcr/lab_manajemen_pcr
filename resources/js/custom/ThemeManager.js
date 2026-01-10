@@ -9,7 +9,7 @@ class ThemeManager {
 
         // Configuration map for CSS vars and data attributes
         this.themeMap = {
-            'theme-bg': { var: '--tblr-body-bg' },
+            'theme-bg': { var: '--tblr-body-bg', attr: 'data-bs-has-theme-bg' },
             'theme-sidebar-bg': { var: '--tblr-sidebar-bg', attr: 'data-bs-has-sidebar-bg' },
             'theme-header-top-bg': { var: '--tblr-header-top-bg', attr: 'data-bs-has-header-top-bg' },
             'theme-header-overlap-bg': { var: '--tblr-header-overlap-bg', attr: 'data-bs-has-header-overlap-bg' },
@@ -149,11 +149,15 @@ class ThemeManager {
         // Remove CSS custom properties
         root.style.removeProperty('--tblr-body-bg');
         root.style.removeProperty('--tblr-sidebar-bg');
+        root.style.removeProperty('--tblr-sidebar-text'); // Remove contrast override
         root.style.removeProperty('--tblr-header-top-bg');
+        root.style.removeProperty('--tblr-header-top-text'); // Remove contrast override
         root.style.removeProperty('--tblr-header-overlap-bg');
         root.style.removeProperty('--tblr-boxed-bg');
+        root.style.removeProperty('--tblr-body-text');
 
         // Remove data attributes
+        root.removeAttribute('data-bs-has-theme-bg');
         root.removeAttribute('data-bs-has-sidebar-bg');
         root.removeAttribute('data-bs-has-header-top-bg');
         root.removeAttribute('data-bs-has-header-overlap-bg');
@@ -179,8 +183,30 @@ class ThemeManager {
                 this._applyRadius(root, rule.var, value);
             } else if (value) {
                 root.style.setProperty(rule.var, value);
+
+                // Auto-Contrast: Update text color if sidebar background changes
+                if (name === 'theme-sidebar-bg') {
+                    this._updateSidebarContrast(root, value);
+                }
+                // Auto-Contrast: Update text color if header top background changes
+                if (name === 'theme-header-top-bg') {
+                    this._updateHeaderTopContrast(root, value);
+                }
+                // Auto-Contrast: Update text color if body background changes
+                if (name === 'theme-bg') {
+                    this._updateBodyContrast(root, value);
+                }
             } else {
                 root.style.removeProperty(rule.var);
+                if (name === 'theme-sidebar-bg') {
+                    root.style.removeProperty('--tblr-sidebar-text');
+                }
+                if (name === 'theme-header-top-bg') {
+                    root.style.removeProperty('--tblr-header-top-text');
+                }
+                if (name === 'theme-bg') {
+                    root.style.removeProperty('--tblr-body-text');
+                }
             }
         }
     }
@@ -234,6 +260,35 @@ class ThemeManager {
             this.formColumn.style.order = '';
             this.mediaColumn.style.order = '';
         }
+    }
+
+    // Calculate luminance to determine if background is dark or light
+    _getLuminance(color) {
+        const rgb = color.match(/\d+/g);
+        if (!rgb) return 1; // Default to light if invalid
+        const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+        // Relative luminance formula (per W3C)
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    }
+
+    _updateSidebarContrast(root, color) {
+        // Threshold: < 0.5 is dark -> white text, >= 0.5 is light -> dark text
+        const isDark = this._getLuminance(color) < 0.6; // Slightly higher threshold for better readability
+        root.style.setProperty('--tblr-sidebar-text', isDark ? '#ffffff' : '#1e293b');
+        // We can also adjust muted text if needed
+        root.style.setProperty('--tblr-sidebar-text-muted', isDark ? 'rgba(255, 255, 255, 0.7)' : '#6c757d');
+    }
+
+    _updateHeaderTopContrast(root, color) {
+        const isDark = this._getLuminance(color) < 0.6;
+        root.style.setProperty('--tblr-header-top-text', isDark ? '#ffffff' : '#1e293b');
+        root.style.setProperty('--tblr-header-top-text-muted', isDark ? 'rgba(255, 255, 255, 0.7)' : '#6c757d');
+    }
+
+    _updateBodyContrast(root, color) {
+        const isDark = this._getLuminance(color) < 0.6;
+        root.style.setProperty('--tblr-body-text', isDark ? '#ffffff' : '#1e293b');
+        // Optional: muted text for body if needed, currently focusing on headers
     }
 
     // ==========================================
