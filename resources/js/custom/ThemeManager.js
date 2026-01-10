@@ -98,27 +98,55 @@ class ThemeManager {
     applySetting(name, value, save = true) {
         const root = document.documentElement;
 
-        // 1. Handle Dark Mode Backgrounds (Skip custom BGs in dark mode)
+        // 1. Handle Theme Mode Changes (Clear custom BGs when switching to dark)
+        if (name === 'theme') {
+            root.setAttribute('data-bs-theme', value);
+
+            // Immediately clear custom background colors when switching to dark mode
+            if (value === 'dark') {
+                this._clearCustomBackgrounds(root);
+            }
+
+            if (save) this.saveSetting(name, value);
+            this.listeners.forEach(cb => cb(name, value));
+            return;
+        }
+
+        // 2. Handle Dark Mode Backgrounds (Skip custom BGs in dark mode)
         if (this._isDarkMode() && ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].includes(name)) {
             if (save) this.saveSetting(name, value);
             return;
         }
 
-        // 2. Handle Mapped Settings (CSS Vars / Data Attrs)
+        // 3. Handle Mapped Settings (CSS Vars / Data Attrs)
         if (this.themeMap[name]) {
             this._applyMappedSetting(root, name, value);
         }
-        // 3. Handle Standard Attributes
-        else if (['theme', 'theme-font', 'theme-base'].includes(name)) {
+        // 4. Handle Standard Attributes
+        else if (['theme-font', 'theme-base'].includes(name)) {
             root.setAttribute('data-bs-' + name, value);
         }
-        // 4. Handle Special Cases
+        // 5. Handle Special Cases
         else {
             this._applySpecialCases(name, value);
         }
 
         if (save) this.saveSetting(name, value);
         this.listeners.forEach(cb => cb(name, value));
+    }
+
+    _clearCustomBackgrounds(root) {
+        // Remove CSS custom properties
+        root.style.removeProperty('--tblr-body-bg');
+        root.style.removeProperty('--tblr-sidebar-bg');
+        root.style.removeProperty('--tblr-header-top-bg');
+        root.style.removeProperty('--tblr-header-overlap-bg');
+        root.style.removeProperty('--tblr-boxed-bg');
+
+        // Remove data attributes
+        root.removeAttribute('data-bs-has-sidebar-bg');
+        root.removeAttribute('data-bs-has-header-top-bg');
+        root.removeAttribute('data-bs-has-header-overlap-bg');
     }
 
     _isDarkMode() {
@@ -336,13 +364,18 @@ class ThemeManager {
                 if (val) sessionStorage.setItem(`saved_${key}`, val);
             });
         } else {
-            // Restore (Light mode) and re-check layout visibility
+            // Restore (Light mode) and immediately re-apply custom backgrounds
             ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
                 const saved = sessionStorage.getItem(`saved_${key}`);
                 const input = this.form.querySelector(`input[name="${key}"]`);
-                const val = saved || (input ? input.value : '');
-                if (val) this.applySetting(key, val);
+                const val = saved || (input ? input.value : '') || this.getSetting(key);
+
+                // Re-apply immediately (not just save)
+                if (val) {
+                    this.applySetting(key, val, false);
+                }
             });
+
             const layout = this.form.querySelector('select[name="layout"]')?.value;
             if (layout) this.handleLayoutChange(layout);
         }
