@@ -10,4 +10,4 @@
 @import 'sweetalert2/dist/sweetalert2.min.css';
 
 /* Select2 Tabler Integration */
-@import './custom/select2-tabler.css';
+@import './custom/tabler-select2.css';

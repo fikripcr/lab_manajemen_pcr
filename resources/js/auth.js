@@ -18,12 +18,12 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Theme Management System ---
-import ThemeManager from './custom/ThemeManager.js';
+import TablerThemeManager from './custom/TablerThemeManager.js';
 
 // --- Auth Specific Logic ---
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Theme Manager
-    const themeManager = new ThemeManager('auth');
+    const themeManager = new TablerThemeManager('auth');
     themeManager.loadTheme();
     themeManager.initSettingsPanel();
 });

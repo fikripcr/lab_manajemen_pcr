@@ -21,11 +21,10 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Shared Components ---
+import TablerThemeManager from './custom/TablerThemeManager.js';
 import './custom/CustomSweetAlerts.js';
-import './custom/FormHandlerAjax.js';
-
-import ThemeManager from './custom/ThemeManager.js';
 import './custom/Notification.js';
+import './custom/FormHandlerAjax.js';
 
 window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
@@ -153,7 +152,7 @@ window.initToastEditor = function (selector, config = {}) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    const themeManager = new ThemeManager('sys');
+    const themeManager = new TablerThemeManager('sys');
     themeManager.loadTheme();
     themeManager.initSettingsPanel();
 

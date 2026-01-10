@@ -2,7 +2,7 @@
  * ThemeManager - Core Theme System
  * Manages Tabler theme settings and the Settings Panel UI (shared between sys & auth sections)
  */
-class ThemeManager {
+class TablerThemeManager {
     constructor(mode = 'sys') {
         this.mode = mode; // 'sys' or 'auth'
         this.prefix = 'tabler-';
@@ -327,7 +327,7 @@ class ThemeManager {
 
             const pickr = window.Pickr.create({
                 el, theme: 'nano', default: initialVal,
-                swatches: ['#f4f6fa', '#ffffff', '#206bc4', '#a55eea', '#d63939', '#fd7e14', '#2fb344'],
+                swatches: ['#f4f6fa', '#ffffff', '#206bc4', '#d63939', '#fd7e14', '#2fb344', '#1f2937'],
                 components: { preview: true, opacity: true, hue: true, interaction: { hex: true, rgba: true, input: true, save: false } }
             });
 
@@ -501,4 +501,4 @@ class ThemeManager {
     }
 }
 
-export default ThemeManager;
+export default TablerThemeManager;

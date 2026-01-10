@@ -1,11 +1,12 @@
 /* 
  * Sys Section - Tabler UI Theme
  * This CSS entry point is for the System Management section only.
+ * Optimized & Import-Based Structure
  */
 
-/* Inter Font (Tabler's default sans-serif) */
-/* Optimized: Removed external import to prevent loading loops. Using system fonts/local fallback. */
-/* @import url('https://rsms.me/inter/inter.css'); */
+/* ==========================================================================
+   1. CORE IMPORTS & SETUP
+   ========================================================================== */
 
 /* Tabler Core CSS */
 @import '@tabler/core/dist/css/tabler.min.css';
@@ -20,203 +21,16 @@
 /* Tabler Icons Webfont */
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
-
-
-/* Shared Theme Customization (fonts, card styles, etc.) */
-@import './custom/theme-customization.css';
-
 /* Select2 Tabler Integration */
-@import './custom/select2-tabler.css';
+@import './custom/tabler-select2.css';
 
 
-/* Override DataTable Processing Indicator to match Theme Primary */
-div.dt-processing>div:last-child>div {
-    position: absolute;
-    top: 0;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: var(--tblr-primary) !important;
-    animation-timing-function: cubic-bezier(0, 1, 1, 0)
-}
-
-
-/* --- Sidebar Background Override --- */
-/* Forces the sidebar to use the custom variable if the attribute is present on the root */
-:root[data-bs-has-sidebar-bg] .navbar-vertical {
-    background-color: var(--tblr-sidebar-bg) !important;
-    box-shadow: none !important;
-    /* Removes the default right border/shadow line */
-}
-
-/* --- Header Top Background Override --- */
-/* (Moved to consolidated logic below) */
-
-/* --- Header Menu Background Override (Linked to Sidebar) --- */
-/* Reuse sidebar configuration for the menu bar */
-:root[data-bs-has-sidebar-bg] header.navbar-expand-md .navbar {
-    background-color: var(--tblr-sidebar-bg) !important;
-}
-
-/* --- Sidebar Text Color for Light Theme --- */
-/* When theme is light, ensure sidebar text is dark/readable */
-[data-bs-theme="light"] .navbar-vertical .nav-link {
-    color: var(--tblr-dark, #1e293b) !important;
-}
-
-[data-bs-theme="light"] .navbar-vertical .nav-link:hover,
-[data-bs-theme="light"] .navbar-vertical .nav-link.active {
-    color: var(--tblr-primary, #206bc4) !important;
-}
-
-[data-bs-theme="light"] .navbar-vertical .nav-link-title {
-    color: var(--tblr-muted, #6c757d) !important;
-}
-
-/* --- Auto-Contrast Sidebar Text Override --- */
-/* Applies when a custom sidebar background is set via Theme Settings */
-:root[data-bs-has-sidebar-bg] .navbar-vertical .navbar-brand,
-:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link,
-:root[data-bs-has-sidebar-bg] .navbar-vertical .dropdown-toggle,
-:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link-icon,
-/* Include Submenus */
-:root[data-bs-has-sidebar-bg] .navbar-vertical .dropdown-menu .dropdown-item {
-    color: var(--tblr-sidebar-text) !important;
-}
-
-:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link-title,
-:root[data-bs-has-sidebar-bg] .navbar-vertical .dropdown-menu .dropdown-item-icon {
-    color: var(--tblr-sidebar-text-muted) !important;
-}
-
-:root[data-bs-has-sidebar-bg] .navbar-vertical .nav-link-title {
-    color: var(--tblr-sidebar-text-muted) !important;
-}
-
-/* --- Boxed Layout Background --- */
-body.layout-boxed {
-    background-color: var(--tblr-boxed-bg, #e2e8f0);
-}
-
-body.layout-boxed .page {
-    background-color: var(--tblr-body-bg, #ffffff);
-    max-width: 1320px;
-    margin: 0 auto 2rem auto;
-    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.1);
-    position: relative;
-    /* Ensure absolute children are contained */
-    /* min-height: 100vh; */
-}
-
-/* Fix Sidebar in Boxed Layout */
-@media (min-width: 992px) {
-    body.layout-boxed .navbar-vertical {
-        position: absolute !important;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        height: auto;
-        /* Allow it to stretch */
-        z-index: 1030;
-    }
-}
-
-/* --- Container Width: Fluid --- */
-[data-container-width="fluid"] .container-xl,
-[data-container-width="fluid"] .container {
-    max-width: 100% !important;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-
-/* --- Navbar Brand Fix --- */
-.navbar-brand-image {
-    height: 2rem;
-    width: auto;
-}
-
-/* --- Header Top Background Logic --- */
-/* Apply custom header color when set via Theme Settings */
-[data-bs-has-header-top-bg] .navbar {
-    background-color: var(--tblr-header-top-bg) !important;
-    background-image: none !important;
-}
-
-/* --- Auto-Contrast Header Top Text --- */
-[data-bs-has-header-top-bg] .navbar .nav-link,
-[data-bs-has-header-top-bg] .navbar .navbar-brand,
-[data-bs-has-header-top-bg] .navbar .btn,
-[data-bs-has-header-top-bg] .navbar .nav-item {
-    color: var(--tblr-header-top-text) !important;
-}
-
-[data-bs-has-header-top-bg] .navbar .text-secondary,
-[data-bs-has-header-top-bg] .navbar .text-muted {
-    color: var(--tblr-header-top-text-muted) !important;
-}
-
-/* --- Auto-Contrast Page Header Text --- */
-/* Applies when a custom body background is set via Theme Settings */
-:root[data-bs-has-theme-bg] .page-header .page-title,
-:root[data-bs-has-theme-bg] .page-header .page-pretitle,
-:root[data-bs-has-theme-bg] .breadcrumb-item,
-:root[data-bs-has-theme-bg] .breadcrumb-item a,
-:root[data-bs-has-theme-bg] .breadcrumb-item.active {
-    color: var(--tblr-body-text) !important;
-}
-
-:root[data-bs-has-theme-bg] .breadcrumb-item+.breadcrumb-item::before {
-    color: var(--tblr-body-text) !important;
-    opacity: 0.7;
-}
-
-/* Apply custom overlap background color when set via Theme Settings */
-[data-bs-has-header-overlap-bg] .navbar-overlap::after {
-    background-color: var(--tblr-header-overlap-bg) !important;
-    background-image: none !important;
-    /* Keep z-index: -1 as per Tabler design - it should be behind navbar content */
-    z-index: -1 !important;
-    /* Extend height to create proper overlap effect */
-    height: 10rem !important;
-}
-
-/* Fix stacking context for navbar-overlap */
-.navbar-overlap {
-    box-shadow: none !important;
-    border-bottom: none !important;
-    position: relative;
-}
-
-/* Fix for boxed layout:
-   1. Create stacking context on .page so negative z-index children sit ABOVE .page background
-   2. Remove backgrounds from wrapper/body so overlap is visible through them
+/* ==========================================================================
+   2. CUSTOM THEME LOGIC
+   ========================================================================== */
+/* Contains:
+   - Base Customizations (Fonts, Cards)
+   - Layout Systems (Boxed, Overlap)
+   - Auto-Contrast System (Sidebar, Header, Body)
 */
-.layout-boxed .page {
-    /* Restore background using body-bg variable (so presets work), fallback to surface */
-    background-color: var(--tblr-body-bg, var(--tblr-bg-surface, #fff)) !important;
-    /* Create stacking context */
-    position: relative;
-    z-index: 0;
-}
-
-.layout-boxed .page-wrapper {
-    background-color: transparent !important;
-}
-
-.layout-boxed .page-body {
-    background-color: transparent !important;
-}
-
-/* Default Tabler Overlap fallback is handled by Tabler core (inherit) */
-
-/* Specific Overrides for Sticky Header in Overlap Mode */
-/* Default: Dark Sticky Header */
-body.layout-navbar-overlap header.navbar.sticky-top {
-    background-color: var(--tblr-bg-surface-dark);
-}
-
-/* Custom Color: Sticky Header matches Theme Top Color */
-body.layout-navbar-overlap[data-bs-has-header-top-bg] header.navbar.sticky-top {
-    background-color: var(--tblr-header-top-bg) !important;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
+@import './custom/tabler-themes.css';
