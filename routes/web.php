@@ -8,6 +8,9 @@ require __DIR__ . '/guest.php';
 
 require __DIR__ . '/admin.php';
 
+// 🔹 Theme API (public, no auth required)
+Route::post('/theme/save', [App\Http\Controllers\Sys\ThemeTablerController::class, 'save'])->name('theme.save');
+
 require __DIR__ . '/sys.php';
 
 // 🔹 Route Auth bawaan Laravel Breeze / Jetstream

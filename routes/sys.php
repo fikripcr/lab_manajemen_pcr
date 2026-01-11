@@ -14,8 +14,6 @@ use App\Http\Controllers\Sys\TestController;
 use Illuminate\Support\Facades\Route;
 
 // 🔹 Public System Routes (Accessible by Guest)
-// Theme Settings Apply (Must be public to work on Login page)
-Route::post('/sys/layout/apply', [AppConfigController::class, 'applyThemeSettings'])->name('sys.layout.apply');
 
 Route::middleware(['auth', 'check.expired'])->group(function () {
     // ==========================

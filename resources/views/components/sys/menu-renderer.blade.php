@@ -11,7 +11,7 @@
             'type'  => 'item',
             'title' => 'Dashboard',
             'route' => 'sys.dashboard',
-            'icon'  => 'ti ti-home',
+            'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>',
         ],
         [
             'type'  => 'header',
@@ -21,7 +21,7 @@
             'type'          => 'dropdown',
             'title'         => 'Access Control',
             'id'            => 'navbar-access',
-            'icon'          => 'ti ti-shield-lock',
+            'icon'          => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /><path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12 12l0 2.5" /></svg>',
             'active_routes' => ['sys.roles.*', 'sys.permissions.*'],
             'children'      => [
                 [
@@ -44,7 +44,7 @@
             'type'          => 'dropdown',
             'title'         => 'System Log',
             'id'            => 'navbar-syslog',
-            'icon'          => 'ti ti-file-analytics',
+            'icon'          => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 17l0 -5" /><path d="M12 17l0 -1" /><path d="M15 17l0 -3" /></svg>',
             'active_routes' => ['notifications.*', 'activity-log.*', 'sys.error-log.*'],
             'children'      => [
                 [
@@ -72,7 +72,7 @@
             'type'          => 'dropdown',
             'title'         => 'Others',
             'id'            => 'navbar-others',
-            'icon'          => 'ti ti-dots-circle-horizontal',
+            'icon'          => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M8 12l.01 0" /><path d="M12 12l.01 0" /><path d="M16 12l.01 0" /></svg>',
             'active_routes' => ['app-config', 'sys.test.*', 'sys.backup.*', 'sys.documentation.*'],
             'children'      => [
                 [
@@ -105,12 +105,12 @@
         [
             'type' => 'dropdown',
             'title' => 'Level 1',
-            'icon' => 'ti ti-folder',
+            'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" /></svg>',
             'id' => 'navbar-level1',
             'children' => [
                  [
                     'title' => 'Level 2 Item',
-                    'icon' => 'ti ti-file',
+                    'icon' => 'ti ti-file', // Keep webfont for dummy deeper items for now
                     'route' => 'sys.dashboard', // Dummy route
                  ],
                  [
