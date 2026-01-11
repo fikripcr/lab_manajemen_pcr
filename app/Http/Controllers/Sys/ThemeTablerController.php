@@ -1,0 +1,399 @@
+<?php
+namespace App\Http\Controllers\Sys;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class ThemeTablerController extends Controller
+{
+    /**
+     * Get theme configuration data for a specific mode
+     */
+    public function getThemeData(string $mode = 'sys'): array
+    {
+        $config = $this->loadConfig($mode);
+
+        // Return formatted data for Blade views
+        return [
+            'theme'                => $config['theme'] ?? 'light',
+            'themePrimary'         => $config['primary_color'] ?? '#206bc4',
+            'themeFont'            => $config['font_family'] ?? 'inter',
+            'themeBase'            => $config['base'] ?? 'gray',
+            'themeRadius'          => $config['radius'] ?? '1',
+            'themeBg'              => $config['bg_body'] ?? '',
+            'themeSidebarBg'       => $config['bg_sidebar'] ?? '',
+            'themeHeaderTopBg'     => $config['bg_header_top'] ?? '',
+            'themeHeaderOverlapBg' => $config['bg_header_overlap'] ?? '',
+            'themeHeaderSticky'    => $config['header_sticky'] ?? 'false',
+            'themeCardStyle'       => $config['card_style'] ?? 'flat',
+            'themeBoxedBg'         => $config['bg_boxed'] ?? '',
+            'layout'               => $config['layout'] ?? 'vertical',
+            'containerWidth'       => $config['container_width'] ?? 'standard',
+            'authLayout'           => $config['auth_layout'] ?? 'basic',
+            'authFormPosition'     => $config['auth_form_position'] ?? 'left',
+        ];
+    }
+
+    /**
+     * Save theme settings (AJAX endpoint)
+     */
+    public function save(Request $request): JsonResponse
+    {
+        $mode = $request->input('mode', 'sys');
+
+        $validated = $request->validate([
+            'mode'                    => 'required|in:sys,auth',
+            'theme'                   => 'nullable|in:light,dark',
+            'theme-primary'           => 'nullable|string',
+            'theme-font'              => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
+            'theme-base'              => 'nullable|in:slate,gray,zinc,neutral,stone',
+            'theme-radius'            => 'nullable|in:0,0.25,0.5,0.75,1',
+            'theme-bg'                => 'nullable|string',
+            'theme-sidebar-bg'        => 'nullable|string',
+            'theme-header-top-bg'     => 'nullable|string',
+            'theme-header-overlap-bg' => 'nullable|string',
+            'theme-header-sticky'     => 'nullable|in:true,false,hidden',
+            'theme-card-style'        => 'nullable|in:flat,shadow,border,modern',
+            'theme-boxed-bg'          => 'nullable|string',
+            'layout'                  => 'nullable|in:vertical,horizontal,condensed,navbar-overlap',
+            'container-width'         => 'nullable|in:standard,fluid,boxed',
+            'auth-layout'             => 'nullable|in:basic,cover,illustration',
+            'auth-form-position'      => 'nullable|in:left,right',
+        ]);
+
+        // Remove mode from data
+        unset($validated['mode']);
+
+        // Map dashed keys to internal config keys
+        $configData = $this->mapToConfigKeys($validated);
+
+        // Load existing config and merge
+        $existingConfig = $this->loadConfig($mode);
+        $mergedConfig   = array_merge($existingConfig, $configData);
+
+        // Save to JSON
+        $this->saveConfig($mode, $mergedConfig);
+
+        // Log activity
+        logActivity('config', "Theme settings updated for {$mode} mode (JSON)", auth()->user() ?? null);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Theme settings saved successfully!',
+        ]);
+    }
+
+    /**
+     * Generate inline CSS style block for theme customization
+     */
+    public function getStyleBlock(string $mode = 'sys'): string
+    {
+        $config = $this->loadConfig($mode);
+        $css    = [];
+
+        // Primary Color
+        if (! empty($config['primary_color'])) {
+            $primaryRgb = $this->hexToRgb($config['primary_color']);
+            $css[]      = "--tblr-primary: {$config['primary_color']};";
+            $css[]      = "--tblr-primary-rgb: {$primaryRgb};";
+        }
+
+        // Font Family
+        if (! empty($config['font_family'])) {
+            $fontStack = $this->getFontStack($config['font_family']);
+            $css[]     = "--tblr-font-sans-serif: {$fontStack};";
+        }
+
+        // Border Radius
+        if (isset($config['radius'])) {
+            $radius = (float) $config['radius'];
+            $css[]  = "--tblr-border-radius: {$radius}rem;";
+            $css[]  = "--tblr-border-radius-sm: " . ($radius * 0.75) . "rem;";
+            $css[]  = "--tblr-border-radius-lg: " . ($radius * 1.25) . "rem;";
+            $css[]  = "--tblr-border-radius-pill: 100rem;";
+        }
+
+        // Background Colors (only if not empty)
+        if (! empty($config['bg_body'])) {
+            $css[]     = "--tblr-body-bg: {$config['bg_body']};";
+            $textColor = $this->getContrastColor($config['bg_body']);
+            $css[]     = "--tblr-body-text: {$textColor};";
+        }
+
+        if (! empty($config['bg_sidebar'])) {
+            $css[]      = "--tblr-sidebar-bg: {$config['bg_sidebar']};";
+            $textColor  = $this->getContrastColor($config['bg_sidebar']);
+            $css[]      = "--tblr-sidebar-text: {$textColor};";
+            $mutedColor = $this->getLuminance($config['bg_sidebar']) < 0.6
+                ? 'rgba(255, 255, 255, 0.7)'
+                : '#6c757d';
+            $css[] = "--tblr-sidebar-text-muted: {$mutedColor};";
+        }
+
+        if (! empty($config['bg_header_top'])) {
+            $css[]     = "--tblr-header-top-bg: {$config['bg_header_top']};";
+            $textColor = $this->getContrastColor($config['bg_header_top']);
+            $css[]     = "--tblr-header-top-text: {$textColor};";
+        }
+
+        if (! empty($config['bg_header_overlap'])) {
+            $css[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
+        }
+
+        if (! empty($config['bg_boxed'])) {
+            $css[] = "--tblr-boxed-bg: {$config['bg_boxed']};";
+        }
+
+        if (empty($css)) {
+            return '';
+        }
+
+        $cssString = implode("\n    ", $css);
+        return "<style>\n:root {\n    {$cssString}\n}\n</style>";
+    }
+
+    /**
+     * Generate HTML attributes for <html> tag
+     */
+    public function getHtmlAttributes(string $mode = 'sys'): string
+    {
+        $config     = $this->loadConfig($mode);
+        $attributes = [];
+
+        // Theme mode (light/dark)
+        $theme        = $config['theme'] ?? 'light';
+        $attributes[] = "data-bs-theme=\"{$theme}\"";
+
+        // Font family
+        if (! empty($config['font_family'])) {
+            $attributes[] = "data-bs-theme-font=\"{$config['font_family']}\"";
+        }
+
+        // Theme base
+        if (! empty($config['base'])) {
+            $attributes[] = "data-bs-theme-base=\"{$config['base']}\"";
+        }
+
+        // Card style
+        if (! empty($config['card_style']) && $config['card_style'] !== 'flat') {
+            $attributes[] = "data-bs-card-style=\"{$config['card_style']}\"";
+        }
+
+        // Background indicators
+        if (! empty($config['bg_body'])) {
+            $attributes[] = 'data-bs-has-theme-bg';
+        }
+        if (! empty($config['bg_sidebar'])) {
+            $attributes[] = 'data-bs-has-sidebar-bg';
+        }
+        if (! empty($config['bg_header_top'])) {
+            $attributes[] = 'data-bs-has-header-top-bg';
+        }
+        if (! empty($config['bg_header_overlap'])) {
+            $attributes[] = 'data-bs-has-header-overlap-bg';
+        }
+
+        return implode(' ', $attributes);
+    }
+
+    /**
+     * Generate body classes and attributes
+     */
+    public function getBodyAttributes(string $mode = 'sys'): string
+    {
+        $config     = $this->loadConfig($mode);
+        $attributes = [];
+
+        // Container width
+        if (! empty($config['container_width'])) {
+            $attributes[] = "data-container-width=\"{$config['container_width']}\"";
+        }
+
+        // Layout classes
+        $layout  = $config['layout'] ?? 'vertical';
+        $classes = ["layout-{$layout}"];
+
+        if ($layout === 'horizontal') {
+            $classes[] = 'layout-horizontal';
+        } elseif ($layout === 'navbar-overlap') {
+            $classes[] = 'layout-navbar-overlap';
+        }
+
+        // Boxed layout
+        if (($config['container_width'] ?? '') === '​boxed') {
+            $classes[] = 'layout-boxed';
+        }
+
+        if (! empty($classes)) {
+            $attributes[] = 'class="' . implode(' ', $classes) . '"';
+        }
+
+        return implode(' ', $attributes);
+    }
+
+    /**
+     * Load config from JSON file
+     */
+    private function loadConfig(string $mode): array
+    {
+        $filename = "theme-{$mode}.json";
+
+        if (Storage::exists($filename)) {
+            try {
+                $content = Storage::get($filename);
+                $config  = json_decode($content, true);
+                if (is_array($config)) {
+                    return array_merge($this->getDefaultConfig(), $config);
+                }
+            } catch (\Exception $e) {
+                // Log error and return defaults
+                \Log::warning("Failed to load theme config for {$mode}: " . $e->getMessage());
+            }
+        }
+
+        // Return defaults and create file
+        $defaults = $this->getDefaultConfig();
+        $this->saveConfig($mode, $defaults);
+        return $defaults;
+    }
+
+    /**
+     * Save config to JSON file
+     */
+    private function saveConfig(string $mode, array $data): void
+    {
+        $filename = "theme-{$mode}.json";
+
+        // Remove null values
+        $data = array_filter($data, fn($value) => $value !== null);
+
+        Storage::put($filename, json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    /**
+     * Get default configuration
+     */
+    private function getDefaultConfig(): array
+    {
+        return [
+            'theme'              => 'light',
+            'layout'             => 'vertical',
+            'container_width'    => 'standard',
+            'header_sticky'      => 'false',
+            'card_style'         => 'flat',
+            'primary_color'      => '#206bc4',
+            'font_family'        => 'inter',
+            'base'               => 'gray',
+            'radius'             => '1',
+            'bg_body'            => '',
+            'bg_sidebar'         => '',
+            'bg_header_top'      => '',
+            'bg_header_overlap'  => '',
+            'bg_boxed'           => '',
+            'auth_layout'        => 'basic',
+            'auth_form_position' => 'left',
+        ];
+    }
+
+    /**
+     * Map form keys to config keys
+     */
+    private function mapToConfigKeys(array $data): array
+    {
+        $map = [
+            'theme'                   => 'theme',
+            'theme-font'              => 'font_family',
+            'theme-base'              => 'base',
+            'theme-radius'            => 'radius',
+            'theme-primary'           => 'primary_color',
+            'theme-card-style'        => 'card_style',
+            'container-width'         => 'container_width',
+            'theme-header-sticky'     => 'header_sticky',
+            'theme-bg'                => 'bg_body',
+            'theme-sidebar-bg'        => 'bg_sidebar',
+            'theme-header-top-bg'     => 'bg_header_top',
+            'theme-header-overlap-bg' => 'bg_header_overlap',
+            'theme-boxed-bg'          => 'bg_boxed',
+            'layout'                  => 'layout',
+            'auth-layout'             => 'auth_layout',
+            'auth-form-position'      => 'auth_form_position',
+        ];
+
+        $result = [];
+        foreach ($data as $key => $value) {
+            $configKey          = $map[$key] ?? $key;
+            $result[$configKey] = $value;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get font stack for a font family
+     */
+    private function getFontStack(string $font): string
+    {
+        $stacks = [
+            'inter'       => "'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'roboto'      => "'Roboto', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Helvetica Neue, sans-serif",
+            'poppins'     => "'Poppins', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'public-sans' => "'Public Sans', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'nunito'      => "'Nunito', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+        ];
+
+        return $stacks[$font] ?? $stacks['inter'];
+    }
+
+    /**
+     * Convert hex color to RGB string
+     */
+    private function hexToRgb(string $hex): string
+    {
+        $hex = ltrim($hex, '#');
+
+        if (strlen($hex) === 3) {
+            $r = hexdec(str_repeat($hex[0], 2));
+            $g = hexdec(str_repeat($hex[1], 2));
+            $b = hexdec(str_repeat($hex[2], 2));
+        } else {
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
+        }
+
+        return "{$r}, {$g}, {$b}";
+    }
+
+    /**
+     * Calculate luminance of a color
+     */
+    private function getLuminance(string $color): float
+    {
+        $hex = ltrim($color, '#');
+
+        if (strlen($hex) === 3) {
+            $r = hexdec(str_repeat($hex[0], 2));
+            $g = hexdec(str_repeat($hex[1], 2));
+            $b = hexdec(str_repeat($hex[2], 2));
+        } elseif (strlen($hex) === 6) {
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
+        } else {
+            return 1;
+        }
+
+        return (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+    }
+
+    /**
+     * Get contrasting text color for a background
+     */
+    private function getContrastColor(string $bgColor): string
+    {
+        $luminance = $this->getLuminance($bgColor);
+        return $luminance < 0.6 ? '#ffffff' : '#1e293b';
+    }
+}

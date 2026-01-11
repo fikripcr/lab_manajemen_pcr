@@ -1,8 +1,16 @@
 ﻿@php
-    use App\Helpers\ThemeHelper;
+    use App\Http\Controllers\Sys\ThemeTablerController;
+    
+    // Load theme controller for auth
+    $themeController = app(ThemeTablerController::class);
+    $themeData = $themeController->getThemeData('auth');
+    
+    // Get layout preferences
+    $authLayout = $themeData['authLayout'] ?? 'basic';
+    $authFormPosition = $themeData['authFormPosition'] ?? 'left';
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {!! ThemeHelper::getHtmlAttributes() !!}>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {!! $themeController->getHtmlAttributes('auth') !!}>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,44 +18,18 @@
 
     <title>{{ config('app.name') }}</title>
 
-    {{-- Theme Styles (Server Side) --}}
-    <style>
-        {!! ThemeHelper::getStyleBlock() !!}
-    </style>
-    
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/auth.css', 'resources/js/auth.js'])
+
+    {{-- Theme Styles (Server Side) - Must be loaded AFTER css bundle to override defaults --}}
+    {!! $themeController->getStyleBlock('auth') !!}
 </head>
 
-@php
-    // Default to 'basic' layout if not specified, utilizing ThemeHelper for consistency
-    $authLayout = ThemeHelper::get('auth-layout', 'basic');
-    $authFormPosition = ThemeHelper::get('auth-form-position', 'left');
-
-    // Load theme data for the settings component
-    $themeData = [
-        'theme'                => ThemeHelper::get('theme'),
-        'themePrimary'         => ThemeHelper::get('theme-primary'),
-        'themeFont'            => ThemeHelper::get('theme-font'),
-        'themeBase'            => ThemeHelper::get('theme-base'),
-        'themeRadius'          => ThemeHelper::get('theme-radius'),
-        'themeBg'              => ThemeHelper::get('theme-bg'),
-        'themeSidebarBg'       => ThemeHelper::get('theme-sidebar-bg'),
-        'themeHeaderTopBg'     => ThemeHelper::get('theme-header-top-bg'),
-        'themeHeaderOverlapBg' => ThemeHelper::get('theme-header-overlap-bg'),
-        'themeHeaderSticky'    => ThemeHelper::get('theme-header-sticky'),
-        'themeCardStyle'       => ThemeHelper::get('theme-card-style'),
-        'themeBoxedBg'         => ThemeHelper::get('theme-boxed-bg'),
-        'authLayout'           => $authLayout,
-        'authFormPosition'     => $authFormPosition,
-    ];
-@endphp
-
-<body class="d-flex flex-column {!! ThemeHelper::getBodyClasses() !!}" {!! ThemeHelper::getBodyAttributes() !!}>
+<body class="d-flex flex-column" {!! $themeController->getBodyAttributes('auth') !!}>
     @if($authLayout === 'basic')
         {{-- BASIC LAYOUT: Centered card --}}
         <main class="page page-center">
@@ -150,7 +132,7 @@
     @endif
     {{-- Theme Settings Component (Unified with sys) --}}
     @if(env('THEME_CUSTOMIZATION_ENABLED', true))
-        <x-sys.theme-settings mode="auth" />
+        <x-sys.theme-settings mode="auth" :themeData="$themeData" :layoutData="$layoutData" />
     @endif
 </body>
 

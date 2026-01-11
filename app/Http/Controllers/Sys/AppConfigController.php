@@ -1,11 +1,8 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
-use App\Helpers\ThemeHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\AppConfigurationRequest;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
@@ -81,27 +78,6 @@ class AppConfigController extends Controller
                 $envContent = $this->updateEnvValue($envContent, 'THEME_CUSTOMIZATION_ENABLED=', 'THEME_CUSTOMIZATION_ENABLED=' . ($request->theme_customization_enabled ? 'true' : 'false'));
                 break;
 
-            case 'theme':
-                if ($request->filled('theme')) {
-                    ThemeHelper::set('theme', $request->theme);
-                }
-                if ($request->filled('theme_primary')) {
-                    ThemeHelper::set('theme-primary', $request->theme_primary);
-                }
-                if ($request->filled('theme_font')) {
-                    ThemeHelper::set('theme-font', $request->theme_font);
-                }
-                if ($request->filled('theme_base')) {
-                    ThemeHelper::set('theme-base', $request->theme_base);
-                }
-                if ($request->filled('theme_radius')) {
-                    ThemeHelper::set('theme-radius', $request->theme_radius);
-                }
-                if ($request->filled('layout')) {
-                    ThemeHelper::set('layout', $request->layout);
-                }
-                // Also handle other fields if added to the form later, mapping them as needed
-                break;
         }
 
         // Write the updated content back to .env
@@ -149,76 +125,6 @@ class AppConfigController extends Controller
         logActivity('config', 'Application optimized: config, routes, and views cached', auth()->user());
 
         return redirect()->back()->with('success', 'Application optimized successfully!');
-    }
-
-    /**
-     * Get theme settings for AJAX requests (used by theme settings panel)
-     */
-    public function getThemeSettings()
-    {
-        return response()->json([
-            'success'  => true,
-            'settings' => [
-                'theme'                   => ThemeHelper::get('theme', 'light'),
-                'theme_primary'           => ThemeHelper::get('theme-primary', '#206bc4'),
-                'theme_font'              => ThemeHelper::get('theme-font', 'inter'),
-                'theme_base'              => ThemeHelper::get('theme-base', 'gray'),
-                'theme_radius'            => ThemeHelper::get('theme-radius', '1'),
-                'theme_bg'                => ThemeHelper::get('theme-bg', ''),
-                'theme_sidebar_bg'        => ThemeHelper::get('theme-sidebar-bg', ''),
-                'theme_header_top_bg'     => ThemeHelper::get('theme-header-top-bg', ''),
-                'theme_header_overlap_bg' => ThemeHelper::get('theme-header-overlap-bg', ''),
-                'theme_header_sticky'     => ThemeHelper::get('theme-header-sticky', 'false'),
-                'theme_card_style'        => ThemeHelper::get('theme-card-style', 'flat'),
-                'layout'                  => ThemeHelper::get('layout', 'vertical'),
-                'container_width'         => ThemeHelper::get('container-width', 'standard'),
-            ],
-        ]);
-    }
-
-    /**
-     * Apply theme settings from AJAX request
-     */
-    public function applyThemeSettings(Request $request)
-    {
-        $validated = $request->validate([
-            'theme'                   => 'nullable|in:light,dark',
-            'theme_primary'           => 'nullable|string',
-            'theme_font'              => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
-            'theme_base'              => 'nullable|in:slate,gray,zinc,neutral,stone',
-            'theme_radius'            => 'nullable|in:0,0.25,0.5,0.75,1',
-            'theme_bg'                => 'nullable|string',
-            'theme_sidebar_bg'        => 'nullable|string',
-            'theme_header_top_bg'     => 'nullable|string',
-            'theme_header_overlap_bg' => 'nullable|string',
-            'theme_header_sticky'     => 'nullable|in:true,false,hidden',
-            'theme_card_style'        => 'nullable|in:flat,shadow,border,modern',
-            'theme_boxed_bg'          => 'nullable|string',
-            'layout'                  => 'nullable|in:vertical,horizontal,condensed,navbar-overlap',
-            'container_width'         => 'nullable|in:standard,fluid,boxed',
-            'auth_layout'             => 'nullable|in:basic,cover,illustration',
-            'auth_form_position'      => 'nullable|in:left,right',
-        ]);
-
-        try {
-            foreach ($validated as $key => $value) {
-                if ($value !== null) {
-                    ThemeHelper::set($key, $value);
-                }
-            }
-
-            logActivity('config', 'Theme & Layout settings updated (JSON)', auth()->user() ?? null);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Settings applied!',
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed: ' . $e->getMessage(),
-            ], 500);
-        }
     }
 
     private function updateEnvValue($content, $key, $newValue)

@@ -1,28 +1,18 @@
 ﻿@php
-    use App\Helpers\ThemeHelper;
-
-    // Load data locally to avoid AppServiceProvider polution
-    $layoutData = ThemeHelper::getLayoutData();
+    use App\Http\Controllers\Sys\ThemeTablerController;
     
-    $themeData = [
-        'theme'                => ThemeHelper::get('theme'),
-        'themePrimary'         => ThemeHelper::get('theme-primary'),
-        'themeFont'            => ThemeHelper::get('theme-font'),
-        'themeBase'            => ThemeHelper::get('theme-base'),
-        'themeRadius'          => ThemeHelper::get('theme-radius'),
-        'themeBg'              => ThemeHelper::get('theme-bg'),
-        'themeSidebarBg'       => ThemeHelper::get('theme-sidebar-bg'),
-        'themeHeaderTopBg'     => ThemeHelper::get('theme-header-top-bg'),
-        'themeHeaderOverlapBg' => ThemeHelper::get('theme-header-overlap-bg'),
-        'themeHeaderSticky'    => ThemeHelper::get('theme-header-sticky'),
-        'themeCardStyle'       => ThemeHelper::get('theme-card-style'),
-        'themeBoxedBg'         => ThemeHelper::get('theme-boxed-bg'),
-        'authLayout'           => ThemeHelper::get('auth-layout', 'basic'),
-        'authFormPosition'     => ThemeHelper::get('auth-form-position', 'left'),
+    // Load theme controller
+    $themeController = app(ThemeTablerController::class);
+    $themeData = $themeController->getThemeData('sys');
+    
+    // Layout data (keep for backward compatibility)
+    $layoutData = [
+        'layout' => $themeData['layout'],
+        'containerWidth' => $themeData['containerWidth'],
     ];
 @endphp
 <!DOCTYPE html>
-<html lang="en" {!! ThemeHelper::getHtmlAttributes() !!}>
+<html lang="en" {!! $themeController->getHtmlAttributes('sys') !!}>
 
 <head>
     <meta charset="utf-8" />
@@ -44,9 +34,7 @@
     ])
 
     {{-- Theme Styles (Server Side) - MUST BE AFTER CSS TO OVERRIDE DEFAULTS --}}
-    <style>
-        {!! ThemeHelper::getStyleBlock() !!}
-    </style>
+    {!! $themeController->getStyleBlock('sys') !!}
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,7 +44,7 @@
     @stack('css')
 </head>
 
-<body class="{{ $layoutData['bodyClass'] ?? '' }} {!! ThemeHelper::getBodyClasses() !!}" {!! ThemeHelper::getBodyAttributes() !!}>
+<body {!! $themeController->getBodyAttributes('sys') !!}>
     <div class="page">
         {{-- SIDEBAR: only shown when layoutSidebar is true --}}
         @if($layoutData['layoutSidebar'] ?? false)
@@ -105,7 +93,7 @@
 
     {{-- Theme Settings Component --}}
     @if(env('THEME_CUSTOMIZATION_ENABLED', true))
-        <x-sys.theme-settings mode="sys" />
+        <x-sys.theme-settings mode="sys" :themeData="$themeData" :layoutData="$layoutData" />
     @endif
 
     {{-- Global Search Modal Component --}}

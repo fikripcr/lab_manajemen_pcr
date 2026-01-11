@@ -8,6 +8,13 @@ window.axios = axios;
 window.axios.defaults.withCredentials = true;
 window.axios.defaults.withXSRFToken = true;
 
+const token = document.head.querySelector('meta[name="csrf-token"]');
+if (token) {
+    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+}
+
 // --- Popper.js (Bootstrap 5 Dependency)
 import { createPopper } from '@popperjs/core';
 window.Popper = { createPopper };
@@ -21,7 +28,7 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Shared Components ---
-import TablerThemeManager from './custom/TablerThemeManager.js';
+import ThemeTabler from './custom/ThemeTabler.js';
 import './custom/CustomSweetAlerts.js';
 import './custom/Notification.js';
 import './custom/FormHandlerAjax.js';
@@ -152,9 +159,9 @@ window.initToastEditor = function (selector, config = {}) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    const themeManager = new TablerThemeManager('sys');
-    themeManager.loadTheme();
-    themeManager.initSettingsPanel();
+    const themeManager = new ThemeTabler('sys');
+    themeManager.initSettingsPanel(); // Only init settings panel for live preview
+
 
     window.initOfflineSelect2 = function () {
         const elements = document.querySelectorAll('.select2-offline');

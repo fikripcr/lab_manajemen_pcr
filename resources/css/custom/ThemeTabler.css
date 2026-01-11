@@ -1,5 +1,5 @@
 /* 
- * TABLER CUSTOM THEME (Consolidated)
+ * THEME TABLER CUSTOM CSS
  * ==========================================================================
  * This file contains ALL custom CSS overrides for the application.
  * 1. Base Customizations (Fonts, Cards, Global Tweaks)
@@ -25,7 +25,7 @@
 }
 
 /* --- Font Family Definitions ---
-   (Used by ThemeHelper to generate --tblr-font-sans-serif) 
+   (Used by ThemeTabler to generate --tblr-font-sans-serif) 
    These rules are fallbacks or reference for the inline styles.
 */
 
@@ -372,6 +372,7 @@ body.layout-navbar-overlap[data-bs-has-header-top-bg] header.navbar.sticky-top {
 .select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field {
     padding: 0.4375rem 0.625rem !important;
     border-radius: var(--tblr-border-radius, 0.25rem) !important;
+    overflow: hidden;
 }
 
 .select2-container--bootstrap-5 .select2-results__option {

@@ -21,8 +21,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        // Paginator::useBootstrapFive();
-
         // Register the custom Notification model
         $this->app->bind('Illuminate\Notifications\DatabaseNotification', function () {
             return new Notification();

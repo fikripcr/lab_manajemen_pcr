@@ -39,6 +39,9 @@
 		</a>
 
     <form class="offcanvas offcanvas-end offcanvas-narrow" tabindex="-1" id="offcanvasSettings">
+        {{-- Hidden field for mode (required by controller) --}}
+        <input type="hidden" name="mode" value="{{ $mode }}">
+        
         <div class="offcanvas-header border-bottom">
             <h2 class="offcanvas-title">Theme Settings</h2>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -79,12 +82,12 @@
                     <div class="col-6">
                         <label class="form-label">Color Mode</label>
                         <div class="form-selectgroup">
-                            @foreach(['light', 'dark'] as $mode)
+                            @foreach(['light', 'dark'] as $themeMode)
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="theme" value="{{ $mode }}" class="form-selectgroup-input" {{ ($themeData['theme'] ?? 'light') === $mode ? 'checked' : '' }}>
+                                <input type="radio" name="theme" value="{{ $themeMode }}" class="form-selectgroup-input" {{ ($themeData['theme'] ?? 'light') === $themeMode ? 'checked' : '' }}>
                                 <span class="form-selectgroup-label">
                                     {{-- Icons optional, text is fine --}}
-                                    {{ ucfirst($mode) }}
+                                    {{ ucfirst($themeMode) }}
                                 </span>
                             </label>
                             @endforeach

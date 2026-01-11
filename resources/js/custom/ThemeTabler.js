@@ -1,11 +1,11 @@
 /**
- * ThemeManager - Core Theme System
- * Manages Tabler theme settings and the Settings Panel UI (shared between sys & auth sections)
+ * ThemeTabler - Simplified Theme System
+ * Handles live preview and form submission only
+ * Server is the single source of truth (no localStorage/cookies)
  */
-class TablerThemeManager {
+class ThemeTabler {
     constructor(mode = 'sys') {
         this.mode = mode; // 'sys' or 'auth'
-        this.prefix = 'tabler-';
 
         // Configuration map for CSS vars and data attributes
         this.themeMap = {
@@ -19,27 +19,7 @@ class TablerThemeManager {
             'theme-radius': { var: '--tblr-border-radius' },
         };
 
-        // Default values
-        this.defaults = {
-            'theme': 'light',
-            'theme-font': 'inter',
-            'theme-base': 'gray',
-            'theme-radius': '1',
-            'theme-primary': '#206bc4',
-            'theme-bg': '',
-            'theme-card-style': 'flat',
-            'theme-sidebar-bg': '',
-            'theme-header-top-bg': '',
-            'theme-header-overlap-bg': '',
-            'theme-header-sticky': 'false',
-            'theme-boxed-bg': '',
-            'container-width': 'standard',
-            ...(mode === 'auth' ? { 'auth-layout': 'basic', 'auth-form-position': 'left' } : {})
-        };
-
-        // Layout Visibility Config (What to HIDE for each layout)
-        // Shows only relevant color presets per layout type
-        // NOTE: boxed-bg-preset visibility is controlled by container-width, not layout
+        // Layout Visibility Config
         this.LAYOUT_config = {
             'vertical': ['header-overlap-preset'],
             'horizontal': ['header-overlap-preset'],
@@ -55,7 +35,7 @@ class TablerThemeManager {
         this.formColumn = document.querySelector('[data-form-column]');
         this.mediaColumn = document.querySelector('[data-media-column]');
 
-        // Font Stacks (Mirroring PHP helper for Live Preview)
+        // Font Stacks
         this.fontStacks = {
             'inter': "'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
             'roboto': "'Roboto', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Helvetica Neue, sans-serif",
@@ -66,179 +46,37 @@ class TablerThemeManager {
     }
 
     // ==========================================
-    // Core Storage & State Logic
+    // Live Preview Logic
     // ==========================================
-
-    _k(name) { return this.prefix + name; } // Private key helper
-    getSetting(name) { return localStorage.getItem(this._k(name)); }
-
-    saveSetting(name, val) {
-        localStorage.setItem(this._k(name), val);
-        // Sync to cookie for PHP access
-        const cookieName = 'tblr_' + name;
-        document.cookie = `${cookieName}=${val}; path=/; max-age=31536000; SameSite=Lax`;
-    }
-
-    removeSetting(name) {
-        localStorage.removeItem(this._k(name));
-        document.cookie = `tblr_${name}=; path=/; max-age=0; SameSite=Lax`;
-    }
 
     subscribe(callback) { this.listeners.push(callback); }
 
-    loadTheme() {
-        // ONE-TIME MIGRATION: Sync LocalStorage to Cookies if cookies are missing
-        this._migrateToCookies();
-
-        // Prevent FOUC: Trust the Server-Side Render (SSR) first.
-        // Only apply settings if they are missing or if we need to sync JS state.
-
-        // 1. Theme Mode
-        const currentThemeAttr = document.documentElement.getAttribute('data-bs-theme');
-        const storedTheme = this.getSetting('theme');
-
-        // If server rendered a theme, update local storage to match it to prevent drift
-        if (currentThemeAttr && currentThemeAttr !== storedTheme) {
-            this.saveSetting('theme', currentThemeAttr);
-        } else if (!currentThemeAttr && storedTheme) {
-            // Fallback: If server didn't render it (unlikely), apply from storage
-            this.applySetting('theme', storedTheme, false);
-        }
-
-        // 2. Apply other settings ONLY if necessary (avoid repaint)
-        Object.keys(this.defaults).forEach(key => {
-            if (key === 'theme') return; // Handled above
-
-            const val = this.getSetting(key);
-            if (val) {
-                // Check if already applied to avoid partial layout shifts
-                if (this._isAlreadyApplied(key, val)) return;
-                this.applySetting(key, val, false);
-            }
-        });
-
-        // Initialize Auth Form Position helper
-        if (this.mode === 'auth' && (this.formColumn || this.mediaColumn)) {
-            const pos = this.getSetting('auth-form-position') || this.defaults['auth-form-position'] || 'left';
-            this._applyAuthPosition(pos);
-        }
-    }
-
-    _isAlreadyApplied(key, value) {
+    applySetting(name, value, save = false) {
         const root = document.documentElement;
 
-        // 1. Check for CSS vars (Computed Style) - PRIORITIZE THIS
-        // CRITICAL: Normalize colors because Server/CSS uses Hex/RGB/Name inconsistent formats
-        if (this.themeMap[key]?.var) {
-            const computed = getComputedStyle(root).getPropertyValue(this.themeMap[key].var).trim();
-            // If computed is empty, it's definitely not applied
-            if (!computed) return false;
-
-            // Normalize both to lowercase for basic string comparison
-            const normComputed = computed.toLowerCase();
-            const normValue = value ? value.toLowerCase().trim() : '';
-
-            // Direct match
-            if (normComputed === normValue) return true;
-
-            // RGB to Hex Check (Computed is usually RGB)
-            if (normComputed.startsWith('rgb')) {
-                const computedHex = this._rgbToHex(normComputed);
-                if (computedHex === normValue) return true;
-
-                // Extra check: maybe normValue was RGB too?
-                if (normValue.startsWith('rgb')) {
-                    const valueHex = this._rgbToHex(normValue);
-                    if (computedHex === valueHex) return true;
-                }
-            }
-
-            return false;
-        }
-
-        // 2. Simple check for mapped attributes
-        if (this.themeMap[key]?.attr) {
-            return root.getAttribute(this.themeMap[key].attr) === value;
-        }
-
-        // 3. Standard attributes
-        if (['theme-font', 'theme-base'].includes(key)) {
-            return root.getAttribute('data-bs-' + key) === value;
-        }
-        return false;
-    }
-
-    _rgbToHex(rgbStr) {
-        // Handle "rgb(r, g, b)" or "rgba(r, g, b, a)"
-        const match = rgbStr.match(/\d+/g);
-        if (!match || match.length < 3) return rgbStr; // Fallback
-
-        const r = parseInt(match[0]);
-        const g = parseInt(match[1]);
-        const b = parseInt(match[2]);
-
-        // Convert to hex
-        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    }
-
-    _migrateToCookies() {
-        // Only migrate if cookies are completely missing (fresh session)
-        if (!document.cookie.includes('tblr_')) {
-            Object.keys(this.defaults).forEach(key => {
-                const val = localStorage.getItem(this._k(key));
-                if (val) {
-                    document.cookie = `tblr_${key}=${val}; path=/; max-age=31536000; SameSite=Lax`;
-                }
-            });
-        }
-    }
-
-    resetSetting(name) {
-        const def = this.defaults[name] || '';
-        this.applySetting(name, def);
-        this.removeSetting(name);
-        return def;
-    }
-
-    getAllSettings() {
-        return Object.keys(this.defaults).reduce((acc, key) => {
-            acc[key] = this.getSetting(key) || this.defaults[key];
-            return acc;
-        }, {});
-    }
-
-    // ==========================================
-    // Application Logic
-    // ==========================================
-
-    applySetting(name, value, save = true) {
-        const root = document.documentElement;
-
-        // 1. Handle Theme Mode Changes (Clear custom BGs when switching to dark)
+        // 1. Handle Theme Mode Changes
         if (name === 'theme') {
             root.setAttribute('data-bs-theme', value);
 
-            // Immediately clear custom background colors when switching to dark mode
+            // Clear custom backgrounds when switching to dark
             if (value === 'dark') {
                 this._clearCustomBackgrounds(root);
             }
 
-            if (save) this.saveSetting(name, value);
             this.listeners.forEach(cb => cb(name, value));
             return;
         }
 
-        // 2. Handle Dark Mode Backgrounds (Skip custom BGs in dark mode)
+        // 2. Handle Dark Mode Backgrounds (Skip in dark mode)
         if (this._isDarkMode() && ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].includes(name)) {
-            if (save) this.saveSetting(name, value);
             return;
         }
 
-        // 3. Handle Mapped Settings (CSS Vars / Data Attrs)
+        // 3. Handle Mapped Settings
         if (this.themeMap[name]) {
             this._applyMappedSetting(root, name, value);
         }
-        // 4. Handle Font (Standard Attr + CSS Var for Live Preview)
+        // 4. Handle Font
         else if (name === 'theme-font') {
             root.setAttribute('data-bs-theme-font', value);
             if (this.fontStacks[value]) {
@@ -254,22 +92,19 @@ class TablerThemeManager {
             this._applySpecialCases(name, value);
         }
 
-        if (save) this.saveSetting(name, value);
         this.listeners.forEach(cb => cb(name, value));
     }
 
     _clearCustomBackgrounds(root) {
-        // Remove CSS custom properties
         root.style.removeProperty('--tblr-body-bg');
         root.style.removeProperty('--tblr-sidebar-bg');
-        root.style.removeProperty('--tblr-sidebar-text'); // Remove contrast override
+        root.style.removeProperty('--tblr-sidebar-text');
         root.style.removeProperty('--tblr-header-top-bg');
-        root.style.removeProperty('--tblr-header-top-text'); // Remove contrast override
+        root.style.removeProperty('--tblr-header-top-text');
         root.style.removeProperty('--tblr-header-overlap-bg');
         root.style.removeProperty('--tblr-boxed-bg');
         root.style.removeProperty('--tblr-body-text');
 
-        // Remove data attributes
         root.removeAttribute('data-bs-has-theme-bg');
         root.removeAttribute('data-bs-has-sidebar-bg');
         root.removeAttribute('data-bs-has-header-top-bg');
@@ -297,15 +132,13 @@ class TablerThemeManager {
             } else if (value) {
                 root.style.setProperty(rule.var, value);
 
-                // Auto-Contrast: Update text color if sidebar background changes
+                // Auto-Contrast
                 if (name === 'theme-sidebar-bg') {
                     this._updateSidebarContrast(root, value);
                 }
-                // Auto-Contrast: Update text color if header top background changes
                 if (name === 'theme-header-top-bg') {
                     this._updateHeaderTopContrast(root, value);
                 }
-                // Auto-Contrast: Update text color if body background changes
                 if (name === 'theme-bg') {
                     this._updateBodyContrast(root, value);
                 }
@@ -354,11 +187,11 @@ class TablerThemeManager {
         const topHeader = wrapper?.querySelector('header.navbar');
         if (!wrapper || !topHeader) return;
 
-        const layout = this.getSetting('layout') || 'vertical';
         wrapper.classList.remove('sticky-top');
         topHeader.classList.remove('sticky-top');
 
         if (isSticky) {
+            const layout = this.form?.querySelector('select[name="layout"]')?.value || 'vertical';
             layout === 'navbar-overlap' ? topHeader.classList.add('sticky-top') : wrapper.classList.add('sticky-top');
         }
     }
@@ -375,11 +208,9 @@ class TablerThemeManager {
         }
     }
 
-    // Calculate luminance to determine if background is dark or light
     _getLuminance(color) {
         let r, g, b;
 
-        // Handle Hex
         if (color.startsWith('#')) {
             const hex = color.slice(1);
             if (hex.length === 3) {
@@ -391,29 +222,24 @@ class TablerThemeManager {
                 g = parseInt(hex.substring(2, 4), 16);
                 b = parseInt(hex.substring(4, 6), 16);
             } else {
-                return 1; // Invalid hex
+                return 1;
             }
-        }
-        // Handle RGB
-        else if (color.startsWith('rgb')) {
+        } else if (color.startsWith('rgb')) {
             const match = color.match(/\d+/g);
             if (!match || match.length < 3) return 1;
             r = parseInt(match[0]);
             g = parseInt(match[1]);
             b = parseInt(match[2]);
         } else {
-            return 1; // Fallback
+            return 1;
         }
 
-        // Relative luminance formula (per W3C)
         return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     }
 
     _updateSidebarContrast(root, color) {
-        // Threshold: < 0.6 is dark -> white text, >= 0.6 is light -> dark text
-        const isDark = this._getLuminance(color) < 0.6; // Slightly higher threshold for better readability
+        const isDark = this._getLuminance(color) < 0.6;
         root.style.setProperty('--tblr-sidebar-text', isDark ? '#ffffff' : '#1e293b');
-        // We can also adjust muted text if needed
         root.style.setProperty('--tblr-sidebar-text-muted', isDark ? 'rgba(255, 255, 255, 0.7)' : '#6c757d');
     }
 
@@ -426,7 +252,6 @@ class TablerThemeManager {
     _updateBodyContrast(root, color) {
         const isDark = this._getLuminance(color) < 0.6;
         root.style.setProperty('--tblr-body-text', isDark ? '#ffffff' : '#1e293b');
-        // Optional: muted text for body if needed, currently focusing on headers
     }
 
     // ==========================================
@@ -438,16 +263,12 @@ class TablerThemeManager {
         if (!this.form) return;
 
         this.initPickr();
-        // setTimeout(() => this.syncFormWithStorage(), 100);
         this.bindEvents();
     }
 
     async initPickr() {
-        // Lazy load Pickr if not already available
         if (typeof window.Pickr === 'undefined') {
             try {
-                // Determine if we are in admin or Guest/Auth context to resolve path correctly?
-                // Actually Vite handles efficient bundling of node_modules.
                 const module = await import('@simonwep/pickr');
                 window.Pickr = module.default;
                 await import('@simonwep/pickr/dist/themes/nano.min.css');
@@ -483,42 +304,6 @@ class TablerThemeManager {
         });
     }
 
-    syncFormWithStorage() {
-        const settings = this.getAllSettings();
-        Object.keys(settings).forEach(key => {
-            const inputs = this.form.querySelectorAll(`[name="${key}"]`);
-            if (!inputs.length) return;
-
-            const value = settings[key];
-            const input = inputs[0];
-
-            if (key.includes('-bg') || key === 'theme-primary') {
-                input.value = value;
-                const pickr = this.pickrInstances[key];
-                if (pickr) {
-                    pickr.setColor(value || pickr._options?.default || '#ffffff');
-                }
-            } else if (input.tagName === 'SELECT') {
-                input.value = value;
-            } else { // Radio
-                inputs.forEach(r => {
-                    r.checked = (r.value === value);
-                    if (r.checked) r.dispatchEvent(new Event('change', { bubbles: true }));
-                });
-            }
-        });
-
-        // Apply Layout & Theme Visibility
-        const layout = this.form.querySelector('select[name="layout"]')?.value;
-        if (layout) this.handleLayoutChange(layout);
-
-        const containerWidth = this.form.querySelector('input[name="container-width"]:checked')?.value;
-        if (containerWidth) this.handleContainerWidthChange(containerWidth);
-
-        const theme = this.form.querySelector('input[name="theme"]:checked')?.value;
-        if (theme) this.handleThemeModeChange(theme);
-    }
-
     bindEvents() {
         this.form.addEventListener('change', (e) => {
             const { name, value } = e.target;
@@ -540,26 +325,22 @@ class TablerThemeManager {
 
                 this.form.querySelector(`input[name="${target}"]`).value = val;
                 this.pickrInstances[target]?.setColor(val, true);
-                this.resetSetting(target);
+                this.applySetting(target, ''); // Reset
             });
         });
     }
 
     handleLayoutChange(layout) {
-        // Reset all to visible first (except boxed-bg which depends on container-width)
         const basicElements = ['sidebar-menu-preset', 'header-overlap-preset', 'header-mode-section'];
         basicElements.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
 
-        // Ensure header mode options are visible
         ['header-scrollable', 'header-fixed', 'header-hidden'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
 
-        // Hide specific elements based on config
         const toHide = this.LAYOUT_config[layout] || [];
         toHide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
     }
 
     handleContainerWidthChange(width) {
-        // Show/hide boxed background preset based on container width
         const boxedBgPreset = document.getElementById('boxed-bg-preset');
         if (boxedBgPreset) {
             boxedBgPreset.style.display = width === 'boxed' ? '' : 'none';
@@ -573,19 +354,16 @@ class TablerThemeManager {
         presets.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = isDark ? 'none' : ''; });
 
         if (isDark) {
-            // Save current values to session
             ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
                 const val = this.form.querySelector(`input[name="${key}"]`)?.value;
                 if (val) sessionStorage.setItem(`saved_${key}`, val);
             });
         } else {
-            // Restore (Light mode) and immediately re-apply custom backgrounds
             ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
                 const saved = sessionStorage.getItem(`saved_${key}`);
                 const input = this.form.querySelector(`input[name="${key}"]`);
-                const val = saved || (input ? input.value : '') || this.getSetting(key);
+                const val = saved || (input ? input.value : '');
 
-                // Re-apply immediately (not just save)
                 if (val) {
                     this.applySetting(key, val, false);
                 }
@@ -599,44 +377,44 @@ class TablerThemeManager {
     async handleApply() {
         if (!window.axios) return console.error('Axios missing');
 
-        const loader = window.Swal ? window.Swal.fire({ title: 'Applying...', didOpen: () => window.Swal.showLoading() }) : null;
-        const formData = new FormData();
-        const getInput = (name) => this.form.querySelector(`input[name="${name}"]:checked`)?.value || this.form.querySelector(`select[name="${name}"]`)?.value;
-        const append = (k, v) => v && formData.append(k.replace(/-/g, '_'), v);
-
-        // Standard fields
-        ['theme', 'layout', 'theme-font', 'theme-base', 'theme-radius', 'theme-card-style', 'auth-layout', 'auth-form-position'].forEach(f => append(f, getInput(f)));
-        append('theme_primary', this.form.querySelector('input[name="theme-primary"]')?.value);
-        append('theme_header_sticky', getInput('theme-header-sticky') || 'false');
-        append('container_width', getInput('container-width'));
-
-        // Backgrounds (only in light mode)
-        if (getInput('theme') !== 'dark') {
-            ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(f => {
-                const inputEl = this.form.querySelector(`input[name="${f}"]`);
-                if (inputEl) {
-                    append(f, inputEl.value || '');
-                }
-            });
-        }
+        const btn = this.form.querySelector('.btn-primary');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Saving...';
+        btn.disabled = true;
 
         try {
-            const res = await window.axios.post('/sys/layout/apply', formData);
-            if (res.data.success) {
-                // Don't clear localStorage - we need it to persist settings across reloads
-                // The .env values are now the source of truth, but localStorage provides instant preview
-                if (window.Swal) {
-                    loader?.close();
-                    window.Swal.fire({ icon: 'success', title: 'Settings saved!', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
-                }
-                setTimeout(() => window.location.reload(), 500);
+            const formData = new FormData(this.form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Add mode parameter
+            data._mode = this.mode;
+
+            const response = await axios.post('/theme/save', data);
+
+            if (response.data.success) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Theme settings saved successfully'
+                });
+
+                // Reload to sync with server
+                setTimeout(() => window.location.reload(), 10000);
             }
-        } catch (e) {
-            console.error(e);
-            if (loader) loader.close();
-            if (window.Swal) window.Swal.fire({ icon: 'error', title: 'Error', text: e.message, toast: true, position: 'top-end', timer: 3000, showConfirmButton: false });
+        } catch (error) {
+            console.error('Save failed:', error);
+            Swal.fire('Error', 'Failed to save settings', 'error');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
     }
 }
 
-export default TablerThemeManager;
+export default ThemeTabler;
