@@ -1,5 +1,25 @@
 ﻿@php
     use App\Helpers\ThemeHelper;
+
+    // Load data locally to avoid AppServiceProvider polution
+    $layoutData = ThemeHelper::getLayoutData();
+    
+    $themeData = [
+        'theme'                => ThemeHelper::get('theme'),
+        'themePrimary'         => ThemeHelper::get('theme-primary'),
+        'themeFont'            => ThemeHelper::get('theme-font'),
+        'themeBase'            => ThemeHelper::get('theme-base'),
+        'themeRadius'          => ThemeHelper::get('theme-radius'),
+        'themeBg'              => ThemeHelper::get('theme-bg'),
+        'themeSidebarBg'       => ThemeHelper::get('theme-sidebar-bg'),
+        'themeHeaderTopBg'     => ThemeHelper::get('theme-header-top-bg'),
+        'themeHeaderOverlapBg' => ThemeHelper::get('theme-header-overlap-bg'),
+        'themeHeaderSticky'    => ThemeHelper::get('theme-header-sticky'),
+        'themeCardStyle'       => ThemeHelper::get('theme-card-style'),
+        'themeBoxedBg'         => ThemeHelper::get('theme-boxed-bg'),
+        'authLayout'           => ThemeHelper::get('auth-layout', 'basic'),
+        'authFormPosition'     => ThemeHelper::get('auth-form-position', 'left'),
+    ];
 @endphp
 <!DOCTYPE html>
 <html lang="en" {!! ThemeHelper::getHtmlAttributes() !!}>

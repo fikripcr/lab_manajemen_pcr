@@ -24,9 +24,27 @@
 </head>
 
 @php
-    // Default to 'basic' layout if not specified, utilizing .env settings
-    $authLayout = $authLayout ?? env('AUTH_LAYOUT', 'basic');
-    $authFormPosition = $authFormPosition ?? env('AUTH_FORM_POSITION', 'left');
+    // Default to 'basic' layout if not specified, utilizing ThemeHelper for consistency
+    $authLayout = ThemeHelper::get('auth-layout', 'basic');
+    $authFormPosition = ThemeHelper::get('auth-form-position', 'left');
+
+    // Load theme data for the settings component
+    $themeData = [
+        'theme'                => ThemeHelper::get('theme'),
+        'themePrimary'         => ThemeHelper::get('theme-primary'),
+        'themeFont'            => ThemeHelper::get('theme-font'),
+        'themeBase'            => ThemeHelper::get('theme-base'),
+        'themeRadius'          => ThemeHelper::get('theme-radius'),
+        'themeBg'              => ThemeHelper::get('theme-bg'),
+        'themeSidebarBg'       => ThemeHelper::get('theme-sidebar-bg'),
+        'themeHeaderTopBg'     => ThemeHelper::get('theme-header-top-bg'),
+        'themeHeaderOverlapBg' => ThemeHelper::get('theme-header-overlap-bg'),
+        'themeHeaderSticky'    => ThemeHelper::get('theme-header-sticky'),
+        'themeCardStyle'       => ThemeHelper::get('theme-card-style'),
+        'themeBoxedBg'         => ThemeHelper::get('theme-boxed-bg'),
+        'authLayout'           => $authLayout,
+        'authFormPosition'     => $authFormPosition,
+    ];
 @endphp
 
 <body class="d-flex flex-column {!! ThemeHelper::getBodyClasses() !!}" {!! ThemeHelper::getBodyAttributes() !!}>
