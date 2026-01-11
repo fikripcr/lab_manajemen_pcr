@@ -16,7 +16,7 @@
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('partials.theme-loader')
+    {{-- Theme Loader (Moved to body for class access) --}}
 
     @vite([
         'resources/css/sys.css',
@@ -31,6 +31,7 @@
 </head>
 
 <body class="{{ $layoutData['bodyClass'] ?? '' }}" data-container-width="{{ $layoutData['containerWidth'] ?? 'standard' }}">
+    @include('partials.theme-loader')
     <div class="page">
         {{-- SIDEBAR: only shown when layoutSidebar is true --}}
         @if($layoutData['layoutSidebar'] ?? false)

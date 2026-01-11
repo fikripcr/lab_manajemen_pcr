@@ -7,8 +7,8 @@
 
     <title>{{ config('app.name') }}</title>
 
-    @include('partials.theme-loader')
-
+    {{-- Theme Loader Moved --}}
+    
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,6 +24,7 @@
 @endphp
 
 <body class="d-flex flex-column">
+    @include('partials.theme-loader')
     @if($authLayout === 'basic')
         {{-- BASIC LAYOUT: Centered card --}}
         <main class="page page-center">
