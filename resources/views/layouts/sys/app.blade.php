@@ -1,5 +1,8 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@php
+    use App\Helpers\ThemeHelper;
+@endphp
+<!DOCTYPE html>
+<html lang="en" {!! ThemeHelper::getHtmlAttributes() !!}>
 
 <head>
     <meta charset="utf-8" />
@@ -16,11 +19,14 @@
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Theme Loader (Moved to body for class access) --}}
-
     @vite([
         'resources/css/sys.css',
     ])
+
+    {{-- Theme Styles (Server Side) - MUST BE AFTER CSS TO OVERRIDE DEFAULTS --}}
+    <style>
+        {!! ThemeHelper::getStyleBlock() !!}
+    </style>
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,8 +36,7 @@
     @stack('css')
 </head>
 
-<body class="{{ $layoutData['bodyClass'] ?? '' }}" data-container-width="{{ $layoutData['containerWidth'] ?? 'standard' }}">
-    @include('partials.theme-loader')
+<body class="{{ $layoutData['bodyClass'] ?? '' }} {!! ThemeHelper::getBodyClasses() !!}" {!! ThemeHelper::getBodyAttributes() !!}>
     <div class="page">
         {{-- SIDEBAR: only shown when layoutSidebar is true --}}
         @if($layoutData['layoutSidebar'] ?? false)

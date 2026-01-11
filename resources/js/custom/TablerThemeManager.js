@@ -54,6 +54,15 @@ class TablerThemeManager {
         // Auth Form Positioning Elements
         this.formColumn = document.querySelector('[data-form-column]');
         this.mediaColumn = document.querySelector('[data-media-column]');
+
+        // Font Stacks (Mirroring PHP helper for Live Preview)
+        this.fontStacks = {
+            'inter': "'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'roboto': "'Roboto', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Helvetica Neue, sans-serif",
+            'poppins': "'Poppins', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'public-sans': "'Public Sans', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+            'nunito': "'Nunito', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif"
+        };
     }
 
     // ==========================================
@@ -62,28 +71,125 @@ class TablerThemeManager {
 
     _k(name) { return this.prefix + name; } // Private key helper
     getSetting(name) { return localStorage.getItem(this._k(name)); }
-    saveSetting(name, val) { localStorage.setItem(this._k(name), val); }
-    removeSetting(name) { localStorage.removeItem(this._k(name)); }
+
+    saveSetting(name, val) {
+        localStorage.setItem(this._k(name), val);
+        // Sync to cookie for PHP access
+        const cookieName = 'tblr_' + name;
+        document.cookie = `${cookieName}=${val}; path=/; max-age=31536000; SameSite=Lax`;
+    }
+
+    removeSetting(name) {
+        localStorage.removeItem(this._k(name));
+        document.cookie = `tblr_${name}=; path=/; max-age=0; SameSite=Lax`;
+    }
 
     subscribe(callback) { this.listeners.push(callback); }
 
     loadTheme() {
-        // CRITICAL: Apply theme mode FIRST before any other settings
-        // This ensures _isDarkMode() returns correct value for background handling
-        const themeMode = this.getSetting('theme') ?? this.defaults['theme'];
-        this.applySetting('theme', themeMode, false);
+        // ONE-TIME MIGRATION: Sync LocalStorage to Cookies if cookies are missing
+        this._migrateToCookies();
 
-        // Then apply all other settings
+        // Prevent FOUC: Trust the Server-Side Render (SSR) first.
+        // Only apply settings if they are missing or if we need to sync JS state.
+
+        // 1. Theme Mode
+        const currentThemeAttr = document.documentElement.getAttribute('data-bs-theme');
+        const storedTheme = this.getSetting('theme');
+
+        // If server rendered a theme, update local storage to match it to prevent drift
+        if (currentThemeAttr && currentThemeAttr !== storedTheme) {
+            this.saveSetting('theme', currentThemeAttr);
+        } else if (!currentThemeAttr && storedTheme) {
+            // Fallback: If server didn't render it (unlikely), apply from storage
+            this.applySetting('theme', storedTheme, false);
+        }
+
+        // 2. Apply other settings ONLY if necessary (avoid repaint)
         Object.keys(this.defaults).forEach(key => {
-            if (key !== 'theme') { // Skip theme as it's already applied
-                this.applySetting(key, this.getSetting(key) ?? this.defaults[key], false);
+            if (key === 'theme') return; // Handled above
+
+            const val = this.getSetting(key);
+            if (val) {
+                // Check if already applied to avoid partial layout shifts
+                if (this._isAlreadyApplied(key, val)) return;
+                this.applySetting(key, val, false);
             }
         });
 
-        // Initialize Auth Form Position helper if elements exist
+        // Initialize Auth Form Position helper
         if (this.mode === 'auth' && (this.formColumn || this.mediaColumn)) {
             const pos = this.getSetting('auth-form-position') || this.defaults['auth-form-position'] || 'left';
             this._applyAuthPosition(pos);
+        }
+    }
+
+    _isAlreadyApplied(key, value) {
+        const root = document.documentElement;
+
+        // 1. Check for CSS vars (Computed Style) - PRIORITIZE THIS
+        // CRITICAL: Normalize colors because Server/CSS uses Hex/RGB/Name inconsistent formats
+        if (this.themeMap[key]?.var) {
+            const computed = getComputedStyle(root).getPropertyValue(this.themeMap[key].var).trim();
+            // If computed is empty, it's definitely not applied
+            if (!computed) return false;
+
+            // Normalize both to lowercase for basic string comparison
+            const normComputed = computed.toLowerCase();
+            const normValue = value ? value.toLowerCase().trim() : '';
+
+            // Direct match
+            if (normComputed === normValue) return true;
+
+            // RGB to Hex Check (Computed is usually RGB)
+            if (normComputed.startsWith('rgb')) {
+                const computedHex = this._rgbToHex(normComputed);
+                if (computedHex === normValue) return true;
+
+                // Extra check: maybe normValue was RGB too?
+                if (normValue.startsWith('rgb')) {
+                    const valueHex = this._rgbToHex(normValue);
+                    if (computedHex === valueHex) return true;
+                }
+            }
+
+            return false;
+        }
+
+        // 2. Simple check for mapped attributes
+        if (this.themeMap[key]?.attr) {
+            return root.getAttribute(this.themeMap[key].attr) === value;
+        }
+
+        // 3. Standard attributes
+        if (['theme-font', 'theme-base'].includes(key)) {
+            return root.getAttribute('data-bs-' + key) === value;
+        }
+        return false;
+    }
+
+    _rgbToHex(rgbStr) {
+        // Handle "rgb(r, g, b)" or "rgba(r, g, b, a)"
+        const match = rgbStr.match(/\d+/g);
+        if (!match || match.length < 3) return rgbStr; // Fallback
+
+        const r = parseInt(match[0]);
+        const g = parseInt(match[1]);
+        const b = parseInt(match[2]);
+
+        // Convert to hex
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    _migrateToCookies() {
+        // Only migrate if cookies are completely missing (fresh session)
+        if (!document.cookie.includes('tblr_')) {
+            Object.keys(this.defaults).forEach(key => {
+                const val = localStorage.getItem(this._k(key));
+                if (val) {
+                    document.cookie = `tblr_${key}=${val}; path=/; max-age=31536000; SameSite=Lax`;
+                }
+            });
         }
     }
 
@@ -132,11 +238,18 @@ class TablerThemeManager {
         if (this.themeMap[name]) {
             this._applyMappedSetting(root, name, value);
         }
-        // 4. Handle Standard Attributes
-        else if (['theme-font', 'theme-base'].includes(name)) {
+        // 4. Handle Font (Standard Attr + CSS Var for Live Preview)
+        else if (name === 'theme-font') {
+            root.setAttribute('data-bs-theme-font', value);
+            if (this.fontStacks[value]) {
+                root.style.setProperty('--tblr-font-sans-serif', this.fontStacks[value]);
+            }
+        }
+        // 5. Handle Standard Attributes
+        else if (['theme-base'].includes(name)) {
             root.setAttribute('data-bs-' + name, value);
         }
-        // 5. Handle Special Cases
+        // 6. Handle Special Cases
         else {
             this._applySpecialCases(name, value);
         }
@@ -264,15 +377,40 @@ class TablerThemeManager {
 
     // Calculate luminance to determine if background is dark or light
     _getLuminance(color) {
-        const rgb = color.match(/\d+/g);
-        if (!rgb) return 1; // Default to light if invalid
-        const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+        let r, g, b;
+
+        // Handle Hex
+        if (color.startsWith('#')) {
+            const hex = color.slice(1);
+            if (hex.length === 3) {
+                r = parseInt(hex[0] + hex[0], 16);
+                g = parseInt(hex[1] + hex[1], 16);
+                b = parseInt(hex[2] + hex[2], 16);
+            } else if (hex.length === 6) {
+                r = parseInt(hex.substring(0, 2), 16);
+                g = parseInt(hex.substring(2, 4), 16);
+                b = parseInt(hex.substring(4, 6), 16);
+            } else {
+                return 1; // Invalid hex
+            }
+        }
+        // Handle RGB
+        else if (color.startsWith('rgb')) {
+            const match = color.match(/\d+/g);
+            if (!match || match.length < 3) return 1;
+            r = parseInt(match[0]);
+            g = parseInt(match[1]);
+            b = parseInt(match[2]);
+        } else {
+            return 1; // Fallback
+        }
+
         // Relative luminance formula (per W3C)
         return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     }
 
     _updateSidebarContrast(root, color) {
-        // Threshold: < 0.5 is dark -> white text, >= 0.5 is light -> dark text
+        // Threshold: < 0.6 is dark -> white text, >= 0.6 is light -> dark text
         const isDark = this._getLuminance(color) < 0.6; // Slightly higher threshold for better readability
         root.style.setProperty('--tblr-sidebar-text', isDark ? '#ffffff' : '#1e293b');
         // We can also adjust muted text if needed

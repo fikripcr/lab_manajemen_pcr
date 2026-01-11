@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
+use App\Helpers\ThemeHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\AppConfigurationRequest;
 use Exception;
@@ -82,23 +83,24 @@ class AppConfigController extends Controller
 
             case 'theme':
                 if ($request->filled('theme')) {
-                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME=', 'TABLER_THEME=' . $request->theme);
+                    ThemeHelper::set('theme', $request->theme);
                 }
                 if ($request->filled('theme_primary')) {
-                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_PRIMARY=', 'TABLER_THEME_PRIMARY=' . $request->theme_primary);
+                    ThemeHelper::set('theme-primary', $request->theme_primary);
                 }
                 if ($request->filled('theme_font')) {
-                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_FONT=', 'TABLER_THEME_FONT=' . $request->theme_font);
+                    ThemeHelper::set('theme-font', $request->theme_font);
                 }
                 if ($request->filled('theme_base')) {
-                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_BASE=', 'TABLER_THEME_BASE=' . $request->theme_base);
+                    ThemeHelper::set('theme-base', $request->theme_base);
                 }
                 if ($request->filled('theme_radius')) {
-                    $envContent = $this->updateEnvValue($envContent, 'TABLER_THEME_RADIUS=', 'TABLER_THEME_RADIUS=' . $request->theme_radius);
+                    ThemeHelper::set('theme-radius', $request->theme_radius);
                 }
                 if ($request->filled('layout')) {
-                    $envContent = $this->updateEnvValue($envContent, 'TABLER_LAYOUT=', 'TABLER_LAYOUT=' . $request->layout);
+                    ThemeHelper::set('layout', $request->layout);
                 }
+                // Also handle other fields if added to the form later, mapping them as needed
                 break;
         }
 
@@ -157,18 +159,19 @@ class AppConfigController extends Controller
         return response()->json([
             'success'  => true,
             'settings' => [
-                'theme'                   => env('TABLER_THEME', 'light'),
-                'theme_primary'           => env('TABLER_THEME_PRIMARY', 'blue'),
-                'theme_font'              => env('TABLER_THEME_FONT', 'sans-serif'),
-                'theme_base'              => env('TABLER_THEME_BASE', 'gray'),
-                'theme_radius'            => env('TABLER_THEME_RADIUS', '1'),
-                'theme_bg'                => env('TABLER_THEME_BG', ''),
-                'theme_sidebar_bg'        => env('TABLER_SIDEBAR_BG', ''),
-                'theme_header_top_bg'     => env('TABLER_HEADER_TOP_BG', ''),
-                'theme_header_overlap_bg' => env('TABLER_HEADER_OVERLAP_BG', ''), // New
-                'theme_header_sticky'     => env('TABLER_HEADER_STICKY', 'false'),
-                'theme_card_style'        => env('TABLER_CARD_STYLE', 'default'),
-                'layout'                  => env('TABLER_LAYOUT', 'vertical'),
+                'theme'                   => ThemeHelper::get('theme', 'light'),
+                'theme_primary'           => ThemeHelper::get('theme-primary', '#206bc4'),
+                'theme_font'              => ThemeHelper::get('theme-font', 'inter'),
+                'theme_base'              => ThemeHelper::get('theme-base', 'gray'),
+                'theme_radius'            => ThemeHelper::get('theme-radius', '1'),
+                'theme_bg'                => ThemeHelper::get('theme-bg', ''),
+                'theme_sidebar_bg'        => ThemeHelper::get('theme-sidebar-bg', ''),
+                'theme_header_top_bg'     => ThemeHelper::get('theme-header-top-bg', ''),
+                'theme_header_overlap_bg' => ThemeHelper::get('theme-header-overlap-bg', ''),
+                'theme_header_sticky'     => ThemeHelper::get('theme-header-sticky', 'false'),
+                'theme_card_style'        => ThemeHelper::get('theme-card-style', 'flat'),
+                'layout'                  => ThemeHelper::get('layout', 'vertical'),
+                'container_width'         => ThemeHelper::get('container-width', 'standard'),
             ],
         ]);
     }
@@ -184,61 +187,27 @@ class AppConfigController extends Controller
             'theme_font'              => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
             'theme_base'              => 'nullable|in:slate,gray,zinc,neutral,stone',
             'theme_radius'            => 'nullable|in:0,0.25,0.5,0.75,1',
-            'theme_bg'                => 'nullable|string', // Allow hex color or empty
+            'theme_bg'                => 'nullable|string',
             'theme_sidebar_bg'        => 'nullable|string',
             'theme_header_top_bg'     => 'nullable|string',
-            'theme_header_overlap_bg' => 'nullable|string',               // New
-            'theme_header_sticky'     => 'nullable|in:true,false,hidden', // Scrollable, Fixed, or Hidden
-            'theme_header_menu_bg'    => 'nullable|string',               // New
-            'theme_card_style'        => 'nullable|in:default,flat,shadow,border,modern',
-            'theme_boxed_bg'          => 'nullable|string', // NEW - boxed layout background
-            'layout'                  => 'nullable|in:vertical,combo,horizontal,condensed,navbar-overlap',
+            'theme_header_overlap_bg' => 'nullable|string',
+            'theme_header_sticky'     => 'nullable|in:true,false,hidden',
+            'theme_card_style'        => 'nullable|in:flat,shadow,border,modern',
+            'theme_boxed_bg'          => 'nullable|string',
+            'layout'                  => 'nullable|in:vertical,horizontal,condensed,navbar-overlap',
             'container_width'         => 'nullable|in:standard,fluid,boxed',
             'auth_layout'             => 'nullable|in:basic,cover,illustration',
             'auth_form_position'      => 'nullable|in:left,right',
         ]);
 
         try {
-            $envPath    = base_path('.env');
-            $envContent = file_get_contents($envPath);
-
-            $envMapping = [
-                'theme'                   => 'TABLER_THEME',
-                'theme_primary'           => 'TABLER_THEME_PRIMARY',
-                'theme_font'              => 'TABLER_THEME_FONT',
-                'theme_base'              => 'TABLER_THEME_BASE',
-                'theme_radius'            => 'TABLER_THEME_RADIUS',
-                'theme_bg'                => 'TABLER_THEME_BG',
-                'theme_sidebar_bg'        => 'TABLER_SIDEBAR_BG',
-                'theme_header_top_bg'     => 'TABLER_HEADER_TOP_BG',
-                'theme_header_overlap_bg' => 'TABLER_HEADER_OVERLAP_BG', // New
-                'theme_header_sticky'     => 'TABLER_HEADER_STICKY',
-                'theme_card_style'        => 'TABLER_CARD_STYLE',
-                'theme_boxed_bg'          => 'TABLER_BOXED_BG', // NEW
-                'layout'                  => 'TABLER_LAYOUT',
-                'container_width'         => 'TABLER_CONTAINER_WIDTH',
-                'auth_layout'             => 'AUTH_LAYOUT',
-                'auth_form_position'      => 'AUTH_FORM_POSITION',
-            ];
-
             foreach ($validated as $key => $value) {
-                if ($value === null) {
-                    continue;
+                if ($value !== null) {
+                    ThemeHelper::set($key, $value);
                 }
-
-                $envKey = $envMapping[$key] ?? null;
-                if (! $envKey) {
-                    continue;
-                }
-
-                // Escape double quotes and wrap value in quotes
-                $safeValue  = str_replace('"', '\"', $value);
-                $envContent = $this->updateEnvValue($envContent, "{$envKey}=", "{$envKey}=\"{$safeValue}\"");
             }
 
-            file_put_contents($envPath, $envContent);
-
-            logActivity('config', 'Theme & Layout settings updated', auth()->user() ?? null);
+            logActivity('config', 'Theme & Layout settings updated (JSON)', auth()->user() ?? null);
 
             return response()->json([
                 'success' => true,

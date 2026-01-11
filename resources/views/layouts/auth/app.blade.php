@@ -1,5 +1,8 @@
-﻿<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+﻿@php
+    use App\Helpers\ThemeHelper;
+@endphp
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {!! ThemeHelper::getHtmlAttributes() !!}>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +10,10 @@
 
     <title>{{ config('app.name') }}</title>
 
-    {{-- Theme Loader Moved --}}
+    {{-- Theme Styles (Server Side) --}}
+    <style>
+        {!! ThemeHelper::getStyleBlock() !!}
+    </style>
     
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,8 +29,7 @@
     $authFormPosition = $authFormPosition ?? env('AUTH_FORM_POSITION', 'left');
 @endphp
 
-<body class="d-flex flex-column">
-    @include('partials.theme-loader')
+<body class="d-flex flex-column {!! ThemeHelper::getBodyClasses() !!}" {!! ThemeHelper::getBodyAttributes() !!}>
     @if($authLayout === 'basic')
         {{-- BASIC LAYOUT: Centered card --}}
         <main class="page page-center">

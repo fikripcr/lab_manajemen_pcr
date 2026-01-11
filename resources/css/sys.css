@@ -22,15 +22,17 @@
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
 /* Select2 Tabler Integration */
-@import './custom/tabler-select2.css';
+/* Select2 Tabler Integration - Merged into tabler-themes.css */
+/* @import './custom/tabler-select2.css'; */
 
 
 /* ==========================================================================
    2. CUSTOM THEME LOGIC
    ========================================================================== */
 /* Contains:
-   - Base Customizations (Fonts, Cards)
-   - Layout Systems (Boxed, Overlap)
-   - Auto-Contrast System (Sidebar, Header, Body)
+   - Base Customizations
+   - Layout Systems
+   - Auto-Contrast System
+   - Select2 Integration
 */
-@import './custom/tabler-themes.css';
+@import './custom/tabler-custom.css';
