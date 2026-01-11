@@ -11,14 +11,13 @@ use App\Http\Controllers\Sys\PermissionController;
 use App\Http\Controllers\Sys\RoleController;
 use App\Http\Controllers\Sys\SysGlobalSearchController;
 use App\Http\Controllers\Sys\TestController;
-use App\Http\Middleware\InjectLayoutData;
 use Illuminate\Support\Facades\Route;
 
 // 🔹 Public System Routes (Accessible by Guest)
 // Theme Settings Apply (Must be public to work on Login page)
 Route::post('/sys/layout/apply', [AppConfigController::class, 'applyThemeSettings'])->name('sys.layout.apply');
 
-Route::middleware(['auth', 'check.expired', InjectLayoutData::class])->group(function () {
+Route::middleware(['auth', 'check.expired'])->group(function () {
     // ==========================
     // 🔹 System Management Routes (require authentication)
     // All routes are prefixed with /sys/
