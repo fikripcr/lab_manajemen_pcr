@@ -1,18 +1,19 @@
 /**
  * Select2 Tabler Integration CSS
- * 
- * Custom styles to integrate Select2 with Tabler theme.
- * Matches standard form-control metrics:
- * - Padding: 0.4375rem 0.75rem
- * - Font Size: 0.875rem
- * - Line Height: 1.4285714
- * - Placeholder Color: Muted
+ * Simplified & Optimized
  */
 
 /* ============================================
-   BASE STYLES
+   BASE VARIABLES & MIXINS
    ============================================ */
+:root {
+    --tblr-select2-padding: 0.4375rem 0.75rem;
+    --tblr-select2-height: 2.375rem;
+}
 
+/* ============================================
+   BASE CONTAINER STYLES
+   ============================================ */
 .select2-container--bootstrap-5 .select2-selection {
     border-radius: var(--tblr-border-radius, 0.25rem) !important;
     border-color: var(--tblr-border-color, #d4d9dd) !important;
@@ -20,42 +21,39 @@
     font-weight: 400 !important;
     color: var(--tblr-body-color, #1e293b) !important;
     background-color: var(--tblr-bg-forms, #ffffff) !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding: var(--tblr-select2-padding) !important;
+    display: block !important;
+}
+
+/* Focus & Open States */
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+    border-color: var(--tblr-primary, #206bc4) !important;
+    box-shadow: 0 0 0 0.25rem rgba(var(--tblr-primary-rgb, 32, 107, 196), 0.25) !important;
 }
 
 /* ============================================
-   DIMENSIONS & PADDING (The Fix)
+   SINGLE SELECT
    ============================================ */
-
-/* Match standard form-control padding */
-.select2-container--bootstrap-5 .select2-selection {
-    min-height: auto !important;
-    height: auto !important;
-    padding: 0.4375rem 0.75rem !important;
-    display: block !important;
-    /* Block model works better with padding than flex here */
-}
-
-/* Rendered Text container */
 .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-    color: var(--tblr-body-color, #1e293b) !important;
-    line-height: 1.4285714286 !important;
+    color: inherit !important;
     padding: 0 !important;
     margin: 0 !important;
     padding-right: 1.5rem !important;
     /* Space for arrow */
+    line-height: 1.4285714 !important;
 }
 
-/* Placeholder specific styling */
 .select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder {
     color: var(--tblr-muted, #9aa0ac) !important;
-    /* Match standard placeholder */
 }
 
-/* Arrow positioning */
 .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
     top: 50% !important;
-    transform: translateY(-50%) !important;
     right: 0.75rem !important;
+    transform: translateY(-50%) !important;
     height: auto !important;
     width: auto !important;
     position: absolute !important;
@@ -64,37 +62,30 @@
 /* ============================================
    MULTI-SELECT
    ============================================ */
-
 .select2-container--bootstrap-5 .select2-selection--multiple {
     padding: 0.25rem 0.5rem !important;
-    /* Minimized padding, let chips handle spacing */
-    min-height: 2.375rem !important;
-    /* display: flex removed as per user request to fix spacing */
+    min-height: var(--tblr-select2-height) !important;
+    /* Flex removed from parent to allow child to handle flow */
 }
 
-/* The list container (ul) */
+/* List Container (UL) */
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
-    /* Force full width to allow flex-wrap to calculate space */
     flex: 1 1 auto !important;
     display: flex !important;
     flex-wrap: wrap !important;
     align-items: center !important;
     gap: 0.25rem;
-    /* Space between chips */
 }
 
-/* Individual Chips */
-/* Individual Chips */
-/* Individual Chips */
-/* Individual Chips */
+/* Chips (Badges) */
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
     font-size: 0.75rem !important;
     padding: 0.125rem 0.5rem !important;
     padding-right: 1.75rem !important;
-    /* Extra space for absolute X */
+    /* Reserve space for absolute X */
     margin: 0 !important;
     border-radius: var(--tblr-border-radius-sm, 0.1875rem) !important;
     display: inline-flex !important;
@@ -103,39 +94,33 @@
     max-width: 100%;
     white-space: nowrap !important;
     position: relative !important;
-    /* For absolute positioning of X */
 
-    /* Reverted to Neutral Theme */
     background-color: var(--tblr-bg-surface-secondary, #f1f5f9) !important;
     border: 1px solid var(--tblr-border-color, #e2e8f0) !important;
     color: var(--tblr-body-color, #1e293b) !important;
-
     float: none !important;
 }
 
-/* The 'x' remove button (Positioned Absolute + SVG Mask) */
+/* Remove Icon (SVG Mask) */
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
     position: absolute !important;
     top: 50% !important;
     right: 0.125rem !important;
     transform: translateY(-50%) !important;
-
     width: 1.25rem !important;
     height: 1.25rem !important;
-
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
 
-    /* Hide text content (like '×') */
+    /* Hide Text */
     font-size: 0 !important;
     color: transparent !important;
 
-    /* Render SVG Icon via Mask (Muted Color) */
+    /* Render Icon */
     background-color: var(--tblr-muted, #9aa0ac) !important;
     -webkit-mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='currentColor' fill='none'%3e%3cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3e%3cpath d='M18 6l-12 12' /%3e%3cpath d='M6 6l12 12' /%3e%3c/svg%3e");
     mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='currentColor' fill='none'%3e%3cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3e%3cpath d='M18 6l-12 12' /%3e%3cpath d='M6 6l12 12' /%3e%3c/svg%3e");
-
     -webkit-mask-size: 0.875rem !important;
     mask-size: 0.875rem !important;
     -webkit-mask-repeat: no-repeat !important;
@@ -149,38 +134,29 @@
 
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
     background-color: var(--tblr-danger, #d63939) !important;
-    /* Red on hover */
 }
 
-/* The Search Input Item (li) */
+/* Search Input */
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-search--inline {
     flex: 1 1 auto !important;
-    /* Allow growth */
     margin: 0 !important;
-    /* margin-left removed, handled by gap on container */
     display: inline-flex !important;
     align-items: center !important;
     min-width: 50px;
     float: none !important;
 }
 
-/* The actual Search Input */
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-search__field {
     margin: 0 !important;
     width: 100% !important;
-    /* Fill the li container */
     padding: 0 !important;
-    /* Reset padding to align with chips */
     line-height: inherit !important;
-    font-family: inherit !important;
     margin-top: 1px !important;
-    /* Optical correction */
 }
 
 /* ============================================
-   DROPDOWN & SEARCH
+   DROPDOWN & RESULTS
    ============================================ */
-
 .select2-container--bootstrap-5 .select2-dropdown {
     border-color: var(--tblr-border-color, #d4d9dd) !important;
     border-radius: var(--tblr-border-radius, 0.25rem) !important;
@@ -201,7 +177,7 @@
     font-size: 0.875rem !important;
 }
 
-/* Selected Option Highlight */
+/* Highlight Selected Option Only */
 .select2-container--bootstrap-5 .select2-results__option--selected,
 .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected="true"] {
     background-color: var(--tblr-primary, #206bc4) !important;
@@ -211,22 +187,11 @@
 /* ============================================
    DARK MODE
    ============================================ */
-
-[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection {
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection,
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-search__field {
     background-color: var(--tblr-bg-forms, #0f172a) !important;
-    /* Correct form bg */
     border-color: var(--tblr-border-color-dark, rgba(255, 255, 255, 0.12)) !important;
     color: var(--tblr-body-color, #f8fafc) !important;
-}
-
-[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered,
-[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option {
-    color: var(--tblr-body-color, #f8fafc) !important;
-}
-
-[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder {
-    color: var(--tblr-muted, #5a6a85) !important;
-    /* Dark mode muted */
 }
 
 [data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown {
@@ -234,15 +199,11 @@
     border-color: var(--tblr-border-color-dark, rgba(255, 255, 255, 0.12)) !important;
 }
 
-[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-search__field {
-    background-color: var(--tblr-bg-forms, #0f172a) !important;
-    border-color: var(--tblr-border-color-dark, rgba(255, 255, 255, 0.12)) !important;
-    color: var(--tblr-body-color, #f8fafc) !important;
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder {
+    color: var(--tblr-muted, #5a6a85) !important;
 }
 
-/* Focus states */
-.select2-container--bootstrap-5.select2-container--focus .select2-selection,
-.select2-container--bootstrap-5.select2-container--open .select2-selection {
-    border-color: var(--tblr-primary, #206bc4) !important;
-    box-shadow: 0 0 0 0.25rem rgba(var(--tblr-primary-rgb, 32, 107, 196), 0.25) !important;
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered,
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option {
+    color: var(--tblr-body-color, #f8fafc) !important;
 }

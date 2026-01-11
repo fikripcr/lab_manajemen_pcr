@@ -1,18 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\LabController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\JadwalController;
-use App\Http\Controllers\Admin\LabTeamController;
-use App\Http\Controllers\Admin\SemesterController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GlobalSearchController;
 use App\Http\Controllers\Admin\InventarisController;
+use App\Http\Controllers\Admin\JadwalController;
+use App\Http\Controllers\Admin\LabController;
+use App\Http\Controllers\Admin\LabInventarisController;
+use App\Http\Controllers\Admin\LabTeamController;
 use App\Http\Controllers\Admin\MataKuliahController;
 use App\Http\Controllers\Admin\PengumumanController;
-use App\Http\Controllers\Admin\GlobalSearchController;
-use App\Http\Controllers\Admin\LabInventarisController;
+use App\Http\Controllers\Admin\SemesterController;
 use App\Http\Controllers\Admin\SoftwareRequestController;
+use App\Http\Controllers\Admin\UserController;
+use Illuminate\Support\Facades\Route;
 
 // ==========================
 // 🔹 Admin Routes (Auth Required)
@@ -34,6 +34,11 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::post('import', [UserController::class, 'import'])->name('import.store');
     });
     Route::resource('users', UserController::class);
+    Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('users.login.as');
+    Route::get('/switch-back', [UserController::class, 'switchBack'])->name('users.switch-back');
+
+    // Role Switching
+    Route::post('/users/switch-role/{role?}', [UserController::class, 'switchRole'])->name('users.switch-role');
 
     // Labs
     Route::get('api/labs', [LabController::class, 'paginate'])->name('labs.data');
@@ -105,12 +110,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::delete('/{berita}', 'destroy')->name('destroy');
         Route::get('/api/data', 'paginate')->name('data');
     });
-
-    Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('users.login.as');
-    Route::get('/switch-back', [UserController::class, 'switchBack'])->name('users.switch-back');
-
-    // Role Switching
-    Route::post('/users/switch-role/{role?}', [UserController::class, 'switchRole'])->name('users.switch-role');
 
     // Global Search
     Route::get('/global-search', [GlobalSearchController::class, 'search'])->name('global-search');
