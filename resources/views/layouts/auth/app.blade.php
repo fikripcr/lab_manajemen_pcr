@@ -8,7 +8,11 @@
     // Get layout preferences
     $authLayout = $themeData['authLayout'] ?? 'basic';
     $authFormPosition = $themeData['authFormPosition'] ?? 'left';
+    
+    // Initialize layoutData for theme-settings component
+    $layoutData = $themeController->getLayoutData('auth');
 @endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {!! $themeController->getHtmlAttributes('auth') !!}>
 <head>

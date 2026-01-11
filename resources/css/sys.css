@@ -13,7 +13,7 @@
 
 /* Tabler Vendors (for third-party integrations) */
 @import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
-@import '@tabler/core/dist/css/tabler-vendors.min.css';
+/* @import '@tabler/core/dist/css/tabler-vendors.min.css'; */
 
 /* Tabler Themes (for theme customization) */
 @import '@tabler/core/dist/css/tabler-themes.css';

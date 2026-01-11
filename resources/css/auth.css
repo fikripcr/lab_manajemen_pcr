@@ -6,7 +6,7 @@
 
 /* Tabler Core CSS */
 @import '@tabler/core/dist/css/tabler.min.css';
-@import '@tabler/core/dist/css/tabler-vendors.min.css';
+/* @import '@tabler/core/dist/css/tabler-vendors.min.css'; */
 
 /* Tabler Themes (for theme-base support like slate, zinc, etc) */
 @import '@tabler/core/dist/css/tabler-themes.css';

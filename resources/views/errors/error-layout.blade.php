@@ -9,7 +9,7 @@
     
     <link rel="icon" type="image/x-icon" href="{{ Vite::asset('resources/assets/admin/img/favicon/favicon.ico') }}">
     
-    @include('partials.theme-loader')
+    {{-- @include('partials.theme-loader') --}}
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
