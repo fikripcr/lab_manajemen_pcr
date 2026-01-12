@@ -37,6 +37,22 @@ class ThemeTablerController extends Controller
     }
 
     /**
+     * Get layout data for blade views
+     */
+    public function getLayoutData(string $mode = 'sys'): array
+    {
+        $config = $this->loadConfig($mode);
+
+        return [
+            'containerWidth'     => $config['container_width'] ?? 'standard',
+            'layout'             => $config['layout'] ?? 'vertical',
+            'layoutSidebar'      => ! in_array($config['layout'] ?? 'vertical', ['condensed', 'navbar-overlap']),
+            'layoutHideTopbar'   => ($config['header_sticky'] ?? 'false') === 'hidden',
+            'layoutNavbarSticky' => ($config['header_sticky'] ?? 'false') === 'true',
+        ];
+    }
+
+    /**
      * Save theme settings (AJAX endpoint)
      */
     public function save(Request $request): JsonResponse

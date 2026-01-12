@@ -24,7 +24,7 @@
     <meta name="description" content="System Management Dashboard" />
 
     {{-- Favicon --}}
-    <link rel="icon" type="image/x-icon" href="{{ Vite::asset('resources/assets/sys/img/favicon/favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
