@@ -44,11 +44,13 @@ class ThemeTablerController extends Controller
         $config = $this->loadConfig($mode);
 
         return [
-            'containerWidth'     => $config['container_width'] ?? 'standard',
-            'layout'             => $config['layout'] ?? 'vertical',
-            'layoutSidebar'      => ! in_array($config['layout'] ?? 'vertical', ['condensed', 'navbar-overlap']),
-            'layoutHideTopbar'   => ($config['header_sticky'] ?? 'false') === 'hidden',
-            'layoutNavbarSticky' => ($config['header_sticky'] ?? 'false') === 'true',
+            'containerWidth'        => $config['container_width'] ?? 'standard',
+            'layout'                => $config['layout'] ?? 'vertical',
+            'layoutSidebar'         => ! in_array($config['layout'] ?? 'vertical', ['condensed', 'navbar-overlap']),
+            'layoutHideTopbar'      => ($config['header_sticky'] ?? 'false') === 'hidden',
+            'layoutNavbarSticky'    => ($config['header_sticky'] ?? 'false') === 'true',
+            'layoutNavbarCondensed' => in_array($config['layout'] ?? 'vertical', ['condensed', 'navbar-overlap']),
+            'layoutNavbarClass'     => ($config['layout'] ?? 'vertical') === 'navbar-overlap' ? 'navbar-overlap' : '',
         ];
     }
 
@@ -156,6 +158,16 @@ class ThemeTablerController extends Controller
 
         if (! empty($config['bg_header_overlap'])) {
             $css[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
+
+            // Generate contrast text color
+            $textColor = $this->getContrastColor($config['bg_header_overlap']);
+            $css[]     = "--tblr-header-overlap-text: {$textColor};";
+
+            // Generate muted text color
+            $mutedColor = $this->getLuminance($config['bg_header_overlap']) < 0.6
+                ? 'rgba(255, 255, 255, 0.7)'
+                : '#6c757d';
+            $css[] = "--tblr-header-overlap-text-muted: {$mutedColor};";
         }
 
         if (! empty($config['bg_boxed'])) {
@@ -238,7 +250,7 @@ class ThemeTablerController extends Controller
         }
 
         // Boxed layout
-        if (($config['container_width'] ?? '') === '​boxed') {
+        if (($config['container_width'] ?? '') === 'boxed') {
             $classes[] = 'layout-boxed';
         }
 

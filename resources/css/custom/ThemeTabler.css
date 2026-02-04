@@ -128,17 +128,60 @@ body.layout-boxed .page {
 }
 
 /* --- Layout: Navbar Overlap --- */
-.navbar-overlap {
+/* 1. Reset Navbar to Transparent (unless Custom Top Color is set) */
+/* 1. Reset Navbar to Transparent (managed by ::before) */
+/* 1. Reset Navbar to Transparent (managed by ::before) */
+.layout-navbar-overlap .navbar-overlap {
+    background: transparent !important;
+    position: relative;
+    z-index: auto !important;
+    /* CRITICAL: Drop from 1030 to Auto so bg stays behind content */
     box-shadow: none !important;
     border-bottom: none !important;
-    position: relative;
 }
 
-[data-bs-has-header-overlap-bg] .navbar-overlap::after {
-    background-color: var(--tblr-header-overlap-bg) !important;
-    background-image: none !important;
-    z-index: -1 !important;
-    height: 10rem !important;
+/* Layer 1: The Large Overlap Background (Bottom) via ::after */
+.layout-navbar-overlap .navbar-overlap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 12rem !important;
+    background: var(--tblr-header-overlap-bg, var(--tblr-bg-surface-dark, #1e293b)) !important;
+    z-index: 0;
+    /* Base level relative to header */
+    pointer-events: none;
+}
+
+/* Layer 2: The Navbar Strip Background (Middle) via ::before */
+.layout-navbar-overlap .navbar-overlap::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Full height of navbar only */
+    background: var(--tblr-header-top-bg, transparent) !important;
+    z-index: 1;
+    /* Above Overlap BG */
+    pointer-events: none;
+}
+
+/* 3. Header Interactive Content: High Z-Index */
+.layout-navbar-overlap .navbar-overlap .container-xl,
+.layout-navbar-overlap .navbar-overlap .navbar-collapse {
+    position: relative;
+    z-index: 1030;
+    /* Lift content above proper */
+}
+
+/* 5. Ensure Content sits above background */
+.layout-navbar-overlap .page-wrapper {
+    position: relative;
+    z-index: 2;
+    /* Content sits on top of Header Backgrounds */
 }
 
 /* Sticky Header in Overlap Mode */
