@@ -1,14 +1,14 @@
 ﻿@php
     use App\Http\Controllers\Sys\ThemeTablerController;
-    
+
     // Load theme controller for auth
     $themeController = app(ThemeTablerController::class);
     $themeData = $themeController->getThemeData('auth');
-    
+
     // Get layout preferences
     $authLayout = $themeData['authLayout'] ?? 'basic';
     $authFormPosition = $themeData['authFormPosition'] ?? 'left';
-    
+
     // Initialize layoutData for theme-settings component
     $layoutData = $themeController->getLayoutData('auth');
 @endphp
@@ -40,7 +40,7 @@
             <div class="container container-tight py-4">
                     <div class="text-center mb-4">
                         <a href="." class="navbar-brand navbar-brand-autodark">
-                            <img src="{{ asset('images/digilab-crop.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
+                            <img src="{{ asset('images/logo-apps.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
                         </a>
                     </div>
                 @yield('content')
@@ -57,13 +57,13 @@
             $contentAlign = $formIsLeft ? 'align-items-end text-end' : 'align-items-start text-start';
             $gradientDir = $formIsLeft ? '315deg' : '135deg'; // Flip gradient direction
         @endphp
-        
+
         <main class="row g-0 flex-fill">
             <div class="col-12 col-lg-6 col-xl-5 {{ $formOrder }} d-flex flex-column justify-content-center" data-form-column>
                 <div class="container container-tight my-5 px-lg-5">
                     <div class="text-center mb-4">
                         <a href="." class="navbar-brand navbar-brand-autodark">
-                            <img src="{{ asset('assets/img/digilab-crop.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
+                            <img src="{{ asset('images/logo-apps.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
                         </a>
                     </div>
                     @yield('content')
@@ -73,17 +73,17 @@
                 {{-- Background cover image with overlay content --}}
                 <div class="bg-cover h-100 min-vh-100 position-relative" style="background-image: url({{ asset('images/bg-auth-cover.png') }})">
                     {{-- Dark gradient overlay for text readability --}}
-                    <div class="position-absolute top-0 start-0 w-100 h-100" 
+                    <div class="position-absolute top-0 start-0 w-100 h-100"
                          style="background: linear-gradient({{ $gradientDir }}, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);"></div>
-                    
+
                     {{-- Content overlay --}}
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column {{ $contentAlign }} p-4 p-lg-5">
                         {{-- Logo at top --}}
                         <div class="mb-auto">
-                            <img src="{{ asset('images/digilab-crop.png') }}" 
+                            <img src="{{ asset('images/logo-apps.png') }}"
                                  width="180" height="33" alt="{{ config('app.name') }}" >
                         </div>
-                        
+
                         {{-- Testimonial at bottom --}}
                         <div class="text-white">
                             <blockquote class="mb-4">
@@ -91,7 +91,7 @@
                                     "Manajemen laboratorium yang lebih cepat, efisien, dan modern untuk pertumbuhan institusi Anda."
                                 </p>
                             </blockquote>
-                            
+
                             <div class="d-flex align-items-center gap-3">
                                 {{-- Avatar group --}}
                                 <div class="avatar-list avatar-list-stacked">
@@ -99,7 +99,7 @@
                                     <span class="avatar avatar-sm avatar-rounded" style="background-image: url('https://ui-avatars.com/api/?name=Lab+Manager&background=10b981&color=fff');"></span>
                                     <span class="avatar avatar-sm avatar-rounded" style="background-image: url('https://ui-avatars.com/api/?name=Lab+Staff&background=f59e0b&color=fff');"></span>
                                 </div>
-                                
+
                                 <div>
                                     <div class="fw-semibold ms-2">
                                         Dipercaya oleh 50+ Laboratorium
@@ -121,7 +121,7 @@
                         <div class="container-tight">
                             <div class="text-center mb-4">
                                 <a href="." class="navbar-brand navbar-brand-autodark">
-                                    <img src="{{ asset('images/digilab-crop.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
+                                    <img src="{{ asset('images/logo-apps.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
                                 </a>
                             </div>
                             @yield('content')

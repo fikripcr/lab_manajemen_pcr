@@ -1,7 +1,7 @@
 @php
     $condensed    = $condensed ?? false;
     $sticky       = $sticky ?? false;
- 
+
     $dark         = $dark ?? false;
     $hideBrand    = $hideBrand ?? false;
     $hideMenu     = $hideMenu ?? false;
@@ -28,7 +28,7 @@
             @unless($hideBrand)
             <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
                 <a href="{{ route('sys.dashboard') }}">
-                    <img src="{{  asset('images/digilab-crop.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
+                    <img src="{{  asset('images/logo-apps.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
                 </a>
             </div>
             @endunless

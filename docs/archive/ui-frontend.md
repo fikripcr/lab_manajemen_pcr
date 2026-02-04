@@ -183,7 +183,7 @@ The global assets folder contains resources shared across multiple templates to 
 - `img/` - Common images used across different layouts including:
   - `no-avatar.png` - Default avatar image for users without uploaded avatars
   - `no-image.jpg` - Default image for content without uploaded images
-  - `digilab-crop.png` - Main logo image used across all layouts
+  - `logo-apps.png` - Main logo image used across all layouts
   - Common element images (1.jpg, 2.jpg, etc.) - Standard images used in UI components
   - Avatar placeholder images (1.png, 5.png, etc.) - Default avatar options
 

@@ -6,7 +6,7 @@
         <!-- <img src="assets/img/logo.webp" alt=""> -->
         <h1 class="sitename">
             <a href="." class="navbar-brand navbar-brand-autodark">
-                <img src="{{ asset('images/digilab-crop.png') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
+                <img src="{{ asset('images/logo-apps.png') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
             </a>
         </h1>
       </a>
