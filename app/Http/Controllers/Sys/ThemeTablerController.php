@@ -133,45 +133,47 @@ class ThemeTablerController extends Controller
             $css[]  = "--tblr-border-radius-pill: 100rem;";
         }
 
-        // Background Colors (only if not empty)
-        if (! empty($config['bg_body'])) {
-            $css[]     = "--tblr-body-bg: {$config['bg_body']};";
-            $textColor = $this->getContrastColor($config['bg_body']);
-            $css[]     = "--tblr-body-text: {$textColor};";
-        }
+        // Background Colors (only if not empty and NOT in dark mode)
+        if (($config['theme'] ?? 'light') !== 'dark') {
+            if (! empty($config['bg_body'])) {
+                $css[]     = "--tblr-body-bg: {$config['bg_body']};";
+                $textColor = $this->getContrastColor($config['bg_body']);
+                $css[]     = "--tblr-body-text: {$textColor};";
+            }
 
-        if (! empty($config['bg_sidebar'])) {
-            $css[]      = "--tblr-sidebar-bg: {$config['bg_sidebar']};";
-            $textColor  = $this->getContrastColor($config['bg_sidebar']);
-            $css[]      = "--tblr-sidebar-text: {$textColor};";
-            $mutedColor = $this->getLuminance($config['bg_sidebar']) < 0.6
-                ? 'rgba(255, 255, 255, 0.7)'
-                : '#6c757d';
-            $css[] = "--tblr-sidebar-text-muted: {$mutedColor};";
-        }
+            if (! empty($config['bg_sidebar'])) {
+                $css[]      = "--tblr-sidebar-bg: {$config['bg_sidebar']};";
+                $textColor  = $this->getContrastColor($config['bg_sidebar']);
+                $css[]      = "--tblr-sidebar-text: {$textColor};";
+                $mutedColor = $this->getLuminance($config['bg_sidebar']) < 0.6
+                    ? 'rgba(255, 255, 255, 0.7)'
+                    : '#6c757d';
+                $css[] = "--tblr-sidebar-text-muted: {$mutedColor};";
+            }
 
-        if (! empty($config['bg_header_top'])) {
-            $css[]     = "--tblr-header-top-bg: {$config['bg_header_top']};";
-            $textColor = $this->getContrastColor($config['bg_header_top']);
-            $css[]     = "--tblr-header-top-text: {$textColor};";
-        }
+            if (! empty($config['bg_header_top'])) {
+                $css[]     = "--tblr-header-top-bg: {$config['bg_header_top']};";
+                $textColor = $this->getContrastColor($config['bg_header_top']);
+                $css[]     = "--tblr-header-top-text: {$textColor};";
+            }
 
-        if (! empty($config['bg_header_overlap'])) {
-            $css[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
+            if (! empty($config['bg_header_overlap'])) {
+                $css[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
 
-            // Generate contrast text color
-            $textColor = $this->getContrastColor($config['bg_header_overlap']);
-            $css[]     = "--tblr-header-overlap-text: {$textColor};";
+                // Generate contrast text color
+                $textColor = $this->getContrastColor($config['bg_header_overlap']);
+                $css[]     = "--tblr-header-overlap-text: {$textColor};";
 
-            // Generate muted text color
-            $mutedColor = $this->getLuminance($config['bg_header_overlap']) < 0.6
-                ? 'rgba(255, 255, 255, 0.7)'
-                : '#6c757d';
-            $css[] = "--tblr-header-overlap-text-muted: {$mutedColor};";
-        }
+                // Generate muted text color
+                $mutedColor = $this->getLuminance($config['bg_header_overlap']) < 0.6
+                    ? 'rgba(255, 255, 255, 0.7)'
+                    : '#6c757d';
+                $css[] = "--tblr-header-overlap-text-muted: {$mutedColor};";
+            }
 
-        if (! empty($config['bg_boxed'])) {
-            $css[] = "--tblr-boxed-bg: {$config['bg_boxed']};";
+            if (! empty($config['bg_boxed'])) {
+                $css[] = "--tblr-boxed-bg: {$config['bg_boxed']};";
+            }
         }
 
         if (empty($css)) {
@@ -209,18 +211,20 @@ class ThemeTablerController extends Controller
             $attributes[] = "data-bs-card-style=\"{$config['card_style']}\"";
         }
 
-        // Background indicators
-        if (! empty($config['bg_body'])) {
-            $attributes[] = 'data-bs-has-theme-bg';
-        }
-        if (! empty($config['bg_sidebar'])) {
-            $attributes[] = 'data-bs-has-sidebar-bg';
-        }
-        if (! empty($config['bg_header_top'])) {
-            $attributes[] = 'data-bs-has-header-top-bg';
-        }
-        if (! empty($config['bg_header_overlap'])) {
-            $attributes[] = 'data-bs-has-header-overlap-bg';
+        // Background indicators (only if not empty and NOT in dark mode)
+        if ($theme !== 'dark') {
+            if (! empty($config['bg_body'])) {
+                $attributes[] = 'data-bs-has-theme-bg';
+            }
+            if (! empty($config['bg_sidebar'])) {
+                $attributes[] = 'data-bs-has-sidebar-bg';
+            }
+            if (! empty($config['bg_header_top'])) {
+                $attributes[] = 'data-bs-has-header-top-bg';
+            }
+            if (! empty($config['bg_header_overlap'])) {
+                $attributes[] = 'data-bs-has-header-overlap-bg';
+            }
         }
 
         return implode(' ', $attributes);

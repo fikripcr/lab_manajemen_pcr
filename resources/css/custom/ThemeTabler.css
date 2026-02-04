@@ -99,7 +99,12 @@ div.dt-processing>div:last-child>div {
 
 /* --- Layout: Boxed --- */
 body.layout-boxed {
-    background-color: var(--tblr-boxed-bg, #e2e8f0);
+    background-color: var(--tblr-boxed-bg, #f1f5f9);
+}
+
+[data-bs-theme="dark"] body.layout-boxed {
+    background-color: var(--tblr-boxed-bg, #0b1120);
+    /* Darker fallback for dark mode */
 }
 
 body.layout-boxed .page {
@@ -148,10 +153,14 @@ body.layout-boxed .page {
     left: 0;
     right: 0;
     height: 12rem !important;
-    background: var(--tblr-header-overlap-bg, var(--tblr-bg-surface-dark, #1e293b)) !important;
+    background: var(--tblr-header-overlap-bg, #1e293b) !important;
     z-index: 0;
     /* Base level relative to header */
     pointer-events: none;
+}
+
+[data-bs-theme="light"] .layout-navbar-overlap .navbar-overlap::after {
+    background: var(--tblr-header-overlap-bg, #2c3e50) !important;
 }
 
 /* Layer 2: The Navbar Strip Background (Middle) via ::before */
