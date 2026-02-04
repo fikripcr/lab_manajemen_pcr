@@ -363,20 +363,31 @@ class ThemeTablerController extends Controller
     }
 
     /**
-     * Convert hex color to RGB string
+     * Convert color (hex/rgb/rgba) to RGB string "r, g, b"
      */
-    private function hexToRgb(string $hex): string
+    private function hexToRgb(string $color): string
     {
-        $hex = ltrim($hex, '#');
+        // Handle RGB/RGBA
+        if (str_starts_with($color, 'rgb')) {
+            preg_match_all('/(\d+)/', $color, $matches);
+            if (count($matches[0]) >= 3) {
+                return "{$matches[0][0]}, {$matches[0][1]}, {$matches[0][2]}";
+            }
+            return "0, 0, 0"; // Fallback
+        }
+
+        $hex = ltrim($color, '#');
 
         if (strlen($hex) === 3) {
             $r = hexdec(str_repeat($hex[0], 2));
             $g = hexdec(str_repeat($hex[1], 2));
             $b = hexdec(str_repeat($hex[2], 2));
         } else {
-            $r = hexdec(substr($hex, 0, 2));
-            $g = hexdec(substr($hex, 2, 2));
-            $b = hexdec(substr($hex, 4, 2));
+            // Ensure we have at least 6 chars (handle potential bad input)
+            $hex = str_pad($hex, 6, '0');
+            $r   = hexdec(substr($hex, 0, 2));
+            $g   = hexdec(substr($hex, 2, 2));
+            $b   = hexdec(substr($hex, 4, 2));
         }
 
         return "{$r}, {$g}, {$b}";
@@ -387,18 +398,35 @@ class ThemeTablerController extends Controller
      */
     private function getLuminance(string $color): float
     {
-        $hex = ltrim($color, '#');
+        $r = 0;
+        $g = 0;
+        $b = 0;
 
-        if (strlen($hex) === 3) {
-            $r = hexdec(str_repeat($hex[0], 2));
-            $g = hexdec(str_repeat($hex[1], 2));
-            $b = hexdec(str_repeat($hex[2], 2));
-        } elseif (strlen($hex) === 6) {
-            $r = hexdec(substr($hex, 0, 2));
-            $g = hexdec(substr($hex, 2, 2));
-            $b = hexdec(substr($hex, 4, 2));
+        // Handle RGB/RGBA
+        if (str_starts_with($color, 'rgb')) {
+            preg_match_all('/(\d+)/', $color, $matches);
+            if (count($matches[0]) >= 3) {
+                $r = (int) $matches[0][0];
+                $g = (int) $matches[0][1];
+                $b = (int) $matches[0][2];
+            } else {
+                return 1; // Default light
+            }
         } else {
-            return 1;
+            // Handle Hex
+            $hex = ltrim($color, '#');
+
+            if (strlen($hex) === 3) {
+                $r = hexdec(str_repeat($hex[0], 2));
+                $g = hexdec(str_repeat($hex[1], 2));
+                $b = hexdec(str_repeat($hex[2], 2));
+            } elseif (strlen($hex) >= 6) {
+                $r = hexdec(substr($hex, 0, 2));
+                $g = hexdec(substr($hex, 2, 2));
+                $b = hexdec(substr($hex, 4, 2));
+            } else {
+                return 1;
+            }
         }
 
         return (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;

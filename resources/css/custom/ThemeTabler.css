@@ -1,4 +1,4 @@
-/* 
+/*
  * THEME TABLER CUSTOM CSS
  * ==========================================================================
  * This file contains ALL custom CSS overrides for the application.
@@ -25,7 +25,7 @@
 }
 
 /* --- Font Family Definitions ---
-   (Used by ThemeTabler to generate --tblr-font-sans-serif) 
+   (Used by ThemeTabler to generate --tblr-font-sans-serif)
    These rules are fallbacks or reference for the inline styles.
 */
 
@@ -407,4 +407,8 @@ body.layout-navbar-overlap[data-bs-has-header-top-bg] header.navbar.sticky-top {
 [data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered,
 [data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option {
     color: var(--tblr-body-color, #f8fafc) !important;
+}
+
+.offcanvas-backdrop.show {
+    opacity: 0% !important;
 }
