@@ -367,29 +367,7 @@ class ThemeTablerController extends Controller
      */
     private function hexToRgb(string $color): string
     {
-        // Handle RGB/RGBA
-        if (str_starts_with($color, 'rgb')) {
-            preg_match_all('/(\d+)/', $color, $matches);
-            if (count($matches[0]) >= 3) {
-                return "{$matches[0][0]}, {$matches[0][1]}, {$matches[0][2]}";
-            }
-            return "0, 0, 0"; // Fallback
-        }
-
-        $hex = ltrim($color, '#');
-
-        if (strlen($hex) === 3) {
-            $r = hexdec(str_repeat($hex[0], 2));
-            $g = hexdec(str_repeat($hex[1], 2));
-            $b = hexdec(str_repeat($hex[2], 2));
-        } else {
-            // Ensure we have at least 6 chars (handle potential bad input)
-            $hex = str_pad($hex, 6, '0');
-            $r   = hexdec(substr($hex, 0, 2));
-            $g   = hexdec(substr($hex, 2, 2));
-            $b   = hexdec(substr($hex, 4, 2));
-        }
-
+        [$r, $g, $b] = $this->extractRgb($color);
         return "{$r}, {$g}, {$b}";
     }
 
@@ -398,38 +376,41 @@ class ThemeTablerController extends Controller
      */
     private function getLuminance(string $color): float
     {
-        $r = 0;
-        $g = 0;
-        $b = 0;
+        [$r, $g, $b] = $this->extractRgb($color);
+        return (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+    }
 
-        // Handle RGB/RGBA
-        if (str_starts_with($color, 'rgb')) {
-            preg_match_all('/(\d+)/', $color, $matches);
-            if (count($matches[0]) >= 3) {
-                $r = (int) $matches[0][0];
-                $g = (int) $matches[0][1];
-                $b = (int) $matches[0][2];
-            } else {
-                return 1; // Default light
-            }
-        } else {
-            // Handle Hex
-            $hex = ltrim($color, '#');
-
-            if (strlen($hex) === 3) {
-                $r = hexdec(str_repeat($hex[0], 2));
-                $g = hexdec(str_repeat($hex[1], 2));
-                $b = hexdec(str_repeat($hex[2], 2));
-            } elseif (strlen($hex) >= 6) {
-                $r = hexdec(substr($hex, 0, 2));
-                $g = hexdec(substr($hex, 2, 2));
-                $b = hexdec(substr($hex, 4, 2));
-            } else {
-                return 1;
-            }
+    /**
+     * Extract RGB components from color string
+     */
+    private function extractRgb(string $color): array
+    {
+        // Handle RGB/RGBA using simple string cleanup
+        if (str_contains($color, ',')) {
+            $parts = explode(',', preg_replace('/[^0-9,]/', '', $color));
+            return [
+                (int) ($parts[0] ?? 0),
+                (int) ($parts[1] ?? 0),
+                (int) ($parts[2] ?? 0),
+            ];
         }
 
-        return (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+        // Handle Hex (3 or 6 chars)
+        $hex = ltrim($color, '#');
+
+        if (strlen($hex) === 3) {
+            $r = hexdec($hex[0] . $hex[0]);
+            $g = hexdec($hex[1] . $hex[1]);
+            $b = hexdec($hex[2] . $hex[2]);
+        } else {
+            // Ensure 6 chars
+            $hex = str_pad($hex, 6, '0');
+            $r   = hexdec(substr($hex, 0, 2));
+            $g   = hexdec(substr($hex, 2, 2));
+            $b   = hexdec(substr($hex, 4, 2));
+        }
+
+        return [$r, $g, $b];
     }
 
     /**
