@@ -151,7 +151,6 @@
                                 'vertical' => 'Vertical (Sidebar + Header)',
                                 'horizontal' => 'Horizontal (Top Navbar)',
                                 'condensed' => 'Condensed',
-                                'navbar-overlap' => 'Navbar Overlap',
                             ] as $value => $label)
                             <option value="{{ $value }}" {{ ($layoutData['layout'] ?? 'vertical') === $value ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach

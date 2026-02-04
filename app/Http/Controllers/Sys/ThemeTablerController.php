@@ -49,8 +49,8 @@ class ThemeTablerController extends Controller
             'layoutSidebar'         => ! in_array($config['layout'] ?? 'vertical', ['condensed', 'navbar-overlap']),
             'layoutHideTopbar'      => ($config['header_sticky'] ?? 'false') === 'hidden',
             'layoutNavbarSticky'    => ($config['header_sticky'] ?? 'false') === 'true',
-            'layoutNavbarCondensed' => in_array($config['layout'] ?? 'vertical', ['condensed', 'navbar-overlap']),
-            'layoutNavbarClass'     => ($config['layout'] ?? 'vertical') === 'navbar-overlap' ? 'navbar-overlap' : '',
+            'layoutNavbarCondensed' => ($config['layout'] ?? 'vertical') === 'condensed',
+            'layoutNavbarClass'     => ($config['layout'] ?? 'vertical') === 'condensed' ? 'navbar-overlap' : '',
         ];
     }
 
@@ -75,7 +75,7 @@ class ThemeTablerController extends Controller
             'theme-header-sticky'     => 'nullable|in:true,false,hidden',
             'theme-card-style'        => 'nullable|in:flat,shadow,border,modern',
             'theme-boxed-bg'          => 'nullable|string',
-            'layout'                  => 'nullable|in:vertical,horizontal,condensed,navbar-overlap',
+            'layout'                  => 'nullable|in:vertical,horizontal,condensed',
             'container-width'         => 'nullable|in:standard,fluid,boxed',
             'auth-layout'             => 'nullable|in:basic,cover,illustration',
             'auth-form-position'      => 'nullable|in:left,right',

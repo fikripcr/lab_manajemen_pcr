@@ -132,11 +132,9 @@ body.layout-boxed .page {
     background-color: transparent !important;
 }
 
-/* --- Layout: Navbar Overlap --- */
-/* 1. Reset Navbar to Transparent (unless Custom Top Color is set) */
+/* --- Layout: Navbar Overlap (Dynamic) --- */
 /* 1. Reset Navbar to Transparent (managed by ::before) */
-/* 1. Reset Navbar to Transparent (managed by ::before) */
-.layout-navbar-overlap .navbar-overlap {
+.navbar-overlap {
     background: transparent !important;
     position: relative;
     z-index: auto !important;
@@ -145,26 +143,36 @@ body.layout-boxed .page {
     border-bottom: none !important;
 }
 
-/* Layer 1: The Large Overlap Background (Bottom) via ::after */
-.layout-navbar-overlap .navbar-overlap::after {
+/* Layer 1: The Large Overlap Background (Bottom) via ::after - TRIGGERED BY ATTRIBUTE */
+.navbar-overlap::after {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 12rem !important;
-    background: var(--tblr-header-overlap-bg, #1e293b) !important;
+    background: var(--tblr-header-overlap-bg, #0b1120) !important;
+    /* Deeper dark for better contrast */
     z-index: 0;
     /* Base level relative to header */
+    visibility: hidden;
+    /* Hide by default */
     pointer-events: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Subtle separator */
 }
 
-[data-bs-theme="light"] .layout-navbar-overlap .navbar-overlap::after {
+/* Show only if color is set */
+:root[data-bs-has-header-overlap-bg] .navbar-overlap::after {
+    visibility: visible;
+}
+
+[data-bs-theme="light"] .navbar-overlap::after {
     background: var(--tblr-header-overlap-bg, #2c3e50) !important;
 }
 
 /* Layer 2: The Navbar Strip Background (Middle) via ::before */
-.layout-navbar-overlap .navbar-overlap::before {
+.navbar-overlap::before {
     content: "";
     position: absolute;
     top: 0;
@@ -178,27 +186,32 @@ body.layout-boxed .page {
     pointer-events: none;
 }
 
+[data-bs-theme="dark"] .navbar-overlap::before {
+    /* Slightly lighter dark for the navbar strip in dark mode */
+    background: var(--tblr-header-top-bg, #182433) !important;
+}
+
 /* 3. Header Interactive Content: High Z-Index */
-.layout-navbar-overlap .navbar-overlap .container-xl,
-.layout-navbar-overlap .navbar-overlap .navbar-collapse {
+.navbar-overlap .container-xl,
+.navbar-overlap .navbar-collapse {
     position: relative;
     z-index: 1030;
     /* Lift content above proper */
 }
 
-/* 5. Ensure Content sits above background */
-.layout-navbar-overlap .page-wrapper {
+/* 5. Ensure Content sits above background when overlap is active */
+:root[data-bs-has-header-overlap-bg] .page-wrapper {
     position: relative;
     z-index: 2;
     /* Content sits on top of Header Backgrounds */
 }
 
 /* Sticky Header in Overlap Mode */
-body.layout-navbar-overlap header.navbar.sticky-top {
+.navbar-overlap.sticky-top {
     background-color: var(--tblr-bg-surface-dark);
 }
 
-body.layout-navbar-overlap[data-bs-has-header-top-bg] header.navbar.sticky-top {
+[data-bs-has-header-top-bg] .navbar-overlap.sticky-top {
     background-color: var(--tblr-header-top-bg) !important;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }

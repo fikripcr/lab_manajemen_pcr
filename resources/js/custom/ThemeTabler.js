@@ -23,8 +23,7 @@ class ThemeTabler {
         this.LAYOUT_config = {
             'vertical': ['header-overlap-preset'],
             'horizontal': ['header-overlap-preset'],
-            'condensed': ['sidebar-menu-preset', 'header-overlap-preset'],
-            'navbar-overlap': ['sidebar-menu-preset', 'body-bg-preset', 'header-fixed']
+            'condensed': ['sidebar-menu-preset'],
         };
 
         this.listeners = [];
@@ -192,7 +191,10 @@ class ThemeTabler {
 
         if (isSticky) {
             const layout = this.form?.querySelector('select[name="layout"]')?.value || 'vertical';
-            layout === 'navbar-overlap' ? topHeader.classList.add('sticky-top') : wrapper.classList.add('sticky-top');
+            // In layout-overlap (now merged with condensed), sticky usually applies directly to header
+            layout === 'condensed' && document.documentElement.hasAttribute('data-bs-has-header-overlap-bg')
+                ? topHeader.classList.add('sticky-top')
+                : wrapper.classList.add('sticky-top');
         }
     }
 
