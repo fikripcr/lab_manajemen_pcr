@@ -6,10 +6,7 @@
     $themeData = $themeController->getThemeData('sys');
     
     // Layout data (keep for backward compatibility)
-    $layoutData = [
-        'layout' => $themeData['layout'],
-        'containerWidth' => $themeData['containerWidth'],
-    ];
+    $layoutData = $themeController->getLayoutData('sys');
 @endphp
 <!DOCTYPE html>
 <html lang="en" {!! $themeController->getHtmlAttributes('sys') !!}>
