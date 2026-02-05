@@ -165,7 +165,7 @@
             @elseif(($item['type'] ?? 'item') === 'item')
                 <li class="nav-item{{ $isActive($item['route'] ?? null) ? ' active' : '' }}">
                     <a class="nav-link" href="{{ isset($item['route']) ? route($item['route']) : '#' }}">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <span class="nav-link-icon d-lg-inline-block">
                             {!! $renderIcon($item['icon'] ?? '') !!}
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
@@ -179,7 +179,7 @@
                        data-bs-auto-close="false" 
                        role="button" 
                        aria-expanded="{{ $isActive($item['active_routes'] ?? []) ? 'true' : 'false' }}">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <span class="nav-link-icon d-lg-inline-block">
                             {!! $renderIcon($item['icon'] ?? '') !!}
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
@@ -237,7 +237,7 @@
             @if(($item['type'] ?? 'item') === 'item')
                 <li class="nav-item{{ $isActive($item['route'] ?? null) ? ' active' : '' }}">
                     <a class="nav-link" href="{{ isset($item['route']) ? route($item['route']) : '#' }}">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <span class="nav-link-icon d-lg-inline-block">
                             {!! $renderIcon($item['icon'] ?? '') !!}
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
@@ -246,7 +246,7 @@
             @elseif(($item['type'] ?? 'item') === 'dropdown')
                 <li class="nav-item dropdown{{ $isActive($item['active_routes'] ?? []) ? ' active' : '' }}">
                     <a class="nav-link dropdown-toggle" href="#{{ $item['id'] ?? 'nav-drop' }}" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <span class="nav-link-icon d-lg-inline-block">
                             {!! $renderIcon($item['icon'] ?? '') !!}
                         </span>
                         <span class="nav-link-title">{{ $item['title'] ?? '' }}</span>
