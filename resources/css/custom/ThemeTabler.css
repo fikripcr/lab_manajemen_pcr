@@ -98,6 +98,10 @@ div.dt-processing>div:last-child>div {
 }
 
 body.layout-boxed {
+    background-color: var(--tblr-boxed-bg, #e2e8f0);
+}
+
+[data-bs-theme="dark"] body.layout-boxed {
     /* Match the Condensed Overlap 'Natural Dark' look (40% Black Mix) */
     background-color: color-mix(in srgb, var(--tblr-bg-surface), black 40%) !important;
 }
@@ -239,7 +243,8 @@ body.layout-condensed .page-body {
     box-shadow: none !important;
 }
 
-:root[data-bs-has-sidebar-bg] header.navbar-expand-md .navbar {
+:root[data-bs-has-sidebar-bg] header.navbar-expand-md .navbar,
+:root[data-bs-has-sidebar-bg] .layout-horizontal header.navbar-expand-md .navbar {
     background-color: var(--tblr-sidebar-bg) !important;
 }
 

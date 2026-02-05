@@ -23,7 +23,7 @@ class ThemeTabler {
         this.LAYOUT_config = {
             'vertical': ['header-overlap-preset'],
             'horizontal': ['header-overlap-preset'],
-            'condensed': ['sidebar-menu-preset', 'header-overlap-preset']
+            'condensed': ['sidebar-menu-preset']
         };
 
         this.listeners = [];
@@ -281,6 +281,15 @@ class ThemeTabler {
 
         this.initPickr();
         this.bindEvents();
+
+        // Trigger initial visibility state based on current values
+        const layout = this.form.querySelector('select[name="layout"]')?.value;
+        const width = this.form.querySelector('select[name="container-width"]')?.value;
+        const theme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+
+        if (layout) this.handleLayoutChange(layout);
+        if (width) this.handleContainerWidthChange(width);
+        this.handleThemeModeChange(theme, true);
     }
 
     async initPickr() {
@@ -372,10 +381,16 @@ class ThemeTabler {
         if (header) {
             if (layout === 'condensed') {
                 header.classList.add('navbar-overlap');
+                // Condensed typically implies dark header text for contrast
+                header.classList.add('navbar-dark', 'text-white');
+
                 // Ensure attribute is set to trigger CSS visibility
                 root.setAttribute('data-bs-has-header-overlap-bg', '');
             } else {
                 header.classList.remove('navbar-overlap');
+                // Non-condensed layouts (Vertical/Horizontal) default to light header
+                header.classList.remove('navbar-dark', 'text-white');
+
                 // Only remove attribute if no custom color is set
                 const customColor = this.form.querySelector('input[name="theme-header-overlap-bg"]')?.value;
                 if (!customColor || customColor === '#1e293b') {
@@ -392,7 +407,7 @@ class ThemeTabler {
         }
     }
 
-    handleThemeModeChange(theme) {
+    handleThemeModeChange(theme, isInit = false) {
         const presets = ['body-bg-preset', 'sidebar-menu-preset', 'header-top-preset', 'header-overlap-preset', 'boxed-bg-preset'];
         const isDark = theme === 'dark';
 
@@ -405,7 +420,7 @@ class ThemeTabler {
             });
         } else {
             ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
-                const saved = sessionStorage.getItem(`saved_${key}`);
+                const saved = isInit ? null : sessionStorage.getItem(`saved_${key}`);
                 const input = this.form.querySelector(`input[name="${key}"]`);
                 const val = saved || (input ? input.value : '');
 
@@ -413,9 +428,6 @@ class ThemeTabler {
                     this.applySetting(key, val, false);
                 }
             });
-
-            const layout = this.form.querySelector('select[name="layout"]')?.value;
-            if (layout) this.handleLayoutChange(layout);
         }
     }
 
