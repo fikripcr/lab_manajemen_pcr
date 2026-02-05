@@ -99,12 +99,12 @@ div.dt-processing>div:last-child>div {
 
 /* --- Layout: Boxed --- */
 body.layout-boxed {
-    background-color: var(--tblr-boxed-bg, #f1f5f9);
+    background-color: var(--tblr-boxed-bg, #0f172a);
+    /* Dark fallback */
 }
 
-[data-bs-theme="dark"] body.layout-boxed {
-    background-color: var(--tblr-boxed-bg, #0b1120);
-    /* Darker fallback for dark mode */
+[data-bs-theme="light"] body.layout-boxed {
+    background-color: var(--tblr-boxed-bg, #e2e8f0);
 }
 
 body.layout-boxed .page {

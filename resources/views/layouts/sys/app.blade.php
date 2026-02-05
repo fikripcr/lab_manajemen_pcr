@@ -8,6 +8,7 @@
     // Layout data (keep for backward compatibility)
     $layoutData = $themeController->getLayoutData('sys');
 @endphp
+
 <!DOCTYPE html>
 <html lang="en" {!! $themeController->getHtmlAttributes('sys') !!}>
 

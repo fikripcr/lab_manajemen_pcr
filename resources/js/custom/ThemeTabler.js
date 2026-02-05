@@ -23,7 +23,7 @@ class ThemeTabler {
         this.LAYOUT_config = {
             'vertical': ['header-overlap-preset'],
             'horizontal': ['header-overlap-preset'],
-            'condensed': ['sidebar-menu-preset'],
+            'condensed': ['sidebar-menu-preset', 'header-overlap-preset']
         };
 
         this.listeners = [];
@@ -181,20 +181,27 @@ class ThemeTabler {
         }
     }
 
-    _applySticky(isSticky) {
+    _applySticky(value) {
         const wrapper = document.getElementById('header-sticky-wrapper');
         const topHeader = wrapper?.querySelector('header.navbar');
         if (!wrapper || !topHeader) return;
 
+        const isSticky = value === 'true' || value === true;
+        const isHidden = value === 'hidden';
+
         wrapper.classList.remove('sticky-top');
         topHeader.classList.remove('sticky-top');
 
+        // Handle Hidden state in live preview
+        if (isHidden) {
+            wrapper.style.setProperty('display', 'none', 'important');
+        } else {
+            wrapper.style.removeProperty('display');
+        }
+
         if (isSticky) {
-            const layout = this.form?.querySelector('select[name="layout"]')?.value || 'vertical';
-            // In layout-overlap (now merged with condensed), sticky usually applies directly to header
-            layout === 'condensed' && document.documentElement.hasAttribute('data-bs-has-header-overlap-bg')
-                ? topHeader.classList.add('sticky-top')
-                : wrapper.classList.add('sticky-top');
+            // Always apply to wrapper in unified condensed/vertical/horizontal layouts
+            wrapper.classList.add('sticky-top');
         }
     }
 

@@ -46,7 +46,7 @@ class ThemeTablerController extends Controller
         return [
             'containerWidth'        => $config['container_width'] ?? 'standard',
             'layout'                => $config['layout'] ?? 'vertical',
-            'layoutSidebar'         => ! in_array($config['layout'] ?? 'vertical', ['condensed', 'navbar-overlap']),
+            'layoutSidebar'         => ! in_array($config['layout'] ?? 'vertical', ['condensed']),
             'layoutHideTopbar'      => ($config['header_sticky'] ?? 'false') === 'hidden',
             'layoutNavbarSticky'    => ($config['header_sticky'] ?? 'false') === 'true',
             'layoutNavbarCondensed' => ($config['layout'] ?? 'vertical') === 'condensed',
@@ -249,8 +249,6 @@ class ThemeTablerController extends Controller
 
         if ($layout === 'horizontal') {
             $classes[] = 'layout-horizontal';
-        } elseif ($layout === 'navbar-overlap') {
-            $classes[] = 'layout-navbar-overlap';
         }
 
         // Boxed layout
