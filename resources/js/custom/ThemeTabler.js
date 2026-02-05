@@ -1,11 +1,14 @@
 /**
  * ThemeTabler - Simplified Theme System
- * Handles live preview and form submission only
- * Server is the single source of truth (no localStorage/cookies)
+ * Handles live preview and form submission.
+ * Uses a "Unified State" pattern: One refresh() function updates EVERYTHING.
+ * Server is the SINGLE source of truth (No sessionStorage/localStorage).
  */
 class ThemeTabler {
     constructor(mode = 'sys') {
         this.mode = mode; // 'sys' or 'auth'
+        this.form = null;
+        this.pickrInstances = {};
 
         // Configuration map for CSS vars and data attributes
         this.themeMap = {
@@ -19,21 +22,6 @@ class ThemeTabler {
             'theme-radius': { var: '--tblr-border-radius' },
         };
 
-        // Layout Visibility Config
-        this.LAYOUT_config = {
-            'vertical': ['header-overlap-preset'],
-            'horizontal': ['header-overlap-preset'],
-            'condensed': ['sidebar-menu-preset']
-        };
-
-        this.listeners = [];
-        this.form = null;
-        this.pickrInstances = {};
-
-        // Auth Form Positioning Elements
-        this.formColumn = document.querySelector('[data-form-column]');
-        this.mediaColumn = document.querySelector('[data-media-column]');
-
         // Font Stacks
         this.fontStacks = {
             'inter': "'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif",
@@ -44,125 +32,226 @@ class ThemeTabler {
         };
     }
 
+    initSettingsPanel() {
+        this.form = document.getElementById('offcanvasSettings');
+        if (!this.form) return;
+
+        this.initPickr();
+        this.bindEvents();
+
+        // Initial Refresh to sync UI with Server Data
+        this.refresh();
+    }
+
     // ==========================================
-    // Live Preview Logic
+    // Core Logic: Unified Refresh
     // ==========================================
 
-    subscribe(callback) { this.listeners.push(callback); }
+    /**
+     * Reads current form state and updates ALL UI (Visibility, CSS, Classes)
+     */
+    refresh() {
+        if (!this.form) return;
 
-    applySetting(name, value, save = false) {
+        // 1. Read State from DOM Inputs
+        const state = {
+            layout: this.form.querySelector('select[name="layout"]')?.value || 'vertical',
+            width: this.form.querySelector('select[name="container-width"]')?.value || 'standard',
+            theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
+            font: this.form.querySelector('select[name="theme-font"]')?.value,
+            base: this.form.querySelector('select[name="theme-base"]')?.value,
+            sticky: this.form.querySelector('select[name="theme-header-sticky"]')?.value
+        };
+
+        // 2. Update Structural Classes (Body & Header)
+        this._updateStructure(state);
+
+        // 3. Update Settings Panel Visibility
+        this._updateVisibility(state);
+
+        // 4. Update CSS Variables & Attributes (Live Preview)
+        this._updateStyles(state);
+    }
+
+    _updateStructure(state) {
         const root = document.documentElement;
+        const body = document.body;
+        const header = document.querySelector('header.navbar');
+        const sidebar = document.querySelector('aside.navbar-vertical');
 
-        // 1. Handle Theme Mode Changes
-        if (name === 'theme') {
-            root.setAttribute('data-bs-theme', value);
+        // Layout Classes
+        body.classList.remove('layout-vertical', 'layout-horizontal', 'layout-condensed', 'layout-boxed');
+        body.classList.add(`layout-${state.layout}`);
 
-            // Clear custom backgrounds when switching to dark
-            if (value === 'dark') {
-                this._clearCustomBackgrounds(root);
-            }
-
-            this.listeners.forEach(cb => cb(name, value));
-            return;
-        }
-
-        // 2. Handle Dark Mode Backgrounds (Skip in dark mode)
-        if (this._isDarkMode() && ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].includes(name)) {
-            return;
-        }
-
-        // 3. Handle Mapped Settings
-        if (this.themeMap[name]) {
-            this._applyMappedSetting(root, name, value);
-        }
-        // 4. Handle Font
-        else if (name === 'theme-font') {
-            root.setAttribute('data-bs-theme-font', value);
-            if (this.fontStacks[value]) {
-                root.style.setProperty('--tblr-font-sans-serif', this.fontStacks[value]);
-            }
-        }
-        // 5. Handle Standard Attributes
-        else if (['theme-base'].includes(name)) {
-            root.setAttribute('data-bs-' + name, value);
-        }
-        // 6. Handle Special Cases
-        else {
-            this._applySpecialCases(name, value);
-        }
-
-        this.listeners.forEach(cb => cb(name, value));
-    }
-
-    _clearCustomBackgrounds(root) {
-        root.style.removeProperty('--tblr-body-bg');
-        root.style.removeProperty('--tblr-sidebar-bg');
-        root.style.removeProperty('--tblr-sidebar-text');
-        root.style.removeProperty('--tblr-header-top-bg');
-        root.style.removeProperty('--tblr-header-top-text');
-        root.style.removeProperty('--tblr-header-overlap-bg');
-        root.style.removeProperty('--tblr-boxed-bg');
-        root.style.removeProperty('--tblr-body-text');
-
-        root.removeAttribute('data-bs-has-theme-bg');
-        root.removeAttribute('data-bs-has-sidebar-bg');
-        root.removeAttribute('data-bs-has-header-top-bg');
-        const layout = this.form?.querySelector('select[name="layout"]')?.value || document.body.className.match(/layout-(\w+)/)?.[1];
-
-        if (layout !== 'condensed') {
-            root.removeAttribute('data-bs-has-header-overlap-bg');
-            root.style.removeProperty('--tblr-header-overlap-bg');
+        if (state.width === 'boxed') {
+            body.classList.add('layout-boxed');
+            body.setAttribute('data-container-width', 'boxed');
         } else {
-            // Ensure it's there for condensed depth
-            root.setAttribute('data-bs-has-header-overlap-bg', '');
+            body.setAttribute('data-container-width', state.width);
+        }
+
+        // Sidebar Visibility
+        if (sidebar) {
+            sidebar.style.display = (state.layout === 'horizontal' || state.layout === 'condensed') ? 'none' : '';
+        }
+
+        // Header Structure
+        if (header) {
+            if (state.layout === 'condensed') {
+                header.classList.add('navbar-overlap', 'navbar-dark', 'text-white');
+                // Condensed ALWAYS implies header overlap background support
+                root.setAttribute('data-bs-has-header-overlap-bg', '');
+            } else {
+                header.classList.remove('navbar-overlap', 'navbar-dark', 'text-white');
+                // Remove unless user set a custom color (handled in _updateStyles)
+                if (!this._hasCustomColor('theme-header-overlap-bg')) {
+                    root.removeAttribute('data-bs-has-header-overlap-bg');
+                }
+            }
+        }
+
+        // Sticky Header / Hidden Header
+        const stickyWrapper = document.getElementById('header-sticky-wrapper');
+        const topHeader = stickyWrapper?.querySelector('header.navbar');
+        if (stickyWrapper && topHeader) {
+            stickyWrapper.classList.remove('sticky-top');
+            topHeader.classList.remove('sticky-top');
+            stickyWrapper.style.removeProperty('display');
+
+            if (state.sticky === 'hidden') {
+                stickyWrapper.style.setProperty('display', 'none', 'important');
+            } else if (state.sticky === 'true' || state.sticky === true) {
+                stickyWrapper.classList.add('sticky-top');
+            }
         }
     }
 
-    _isDarkMode() {
-        return document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    _updateVisibility(state) {
+        // Helper to show/hide by ID
+        const setVisible = (ids, show) => {
+            if (!Array.isArray(ids)) ids = [ids];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = show ? '' : 'none';
+            });
+        };
+
+        const isDark = state.theme === 'dark';
+
+        // 1. Color Presets: Hide ALL custom colors in Dark Mode
+        const colorPresets = ['body-bg-preset', 'sidebar-menu-preset', 'header-top-preset', 'header-overlap-preset', 'boxed-bg-preset'];
+        setVisible(colorPresets, !isDark);
+
+        if (!isDark) {
+            // Refine visibility based on Layout/Width rules
+            // Header Overlap Preset -> Only show if Condensed OR if user wants to override (optional, but sticking to previous logic: condensed only or vertical/horizontal?)
+            // Previous logic: Hidden for Vertical/Horizontal. Visible for Condensed.
+            setVisible('header-overlap-preset', state.layout === 'condensed');
+
+            // Sidebar Menu Preset -> Hide if Condensed (since Condensed uses top nav mostly?)
+            // Previous logic: Hides 'sidebar-menu-preset' for Condensed.
+            if (state.layout === 'condensed') {
+                setVisible('sidebar-menu-preset', false);
+            }
+
+            // Boxed BG Preset -> Only show if Boxed
+            setVisible('boxed-bg-preset', state.width === 'boxed');
+        }
+
+        // 2. Auth Flow Visibility
+        if (this.mode === 'auth') {
+            const position = this.form.querySelector('select[name="auth-form-position"]')?.value;
+            const formCol = document.querySelector('[data-form-column]');
+            const mediaCol = document.querySelector('[data-media-column]');
+            if (formCol && mediaCol) {
+                if (position === 'right') {
+                    formCol.style.order = '2';
+                    mediaCol.style.order = '1';
+                } else {
+                    formCol.style.order = '';
+                    mediaCol.style.order = '';
+                }
+            }
+        }
     }
 
-    _applyMappedSetting(root, name, value) {
-        const rule = this.themeMap[name];
+    _updateStyles(state) {
+        const root = document.documentElement;
+        if (state.theme === 'dark') return; // Do not apply custom colors in dark mode
 
+        // Iterate over all mapped settings and apply
+        for (const [name, rule] of Object.entries(this.themeMap)) {
+            const input = this.form.querySelector(`input[name="${name}"]`);
+            // Value is from Input OR Font Select OR empty
+            let val = input ? input.value : (name === 'theme-primary' ? state.primary : null);
+
+            // Special handling for non-inputs
+            if (name === 'theme-radius') val = this.form.querySelector('select[name="theme-radius"]')?.value;
+            if (name === 'theme-card-style') val = this.form.querySelector('select[name="theme-card-style"]')?.value;
+
+            if (val) {
+                this._applySingleStyle(root, name, val, rule);
+            } else {
+                this._removeSingleStyle(root, name, rule);
+            }
+        }
+
+        // Font Family
+        if (state.font) {
+            root.setAttribute('data-bs-theme-font', state.font);
+            if (this.fontStacks[state.font]) {
+                root.style.setProperty('--tblr-font-sans-serif', this.fontStacks[state.font]);
+            }
+        }
+
+        // Theme Base
+        if (state.base) {
+            root.setAttribute('data-bs-theme-base', state.base);
+        }
+    }
+
+    _applySingleStyle(root, name, value, rule) {
         // Attribute Handling
-        if (name === 'theme-card-style' && value === 'default') {
-            root.removeAttribute('data-bs-card-style');
-        } else if (rule.attr) {
-            root.setAttribute(rule.attr, value === true || value === 'true' ? '' : value);
+        if (rule.attr) {
+            if (name === 'theme-card-style' && value === 'default') {
+                root.removeAttribute('data-bs-card-style');
+            } else {
+                root.setAttribute(rule.attr, value === true || value === 'true' ? '' : value);
+            }
         }
 
         // CSS Variable Handling
         if (rule.var) {
             if (name === 'theme-radius') {
                 this._applyRadius(root, rule.var, value);
-            } else if (value) {
-                root.style.setProperty(rule.var, value);
-
-                // Auto-Contrast
-                if (name === 'theme-sidebar-bg') {
-                    this._updateSidebarContrast(root, value);
-                }
-                if (name === 'theme-header-top-bg') {
-                    this._updateHeaderTopContrast(root, value);
-                }
-                if (name === 'theme-bg') {
-                    this._updateBodyContrast(root, value);
-                }
             } else {
-                root.style.removeProperty(rule.var);
-                if (name === 'theme-sidebar-bg') {
-                    root.style.removeProperty('--tblr-sidebar-text');
-                }
-                if (name === 'theme-header-top-bg') {
-                    root.style.removeProperty('--tblr-header-top-text');
-                }
-                if (name === 'theme-bg') {
-                    root.style.removeProperty('--tblr-body-text');
-                }
+                root.style.setProperty(rule.var, value);
+                // Auto-Contrast logic
+                if (name === 'theme-sidebar-bg') this._updateContrast(root, value, '--tblr-sidebar-text', '--tblr-sidebar-text-muted');
+                if (name === 'theme-header-top-bg') this._updateContrast(root, value, '--tblr-header-top-text', '--tblr-header-top-text-muted');
+                if (name === 'theme-bg') this._updateContrast(root, value, '--tblr-body-text');
             }
         }
     }
+
+    _removeSingleStyle(root, name, rule) {
+        if (rule.var) root.style.removeProperty(rule.var);
+        if (rule.attr) root.removeAttribute(rule.attr);
+
+        // Clean up contrast vars
+        if (name === 'theme-sidebar-bg') { root.style.removeProperty('--tblr-sidebar-text'); root.style.removeProperty('--tblr-sidebar-text-muted'); }
+        if (name === 'theme-header-top-bg') { root.style.removeProperty('--tblr-header-top-text'); root.style.removeProperty('--tblr-header-top-text-muted'); }
+        if (name === 'theme-bg') { root.style.removeProperty('--tblr-body-text'); }
+    }
+
+    _hasCustomColor(name) {
+        const input = this.form.querySelector(`input[name="${name}"]`);
+        return input && input.value && input.value !== '';
+    }
+
+    // ==========================================
+    // Utilities
+    // ==========================================
 
     _applyRadius(root, varName, value) {
         const val = parseFloat(value);
@@ -171,126 +260,34 @@ class ThemeTabler {
             root.style.setProperty(varName + '-sm', (val * 0.75) + 'rem');
             root.style.setProperty(varName + '-lg', (val * 1.25) + 'rem');
             root.style.setProperty(varName + '-pill', '100rem');
-        } else {
-            [varName, varName + '-sm', varName + '-lg', varName + '-pill'].forEach(v => root.style.removeProperty(v));
         }
     }
 
-    _applySpecialCases(name, value) {
-        if (this.mode !== 'sys') return;
-
-        if (name === 'container-width') {
-            document.body.setAttribute('data-container-width', value);
-            value === 'boxed' ? document.body.classList.add('layout-boxed') : document.body.classList.remove('layout-boxed');
-        } else if (name === 'theme-header-sticky') {
-            this._applySticky(value === 'true' || value === true);
-        } else if (name === 'auth-form-position') {
-            this._applyAuthPosition(value);
-        }
-    }
-
-    _applySticky(value) {
-        const wrapper = document.getElementById('header-sticky-wrapper');
-        const topHeader = wrapper?.querySelector('header.navbar');
-        if (!wrapper || !topHeader) return;
-
-        const isSticky = value === 'true' || value === true;
-        const isHidden = value === 'hidden';
-
-        wrapper.classList.remove('sticky-top');
-        topHeader.classList.remove('sticky-top');
-
-        // Handle Hidden state in live preview
-        if (isHidden) {
-            wrapper.style.setProperty('display', 'none', 'important');
-        } else {
-            wrapper.style.removeProperty('display');
-        }
-
-        if (isSticky) {
-            // Always apply to wrapper in unified condensed/vertical/horizontal layouts
-            wrapper.classList.add('sticky-top');
-        }
-    }
-
-    _applyAuthPosition(position) {
-        if (!this.formColumn || !this.mediaColumn) return;
-
-        if (position === 'right') {
-            this.formColumn.style.order = '2';
-            this.mediaColumn.style.order = '1';
-        } else {
-            this.formColumn.style.order = '';
-            this.mediaColumn.style.order = '';
+    _updateContrast(root, color, textVar, mutedVar = null) {
+        const isDark = this._getLuminance(color) < 0.6;
+        root.style.setProperty(textVar, isDark ? '#ffffff' : '#1e293b');
+        if (mutedVar) {
+            root.style.setProperty(mutedVar, isDark ? 'rgba(255, 255, 255, 0.7)' : '#6c757d');
         }
     }
 
     _getLuminance(color) {
-        let r, g, b;
-
+        // Simple shim for luminance calculation
+        let r = 0, g = 0, b = 0;
         if (color.startsWith('#')) {
             const hex = color.slice(1);
-            if (hex.length === 3) {
-                r = parseInt(hex[0] + hex[0], 16);
-                g = parseInt(hex[1] + hex[1], 16);
-                b = parseInt(hex[2] + hex[2], 16);
-            } else if (hex.length === 6) {
-                r = parseInt(hex.substring(0, 2), 16);
-                g = parseInt(hex.substring(2, 4), 16);
-                b = parseInt(hex.substring(4, 6), 16);
-            } else {
-                return 1;
-            }
+            if (hex.length === 3) { r = parseInt(hex[0] + hex[0], 16); g = parseInt(hex[1] + hex[1], 16); b = parseInt(hex[2] + hex[2], 16); }
+            else if (hex.length === 6) { r = parseInt(hex.slice(0, 2), 16); g = parseInt(hex.slice(2, 4), 16); b = parseInt(hex.slice(4, 6), 16); }
         } else if (color.startsWith('rgb')) {
-            const match = color.match(/\d+/g);
-            if (!match || match.length < 3) return 1;
-            r = parseInt(match[0]);
-            g = parseInt(match[1]);
-            b = parseInt(match[2]);
-        } else {
-            return 1;
+            const m = color.match(/\d+/g);
+            if (m) { r = m[0]; g = m[1]; b = m[2]; }
         }
-
         return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     }
 
-    _updateSidebarContrast(root, color) {
-        const isDark = this._getLuminance(color) < 0.6;
-        root.style.setProperty('--tblr-sidebar-text', isDark ? '#ffffff' : '#1e293b');
-        root.style.setProperty('--tblr-sidebar-text-muted', isDark ? 'rgba(255, 255, 255, 0.7)' : '#6c757d');
-    }
-
-    _updateHeaderTopContrast(root, color) {
-        const isDark = this._getLuminance(color) < 0.6;
-        root.style.setProperty('--tblr-header-top-text', isDark ? '#ffffff' : '#1e293b');
-        root.style.setProperty('--tblr-header-top-text-muted', isDark ? 'rgba(255, 255, 255, 0.7)' : '#6c757d');
-    }
-
-    _updateBodyContrast(root, color) {
-        const isDark = this._getLuminance(color) < 0.6;
-        root.style.setProperty('--tblr-body-text', isDark ? '#ffffff' : '#1e293b');
-    }
-
     // ==========================================
-    // UI Logic (Settings Panel)
+    // Init & Events
     // ==========================================
-
-    initSettingsPanel() {
-        this.form = document.getElementById('offcanvasSettings');
-        if (!this.form) return;
-
-        this.initPickr();
-        this.bindEvents();
-
-        // Trigger initial visibility state based on current values
-        const layout = this.form.querySelector('select[name="layout"]')?.value;
-        const width = this.form.querySelector('select[name="container-width"]')?.value;
-        const theme = document.documentElement.getAttribute('data-bs-theme') || 'light';
-
-        if (layout) this.handleLayoutChange(layout);
-        if (width) this.handleContainerWidthChange(width);
-        this.handleThemeModeChange(theme, true);
-    }
 
     async initPickr() {
         if (typeof window.Pickr === 'undefined') {
@@ -318,12 +315,12 @@ class ThemeTabler {
 
             this.pickrInstances[target] = pickr;
 
-            pickr.on('change', (color, source, inst) => {
+            pickr.on('change', (color) => {
                 const rgba = color.toRGBA().toString(0);
-                inst.applyColor(true);
+                pickr.applyColor(true);
                 if (hiddenInput) {
                     hiddenInput.value = rgba;
-                    this.applySetting(target, rgba);
+                    this.refresh(); // Trigger unified refresh
                 }
             });
             pickr.on('save', () => pickr.hide());
@@ -331,104 +328,39 @@ class ThemeTabler {
     }
 
     bindEvents() {
+        // Change Event: Triggers Refresh
         this.form.addEventListener('change', (e) => {
             const { name, value } = e.target;
             if (!name) return;
 
-            this.applySetting(name, value);
-            if (name === 'layout') this.handleLayoutChange(value);
-            if (name === 'container-width') this.handleContainerWidthChange(value);
-            if (name === 'theme') this.handleThemeModeChange(value);
+            // Special handling for Theme Mode toggle (Dark -> Light reset)
+            if (name === 'theme') {
+                document.documentElement.setAttribute('data-bs-theme', value);
+                if (value === 'dark') {
+                    // Optionally clear inputs or just let refresh() handle visibility
+                    // Current refresh() hides presets, which is enough.
+                }
+            }
+
+            this.refresh();
         });
 
+        // Apply Button
         document.getElementById('apply-settings')?.addEventListener('click', () => this.handleApply());
 
+        // Reset Buttons
         this.form.querySelectorAll('button[data-reset-bg]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const target = e.currentTarget.getAttribute('data-reset-bg');
                 const defaults = { 'theme-bg': '#f4f6fa', 'theme-primary': '#206bc4', 'theme-header-overlap-bg': '#1e293b', 'theme-boxed-bg': '#e2e8f0' };
                 const val = defaults[target] || '#ffffff';
 
-                this.form.querySelector(`input[name="${target}"]`).value = val;
+                const input = this.form.querySelector(`input[name="${target}"]`);
+                if (input) input.value = val;
                 this.pickrInstances[target]?.setColor(val, true);
-                this.applySetting(target, ''); // Reset
+                this.refresh();
             });
         });
-    }
-
-    handleLayoutChange(layout) {
-        const basicElements = ['sidebar-menu-preset', 'header-overlap-preset', 'header-mode-section'];
-        basicElements.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
-
-        ['header-scrollable', 'header-fixed', 'header-hidden'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
-
-        const toHide = this.LAYOUT_config[layout] || [];
-        toHide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-
-        // Update body classes for live preview
-        document.body.classList.remove('layout-vertical', 'layout-horizontal', 'layout-condensed');
-        document.body.classList.add(`layout-${layout}`);
-
-        // Sync Sidebar visibility
-        const sidebar = document.querySelector('aside.navbar-vertical');
-        if (sidebar) {
-            sidebar.style.display = (layout === 'horizontal' || layout === 'condensed') ? 'none' : '';
-        }
-
-        // Sync header class and root attribute
-        const header = document.querySelector('header.navbar');
-        const root = document.documentElement;
-        if (header) {
-            if (layout === 'condensed') {
-                header.classList.add('navbar-overlap');
-                // Condensed typically implies dark header text for contrast
-                header.classList.add('navbar-dark', 'text-white');
-
-                // Ensure attribute is set to trigger CSS visibility
-                root.setAttribute('data-bs-has-header-overlap-bg', '');
-            } else {
-                header.classList.remove('navbar-overlap');
-                // Non-condensed layouts (Vertical/Horizontal) default to light header
-                header.classList.remove('navbar-dark', 'text-white');
-
-                // Only remove attribute if no custom color is set
-                const customColor = this.form.querySelector('input[name="theme-header-overlap-bg"]')?.value;
-                if (!customColor || customColor === '#1e293b') {
-                    root.removeAttribute('data-bs-has-header-overlap-bg');
-                }
-            }
-        }
-    }
-
-    handleContainerWidthChange(width) {
-        const boxedBgPreset = document.getElementById('boxed-bg-preset');
-        if (boxedBgPreset) {
-            boxedBgPreset.style.display = width === 'boxed' ? '' : 'none';
-        }
-    }
-
-    handleThemeModeChange(theme, isInit = false) {
-        const presets = ['body-bg-preset', 'sidebar-menu-preset', 'header-top-preset', 'header-overlap-preset', 'boxed-bg-preset'];
-        const isDark = theme === 'dark';
-
-        presets.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = isDark ? 'none' : ''; });
-
-        if (isDark) {
-            ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
-                const val = this.form.querySelector(`input[name="${key}"]`)?.value;
-                if (val) sessionStorage.setItem(`saved_${key}`, val);
-            });
-        } else {
-            ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'].forEach(key => {
-                const saved = isInit ? null : sessionStorage.getItem(`saved_${key}`);
-                const input = this.form.querySelector(`input[name="${key}"]`);
-                const val = saved || (input ? input.value : '');
-
-                if (val) {
-                    this.applySetting(key, val, false);
-                }
-            });
-        }
     }
 
     async handleApply() {
@@ -442,8 +374,6 @@ class ThemeTabler {
         try {
             const formData = new FormData(this.form);
             const data = Object.fromEntries(formData.entries());
-
-            // Add mode parameter
             data._mode = this.mode;
 
             const response = await axios.post('/theme/save', data);
@@ -456,12 +386,7 @@ class ThemeTabler {
                     timer: 3000,
                     timerProgressBar: true,
                 });
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Theme settings saved successfully'
-                });
-
-                // Reload to sync with server
+                Toast.fire({ icon: 'success', title: 'Theme settings saved successfully' });
                 setTimeout(() => window.location.reload(), 500);
             }
         } catch (error) {
