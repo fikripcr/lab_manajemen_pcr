@@ -414,7 +414,7 @@ class ThemeTabler {
                 });
 
                 // Reload to sync with server
-                setTimeout(() => window.location.reload(), 10000);
+                setTimeout(() => window.location.reload(), 500);
             }
         } catch (error) {
             console.error('Save failed:', error);
