@@ -177,7 +177,9 @@ class ThemeTabler {
 
     _updateStyles(state) {
         const root = document.documentElement;
-        if (state.theme === 'dark') return; // Do not apply custom colors in dark mode
+
+        // In Dark Mode, we only skip specific "Background" colors.
+        const backgroundKeys = ['theme-bg', 'theme-sidebar-bg', 'theme-header-top-bg', 'theme-header-overlap-bg', 'theme-boxed-bg'];
 
         // Iterate over all mapped settings and apply
         for (const [name, rule] of Object.entries(this.themeMap)) {
@@ -188,6 +190,12 @@ class ThemeTabler {
             // Special handling for non-inputs
             if (name === 'theme-radius') val = this.form.querySelector('select[name="theme-radius"]')?.value;
             if (name === 'theme-card-style') val = this.form.querySelector('select[name="theme-card-style"]')?.value;
+
+            // If Dark Mode AND it's a background key -> Force Remove (Do not apply)
+            if (state.theme === 'dark' && backgroundKeys.includes(name)) {
+                this._removeSingleStyle(root, name, rule);
+                continue;
+            }
 
             if (val) {
                 this._applySingleStyle(root, name, val, rule);
