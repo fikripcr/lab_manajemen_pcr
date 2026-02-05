@@ -54,13 +54,21 @@ class ThemeTabler {
         if (!this.form) return;
 
         // 1. Read State from DOM Inputs
+        // Helper to get value from Select OR Radio
+        const getVal = (name) => {
+            const radio = this.form.querySelector(`input[name="${name}"]:checked`);
+            if (radio) return radio.value;
+            const select = this.form.querySelector(`select[name="${name}"]`);
+            return select ? select.value : null;
+        };
+
         const state = {
-            layout: this.form.querySelector('select[name="layout"]')?.value || 'vertical',
-            width: this.form.querySelector('select[name="container-width"]')?.value || 'standard',
+            layout: getVal('layout') || 'vertical',
+            width: getVal('container-width') || 'standard',
             theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
-            font: this.form.querySelector('select[name="theme-font"]')?.value,
-            base: this.form.querySelector('select[name="theme-base"]')?.value,
-            sticky: this.form.querySelector('select[name="theme-header-sticky"]')?.value
+            font: getVal('theme-font'),
+            base: getVal('theme-base'),
+            sticky: getVal('theme-header-sticky')
         };
 
         // 2. Update Structural Classes (Body & Header)
@@ -88,6 +96,36 @@ class ThemeTabler {
             body.setAttribute('data-container-width', 'boxed');
         } else {
             body.setAttribute('data-container-width', state.width);
+        }
+
+        // DYNAMIC CONTAINER WIDTH UPDATE (Live Preview Fix)
+        const targetClass = state.width === 'fluid' ? 'container-fluid' : 'container-xl';
+        const removeClass = state.width === 'fluid' ? 'container-xl' : 'container-fluid';
+
+        // 1. Page Content (Wrap in page-wrapper usually)
+        const pageContainers = document.querySelectorAll('.page-wrapper .container-xl, .page-wrapper .container-fluid');
+        pageContainers.forEach(el => {
+            el.classList.remove(removeClass);
+            el.classList.add(targetClass);
+        });
+
+        // 2. Headers (Navbar)
+        const headers = document.querySelectorAll('header.navbar');
+        headers.forEach(header => {
+            // Find inner container regardless of current class
+            const container = header.querySelector('.container-xl, .container-fluid');
+            if (container) {
+                container.classList.remove(removeClass);
+                container.classList.add(targetClass);
+            }
+        });
+
+        // 3. Vertical Mobile Menu (Functionality specific)
+        // Check for the container inside the separate collapse block if exists
+        const mobileMenuContainer = document.querySelector('#navbar-menu > .d-lg-none > .container-xl, #navbar-menu > .d-lg-none > .container-fluid');
+        if (mobileMenuContainer) {
+            mobileMenuContainer.classList.remove(removeClass);
+            mobileMenuContainer.classList.add(targetClass);
         }
 
         // Sidebar Visibility
@@ -160,7 +198,7 @@ class ThemeTabler {
 
         // 2. Auth Flow Visibility
         if (this.mode === 'auth') {
-            const position = this.form.querySelector('select[name="auth-form-position"]')?.value;
+            const position = this.form.querySelector('input[name="auth-form-position"]:checked')?.value;
             const formCol = document.querySelector('[data-form-column]');
             const mediaCol = document.querySelector('[data-media-column]');
             if (formCol && mediaCol) {
