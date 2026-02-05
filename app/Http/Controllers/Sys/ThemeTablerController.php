@@ -46,7 +46,7 @@ class ThemeTablerController extends Controller
         return [
             'containerWidth'        => $config['container_width'] ?? 'standard',
             'layout'                => $config['layout'] ?? 'vertical',
-            'layoutSidebar'         => ! in_array($config['layout'] ?? 'vertical', ['condensed']),
+            'layoutSidebar'         => ! in_array($config['layout'] ?? 'vertical', ['condensed', 'horizontal']),
             'layoutHideTopbar'      => ($config['header_sticky'] ?? 'false') === 'hidden',
             'layoutNavbarSticky'    => ($config['header_sticky'] ?? 'false') === 'true',
             'layoutNavbarCondensed' => ($config['layout'] ?? 'vertical') === 'condensed',
@@ -158,22 +158,31 @@ class ThemeTablerController extends Controller
                 $bgCss[]   = "--tblr-header-top-text: {$textColor};";
             }
 
-            if (! empty($config['bg_header_overlap'])) {
-                $bgCss[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
-
-                // Generate contrast text color
-                $textColor = $this->getContrastColor($config['bg_header_overlap']);
-                $bgCss[]   = "--tblr-header-overlap-text: {$textColor};";
-
-                // Generate muted text color
-                $mutedColor = $this->getLuminance($config['bg_header_overlap']) < 0.6
-                    ? 'rgba(255, 255, 255, 0.7)'
-                    : '#6c757d';
-                $bgCss[] = "--tblr-header-overlap-text-muted: {$mutedColor};";
-            }
-
             if (! empty($config['bg_boxed'])) {
                 $bgCss[] = "--tblr-boxed-bg: {$config['bg_boxed']};";
+            }
+        }
+
+        // Always allow Header Overlap BG in Dark Mode if needed for depth
+        if (! empty($config['bg_header_overlap'])) {
+            $overlapCss   = [];
+            $overlapCss[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
+
+            // Generate contrast text color
+            $textColor    = $this->getContrastColor($config['bg_header_overlap']);
+            $overlapCss[] = "--tblr-header-overlap-text: {$textColor};";
+
+            // Generate muted text color
+            $mutedColor = $this->getLuminance($config['bg_header_overlap']) < 0.6
+                ? 'rgba(255, 255, 255, 0.7)'
+                : '#6c757d';
+            $overlapCss[] = "--tblr-header-overlap-text-muted: {$mutedColor};";
+
+            // If in dark mode, we add these to the main :root to ensure they override fallbacks
+            if (($config['theme'] ?? 'light') === 'dark') {
+                $css = array_merge($css, $overlapCss);
+            } else {
+                $bgCss = array_merge($bgCss, $overlapCss);
             }
         }
 
@@ -226,7 +235,7 @@ class ThemeTablerController extends Controller
             $attributes[] = "data-bs-card-style=\"{$config['card_style']}\"";
         }
 
-        // Background indicators (only if not empty and NOT in dark mode)
+        // Background indicators
         if ($theme !== 'dark') {
             if (! empty($config['bg_body'])) {
                 $attributes[] = 'data-bs-has-theme-bg';
@@ -237,7 +246,11 @@ class ThemeTablerController extends Controller
             if (! empty($config['bg_header_top'])) {
                 $attributes[] = 'data-bs-has-header-top-bg';
             }
-            if (! empty($config['bg_header_overlap'])) {
+        }
+
+        // Overlap indicator: Allow in dark mode if layout is condensed to provide visual depth
+        if (! empty($config['bg_header_overlap']) || ($config['layout'] ?? '') === 'condensed') {
+            if ($theme !== 'dark' || ($config['layout'] ?? '') === 'condensed') {
                 $attributes[] = 'data-bs-has-header-overlap-bg';
             }
         }

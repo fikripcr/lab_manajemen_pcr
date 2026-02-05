@@ -19,7 +19,8 @@
 
     <title>@yield('title') - {{ config('app.name') }}</title>
 
-    <meta name="description" content="System Management Dashboard" />
+    <meta name="description" content="
+    " />
 
     {{-- Favicon --}}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />

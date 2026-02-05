@@ -151,8 +151,8 @@ body.layout-boxed .page {
     left: 0;
     right: 0;
     height: 12rem !important;
-    background: var(--tblr-header-overlap-bg, #0b1120) !important;
-    /* Deeper dark for better contrast */
+    background: var(--tblr-header-overlap-bg, #04060b) !important;
+    /* Pitch dark-blue for extreme contrast */
     z-index: 0;
     /* Base level relative to header */
     visibility: hidden;
@@ -162,13 +162,20 @@ body.layout-boxed .page {
     /* Subtle separator */
 }
 
-/* Show only if color is set */
-:root[data-bs-has-header-overlap-bg] .navbar-overlap::after {
+/* Show only if color is set OR layout is condensed (depth fallback) */
+:root[data-bs-has-header-overlap-bg] .navbar-overlap::after,
+body.layout-condensed .navbar-overlap::after {
     visibility: visible;
 }
 
 [data-bs-theme="light"] .navbar-overlap::after {
     background: var(--tblr-header-overlap-bg, #2c3e50) !important;
+}
+
+[data-bs-theme="dark"] .navbar-overlap::after {
+    /* Layer: Darker overlay to create depth behind the header */
+    background: rgba(0, 0, 0, 0.5) !important;
+    opacity: 1 !important;
 }
 
 /* Layer 2: The Navbar Strip Background (Middle) via ::before */
@@ -187,8 +194,8 @@ body.layout-boxed .page {
 }
 
 [data-bs-theme="dark"] .navbar-overlap::before {
-    /* Slightly lighter dark for the navbar strip in dark mode */
-    background: var(--tblr-header-top-bg, #182433) !important;
+    /* Navbar Top: Match the standard Horizontal Dark Header color */
+    background: var(--tblr-bg-surface-dark, #182433) !important;
 }
 
 /* 3. Header Interactive Content: High Z-Index */
@@ -200,10 +207,17 @@ body.layout-boxed .page {
 }
 
 /* 5. Ensure Content sits above background when overlap is active */
-:root[data-bs-has-header-overlap-bg] .page-wrapper {
+:root[data-bs-has-header-overlap-bg] .page-wrapper,
+body.layout-condensed .page-wrapper {
     position: relative;
     z-index: 2;
+    background-color: transparent !important;
     /* Content sits on top of Header Backgrounds */
+}
+
+:root[data-bs-has-header-overlap-bg] .page-body,
+body.layout-condensed .page-body {
+    background-color: transparent !important;
 }
 
 /* Sticky Header in Overlap Mode */

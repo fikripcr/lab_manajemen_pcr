@@ -107,7 +107,15 @@ class ThemeTabler {
         root.removeAttribute('data-bs-has-theme-bg');
         root.removeAttribute('data-bs-has-sidebar-bg');
         root.removeAttribute('data-bs-has-header-top-bg');
-        root.removeAttribute('data-bs-has-header-overlap-bg');
+        const layout = this.form?.querySelector('select[name="layout"]')?.value || document.body.className.match(/layout-(\w+)/)?.[1];
+
+        if (layout !== 'condensed') {
+            root.removeAttribute('data-bs-has-header-overlap-bg');
+            root.style.removeProperty('--tblr-header-overlap-bg');
+        } else {
+            // Ensure it's there for condensed depth
+            root.setAttribute('data-bs-has-header-overlap-bg', '');
+        }
     }
 
     _isDarkMode() {
@@ -347,6 +355,34 @@ class ThemeTabler {
 
         const toHide = this.LAYOUT_config[layout] || [];
         toHide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+
+        // Update body classes for live preview
+        document.body.classList.remove('layout-vertical', 'layout-horizontal', 'layout-condensed');
+        document.body.classList.add(`layout-${layout}`);
+
+        // Sync Sidebar visibility
+        const sidebar = document.querySelector('aside.navbar-vertical');
+        if (sidebar) {
+            sidebar.style.display = (layout === 'horizontal' || layout === 'condensed') ? 'none' : '';
+        }
+
+        // Sync header class and root attribute
+        const header = document.querySelector('header.navbar');
+        const root = document.documentElement;
+        if (header) {
+            if (layout === 'condensed') {
+                header.classList.add('navbar-overlap');
+                // Ensure attribute is set to trigger CSS visibility
+                root.setAttribute('data-bs-has-header-overlap-bg', '');
+            } else {
+                header.classList.remove('navbar-overlap');
+                // Only remove attribute if no custom color is set
+                const customColor = this.form.querySelector('input[name="theme-header-overlap-bg"]')?.value;
+                if (!customColor || customColor === '#1e293b') {
+                    root.removeAttribute('data-bs-has-header-overlap-bg');
+                }
+            }
+        }
     }
 
     handleContainerWidthChange(width) {
