@@ -97,10 +97,9 @@ div.dt-processing>div:last-child>div {
     padding-right: 1.5rem;
 }
 
-/* --- Layout: Boxed --- */
 body.layout-boxed {
-    background-color: var(--tblr-boxed-bg, #0f172a);
-    /* Dark fallback */
+    /* Match the Condensed Overlap 'Natural Dark' look (40% Black Mix) */
+    background-color: color-mix(in srgb, var(--tblr-bg-surface), black 40%) !important;
 }
 
 [data-bs-theme="light"] body.layout-boxed {
@@ -173,8 +172,8 @@ body.layout-condensed .navbar-overlap::after {
 }
 
 [data-bs-theme="dark"] .navbar-overlap::after {
-    /* Layer: Darker overlay to create depth behind the header */
-    background: rgba(0, 0, 0, 0.5) !important;
+    /* Variable Dark Natural: Weaker mix (50%) so it's not 'pitch black' but still deep */
+    background: color-mix(in srgb, var(--tblr-bg-surface), black 40%) !important;
     opacity: 1 !important;
 }
 
@@ -194,8 +193,8 @@ body.layout-condensed .navbar-overlap::after {
 }
 
 [data-bs-theme="dark"] .navbar-overlap::before {
-    /* Navbar Top: Match the standard Horizontal Dark Header color */
-    background: var(--tblr-bg-surface-dark, #182433) !important;
+    /* Navbar Top: Match the lighter standard Horizontal Header (bg-surface) */
+    background: var(--tblr-bg-surface, #182433) !important;
 }
 
 /* 3. Header Interactive Content: High Z-Index */
