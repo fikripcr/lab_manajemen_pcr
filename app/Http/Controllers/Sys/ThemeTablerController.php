@@ -110,6 +110,7 @@ class ThemeTablerController extends Controller
     {
         $config = $this->loadConfig($mode);
         $css    = [];
+        $bgCss  = [];
 
         // Primary Color
         if (! empty($config['primary_color'])) {
@@ -136,52 +137,66 @@ class ThemeTablerController extends Controller
         // Background Colors (only if not empty and NOT in dark mode)
         if (($config['theme'] ?? 'light') !== 'dark') {
             if (! empty($config['bg_body'])) {
-                $css[]     = "--tblr-body-bg: {$config['bg_body']};";
+                $bgCss[]   = "--tblr-body-bg: {$config['bg_body']};";
                 $textColor = $this->getContrastColor($config['bg_body']);
-                $css[]     = "--tblr-body-text: {$textColor};";
+                $bgCss[]   = "--tblr-body-text: {$textColor};";
             }
 
             if (! empty($config['bg_sidebar'])) {
-                $css[]      = "--tblr-sidebar-bg: {$config['bg_sidebar']};";
+                $bgCss[]    = "--tblr-sidebar-bg: {$config['bg_sidebar']};";
                 $textColor  = $this->getContrastColor($config['bg_sidebar']);
-                $css[]      = "--tblr-sidebar-text: {$textColor};";
+                $bgCss[]    = "--tblr-sidebar-text: {$textColor};";
                 $mutedColor = $this->getLuminance($config['bg_sidebar']) < 0.6
                     ? 'rgba(255, 255, 255, 0.7)'
                     : '#6c757d';
-                $css[] = "--tblr-sidebar-text-muted: {$mutedColor};";
+                $bgCss[] = "--tblr-sidebar-text-muted: {$mutedColor};";
             }
 
             if (! empty($config['bg_header_top'])) {
-                $css[]     = "--tblr-header-top-bg: {$config['bg_header_top']};";
+                $bgCss[]   = "--tblr-header-top-bg: {$config['bg_header_top']};";
                 $textColor = $this->getContrastColor($config['bg_header_top']);
-                $css[]     = "--tblr-header-top-text: {$textColor};";
+                $bgCss[]   = "--tblr-header-top-text: {$textColor};";
             }
 
             if (! empty($config['bg_header_overlap'])) {
-                $css[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
+                $bgCss[] = "--tblr-header-overlap-bg: {$config['bg_header_overlap']};";
 
                 // Generate contrast text color
                 $textColor = $this->getContrastColor($config['bg_header_overlap']);
-                $css[]     = "--tblr-header-overlap-text: {$textColor};";
+                $bgCss[]   = "--tblr-header-overlap-text: {$textColor};";
 
                 // Generate muted text color
                 $mutedColor = $this->getLuminance($config['bg_header_overlap']) < 0.6
                     ? 'rgba(255, 255, 255, 0.7)'
                     : '#6c757d';
-                $css[] = "--tblr-header-overlap-text-muted: {$mutedColor};";
+                $bgCss[] = "--tblr-header-overlap-text-muted: {$mutedColor};";
             }
 
             if (! empty($config['bg_boxed'])) {
-                $css[] = "--tblr-boxed-bg: {$config['bg_boxed']};";
+                $bgCss[] = "--tblr-boxed-bg: {$config['bg_boxed']};";
             }
         }
 
-        if (empty($css)) {
+        if (empty($css) && empty($bgCss)) {
             return '';
         }
 
-        $cssString = implode("\n    ", $css);
-        return "<style>\n:root {\n    {$cssString}\n}\n</style>";
+        $style = "<style>\n";
+
+        if (! empty($css)) {
+            $cssString  = implode("\n    ", $css);
+            $style     .= ":root {\n    {$cssString}\n}\n";
+        }
+
+        if (! empty($bgCss)) {
+            $bgCssString  = implode("\n    ", $bgCss);
+            // Wrap in :not selector to allow live preview to override server styles
+            $style .= "html:not([data-bs-theme=\"dark\"]) {\n    {$bgCssString}\n}\n";
+        }
+
+        $style .= "</style>";
+
+        return $style;
     }
 
     /**
