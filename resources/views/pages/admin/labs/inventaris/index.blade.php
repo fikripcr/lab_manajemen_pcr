@@ -6,7 +6,7 @@
     <x-sys.page-header :title="'Inventaris Lab: ' . $lab->name" pretitle="Laboratorium">
         <x-slot:actions>
             <x-sys.button type="back" :href="route('labs.index')" />
-            <x-sys.button type="create" :href="route('labs.inventaris.create', $lab->encrypted_lab_id)" text="Tambah Inventaris" />
+            <x-sys.button type="create" :href="route('labs.inventaris.create', $lab->encrypted_lab_id)" text="Create" />
         </x-slot:actions>
     </x-sys.page-header>
 @endsection

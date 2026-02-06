@@ -64,8 +64,15 @@ window.loadHugeRTE = function (selector, config = {}) {
         ]).then(([, , , , , , , , , , , , , , skinModule, contentCssModule]) => {
             window.hugerte = hugerte;
             window.hugerteContentCss = contentCssModule.default;
-            if (isDarkMode) config.content_css = 'dark';
-            if (selector) hugerte.init({ selector: selector, ...config });
+            if (selector) {
+                hugerte.init({
+                    selector: selector,
+                    skin: false,
+                    content_css: false,
+                    content_style: window.hugerteContentCss + (config.content_style || ''),
+                    ...config
+                });
+            }
             return hugerte;
         });
     });

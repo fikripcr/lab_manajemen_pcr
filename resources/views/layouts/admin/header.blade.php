@@ -156,17 +156,7 @@
             <div class="collapse navbar-collapse" id="navbar-menu">
                 {{-- Placeholder for Admin Mobile Menu - Can be implemented later if needed --}}
                 <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
-                     <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}" >
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <i class="ti ti-home fs-2"></i>
-                                </span>
-                                <span class="nav-link-title">Dashboard</span>
-                            </a>
-                        </li>
-                        {{-- Add more critical mobile links here --}}
-                     </ul>
+                     <x-admin.menu-renderer type="navbar" />
                 </div>
             </div>
             @endif

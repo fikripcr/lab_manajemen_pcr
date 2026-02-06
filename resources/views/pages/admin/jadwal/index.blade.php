@@ -4,7 +4,7 @@
 <x-sys.page-header title="Jadwal Kuliah" pretitle="Perkuliahan">
     <x-slot:actions>
         <x-sys.button type="import" :href="route('jadwal.import.form')" text="Import Jadwal" />
-        <x-sys.button type="create" :href="route('jadwal.create')" text="Add New Schedule" />
+        <x-sys.button type="create" :href="route('jadwal.create')" text="Create" />
     </x-slot:actions>
 </x-sys.page-header>
 @endsection

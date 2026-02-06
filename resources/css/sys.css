@@ -1,7 +1,6 @@
 /* 
  * Sys Section - Tabler UI Theme
  * This CSS entry point is for the System Management section only.
- * Optimized & Import-Based Structure
  */
 
 /* ==========================================================================
@@ -22,12 +21,6 @@
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
 /* ==========================================================================
-   2. CUSTOM THEME LOGIC
+   2. CUSTOM THEME LOGIC (SHARED WITH SYS)
    ========================================================================== */
-/* Contains:
-   - Base Customizations
-   - Layout Systems
-   - Auto-Contrast System
-   - Select2 Integration
-*/
 @import './custom/ThemeTabler.css';

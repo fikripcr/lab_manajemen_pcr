@@ -6,7 +6,7 @@
     <x-sys.page-header :title="'Team Lab: ' . $lab->name" pretitle="Laboratorium">
         <x-slot:actions>
             <x-sys.button type="back" :href="route('labs.index')" />
-            <x-sys.button type="create" :href="route('labs.teams.create', $lab->encrypted_lab_id)" text="Tambah Anggota" />
+            <x-sys.button type="create" :href="route('labs.teams.create', $lab->encrypted_lab_id)" text="Create" />
         </x-slot:actions>
     </x-sys.page-header>
 @endsection

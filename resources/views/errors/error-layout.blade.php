@@ -7,7 +7,7 @@
     <meta name="description" content="@yield('message', 'An error occurred')">
     <meta name="robots" content="noindex, nofollow">
     
-    <link rel="icon" type="image/x-icon" href="{{ Vite::asset('resources/assets/admin/img/favicon/favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     
     {{-- @include('partials.theme-loader') --}}
     

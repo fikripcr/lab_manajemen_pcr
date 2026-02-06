@@ -7,9 +7,6 @@
    1. CORE IMPORTS & SETUP
    ========================================================================== */
 
-/* Legacy Support: Boxicons (Used in existing admin views) */
-@import '../assets/admin/vendor/fonts/boxicons.min.css';
-
 /* Tabler Core CSS */
 @import '@tabler/core/dist/css/tabler.min.css';
 

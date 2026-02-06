@@ -34,7 +34,7 @@
                                         <li><strong>jam_selesai</strong> - Format: HH:MM (contoh: 10:00)</li>
                                         <li><strong>lab</strong> - Nama lab (contoh: Lab Jaringan)</li>
                                     </ul>
-                                    <a href="{{ Vite::asset('resources/assets/admin/import/template_import_jadwal.xlsx') }}" class="btn btn-sm btn-outline-info">
+                                    <a href="{{ Vite::asset('resources/assets/templates/template_import_jadwal.xlsx') }}" class="btn btn-sm btn-outline-info">
                                         <i class="ti ti-download me-1"></i> Download Template
                                     </a>
                                 </div>

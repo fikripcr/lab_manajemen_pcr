@@ -1,33 +1,43 @@
 @extends('layouts.admin.app')
 
-@section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Import Users /</span> Upload File</h4>
+@section('title', 'Import User')
 
+@section('header')
+    <x-sys.page-header title="Import Pengguna" pretitle="Pengguna">
+        <x-slot:actions>
+            <x-sys.button type="back" :href="route('users.index')" />
+        </x-slot:actions>
+    </x-sys.page-header>
+@endsection
+
+@section('content')
     <div class="row">
         <div class="col-12">
             <x-admin.flash-message />
 
             <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Import Users from Excel</h5>
-                    <a href="{{ route('users.index') }}" class="btn btn-secondary">
-                        <i class='bx bx-arrow-back me-1'></i> Back to Users
-                    </a>
-                </div>
                 <div class="card-body">
-                    <div class="alert alert-info">
-                        <h6 class="alert-heading">Petunjuk Import Pengguna</h6>
-                        <p>Gunakan format file Excel (.xlsx, .xls) atau CSV dengan struktur kolom sebagai berikut:</p>
-                        <ul>
-                            <li><strong>Nama:</strong> Nama lengkap pengguna</li>
-                            <li><strong>Email:</strong> Alamat email pengguna (unik)</li>
-                            <li><strong>Password:</strong> Sandi pengguna (opsional, akan di-generate jika kosong)</li>
-                            <li><strong>Role:</strong> Nama role pengguna (contoh: admin, dosen, mahasiswa, dll)</li>
-                        </ul>
-                        <a href="{{ Vite::asset('resources/assets/admin/import/template_import_user.xlsx') }}" class="btn btn-primary btn-sm">
-                            <i class='bx bx-download me-1'></i> Download Template
-                        </a>
+                    <div class="alert alert-info border-0 shadow-sm mb-4">
+                        <div class="d-flex">
+                            <div>
+                                <i class="ti ti-info-circle fs-2 me-2"></i>
+                            </div>
+                            <div>
+                                <h4 class="alert-title">Petunjuk Import Pengguna</h4>
+                                <div class="text-muted">
+                                    Gunakan format file Excel (.xlsx, .xls) atau CSV dengan struktur kolom sebagai berikut:
+                                    <ul class="mt-2 mb-2">
+                                        <li><strong>Nama:</strong> Nama lengkap pengguna</li>
+                                        <li><strong>Email:</strong> Alamat email pengguna (unik)</li>
+                                        <li><strong>Password:</strong> Sandi pengguna (opsional, akan di-generate jika kosong)</li>
+                                        <li><strong>Role:</strong> Nama role pengguna (contoh: admin, dosen, mahasiswa, dll)</li>
+                                    </ul>
+                                    <a href="{{ Vite::asset('resources/assets/templates/template_import_user.xlsx') }}" class="btn btn-sm btn-outline-info">
+                                        <i class="ti ti-download me-1"></i> Download Template
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <form action="{{ route('users.import.store') }}" method="POST" enctype="multipart/form-data">
@@ -68,17 +78,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <button type="submit" class="btn btn-primary me-2">
-                                <i class='bx bx-import me-1'></i> Import Users
-                            </button>
-                            <a href="{{ route('users.index') }}" class="btn btn-secondary">
-                                <i class='bx bx-x me-1'></i> Cancel
-                            </a>
+                            <x-sys.button type="submit" text="Import Users" icon="ti ti-upload" />
+                            <x-sys.button type="cancel" :href="route('users.index')" />
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection

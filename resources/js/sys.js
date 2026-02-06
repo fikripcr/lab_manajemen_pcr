@@ -74,6 +74,9 @@ window.loadHugeRTE = function (selector, config = {}) {
             if (selector) {
                 hugerte.init({
                     selector: selector,
+                    skin: false,
+                    content_css: false,
+                    content_style: window.hugerteContentCss + (config.content_style || ''),
                     ...config
                 });
             }

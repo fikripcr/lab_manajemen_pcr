@@ -3,7 +3,7 @@
 @section('header')
 <x-sys.page-header title="Mata Kuliah" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-sys.button type="create" :href="route('mata-kuliah.create')" text="Add New Mata Kuliah" />
+        <x-sys.button type="create" :href="route('mata-kuliah.create')" text="Create" />
     </x-slot:actions>
 </x-sys.page-header>
 @endsection

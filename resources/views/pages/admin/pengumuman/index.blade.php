@@ -3,7 +3,7 @@
 @section('header')
 <x-sys.page-header :title="ucfirst($type) . ' Management'" pretitle="Announcement">
     <x-slot:actions>
-        <x-sys.button type="create" :href="route($type . '.create')" :text="'Add New ' . ucfirst($type)" />
+        <x-sys.button type="create" :href="route($type . '.create')" text="Create" />
     </x-slot:actions>
 </x-sys.page-header>
 @endsection

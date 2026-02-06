@@ -1,9 +1,5 @@
 @props(['id', 'route', 'columns', 'search' => true, 'pageLengthSelector' => '#pageLength', 'order' => [[0, 'desc']], 'withCheckbox' => false, 'checkboxKey' => 'id'])
 
-@push('css')
-       <!-- DataTables CSS -->
-    @vite(['resources/assets/admin/libs/datatables/dataTables.bootstrap5.min.css', 'resources/assets/admin/css/custom-datatable.css'])
-@endpush
 
 <div class="table-responsive">
     <table id="{{ $id }}" class="table" style="width:100%">
@@ -26,8 +22,6 @@
 </div>
 
 @push('scripts')
-    @vite(['resources/assets/admin/libs/datatables/jquery.dataTables.min.js', 'resources/assets/admin/libs/datatables/dataTables.bootstrap5.min.js'])
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Prevent reinitialization if already initialized

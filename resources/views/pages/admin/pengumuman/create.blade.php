@@ -79,7 +79,7 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-sys.button type="submit" :text="'Create ' . ucfirst($type)" />
+                                <x-sys.button type="submit" text="Create" />
                                 <x-sys.button type="cancel" :href="route($type . '.index')" />
                             </div>
                         </div>

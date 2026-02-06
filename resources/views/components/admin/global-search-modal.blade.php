@@ -17,6 +17,4 @@
     </div>
 </div>
 
-@push('scripts')
-    @vite(['resources/assets/admin/js/global-search.js'])
-@endpush
+

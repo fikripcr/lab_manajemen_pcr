@@ -4,7 +4,7 @@
 <x-sys.page-header title="Inventory Management" pretitle="Inventory">
     <x-slot:actions>
         <x-sys.button type="export" id="exportBtn" text="Export Excel" />
-        <x-sys.button type="create" :href="route('inventaris.create')" text="Add New Inventory" />
+        <x-sys.button type="create" :href="route('inventaris.create')" text="Create" />
     </x-slot:actions>
 </x-sys.page-header>
 @endsection

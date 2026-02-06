@@ -3,7 +3,7 @@
 @section('header')
 <x-sys.page-header title="Manajemen Laboratorium" pretitle="Laboratorium">
     <x-slot:actions>
-        <x-sys.button type="create" :href="route('labs.create')" text="Tambah Lab Baru" />
+        <x-sys.button type="create" :href="route('labs.create')" text="Create" />
     </x-slot:actions>
 </x-sys.page-header>
 @endsection

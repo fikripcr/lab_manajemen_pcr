@@ -3,7 +3,7 @@
 @section('header')
 <x-sys.page-header title="Semester" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-sys.button type="button" icon="ti ti-plus" text="Add New Semester" id="createSemesterBtn" />
+        <x-sys.button type="button" icon="ti ti-plus" text="Create" id="createSemesterBtn" />
     </x-slot:actions>
 </x-sys.page-header>
 @endsection
