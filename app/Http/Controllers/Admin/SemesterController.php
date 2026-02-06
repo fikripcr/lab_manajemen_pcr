@@ -60,7 +60,7 @@ class SemesterController extends Controller
                 return $semester->end_date ? formatTanggalIndo($semester->end_date) : '-';
             })
             ->addColumn('action', function ($semester) {
-                return view('components.sys.datatables-actions', [
+                return view('components.tabler.datatables-actions', [
                     'editUrl'   => 'javascript:void(0)',
                     'editClass' => 'edit-semester',
                     'editData'  => ['id' => $semester->encrypted_semester_id],

@@ -114,7 +114,7 @@ class JadwalController extends Controller
             })
             ->addColumn('action', function ($jadwal) {
                 $encryptedId = $jadwal->encrypted_jadwal_kuliah_id;
-                return view('components.sys.datatables-actions', [
+                return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('jadwal.edit', $encryptedId),
                     'viewUrl'   => route('jadwal.show', $encryptedId),
                     'deleteUrl' => route('jadwal.destroy', $encryptedId),

@@ -50,7 +50,7 @@ class MataKuliahController extends Controller
                 return '<span class="fw-medium">' . e($mk->nama_mk) . '</span>';
             })
             ->addColumn('action', function ($mk) {
-                return view('components.sys.datatables-actions', [
+                return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('mata-kuliah.edit', $mk->encrypted_mata_kuliah_id),
                     'viewUrl'   => route('mata-kuliah.show', $mk->encrypted_mata_kuliah_id),
                     'deleteUrl' => route('mata-kuliah.destroy', $mk->encrypted_mata_kuliah_id),

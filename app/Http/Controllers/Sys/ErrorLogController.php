@@ -78,7 +78,7 @@ class ErrorLogController extends Controller
                     return formatTanggalIndo($log->created_at);
                 })
                 ->addColumn('actions', function ($log) {
-                    return view('components.sys.datatables-actions', [
+                    return view('components.tabler.datatables-actions', [
                         'viewUrl' => route('sys.error-log.show', encryptId($log->id)),
                     ])->render();
                 })

@@ -72,7 +72,7 @@ class InventarisController extends Controller
             })
             ->addColumn('action', function ($item) {
                 $encryptedId = encryptId($item->inventaris_id);
-                return view('components.sys.datatables-actions', [
+                return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('inventaris.edit', $encryptedId),
                     'viewUrl'   => route('inventaris.show', $encryptedId),
                     'deleteUrl' => route('inventaris.destroy', $encryptedId),

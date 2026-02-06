@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header :title="'Create ' . ucfirst($type)" :pretitle="ucfirst($type)">
+    <x-tabler.page-header :title="'Create ' . ucfirst($type)" :pretitle="ucfirst($type)">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route($type . '.index')" />
+            <x-tabler.button type="back" :href="route($type . '.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -42,11 +42,12 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="cover_image">Cover Image</label>
                             <div class="col-sm-10">
-                                <input type="file" class="form-control @error('cover_image') is-invalid @enderror" 
-                                       id="cover_image" name="cover_image" accept="image/*">
+                                <input type="file" class="filepond-input" 
+                                       id="cover_image" name="cover" accept="image/*"
+                                       data-max-files="1">
                                 <div class="form-hint">Upload a cover image for this {{ strtolower($type) }}.</div>
-                                @error('cover_image')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @error('cover')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -54,11 +55,12 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="attachments">Attachments</label>
                             <div class="col-sm-10">
-                                <input type="file" class="form-control @error('attachments') is-invalid @enderror" 
-                                       id="attachments" name="attachments[]" multiple accept="*/*">
+                                <input type="file" class="filepond-input" 
+                                       id="attachments" name="attachments[]" multiple 
+                                       data-allow-multiple="true">
                                 <div class="form-hint">Upload related attachments/files for this {{ strtolower($type) }}.</div>
                                 @error('attachments')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -79,8 +81,8 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-sys.button type="submit" text="Create" />
-                                <x-sys.button type="cancel" :href="route($type . '.index')" />
+                                <x-tabler.button type="submit" text="Create" />
+                                <x-tabler.button type="cancel" :href="route($type . '.index')" />
                             </div>
                         </div>
                     </form>
@@ -89,3 +91,41 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        if (typeof window.loadFilePond === 'function') {
+            const FilePond = await window.loadFilePond();
+            
+            // Register plugins if needed (loadFilePond already registers ImagePreview)
+            
+            // Initialize Cover Image (Single)
+            const coverInput = document.querySelector('#cover_image');
+            if(coverInput) {
+                FilePond.create(coverInput, {
+                    storeAsFile: true,
+                    labelIdle: 'Drag & Drop your cover image or <span class="filepond--label-action">Browse</span>',
+                    acceptedFileTypes: ['image/*'],
+                    imagePreviewHeight: 170,
+                    stylePanelLayout: 'compact circle',
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProcessIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                });
+            }
+
+            // Initialize Attachments (Multiple)
+            const attachmentInput = document.querySelector('#attachments');
+            if(attachmentInput) {
+                FilePond.create(attachmentInput, {
+                    storeAsFile: true,
+                    allowMultiple: true,
+                    labelIdle: 'Drag & Drop files or <span class="filepond--label-action">Browse</span>',
+                });
+            }
+        }
+    });
+</script>
+@endpush

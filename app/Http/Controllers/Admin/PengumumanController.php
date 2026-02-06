@@ -235,7 +235,7 @@ class PengumumanController extends Controller
                 $encryptedId = encryptId($item->pengumuman_id);
                 $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
 
-                return view('components.sys.datatables-actions', [
+                return view('components.tabler.datatables-actions', [
                     'editUrl'   => route($routePrefix . '.edit', $encryptedId),
                     'viewUrl'   => route($routePrefix . '.show', $encryptedId),
                     'deleteUrl' => route($routePrefix . '.destroy', $encryptedId),

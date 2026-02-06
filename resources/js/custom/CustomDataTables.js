@@ -196,7 +196,9 @@ export default class CustomDataTables {
                 pageLenEl.value = initialPageLength;
 
                 pageLenEl.addEventListener('change', (e) => {
-                    this.table.page.len(parseInt(e.target.value)).draw();
+                    const val = e.target.value;
+                    const len = val === 'All' ? -1 : parseInt(val);
+                    this.table.page.len(len).draw();
                 });
             }
         }
@@ -287,10 +289,14 @@ export default class CustomDataTables {
         if (!el || !this.table) return;
 
         const info = this.table.page.info();
-        const start = info.start === -1 ? 0 : info.start + 1;
-        const end = info.end === -1 ? 0 : info.end;
+        let start = info.start === -1 ? 0 : info.start + 1;
+        let end = info.end === -1 ? 0 : info.end;
         const total = info.recordsTotal || 0;
         const filtered = info.recordsFiltered || 0;
+
+        // Safety check for NaN (in case of corrupted state or invalid pageLength)
+        if (isNaN(start)) start = 0;
+        if (isNaN(end)) end = 0;
 
         if (filtered > 0 && start > 0) {
             if (total === filtered) {

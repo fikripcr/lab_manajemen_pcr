@@ -3,6 +3,8 @@
     'pretitle' => null,
 ])
 
+@section('title', $title)
+
 <div class="row g-2 align-items-center">
     <div class="col">
         @if($pretitle)

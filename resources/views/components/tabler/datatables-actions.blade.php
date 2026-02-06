@@ -33,7 +33,7 @@
 
     {{-- Dropdown for extra actions --}}
     <div class="dropdown">
-        <button type="button" class="btn dropdown-toggle btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="btn dropdown-toggle btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="viewport">
             <i class="ti ti-dots-vertical fs-3"></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end">

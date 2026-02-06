@@ -60,7 +60,7 @@ class SoftwareRequestController extends Controller
                 return formatTanggalIndo($request->created_at);
             })
             ->addColumn('action', function ($request) {
-                return view('components.sys.datatables-actions', [
+                return view('components.tabler.datatables-actions', [
                     'editUrl' => route('software-requests.edit', $request->id),
                     'viewUrl' => route('software-requests.show', $request->id),
                     // deleteUrl omitted as SoftwareRequestController doesn't have destroy method in preview

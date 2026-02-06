@@ -36,7 +36,7 @@ class LabController extends Controller
         return DataTables::of($labs)
             ->addIndexColumn()
             ->addColumn('action', function ($lab) {
-                return view('components.sys.datatables-actions', [
+                return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('labs.edit', $lab->encrypted_lab_id),
                     'editModal' => false,
                     'viewUrl'   => route('labs.show', $lab->encrypted_lab_id),

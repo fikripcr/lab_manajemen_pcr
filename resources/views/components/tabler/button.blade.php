@@ -96,6 +96,13 @@
     if ($type === 'submit') $typeAttr = 'submit';
     if ($type === 'reset') $typeAttr = 'reset';
     
+    // Smart Back/Cancel Logic
+    // If type is back or cancel, and no specific onclick is provided, try to use history.back()
+    // We check document.referrer to ensure we are staying within the app.
+    if (($type === 'back' || $type === 'cancel') && !$onclick && $href) {
+         $onclick = "if(document.referrer.indexOf(window.location.host) !== -1) { history.back(); return false; }";
+    }
+
     // Props for tag
     $attributes = $attributes->merge(['class' => $classes]);
     @endphp

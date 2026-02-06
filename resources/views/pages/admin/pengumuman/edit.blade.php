@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header :title="'Edit ' . ucfirst($type)" pretitle="Announcement">
+    <x-tabler.page-header :title="'Edit ' . ucfirst($type)" pretitle="Announcement">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route($type . '.index')" />
+            <x-tabler.button type="back" :href="route($type . '.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -43,18 +43,20 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="cover_image">Cover Image</label>
                             <div class="col-sm-10">
-                                <input type="file" class="form-control @error('cover_image') is-invalid @enderror" 
-                                       id="cover_image" name="cover_image" accept="image/*">
+                                <input type="file" class="filepond-input" 
+                                       id="cover_image" name="cover" accept="image/*"
+                                       data-max-files="1">
                                 <div class="form-hint text-muted">Upload a new cover image to replace the current one.</div>
                                 
                                 @if ($pengumuman->hasMedia('info_cover'))
                                     <div class="mt-2">
+                                        <div class="form-label">Current Cover:</div>
                                         <img src="{{ $pengumuman->getFirstMediaUrl('info_cover', 'medium') }}" alt="Current Cover" class="img-thumbnail" style="max-height: 150px;">
                                     </div>
                                 @endif
 
-                                @error('cover_image')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @error('cover')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -62,12 +64,14 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="attachments">Attachments</label>
                             <div class="col-sm-10">
-                                <input type="file" class="form-control @error('attachments') is-invalid @enderror" 
-                                       id="attachments" name="attachments[]" multiple accept="*/*">
+                                <input type="file" class="filepond-input" 
+                                       id="attachments" name="attachments[]" multiple 
+                                       data-allow-multiple="true">
                                 <div class="form-hint text-muted">Upload additional files (current ones will be kept).</div>
 
                                 @if ($pengumuman->hasMedia('info_attachment'))
                                     <div class="mt-2">
+                                        <div class="form-label">Current Attachments:</div>
                                         <ul class="list-group list-group-flush border rounded">
                                             @foreach ($pengumuman->getMedia('info_attachment') as $attachment)
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -80,7 +84,7 @@
                                 @endif
 
                                 @error('attachments')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -98,8 +102,8 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-sys.button type="submit" :text="'Update ' . ucfirst($type)" />
-                                <x-sys.button type="cancel" :href="route($type . '.index')" />
+                                <x-tabler.button type="submit" :text="'Update ' . ucfirst($type)" />
+                                <x-tabler.button type="cancel" :href="route($type . '.index')" />
                             </div>
                         </div>
                     </form>
@@ -107,3 +111,40 @@
             </div>
         </div>
     </div>
+@endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        if (typeof window.loadFilePond === 'function') {
+            const FilePond = await window.loadFilePond();
+            
+            // Initialize Cover Image (Single)
+            const coverInput = document.querySelector('#cover_image');
+            if(coverInput) {
+                FilePond.create(coverInput, {
+                    storeAsFile: true,
+                    labelIdle: 'Drag & Drop your new cover image (if replacing)',
+                    acceptedFileTypes: ['image/*'],
+                    imagePreviewHeight: 170,
+                    stylePanelLayout: 'compact circle',
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProcessIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                });
+            }
+
+            // Initialize Attachments (Multiple)
+            const attachmentInput = document.querySelector('#attachments');
+            if(attachmentInput) {
+                FilePond.create(attachmentInput, {
+                    storeAsFile: true,
+                    allowMultiple: true,
+                    labelIdle: 'Drag & Drop new files',
+                });
+            }
+        }
+    });
+</script>
+@endpush

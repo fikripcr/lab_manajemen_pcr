@@ -56,7 +56,7 @@ class PermissionController extends Controller
                     return $permission->sub_category ?? '-';
                 })
                 ->addColumn('action', function ($permission) {
-                    return view('components.sys.datatables-actions', [
+                    return view('components.tabler.datatables-actions', [
                         'editUrl'   => route('sys.permissions.edit', $permission->encryptedId),
                         'deleteUrl' => route('sys.permissions.destroy', $permission->encryptedId),
                     ])->render();

@@ -64,7 +64,7 @@ class NotificationsController extends Controller
             })
             ->addColumn('action', function ($notification) {
                 if (is_null($notification->read_at)) {
-                    return view('components.sys.datatables-actions', [
+                    return view('components.tabler.datatables-actions', [
                         'customActions' => [
                             [
                                 'label' => 'Mark as Read',
