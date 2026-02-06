@@ -1,124 +1,64 @@
 @extends('layouts.admin.app')
 
-@section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Perkuliahan /</span> Mata Kuliah</h4>
-        <a href="{{ route('mata-kuliah.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> Add New Mata Kuliah
-        </a>
-    </div>
+@section('header')
+<x-sys.page-header title="Mata Kuliah" pretitle="Perkuliahan">
+    <x-slot:actions>
+        <x-sys.button type="create" :href="route('mata-kuliah.create')" text="Add New Mata Kuliah" />
+    </x-slot:actions>
+</x-sys.page-header>
+@endsection
 
-    <div class="card">
+@section('content')
+    <div class="card overflow-hidden">
         <div class="card-header">
-            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <h5 class="mb-2 mb-sm-0">Mata Kuliah List</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <div class="me-3 mb-2 mb-sm-0">
-                        <x-admin.datatable-page-length id="pageLength" selected="10" />
-                    </div>
+            <div class="d-flex flex-wrap gap-2">
+                <div>
+                    <x-sys.datatable-page-length dataTableId="mata-kuliah-table" />
+                </div>
+                <div>
+                    <x-sys.datatable-search dataTableId="mata-kuliah-table" />
                 </div>
             </div>
-            @include('components.datatable.search-filter', [
-                'dataTableId' => 'mata-kuliah-table',
-                'filters' => [
-                    [
-                        'id' => 'sksFilter',
-                        'name' => 'sks',
-                        'label' => 'SKS',
-                        'type' => 'select',
-                        'column' => 3, // SKS column index
-                        'options' => [
-                            '' => 'All SKS',
-                            '1' => '1 SKS',
-                            '2' => '2 SKS',
-                            '3' => '3 SKS',
-                            '4' => '4 SKS'
-                        ],
-                        'placeholder' => 'Select SKS'
-                    ]
-                ]
-            ])
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <x-admin.flash-message />
-
-            <div class="table-responsive">
-                <table id="mata-kuliah-table" class="table" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Kode MK</th>
-                            <th>Nama MK</th>
-                            <th>SKS</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+            @php
+                $columns = [
+                    [
+                        'title' => '#',
+                        'data' => 'DT_RowIndex',
+                        'name' => 'DT_RowIndex',
+                        'orderable' => false,
+                        'searchable' => false,
+                        'className' => 'text-center'
+                    ],
+                    [
+                        'title' => 'Kode MK',
+                        'data' => 'kode_mk',
+                        'name' => 'kode_mk'
+                    ],
+                    [
+                        'title' => 'Nama MK',
+                        'data' => 'nama_mk',
+                        'name' => 'nama_mk'
+                    ],
+                    [
+                        'title' => 'SKS',
+                        'data' => 'sks',
+                        'name' => 'sks',
+                        'className' => 'text-center'
+                    ],
+                    [
+                        'title' => 'Actions',
+                        'data' => 'action',
+                        'name' => 'action',
+                        'orderable' => false,
+                        'searchable' => false,
+                        'className' => 'text-end'
+                    ]
+                ];
+            @endphp
+            <x-sys.datatable id="mata-kuliah-table" :route="route('mata-kuliah.data')" :columns="$columns" :order="[[0, 'desc']]" />
         </div>
     </div>
 @endsection
-
-@push('scripts')
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if DataTable is already initialized to avoid re-initialization
-            if (!$.fn.DataTable.isDataTable('#mata-kuliah-table')) {
-                var table = $('#mata-kuliah-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: '{{ route('mata-kuliah.data') }}',
-                        data: function(d) {
-                            // Capture custom search from the filter component
-                            var searchValue = $('#globalSearch-mata-kuliah-table').val();
-                            if (searchValue) {
-                                d.search.value = searchValue;
-                            }
-                        }
-                    },
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center'
-                        },
-                        {
-                            data: 'kode_mk',
-                            name: 'kode_mk'
-                        },
-                        {
-                            data: 'nama_mk',
-                            name: 'nama_mk'
-                        },
-                        {
-                            data: 'sks',
-                            name: 'sks',
-                            className: 'text-center'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        }
-                    ],
-                    order: [
-                        [0, 'desc']
-                    ],
-                    pageLength: 10,
-                    responsive: true,
-                    dom: 'rtip' // Only show table, info, and paging
-                });
-
-                // Setup common DataTable behaviors
-                setupCommonDataTableBehaviors(table, {
-                    searchInputSelector: '#globalSearch-mata-kuliah-table',
-                    pageLengthSelector: '#pageLength'
-                });
-            }
-        });
-    </script>
-@endpush

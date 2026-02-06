@@ -1,38 +1,36 @@
 @extends('layouts.admin.app')
 
-@section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tabel /</span> Manajemen Laboratorium</h4>
-        <a href="{{ route('labs.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus"></i> Tambah Lab Baru
-        </a>
-    </div>
+@section('header')
+<x-sys.page-header title="Manajemen Laboratorium" pretitle="Laboratorium">
+    <x-slot:actions>
+        <x-sys.button type="create" :href="route('labs.create')" text="Tambah Lab Baru" />
+    </x-slot:actions>
+</x-sys.page-header>
+@endsection
 
-    <div class="card">
+@section('content')
+    <div class="card overflow-hidden">
         <div class="card-header">
-            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <h5 class="mb-2 mb-sm-0">Daftar Laboratorium</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <div class="me-3 mb-2 mb-sm-0">
-                        <x-admin.datatable-page-length id="pageLength" selected="10" />
-                    </div>
+            <div class="d-flex flex-wrap gap-2">
+                <div>
+                    <x-sys.datatable-page-length dataTableId="labs-table" />
+                </div>
+                <div>
+                    <x-sys.datatable-search dataTableId="labs-table" />
                 </div>
             </div>
-            <x-admin.datatable-search-filter :dataTableId="'labs-table'" />
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <x-admin.flash-message />
-
-            <x-admin.datatable
-                id="labs-table"
-                route="{{ route('labs.data') }}"
-                :columns="[
+            @php
+                $columns = [
                     [
                         'title' => '#',
                         'data' => 'DT_RowIndex',
                         'name' => 'DT_RowIndex',
                         'orderable' => false,
-                        'searchable' => false
+                        'searchable' => false,
+                        'className' => 'text-center'
                     ],
                     [
                         'title' => 'Nama',
@@ -48,24 +46,24 @@
                         'title' => 'Kapasitas',
                         'data' => 'capacity',
                         'name' => 'capacity',
+                        'className' => 'text-center'
                     ],
                     [
                         'title' => 'Deskripsi',
                         'data' => 'description',
                         'name' => 'description',
-                        'render' => 'function(data, type, row) {
-                            return data && data.length > 50 ? data.substring(0, 50) + \'...\' : data;
-                        }'
                     ],
                     [
                         'title' => 'Aksi',
                         'data' => 'action',
                         'name' => 'action',
                         'orderable' => false,
-                        'searchable' => false
+                        'searchable' => false,
+                        'className' => 'text-end'
                     ]
-                ]"
-            />
+                ];
+            @endphp
+            <x-sys.datatable id="labs-table" :route="route('labs.data')" :columns="$columns" />
         </div>
     </div>
 @endsection

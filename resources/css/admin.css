@@ -1,13 +1,29 @@
-/* Icons */
+/* 
+ * Admin Section - Tabler UI Theme
+ * Replaces Sneat with Tabler to match Sys section.
+ */
+
+/* ==========================================================================
+   1. CORE IMPORTS & SETUP
+   ========================================================================== */
+
+/* Legacy Support: Boxicons (Used in existing admin views) */
 @import '../assets/admin/vendor/fonts/boxicons.min.css';
 
-/* Core CSS */
-@import '../assets/admin/vendor/css/core.min.css';
-@import '../assets/admin/vendor/css/theme-default.css';
-@import '../assets/admin/css/demo.css';
+/* Tabler Core CSS */
+@import '@tabler/core/dist/css/tabler.min.css';
 
-/* SweetAlert2 CSS */
-@import 'sweetalert2/dist/sweetalert2.min.css';
+/* Tabler Vendors (for third-party integrations) */
+@import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
+/* @import '@tabler/core/dist/css/tabler-vendors.min.css'; */
 
-/* Select2 Tabler Integration */
+/* Tabler Themes (for theme customization) */
+@import '@tabler/core/dist/css/tabler-themes.css';
+
+/* Tabler Icons Webfont */
+@import '@tabler/icons-webfont/dist/tabler-icons.min.css';
+
+/* ==========================================================================
+   2. CUSTOM THEME LOGIC (SHARED WITH SYS)
+   ========================================================================== */
 @import './custom/ThemeTabler.css';

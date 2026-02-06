@@ -15,7 +15,7 @@
                 <i class="bi bi-star-fill"></i>
                 <span>Premium Properties</span>
               </div>
-              <h1>Laboratorium JTI<br>Politeknik Caltex Riau</h1>
+              <h1>Laravel <br>Politeknik Caltex Riau</h1>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Browse thousands of verified listings from trusted agents.</p>
 
               <div class="search-form" data-aos="fade-up" data-aos-delay="300">

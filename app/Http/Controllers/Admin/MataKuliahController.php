@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -41,42 +40,25 @@ class MataKuliahController extends Controller
                 // Global search functionality
                 if ($request->has('search') && $request->search['value'] != '') {
                     $searchValue = $request->search['value'];
-                    $query->where(function($q) use ($searchValue) {
+                    $query->where(function ($q) use ($searchValue) {
                         $q->where('kode_mk', 'like', '%' . $searchValue . '%')
-                          ->orWhere('nama_mk', 'like', '%' . $searchValue . '%');
+                            ->orWhere('nama_mk', 'like', '%' . $searchValue . '%');
                     });
                 }
             })
-            ->addColumn('action', function ($mk) {
-                $encryptedId = encryptId($mk->mata_kuliah_id);
-                return '
-                    <div class="d-flex align-items-center">
-                        <a class="text-success me-2" href="' . route('mata-kuliah.edit', $encryptedId) . '" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('mata-kuliah.show', $encryptedId) . '">
-                                    <i class="bx bx-show me-1"></i> View
-                                </a>
-                                <form action="' . route('mata-kuliah.destroy', $encryptedId) . '" method="POST" class="d-inline">
-                                    ' . csrf_field() . '
-                                    ' . method_field('DELETE') . '
-                                    <button type="submit" class="dropdown-item text-danger" title="Delete" onclick="return confirmDelete(this.form.action, \'Hapus Mata Kuliah?\', \'Apakah Anda yakin ingin menghapus mata kuliah ini?\')">
-                                        <i class="bx bx-trash me-1"></i> Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>';
+            ->editColumn('nama_mk', function ($mk) {
+                return '<span class="fw-medium">' . e($mk->nama_mk) . '</span>';
             })
-            ->rawColumns(['action'])
+            ->addColumn('action', function ($mk) {
+                return view('components.sys.datatables-actions', [
+                    'editUrl'   => route('mata-kuliah.edit', $mk->encrypted_mata_kuliah_id),
+                    'viewUrl'   => route('mata-kuliah.show', $mk->encrypted_mata_kuliah_id),
+                    'deleteUrl' => route('mata-kuliah.destroy', $mk->encrypted_mata_kuliah_id),
+                ])->render();
+            })
+            ->rawColumns(['nama_mk', 'action'])
             ->make(true);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -112,7 +94,7 @@ class MataKuliahController extends Controller
      */
     public function show($id)
     {
-        $realId = decryptId($id);
+        $realId     = decryptId($id);
         $mataKuliah = MataKuliah::findOrFail($realId);
         return view('pages.admin.mata-kuliah.show', compact('mataKuliah'));
     }
@@ -122,7 +104,7 @@ class MataKuliahController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id);
+        $realId     = decryptId($id);
         $mataKuliah = MataKuliah::findOrFail($realId);
         return view('pages.admin.mata-kuliah.edit', compact('mataKuliah'));
     }
@@ -132,7 +114,7 @@ class MataKuliahController extends Controller
      */
     public function update(MataKuliahRequest $request, $id)
     {
-        $realId = decryptId($id);
+        $realId     = decryptId($id);
         $mataKuliah = MataKuliah::findOrFail($realId);
 
         \DB::beginTransaction();
@@ -156,7 +138,7 @@ class MataKuliahController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
+        $realId     = decryptId($id);
         $mataKuliah = MataKuliah::findOrFail($realId);
 
         // Check if mata kuliah is used in any schedule
@@ -174,7 +156,7 @@ class MataKuliahController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Mata Kuliah berhasil dihapus.'
+                'message' => 'Mata Kuliah berhasil dihapus.',
             ]);
         }
 

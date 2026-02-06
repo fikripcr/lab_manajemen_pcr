@@ -1,12 +1,14 @@
 @extends('layouts.admin.app')
 
+@section('header')
+    <x-sys.page-header title="Edit Software Request" pretitle="Software Request">
+        <x-slot:actions>
+            <x-sys.button type="back" :href="route('software-requests.show', $softwareRequest->encrypted_request_software_id)" />
+        </x-slot:actions>
+    </x-sys.page-header>
+@endsection
+
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0">Edit Software Request</h4>
-        <a href="{{ route('software-requests.index') }}" class="btn btn-secondary">
-            <i class="bx bx-arrow-back me-1"></i> Back to List
-        </a>
-    </div>
 
     <div class="row">
         <div class="col-12">

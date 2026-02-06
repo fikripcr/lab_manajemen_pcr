@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -42,45 +41,32 @@ class SemesterController extends Controller
                 // Global search functionality
                 if ($request->has('search') && $request->search['value'] != '') {
                     $searchValue = $request->search['value'];
-                    $query->where(function($q) use ($searchValue) {
+                    $query->where(function ($q) use ($searchValue) {
                         $q->where('tahun_ajaran', 'like', '%' . $searchValue . '%')
-                          ->orWhere('semester', 'like', '%' . $searchValue . '%')
-                          ->orWhereRaw("CASE WHEN is_active = 1 THEN 'Aktif' ELSE 'Tidak Aktif' END LIKE ?", ['%' . $searchValue . '%']);
+                            ->orWhere('semester', 'like', '%' . $searchValue . '%')
+                            ->orWhereRaw("CASE WHEN is_active = 1 THEN 'Aktif' ELSE 'Tidak Aktif' END LIKE ?", ['%' . $searchValue . '%']);
                     });
                 }
             })
             ->editColumn('is_active', function ($semester) {
                 return $semester->is_active
-                    ? '<span class="badge bg-success">Aktif</span>'
-                    : '<span class="badge bg-secondary">Tidak Aktif</span>';
+                    ? '<span class="badge bg-label-success">Aktif</span>'
+                    : '<span class="badge bg-label-secondary">Tidak Aktif</span>';
             })
             ->editColumn('start_date', function ($semester) {
-                return $semester->start_date ? date('d M Y', strtotime($semester->start_date)) : '-';
+                return $semester->start_date ? formatTanggalIndo($semester->start_date) : '-';
             })
             ->editColumn('end_date', function ($semester) {
-                return $semester->end_date ? date('d M Y', strtotime($semester->end_date)) : '-';
+                return $semester->end_date ? formatTanggalIndo($semester->end_date) : '-';
             })
             ->addColumn('action', function ($semester) {
-                $encryptedId = encryptId($semester->semester_id);
-                return '
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-icon btn-outline-primary me-1 edit-semester" href="javascript:void(0)" data-id="' . $encryptedId . '" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('semesters.show',$encryptedId) . '">
-                                    <i class="bx bx-show me-1"></i> View
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('semesters.destroy',$encryptedId) . '\')">
-                                    <i class="bx bx-trash me-1"></i> Delete
-                                </a>
-                            </div>
-                        </div>
-                    </div>';
+                return view('components.sys.datatables-actions', [
+                    'editUrl'   => 'javascript:void(0)',
+                    'editClass' => 'edit-semester',
+                    'editData'  => ['id' => $semester->encrypted_semester_id],
+                    'viewUrl'   => route('semesters.show', $semester->encrypted_semester_id),
+                    'deleteUrl' => route('semesters.destroy', $semester->encrypted_semester_id),
+                ])->render();
             })
             ->rawColumns(['is_active', 'action'])
             ->make(true);
@@ -128,7 +114,7 @@ class SemesterController extends Controller
      */
     public function show($id)
     {
-        $realId = decryptId($id);
+        $realId   = decryptId($id);
         $semester = Semester::findOrFail($realId);
         return view('pages.admin.semesters.show', compact('semester'));
     }
@@ -138,7 +124,7 @@ class SemesterController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id);
+        $realId   = decryptId($id);
         $semester = Semester::findOrFail($realId);
         return view('pages.admin.semesters.edit', compact('semester'));
     }
@@ -148,7 +134,7 @@ class SemesterController extends Controller
      */
     public function update(SemesterRequest $request, $id)
     {
-        $realId = decryptId($id);
+        $realId   = decryptId($id);
         $semester = Semester::findOrFail($realId);
 
         \DB::beginTransaction();
@@ -172,7 +158,7 @@ class SemesterController extends Controller
      */
     public function editModal($id)
     {
-        $realId = decryptId($id);
+        $realId   = decryptId($id);
         $semester = Semester::findOrFail($realId);
         return view('pages.admin.semesters.edit-ajax', compact('semester'));
     }
@@ -182,7 +168,7 @@ class SemesterController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
+        $realId   = decryptId($id);
         $semester = Semester::findOrFail($realId);
 
         // Check if semester is used in any schedule

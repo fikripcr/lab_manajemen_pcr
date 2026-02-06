@@ -1,125 +1,79 @@
 @extends('layouts.admin.app')
 
-@section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tables /</span> {{ ucfirst($type) }} Management</h4>
-        <a href="{{ route($type . '.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus"></i> Add New {{ ucfirst($type) }}
-        </a>
-    </div>
+@section('header')
+<x-sys.page-header :title="ucfirst($type) . ' Management'" pretitle="Announcement">
+    <x-slot:actions>
+        <x-sys.button type="create" :href="route($type . '.create')" :text="'Add New ' . ucfirst($type)" />
+    </x-slot:actions>
+</x-sys.page-header>
+@endsection
 
-    <div class="card">
+@section('content')
+    <div class="card overflow-hidden">
         <div class="card-header">
-            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <h5 class="mb-2 mb-sm-0">{{ ucfirst($type) }} List</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <div class="me-3 mb-2 mb-sm-0">
-                        <x-admin.datatable-page-length id="{{ $type }}PageLength" selected="10" />
-                    </div>
+            <div class="d-flex flex-wrap gap-2">
+                <div>
+                    <x-sys.datatable-page-length :dataTableId="$type . '-table'" />
+                </div>
+                <div>
+                    <x-sys.datatable-search :dataTableId="$type . '-table'" />
                 </div>
             </div>
-            @include('components.datatable.search-filter', [
-                'dataTableId' => $type . '-table'
-            ])
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <x-admin.flash-message />
-            <div class="table-responsive">
-                <table id="{{ $type }}-table" class="table" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Cover</th>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Author</th>
-                            <th>Created Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+            @php
+                $columns = [
+                    [
+                        'title' => '#',
+                        'data' => 'DT_RowIndex',
+                        'name' => 'DT_RowIndex',
+                        'orderable' => false,
+                        'searchable' => false,
+                        'className' => 'text-center'
+                    ],
+                    [
+                        'title' => 'Cover',
+                        'data' => 'cover',
+                        'name' => 'cover',
+                        'orderable' => false,
+                        'searchable' => false
+                    ],
+                    [
+                        'title' => 'Title',
+                        'data' => 'judul',
+                        'name' => 'judul',
+                        'orderable' => true,
+                        'searchable' => true
+                    ],
+                    [
+                        'title' => 'Status',
+                        'data' => 'is_published',
+                        'name' => 'is_published',
+                        'orderable' => true,
+                        'searchable' => false
+                    ],
+                    [
+                        'title' => 'Author',
+                        'data' => 'author',
+                        'name' => 'penulis.name',
+                    ],
+                    [
+                        'title' => 'Dibuat Pada',
+                        'data' => 'created_at',
+                        'name' => 'created_at',
+                    ],
+                    [
+                        'title' => 'Aksi',
+                        'data' => 'action',
+                        'name' => 'action',
+                        'orderable' => false,
+                        'searchable' => false,
+                        'className' => 'text-end'
+                    ]
+                ];
+            @endphp
+            <x-sys.datatable id="pengumuman-table" :route="route($type.'.data')" :columns="$columns" :order="[[4, 'desc']]" />
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!$.fn.DataTable.isDataTable('#{{ $type }}-table')) {
-                var table = $('#{{ $type }}-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    stateSave: true,
-                    ajax: {
-                        url: '{{ route($type.'.data')}}',
-                        data: function(d) {
-                            // Capture custom search from the filter component
-                            var searchValue = $('#globalSearch-{{ $type }}-table').val();
-                            if (searchValue) {
-                                d.search.value = searchValue;
-                            }
-                        }
-                    },
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false,
-                            className: 'text-center'
-                        },
-                        {
-                            data: 'cover',
-                            name: 'cover',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'judul',
-                            name: 'judul',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'is_published',
-                            name: 'is_published',
-                            orderable: true,
-                            searchable: false
-                        },
-                        {
-                            data: null,
-                            name: 'penulis.name',
-                            render: function(data, type, row) {
-                                return row.penulis ? row.penulis.name : 'System';
-                            }
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at',
-                            orderable: true,
-                            searchable: false
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        }
-                    ],
-                    order: [
-                        [0, 'desc']
-                    ],
-                    pageLength: 10,
-                    responsive: true,
-                    dom: 'rtip' // Only show table, info, and paging - hide default search and length inputs
-                });
-
-                // Setup common DataTable behaviors
-                setupCommonDataTableBehaviors(table, {
-                    searchInputSelector: '#globalSearch-{{ $type }}-table',
-                    pageLengthSelector: '#{{ $type }}PageLength'
-                });
-            }
-        });
-    </script>
-@endpush

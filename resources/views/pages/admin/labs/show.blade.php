@@ -1,322 +1,196 @@
-@extends('layouts.admin.app')
+@section('header')
+    <x-sys.page-header :title="$lab->name" pretitle="Laboratorium">
+        <x-slot:actions>
+            <x-sys.button type="edit" :href="route('labs.edit', $lab->encrypted_lab_id)" />
+            <x-sys.button type="back" :href="route('labs.index')" />
+        </x-slot:actions>
+    </x-sys.page-header>
+@endsection
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Data Lab /</span> {{ $lab->name }}</h4>
-        <div class="d-flex">
-            <a href="{{ route('labs.edit', $lab) }}" class="btn btn-light me-2">
-                <i class='bx bx-edit me-1'></i> Edit
-            </a>
-            <form action="{{ route('labs.destroy', $lab) }}" method="POST" class="d-inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus lab ini? Semua data terkait akan terpengaruh.')">
-                    <i class='bx bx-trash me-1'></i> Hapus
-                </button>
-            </form>
+    <div class="row row-cards">
+        <!-- Sidebar stats -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Statistik Laboratorium</h3>
+                </div>
+                <div class="card-body">
+                    <div class="datagrid">
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Inventaris</div>
+                            <div class="datagrid-content">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xs me-2 rounded bg-info-lt">
+                                        <i class="ti ti-package fs-2"></i>
+                                    </span>
+                                    <span class="fw-bold">{{ $lab->labInventaris->count() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Jadwal</div>
+                            <div class="datagrid-content">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xs me-2 rounded bg-success-lt">
+                                        <i class="ti ti-calendar fs-2"></i>
+                                    </span>
+                                    <span class="fw-bold">{{ $lab->jadwals->count() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Tim</div>
+                            <div class="datagrid-content">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xs me-2 rounded bg-warning-lt">
+                                        <i class="ti ti-users fs-2"></i>
+                                    </span>
+                                    <span class="fw-bold">{{ $lab->labTeams->count() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h3 class="card-title">Jadwal Terkini</h3>
+                </div>
+                <div class="list-group list-group-flush">
+                    @forelse ($lab->jadwals->sortByDesc('created_at')->take(3) as $jadwal)
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col text-truncate">
+                                    <div class="text-reset d-block fw-bold">{{ $jadwal->mataKuliah->nama_mk ?? 'N/A' }}</div>
+                                    <div class="d-block text-muted text-truncate mt-n1">
+                                        {{ $jadwal->hari }}, {{ $jadwal->jam_mulai }} - {{ $jadwal->jam_selesai }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="card-body text-center py-4 text-muted small">
+                            Tidak ada jadwal aktif.
+                        </div>
+                    @endforelse
+                </div>
+                @if($lab->jadwals->count() > 0)
+                <div class="card-footer text-center">
+                    <a href="{{ route('jadwal.index') }}" class="small">Lihat Semua Jadwal</a>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Detail Laboratorium</h3>
+                </div>
+                <div class="card-body">
+                    <div class="datagrid">
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Nama Lab</div>
+                            <div class="datagrid-content fw-bold">{{ $lab->name }}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Lokasi</div>
+                            <div class="datagrid-content">{{ $lab->location }}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Kapasitas</div>
+                            <div class="datagrid-content">{{ $lab->capacity }} Orang</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="datagrid-title">Deskripsi</div>
+                        <div class="datagrid-content prose max-w-none mt-2">
+                            {!! $lab->description ?: '<span class="text-muted italic">Tidak ada deskripsi.</span>' !!}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Gambar Laboratorium</h3>
+                    <a href="{{ route('labs.edit', $lab->encrypted_lab_id) }}" class="btn btn-sm btn-outline-primary">
+                        <i class="ti ti-plus me-1"></i> Edit Gambar
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if ($lab->getMedia('lab_images')->count() > 0)
+                        <div class="row g-2">
+                            @foreach ($lab->getMedia('lab_images') as $media)
+                                <div class="col-4 col-md-3">
+                                    <a href="{{ $media->getUrl() }}" target="_blank" class="d-block shadow-none">
+                                        <img src="{{ $media->getUrl() }}" class="rounded img-fluid" alt="{{ $media->name }}" style="height: 120px; width: 100%; object-fit: cover;">
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-4 text-muted italic">
+                            Belum ada gambar yang diunggah.
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Tim Laboratorium</h3>
+                    <a href="{{ route('labs.teams.index', $lab->encrypted_lab_id) }}" class="btn btn-sm btn-outline-primary">
+                        Kelola Tim
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table table-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Jabatan</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($lab->getActiveTeamMembers() as $teamMember)
+                                <tr>
+                                    <td>{{ $teamMember->user->name }}</td>
+                                    <td class="text-muted">{{ $teamMember->user->email }}</td>
+                                    <td>{{ $teamMember->jabatan ?: '-' }}</td>
+                                    <td>
+                                        <span class="badge bg-success-lt">Aktif</span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">Tidak ada anggota tim aktif.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="row">
-            <!-- Main Lab Info Card -->
-            <div class="col-xl-8">
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0"><i class='bx bx-building me-2 text-primary'></i>Detail Laboratorium</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="info-container">
-
-                            <div class="info-details">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td width="30%"><strong>Nama:</strong></td>
-                                        <td>{{ $lab->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Lokasi:</strong></td>
-                                        <td>{{ $lab->location }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Kapasitas:</strong></td>
-                                        <td><span class="badge bg-label-info">{{ $lab->capacity }} Orang</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Dibuat:</strong></td>
-                                        <td>{{ $lab->created_at->format('d M Y H:i') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Diubah:</strong></td>
-                                        <td>{{ $lab->updated_at->format('d M Y H:i') }}</td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <div class="row mt-4">
-                                <div class="col-md-12">
-                                    <p class="text-muted">{!! $lab->description !!}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lab Images Section -->
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0"><i class='bx bx-images me-2 text-primary'></i>Gambar Laboratorium</h5>
-                        <div>
-                            <span class="badge bg-primary bg-opacity-10 text-white">{{ $lab->getMedia('lab_images')->count() }} Gambar</span>
-                            <a href="{{ route('labs.edit', $lab->encrypted_lab_id) }}" class="btn btn-sm btn-outline-primary">
-                                <i class='bx bx-plus me-1'></i>Tambah Gambar
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        @if ($lab->getMedia('lab_images')->count() > 0)
-                            <div class="row g-3">
-                                @foreach ($lab->getMedia('lab_images') as $media)
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="card h-100 shadow-sm border">
-                                            <img src="{{ $media->getUrl() }}" class="card-img-top" alt="{{ $media->name }}" style="height: 200px; object-fit: cover;">
-                                            <div class="card-body">
-                                                <h6 class="card-title">{{ Str::limit($media->name, 20) }}</h6>
-                                                <p class="card-text small text-muted">{{ Str::limit($media->description, 50) }}</p>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <small class="text-muted">{{ round($media->size / 1024, 2) }} KB</small>
-                                                    <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                                        <i class='bx bx-show'></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="text-center py-5">
-                                <div class="avatar avatar-lg mx-auto mb-4 bg-light rounded">
-                                    <div class="avatar-initial rounded bg-label-secondary">
-                                        <i class='bx bx-images bx-lg'></i>
-                                    </div>
-                                </div>
-                                <p class="text-muted mb-0">Belum ada gambar yang diunggah untuk laboratorium ini</p>
-                                <a href="{{ route('labs.edit', $lab->encrypted_lab_id) }}" class="btn btn-primary mt-3">
-                                    <i class='bx bx-upload me-1'></i>Tambahkan Gambar
-                                </a>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sidebar with Stats -->
-            <div class="col-xl-4">
-                <!-- Lab Stats Card -->
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0"><i class='bx bx-stats me-2 text-primary'></i>Statistik Laboratorium</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-grid gap-3">
-                            <div class="d-flex align-items-center border-bottom pb-3">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-info">
-                                        <i class='bx bx-package'></i>
-                                    </span>
-                                </div>
-                                <div class="info-title">
-                                    <h5 class="mb-0">{{ $lab->labInventaris->count() }}</h5>
-                                    <small class="text-muted">Inventaris</small>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-center border-bottom pb-3">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-success">
-                                        <i class='bx bx-calendar-event'></i>
-                                    </span>
-                                </div>
-                                <div class="info-title">
-                                    <h5 class="mb-0">{{ $lab->jadwals->count() }}</h5>
-                                    <small class="text-muted">Jadwal</small>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-center">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-warning">
-                                        <i class='bx bx-user'></i>
-                                    </span>
-                                </div>
-                                <div class="info-title">
-                                    <h5 class="mb-0">{{ $lab->pcAssignments->count() }}</h5>
-                                    <small class="text-muted">Penugasan PC</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lab Inventory Section -->
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0"><i class='bx bx-package me-2 text-info'></i>Inventaris Laboratorium</h5>
-                        <span class="badge bg-info bg-opacity-10 text-white">{{ $lab->labInventaris->count() }} Barang</span>
-                    </div>
-                    <div class="card-body">
-                        @if ($lab->labInventaris->isNotEmpty())
-                            <div class="table-responsive">
-                                <table class="table table-hover table-sm">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Nama Alat</th>
-                                            <th>Kode Inventaris</th>
-                                            <th>Kondisi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lab->labInventaris()->with('inventaris')->take(5)->get() as $inventory)
-                                            {{-- Show only top 5 --}}
-                                            <tr>
-                                                <td>{{ Str::limit($inventory->inventaris->nama_alat, 20) }}</td>
-                                                <td>{{ $inventory->kode_inventaris }}</td>
-                                                <td>
-                                                    @if ($inventory->inventaris->kondisi_terakhir == 'Baik')
-                                                        <span class="badge bg-label-success"><i class='bx bx-check-circle me-1'></i>{{ $inventory->inventaris->kondisi_terakhir }}</span>
-                                                    @elseif($inventory->inventaris->kondisi_terakhir == 'Rusak Ringan')
-                                                        <span class="badge bg-label-warning"><i class='bx bx-exclamation-triangle me-1'></i>{{ $inventory->inventaris->kondisi_terakhir }}</span>
-                                                    @else
-                                                        <span class="badge bg-label-danger"><i class='bx bx-x-circle me-1'></i>{{ $inventory->inventaris->kondisi_terakhir }}</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-
-                                <a href="{{ route('labs.inventaris.index', $lab->encrypted_lab_id) }}" class="btn btn-outline-primary w-100 mt-2">
-                                    <i class='bx bx-list-ul me-1'></i>Lihat Semua Inventaris ({{ $lab->labInventaris->count() }})
-                                </a>
-                            </div>
-                        @else
-                            <div class="text-center py-3">
-                                <i class='bx bx-package bx-lg text-muted'></i>
-                                <p class="text-muted mb-0 mt-2">Tidak ada inventaris dalam laboratorium ini</p>
-                                <a href="{{ route('labs.inventaris.create', $lab->encrypted_lab_id) }}" class="btn btn-primary mt-2">
-                                    <i class='bx bx-plus me-1'></i>Tambah Inventaris
-                                </a>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Lab Schedule Section -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0"><i class='bx bx-calendar me-2 text-success'></i>Jadwal Terkini</h5>
-                        <span class="badge bg-success bg-opacity-10 text-white">{{ $lab->jadwals->count() }} Jadwal</span>
-                    </div>
-                    <div class="card-body">
-                        @if ($lab->jadwals->isNotEmpty())
-                            <ul class="list-group list-group-flush">
-                                @foreach ($lab->jadwals->sortByDesc('created_at')->take(3) as $jadwal)
-                                    <li class="list-group-item">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <h6 class="mb-1">{{ $jadwal->mataKuliah->nama_mk ?? 'N/A' }}</h6>
-                                                <p class="mb-0 text-muted small">
-                                                    <i class='bx bx-time-five me-1'></i>{{ $jadwal->jam_mulai }} - {{ $jadwal->jam_selesai }}
-                                                    <br>
-                                                    <i class='bx bx-user me-1'></i>{{ $jadwal->dosen->name ?? 'N/A' }}
-                                                </p>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <span class="badge bg-label-primary">{{ $jadwal->hari }}</span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <div class="text-center py-3">
-                                <i class='bx bx-calendar bx-lg text-muted'></i>
-                                <p class="text-muted mb-0 mt-2">Tidak ada jadwal dalam laboratorium ini</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
+    <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+        <div>
+            <x-sys.button type="delete" 
+                        class="ajax-delete"
+                        :data-url="route('labs.destroy', $lab->encrypted_lab_id)"
+                        data-title="Hapus Lab"
+                        data-text="Apakah Anda yakin ingin menghapus laboratorium ini? Seluruh data terkait akan terpengaruh."
+                        data-redirect="{{ route('labs.index') }}" />
         </div>
-
-        <!-- Lab Teams Section -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0"><i class='bx bx-group me-2 text-warning'></i>Tim Laboratorium</h5>
-                        <div>
-                            <span class="badge bg-warning bg-opacity-10 text-white me-2">{{ $lab->labTeams->count() }} Anggota</span>
-                            <a href="{{ route('labs.teams.create', $lab->encrypted_lab_id) }}" class="btn btn-sm btn-outline-primary">
-                                <i class='bx bx-plus me-1'></i>Tambah Anggota
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        @if ($lab->labTeams->isNotEmpty())
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Nama</th>
-                                            <th>Email</th>
-                                            <th>Jabatan</th>
-                                            <th>Tanggal Mulai</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lab->getActiveTeamMembers() as $teamMember)
-                                            <tr>
-                                                <td>{{ $teamMember->user->name }}</td>
-                                                <td>{{ $teamMember->user->email }}</td>
-                                                <td>{{ $teamMember->jabatan ?: '-' }}</td>
-                                                <td>{{ formatTanggalIndo($teamMember->tanggal_mulai) }}</td>
-                                                <td>
-                                                    <span class="badge bg-label-success">
-                                                        <i class='bx bx-check-circle me-1'></i>Aktif
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-
-                                <a href="{{ route('labs.teams.index', $lab->encrypted_lab_id) }}" class="btn btn-outline-primary w-100">
-                                    <i class='bx bx-list-ul me-1'></i>Lihat Semua Tim ({{ $lab->labTeams->count() }})
-                                </a>
-                            </div>
-                        @else
-                            <div class="text-center py-3">
-                                <i class='bx bx-group bx-lg text-muted'></i>
-                                <p class="text-muted mb-0 mt-2">Tidak ada tim dalam laboratorium ini</p>
-                                <a href="{{ route('labs.teams.create', $lab->encrypted_lab_id) }}" class="btn btn-primary mt-2">
-                                    <i class='bx bx-plus me-1'></i>Tambah Tim
-                                </a>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-12 d-flex justify-content-end">
-                <a href="{{ route('labs.index') }}" class="btn btn-secondary">
-                    <i class='bx bx-arrow-back me-1'></i> Kembali ke Daftar Lab
-                </a>
-            </div>
+        <div>
+            <x-sys.button type="back" :href="route('labs.index')" />
         </div>
     </div>
 @endsection

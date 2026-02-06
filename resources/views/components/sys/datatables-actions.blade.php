@@ -1,6 +1,7 @@
 @props([
     'editUrl' => null,
     'editTitle' => 'Edit',
+    'editModal' => true,
     'viewUrl' => null,
     'loginAsUrl' => null,
     'loginAsName' => null,
@@ -13,13 +14,21 @@
 <div class="btn-actions">
     {{-- Edit Button (Direct Action) --}}
     @if($editUrl)
-        <a href="#" 
-           class="btn btn-action text-primary btn-animate-icon ajax-modal-btn" 
-           data-url="{{ $editUrl }}" 
-           data-modal-title="{{ $editTitle }}" 
-           title="Edit">
-            <i class="ti ti-edit fs-2"></i>
-        </a>
+        @if($editModal)
+            <a href="#" 
+               class="btn btn-action text-primary btn-animate-icon ajax-modal-btn" 
+               data-url="{{ $editUrl }}" 
+               data-modal-title="{{ $editTitle }}" 
+               title="Edit">
+                <i class="ti ti-edit fs-2"></i>
+            </a>
+        @else
+            <a href="{{ $editUrl }}" 
+               class="btn btn-action text-primary btn-animate-icon" 
+               title="Edit">
+                <i class="ti ti-edit fs-2"></i>
+            </a>
+        @endif
     @endif
 
     {{-- Dropdown for extra actions --}}

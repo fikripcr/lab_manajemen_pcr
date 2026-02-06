@@ -1,23 +1,29 @@
 @extends('layouts.admin.app')
 
-@section('content')
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Create New Lab</h4>
+@section('header')
+    <x-sys.page-header title="Tambah Lab Baru" pretitle="Laboratorium">
+        <x-slot:actions>
+            <x-sys.button type="back" :href="route('labs.index')" />
+        </x-slot:actions>
+    </x-sys.page-header>
+@endsection
 
+@section('content')
     <div class="row">
-        <div class="col-xxl">
-            <div class="card mb-4">
+        <div class="col-12">
+            <div class="card">
                 <div class="card-body">
                     <x-admin.flash-message />
 
-                    <form action="{{ route('labs.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('labs.store') }}" method="POST" enctype="multipart/form-data" class="ajax-form">
                         @csrf
 
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="name">Lab Name</label>
+                            <label class="col-sm-2 col-form-label required" for="name">Lab Name</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
                                        id="name" name="name" value="{{ old('name') }}"
-                                       placeholder="Computer Lab A" >
+                                       placeholder="Computer Lab A" required>
                                 @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -25,11 +31,11 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="location">Location</label>
+                            <label class="col-sm-2 col-form-label required" for="location">Location</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('location') is-invalid @enderror"
                                        id="location" name="location" value="{{ old('location') }}"
-                                       placeholder="Building A, Floor 2" >
+                                       placeholder="Building A, Floor 2" required>
                                 @error('location')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -37,11 +43,11 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="capacity">Capacity</label>
+                            <label class="col-sm-2 col-form-label required" for="capacity">Capacity</label>
                             <div class="col-sm-10">
                                 <input type="number" class="form-control @error('capacity') is-invalid @enderror"
                                        id="capacity" name="capacity" value="{{ old('capacity') }}"
-                                       placeholder="30" min="1" >
+                                       placeholder="30" min="1" required>
                                 @error('capacity')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -58,44 +64,30 @@
                             </div>
                         </div>
 
-                        <!-- Note for New Lab Creation -->
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Gambar Lab</label>
-                            <div class="col-sm-10">
-                                <div class="border rounded p-3 bg-light">
-                                    <p class="mb-0">Belum ada gambar untuk lab ini. Anda bisa menambahkan gambar setelah lab dibuat atau sekarang.</p>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Media Upload Section -->
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Upload Gambar</label>
+                            <label class="col-sm-2 col-form-label">Lab Images</label>
                             <div class="col-sm-10">
-                                <div class="border rounded p-3 bg-light">
+                                <div class="border rounded p-3 bg-light-lt">
                                     <div id="media-upload-section">
                                         <div class="mb-3">
-                                            <label class="form-label">Pilih Gambar</label>
-                                            <input type="file" class="form-control" name="media_files[]" multiple accept="image/*">
-                                            <small class="text-muted">Pilih satu atau lebih gambar untuk diunggah</small>
+                                            <label class="form-label">Select Images</label>
+                                            <input type="file" class="form-control" name="lab_images[]" multiple accept="image/*">
+                                            <small class="text-muted">You can select multiple images to upload</small>
                                         </div>
 
                                         <div id="media-files-container">
-                                            <!-- Dynamic form fields will be added here by JavaScript when files are selected -->
+                                            <!-- Preview will be added here -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row justify-content-end">
-                            <div class="col-sm-10">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bx bx-save me-1"></i> Buat Lab
-                                </button>
-                                <a href="{{ route('labs.index') }}" class="btn btn-secondary">
-                                    <i class="bx bx-arrow-back me-1"></i> Batal
-                                </a>
+                        <div class="row mt-4">
+                            <div class="col-sm-10 offset-sm-2">
+                                <x-sys.button type="submit" text="Tambah Lab" />
+                                <x-sys.button type="cancel" :href="route('labs.index')" />
                             </div>
                         </div>
                     </form>
@@ -105,7 +97,46 @@
     </div>
 
     <script>
-        const fileInput = document.querySelector('input[name="media_files[]"]');
-        const container = document.getElementById('media-files-container');
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.querySelector('input[name="lab_images[]"]');
+            const container = document.getElementById('media-files-container');
 
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    container.innerHTML = ''; // Clear previous entries
+
+                    if (this.files.length > 0) {
+                        Array.from(this.files).forEach((file, index) => {
+                            if (!file.type.match('image.*')) return; // Only process images
+
+                            const mediaFormHtml = `
+                                <div class="card mb-2 border">
+                                    <div class="card-body p-2">
+                                        <div class="row align-items-center g-3">
+                                            <div class="col-auto">
+                                                <img src="${URL.createObjectURL(file)}" class="rounded" alt="Preview" style="width: 80px; height: 60px; object-fit: cover;">
+                                            </div>
+                                            <div class="col">
+                                                <div class="row g-2">
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control form-control-sm" name="media_titles[]" placeholder="Image Title" value="${file.name.replace(/\.[^/.]+$/, '')}" />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control form-control-sm" name="media_descriptions[]" placeholder="Description" />
+                                                    </div>
+                                                </div>
+                                                <div class="mt-1 small text-muted">Size: ${(file.size/1024).toFixed(2)} KB</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                            container.insertAdjacentHTML('beforeend', mediaFormHtml);
+                        });
+                    }
+                });
+            }
+        });
+    </script>
 @endsection

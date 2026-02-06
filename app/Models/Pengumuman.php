@@ -42,8 +42,8 @@ class Pengumuman extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('cover')
-            ->useFallbackUrl(asset('assets-guest/img/no-image.jpg'))
-            ->useFallbackPath(public_path('assets-guest/img/no-image.jpg'))
+            ->useFallbackUrl(asset('images/no-image.jpg'))
+            ->useFallbackPath(public_path('images/no-image.jpg'))
             ->useDisk('public')
             ->singleFile();
 
@@ -85,12 +85,12 @@ class Pengumuman extends Model implements HasMedia
 
     public function getCoverSmallUrlAttribute()
     {
-        return $this->getFirstMediaUrl('cover','small');
+        return $this->getFirstMediaUrl('cover', 'small');
     }
 
     public function getCoverMediumUrllttribute()
     {
-        return $this->getFirstMediaUrl('cover','medium');
+        return $this->getFirstMediaUrl('cover', 'medium');
     }
 
     public function getAttachmentsUrlAttribute()

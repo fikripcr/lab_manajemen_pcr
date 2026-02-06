@@ -1,13 +1,21 @@
-<footer class="content-footer footer bg-footer-theme mt-2 mb-2">
-    <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-        <div class="mb-2 mb-md-0">
-            ©
-            <b>{{date('Y').', '.config('app.name')}}</b> - Sistem Manajemen Laboratorium Jurusan Teknologi Informasi
-        </div>
-        <div>
-            <a href="#" class="footer-link me-4">About</a>
-            <a href="#" class="footer-link me-4">Contact</a>
-            <a href="#" class="footer-link me-4">Support</a>
+<footer class="footer footer-transparent d-print-none">
+    <div class="container-xl">
+        <div class="row text-center align-items-center flex-row-reverse">
+            <div class="col-lg-auto ms-lg-auto">
+                <ul class="list-inline list-inline-dots mb-0">
+                    <li class="list-inline-item"><a href="#" class="link-secondary">Documentation</a></li>
+                    <li class="list-inline-item"><a href="#" class="link-secondary">Support</a></li>
+                </ul>
+            </div>
+            <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                <ul class="list-inline list-inline-dots mb-0">
+                    <li class="list-inline-item">
+                        Copyright &copy; {{ date('Y') }}
+                        <a href="." class="link-secondary">{{ config('app.name') }}</a>.
+                        All rights reserved.
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </footer>

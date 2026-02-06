@@ -1,14 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\InventarisExport;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InventarisRequest;
 use App\Models\Inventaris;
 use App\Models\Lab;
-use App\Exports\InventarisExport;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
@@ -28,21 +26,27 @@ class InventarisController extends Controller
     public function paginate(Request $request)
     {
         $inventaris = Inventaris::select([
-                'inventaris_id',
-                'nama_alat',
-                'jenis_alat',
-                'kondisi_terakhir',
-                'tanggal_pengecekan'
-            ])
+            'inventaris_id',
+            'nama_alat',
+            'jenis_alat',
+            'kondisi_terakhir',
+            'tanggal_pengecekan',
+        ])
             ->whereNull('deleted_at');
 
         // Apply condition filter if provided
-        if ($request->has('condition') && !empty($request->condition)) {
+        if ($request->has('condition') && ! empty($request->condition)) {
             $inventaris = $inventaris->where('kondisi_terakhir', $request->condition);
         }
 
         return DataTables::of($inventaris)
             ->addIndexColumn()
+            ->editColumn('nama_alat', function ($item) {
+                return '<span class="fw-medium">' . $item->nama_alat . '</span>';
+            })
+            ->editColumn('jenis_alat', function ($item) {
+                return '<span class="badge bg-label-info me-1">' . $item->jenis_alat . '</span>';
+            })
             ->editColumn('kondisi_terakhir', function ($item) {
                 $badgeClass = '';
                 switch ($item->kondisi_terakhir) {
@@ -68,27 +72,13 @@ class InventarisController extends Controller
             })
             ->addColumn('action', function ($item) {
                 $encryptedId = encryptId($item->inventaris_id);
-                return '
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('inventaris.edit', $encryptedId) . '" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('inventaris.show', $encryptedId) . '">
-                                    <i class="bx bx-show me-1"></i> View
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('inventaris.destroy', $encryptedId) . '\')">
-                                    <i class="bx bx-trash me-1"></i> Delete
-                                </a>
-                            </div>
-                        </div>
-                    </div>';
+                return view('components.sys.datatables-actions', [
+                    'editUrl'   => route('inventaris.edit', $encryptedId),
+                    'viewUrl'   => route('inventaris.show', $encryptedId),
+                    'deleteUrl' => route('inventaris.destroy', $encryptedId),
+                ])->render();
             })
-            ->rawColumns(['kondisi_terakhir', 'action'])
+            ->rawColumns(['nama_alat', 'jenis_alat', 'kondisi_terakhir', 'action'])
             ->make(true);
     }
 
@@ -138,9 +128,9 @@ class InventarisController extends Controller
      */
     public function edit($id)
     {
-        $realId = decryptId($id);
+        $realId    = decryptId($id);
         $inventory = Inventaris::findOrFail($realId);
-        $labs = Lab::all();
+        $labs      = Lab::all();
         return view('pages.admin.inventaris.edit', compact('inventory', 'labs'));
     }
 
@@ -182,7 +172,7 @@ class InventarisController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Inventaris berhasil dihapus.'
+                'message' => 'Inventaris berhasil dihapus.',
             ]);
         }
 
@@ -197,9 +187,9 @@ class InventarisController extends Controller
     {
         // Extract filters from request (matching the DataTables filters)
         $filters = [
-            'search' => $request->get('search'),
+            'search'    => $request->get('search'),
             'condition' => $request->get('condition'),
-            'lab_id' => $request->get('lab_id'),
+            'lab_id'    => $request->get('lab_id'),
         ];
         $columns = $request->get('columns', ['id', 'nama_alat', 'jenis_alat', 'kondisi_terakhir', 'tanggal_pengecekan', 'lab_name']);
 

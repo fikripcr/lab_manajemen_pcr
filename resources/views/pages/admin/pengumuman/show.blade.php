@@ -1,131 +1,100 @@
 @extends('layouts.admin.app')
 
-@section('content')
-    <h4 class="fw-bold py-3 mb-4">
-        <span class="text-muted fw-light">{{ ucfirst($pengumuman->jenis) }} Details /</span> {{ $pengumuman->judul }}
-    </h4>
+@section('header')
+    <x-sys.page-header :title="$pengumuman->judul" pretitle="Announcement Details">
+        <x-slot:actions>
+            <x-sys.button type="edit" :href="route($pengumuman->jenis.'.edit', $pengumuman)" />
+            <x-sys.button type="back" :href="route($pengumuman->jenis.'.index')" />
+        </x-slot:actions>
+    </x-sys.page-header>
+@endsection
 
+@section('content')
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">{{ $pengumuman->judul }}</h5>
-                    <div class="d-flex gap-2">
-                        <a href="{{ route($pengumuman->jenis.'.edit', $pengumuman) }}" class="btn btn-primary">
-                            <i class="bx bx-edit me-1"></i> Edit
-                        </a>
-                        <a href="{{ route($pengumuman->jenis.'.index') }}" class="btn btn-secondary">
-                            <i class="bx bx-arrow-back me-1"></i> Back
-                        </a>
-                    </div>
-                </div>
+            <div class="card">
                 <div class="card-body">
                     <x-admin.flash-message />
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <h6 class="text-muted">Title:</h6>
-                            <p class="mb-0">{{ $pengumuman->judul }}</p>
+                    <div class="datagrid">
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Title</div>
+                            <div class="datagrid-content">{{ $pengumuman->judul }}</div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <h6 class="text-muted">Type:</h6>
-                            <p class="mb-0">
-                                <span class="badge bg-label-{{ $pengumuman->jenis == 'pengumuman' ? 'primary' : 'info' }}">
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Type</div>
+                            <div class="datagrid-content">
+                                <span class="badge bg-{{ $pengumuman->jenis == 'pengumuman' ? 'primary' : 'info' }}">
                                     {{ ucfirst($pengumuman->jenis) }}
                                 </span>
-                            </p>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <h6 class="text-muted">Author:</h6>
-                            <p class="mb-0">{{ $pengumuman->penulis ? $pengumuman->penulis->name : 'System' }}</p>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Author</div>
+                            <div class="datagrid-content">{{ $pengumuman->penulis ? $pengumuman->penulis->name : 'System' }}</div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <h6 class="text-muted">Status:</h6>
-                            <p class="mb-0">
-                                <span class="badge bg-label-{{ $pengumuman->is_published ? 'success' : 'warning' }}">
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Status</div>
+                            <div class="datagrid-content">
+                                <span class="badge bg-{{ $pengumuman->is_published ? 'success' : 'warning' }}">
                                     {{ $pengumuman->is_published ? 'Published' : 'Draft' }}
                                 </span>
-                            </p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <h6 class="text-muted">Created:</h6>
-                            <p class="mb-0">{{ $pengumuman->created_at->format('d M Y H:i') }}</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <h6 class="text-muted">Last Updated:</h6>
-                            <p class="mb-0">{{ $pengumuman->updated_at->format('d M Y H:i') }}</p>
-                        </div>
-
-                        @php
-                            $coverMedia = $pengumuman->getFirstMedia('info_cover');
-                        @endphp
-                        @if($coverMedia)
-                            <div class="col-md-12 mb-3">
-                                <h6 class="text-muted">Cover Image:</h6>
-                                <img src="{{ $coverMedia->getFullUrl() }}"
-                                     alt="Cover Image" class="img-fluid img-thumbnail" style="max-height: 300px;">
                             </div>
-                        @endif
-
-                        @php
-                            $attachments = $pengumuman->getMedia('info_attachment');
-                        @endphp
-                        @if($attachments->count() > 0)
-                            <div class="col-md-12 mb-3">
-                                <h6 class="text-muted">Attachments:</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>File Name</th>
-                                                <th>Size</th>
-                                                <th>Mime Type</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($attachments as $attachment)
-                                                <tr>
-                                                    <td>{{ $attachment->file_name }}</td>
-                                                    <td>{{ number_format($attachment->size / 1024, 2) }} KB</td>
-                                                    <td>{{ $attachment->mime_type }}</td>
-                                                    <td>
-                                                        <a href="{{ $attachment->getFullUrl() }}"
-                                                           class="btn btn-primary btn-sm" target="_blank">
-                                                            Download
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="mb-3">
-                        <h6 class="text-muted">Content:</h6>
-                        <div class="border p-3 rounded bg-light">
-                            <div class="mb-0">{!! $pengumuman->isi !!}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Created At</div>
+                            <div class="datagrid-content">{{ $pengumuman->created_at->format('d M Y H:i') }}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Last Updated</div>
+                            <div class="datagrid-content">{{ $pengumuman->updated_at->format('d M Y H:i') }}</div>
                         </div>
                     </div>
 
-                    @if($pengumuman->is_published && $pengumuman->published_at)
-                        <div class="mb-3">
-                            <h6 class="text-muted">Published Date:</h6>
-                            <p class="mb-0">{{ $pengumuman->published_at->format('d M Y H:i') }}</p>
+                    @php
+                        $coverMedia = $pengumuman->getFirstMedia('info_cover');
+                        $attachments = $pengumuman->getMedia('info_attachment');
+                    @endphp
+
+                    @if($coverMedia)
+                        <div class="mt-4">
+                            <h4 class="card-title mb-3">Cover Image</h4>
+                            <img src="{{ $coverMedia->getFullUrl() }}" alt="Cover Image" class="rounded border shadow-sm" style="max-height: 300px;">
                         </div>
                     @endif
 
                     <div class="mt-4">
-                        <form action="{{ route($pengumuman->jenis.'.destroy', $pengumuman) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this {{ $pengumuman->jenis }}?')">
-                                <i class="bx bx-trash me-1"></i> Delete {{ ucfirst($pengumuman->jenis) }}
-                            </button>
-                        </form>
+                        <h4 class="card-title mb-3">Content</h4>
+                        <div class="p-3 border rounded bg-light">
+                            {!! $pengumuman->isi !!}
+                        </div>
+                    </div>
+
+                    @if($attachments->count() > 0)
+                        <div class="mt-4">
+                            <h4 class="card-title mb-3">Attachments</h4>
+                            <div class="list-group list-group-flush border rounded-3 overflow-hidden">
+                                @foreach($attachments as $attachment)
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                                        <div>
+                                            <div class="fw-bold">{{ $attachment->file_name }}</div>
+                                            <div class="text-muted small">{{ number_format($attachment->size / 1024, 2) }} KB • {{ strtoupper($attachment->extension) }}</div>
+                                        </div>
+                                        <x-sys.button type="link" :href="$attachment->getFullUrl()" text="Download" icon="ti ti-download" class="btn-sm btn-outline-primary" target="_blank" />
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+                        <x-sys.button type="delete" 
+                                    class="ajax-delete"
+                                    :data-url="route($pengumuman->jenis.'.destroy', $pengumuman)"
+                                    data-title="Hapus {{ ucfirst($pengumuman->jenis) }}"
+                                    data-text="Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan."
+                                    data-redirect="{{ route($pengumuman->jenis.'.index') }}"
+                                    icon="ti ti-trash" />
                     </div>
                 </div>
             </div>

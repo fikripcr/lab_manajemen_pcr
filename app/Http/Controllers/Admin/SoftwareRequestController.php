@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SoftwareRequestUpdateRequest;
-use App\Models\RequestSoftware;
 use App\Models\MataKuliah;
+use App\Models\RequestSoftware;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -34,36 +33,38 @@ class SoftwareRequestController extends Controller
                 $badgeClass = '';
                 switch ($request->status) {
                     case 'menunggu_approval':
-                        $badgeClass = 'bg-warning';
+                        $badgeClass = 'bg-label-warning';
                         break;
                     case 'disetujui':
-                        $badgeClass = 'bg-success';
+                        $badgeClass = 'bg-label-success';
                         break;
                     case 'ditolak':
-                        $badgeClass = 'bg-danger';
+                        $badgeClass = 'bg-label-danger';
                         break;
                     default:
-                        $badgeClass = 'bg-secondary';
+                        $badgeClass = 'bg-label-secondary';
                 }
                 return '<span class="badge ' . $badgeClass . '">' . ucfirst(str_replace('_', ' ', $request->status)) . '</span>';
             })
             ->editColumn('mata_kuliah', function ($request) {
                 $mataKuliahNames = $request->mataKuliahs->map(function ($mk) {
-                    return $mk->kode . ' - ' . $mk->nama;
+                    return $mk->kode_mk . ' - ' . $mk->nama_mk;
                 })->join(', ');
 
                 return $mataKuliahNames ?: 'Tidak ada';
             })
+            ->addColumn('dosen_name', function ($request) {
+                return $request->dosen ? $request->dosen->name : ($request->dosen_name ?: 'Guest');
+            })
+            ->editColumn('created_at', function ($request) {
+                return formatTanggalIndo($request->created_at);
+            })
             ->addColumn('action', function ($request) {
-                return '
-                    <div class="d-flex">
-                        <a href="' . route('software-requests.show', $request->id) . '" class="btn btn-info btn-sm me-1" title="View">
-                            <i class="bx bx-show"></i>
-                        </a>
-                        <a href="' . route('software-requests.edit', $request->id) . '" class="btn btn-primary btn-sm me-1" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                    </div>';
+                return view('components.sys.datatables-actions', [
+                    'editUrl' => route('software-requests.edit', $request->id),
+                    'viewUrl' => route('software-requests.show', $request->id),
+                    // deleteUrl omitted as SoftwareRequestController doesn't have destroy method in preview
+                ])->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
@@ -84,7 +85,7 @@ class SoftwareRequestController extends Controller
     public function edit($id)
     {
         $softwareRequest = RequestSoftware::with(['dosen', 'mataKuliahs'])->findOrFail($id);
-        $mataKuliahs = MataKuliah::all();
+        $mataKuliahs     = MataKuliah::all();
         return view('pages.admin.software-requests.edit', compact('softwareRequest', 'mataKuliahs'));
     }
 

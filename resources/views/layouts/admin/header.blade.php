@@ -1,201 +1,223 @@
-<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
-    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-            <i class="bx bx-menu bx-sm"></i>
-        </a>
-    </div>
+@php
+    $condensed    = $condensed ?? false;
+    $sticky       = $sticky ?? false;
 
-    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-        <!-- Global Search Trigger -->
-        <div class="navbar-nav align-items-center">
-            <div class="nav-item d-flex align-items-center">
-                <a href="javascript:void(0)" class="nav-link text-dark" onclick="openGlobalSearchModal('{{ route('global-search') }}')" title="Global Search">
-                    <i class="bx bx-search fs-4 lh-0 me-1"></i>
-                    <span>Search</span>
+    $dark         = $dark ?? false;
+    $hideBrand    = $hideBrand ?? false;
+    $hideMenu     = $hideMenu ?? false;
+    $navbarClass = $navbarClass ?? '';
+
+
+    // Apply sticky-top directly to the header if enabled
+    $headerStickyClass = $sticky ? 'sticky-top' : '';
+
+@endphp
+
+
+    {{-- Primary Header --}}
+    <header class="navbar navbar-expand-lg{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} {{ $headerStickyClass }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
+        <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
+            {{-- Mobile Toggle --}}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
+					aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+            
+            {{-- Brand/Logo --}}
+            @unless($hideBrand)
+            <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                <a href="{{ route('dashboard') }}">
+                    <img src="{{  asset('images/logo-apps.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
                 </a>
             </div>
-        </div>
-        <!-- /Global Search Trigger -->
+            @endunless
 
-        <ul class="navbar-nav flex-row align-items-center ms-auto">
-            <!-- Notification -->
-            <li class="nav-item navbar-dropdown dropdown-notification dropdown">
-                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <i class="bx bx-bell bx-sm"></i>
-                    <span class="badge bg-danger rounded-pill" id="notification-count">0</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li class="dropdown-header">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="mb-0 me-2">Notifications</h5>
-                            <a href="#" class="text-muted" id="markAllAsReadBtn">Mark all as read</a>
-                        </div>
-                    </li>
+            {{-- Right Side Navigation --}}
+            <div class="navbar-nav flex-row order-md-last">
 
-                    <li>
-                        <div class="dropdown-menu-scrollable" data-bs-simple="true">
-                            <ul class="menu border-0" id="notifications-list">
-                                <li>
-                                    <a class="dropdown-item" href="javascript:void(0);">
-                                        <p class="text-center mb-0">Loading notifications...</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-center text-primary" href="{{ route('notifications.index') }}">
-                            <small>View all notifications</small>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <!--/ Notification -->
-
-            <!-- User -->
-            <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <div class="avatar avatar-online">
-                        <img src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5' }}" alt class="w-px-40 h-auto rounded-circle object-fit-cover" />
-                    </div>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="{{ route('users.show', auth()->user()->encrypted_id) }}">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="avatar avatar-online">
-                                        <img src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5' }}" alt class="w-px-40 h-auto rounded-circle object-fit-cover" />
+                {{-- Quick Access / Apps Dropdown --}}
+                <div class="nav-item dropdown d-none d-md-flex">
+                    <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show apps">
+                        <i class="ti ti-apps fs-2"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-card"{{ $dark ? ' data-bs-theme="light"' : '' }}>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Akses Cepat</h3>
+                            </div>
+                            <div class="card-body p-2">
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <a href="{{ route('dashboard') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
+                                            <i class="ti ti-layout-dashboard fs-2 d-block mb-1"></i>
+                                            <div class="small">Dashboard</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('labs.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
+                                            <i class="ti ti-flask fs-2 d-block mb-1"></i>
+                                            <div class="small">Lab</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('inventaris.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
+                                            <i class="ti ti-package fs-2 d-block mb-1"></i>
+                                            <div class="small">Inventaris</div>
+                                        </a>
                                     </div>
                                 </div>
-                                <div class="flex-grow-1">
-                                    <span class="fw-semibold d-block">{{ auth()->user()->name }}</span>
-                                    <small class="text-muted">{{ getActiveRole() ?? 'User' }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Dark Mode Toggle --}}
+                <div class="d-none d-md-flex">
+                    <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                        <i class="ti ti-moon fs-2"></i>
+                    </a>
+                    <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                        <i class="ti ti-sun fs-2"></i>
+                    </a>
+                </div>
+
+                {{-- Global Search --}}
+                <div class="d-none d-md-flex">
+                    <a href="javascript:void(0)" class="nav-link px-0" onclick="openGlobalSearchModal('{{ route('global-search') }}')" title="Global Search">
+                        <i class="ti ti-search fs-2"></i>
+                    </a>
+                </div>
+
+                {{-- Notifications --}}
+                <div class="nav-item dropdown me-3 dropdown-notification">
+                    <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
+                        <i class="ti ti-bell fs-2"></i>
+                        <span class="badge bg-red notification-count" style="display: none;"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-card"{{ $dark ? ' data-bs-theme="light"' : '' }}>
+                        <div class="card">
+                            <div class="card-header d-flex">
+                                <h3 class="card-title">Notifications</h3>
+                                <div class="btn-close ms-auto" data-bs-dismiss="dropdown"></div>
+                            </div>
+                            <div class="list-group list-group-flush list-group-hoverable" id="notifications-list" style="max-height: 20rem; overflow-y: auto;">
+                                <div class="list-group-item">
+                                    <div class="row align-items-center">
+                                        <div class="col text-truncate">
+                                            <div class="text-body d-block">Loading notifications...</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="card-footer text-center">
+                                <a href="{{ route('notifications.index') }}" class="btn btn-link btn-sm">View All</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- User Menu --}}
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+                        <span class="avatar avatar-sm" style="background-image: url('{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5' }}')"></span>
+                        <div class="d-none d-xl-block ps-2">
+                            <div>{{ auth()->user()->name }}</div>
+                            <div class="mt-1 small text-secondary">{{ auth()->user()->roles->first()?->name ?? 'User' }}</div>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ? ' data-bs-theme="light"' : '' }}>
+                        <a href="{{ route('users.show', auth()->user()->id) }}" class="dropdown-item">
+                            <i class="ti ti-user me-2"></i> My Profile
                         </a>
-                    </li>
-                    <li>
-                        <div class="dropdown-divider"></div>
-                    </li>
-                    <!-- Role Switching Dropdown -->
-                    @if(getAllUserRoles()->count() > 1)
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="javascript:void(0);">
-                                <i class="bx bx-user-check me-2"></i>
-                                <span class="align-middle">Switch Role</span>
-                                <i class="bx bx-chevron-right float-end"></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                @foreach(getAllUserRoles() as $role)
-                                    <li>
-                                        <a class="dropdown-item {{ $role === getActiveRole() ? 'active' : '' }}"
-                                           href="javascript:void(0)"
-                                           onclick="switchRole('{{ $role }}')">
-                                            {{ $role }}
-                                            @if($role === getActiveRole())
-                                                <i class="bx bx-check float-end"></i>
-                                            @endif
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </li>
-                        <li>
+                        
+                        {{-- Switch Role logic --}}
+                        @if(getAllUserRoles()->count() > 1)
                             <div class="dropdown-divider"></div>
-                        </li>
-                    @endif
-                    <li>
-                        <a class="dropdown-item" href="{{ route('users.show', auth()->user()->encrypted_id) }}">
-                            <i class="bx bx-user me-2"></i>
-                            <span class="align-middle">My Profile</span>
+                             @foreach(getAllUserRoles() as $role)
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="switchRole('{{ $role }}')">
+                                    <i class="ti ti-arrows-exchange me-2"></i> Switch to {{ $role }}
+                                </a>
+                            @endforeach
+                        @endif
+
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ route('logout') }}" class="dropdown-item text-danger" onclick="event.preventDefault(); document.getElementById('logout-form-header').submit();">
+                            <i class="ti ti-logout me-2"></i> Logout
                         </a>
-                    </li>
-                    @if(app('impersonate')->isImpersonating())
-                        <li>
-                            <a class="dropdown-item" href="{{ route('users.switch-back') }}">
-                                <i class="bx bx-log-out me-2"></i>
-                                <span class="align-middle">Switch Back to Original Account</span>
+                        <form id="logout-form-header" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Menu Container (Mobile) --}}
+            {{-- In Condensed: Visible Always --}}
+            {{-- In Vertical ($hideMenu): Visible Only on Mobile --}}
+            @if($condensed || $hideMenu)
+            <div class="collapse navbar-collapse" id="navbar-menu">
+                {{-- Placeholder for Admin Mobile Menu - Can be implemented later if needed --}}
+                <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
+                     <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('dashboard') }}" >
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-home fs-2"></i>
+                                </span>
+                                <span class="nav-link-title">Dashboard</span>
                             </a>
                         </li>
-                    @endif
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bx bx-cog me-2"></i>
-                            <span class="align-middle">Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bx bx-power-off me-2"></i>
-                            <span class="align-middle">Log Out</span>
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</nav>
+                        {{-- Add more critical mobile links here --}}
+                     </ul>
+                </div>
+            </div>
+            @endif
+        </div>
+    </header>
 
-<style>
-.dropdown-submenu {
-    position: relative;
-}
+    {{-- Secondary Menu Bar (non-condensed only, and NO Sidebar) --}}
+    @if(!$condensed && empty($layoutData['layoutSidebar']))
+    <header class="navbar-expand-md">
+        <div class="collapse navbar-collapse" id="navbar-menu">
+            <div class="navbar"{{ $dark ? ' data-bs-theme="dark"' : '' }}>
+                <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
+                     <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('dashboard') }}" >
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-home fs-2"></i>
+                                </span>
+                                <span class="nav-link-title">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('labs.index') }}" >
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-flask fs-2"></i>
+                                </span>
+                                <span class="nav-link-title">Laboratorium</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('inventaris.index') }}" >
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-package fs-2"></i>
+                                </span>
+                                <span class="nav-link-title">Inventaris Utama</span>
+                            </a>
+                        </li>
+                     </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    @endif
 
-.dropdown-submenu .dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -6px;
-    margin-left: -1px;
-    border-radius: 0.375rem;
-}
-
-.dropdown-submenu:hover .dropdown-menu {
-    display: block;
-}
-
-.dropdown-submenu > a:after {
-    display: block;
-    content: " ";
-    float: right;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 5px 0 5px 5px;
-    border-left-color: #ccc;
-    margin-top: 5px;
-    margin-right: -10px;
-}
-
-.dropdown-submenu.pull-left {
-    float: none;
-}
-
-.dropdown-submenu.pull-left .dropdown-menu {
-    left: -100%;
-    margin-left: 10px;
-    border-radius: 0.375rem;
-}
-</style>
-
+@push('scripts')
 <script>
     function switchRole(role) {
-        // Create a form and submit it via POST
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '{{ route('users.switch-role', '') }}/' + role;
+        form.action = '{{ route("users.switch-role") }}/' + role;
 
-        // Add CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const tokenInput = document.createElement('input');
         tokenInput.type = 'hidden';
@@ -207,3 +229,4 @@
         form.submit();
     }
 </script>
+@endpush

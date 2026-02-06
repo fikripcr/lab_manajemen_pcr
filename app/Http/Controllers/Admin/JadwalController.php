@@ -34,24 +34,24 @@ class JadwalController extends Controller
     public function paginate(Request $request)
     {
         $jadwals = JadwalKuliah::select([
-                'jadwal_kuliah.jadwal_kuliah_id',
-                'jadwal_kuliah.semester_id',
-                'jadwal_kuliah.mata_kuliah_id',
-                'jadwal_kuliah.dosen_id',
-                'jadwal_kuliah.hari',
-                'jadwal_kuliah.jam_mulai',
-                'jadwal_kuliah.jam_selesai',
-                'jadwal_kuliah.lab_id',
-                'jadwal_kuliah.created_at',
-                'jadwal_kuliah.updated_at',
-                'jadwal_kuliah.deleted_at',
-                'semesters.tahun_ajaran',
-                'semesters.semester as semester_nama',
-                'mata_kuliahs.kode_mk',
-                'mata_kuliahs.nama_mk',
-                'users.name as dosen_name',
-                'labs.name as lab_name'
-            ])->with(['semester', 'mataKuliah', 'dosen', 'lab'])
+            'jadwal_kuliah.jadwal_kuliah_id',
+            'jadwal_kuliah.semester_id',
+            'jadwal_kuliah.mata_kuliah_id',
+            'jadwal_kuliah.dosen_id',
+            'jadwal_kuliah.hari',
+            'jadwal_kuliah.jam_mulai',
+            'jadwal_kuliah.jam_selesai',
+            'jadwal_kuliah.lab_id',
+            'jadwal_kuliah.created_at',
+            'jadwal_kuliah.updated_at',
+            'jadwal_kuliah.deleted_at',
+            'semesters.tahun_ajaran',
+            'semesters.semester as semester_nama',
+            'mata_kuliahs.kode_mk',
+            'mata_kuliahs.nama_mk',
+            'users.name as dosen_name',
+            'labs.name as lab_name',
+        ])->with(['semester', 'mataKuliah', 'dosen', 'lab'])
             ->leftJoin('semesters', 'jadwal_kuliah.semester_id', '=', 'semesters.semester_id')
             ->leftJoin('mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'mata_kuliahs.mata_kuliah_id')
             ->leftJoin('users', 'jadwal_kuliah.dosen_id', '=', 'users.id')
@@ -67,6 +67,8 @@ class JadwalController extends Controller
             $jadwals->where('users.name', 'like', '%' . $request->dosen . '%');
         }
 
+        return DataTables::of($jadwals)
+            ->addIndexColumn();
         return DataTables::of($jadwals)
             ->addIndexColumn()
             ->filter(function ($query) use ($request) {
@@ -87,61 +89,40 @@ class JadwalController extends Controller
                 return $jadwal->hari;
             })
             ->addColumn('waktu_mulai', function ($jadwal) {
-                return formatTanggalIndo($jadwal->jam_mulai);
+                return date('H:i', strtotime($jadwal->jam_mulai));
             })
             ->addColumn('waktu_selesai', function ($jadwal) {
-                return formatTanggalIndo($jadwal->jam_selesai);
+                return date('H:i', strtotime($jadwal->jam_selesai));
             })
-            ->addColumn('mata_kuliah.nama', function ($jadwal) {
+            ->addColumn('mata_kuliah_nama', function ($jadwal) {
                 if ($jadwal->mata_kuliah_id && $jadwal->mataKuliah) {
-                    return $jadwal->mataKuliah->kode_mk . ' - ' . $jadwal->mataKuliah->nama_mk;
+                    return '<span class="fw-medium">' . $jadwal->mataKuliah->kode_mk . '</span> - ' . $jadwal->mataKuliah->nama_mk;
                 }
                 return '-';
             })
-            ->addColumn('dosen.nama', function ($jadwal) {
-                if ($jadwal->dosen_id && $jadwal->dosen) {
-                    return $jadwal->dosen->name;
-                }
-                return '-';
+            ->addColumn('dosen_nama', function ($jadwal) {
+                return $jadwal->dosen ? $jadwal->dosen->name : '-';
             })
-            ->addColumn('ruang', function ($jadwal) {
-                if ($jadwal->lab_id && $jadwal->lab) {
-                    return $jadwal->lab->name;
-                }
-                return '-';
+            ->addColumn('ruang_nama', function ($jadwal) {
+                return $jadwal->lab ? $jadwal->lab->name : '-';
             })
-            ->addColumn('semester.tahun_ajaran', function ($jadwal) {
+            ->addColumn('semester_nama_display', function ($jadwal) {
                 if ($jadwal->semester_id) {
                     return $jadwal->tahun_ajaran . ' - ' . ($jadwal->semester_nama == 1 ? 'Ganjil' : 'Genap');
                 }
                 return '-';
             })
             ->addColumn('action', function ($jadwal) {
-                $encryptedId = encryptId($jadwal->jadwal_kuliah_id);
-                return '
-                    <div class="d-flex align-items-center">
-                        <a class="text-success me-2" href="' . route('jadwal.edit', ['jadwal' => $encryptedId]) . '" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('jadwal.show', ['jadwal' => $encryptedId]) . '">
-                                    <i class="bx bx-show me-1"></i> View
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('jadwal.destroy', ['jadwal' => $encryptedId]) . '\')">
-                                    <i class="bx bx-trash me-1"></i> Delete
-                                </a>
-                            </div>
-                        </div>
-                    </div>';
+                $encryptedId = $jadwal->encrypted_jadwal_kuliah_id;
+                return view('components.sys.datatables-actions', [
+                    'editUrl'   => route('jadwal.edit', $encryptedId),
+                    'viewUrl'   => route('jadwal.show', $encryptedId),
+                    'deleteUrl' => route('jadwal.destroy', $encryptedId),
+                ])->render();
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['mata_kuliah_nama', 'action'])
             ->make(true);
     }
-
 
     /**
      * Show the form for creating a new resource.

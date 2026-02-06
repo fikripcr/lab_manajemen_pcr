@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">Edit Semester</h4>
+    <h5 class="modal-title">Edit Semester</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <form id="editSemesterForm" action="{{ route('semesters.update', $semester->encrypted_semester_id) }}" method="POST">
@@ -7,7 +7,7 @@
     @method('PUT')
     <div class="modal-body">
         <div class="mb-3">
-            <label for="tahun_ajaran" class="form-label fw-bold">Tahun Ajaran <span class="text-danger">*</span></label>
+            <label for="tahun_ajaran" class="form-label required">Tahun Ajaran</label>
             <input type="text" class="form-control @error('tahun_ajaran') is-invalid @enderror"
                    id="tahun_ajaran" name="tahun_ajaran"
                    value="{{ old('tahun_ajaran', $semester->tahun_ajaran) }}"
@@ -18,7 +18,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="semester" class="form-label fw-bold">Semester <span class="text-danger">*</span></label>
+            <label for="semester" class="form-label required">Semester</label>
             <select class="form-select @error('semester') is-invalid @enderror"
                     id="semester" name="semester" required>
                 <option value="">Pilih Semester</option>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="start_date" class="form-label fw-bold">Start Date <span class="text-danger">*</span></label>
+            <label for="start_date" class="form-label required">Start Date</label>
             <input type="date" class="form-control @error('start_date') is-invalid @enderror"
                    id="start_date" name="start_date"
                    value="{{ old('start_date', $semester->start_date) }}" required>
@@ -41,7 +41,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="end_date" class="form-label fw-bold">End Date <span class="text-danger">*</span></label>
+            <label for="end_date" class="form-label required">End Date</label>
             <input type="date" class="form-control @error('end_date') is-invalid @enderror"
                    id="end_date" name="end_date"
                    value="{{ old('end_date', $semester->end_date) }}" required>
@@ -51,17 +51,15 @@
         </div>
 
         <div class="mb-3">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', $semester->is_active) ? 'checked' : '' }}>
-                <label class="form-check-label" for="is_active">
-                    Set as Active Semester
-                </label>
-            </div>
+            <label class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="is_active" value="1" {{ old('is_active', $semester->is_active) ? 'checked' : '' }}>
+                <span class="form-check-label">Set as Active Semester</span>
+            </label>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Update Semester</button>
+        <x-sys.button type="button" text="Close" class="btn-link link-secondary" data-bs-dismiss="modal" />
+        <x-sys.button type="submit" text="Update Semester" />
     </div>
 </form>
 

@@ -215,10 +215,13 @@ class PengumumanController extends Controller
             ->editColumn('judul', function ($item) {
                 $encryptedId = encryptId($item->pengumuman_id);
                 $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
-                return '<a href="' . route($routePrefix . '.show', $encryptedId) . '">' . e($item->judul) . '</a>';
+                return '<a href="' . route($routePrefix . '.show', $encryptedId) . '" class="fw-medium">' . e($item->judul) . '</a>';
             })
             ->addColumn('cover', function ($item) {
-                return '<img src="' . $item->cover_small_url . '" class="rounded w-px-40 h-40">';
+                return '<img src="' . $item->cover_small_url . '" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">';
+            })
+            ->addColumn('author', function ($item) {
+                return $item->penulis ? $item->penulis->name : '-';
             })
             ->editColumn('is_published', function ($item) {
                 $status = $item->is_published ? 'Published' : 'Draft';
@@ -229,19 +232,14 @@ class PengumumanController extends Controller
                 return formatTanggalIndo($item->created_at);
             })
             ->addColumn('action', function ($item) {
-                // Use the appropriate route based on jenis
                 $encryptedId = encryptId($item->pengumuman_id);
                 $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
 
-                return '
-                    <div class="d-flex align-items-center">
-                        <a href="' . route($routePrefix . '.edit', $encryptedId) . '" class="text-primary me-2" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <a href="javascript:void(0)" class="text-danger" title="Delete" onclick="confirmDelete(\'' . route($routePrefix . '.destroy', $encryptedId) . '\')">
-                            <i class="bx bx-trash"></i>
-                        </a>
-                    </div>';
+                return view('components.sys.datatables-actions', [
+                    'editUrl'   => route($routePrefix . '.edit', $encryptedId),
+                    'viewUrl'   => route($routePrefix . '.show', $encryptedId),
+                    'deleteUrl' => route($routePrefix . '.destroy', $encryptedId),
+                ])->render();
             })
             ->rawColumns(['judul', 'is_published', 'cover', 'action'])
             ->make(true);

@@ -1,14 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Lab;
-use App\Models\LabMedia;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Admin\LabRequest;
+use App\Models\Lab;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTables;
 
 class LabController extends Controller
 {
@@ -33,36 +31,25 @@ class LabController extends Controller
      */
     public function paginate(Request $request)
     {
-        $labs = Lab::select('*')->whereNull('deleted_at');
+        $labs = Lab::query();
 
         return DataTables::of($labs)
             ->addIndexColumn()
             ->addColumn('action', function ($lab) {
-                $encryptedId = encryptId($lab->lab_id);
-                return '
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-icon btn-outline-primary me-1" href="' . route('labs.edit', $encryptedId) . '" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('labs.show', $encryptedId) . '">
-                                    <i class="bx bx-show me-1"></i> View
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('labs.destroy', $encryptedId) . '\')">
-                                    <i class="bx bx-trash me-1"></i> Delete
-                                </a>
-                            </div>
-                        </div>
-                    </div>';
+                return view('components.sys.datatables-actions', [
+                    'editUrl'   => route('labs.edit', $lab->encrypted_lab_id),
+                    'editModal' => false,
+                    'viewUrl'   => route('labs.show', $lab->encrypted_lab_id),
+                    'deleteUrl' => route('labs.destroy', $lab->encrypted_lab_id),
+                ])->render();
             })
-            ->rawColumns(['action'])
+            ->editColumn('description', function ($lab) {
+                $description = strip_tags($lab->description);
+                return strlen($description) > 50 ? substr($description, 0, 50) . '...' : $description;
+            })
+            ->rawColumns(['action', 'description'])
             ->make(true);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -86,8 +73,8 @@ class LabController extends Controller
                 foreach ($request->file('lab_images') as $image) {
                     if ($image->isValid()) {
                         $lab->addMedia($image)
-                           ->withCustomProperties(['uploaded_by' => auth()->id()])
-                           ->toMediaCollection('lab_images');
+                            ->withCustomProperties(['uploaded_by' => auth()->id()])
+                            ->toMediaCollection('lab_images');
                     }
                 }
             }
@@ -97,8 +84,8 @@ class LabController extends Controller
                 foreach ($request->file('lab_attachments') as $attachment) {
                     if ($attachment->isValid()) {
                         $lab->addMedia($attachment)
-                           ->withCustomProperties(['uploaded_by' => auth()->id()])
-                           ->toMediaCollection('lab_attachments');
+                            ->withCustomProperties(['uploaded_by' => auth()->id()])
+                            ->toMediaCollection('lab_attachments');
                     }
                 }
             }
@@ -154,8 +141,8 @@ class LabController extends Controller
                 foreach ($request->file('lab_images') as $image) {
                     if ($image->isValid()) {
                         $lab->addMedia($image)
-                           ->withCustomProperties(['uploaded_by' => auth()->id()])
-                           ->toMediaCollection('lab_images');
+                            ->withCustomProperties(['uploaded_by' => auth()->id()])
+                            ->toMediaCollection('lab_images');
                     }
                 }
             }
@@ -165,8 +152,8 @@ class LabController extends Controller
                 foreach ($request->file('lab_attachments') as $attachment) {
                     if ($attachment->isValid()) {
                         $lab->addMedia($attachment)
-                           ->withCustomProperties(['uploaded_by' => auth()->id()])
-                           ->toMediaCollection('lab_attachments');
+                            ->withCustomProperties(['uploaded_by' => auth()->id()])
+                            ->toMediaCollection('lab_attachments');
                     }
                 }
             }
@@ -196,7 +183,7 @@ class LabController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Lab berhasil dihapus.'
+                'message' => 'Lab berhasil dihapus.',
             ]);
         }
 
