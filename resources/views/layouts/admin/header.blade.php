@@ -154,10 +154,15 @@
             {{-- In Vertical ($hideMenu): Visible Only on Mobile --}}
             @if($condensed || $hideMenu)
             <div class="collapse navbar-collapse" id="navbar-menu">
-                {{-- Placeholder for Admin Mobile Menu - Can be implemented later if needed --}}
-                <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
-                     <x-admin.menu-renderer type="navbar" />
-                </div>
+                @if($hideMenu)
+                    {{-- Vertical Layout Mobile Menu (Hidden on Desktop) --}}
+                    <div class="d-lg-none">
+                        <x-admin.menu-renderer type="navbar" />
+                    </div>
+                @else
+                    {{-- Condensed Layout Menu --}}
+                    <x-admin.menu-renderer type="navbar" />
+                @endif
             </div>
             @endif
         </div>
