@@ -46,7 +46,7 @@
 
         {{-- 4. COLLAPSE with NAVBAR MENU --}}
         <div class="collapse navbar-collapse" id="sidebar-menu">
-            <x-sys.menu-renderer type="sidebar" />
+            <x-tabler.menu-renderer type="sidebar" group="sys" />
         </div>
     </div>
 </aside>

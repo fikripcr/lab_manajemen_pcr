@@ -33,13 +33,14 @@ import './custom/CustomSweetAlerts.js';
 import './custom/Notification.js';
 import './custom/FormHandlerAjax.js';
 
-// --- Feature Loaders (Text Editor, DataTables, Charts, Global Search) ---
-// Note: We use the exact same loaders as Sys to ensure consistency
-
 window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
         const hugerte = module.default;
+
+        // Check if dark mode is enabled
         const isDarkMode = localStorage.getItem("tabler-theme") === 'dark';
+
+        // Import appropriate skin based on theme
         const skinImport = isDarkMode
             ? import('hugerte/skins/ui/oxide-dark/skin.min.css')
             : import('hugerte/skins/ui/oxide/skin.min.css');
@@ -64,6 +65,12 @@ window.loadHugeRTE = function (selector, config = {}) {
         ]).then(([, , , , , , , , , , , , , , skinModule, contentCssModule]) => {
             window.hugerte = hugerte;
             window.hugerteContentCss = contentCssModule.default;
+
+            // Apply dark content CSS if enabled
+            if (isDarkMode) {
+                config.content_css = 'dark';
+            }
+
             if (selector) {
                 hugerte.init({
                     selector: selector,
@@ -80,6 +87,7 @@ window.loadHugeRTE = function (selector, config = {}) {
 
 window.loadDataTables = function () {
     if (window.DataTablesLoaded) return Promise.resolve(window.CustomDataTables);
+
     return import('datatables.net-bs5').then(() => {
         return import('./custom/CustomDataTables.js').then(({ default: CustomDataTables }) => {
             window.CustomDataTables = CustomDataTables;
@@ -91,6 +99,7 @@ window.loadDataTables = function () {
 
 window.loadApexCharts = function () {
     if (window.ApexCharts) return Promise.resolve(window.ApexCharts);
+
     return import('apexcharts').then(({ default: ApexCharts }) => {
         window.ApexCharts = ApexCharts;
         return ApexCharts;
@@ -99,13 +108,16 @@ window.loadApexCharts = function () {
 
 window.loadGlobalSearch = function () {
     return import('./custom/GlobalSearch.js').then(({ GlobalSearch }) => {
-        if (!window.GlobalSearch) { window.GlobalSearch = GlobalSearch; }
+        if (!window.GlobalSearch) {
+            window.GlobalSearch = GlobalSearch;
+        }
         return GlobalSearch;
     });
 };
 
 window.loadFlatpickr = async function () {
     if (window.flatpickr) return window.flatpickr;
+
     const flatpickr = (await import('flatpickr')).default;
     await import('flatpickr/dist/flatpickr.min.css');
     window.flatpickr = flatpickr;
@@ -114,40 +126,46 @@ window.loadFlatpickr = async function () {
 
 window.loadSelect2 = async function () {
     if (window.jQuery.fn.select2) return window.jQuery.fn.select2;
+
+    // Load Select2 library and CSS with Bootstrap 5 theme
     await import('select2/dist/css/select2.min.css');
     await import('select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css');
     const select2 = (await import('select2')).default;
+
+    // Initialize Select2 on jQuery
     select2($);
+
     return window.jQuery.fn.select2;
 };
 
 window.loadFilePond = async function () {
     if (window.FilePond) return window.FilePond;
+
     const FilePond = await import('filepond');
     await import('filepond/dist/filepond.min.css');
+
     const FilePondPluginImagePreview = (await import('filepond-plugin-image-preview')).default;
     await import('filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css');
+
     FilePond.registerPlugin(FilePondPluginImagePreview);
     window.FilePond = FilePond;
     return FilePond;
 };
 
+window.initToastEditor = function (selector, config = {}) {
+    import('@toast-ui/editor').then(({ Editor }) => {
+        new Editor({
+            el: document.querySelector(selector),
+            ...config
+        });
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    /**
-     * UNIFIED THEME SYNC:
-     * We initialize with 'sys' mode even in Admin to ensure settings panel syncs globally.
-     */
-    const themeManager = new ThemeTabler('sys');
+    // Initializing for both Admin and Sys (Unified)
+    const themeManager = new ThemeTabler('sys'); // Default to sys mode/standard
     themeManager.initSettingsPanel();
 
-    // Initialize Global Search if present
-    if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
-        window.loadGlobalSearch().then((GlobalSearch) => {
-            window.globalSearch = new GlobalSearch();
-        });
-    }
-
-    // Initialize Offline Select2 (same as sys)
     window.initOfflineSelect2 = function () {
         const elements = document.querySelectorAll('.select2-offline');
         if (elements.length > 0) {
@@ -155,12 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 $('.select2-offline').each(function () {
                     const $el = $(this);
                     if ($el.data('select2')) return;
+
                     $el.select2({
                         theme: 'bootstrap-5',
                         width: '100%',
                         placeholder: $el.data('placeholder') || 'Select option',
                         allowClear: true
                     });
+
                     $el.on('select2:select select2:unselect', function (e) {
                         this.dispatchEvent(new Event('change', { bubbles: true }));
                     });
@@ -168,5 +188,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     };
+
     window.initOfflineSelect2();
+
+
+    if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
+        window.loadGlobalSearch().then((GlobalSearch) => {
+            window.globalSearch = new GlobalSearch();
+        });
+    }
 });

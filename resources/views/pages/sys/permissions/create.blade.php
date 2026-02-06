@@ -13,7 +13,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <x-sys.button type="cancel" data-bs-dismiss="modal" />
-        <x-sys.button type="submit" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" />
+        <x-tabler.button type="submit" />
     </div>
 </form>

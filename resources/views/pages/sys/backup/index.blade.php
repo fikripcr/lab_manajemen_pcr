@@ -3,12 +3,12 @@
 @section('title', 'Backup Management')
 
 @section('header')
-<x-sys.page-header title="Backup Management" pretitle="Others">
+<x-tabler.page-header title="Backup Management" pretitle="Others">
     <x-slot:actions>
-        <x-sys.button type="create" onclick="createBackup('files')" text="Web Files Backup" icon="ti ti-files" />
-        <x-sys.button type="success" onclick="createBackup('db')" text="Database Backup" icon="ti ti-database" />
+        <x-tabler.button type="create" onclick="createBackup('files')" text="Web Files Backup" icon="ti ti-files" />
+        <x-tabler.button type="success" onclick="createBackup('db')" text="Database Backup" icon="ti ti-database" />
     </x-slot:actions>
-</x-sys.page-header>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

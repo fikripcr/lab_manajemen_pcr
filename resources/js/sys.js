@@ -162,9 +162,9 @@ window.initToastEditor = function (selector, config = {}) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    const themeManager = new ThemeTabler('sys');
-    themeManager.initSettingsPanel(); // Only init settings panel for live preview
-
+    // Initializing for both Admin and Sys (Unified)
+    const themeManager = new ThemeTabler('sys'); // Default to sys mode/standard
+    themeManager.initSettingsPanel();
 
     window.initOfflineSelect2 = function () {
         const elements = document.querySelectorAll('.select2-offline');
@@ -181,18 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         allowClear: true
                     });
 
-                    // Reactivate native change event for CustomDataTables
-                    $el.on('change', function (e) {
-                        // Check if the event is jQuery-triggered (originalEvent present usually means native, 
-                        // but jQuery trigger doesn't pass it same way. 
-                        // To avoid infinite loop, we check a flag or just ensure dispatch happens if needed)
-                        // Actually, Select2 triggers change. We need vanilla event.
-                        // But dispatching vanilla event triggers jQuery change again? 
-                        // Let's use specific Select2 events
-                    });
-
                     $el.on('select2:select select2:unselect', function (e) {
-                        // Dispatch native change event so CustomDataTables (vanilla listener) picks it up
                         this.dispatchEvent(new Event('change', { bubbles: true }));
                     });
                 });

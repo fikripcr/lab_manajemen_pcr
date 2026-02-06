@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('header')
-<x-sys.page-header title="Dashboard" pretitle="Overview">
+<x-tabler.page-header title="Dashboard" pretitle="Overview">
     <x-slot:actions>
         <div class="d-flex gap-2">
             <div class="input-icon">
@@ -18,7 +18,7 @@
             </button>
         </div>
     </x-slot:actions>
-</x-sys.page-header>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

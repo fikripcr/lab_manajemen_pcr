@@ -136,7 +136,7 @@
                 <div class="card-body">
                     <form id="tinymceTestForm">
                         <div class="mb-3">
-                            <x-sys.editor id="editorContent" name="isi" :value="old('isi')" height="250" required />
+                            <x-tabler.editor id="editorContent" name="isi" :value="old('isi')" height="250" required />
                         </div>
                         <div class="btn-list">
                             <button type="submit" class="btn btn-primary">

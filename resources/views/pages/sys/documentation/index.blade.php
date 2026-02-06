@@ -3,7 +3,7 @@
 @section('title', 'Documentation')
 
 @section('header')
-<x-sys.page-header title="Development Guide" pretitle="Others" />
+<x-tabler.page-header title="Development Guide" pretitle="Others" />
 @endsection
 
 @section('content')

@@ -16,7 +16,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
             <x-sys.datatable
                 id="inventaris-table"
                 route="{{ route('labs.inventaris.paginate', $lab->encrypted_lab_id) }}"

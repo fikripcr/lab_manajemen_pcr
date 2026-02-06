@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form action="{{ route($type . '.update', $pengumuman->encrypted_pengumuman_id) }}" method="POST" enctype="multipart/form-data" class="ajax-form">
                         @csrf
@@ -33,7 +33,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="isi">Content</label>
                             <div class="col-sm-10">
-                                <x-admin.editor id="isi" name="isi" :value="old('isi', $pengumuman->isi)" height="400" />
+                                <x-tabler.editor id="isi" name="isi" :value="old('isi', $pengumuman->isi)" height="400" />
                                 @error('isi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

@@ -8,7 +8,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <x-admin.flash-message />
+                <x-tabler.flash-message />
 
                 <div class="card mb-4">
                     <div class="card-body">

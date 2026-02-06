@@ -3,11 +3,11 @@
 @section('title', 'Error Log')
 
 @section('header')
-    <x-sys.page-header title="Error Log" pretitle="System Log">
+    <x-tabler.page-header title="Error Log" pretitle="System Log">
         <x-slot:actions>
-            <x-sys.button type="back" url="{{ route('sys.error-log.index') }}" />
+            <x-tabler.button type="back" url="{{ route('sys.error-log.index') }}" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')

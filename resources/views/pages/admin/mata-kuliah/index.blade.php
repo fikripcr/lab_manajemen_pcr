@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <x-admin.flash-message />
+            <x-tabler.flash-message />
             @php
                 $columns = [
                     [

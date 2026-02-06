@@ -13,7 +13,7 @@
         <div class="col-md-3 ">
             <div class=" sticky-top">
                 <div class="mb-1">
-                    <x-sys.button type="back" :href="route('sys.documentation.index')" class="w-100" />
+                    <x-tabler.button type="back" :href="route('sys.documentation.index')" class="w-100" />
                 </div>
 
                 <div class="card" style="top: 1rem;">

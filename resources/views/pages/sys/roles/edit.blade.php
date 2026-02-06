@@ -3,17 +3,17 @@
 @section('title', 'Edit Role')
 
 @section('header')
-    <x-sys.page-header title="Edit Role" pretitle="Access Control">
+    <x-tabler.page-header title="Edit Role" pretitle="Access Control">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('sys.roles.index')" />
+            <x-tabler.button type="back" :href="route('sys.roles.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
     <div class="row">
         <div class="col-12">
-            <x-sys.flash-message />
+            <x-tabler.flash-message />
             <form class="ajax-form" action="{{ route('sys.roles.update', $role->encryptedId) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -93,8 +93,8 @@
                 </div>
 
                 <div class="d-flex justify-content-start gap-2">
-                    <x-sys.button type="submit" />
-                    <x-sys.button type="back" :href="route('sys.roles.index')" />
+                    <x-tabler.button type="submit" />
+                    <x-tabler.button type="back" :href="route('sys.roles.index')" />
                 </div>
             </form>
         </div>

@@ -9,7 +9,7 @@
             </a>
         </div>
         <div class="collapse navbar-collapse" id="sidebar-menu">
-            <x-admin.menu-renderer type="sidebar" />
+            <x-tabler.menu-renderer type="sidebar" group="admin" />
         </div>
     </div>
 </aside>

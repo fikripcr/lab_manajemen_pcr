@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form action="{{ route('inventaris.update', $inventory) }}" method="POST" class="ajax-form">
                         @csrf

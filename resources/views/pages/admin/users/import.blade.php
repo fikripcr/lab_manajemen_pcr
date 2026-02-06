@@ -13,7 +13,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <x-admin.flash-message />
+            <x-tabler.flash-message />
 
             <div class="card mb-4">
                 <div class="card-body">

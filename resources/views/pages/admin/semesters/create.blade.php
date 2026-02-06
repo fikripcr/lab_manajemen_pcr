@@ -12,7 +12,7 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form method="POST" action="{{ route('semesters.store') }}">
                         @csrf

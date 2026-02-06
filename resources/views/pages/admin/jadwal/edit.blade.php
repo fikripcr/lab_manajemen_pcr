@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form method="POST" action="{{ route('jadwal.update', $jadwal->encrypted_jadwal_kuliah_id) }}" class="ajax-form">
                         @csrf

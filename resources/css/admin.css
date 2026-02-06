@@ -1,6 +1,6 @@
 /* 
- * Admin Section - Tabler UI Theme
- * Replaces Sneat with Tabler to match Sys section.
+ * Tabler UI Theme - Unified Resource
+ * Replaces separate admin.css and sys.css
  */
 
 /* ==========================================================================
@@ -21,6 +21,6 @@
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
 /* ==========================================================================
-   2. CUSTOM THEME LOGIC (SHARED WITH SYS)
+   2. CUSTOM THEME LOGIC
    ========================================================================== */
 @import './custom/ThemeTabler.css';

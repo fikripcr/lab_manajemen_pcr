@@ -4,7 +4,7 @@
 @section('title', 'Notifications')
 
 @section('header')
-    <x-sys.page-header title="Notifications" pretitle="System Log" />
+    <x-tabler.page-header title="Notifications" pretitle="System Log" />
 @endsection
 
 @section('content')
@@ -62,19 +62,19 @@
             <div class="d-flex flex-wrap justify-content-between">
                 <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
                     <div>
-                        <x-sys.datatable-page-length :dataTableId="'notifications-table'" />
+                        <x-tabler.datatable-page-length :dataTableId="'notifications-table'" />
                     </div>
                     <div>
-                        <x-sys.datatable-search :dataTableId="'notifications-table'" />
+                        <x-tabler.datatable-search :dataTableId="'notifications-table'" />
                     </div>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
-                    <x-sys.button type="create" id="markSelectedAsReadBtn" class="btn-sm" icon="ti ti-check-double" text="Mark Selected as Read" disabled />
+                    <x-tabler.button type="create" id="markSelectedAsReadBtn" class="btn-sm" icon="ti ti-check-double" text="Mark Selected as Read" disabled />
                 </div>
             </div>
         </div>
         <div class="card-body p-0">
-            <x-sys.datatable id="notifications-table" route="{{ route('notifications.data') }}" Checkbox="true"
+            <x-tabler.datatable id="notifications-table" route="{{ route('notifications.data') }}" checkbox="true"
             :columns="[
                 [
                     'title' => 'Status',

@@ -3,11 +3,11 @@
 @section('title', 'Error Log')
 
 @section('header')
-<x-sys.page-header title="Error Log" pretitle="System Log">
+<x-tabler.page-header title="Error Log" pretitle="System Log">
     <x-slot:actions>
-        <x-sys.button type="delete" onclick="confirmClearAll()" text="Clear All" title="Clear All Error Logs" />
+        <x-tabler.button type="delete" onclick="confirmClearAll()" text="Clear All" title="Clear All Error Logs" />
     </x-slot:actions>
-</x-sys.page-header>
+</x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -17,16 +17,16 @@
         <div class="d-flex flex-wrap justify-content-between">
             <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
                 <div>
-                    <x-sys.datatable-page-length :dataTableId="'error-logs-table'" />
+                    <x-tabler.datatable-page-length :dataTableId="'error-logs-table'" />
                 </div>
                 <div>
-                    <x-sys.datatable-search :dataTableId="'error-logs-table'" />
+                    <x-tabler.datatable-search :dataTableId="'error-logs-table'" />
                 </div>
             </div>
         </div>
     </div>
     <div class="card-body">
-        <x-sys.datatable id="error-logs-table" route="{{ route('sys.error-log.data') }}" :columns="[
+        <x-tabler.datatable id="error-logs-table" route="{{ route('sys.error-log.data') }}" :columns="[
             [
                 'title' => '#',
                 'data' => 'DT_RowIndex',

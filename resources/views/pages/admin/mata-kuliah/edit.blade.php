@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form method="POST" action="{{ route('mata-kuliah.update', $mataKuliah->encrypted_mata_kuliah_id) }}" class="ajax-form">
                         @csrf

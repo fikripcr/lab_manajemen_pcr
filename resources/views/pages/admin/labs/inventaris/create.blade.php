@@ -15,7 +15,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form action="{{ route('labs.inventaris.store', $lab->encrypted_lab_id) }}" method="POST" class="ajax-form">
                         @csrf

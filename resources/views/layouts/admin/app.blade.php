@@ -28,7 +28,6 @@
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Admin Assets (migrated to Tabler) --}}
     @vite([
         'resources/css/admin.css',
     ])
@@ -108,11 +107,11 @@
     </div>
 
     @if(env('THEME_CUSTOMIZATION_ENABLED', true))
-        <x-sys.theme-settings mode="sys" :themeData="$themeData" :layoutData="$layoutData" />
+        <x-tabler.theme-settings mode="sys" :themeData="$themeData" :layoutData="$layoutData" />
     @endif
 
     {{-- Global Search Modal Component --}}
-    <x-admin.global-search-modal /> 
+    <x-tabler.modal-global-search /> 
 
     {{-- Global Generic Modal --}}
     <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true">

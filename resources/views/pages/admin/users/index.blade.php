@@ -33,10 +33,10 @@
         <div class="card-header">
             <div class="d-flex flex-wrap gap-2">
                 <div>
-                    <x-sys.datatable-page-length :dataTableId="'users-table'" />
+                    <x-tabler.datatable-page-length :dataTableId="'users-table'" />
                 </div>
                 <div>
-                    <x-sys.datatable-search :dataTableId="'users-table'" />
+                    <x-tabler.datatable-search :dataTableId="'users-table'" />
                 </div>
             </div>
             <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
@@ -55,9 +55,9 @@
             </div>
         </div>
         <div class="card-body">
-            <x-admin.flash-message />
+            <x-tabler.flash-message />
 
-            <x-sys.datatable
+            <x-tabler.datatable
                 id="users-table" route="{{ route('users.data') }}" :columns="[
                 [
                     'title' => 'Name',

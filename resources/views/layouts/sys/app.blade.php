@@ -80,7 +80,7 @@
             <div class="page-body mb-0">
                 {{-- Boxed layout uses container at .page level, others use container-xl here --}}
                 <div class="{{ $layoutData['containerClass'] ?? 'container-xl' }}">
-                    <x-sys.flash-message />
+                    <x-tabler.flash-message />
                     @yield('content')
                 </div>
             </div>
@@ -92,11 +92,11 @@
 
     {{-- Theme Settings Component --}}
     @if(env('THEME_CUSTOMIZATION_ENABLED', true))
-        <x-sys.theme-settings mode="sys" :themeData="$themeData" :layoutData="$layoutData" />
+        <x-tabler.theme-settings mode="sys" :themeData="$themeData" :layoutData="$layoutData" />
     @endif
 
     {{-- Global Search Modal Component --}}
-    <x-sys.modal-global-search />
+    <x-tabler.modal-global-search />
 
     {{-- Global Generic Modal --}}
     <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true">

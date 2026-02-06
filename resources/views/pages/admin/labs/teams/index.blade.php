@@ -16,7 +16,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <div class="table-responsive">
                         <table class="table card-table table-vcenter table-mobile-md table-nowrap">

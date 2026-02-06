@@ -3,11 +3,11 @@
 @section('title', 'Roles')
 
 @section('header')
-<x-sys.page-header title="Roles" pretitle="Access Control">
+<x-tabler.page-header title="Roles" pretitle="Access Control">
     <x-slot:actions>
-        <x-sys.button type="create" :modal-url="route('sys.roles.create')" />
+        <x-tabler.button type="create" :modal-url="route('sys.roles.create')" />
     </x-slot:actions>
-</x-sys.page-header>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

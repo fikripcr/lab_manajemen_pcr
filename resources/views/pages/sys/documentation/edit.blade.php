@@ -27,7 +27,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Edit Documentation: {{ $page }}</h5>
             <div>
-                <x-sys.button type="back" :href="route('sys.documentation.show', $page)" class="me-2" />
+                <x-tabler.button type="back" :href="route('sys.documentation.show', $page)" class="me-2" />
             </div>
         </div>
         <div class="card-body">
@@ -41,8 +41,8 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <x-sys.button type="back" :href="route('sys.documentation.show', $page)" />
-                    <x-sys.button type="submit" />
+                    <x-tabler.button type="back" :href="route('sys.documentation.show', $page)" />
+                    <x-tabler.button type="submit" />
                 </div>
             </form>
         </div>

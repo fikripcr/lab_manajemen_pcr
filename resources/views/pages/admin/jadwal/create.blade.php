@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form method="POST" action="{{ route('jadwal.store') }}" class="ajax-form">
                         @csrf

@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <div class="alert alert-info border-0 shadow-sm mb-4">
                         <div class="d-flex">

@@ -7,7 +7,7 @@
         <div class="col-xxl">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form action="{{ route('users.update', $user->encrypted_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf

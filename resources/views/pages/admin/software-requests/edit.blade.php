@@ -14,7 +14,7 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form method="POST" action="{{ route('software-requests.update', $softwareRequest->encrypted_request_software_id) }}">
                         @csrf

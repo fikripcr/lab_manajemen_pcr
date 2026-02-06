@@ -13,7 +13,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <x-admin.flash-message />
+                    <x-tabler.flash-message />
 
                     <form action="{{ route('labs.update', $lab->encrypted_lab_id) }}" method="POST" enctype="multipart/form-data" class="ajax-form">
                         @csrf
@@ -58,7 +58,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="description">Description</label>
                             <div class="col-sm-10">
-                                <x-admin.editor id="description" name="description" :value="old('description', $lab->description)" height="300" />
+                                <x-tabler.editor id="description" name="description" :value="old('description', $lab->description)" height="300" />
                                 @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
