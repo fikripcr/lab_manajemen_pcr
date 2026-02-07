@@ -22,8 +22,8 @@ class IndikatorController extends Controller
     public function index()
     {
         // Filters data
-        $dokumens   = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id');
-        $labelTypes = \App\Models\Pemtu\LabelType::orderBy('name')->pluck('name', 'labeltype_id');
+        $dokumens   = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id')->toArray();
+        $labelTypes = \App\Models\Pemtu\LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
 
         return view('pages.pemtu.indikators.index', compact('dokumens', 'labelTypes'));
     }
