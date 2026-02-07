@@ -57,8 +57,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <x-sys.button type="button" text="Close" class="btn-link link-secondary" data-bs-dismiss="modal" />
-        <x-sys.button type="submit" text="Create Semester" />
+        <x-tabler.button type="button" text="Close" class="btn-link link-secondary" data-bs-dismiss="modal" />
+        <x-tabler.button type="submit" text="Create Semester" />
     </div>
 </form>
 

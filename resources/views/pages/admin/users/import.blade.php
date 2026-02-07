@@ -1,13 +1,11 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Import User')
-
 @section('header')
-    <x-sys.page-header title="Import Pengguna" pretitle="Pengguna">
+    <x-tabler.page-header title="Import Pengguna" pretitle="Pengguna">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('users.index')" />
+            <x-tabler.button type="back" :href="route('users.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -44,25 +42,25 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label class="form-label" for="file">Pilih File</label>
-                            <input type="file" class="form-control @error('file') is-invalid @enderror"
+                            <label class="form-label required" for="file">Pilih File</label>
+                            <input type="file" class="filepond-input"
                                    id="file" name="file" accept=".xlsx,.xls,.csv" required>
+                            <div class="form-hint">Format yang didukung: .xlsx, .xls, .csv</div>
                             @error('file')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="role_default">Role Default</label>
-                            <select class="form-select @error('role_default') is-invalid @enderror"
-                                    id="role_default" name="role_default">
-                                <option value="">Pilih role default jika tidak disertakan di file</option>
-                                @foreach($roles as $role)
-                                    <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
-                                @endforeach
-                            </select>
+                            <x-form.select2
+                                id="role_default"
+                                name="role_default"
+                                label="Role Default"
+                                placeholder="Pilih role default jika tidak disertakan di file"
+                                :options="$roles->pluck('name', 'name')->toArray()"
+                            />
                             @error('role_default')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -78,8 +76,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <x-sys.button type="submit" text="Import Users" icon="ti ti-upload" />
-                            <x-sys.button type="cancel" :href="route('users.index')" />
+                            <x-tabler.button type="import" text="Import Users" />
+                            <x-tabler.button type="cancel" :href="route('users.index')" />
                         </div>
                     </form>
                 </div>
@@ -87,3 +85,23 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        if (typeof window.loadFilePond === 'function') {
+            const FilePond = await window.loadFilePond();
+            const input = document.querySelector('#file');
+            if (input) {
+                FilePond.create(input, {
+                    storeAsFile: true,
+                    allowMultiple: false,
+                    maxFiles: 1,
+                    labelIdle: 'Drag & Drop Excel/CSV or <span class="filepond--label-action">Browse</span>',
+                });
+            }
+        }
+    });
+</script>
+@endpush
+

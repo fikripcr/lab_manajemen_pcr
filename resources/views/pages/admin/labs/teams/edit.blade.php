@@ -3,11 +3,11 @@
 @section('title', 'Edit Anggota Tim Lab: ' . $teamMember->user->name)
 
 @section('header')
-    <x-sys.page-header :title="'Edit Anggota Tim Lab: ' . $teamMember->user->name" pretitle="Laboratorium">
+    <x-tabler.page-header :title="'Edit Anggota Tim Lab: ' . $teamMember->user->name" pretitle="Laboratorium">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('labs.teams.index', $teamMember->encrypted_lab_id)" />
+            <x-tabler.button type="back" :href="route('labs.teams.index', $teamMember->encrypted_lab_id)" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -72,8 +72,8 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-sys.button type="submit" text="Simpan" />
-                                <x-sys.button type="cancel" :href="route('labs.teams.index', $teamMember->encrypted_lab_id)" />
+                                <x-tabler.button type="submit" text="Simpan" />
+                                <x-tabler.button type="cancel" :href="route('labs.teams.index', $teamMember->encrypted_lab_id)" />
                             </div>
                         </div>
                     </form>

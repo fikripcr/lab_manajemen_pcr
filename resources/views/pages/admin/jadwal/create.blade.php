@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Tambah Jadwal" pretitle="Jadwal Kuliah">
+    <x-tabler.page-header title="Tambah Jadwal" pretitle="Jadwal Kuliah">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('jadwal.index')" />
+            <x-tabler.button type="back" :href="route('jadwal.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -17,6 +17,121 @@
 
                     <form method="POST" action="{{ route('jadwal.store') }}" class="ajax-form">
                         @csrf
+
+                        <div class="row mb-3">
+                            <label for="semester_id" class="col-sm-3 col-form-label required">Semester</label>
+                            <div class="col-sm-9">
+                                <x-form.select2 
+                                    id="semester_id" 
+                                    name="semester_id" 
+                                    placeholder="Pilih Semester" 
+                                    :options="$semesters->mapWithKeys(fn($s) => [$s->semester_id => $s->tahun_ajaran . ' - ' . ($s->semester == 1 ? 'Ganjil' : 'Genap')])->toArray()"
+                                    :selected="old('semester_id')" 
+                                    required="true"
+                                />
+                                @error('semester_id')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="mata_kuliah_id" class="col-sm-3 col-form-label required">Mata Kuliah</label>
+                            <div class="col-sm-9">
+                                <x-form.select2 
+                                    id="mata_kuliah_id" 
+                                    name="mata_kuliah_id" 
+                                    placeholder="Pilih Mata Kuliah" 
+                                    :options="$mataKuliahs->mapWithKeys(fn($mk) => [$mk->id => $mk->kode_mk . ' - ' . $mk->nama_mk])->toArray()"
+                                    :selected="old('mata_kuliah_id')" 
+                                    required="true"
+                                />
+                                @error('mata_kuliah_id')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="dosen_id" class="col-sm-3 col-form-label required">Dosen</label>
+                            <div class="col-sm-9">
+                                <x-form.select2 
+                                    id="dosen_id" 
+                                    name="dosen_id" 
+                                    placeholder="Pilih Dosen" 
+                                    :options="$dosens->pluck('name', 'id')->toArray()"
+                                    :selected="old('dosen_id')" 
+                                    required="true"
+                                />
+                                @error('dosen_id')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="lab_id" class="col-sm-3 col-form-label required">Lab</label>
+                            <div class="col-sm-9">
+                                <x-form.select2 
+                                    id="lab_id" 
+                                    name="lab_id" 
+                                    placeholder="Pilih Lab" 
+                                    :options="$labs->pluck('name', 'lab_id')->toArray()"
+                                    :selected="old('lab_id')" 
+                                    required="true"
+                                />
+                                @error('lab_id')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="hari" class="col-sm-3 col-form-label required">Hari</label>
+                            <div class="col-sm-9">
+                                <x-form.select2 
+                                    id="hari" 
+                                    name="hari" 
+                                    placeholder="Pilih Hari" 
+                                    :options="array_combine(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'], ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'])"
+                                    :selected="old('hari')" 
+                                    required="true"
+                                />
+                                @error('hari')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="jam_mulai" class="col-sm-3 col-form-label required">Waktu</label>
+                            <div class="col-sm-9">
+                                <div class="row g-2">
+                                    <div class="col-auto">
+                                        <input type="time" class="form-control @error('jam_mulai') is-invalid @enderror" id="jam_mulai" name="jam_mulai" value="{{ old('jam_mulai') }}" required>
+                                    </div>
+                                    <div class="col-auto pt-2">sampai</div>
+                                    <div class="col-auto">
+                                        <input type="time" class="form-control @error('jam_selesai') is-invalid @enderror" id="jam_selesai" name="jam_selesai" value="{{ old('jam_selesai') }}" required>
+                                    </div>
+                                </div>
+                                @error('jam_mulai') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                @error('jam_selesai') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-sm-9 offset-sm-3">
+                                <x-tabler.button type="submit" text="Save Jadwal" />
+                                <x-tabler.button type="cancel" :href="route('jadwal.index')" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
 
                         <div class="row mb-3">
                             <label for="semester_id" class="col-sm-3 col-form-label required">Semester</label>
@@ -120,8 +235,8 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-9 offset-sm-3">
-                                <x-sys.button type="submit" text="Save Jadwal" />
-                                <x-sys.button type="cancel" :href="route('jadwal.index')" />
+                                <x-tabler.button type="submit" text="Save Jadwal" />
+                                <x-tabler.button type="cancel" :href="route('jadwal.index')" />
                             </div>
                         </div>
                     </form>

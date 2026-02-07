@@ -1,12 +1,12 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header :title="$pengumuman->judul" pretitle="Announcement Details">
+    <x-tabler.page-header :title="$pengumuman->judul" pretitle="Announcement Details">
         <x-slot:actions>
-            <x-sys.button type="edit" :href="route($pengumuman->jenis.'.edit', $pengumuman)" />
-            <x-sys.button type="back" :href="route($pengumuman->jenis.'.index')" />
+            <x-tabler.button type="edit" :href="route($pengumuman->jenis.'.edit', $pengumuman)" />
+            <x-tabler.button type="back" :href="route($pengumuman->jenis.'.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -80,7 +80,7 @@
                                             <div class="fw-bold">{{ $attachment->file_name }}</div>
                                             <div class="text-muted small">{{ number_format($attachment->size / 1024, 2) }} KB • {{ strtoupper($attachment->extension) }}</div>
                                         </div>
-                                        <x-sys.button type="link" :href="$attachment->getFullUrl()" text="Download" icon="ti ti-download" class="btn-sm btn-outline-primary" target="_blank" />
+                                        <x-tabler.button type="link" :href="$attachment->getFullUrl()" text="Download" icon="ti ti-download" class="btn-sm btn-outline-primary" target="_blank" />
                                     </div>
                                 @endforeach
                             </div>
@@ -88,7 +88,7 @@
                     @endif
 
                     <div class="mt-4 pt-3 border-top d-flex justify-content-between">
-                        <x-sys.button type="delete" 
+                        <x-tabler.button type="delete" 
                                     class="ajax-delete"
                                     :data-url="route($pengumuman->jenis.'.destroy', $pengumuman)"
                                     data-title="Hapus {{ ucfirst($pengumuman->jenis) }}"

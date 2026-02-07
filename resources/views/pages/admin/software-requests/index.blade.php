@@ -9,10 +9,10 @@
         <div class="card-header">
             <div class="d-flex flex-wrap gap-2">
                 <div>
-                    <x-sys.datatable-page-length dataTableId="software-requests-table" />
+                    <x-tabler.datatable-page-length dataTableId="software-requests-table" />
                 </div>
                 <div>
-                    <x-sys.datatable-search dataTableId="software-requests-table" />
+                    <x-tabler.datatable-search dataTableId="software-requests-table" />
                 </div>
             </div>
         </div>

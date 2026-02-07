@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Edit Jadwal" pretitle="Jadwal Kuliah">
+    <x-tabler.page-header title="Edit Jadwal" pretitle="Jadwal Kuliah">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('jadwal.index')" />
+            <x-tabler.button type="back" :href="route('jadwal.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -15,19 +15,13 @@
                 <div class="card-body">
                     <x-tabler.flash-message />
 
-                    <form method="POST" action="{{ route('jadwal.update', $jadwal->encrypted_jadwal_kuliah_id) }}" class="ajax-form">
+                    <form method="POST" action="{{ route('jadwal.update', $jadwal->encrypt_id) }}" class="ajax-form">
                         @csrf
                         @method('PUT')
 
                         <div class="row mb-3">
                             <label for="semester_id" class="col-sm-3 col-form-label required">Semester</label>
                             <div class="col-sm-9">
-                                <select class="form-select @error('semester_id') is-invalid @enderror" id="semester_id" name="semester_id" required>
-                                    <option value="">Pilih Semester</option>
-                                    @foreach($semesters as $semester)
-                                        <option value="{{ $semester->semester_id }}" {{ old('semester_id', $jadwal->semester_id) == $semester->semester_id ? 'selected' : '' }}>
-                                            {{ $semester->tahun_ajaran }} - {{ $semester->semester == 1 ? 'Ganjil' : 'Genap' }}
-                                        </option>
                                     @endforeach
                                 </select>
                                 @error('semester_id')
@@ -121,8 +115,8 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-9 offset-sm-3">
-                                <x-sys.button type="submit" text="Update Jadwal" />
-                                <x-sys.button type="cancel" :href="route('jadwal.index')" />
+                                <x-tabler.button type="submit" text="Update Jadwal" />
+                                <x-tabler.button type="cancel" :href="route('jadwal.index')" />
                             </div>
                         </div>
                     </form>

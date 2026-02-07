@@ -108,7 +108,6 @@
                     labelIdle: 'Drag & Drop your cover image or <span class="filepond--label-action">Browse</span>',
                     acceptedFileTypes: ['image/*'],
                     imagePreviewHeight: 170,
-                    stylePanelLayout: 'compact circle',
                     styleLoadIndicatorPosition: 'center bottom',
                     styleProcessIndicatorPosition: 'right bottom',
                     styleButtonRemoveItemPosition: 'left bottom',

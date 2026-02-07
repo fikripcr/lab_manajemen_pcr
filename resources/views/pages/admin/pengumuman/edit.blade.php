@@ -127,7 +127,6 @@
                     labelIdle: 'Drag & Drop your new cover image (if replacing)',
                     acceptedFileTypes: ['image/*'],
                     imagePreviewHeight: 170,
-                    stylePanelLayout: 'compact circle',
                     styleLoadIndicatorPosition: 'center bottom',
                     styleProcessIndicatorPosition: 'right bottom',
                     styleButtonRemoveItemPosition: 'left bottom',

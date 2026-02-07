@@ -1,12 +1,12 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Software Request Details" pretitle="Software Request">
+    <x-tabler.page-header :title="'Detail Request: ' . $softwareRequest->nama_software" pretitle="Software Request">
         <x-slot:actions>
-            <x-sys.button type="edit" :href="route('software-requests.edit', $softwareRequest->encrypted_request_software_id)" text="Edit Status" />
-            <x-sys.button type="back" :href="route('software-requests.index')" />
+            <x-tabler.button type="back" :href="route('software-requests.index')" />
+            <x-tabler.button type="edit" :href="route('software-requests.edit', $softwareRequest->id)" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')

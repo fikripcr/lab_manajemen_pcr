@@ -61,7 +61,7 @@ class UserController extends Controller
             ->editColumn('name', function ($user) {
                 $userCreatedAt = formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
 
-                $html = '<div class="d-flex align-items-center">';
+                $html  = '<div class="d-flex align-items-center">';
                 $html .= '<div class="avatar flex-shrink-0 me-3">';
                 $html .= '<img src="' . $user->avatar_small_url . '" alt="' . $user->name . '" class="rounded-circle w-px-40 h-40">';
                 $html .= '</div>';
@@ -99,28 +99,13 @@ class UserController extends Controller
             })
             ->addColumn('action', function ($user) {
                 $encryptedId = encryptId($user->id);
-                return '
-                    <div class="d-flex align-items-center">
-                        <a class="text-success me-2" href="' . route('users.edit', $encryptedId) . '" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="' . route('users.show', $encryptedId) . '">
-                                    <i class="bx bx-show me-1"></i> View
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item" onclick="loginAsUser(\'' . route('users.login.as', $encryptedId) . '\', \'' . addslashes($user->name) . '\')">
-                                    <i class="bx bx-log-in me-1"></i> Login As
-                                </a>
-                                <a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(\'' . route('users.destroy', $encryptedId) . '\',\'users-table\')">
-                                    <i class="bx bx-trash me-1"></i> Delete
-                                </a>
-                            </div>
-                        </div>
-                    </div>';
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'     => route('users.edit', $encryptedId),
+                    'viewUrl'     => route('users.show', $encryptedId),
+                    'loginAsUrl'  => route('users.login.as', $encryptedId),
+                    'loginAsName' => addslashes($user->name),
+                    'deleteUrl'   => route('users.destroy', $encryptedId),
+                ])->render();
             })
             ->rawColumns(['name', 'roles', 'expired_at', 'action'])
             ->make(true);

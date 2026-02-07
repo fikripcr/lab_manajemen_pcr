@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-<x-sys.page-header :title="ucfirst($type) . ' Management'" pretitle="Announcement">
+<x-tabler.page-header :title="ucfirst($type) . ' Management'" pretitle="Announcement">
     <x-slot:actions>
-        <x-sys.button type="create" :href="route($type . '.create')" text="Create" />
+        <x-tabler.button type="create" :href="route($type . '.create')" text="Create" />
     </x-slot:actions>
-</x-sys.page-header>
+</x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -13,10 +13,10 @@
         <div class="card-header">
             <div class="d-flex flex-wrap gap-2">
                 <div>
-                    <x-sys.datatable-page-length :dataTableId="$type . '-table'" />
+                    <x-tabler.datatable-page-length :dataTableId="$type . '-table'" />
                 </div>
                 <div>
-                    <x-sys.datatable-search :dataTableId="$type . '-table'" />
+                    <x-tabler.datatable-search :dataTableId="$type . '-table'" />
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
                     ]
                 ];
             @endphp
-            <x-sys.datatable id="pengumuman-table" :route="route($type.'.data')" :columns="$columns" :order="[[4, 'desc']]" />
+            <x-tabler.datatable id="pengumuman-table" :route="route($type.'.data')" :columns="$columns" :order="[[4, 'desc']]" />
         </div>
     </div>
 @endsection

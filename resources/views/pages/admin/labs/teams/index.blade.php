@@ -3,12 +3,12 @@
 @section('title', 'Team Lab: ' . $lab->name)
 
 @section('header')
-    <x-sys.page-header :title="'Team Lab: ' . $lab->name" pretitle="Laboratorium">
+    <x-tabler.page-header :title="'Team Lab: ' . $lab->name" pretitle="Laboratorium">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('labs.index')" />
-            <x-sys.button type="create" :href="route('labs.teams.create', $lab->encrypted_lab_id)" text="Create" />
+            <x-tabler.button type="back" :href="route('labs.index')" />
+            <x-tabler.button type="create" :href="route('labs.teams.create', $lab->encrypted_lab_id)" text="Create" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -52,11 +52,11 @@
                                         </td>
                                         <td class="text-end">
                                             <div class="d-flex justify-content-end gap-1">
-                                                <x-sys.button type="edit" :href="route('labs.teams.edit', [$lab->encrypted_lab_id, $team->encrypted_id])" size="sm" />
+                                                <x-tabler.button type="edit" :href="route('labs.teams.edit', [$lab->encrypted_lab_id, $team->encrypted_id])" size="sm" />
                                                 <form action="{{ route('labs.teams.destroy', [$lab->encrypted_lab_id, $team->encrypted_id]) }}" method="POST" class="ajax-form-delete d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <x-sys.button type="delete" size="sm" />
+                                                    <x-tabler.button type="delete" size="sm" />
                                                 </form>
                                             </div>
                                         </td>

@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Import Jadwal" pretitle="Jadwal Kuliah">
+    <x-tabler.page-header title="Import Jadwal" pretitle="Jadwal Kuliah">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('jadwal.index')" />
+            <x-tabler.button type="back" :href="route('jadwal.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -59,8 +59,8 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-sys.button type="submit" text="Import Jadwal" icon="ti ti-upload" />
-                                <x-sys.button type="cancel" :href="route('jadwal.index')" />
+                                <x-tabler.button type="submit" text="Import Jadwal" icon="ti ti-upload" />
+                                <x-tabler.button type="cancel" :href="route('jadwal.index')" />
                             </div>
                         </div>
                     </form>

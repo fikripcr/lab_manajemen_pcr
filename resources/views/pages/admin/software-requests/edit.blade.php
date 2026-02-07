@@ -1,24 +1,25 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Edit Software Request" pretitle="Software Request">
+    <x-tabler.page-header :title="'Edit Request: ' . $softwareRequest->nama_software" pretitle="Software Request">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('software-requests.show', $softwareRequest->encrypted_request_software_id)" />
+            <x-tabler.button type="back" :href="route('software-requests.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
 
-    <div class="row">
+    <div class="row row-cards">
         <div class="col-12">
-            <div class="card mb-4">
+            <form action="{{ route('software-requests.update', $softwareRequest->id) }}" method="POST" class="card">
+                @csrf
+                @method('PUT')
                 <div class="card-body">
                     <x-tabler.flash-message />
 
-                    <form method="POST" action="{{ route('software-requests.update', $softwareRequest->encrypted_request_software_id) }}">
-                        @csrf
-                        @method('PUT')
+                    {{-- The original form tag was here, but the instruction implies the outer form should be the main one.
+                         Keeping the content structure as close to the original as possible while applying the changes. --}}
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -84,18 +85,12 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary me-2">
-                                <i class="bx bx-save me-1"></i> Update Status
-                            </button>
-                            <a href="{{ route('software-requests.show', $softwareRequest->encrypted_request_software_id) }}" class="btn btn-secondary">
-                                Cancel
-                            </a>
-                        </div>
-                    </form>
                 </div>
-            </div>
+                <div class="card-footer text-end">
+                    <x-tabler.button type="submit" text="Update Status" />
+                    <x-tabler.button type="cancel" :href="route('software-requests.index')" />
+                </div>
+            </form>
         </div>
     </div>
 @endsection

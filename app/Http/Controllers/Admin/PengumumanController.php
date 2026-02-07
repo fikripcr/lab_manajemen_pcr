@@ -237,6 +237,7 @@ class PengumumanController extends Controller
 
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route($routePrefix . '.edit', $encryptedId),
+                    'editModal' => false,
                     'viewUrl'   => route($routePrefix . '.show', $encryptedId),
                     'deleteUrl' => route($routePrefix . '.destroy', $encryptedId),
                 ])->render();

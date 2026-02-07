@@ -3,12 +3,12 @@
 @section('title', 'Inventaris Lab: ' . $lab->name)
 
 @section('header')
-    <x-sys.page-header :title="'Inventaris Lab: ' . $lab->name" pretitle="Laboratorium">
+    <x-tabler.page-header :title="'Inventaris Lab: ' . $lab->name" pretitle="Laboratorium">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('labs.index')" />
-            <x-sys.button type="create" :href="route('labs.inventaris.create', $lab->encrypted_lab_id)" text="Create" />
+            <x-tabler.button type="back" :href="route('labs.index')" />
+            <x-tabler.button type="create" :href="route('labs.inventaris.create', $lab->encrypted_lab_id)" text="Create" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
                     <x-tabler.flash-message />
-            <x-sys.datatable
+            <x-tabler.datatable
                 id="inventaris-table"
                 route="{{ route('labs.inventaris.paginate', $lab->encrypted_lab_id) }}"
                 :columns="[

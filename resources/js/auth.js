@@ -25,7 +25,7 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Theme Management System ---
-import ThemeTabler from './custom/ThemeTabler.js';
+import ThemeTabler from '../assets/tabler/js/ThemeTabler.js';
 
 // --- Auth Specific Logic ---
 document.addEventListener('DOMContentLoaded', () => {

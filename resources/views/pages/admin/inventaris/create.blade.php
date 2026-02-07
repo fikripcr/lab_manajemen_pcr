@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Create New Inventory" pretitle="Inventory">
+    <x-tabler.page-header title="Create New Inventory" pretitle="Inventory">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('inventaris.index')" />
+            <x-tabler.button type="back" :href="route('inventaris.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -21,17 +21,16 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="lab_id">Lab</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('lab_id') is-invalid @enderror"
-                                        id="lab_id" name="lab_id" required>
-                                    <option value="">Select Lab</option>
-                                    @foreach($labs as $lab)
-                                    <option value="{{ $lab->lab_id }}" {{ old('lab_id') == $lab->lab_id ? 'selected' : '' }}>
-                                        {{ $lab->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
+                                <x-form.select2
+                                    id="lab_id"
+                                    name="lab_id"
+                                    :options="$labs->pluck('name', 'lab_id')->toArray()"
+                                    :selected="old('lab_id')"
+                                    placeholder="Select Lab"
+                                    required="true"
+                                />
                                 @error('lab_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -63,16 +62,21 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="kondisi_terakhir">Condition</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('kondisi_terakhir') is-invalid @enderror"
-                                        id="kondisi_terakhir" name="kondisi_terakhir" required>
-                                    <option value="">Select Condition</option>
-                                    <option value="Baik" {{ old('kondisi_terakhir') == 'Baik' ? 'selected' : '' }}>Good</option>
-                                    <option value="Rusak Ringan" {{ old('kondisi_terakhir') == 'Rusak Ringan' ? 'selected' : '' }}>Minor Damage</option>
-                                    <option value="Rusak Berat" {{ old('kondisi_terakhir') == 'Rusak Berat' ? 'selected' : '' }}>Major Damage</option>
-                                    <option value="Tidak Dapat Digunakan" {{ old('kondisi_terakhir') == 'Tidak Dapat Digunakan' ? 'selected' : '' }}>Cannot Be Used</option>
-                                </select>
+                                <x-form.select2
+                                    id="kondisi_terakhir"
+                                    name="kondisi_terakhir"
+                                    :options="[
+                                        'Baik' => 'Good',
+                                        'Rusak Ringan' => 'Minor Damage',
+                                        'Rusak Berat' => 'Major Damage',
+                                        'Tidak Dapat Digunakan' => 'Cannot Be Used'
+                                    ]"
+                                    :selected="old('kondisi_terakhir')"
+                                    placeholder="Select Condition"
+                                    required="true"
+                                />
                                 @error('kondisi_terakhir')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -91,9 +95,14 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-sys.button type="submit" text="Create Inventory" />
-                                <x-sys.button type="cancel" :href="route('inventaris.index')" />
+                                <x-tabler.button type="submit" text="Create Inventory" />
+                                <x-tabler.button type="cancel" :href="route('inventaris.index')" />
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+

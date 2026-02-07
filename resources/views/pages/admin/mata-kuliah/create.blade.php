@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Create New Mata Kuliah" pretitle="Mata Kuliah">
+    <x-tabler.page-header title="Create New Mata Kuliah" pretitle="Mata Kuliah">
         <x-slot:actions>
-            <x-sys.button type="back" :href="route('mata-kuliah.index')" />
+            <x-tabler.button type="back" :href="route('mata-kuliah.index')" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -59,8 +59,8 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-sys.button type="submit" text="Save" />
-                                <x-sys.button type="cancel" :href="route('mata-kuliah.index')" />
+                                <x-tabler.button type="submit" text="Save" />
+                                <x-tabler.button type="cancel" :href="route('mata-kuliah.index')" />
                             </div>
                         </div>
                     </form>

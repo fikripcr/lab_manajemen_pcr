@@ -1,26 +1,5 @@
-/* 
- * Tabler UI Theme - Unified Resource
- * Replaces separate admin.css and sys.css
- */
-
-/* ==========================================================================
-   1. CORE IMPORTS & SETUP
-   ========================================================================== */
-
-/* Tabler Core CSS */
 @import '@tabler/core/dist/css/tabler.min.css';
-
-/* Tabler Vendors (for third-party integrations) */
 @import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
-/* @import '@tabler/core/dist/css/tabler-vendors.min.css'; */
-
-/* Tabler Themes (for theme customization) */
 @import '@tabler/core/dist/css/tabler-themes.css';
-
-/* Tabler Icons Webfont */
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
-
-/* ==========================================================================
-   2. CUSTOM THEME LOGIC
-   ========================================================================== */
-@import './custom/ThemeTabler.css';
+@import '../assets/tabler/css/ThemeTabler.css';

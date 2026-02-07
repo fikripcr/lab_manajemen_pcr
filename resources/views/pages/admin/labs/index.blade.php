@@ -1,11 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-<x-sys.page-header title="Manajemen Laboratorium" pretitle="Laboratorium">
+<x-tabler.page-header title="Manajemen Laboratorium" pretitle="Laboratorium">
     <x-slot:actions>
-        <x-sys.button type="create" :href="route('labs.create')" text="Create" />
+        <x-tabler.button type="create" :href="route('labs.create')" text="Create" />
     </x-slot:actions>
-</x-sys.page-header>
+</x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -13,10 +13,10 @@
         <div class="card-header">
             <div class="d-flex flex-wrap gap-2">
                 <div>
-                    <x-sys.datatable-page-length dataTableId="labs-table" />
+                    <x-tabler.datatable-page-length dataTableId="labs-table" />
                 </div>
                 <div>
-                    <x-sys.datatable-search dataTableId="labs-table" />
+                    <x-tabler.datatable-search dataTableId="labs-table" />
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
                     ]
                 ];
             @endphp
-            <x-sys.datatable id="labs-table" :route="route('labs.data')" :columns="$columns" />
+            <x-tabler.datatable id="labs-table" :route="route('labs.data')" :columns="$columns" />
         </div>
     </div>
 @endsection
