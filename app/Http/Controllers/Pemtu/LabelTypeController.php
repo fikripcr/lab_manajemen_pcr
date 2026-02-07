@@ -2,63 +2,63 @@
 namespace App\Http\Controllers\Pemtu;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pemtu\LabelType;
-use Illuminate\Http\Request;
+use App\Http\Requests\Pemtu\LabelTypeRequest;
+use App\Services\Pemtu\LabelService;
 
 class LabelTypeController extends Controller
 {
+    protected $labelService;
+
+    public function __construct(LabelService $labelService)
+    {
+        $this->labelService = $labelService;
+    }
 
     public function create()
     {
         return view('pages.pemtu.label-types.create');
     }
 
-    public function store(Request $request)
+    public function store(LabelTypeRequest $request)
     {
-        $request->validate([
-            'name'        => 'required|string|max:100',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $this->labelService->createLabelType($request->validated());
 
-        LabelType::create($request->all());
-
-        return response()->json([
-            'message'  => 'Label Type created successfully.',
-            'redirect' => route('pemtu.labels.index'),
-        ]);
+            return jsonSuccess('Label Type created successfully.', route('pemtu.labels.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function edit($id)
     {
-        $labelType = LabelType::findOrFail($id);
+        $labelType = $this->labelService->getLabelTypeById($id);
+        if (! $labelType) {
+            abort(404);
+        }
+
         return view('pages.pemtu.label-types.edit', compact('labelType'));
     }
 
-    public function update(Request $request, $id)
+    public function update(LabelTypeRequest $request, $id)
     {
-        $request->validate([
-            'name'        => 'required|string|max:100',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $this->labelService->updateLabelType($id, $request->validated());
 
-        $labelType = LabelType::findOrFail($id);
-        $labelType->update($request->all());
-
-        return response()->json([
-            'message'  => 'Label Type updated successfully.',
-            'redirect' => route('pemtu.labels.index'),
-        ]);
+            return jsonSuccess('Label Type updated successfully.', route('pemtu.labels.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function destroy($id)
     {
-        $labelType = LabelType::findOrFail($id);
-        $labelType->delete();
+        try {
+            $this->labelService->deleteLabelType($id);
 
-        return response()->json([
-            'success'  => true,
-            'message'  => 'Label Type deleted successfully.',
-            'redirect' => route('pemtu.labels.index'),
-        ]);
+            return jsonSuccess('Label Type deleted successfully.', route('pemtu.labels.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 }

@@ -4,15 +4,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SoftwareRequestUpdateRequest;
 use App\Models\MataKuliah;
-use App\Models\RequestSoftware;
+use App\Services\Admin\SoftwareRequestService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class SoftwareRequestController extends Controller
 {
-    public function __construct()
+    protected $softwareRequestService;
+
+    public function __construct(SoftwareRequestService $softwareRequestService)
     {
-        // $this->middleware(['permission:manage-software-requests']);
+        $this->softwareRequestService = $softwareRequestService;
     }
 
     /**
@@ -25,7 +27,7 @@ class SoftwareRequestController extends Controller
 
     public function paginate(Request $request)
     {
-        $softwareRequests = RequestSoftware::with(['dosen', 'mataKuliahs'])->select('*');
+        $softwareRequests = $this->softwareRequestService->getFilteredQuery($request->all());
 
         return DataTables::of($softwareRequests)
             ->addIndexColumn()
@@ -75,7 +77,12 @@ class SoftwareRequestController extends Controller
      */
     public function show($id)
     {
-        $softwareRequest = RequestSoftware::with(['dosen', 'mataKuliahs'])->findOrFail($id);
+        $softwareRequest = $this->softwareRequestService->getRequestById($id);
+
+        if (! $softwareRequest) {
+            abort(404);
+        }
+
         return view('pages.admin.software-requests.show', compact('softwareRequest'));
     }
 
@@ -84,8 +91,13 @@ class SoftwareRequestController extends Controller
      */
     public function edit($id)
     {
-        $softwareRequest = RequestSoftware::with(['dosen', 'mataKuliahs'])->findOrFail($id);
-        $mataKuliahs     = MataKuliah::all();
+        $softwareRequest = $this->softwareRequestService->getRequestById($id);
+
+        if (! $softwareRequest) {
+            abort(404);
+        }
+
+        $mataKuliahs = MataKuliah::all();
         return view('pages.admin.software-requests.edit', compact('softwareRequest', 'mataKuliahs'));
     }
 
@@ -94,11 +106,12 @@ class SoftwareRequestController extends Controller
      */
     public function update(SoftwareRequestUpdateRequest $request, $id)
     {
-        $softwareRequest = RequestSoftware::findOrFail($id);
+        try {
+            $this->softwareRequestService->updateRequest($id, $request->validated());
 
-        $softwareRequest->update($request->validated());
-
-        return redirect()->route('software-requests.index')
-            ->with('success', 'Status permintaan software berhasil diperbarui.');
+            return jsonSuccess('Status permintaan software berhasil diperbarui.', route('software-requests.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 }

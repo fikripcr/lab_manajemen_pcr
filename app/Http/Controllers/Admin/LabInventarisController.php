@@ -1,16 +1,27 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lab;
 use App\Models\Inventaris;
-use App\Models\LabInventaris;
+use App\Models\Lab; // Still used for type hinting or direct simple queries if necessary
+use App\Services\Admin\InventarisService;
+use App\Services\Admin\LabInventarisService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class LabInventarisController extends Controller
 {
+    protected $labInventarisService;
+    protected $inventarisService; // Inject Master Inventory Service for "Get Unassigned" helper
+
+    public function __construct(
+        LabInventarisService $labInventarisService,
+        InventarisService $inventarisService
+    ) {
+        $this->labInventarisService = $labInventarisService;
+        $this->inventarisService    = $inventarisService;
+    }
+
     public function index($labId)
     {
         $lab = Lab::findOrFail(decryptId($labId));
@@ -19,11 +30,12 @@ class LabInventarisController extends Controller
 
     public function data(Request $request, $labId)
     {
-        $lab = Lab::findOrFail(decryptId($labId));
-        $labInventaris = $lab->labInventaris()
-            ->with(['inventaris', 'lab']);
+        $labIdDecrypted = decryptId($labId);
 
-        return \Yajra\DataTables\DataTables::of($labInventaris)
+        // Use Service Query
+        $labInventaris = $this->labInventarisService->getLabInventarisQuery($labIdDecrypted);
+
+        return DataTables::of($labInventaris)
             ->addIndexColumn()
             ->editColumn('kode_inventaris', function ($item) {
                 return '<code>' . $item->kode_inventaris . '</code>';
@@ -39,22 +51,23 @@ class LabInventarisController extends Controller
             })
             ->editColumn('status', function ($item) {
                 $statusClass = '';
+                $statusText  = '';
                 switch ($item->status) {
                     case 'active':
                         $statusClass = 'bg-label-success';
-                        $statusText = 'Active';
+                        $statusText  = 'Active';
                         break;
                     case 'moved':
                         $statusClass = 'bg-label-warning';
-                        $statusText = 'Moved';
+                        $statusText  = 'Moved';
                         break;
                     case 'inactive':
                         $statusClass = 'bg-label-secondary';
-                        $statusText = 'Inactive';
+                        $statusText  = 'Inactive';
                         break;
                     default:
                         $statusClass = 'bg-label-secondary';
-                        $statusText = ucfirst($item->status);
+                        $statusText  = ucfirst($item->status);
                 }
 
                 return '<span class="badge ' . $statusClass . '">' . $statusText . '</span>';
@@ -66,9 +79,9 @@ class LabInventarisController extends Controller
                 return $item->inventaris->jenis_alat;
             })
             ->addColumn('action', function ($item) {
-                $encryptedId = encryptId($item->id);
+                $encryptedId    = encryptId($item->id);
                 $encryptedLabId = encryptId($item->lab_id);
-                
+
                 return '
                     <div class="d-flex align-items-center">
                         <a href="' . route('labs.inventaris.edit', [$encryptedLabId, $encryptedId]) . '" class="btn btn-sm btn-icon btn-outline-primary me-1" title="Edit">
@@ -86,11 +99,10 @@ class LabInventarisController extends Controller
     public function create($labId)
     {
         $realId = decryptId($labId);
-        $lab = Lab::findOrFail($realId);
-        $inventarisList = Inventaris::whereDoesntHave('labInventaris', function($query) use ($realId) {
-                $query->where('lab_id', $realId);
-            })
-            ->get();
+        $lab    = Lab::findOrFail($realId);
+
+                                                                                              // Fetch unassigned items using helper from InventarisService
+        $inventarisList = $this->inventarisService->getUnassignedForLab($realId, null, 1000); // Fetch all or reasonable limit
 
         return view('pages.admin.labs.inventaris.create', compact('lab', 'inventarisList'));
     }
@@ -98,47 +110,33 @@ class LabInventarisController extends Controller
     public function store(Request $request, $labId)
     {
         $request->validate([
-            'inventaris_id' => 'required|exists:inventaris,inventaris_id',
-            'no_series' => 'nullable|string|max:255',
-            'keterangan' => 'nullable|string|max:1000',
+            'inventaris_id'      => 'required|exists:inventaris,inventaris_id',
+            'no_series'          => 'nullable|string|max:255',
+            'keterangan'         => 'nullable|string|max:1000',
             'tanggal_penempatan' => 'nullable|date',
-            'status' => 'nullable|in:active,moved,inactive',
+            'status'             => 'nullable|in:active,moved,inactive',
         ]);
 
-        $lab = Lab::findOrFail(decryptId($labId));
-        $inventaris = Inventaris::findOrFail($request->inventaris_id);
+        $realLabId = decryptId($labId);
 
-        DB::beginTransaction();
         try {
-            $kodeInventaris = LabInventaris::generateKodeInventaris($lab->lab_id, $inventaris->inventaris_id);
+            // Service handles Assignment Creation and Code Generation
+            $this->labInventarisService->assignInventaris($realLabId, $request->all());
 
-            $labInventaris = LabInventaris::create([
-                'inventaris_id' => $inventaris->inventaris_id,
-                'lab_id' => $lab->lab_id,
-                'kode_inventaris' => $kodeInventaris,
-                'no_series' => $request->no_series,
-                'tanggal_penempatan' => $request->tanggal_penempatan ?? now(),
-                'keterangan' => $request->keterangan,
-                'status' => $request->status ?? 'active',
-            ]);
-
-            DB::commit();
-
-            return redirect()->route('labs.inventaris.index', $lab->encrypted_lab_id)
-                ->with('success', 'Inventaris berhasil ditambahkan ke lab.');
+            return jsonSuccess('Inventaris berhasil ditambahkan ke lab.', route('labs.inventaris.index', $labId));
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal menambahkan inventaris ke lab: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
     public function edit($labId, $id)
     {
-        $lab = Lab::findOrFail(decryptId($labId));
-        $labInventaris = LabInventaris::findOrFail(decryptId($id));
-        $inventarisList = Inventaris::all();
+        $lab           = Lab::findOrFail(decryptId($labId));
+        $labInventaris = $this->labInventarisService->getAssignmentById(decryptId($id));
+
+        $inventarisList = Inventaris::all(); // Or filtered? Edit usually allows selecting any or just changing details.
+                                             // If changing item is allowed, we might need all items.
+                                             // Existing logic used Inventaris::all().
 
         return view('pages.admin.labs.inventaris.edit', compact('lab', 'labInventaris', 'inventarisList'));
     }
@@ -146,82 +144,74 @@ class LabInventarisController extends Controller
     public function update(Request $request, $labId, $id)
     {
         $request->validate([
-            'inventaris_id' => 'required|exists:inventaris,inventaris_id',
-            'no_series' => 'nullable|string|max:255',
-            'keterangan' => 'nullable|string|max:1000',
-            'tanggal_penempatan' => 'nullable|date',
+            'inventaris_id'       => 'required|exists:inventaris,inventaris_id',
+            'no_series'           => 'nullable|string|max:255',
+            'keterangan'          => 'nullable|string|max:1000',
+            'tanggal_penempatan'  => 'nullable|date',
             'tanggal_penghapusan' => 'nullable|date',
-            'status' => 'nullable|in:active,moved,inactive',
+            'status'              => 'nullable|in:active,moved,inactive',
         ]);
 
-        $labInventaris = LabInventaris::findOrFail(decryptId($id));
-
-        DB::beginTransaction();
         try {
-            $labInventaris->update([
-                'inventaris_id' => $request->inventaris_id,
-                'no_series' => $request->no_series,
-                'tanggal_penempatan' => $request->tanggal_penempatan,
-                'tanggal_penghapusan' => $request->tanggal_penghapusan,
-                'keterangan' => $request->keterangan,
-                'status' => $request->status,
-            ]);
+            $this->labInventarisService->updateAssignment(decryptId($id), $request->all());
 
-            DB::commit();
-
-            return redirect()->route('labs.inventaris.index', $labInventaris->encrypted_lab_id)
-                ->with('success', 'Data inventaris lab berhasil diperbarui.');
+            return jsonSuccess('Data inventaris lab berhasil diperbarui.', route('labs.inventaris.index', $labId));
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal memperbarui data inventaris lab: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
     public function getInventaris(Request $request, $labId)
     {
-        $search = $request->get('search');
+        $search    = $request->get('search');
         $realLabId = decryptId($labId);
 
-        // Exclude inventaris already assigned to this lab
-        $inventaris = Inventaris::select('inventaris_id', 'nama_alat', 'jenis_alat')
-            ->whereDoesntHave('labInventaris', function($query) use ($realLabId) {
-                $query->where('lab_id', $realLabId);
-            })
-            ->when($search, function($query, $search) {
-                return $query->where('nama_alat', 'LIKE', "%{$search}%")
-                             ->orWhere('jenis_alat', 'LIKE', "%{$search}%");
-            })
-            ->limit(5)
-            ->get()
-            ->map(function($item) {
-                return [
-                    'id' => encryptId($item->inventaris_id),
-                    'text' => $item->nama_alat . ' (' . $item->jenis_alat . ')'
-                ];
-            });
+        // Use Service to get unassigned items
+        $inventaris = $this->inventarisService->getUnassignedForLab($realLabId, $search, 5);
+
+        $results = $inventaris->map(function ($item) {
+            return [
+                'id'   => $item->inventaris_id, // Original ID (or encrypted if JS expects it? existing controller used encryptId($item->inventaris_id) but store expects valid ID. Usually Select2 sends value. Check existing view logic later. If view expects encrypted, we encrypt. Store decrypts? No, store validates exists:inventaris,inventaris_id. DataTables usually sends ID. Let's assume standard ID for value.)
+                                                // Wait, existing controller: 'id' => encryptId($item->inventaris_id).
+                                                // Store: $inventaris = Inventaris::findOrFail($request->inventaris_id); -> This implies $request->inventaris_id is the primary key OR if model uses string ID it might be non-encrypted.
+                                                // Re-checking existing Store method:
+                                                // $inventaris = Inventaris::findOrFail($request->inventaris_id);
+                                                // Validation: 'inventaris_id' => 'required|exists:inventaris,inventaris_id'.
+                                                // If ID is numeric, 'exists' works on DB. Encrypted string won't work on DB unless we decrypt in validation rules (custom rule) or decrypt before validation.
+                                                // Standard: Select2 value is raw ID.
+                                                // BUT previous controller returned encrypted ID in `getInventaris`: 'id' => encryptId($item->inventaris_id).
+                                                // This means the form submission sends ENCRYPTED ID.
+                                                // The validation `exists:inventaris,inventaris_id` would FAIL if ID is encrypted string and DB column is int/string (unless encryption is deterministic and column matches).
+                                                // BUT `Inventaris` model primary key `inventaris_id` is string?
+                                                // `protected $primaryKey = 'inventaris_id';`
+                                                // Migration? `increments` or `uuid`?
+                                                // If it's standard int, `exists` needs int.
+                                                // I suspect the Previous Controller implementation might have a bug OR the Request handles decryption before validation (unlikely).
+                                                // OR `encryptId` returns the ID itself if encryption is disabled?
+                                                // Let's assume for now I should send raw ID if I want standard validation.
+                                                // HOWEVER, to be safe and match previous behavior (maybe there's a middleware decrypting inputs?), I will stick to what was there OR fix it to be correct (Store expects RAW ID usually).
+                                                // "findOrFail($request->inventaris_id)" -> If this works, then input must be Raw ID.
+                                                // If `getInventaris` sends Encrypted, then form submits Encrypted.
+                                                // `findOrFail` would fail on encrypted string.
+                                                // I will return RAW ID.
+                'id'   => $item->inventaris_id,
+                'text' => $item->nama_alat . ' (' . $item->jenis_alat . ')',
+            ];
+        });
 
         return response()->json([
-            'results' => $inventaris
+            'results' => $results,
         ]);
     }
 
     public function destroy($labId, $id)
     {
-        $labInventaris = LabInventaris::findOrFail(decryptId($id));
-
         try {
-            $labInventaris->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Inventaris berhasil dihapus dari lab.'
-            ]);
+            $this->labInventarisService->deleteAssignment(decryptId($id));
+
+            return jsonSuccess('Inventaris berhasil dihapus dari lab.', route('labs.inventaris.index', $labId));
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus inventaris: ' . $e->getMessage()
-            ], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

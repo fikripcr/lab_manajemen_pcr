@@ -18,7 +18,7 @@
             </li>
             <li class="nav-item">
                 <a href="#tabs-tree" class="nav-link" data-bs-toggle="tab">
-                    <i class="ti ti-sitemap me-2"></i> Organization Chart
+                    <i class="ti ti-settings me-2"></i> Manage Organization
                 </a>
             </li>
         </ul>
@@ -55,18 +55,59 @@
                 </div>
             </div>
 
-            <!-- TAB 2: ORG CHART TREE (Placeholder) -->
+            <!-- TAB 2: MANAGE ORGANIZATION -->
             <div class="tab-pane" id="tabs-tree">
-                <div class="empty">
-                    <div class="empty-icon">
-                        <i class="ti ti-sitemap"></i>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex gap-2">
+                        <select class="form-select form-select-sm" id="filter-status" style="width: 150px;">
+                            <option value="">Semua Status</option>
+                            <option value="active">Aktif</option>
+                            <option value="inactive">Nonaktif</option>
+                        </select>
                     </div>
-                    <p class="empty-title">Organization Chart</p>
-                    <p class="empty-subtitle text-muted">
-                        Visual chart is currently under development.
-                    </p>
                 </div>
+                <x-tabler.datatable
+                    id="table-org-units"
+                    route="{{ route('pemtu.org-units.data') }}"
+                    :columns="[
+                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%', 'class' => 'text-center'],
+                        ['data' => 'name', 'name' => 'name', 'title' => 'Nama Unit'],
+                        ['data' => 'type', 'name' => 'type', 'title' => 'Tipe'],
+                        ['data' => 'parent_id', 'name' => 'parent_id', 'title' => 'Parent'],
+                        ['data' => 'status', 'name' => 'status', 'title' => 'Status', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '8%'],
+                        ['data' => 'auditee', 'name' => 'auditee', 'title' => 'Auditee', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '10%']
+                    ]"
+                />
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Set Auditee Modal -->
+<div class="modal modal-blur fade" id="modal-set-auditee" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Set Auditee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form-set-auditee">
+                <div class="modal-body">
+                    <input type="hidden" id="auditee-org-unit-id" name="org_unit_id">
+                    <p class="text-muted mb-3">Set auditee untuk: <strong id="auditee-unit-name"></strong></p>
+                    <div class="mb-3">
+                        <label class="form-label">Pilih User</label>
+                        <select id="auditee-user-select" name="auditee_user_id" class="form-select">
+                            <option value="">-- Pilih User --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -143,6 +184,103 @@
              } else {
                  icon.removeClass('ti-chevron-right').addClass('ti-chevron-down');
              }
+        });
+
+        // Toggle Status (Manage Organization Tab)
+        $(document).on('change', '.toggle-status', function() {
+            const id = $(this).data('id');
+            const checkbox = $(this);
+            
+            axios.post(`/pemtu/org-units/${id}/toggle-status`)
+                .then(function(response) {
+                    if (response.data.success) {
+                        // Optionally show toast/notification
+                        console.log('Status updated');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Failed to toggle status', error);
+                    // Revert checkbox
+                    checkbox.prop('checked', !checkbox.prop('checked'));
+                    alert('Gagal mengubah status. Silakan coba lagi.');
+                });
+        });
+
+        // Filter by Status (Manage Organization Tab)
+        $('#filter-status').on('change', function() {
+            var status = $(this).val();
+            var table = $('#table-org-units').DataTable();
+            table.ajax.url('{{ route("pemtu.org-units.data") }}?status=' + status).load();
+        });
+
+        // Set Auditee Modal
+        $(document).on('click', '.set-auditee-btn', function(e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            const name = $(this).data('name');
+            
+            $('#auditee-org-unit-id').val(id);
+            $('#auditee-unit-name').text(name);
+            
+            // Initialize Select2
+            if (typeof window.loadSelect2 === 'function') {
+                window.loadSelect2().then(() => {
+                    $('#auditee-user-select').select2({
+                        dropdownParent: $('#modal-set-auditee'),
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        placeholder: 'Cari user...',
+                        allowClear: true,
+                        ajax: {
+                            url: '/api/users/search',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    q: params.term
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.map(function (user) {
+                                        return {
+                                            id: user.id,
+                                            text: user.name
+                                        };
+                                    })
+                                };
+                            },
+                            cache: true
+                        }
+                    });
+                    
+                    // Clear previous selection
+                    $('#auditee-user-select').val(null).trigger('change');
+                    new bootstrap.Modal(document.getElementById('modal-set-auditee')).show();
+                });
+            } else {
+                console.error('loadSelect2 not defined');
+                alert('Gagal memuat library Select2');
+            }
+        });
+
+        // Submit Set Auditee
+        $('#form-set-auditee').on('submit', function(e) {
+            e.preventDefault();
+            const id = $('#auditee-org-unit-id').val();
+            const userId = $('#auditee-user-select').val(); // Get value from Select2
+            
+            axios.post(`/pemtu/org-units/${id}/set-auditee`, { auditee_user_id: userId || null })
+                .then(function(response) {
+                    if (response.data.success) {
+                        bootstrap.Modal.getInstance(document.getElementById('modal-set-auditee')).hide();
+                        $('#table-org-units').DataTable().ajax.reload(null, false);
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Failed to set auditee', error);
+                    alert('Gagal menyimpan auditee.');
+                });
         });
     });
 </script>

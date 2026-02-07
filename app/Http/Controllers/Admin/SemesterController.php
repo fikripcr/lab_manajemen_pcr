@@ -4,14 +4,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SemesterRequest;
 use App\Models\Semester;
+use App\Services\Admin\SemesterService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class SemesterController extends Controller
 {
-    public function __construct()
+    protected $semesterService;
+
+    public function __construct(SemesterService $semesterService)
     {
-        // $this->middleware(['permission:manage-semesters']);
+        $this->semesterService = $semesterService;
     }
 
     /**
@@ -24,16 +27,7 @@ class SemesterController extends Controller
 
     public function paginate(Request $request)
     {
-        $semesters = Semester::query();
-
-        // Apply filters if present
-        if ($request->filled('status')) {
-            if ($request->status === 'Aktif') {
-                $semesters->where('is_active', 1);
-            } elseif ($request->status === 'Tidak Aktif') {
-                $semesters->where('is_active', 0);
-            }
-        }
+        $semesters = $this->semesterService->getFilteredQuery($request->all());
 
         return DataTables::of($semesters)
             ->addIndexColumn()
@@ -92,19 +86,12 @@ class SemesterController extends Controller
      */
     public function store(SemesterRequest $request)
     {
-        \DB::beginTransaction();
         try {
-            Semester::create($request->validated());
+            $this->semesterService->createSemester($request->validated());
 
-            \DB::commit();
-
-            return redirect()->route('semesters.index')
-                ->with('success', 'Semester berhasil dibuat.');
+            return jsonSuccess('Semester berhasil dibuat.', route('semesters.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal membuat semester: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -114,7 +101,12 @@ class SemesterController extends Controller
     public function show($id)
     {
         $realId   = decryptId($id);
-        $semester = Semester::findOrFail($realId);
+        $semester = $this->semesterService->getSemesterById($realId);
+
+        if (! $semester) {
+            abort(404);
+        }
+
         return view('pages.admin.semesters.show', compact('semester'));
     }
 
@@ -124,7 +116,12 @@ class SemesterController extends Controller
     public function edit($id)
     {
         $realId   = decryptId($id);
-        $semester = Semester::findOrFail($realId);
+        $semester = $this->semesterService->getSemesterById($realId);
+
+        if (! $semester) {
+            abort(404);
+        }
+
         return view('pages.admin.semesters.edit', compact('semester'));
     }
 
@@ -133,22 +130,14 @@ class SemesterController extends Controller
      */
     public function update(SemesterRequest $request, $id)
     {
-        $realId   = decryptId($id);
-        $semester = Semester::findOrFail($realId);
+        $realId = decryptId($id);
 
-        \DB::beginTransaction();
         try {
-            $semester->update($request->validated());
+            $this->semesterService->updateSemester($realId, $request->validated());
 
-            \DB::commit();
-
-            return redirect()->route('semesters.index')
-                ->with('success', 'Semester berhasil diperbarui.');
+            return jsonSuccess('Semester berhasil diperbarui.', route('semesters.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal memperbarui semester: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -158,7 +147,12 @@ class SemesterController extends Controller
     public function editModal($id)
     {
         $realId   = decryptId($id);
-        $semester = Semester::findOrFail($realId);
+        $semester = $this->semesterService->getSemesterById($realId);
+
+        if (! $semester) {
+            return response()->json(['error' => 'Semester not found'], 404);
+        }
+
         return view('pages.admin.semesters.edit-ajax', compact('semester'));
     }
 
@@ -167,17 +161,14 @@ class SemesterController extends Controller
      */
     public function destroy($id)
     {
-        $realId   = decryptId($id);
-        $semester = Semester::findOrFail($realId);
+        try {
+            $realId = decryptId($id);
+            $this->semesterService->deleteSemester($realId);
 
-        // Check if semester is used in any schedule
-        if ($semester->jadwals->count() > 0) {
-            return redirect()->back()->with('error', 'Cannot delete semester that is associated with schedules.');
+            return jsonSuccess('Semester deleted successfully.', route('semesters.index'));
+
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $semester->delete();
-
-        return redirect()->route('semesters.index')
-            ->with('success', 'Semester deleted successfully.');
     }
 }

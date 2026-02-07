@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Services\Sys;
 
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserService
 {
@@ -15,27 +13,10 @@ class UserService
      */
     public function getUserList(array $filters = []): LengthAwarePaginator
     {
-        return DB::transaction(function() use ($filters) {
-            $query = User::with(['roles', 'media']);
-
-            // Apply filters
-            if (isset($filters['name'])) {
-                $query->where('name', 'like', '%' . $filters['name'] . '%');
-            }
-
-            if (isset($filters['email'])) {
-                $query->where('email', 'like', '%' . $filters['email'] . '%');
-            }
-
-            if (isset($filters['role'])) {
-                $query->whereHas('roles', function($q) use ($filters) {
-                    $q->where('name', $filters['role']);
-                });
-            }
-
+        return DB::transaction(function () use ($filters) {
+            $query   = $this->getFilteredQuery($filters);
             $perPage = $filters['per_page'] ?? 10;
-
-            return $query->latest()->paginate($perPage);
+            return $query->paginate($perPage);
         });
     }
 
@@ -44,9 +25,7 @@ class UserService
      */
     public function getUserById(int $userId): ?User
     {
-        return DB::transaction(function() use ($userId) {
-            return User::with(['roles', 'media'])->find($userId);
-        });
+        return User::with(['roles', 'media'])->find($userId);
     }
 
     /**
@@ -54,23 +33,28 @@ class UserService
      */
     public function createUser(array $data): User
     {
-        return DB::transaction(function() use ($data) {
+        return DB::transaction(function () use ($data) {
             $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
+                'name'              => $data['name'],
+                'email'             => $data['email'],
+                'password'          => Hash::make($data['password']),
                 'email_verified_at' => now(),
+                'expired_at'        => $data['expired_at'] ?? null,
             ]);
 
-            // Assign roles if provided
+            // Assign roles
             if (isset($data['roles']) && is_array($data['roles'])) {
-                $user->assignRole($data['roles']);
+                $user->assignRole($data['roles']); // assignRole accepts array or string
+            } elseif (isset($data['role'])) {
+                $user->assignRole($data['role']); // Controller passed 'role' (singular/array)
             }
 
-            // Set active role if provided
-            if (isset($data['active_role'])) {
-                session(['active_role' => $data['active_role']]);
+            // Handle Avatar if provided
+            if (isset($data['avatar']) && $data['avatar']) {
+                $user->addMedia($data['avatar'])->toMediaCollection('avatar');
             }
+
+            logActivity('user', 'Membuat pengguna baru: ' . $user->name, $user);
 
             return $user;
         });
@@ -81,29 +65,47 @@ class UserService
      */
     public function updateUser(int $userId, array $data): bool
     {
-        return DB::transaction(function() use ($userId, $data) {
-            $user = User::find($userId);
-            if (!$user) {
-                return false;
-            }
+        return DB::transaction(function () use ($userId, $data) {
+            $user          = User::findOrFail($userId);
+            $oldAttributes = $user->getAttributes();
+            $oldName       = $user->name;
 
-            // Update basic user info
-            $user->update([
-                'name' => $data['name'],
+            // Update basic fields
+            $updateData = [
+                'name'  => $data['name'],
                 'email' => $data['email'],
-            ]);
+            ];
+
+            if (isset($data['expired_at'])) {
+                $updateData['expired_at'] = $data['expired_at'];
+            }
 
             // Update password if provided
-            if (!empty($data['password'])) {
-                $user->update([
-                    'password' => Hash::make($data['password'])
-                ]);
+            if (! empty($data['password'])) {
+                $updateData['password'] = Hash::make($data['password']);
             }
 
-            // Sync roles if provided
-            if (isset($data['roles'])) {
-                $user->syncRoles($data['roles']);
+            $user->update($updateData);
+
+                                                                       // Sync roles
+            if (class_exists(\Spatie\Permission\Models\Role::class)) { // Safety check
+                if (isset($data['roles'])) {
+                    $user->syncRoles($data['roles']);
+                } elseif (isset($data['role'])) {
+                    $user->syncRoles($data['role']);
+                }
             }
+
+            // Handle Avatar
+            if (isset($data['avatar']) && $data['avatar']) {
+                $user->clearMediaCollection('avatar');
+                $user->addMedia($data['avatar'])->toMediaCollection('avatar');
+            }
+
+            logActivity('user', 'Memperbarui pengguna ' . $user->name, $user, [
+                'old'        => $oldAttributes,
+                'attributes' => $user->getAttributes(),
+            ]);
 
             return true;
         });
@@ -114,71 +116,62 @@ class UserService
      */
     public function deleteUser(int $userId): bool
     {
-        return DB::transaction(function() use ($userId) {
-            $user = User::find($userId);
-            if (!$user) {
-                return false;
-            }
+        return DB::transaction(function () use ($userId) {
+            $user = User::findOrFail($userId);
+            $name = $user->name;
 
-            // Check if user has related data that would prevent deletion
+            // Detach roles logic (optional as deleting user normally detaches in pivot, but explicit is fine)
             if ($user->roles()->count() > 0) {
-                $user->removeRole($user->roles->pluck('name')->toArray());
+                $user->roles()->detach();
             }
 
-            return $user->delete();
+            $user->delete();
+
+            logActivity('user', 'Menghapus pengguna: ' . $name);
+
+            return true;
         });
     }
 
     /**
-     * Get filtered query for DataTables
+     * Get filtered query for DataTables and Exports
      */
     public function getFilteredQuery(array $filters = [])
     {
         $query = User::with(['roles', 'media'])
-            ->select('users.*')
-            ->orderBy('users.created_at', 'desc');
+            ->select('users.*');
 
-        // Apply filters
-        if (isset($filters['name'])) {
-            $query->where('users.name', 'like', '%' . $filters['name'] . '%');
+        // Search (Name or Email)
+        if (! empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('email', 'like', '%' . $filters['search'] . '%');
+            });
         }
 
-        if (isset($filters['email'])) {
-            $query->where('users.email', 'like', '%' . $filters['email'] . '%');
+        // Exact filters
+        if (! empty($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
         }
 
-        if (isset($filters['role'])) {
-            $query->whereHas('roles', function($q) use ($filters) {
+        if (! empty($filters['email'])) {
+            $query->where('email', 'like', '%' . $filters['email'] . '%');
+        }
+
+        if (! empty($filters['role'])) {
+            $query->whereHas('roles', function ($q) use ($filters) {
                 $q->where('name', $filters['role']);
             });
         }
 
+        // Date filters (for PDF export)
+        if (! empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+        if (! empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
         return $query;
-    }
-
-    /**
-     * Count users with filters
-     */
-    public function countUsers(array $filters = []): int
-    {
-        return DB::transaction(function() use ($filters) {
-            $query = User::query();
-
-            if (isset($filters['name'])) {
-                $query->where('name', 'like', '%' . $filters['name'] . '%');
-            }
-
-            if (isset($filters['email'])) {
-                $query->where('email', 'like', '%' . $filters['email'] . '%');
-            }
-
-            if (isset($filters['role'])) {
-                $query->whereHas('roles', function($q) use ($filters) {
-                    $q->where('name', $filters['role']);
-                });
-            }
-
-            return $query->count();
-        });
     }
 }

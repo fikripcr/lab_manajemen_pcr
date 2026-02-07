@@ -1,17 +1,23 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\InventarisExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InventarisRequest;
-use App\Models\Inventaris;
 use App\Models\Lab;
+use App\Services\Admin\InventarisService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class InventarisController extends Controller
 {
+    protected $inventarisService;
+
+    public function __construct(InventarisService $inventarisService)
+    {
+        $this->inventarisService = $inventarisService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -25,19 +31,8 @@ class InventarisController extends Controller
      */
     public function paginate(Request $request)
     {
-        $inventaris = Inventaris::select([
-            'inventaris_id',
-            'nama_alat',
-            'jenis_alat',
-            'kondisi_terakhir',
-            'tanggal_pengecekan',
-        ])
-            ->whereNull('deleted_at');
-
-        // Apply condition filter if provided
-        if ($request->has('condition') && ! empty($request->condition)) {
-            $inventaris = $inventaris->where('kondisi_terakhir', $request->condition);
-        }
+        // Use Service Query
+        $inventaris = $this->inventarisService->getFilteredQuery($request->all());
 
         return DataTables::of($inventaris)
             ->addIndexColumn()
@@ -96,19 +91,12 @@ class InventarisController extends Controller
      */
     public function store(InventarisRequest $request)
     {
-        \DB::beginTransaction();
         try {
-            Inventaris::create($request->validated());
+            $this->inventarisService->createInventaris($request->validated());
 
-            \DB::commit();
-
-            return redirect()->route('inventaris.index')
-                ->with('success', 'Inventaris berhasil dibuat.');
+            return jsonSuccess('Inventaris berhasil dibuat.', route('inventaris.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal membuat inventaris: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -119,7 +107,11 @@ class InventarisController extends Controller
     {
         $realId = decryptId($id);
 
-        $inventory = Inventaris::findOrFail($realId);
+        $inventory = $this->inventarisService->getInventarisById($realId); // Uses Service
+        if (! $inventory) {
+            abort(404);
+        }
+
         return view('pages.admin.inventaris.show', compact('inventory'));
     }
 
@@ -128,9 +120,14 @@ class InventarisController extends Controller
      */
     public function edit($id)
     {
-        $realId    = decryptId($id);
-        $inventory = Inventaris::findOrFail($realId);
-        $labs      = Lab::all();
+        $realId = decryptId($id);
+
+        $inventory = $this->inventarisService->getInventarisById($realId);
+        if (! $inventory) {
+            abort(404);
+        }
+
+        $labs = Lab::all();
         return view('pages.admin.inventaris.edit', compact('inventory', 'labs'));
     }
 
@@ -141,21 +138,12 @@ class InventarisController extends Controller
     {
         $realId = decryptId($id);
 
-        $inventory = Inventaris::findOrFail($realId);
-
-        \DB::beginTransaction();
         try {
-            $inventory->update($request->validated());
+            $this->inventarisService->updateInventaris($realId, $request->validated());
 
-            \DB::commit();
-
-            return redirect()->route('inventaris.index')
-                ->with('success', 'Inventaris berhasil diperbarui.');
+            return jsonSuccess('Inventaris berhasil diperbarui.', route('inventaris.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal memperbarui inventaris: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -164,20 +152,15 @@ class InventarisController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
+        try {
+            $realId = decryptId($id);
+            $this->inventarisService->deleteInventaris($realId);
 
-        $inventory = Inventaris::findOrFail($realId);
-        $inventory->delete();
+            return jsonSuccess('Inventaris berhasil dihapus.', route('inventaris.index'));
 
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Inventaris berhasil dihapus.',
-            ]);
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        return redirect()->route('inventaris.index')
-            ->with('success', 'Inventaris berhasil dihapus.');
     }
 
     /**
@@ -193,7 +176,7 @@ class InventarisController extends Controller
         ];
         $columns = $request->get('columns', ['id', 'nama_alat', 'jenis_alat', 'kondisi_terakhir', 'tanggal_pengecekan', 'lab_name']);
 
-        $export = new InventarisExport($filters, $columns);
+        $export = $this->inventarisService->exportInventaris($filters, $columns);
 
         return Excel::download($export, 'inventory_' . date('Y-m-d_H-i-s') . '.xlsx');
     }

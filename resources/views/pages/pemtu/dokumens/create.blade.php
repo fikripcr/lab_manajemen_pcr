@@ -95,7 +95,7 @@
             if(val === 'misi') cleanTitle = 'Misi';
 
             $('#judul').val(cleanTitle);
-            $('#judul-container').hide();
+            // $('#judul-container').hide(); // Allow editing title
         } else {
             $('#judul-container').show();
             if(!$('#judul').val()) {

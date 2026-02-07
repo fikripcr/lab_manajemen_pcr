@@ -3,19 +3,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LabRequest;
-use App\Models\Lab;
+use App\Models\Lab; // Still needed for type hinting or specific direct queries if any (e.g., DataTables if not via Service)
+use App\Services\Admin\LabService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class LabController extends Controller
 {
-    public function __construct()
+    protected $labService;
+
+    public function __construct(LabService $labService)
     {
-        // $this->middleware(['permission:view labs'], ['only' => ['index', 'show', 'data']]);
-        // $this->middleware(['permission:edit labs'], ['only' => [ 'edit', 'update']]);
-        // $this->middleware(['permission:create labs'], ['only' => ['create', 'store']]);
-        // $this->middleware(['permission:delete labs'], ['only' => ['destroy']]);
+        $this->labService = $labService;
     }
 
     /**
@@ -31,7 +30,8 @@ class LabController extends Controller
      */
     public function paginate(Request $request)
     {
-        $labs = Lab::query();
+        // Use Service Query
+        $labs = $this->labService->getFilteredQuery($request->all());
 
         return DataTables::of($labs)
             ->addIndexColumn()
@@ -64,39 +64,23 @@ class LabController extends Controller
      */
     public function store(LabRequest $request)
     {
-        \DB::beginTransaction();
+        // Validated data
+        $data = $request->validated();
+
+        // Add files to data array for Service to handle
+        if ($request->hasFile('lab_images')) {
+            $data['lab_images'] = $request->file('lab_images');
+        }
+        if ($request->hasFile('lab_attachments')) {
+            $data['lab_attachments'] = $request->file('lab_attachments');
+        }
+
         try {
-            $lab = Lab::create($request->validated());
-
-            // Handle image uploads using Spatie Media Library
-            if ($request->hasFile('lab_images')) {
-                foreach ($request->file('lab_images') as $image) {
-                    if ($image->isValid()) {
-                        $lab->addMedia($image)
-                            ->withCustomProperties(['uploaded_by' => auth()->id()])
-                            ->toMediaCollection('lab_images');
-                    }
-                }
-            }
-
-            // Handle attachment uploads using Spatie Media Library
-            if ($request->hasFile('lab_attachments')) {
-                foreach ($request->file('lab_attachments') as $attachment) {
-                    if ($attachment->isValid()) {
-                        $lab->addMedia($attachment)
-                            ->withCustomProperties(['uploaded_by' => auth()->id()])
-                            ->toMediaCollection('lab_attachments');
-                    }
-                }
-            }
-
-            \DB::commit();
-
-            return redirect()->route('labs.index')->with('success', 'Lab berhasil ditambahkan.');
+            $this->labService->createLab($data);
+            return jsonSuccess('Lab berhasil ditambahkan.', route('labs.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            \Log::error('Error creating lab: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal membuat lab: ' . $e->getMessage())->withInput();
+            \Log::error('Error creation lab: ' . $e->getMessage());
+            return jsonError('Gagal membuat lab: ' . $e->getMessage(), 500);
         }
     }
 
@@ -107,8 +91,11 @@ class LabController extends Controller
     {
         $realId = decryptId($id);
 
-        $lab = Lab::findOrFail($realId);
-        // $lab->lab_id = encryptId($lab->lab_id);
+        $lab = $this->labService->getLabById($realId); // Uses Service
+        if (! $lab) {
+            abort(404);
+        }
+
         return view('pages.admin.labs.show', compact('lab'));
     }
 
@@ -119,7 +106,11 @@ class LabController extends Controller
     {
         $realId = decryptId($id);
 
-        $lab = Lab::findOrFail($realId);
+        $lab = $this->labService->getLabById($realId);
+        if (! $lab) {
+            abort(404);
+        }
+
         return view('pages.admin.labs.edit', compact('lab'));
     }
 
@@ -129,44 +120,22 @@ class LabController extends Controller
     public function update(LabRequest $request, $id)
     {
         $realId = decryptId($id);
+        $data   = $request->validated();
 
-        $lab = Lab::findOrFail($realId);
+        // Add files to data array
+        if ($request->hasFile('lab_images')) {
+            $data['lab_images'] = $request->file('lab_images');
+        }
+        if ($request->hasFile('lab_attachments')) {
+            $data['lab_attachments'] = $request->file('lab_attachments');
+        }
 
-        \DB::beginTransaction();
         try {
-            $lab->update($request->validated());
+            $this->labService->updateLab($realId, $data);
 
-            // Handle image uploads using Spatie Media Library
-            if ($request->hasFile('lab_images')) {
-                foreach ($request->file('lab_images') as $image) {
-                    if ($image->isValid()) {
-                        $lab->addMedia($image)
-                            ->withCustomProperties(['uploaded_by' => auth()->id()])
-                            ->toMediaCollection('lab_images');
-                    }
-                }
-            }
-
-            // Handle attachment uploads using Spatie Media Library
-            if ($request->hasFile('lab_attachments')) {
-                foreach ($request->file('lab_attachments') as $attachment) {
-                    if ($attachment->isValid()) {
-                        $lab->addMedia($attachment)
-                            ->withCustomProperties(['uploaded_by' => auth()->id()])
-                            ->toMediaCollection('lab_attachments');
-                    }
-                }
-            }
-
-            \DB::commit();
-
-            return redirect()->route('labs.index')
-                ->with('success', 'Lab berhasil diperbarui.');
+            return jsonSuccess('Lab berhasil diperbarui.', route('labs.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal memperbarui lab: ' . $e->getMessage())
-                ->withInput();
+            return jsonError('Gagal memperbarui lab: ' . $e->getMessage(), 500);
         }
     }
 
@@ -175,20 +144,14 @@ class LabController extends Controller
      */
     public function destroy($id)
     {
-        $realId = decryptId($id);
+        try {
+            $realId = decryptId($id);
+            $this->labService->deleteLab($realId);
 
-        $lab = Lab::findOrFail($realId);
-        $lab->delete();
+            return jsonSuccess('Lab berhasil dihapus.', route('labs.index'));
 
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Lab berhasil dihapus.',
-            ]);
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        return redirect()->route('labs.index')
-            ->with('success', 'Lab deleted successfully.');
     }
-
 }

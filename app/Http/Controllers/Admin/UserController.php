@@ -10,19 +10,19 @@ use App\Services\Sys\UserService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
-    public function __construct(
-        UserService $userService
-    ) {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
         $this->userService = $userService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -45,21 +45,22 @@ class UserController extends Controller
      */
     public function paginate(Request $request)
     {
-        $users = User::select('id', 'name', 'email', 'created_at', 'expired_at')
-            ->with(['roles', 'media'])->whereNull('deleted_at');
+        // Reuse Service Query
+        $users = $this->userService->getFilteredQuery($request->all());
 
         return DataTables::of($users)
             ->addIndexColumn()
             ->order(function ($query) {
-                $query->latest('created_at'); // Sort by created_at DESC by default
+                $query->latest('created_at');
             })
+        // Filter Column logic usually handled by Service query, but if DataTables sends specific column search:
             ->filterColumn('roles', function ($query, $keyword) {
                 $query->whereHas('roles', function ($q) use ($keyword) {
                     $q->where('name', 'like', "%{$keyword}%");
                 });
             })
             ->editColumn('name', function ($user) {
-                $userCreatedAt = formatTanggalIndo($user->created_at); // Format tanggal ke bahasa Indonesia
+                $userCreatedAt = formatTanggalIndo($user->created_at);
 
                 $html  = '<div class="d-flex align-items-center">';
                 $html .= '<div class="avatar flex-shrink-0 me-3">';
@@ -117,14 +118,17 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $validated = $request->validated();
+
+        // Add avatar file to data if exists (handled by service)
+        if ($request->hasFile('avatar')) {
+            $validated['avatar'] = $request->file('avatar');
+        }
+
         try {
             $this->userService->createUser($validated);
-            return redirect()->route('users.index')
-                ->with('success', 'Pengguna berhasil dibuat.');
+            return jsonSuccess('Pengguna berhasil dibuat.', route('users.index'));
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -135,7 +139,11 @@ class UserController extends Controller
     {
         $realId = decryptId($id);
 
-        $user = User::findOrFail($realId);
+        $user = $this->userService->getUserById($realId); // Uses Service
+        if (! $user) {
+            abort(404);
+        }
+
         return view('pages.admin.users.show', compact('user'));
     }
 
@@ -146,7 +154,11 @@ class UserController extends Controller
     {
         $realId = decryptId($id);
 
-        $user  = User::findOrFail($realId);
+        $user = $this->userService->getUserById($realId);
+        if (! $user) {
+            abort(404);
+        }
+
         $roles = Role::all();
         return view('pages.admin.users.edit', compact('user', 'roles'));
     }
@@ -156,49 +168,24 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, $id)
     {
-
         $realId    = decryptId($id);
-        $user      = User::findOrFail($realId);
         $validated = $request->validated();
 
-        // Store old values for logging
-        $oldAttributes = $user->getAttributes();
-
-        // Handle avatar upload using Spatie Media Library
+        // Add avatar file to data if exists
         if ($request->hasFile('avatar')) {
-            // Clear existing avatar media
-            $user->clearMediaCollection('avatar');
-            // Add new avatar
-            $user->addMedia($request->file('avatar'))->toMediaCollection('avatar');
+            $validated['avatar'] = $request->file('avatar');
         }
+        // Transform 'role' to 'roles' for service consistency if needed,
+        // service handles both keys but let's be standardized.
+        // Controller validated 'role' (singular or array). Service checks both.
 
-        $updatedData = [
-            'name'       => $validated['name'],
-            'email'      => $validated['email'],
-            'expired_at' => $validated['expired_at'] ?? null,
-        ];
+        try {
+            $this->userService->updateUser($realId, $validated);
 
-        if (isset($validated['password'])) {
-            $updatedData['password'] = Hash::make($validated['password']);
+            return jsonSuccess('Pengguna berhasil diperbarui.', route('users.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $user->update($updatedData);
-
-        // Update the user's role(s)
-        if (is_array($validated['role'])) {
-            $user->syncRoles($validated['role']);
-        } else {
-            $user->syncRoles([$validated['role']]);
-        }
-
-        // Log the activity
-        logActivity('user', 'Memperbarui pengguna ' . $user->name, $user, [
-            'old'        => $oldAttributes,
-            'attributes' => $user->getAttributes(),
-        ]);
-
-        return redirect()->route('users.index')
-            ->with('success', 'Pengguna berhasil diperbarui.');
     }
 
     /**
@@ -206,19 +193,13 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-
         try {
             $realId = decryptId($id);
             $this->userService->deleteUser($realId);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus.',
-            ]);
+            return jsonSuccess('Data berhasil dihapus.', route('users.index'));
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -227,7 +208,6 @@ class UserController extends Controller
      */
     public function export(Request $request)
     {
-        // Extract filters from request (matching the DataTables filters)
         $filters = [
             'search' => $request->get('search'),
         ];
@@ -246,7 +226,7 @@ class UserController extends Controller
         if ($id) {
             // Detail report for specific user
             $realId = decryptId($id);
-            $user   = User::with('roles')->findOrFail($realId);
+            $user   = $this->userService->getUserById($realId);
 
             $data = [
                 'user'       => $user,
@@ -259,36 +239,11 @@ class UserController extends Controller
         } else {
             // Summary report for all users
             $type    = $request->get('type', 'summary');
-            $filters = [
-                'search'    => $request->get('search'),
-                'role'      => $request->get('role'),
-                'date_from' => $request->get('date_from'),
-                'date_to'   => $request->get('date_to'),
-            ];
+            $filters = $request->all(); // Pass all filters to Service
 
-            $users = User::with('roles');
-
-            // Apply filters
-            if (! empty($filters['search'])) {
-                $users = $users->where('name', 'LIKE', '%' . $filters['search'] . '%')
-                    ->orWhere('email', 'LIKE', '%' . $filters['search'] . '%');
-            }
-
-            if (! empty($filters['role'])) {
-                $users = $users->whereHas('roles', function ($query) use ($filters) {
-                    $query->where('name', $filters['role']);
-                });
-            }
-
-            if (! empty($filters['date_from'])) {
-                $users = $users->whereDate('created_at', '>=', $filters['date_from']);
-            }
-
-            if (! empty($filters['date_to'])) {
-                $users = $users->whereDate('created_at', '<=', $filters['date_to']);
-            }
-
-            $users = $users->get();
+            // Use Service to get Query
+            $query = $this->userService->getFilteredQuery($filters);
+            $users = $query->get();
 
             $data = [
                 'users'       => $users,
@@ -324,11 +279,18 @@ class UserController extends Controller
             $file = $request->file('file');
 
             // Import using the UserImport class with parameters
+            // Service could wrap this, but UserImport class is self-contained.
+            // Let's keep it here for now unless I add 'importUsers' to service.
+            // Added 'importPersonils' to PersonilService, so consistencies...
+            // But UserImport takes parameters ($defaultRole) in Constructor.
+
             $defaultRole       = $request->input('role_default');
             $overwriteExisting = $request->input('overwrite_existing', false);
 
             $import = new UserImport($defaultRole, $overwriteExisting);
             Excel::import($import, $file);
+
+            logActivity('user', 'Import users from file.');
 
             return redirect()->route('users.index')
                 ->with('success', "Import completed successfully. Users have been added to the database.");
@@ -344,10 +306,12 @@ class UserController extends Controller
      */
     public function loginAs(Request $request, $user)
     {
-                                                                   // Only allow high-privilege users to use this feature
-        $allowedRoles  = ['admin', 'kepala_lab', 'ketua_jurusan']; // Allow these roles to impersonate other users
-        $hasPermission = false;
+        $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan'];
 
+        // Permission check logic
+        // This is Access Control, fits in Controller or Middleware or Policy.
+        // Service handles Business Logic.
+        $hasPermission = false;
         foreach ($allowedRoles as $role) {
             if (auth()->user()->hasRole($role)) {
                 $hasPermission = true;
@@ -355,22 +319,22 @@ class UserController extends Controller
             }
         }
 
-        // if (!$hasPermission) {
-        //     abort(403, 'Unauthorized to use this feature.');
-        // }
-
-        // Decrypt the user ID if necessary
+        // Decrypt the user ID
         try {
             $userId     = decryptId($user);
-            $targetUser = User::findOrFail($userId);
+            $targetUser = $this->userService->getUserById($userId);
         } catch (\Exception $e) {
-            $targetUser = User::findOrFail($user);
+            // Fallback if not encrypted (should not happen if consistent)
+            $targetUser = $this->userService->getUserById($user);
+        }
+
+        if (! $targetUser) {
+            abort(404);
         }
 
         // Use laravel-impersonate
         app('impersonate')->take(auth()->user(), $targetUser);
 
-        // Log the impersonation activity
         logActivity('impersonation', 'User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')', $targetUser);
 
         return response()->json([
@@ -389,12 +353,10 @@ class UserController extends Controller
             return redirect()->route('dashboard')->with('error', 'Not currently impersonating anyone.');
         }
 
-        // Get the impersonator before leaving impersonation
         $impersonator = app('impersonate')->getImpersonator();
 
         app('impersonate')->leave();
 
-        // Log the end impersonation activity
         if ($impersonator) {
             logActivity('impersonation', 'User switched back from impersonation to original account', $impersonator);
         }
@@ -418,7 +380,6 @@ class UserController extends Controller
         // Set the active role in session
         setActiveRole($role);
 
-        // Log the role switch activity
         logActivity('role_switch', 'User switched active role to ' . $role, $user);
 
         return redirect()->back()->with('success', 'Successfully switched to ' . $role . ' role.');

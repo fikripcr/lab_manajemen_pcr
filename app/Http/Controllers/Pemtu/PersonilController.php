@@ -2,16 +2,21 @@
 namespace App\Http\Controllers\Pemtu;
 
 use App\Http\Controllers\Controller;
-use App\Imports\Pemtu\PersonilImport;
+use App\Http\Requests\Pemtu\PersonilRequest;
 use App\Models\Pemtu\OrgUnit;
-use App\Models\Pemtu\Personil;
-use App\Models\User;
+use App\Services\Pemtu\PersonilService; // Import Service
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class PersonilController extends Controller
 {
+    protected $personilService;
+
+    public function __construct(PersonilService $personilService)
+    {
+        $this->personilService = $personilService;
+    }
+
     public function index()
     {
         return view('pages.pemtu.personils.index');
@@ -19,9 +24,9 @@ class PersonilController extends Controller
 
     public function paginate()
     {
-        $data = Personil::with(['orgUnit', 'user']);
+        $query = $this->personilService->getFilteredQuery();
 
-        return DataTables::of($data)
+        return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('org_unit_id', function ($row) {
                 return $row->orgUnit ? $row->orgUnit->name : '-';
@@ -46,75 +51,48 @@ class PersonilController extends Controller
         return view('pages.pemtu.personils.create', compact('units'));
     }
 
-    public function store(Request $request)
+    public function store(PersonilRequest $request)
     {
-        $request->validate([
-            'nama'        => 'required|string|max:100',
-            'email'       => 'nullable|email|max:100',
-            'org_unit_id' => 'nullable|exists:org_unit,orgunit_id',
-            'jenis'       => 'nullable|string|max:20',
-        ]);
+        try {
+            $this->personilService->createPersonil($request->validated());
 
-        $data = $request->all();
-
-        // Auto-link user by email
-        if (! empty($data['email'])) {
-            $user = User::where('email', $data['email'])->first();
-            if ($user && empty($data['user_id'])) {
-                $data['user_id'] = $user->id;
-            }
+            return jsonSuccess('Personil created successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        Personil::create($data);
-
-        return response()->json([
-            'message' => 'Personil created successfully.',
-        ]);
     }
 
     public function edit($id)
     {
-        $personil = Personil::findOrFail($id);
-        $units    = OrgUnit::orderBy('name')->get();
+        $personil = $this->personilService->getPersonilById($id);
+        if (! $personil) {
+            abort(404);
+        }
+
+        $units = OrgUnit::orderBy('name')->get();
         return view('pages.pemtu.personils.edit', compact('personil', 'units'));
     }
 
-    public function update(Request $request, $id)
+    public function update(PersonilRequest $request, $id)
     {
-        $request->validate([
-            'nama'        => 'required|string|max:100',
-            'email'       => 'nullable|email|max:100',
-            'org_unit_id' => 'nullable|exists:org_unit,orgunit_id',
-            'jenis'       => 'nullable|string|max:20',
-        ]);
+        try {
+            $this->personilService->updatePersonil($id, $request->validated());
 
-        $personil = Personil::findOrFail($id);
-        $data     = $request->all();
-
-        // Auto-link user by email if changed and not manually set
-        if (! empty($data['email']) && $data['email'] !== $personil->email) {
-            $user = User::where('email', $data['email'])->first();
-            if ($user) {
-                $data['user_id'] = $user->id;
-            }
+            return jsonSuccess('Personil updated successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $personil->update($data);
-
-        return response()->json([
-            'message' => 'Personil updated successfully.',
-        ]);
     }
 
     public function destroy($id)
     {
-        $personil = Personil::findOrFail($id);
-        $personil->delete();
+        try {
+            $this->personilService->deletePersonil($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Personil deleted successfully.',
-        ]);
+            return jsonSuccess('Personil deleted successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function import(Request $request)
@@ -127,11 +105,12 @@ class PersonilController extends Controller
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
 
-        Excel::import(new PersonilImport, $request->file('file'));
+        try {
+            $this->personilService->importPersonils($request->file('file'));
 
-        return response()->json([
-            'message'  => 'Personils imported successfully.',
-            'redirect' => route('pemtu.personils.index'),
-        ]);
+            return jsonSuccess('Personils imported successfully.', route('pemtu.personils.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 }

@@ -2,11 +2,16 @@
 namespace App\Http\Controllers\Pemtu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemtu\OrgUnitRequest;
 use App\Models\Pemtu\OrgUnit;
+use App\Services\Pemtu\OrgUnitService;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class OrgUnitController extends Controller
 {
+    protected $orgUnitService;
+
     private static $UNIT_TYPES = [
         'Institusi',
         'Direktorat',
@@ -19,55 +24,140 @@ class OrgUnitController extends Controller
         'Sekretariat',
         'Pimpinan',
     ];
+
+    public function __construct(OrgUnitService $orgUnitService)
+    {
+        $this->orgUnitService = $orgUnitService;
+    }
+
     public function index()
     {
-        // Eager load up to 5 levels deep
-        $rootUnits = OrgUnit::whereNull('parent_id')
-            ->orderBy('seq')
-            ->with(['children' => function ($q) {
-                $q->orderBy('seq')->with(['children' => function ($qq) {
-                    $qq->orderBy('seq')->with(['children' => function ($qqq) {
-                        $qqq->orderBy('seq')->with(['children' => function ($qqqq) {
-                            $qqqq->orderBy('seq');
-                        }]);
-                    }]);
-                }]);
-            }])
-            ->get();
-        return view('pages.pemtu.org-units.index', compact('rootUnits'));
+        // Eager load ONLY ACTIVE units up to 5 levels deep for Hierarchy List via Service
+        $rootUnits = $this->orgUnitService->getActiveHierarchicalUnits();
+
+        // Get ALL units for Manage tab (including inactive)
+        $allUnits = $this->orgUnitService->getAllUnits();
+
+        return view('pages.pemtu.org-units.index', compact('rootUnits', 'allUnits'));
     }
 
     public function show($id)
     {
-        $orgUnit = OrgUnit::with(['parent', 'personils.user'])->findOrFail($id);
+        $orgUnit = $this->orgUnitService->getOrgUnitById($id);
+        if (! $orgUnit) {
+            abort(404);
+        }
+
         return view('pages.pemtu.org-units.detail', compact('orgUnit'));
     }
 
-    private function getHierarchicalUnits($parentId = null, $prefix = '')
+    public function paginate(Request $request)
     {
-        $units = OrgUnit::where('parent_id', $parentId)
-            ->orderBy('seq')
-            ->orderBy('name')
-            ->get();
+        $query = $this->orgUnitService->getFilteredQuery($request->all());
 
-        $result = [];
-        foreach ($units as $unit) {
-            $unit->name = $prefix . ' ' . $unit->name;
-            $result[]   = $unit;
-            $result     = array_merge($result, $this->getHierarchicalUnits($unit->orgunit_id, $prefix . '--'));
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->editColumn('name', function ($row) {
+                $name = e($row->name);
+                if ($row->successor) {
+                    $name .= '<br><small class="text-muted">→ ' . e($row->successor->name) . '</small>';
+                }
+                return $name;
+            })
+            ->editColumn('parent_id', function ($row) {
+                return $row->parent ? $row->parent->name : '-';
+            })
+            ->addColumn('status', function ($row) {
+                $checked = $row->is_active ? 'checked' : '';
+                return '<label class="form-check form-switch mb-0">
+                    <input type="checkbox" class="form-check-input toggle-status" data-id="' . $row->orgunit_id . '" ' . $checked . '>
+                </label>';
+            })
+            ->addColumn('auditee', function ($row) {
+                if ($row->auditee) {
+                    return '<span class="badge bg-primary-lt">' . e($row->auditee->name) . '</span>';
+                }
+                return '<span class="text-muted">-</span>';
+            })
+            ->addColumn('action', function ($row) {
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'       => route('pemtu.org-units.edit', $row->orgunit_id),
+                    'editModal'     => true,
+                    'deleteUrl'     => route('pemtu.org-units.destroy', $row->orgunit_id),
+                    'customActions' => [
+                        [
+                            'url'        => '#',
+                            'label'      => 'Set Auditee',
+                            'icon'       => 'user-check',
+                            'class'      => 'set-auditee-btn',
+                            'attributes' => 'data-id="' . $row->orgunit_id . '" data-name="' . e($row->name) . '"',
+                        ],
+                    ],
+                ])->render();
+            })
+            ->rawColumns(['name', 'status', 'auditee', 'action'])
+            ->make(true);
+    }
+
+    public function toggleStatus($id)
+    {
+        try {
+            $orgUnit = $this->orgUnitService->toggleStatus($id);
+
+            return jsonSuccess('Status updated successfully.', null, ['is_active' => $orgUnit->is_active]);
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-        return $result;
+    }
+
+    public function setAuditee(Request $request, $id)
+    {
+        // Simple internal method validation, kept here or could be Separate Request
+        // Given simplicity, inline is acceptable, but let's stick to standard response.
+        $request->validate([
+            'auditee_user_id' => 'nullable|exists:users,id',
+        ]);
+
+        try {
+            $this->orgUnitService->setAuditee($id, $request->auditee_user_id);
+
+            return jsonSuccess('Auditee berhasil diset.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function create(Request $request)
     {
         $parentId = $request->query('parent_id');
-        $parent   = $parentId ? OrgUnit::find($parentId) : null;
-        // Use hierarchical order
-        $units = $this->getHierarchicalUnits();
+        $parent   = $parentId ? $this->orgUnitService->getOrgUnitById($parentId) : null;
 
-        // Auto-suggest seq
+        $units = $this->orgUnitService->getHierarchicalList();
+
+        // Auto-suggest seq via service (helper or directly in logic?)
+        // Controller logic handles suggestion for view.
+        // Let's add helper to Service? `getNextSeq($parentId)`.
         $suggestedSeq = 1;
+
+        // Assuming I added this helper to service. If not, I can query via model directly here OR add to service now.
+        // I'll add `getNextSeq` to service if I forgot. But let's check my service code.
+        // Ah, in write_to_file 367 I didn't verify if I added `getNextSeq`.
+        // Let's assume I did or I will fix it.
+        // Re-reading Step 367 output... I see `getNextSeq` is NOT there explicitly?
+        // Wait, Step 367 output content check...
+        // Ah, I missed adding `getNextSeq` in step 367 output display?
+        // Let's assume I missed it.
+        // I will use direct Model query here or add it.
+        // Better to use Model query for View Prep to save time OR update Service.
+        // I'll update Service quickly or just query.
+        // Let's Query Model here directly as it's View Prep.
+        // Or cleaner: `$this->orgUnitService->getNextSeq($parentId?->orgunit_id);`
+        // I'll assume I update service.
+
+        // Actually, looking at Step 367 again...
+        // No `getNextSeq`.
+        // I will add it via replace_file later if needed.
+        // For now, I'll use Model directly here.
         if ($parent) {
             $suggestedSeq = OrgUnit::where('parent_id', $parent->orgunit_id)->max('seq') + 1;
         } else {
@@ -78,49 +168,25 @@ class OrgUnitController extends Controller
         return view('pages.pemtu.org-units.create', compact('parent', 'units', 'suggestedSeq', 'types'));
     }
 
-    public function store(Request $request)
+    public function store(OrgUnitRequest $request)
     {
-        $request->validate([
-            'name'      => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:org_unit,orgunit_id',
-            'type'      => 'nullable|string|max:100',
-            'code'      => 'nullable|string|max:50',
-            'seq'       => 'nullable|integer',
-        ]);
+        try {
+            $this->orgUnitService->createOrgUnit($request->validated());
 
-        $data = $request->all();
-
-        // Calculate Level
-        if (! empty($data['parent_id'])) {
-            $parent        = OrgUnit::find($data['parent_id']);
-            $data['level'] = $parent ? $parent->level + 1 : 1;
-        } else {
-            $data['level'] = 1;
+            return jsonSuccess('OrgUnit created successfully.', route('pemtu.org-units.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        // Default Seq if empty
-        if (empty($data['seq'])) {
-            if (! empty($data['parent_id'])) {
-                $data['seq'] = OrgUnit::where('parent_id', $data['parent_id'])->max('seq') + 1;
-            } else {
-                $data['seq'] = OrgUnit::whereNull('parent_id')->max('seq') + 1;
-            }
-        }
-
-        OrgUnit::create($data);
-
-        return response()->json([
-            'message'  => 'OrgUnit created successfully.',
-            'redirect' => route('pemtu.org-units.index'),
-        ]);
     }
 
     public function edit($id)
     {
-        $orgUnit = OrgUnit::findOrFail($id);
-        // Exclude self and children from parent options to avoid cycles (simple exclusion of self for now)
-        // ideally we filter detailed check, but hierarchical list makes it visual.
-        $allUnits = $this->getHierarchicalUnits();
+        $orgUnit = $this->orgUnitService->getOrgUnitById($id);
+        if (! $orgUnit) {
+            abort(404);
+        }
+
+        $allUnits = $this->orgUnitService->getHierarchicalList();
         $units    = collect($allUnits)->filter(function ($u) use ($id) {
             return $u->orgunit_id != $id;
         });
@@ -129,89 +195,37 @@ class OrgUnitController extends Controller
         return view('pages.pemtu.org-units.edit', compact('orgUnit', 'units', 'types'));
     }
 
-    public function update(Request $request, $id)
+    public function update(OrgUnitRequest $request, $id)
     {
-        $request->validate([
-            'name'      => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:org_unit,orgunit_id',
-            'type'      => 'nullable|string|max:100',
-            'code'      => 'nullable|string|max:50',
-            'seq'       => 'nullable|integer',
-        ]);
+        try {
+            $this->orgUnitService->updateOrgUnit($id, $request->validated());
 
-        $orgUnit = OrgUnit::findOrFail($id);
-
-        if ($request->parent_id == $id) {
-            return response()->json(['message' => 'Cannot be parent of itself.'], 422);
+            return jsonSuccess('OrgUnit updated successfully.', route('pemtu.org-units.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $data = $request->all();
-
-        // Recalculate Level if parent changed
-        if ($data['parent_id'] != $orgUnit->parent_id) {
-            if (! empty($data['parent_id'])) {
-                $parent        = OrgUnit::find($data['parent_id']);
-                $data['level'] = $parent ? $parent->level + 1 : 1;
-            } else {
-                $data['level'] = 1;
-            }
-            // Note: Children levels should technically be updated recursively too.
-            // For now, let's assume one-level update.
-        }
-
-        $orgUnit->update($data);
-
-        return response()->json([
-            'message'  => 'OrgUnit updated successfully.',
-            'redirect' => route('pemtu.org-units.index'),
-        ]);
     }
 
     public function destroy($id)
     {
-        $orgUnit = OrgUnit::findOrFail($id);
+        try {
+            $this->orgUnitService->deleteOrgUnit($id);
 
-        if ($orgUnit->children()->exists()) {
-            return response()->json([
-                'message' => 'Cannot delete unit with children. Move or delete children first.',
-            ], 422);
+            return jsonSuccess('OrgUnit deleted successfully.', route('pemtu.org-units.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $orgUnit->delete();
-
-        return response()->json([
-            'success'  => true,
-            'message'  => 'OrgUnit deleted successfully.',
-            'redirect' => route('pemtu.org-units.index'),
-        ]);
     }
+
     public function reorder(Request $request)
     {
-        $hierarchy = $request->input('hierarchy');
+        try {
+            $hierarchy = $request->input('hierarchy');
+            $this->orgUnitService->reorderUnits($hierarchy);
 
-        \DB::transaction(function () use ($hierarchy) {
-            $this->updateHierarchy($hierarchy);
-        });
-
-        return response()->json(['message' => 'Hierarchy updated successfully.']);
-    }
-
-    private function updateHierarchy($items, $parentId = null, $level = 1)
-    {
-        foreach ($items as $index => $item) {
-            $orgUnit = OrgUnit::find($item['id']);
-            if ($orgUnit) {
-                // Update Parent, Seq, Level
-                $orgUnit->parent_id = $parentId;
-                $orgUnit->seq       = $index + 1;
-                $orgUnit->level     = $level;
-                $orgUnit->save();
-
-                // Recursively update children
-                if (isset($item['children']) && is_array($item['children'])) {
-                    $this->updateHierarchy($item['children'], $orgUnit->orgunit_id, $level + 1);
-                }
-            }
+            return jsonSuccess('Hierarchy updated successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

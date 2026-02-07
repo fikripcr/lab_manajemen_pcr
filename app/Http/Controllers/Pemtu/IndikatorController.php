@@ -2,12 +2,13 @@
 namespace App\Http\Controllers\Pemtu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemtu\IndikatorRequest;
 use App\Models\Pemtu\DokSub;
 use App\Models\Pemtu\Dokumen;
-use App\Models\Pemtu\Indikator;
 use App\Models\Pemtu\OrgUnit;
 use App\Services\Pemtu\IndikatorService;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class IndikatorController extends Controller
 {
@@ -20,14 +21,18 @@ class IndikatorController extends Controller
 
     public function index()
     {
-        return view('pages.pemtu.indikators.index');
+        // Filters data
+        $dokumens   = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id');
+        $labelTypes = \App\Models\Pemtu\LabelType::orderBy('name')->pluck('name', 'labeltype_id');
+
+        return view('pages.pemtu.indikators.index', compact('dokumens', 'labelTypes'));
     }
 
-    public function paginate()
+    public function paginate(Request $request)
     {
-        $data = Indikator::with(['dokSub.dokumen', 'labels.type'])->select('indikator.*');
+        $query = $this->indikatorService->getFilteredQuery($request->all());
 
-        return \Yajra\DataTables\DataTables::of($data)
+        return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('dokumen_judul', function ($row) {
                 return $row->dokSub->dokumen->judul ?? '-';
@@ -68,90 +73,71 @@ class IndikatorController extends Controller
         $dokSubId = $request->query('doksub_id');
         $dokSub   = $dokSubId ? DokSub::with('dokumen')->find($dokSubId) : null;
 
-        // Get LabelTypes with Labels for separate inputs
+        // View Dependencies - Can be moved to separate Service helper if reused often
         $labelTypes = \App\Models\Pemtu\LabelType::with(['labels' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
-        // Fetch Root OrgUnits (Level 1) with Children for Hierarchy
         $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
 
-        // Get Renop Documents only
         $dokumens = Dokumen::with('dokSubs')
-            ->where('jenis', 'Renop') // Filter specific for Indikator
+            ->where('jenis', 'Renop')
             ->orderBy('judul')
             ->get();
 
         return view('pages.pemtu.indikators.create', compact('dokSub', 'labelTypes', 'orgUnits', 'dokumens'));
     }
 
-    public function store(Request $request)
+    public function store(IndikatorRequest $request)
     {
-        $request->validate([
-            'doksub_id'       => 'required|exists:dok_sub,doksub_id',
-            'indikator'       => 'required|string',
-            'target'          => 'nullable|string',
-            'jenis_indikator' => 'nullable|string|max:20',
-            'labels'          => 'array',
-            'org_units'       => 'array',
-        ]);
+        try {
+            $data = $request->validated();
 
-        $data = $request->all();
-
-        // Auto Generate Number and Seq via Service
-        $dokSub               = DokSub::with('dokumen')->findOrFail($request->doksub_id);
-        $data['no_indikator'] = $this->indikatorService->generateNoIndikator($dokSub);
-        $data['seq']          = $this->indikatorService->generateSeq($request->doksub_id);
-
-        $indikator = Indikator::create($data);
-
-        // Sync Pivots
-        if ($request->has('labels')) {
-            // Flatten labels because they come as labels[type_id][] potentially or just labels[] if multiple selects share same name
-            $indikator->labels()->sync($request->labels);
-        }
-
-        // Handle Assignments (Unit + Target)
-        if ($request->has('assignments')) {
-            $syncData = [];
-            foreach ($request->assignments as $unitId => $val) {
-                // Check if unit is selected
-                if (isset($val['selected']) && $val['selected'] == 1) {
-                    $syncData[$unitId] = ['target' => $val['target'] ?? null];
+            // Handle Assignments Parsing (prepare for Service)
+            if ($request->has('assignments')) {
+                $syncData = [];
+                foreach ($request->assignments as $unitId => $val) {
+                    if (isset($val['selected']) && $val['selected'] == 1) {
+                        $syncData[$unitId] = ['target' => $val['target'] ?? null];
+                    }
                 }
+                $data['org_units'] = $syncData;
             }
-            $indikator->orgUnits()->sync($syncData);
-        }
-        // Related DokSubs might be handled if passed, but typically implied by parent doksub_id
-        // If user selects other related doksubs manually:
-        if ($request->has('related_doksubs')) {
-            $indikator->relatedDokSubs()->sync($request->related_doksubs);
-        }
 
-        return response()->json([
-            'message'  => 'Indikator created successfully.',
-            'redirect' => route('pemtu.indikators.index'),
-        ]);
+            // Labels are usually flat array of IDs, so $request->labels is fine.
+            // Related DokSubs ($request->related_doksubs) also fine.
+
+            $this->indikatorService->createIndikator($data);
+
+            return jsonSuccess('Indikator created successfully.', route('pemtu.indikators.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function show($id)
     {
-        $indikator = Indikator::with(['labels', 'orgUnits', 'relatedDokSubs', 'dokSub.dokumen'])->findOrFail($id);
+        $indikator = $this->indikatorService->getIndikatorById($id);
+        if (! $indikator) {
+            abort(404);
+        }
+
         return view('pages.pemtu.indikators.show', compact('indikator'));
     }
 
     public function edit($id)
     {
-        $indikator = Indikator::with(['labels', 'orgUnits', 'relatedDokSubs'])->findOrFail($id);
+        $indikator = $this->indikatorService->getIndikatorById($id);
+        if (! $indikator) {
+            abort(404);
+        }
 
         $labelTypes = \App\Models\Pemtu\LabelType::with(['labels' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
-        // Fetch Root OrgUnits (Level 1) with Children for Hierarchy
         $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
 
-        // Get Renop Documents only
         $dokumens = Dokumen::with('dokSubs')
             ->where('jenis', 'Renop')
             ->orderBy('judul')
@@ -160,63 +146,38 @@ class IndikatorController extends Controller
         return view('pages.pemtu.indikators.edit', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens'));
     }
 
-    public function update(Request $request, $id)
+    public function update(IndikatorRequest $request, $id)
     {
-        $request->validate([
-            'no_indikator'    => 'nullable|string|max:20',
-            'indikator'       => 'required|string',
-            'target'          => 'nullable|string',
-            'jenis_indikator' => 'nullable|string|max:20',
-            'seq'             => 'nullable|integer',
-            'labels'          => 'array',
-            'org_units'       => 'array',
-            'related_doksubs' => 'array',
-        ]);
+        try {
+            $data = $request->validated();
 
-        $indikator = Indikator::findOrFail($id);
-        $indikator->update($request->all());
-
-        // Sync Pivots
-        if ($request->has('labels')) {
-            $indikator->labels()->sync($request->labels);
-        } else {
-            $indikator->labels()->detach();
-        }
-
-        // Handle Assignments (Unit + Target)
-        if ($request->has('assignments')) {
-            $syncData = [];
-            foreach ($request->assignments as $unitId => $val) {
-                if (isset($val['selected']) && $val['selected'] == 1) {
-                    $syncData[$unitId] = ['target' => $val['target'] ?? null];
+            // Handle Assignments Parsing
+            if ($request->has('assignments')) {
+                $syncData = [];
+                foreach ($request->assignments as $unitId => $val) {
+                    if (isset($val['selected']) && $val['selected'] == 1) {
+                        $syncData[$unitId] = ['target' => $val['target'] ?? null];
+                    }
                 }
+                $data['org_units'] = $syncData;
             }
-            $indikator->orgUnits()->sync($syncData);
-        } else {
-            $indikator->orgUnits()->detach();
-        }
 
-        if ($request->has('related_doksubs')) {
-            $indikator->relatedDokSubs()->sync($request->related_doksubs);
-        } else {
-            $indikator->relatedDokSubs()->detach();
-        }
+            $this->indikatorService->updateIndikator($id, $data);
 
-        // Redirect to Detail Page instead of JSON
-        return redirect()->route('pemtu.indikators.show', $indikator->indikator_id)
-            ->with('success', 'Indikator updated successfully.');
+            return jsonSuccess('Indikator updated successfully.', route('pemtu.indikators.show', $id));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function destroy($id)
     {
-        $indikator = Indikator::findOrFail($id);
-        $doksubId  = $indikator->doksub_id;
-        $indikator->delete();
+        try {
+            $this->indikatorService->deleteIndikator($id);
 
-        return response()->json([
-            'success'  => true,
-            'message'  => 'Indikator deleted successfully.',
-            'redirect' => route('pemtu.indikators.index'),
-        ]);
+            return jsonSuccess('Indikator deleted successfully.', route('pemtu.indikators.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 }

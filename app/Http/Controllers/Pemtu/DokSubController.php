@@ -2,18 +2,34 @@
 namespace App\Http\Controllers\Pemtu;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pemtu\DokSub;
-use App\Models\Pemtu\Dokumen;
+use App\Http\Requests\Pemtu\DokSubRequest;
+use App\Services\Pemtu\DokSubService;
+use App\Services\Pemtu\DokumenService;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class DokSubController extends Controller
 {
+    protected $dokSubService;
+    protected $dokumenService;
+
+    public function __construct(DokSubService $dokSubService, DokumenService $dokumenService)
+    {
+        $this->dokSubService  = $dokSubService;
+        $this->dokumenService = $dokumenService;
+    }
+
     public function show($id)
     {
-        $dokSub = DokSub::with(['dokumen.parent', 'childDokumens'])->findOrFail($id);
+        $dokSub = $this->dokSubService->getDokSubById($id);
+        if (! $dokSub) {
+            abort(404);
+        }
+
         $parent = $dokSub->dokumen;
 
         // Determine Child Type based on Parent Dokumen Type
+        // Logic remains here as it's view-specific presentation logic
         $parentJenis = strtolower(trim($parent->jenis));
         $childType   = match ($parentJenis) {
             'visi'    => 'Misi',
@@ -29,97 +45,97 @@ class DokSubController extends Controller
     public function create(Request $request)
     {
         $dokId   = $request->query('dok_id');
-        $dokumen = Dokumen::findOrFail($dokId);
+        $dokumen = $this->dokumenService->getDokumenById($dokId);
+        if (! $dokumen) {
+            abort(404);
+        }
+
         return view('pages.pemtu.dok-subs.create', compact('dokumen'));
     }
 
-    public function store(Request $request)
+    public function store(DokSubRequest $request)
     {
-        $request->validate([
-            'dok_id' => 'required|exists:dokumen,dok_id',
-            'judul'  => 'required|string|max:150',
-            'isi'    => 'nullable|string',
-            'seq'    => 'nullable|integer',
-        ]);
+        try {
+            $this->dokSubService->createDokSub($request->validated());
 
-        DokSub::create($request->all());
-
-        return response()->json([
-            'message' => 'Sub-Document created successfully.',
-            // Reload the parent document page to show new sub
-            // 'redirect' => route('pemtu.dokumens.index'),
-        ]);
+            return jsonSuccess('Sub-Document created successfully.', route('pemtu.dokumens.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function edit($id)
     {
-        $dokSub = DokSub::findOrFail($id);
+        $dokSub = $this->dokSubService->getDokSubById($id);
+        if (! $dokSub) {
+            abort(404);
+        }
+
         return view('pages.pemtu.dok-subs.edit', compact('dokSub'));
     }
 
-    public function update(Request $request, $id)
+    public function update(DokSubRequest $request, $id)
     {
-        $request->validate([
-            'judul' => 'required|string|max:150',
-            'isi'   => 'nullable|string',
-            'seq'   => 'nullable|integer',
-        ]);
+        try {
+            $this->dokSubService->updateDokSub($id, $request->validated());
+            $dokSub = $this->dokSubService->getDokSubById($id);
 
-        $dokSub = DokSub::findOrFail($id);
-        $dokSub->update($request->all());
-
-        return response()->json([
-            'message'  => 'Sub-Document updated successfully.',
-            'redirect' => route('pemtu.dokumens.show', $dokSub->dok_id),
-        ]);
+            return jsonSuccess('Sub-Document updated successfully.', route('pemtu.dokumens.show', $dokSub->dok_id));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function destroy($id)
     {
-        $dokSub = DokSub::findOrFail($id);
-        $dokSub->delete();
+        try {
+            $this->dokSubService->deleteDokSub($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Sub-Document deleted successfully.',
-            // 'redirect' => route('pemtu.dokumens.index'),
-        ]);
+            return jsonSuccess('Sub-Document deleted successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
+
     public function data(Request $request, $dokId)
     {
         if ($request->ajax()) {
-            $query = DokSub::where('dok_id', $dokId)->orderBy('seq');
+            try {
+                $query = $this->dokSubService->getFilteredQuery(['dok_id' => $dokId]);
 
-            return \DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('seq', function ($row) {
-                    return '<span class="badge badge-outline text-muted">' . $row->seq . '</span>';
-                })
-                ->addColumn('judul', function ($row) {
-                    $detailUrl = route('pemtu.dok-subs.show', $row->doksub_id);
-                    return '
-                        <a href="' . $detailUrl . '" class="fw-medium text-reset" title="Lihat Detail & Turunan">
-                            ' . $row->judul . '
-                        </a>
-                        <div class="text-muted small text-truncate" style="max-width: 300px;">' . strip_tags($row->isi) . '</div>
-                    ';
-                })
-                ->addColumn('action', function ($row) {
-                    $editUrl   = route('pemtu.dok-subs.edit', $row->doksub_id);
-                    $deleteUrl = route('pemtu.dok-subs.destroy', $row->doksub_id);
-
-                    return '
-                        <div class="btn-list flex-nowrap">
-                            <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-outline-primary" title="Edit Content">
-                                <i class="ti ti-pencil"></i>
+                return DataTables::of($query)
+                    ->addIndexColumn()
+                    ->addColumn('seq', function ($row) {
+                        return '<span class="badge badge-outline text-muted">' . $row->seq . '</span>';
+                    })
+                    ->addColumn('judul', function ($row) {
+                        $detailUrl = route('pemtu.dok-subs.show', $row->doksub_id);
+                        return '
+                            <a href="' . $detailUrl . '" class="fw-medium text-reset" title="Lihat Detail & Turunan">
+                                ' . $row->judul . '
                             </a>
-                            <button type="button" class="btn btn-sm btn-icon btn-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus Sub-Dokumen?" data-text="Data ini akan dihapus permanen.">
-                                <i class="ti ti-trash"></i>
-                            </button>
-                        </div>';
-                })
-                ->rawColumns(['seq', 'judul', 'action'])
-                ->make(true);
+                            <div class="text-muted small text-truncate" style="max-width: 300px;">' . strip_tags($row->isi) . '</div>
+                        ';
+                    })
+                    ->addColumn('action', function ($row) {
+                        $editUrl   = route('pemtu.dok-subs.edit', $row->doksub_id);
+                        $deleteUrl = route('pemtu.dok-subs.destroy', $row->doksub_id);
+
+                        return '
+                            <div class="btn-list flex-nowrap">
+                                <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-outline-primary" title="Edit Content">
+                                    <i class="ti ti-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-icon btn-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus Sub-Dokumen?" data-text="Data ini akan dihapus permanen.">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </div>';
+                    })
+                    ->rawColumns(['seq', 'judul', 'action'])
+                    ->make(true);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
         }
     }
 }

@@ -14,7 +14,10 @@
              <label for="seq" class="form-label">Urutan</label>
              <input type="number" class="form-control" id="seq" name="seq" placeholder="Contoh: 1">
          </div>
-         {{-- Content/Isi will be added via Edit page --}}
+         <div class="mb-3">
+             <label for="isi" class="form-label">Isi Dokumen</label>
+             <textarea class="form-control" id="isi" name="isi" rows="5" placeholder="Isi sub-dokumen..."></textarea>
+         </div>
     </div>
     <div class="modal-footer">
         <x-tabler.button type="button" text="Close" class="btn-link link-secondary" data-bs-dismiss="modal" />

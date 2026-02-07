@@ -61,7 +61,6 @@
             ajax-load="true"
             :columns="[
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
-                ['data' => 'seq', 'name' => 'seq', 'title' => 'Urutan', 'width' => '10%'],
                 ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul Sub Dokumen'],
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '15%']
             ]"

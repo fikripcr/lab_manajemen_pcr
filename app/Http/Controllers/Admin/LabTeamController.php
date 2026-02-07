@@ -1,23 +1,30 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\LabTeamRequest;
 use App\Models\Lab;
 use App\Models\User;
-use App\Models\LabTeam;
+use App\Services\Admin\LabTeamService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class LabTeamController extends Controller
 {
+    protected $labTeamService;
+
+    public function __construct(LabTeamService $labTeamService)
+    {
+        $this->labTeamService = $labTeamService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request, $labId)
     {
-        $lab = Lab::findOrFail($labId);
-        $labTeams = $lab->labTeams()->with(['user'])->paginate(10);
+        $realLabId = decryptId($labId);
+        $lab       = Lab::findOrFail($realLabId);
+        $labTeams  = $this->labTeamService->getLabTeamsQuery($realLabId)->paginate(10);
 
         return view('pages.admin.labs.teams.index', compact('lab', 'labTeams'));
     }
@@ -27,8 +34,9 @@ class LabTeamController extends Controller
      */
     public function create($labId)
     {
-        $lab = Lab::findOrFail($labId);
-        $users = User::all();
+        $realLabId = decryptId($labId);
+        $lab       = Lab::findOrFail($realLabId);
+        $users     = User::all();
 
         return view('pages.admin.labs.teams.create', compact('lab', 'users'));
     }
@@ -38,77 +46,39 @@ class LabTeamController extends Controller
      */
     public function getUsers(Request $request, $labId)
     {
-        $search = $request->get('search');
+        $search    = $request->get('search');
         $realLabId = decryptId($labId);
 
-        // Exclude users already assigned to this lab
-        $users = User::select('id', 'name', 'email')
-            ->whereDoesntHave('labTeams', function($query) use ($realLabId) {
-                $query->where('lab_id', $realLabId);
-            })
-            ->when($search, function($query, $search) {
-                return $query->where('name', 'LIKE', "%{$search}%")
-                             ->orWhere('email', 'LIKE', "%{$search}%");
-            })
-            ->limit(5)
-            ->get()
-            ->map(function($user) {
-                return [
-                    'id' => encryptId($user->id),
-                    'text' => $user->name . ' (' . $user->email . ')'
-                ];
-            });
+        $users = $this->labTeamService->getUsersForAutocomplete($realLabId, $search);
+
+        $results = $users->map(function ($user) {
+            return [
+                'id'   => encryptId($user->id), // Return Encrypted ID for form submission
+                'text' => $user->name . ' (' . $user->email . ')',
+            ];
+        });
 
         return response()->json([
-            'results' => $users
+            'results' => $results,
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, $labId)
+    public function store(LabTeamRequest $request, $labId)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'jabatan' => 'nullable|string|max:255',
-            'tanggal_mulai' => 'nullable|date',
-        ]);
+        $realLabId = decryptId($labId);
 
-        $realId = decryptId($request->user_id);
-        $lab = Lab::findOrFail($labId);
-        $user = User::findOrFail($realId);
-
-        DB::beginTransaction();
         try {
-            // Check if this user is already assigned to this lab
-            $existingAssignment = LabTeam::where('user_id', $user->id)
-                                         ->where('lab_id', $lab->lab_id)
-                                         ->first();
+            $data            = $request->all();
+            $data['user_id'] = decryptId($request->user_id); // Decrypt user_id
 
-            if ($existingAssignment) {
-                return redirect()->back()
-                    ->with('error', 'User ini sudah menjadi bagian dari lab ini.')
-                    ->withInput();
-            }
+            $this->labTeamService->assignUserToLab($realLabId, $data);
 
-            LabTeam::create([
-                'user_id' => $user->id,
-                'lab_id' => $lab->lab_id,
-                'jabatan' => $request->jabatan,
-                'tanggal_mulai' => $request->tanggal_mulai ?? now(),
-                'is_active' => true,
-            ]);
-
-            DB::commit();
-
-            return redirect()->route('labs.teams.index', $lab->lab_id)
-                ->with('success', 'Anggota tim berhasil ditambahkan ke lab.');
+            return jsonSuccess('Anggota tim berhasil ditambahkan ke lab.', route('labs.teams.index', $labId));
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal menambahkan anggota tim: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -117,27 +87,15 @@ class LabTeamController extends Controller
      */
     public function destroy($labId, $id)
     {
-        $labTeam = LabTeam::findOrFail($id);
-
-        if ($labTeam->lab_id != $labId) {
-            return redirect()->back()->with('error', 'Data tidak ditemukan.');
-        }
-
-        DB::beginTransaction();
         try {
-            // Update status to inactive instead of deleting
-            $labTeam->update([
-                'is_active' => false,
-                'tanggal_selesai' => now()
-            ]);
+            $realLabId = decryptId($labId);
+            $realId    = decryptId($id); // Assuming ID passed in route is encrypted
 
-            DB::commit();
+            $this->labTeamService->removeUserFromLab($realLabId, $realId);
 
-            return redirect()->route('labs.teams.index', $labId)
-                ->with('success', 'Anggota tim berhasil dihapus dari lab.');
+            return jsonSuccess('Anggota tim berhasil dihapus dari lab.', route('labs.teams.index', $labId));
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Gagal menghapus anggota tim: ' . $e->getMessage());
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

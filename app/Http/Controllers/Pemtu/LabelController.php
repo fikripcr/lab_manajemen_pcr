@@ -2,29 +2,31 @@
 namespace App\Http\Controllers\Pemtu;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pemtu\Label;
-use App\Models\Pemtu\LabelType;
+use App\Http\Requests\Pemtu\LabelRequest;
+use App\Services\Pemtu\LabelService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class LabelController extends Controller
 {
+    protected $labelService;
+
+    public function __construct(LabelService $labelService)
+    {
+        $this->labelService = $labelService;
+    }
+
     public function index()
     {
-        $types = LabelType::orderBy('name')->get();
+        $types = $this->labelService->getAllLabelTypes();
         return view('pages.pemtu.labels.index', compact('types'));
     }
 
     public function paginate(Request $request)
     {
-        $data = Label::with('type')->select('label.*');
+        $query = $this->labelService->getLabelFilteredQuery($request->all());
 
-        if ($request->has('type_id') && $request->type_id != '') {
-            $data->where('type_id', $request->type_id);
-        }
-
-        return DataTables::of($data)
+        return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('name', function ($row) {
                 $color = $row->type->color ?? 'blue';
@@ -49,69 +51,52 @@ class LabelController extends Controller
 
     public function create()
     {
-        $types = LabelType::all();
+        $types = $this->labelService->getAllLabelTypes();
         return view('pages.pemtu.labels.create', compact('types'));
     }
 
-    public function store(Request $request)
+    public function store(LabelRequest $request)
     {
-        $request->validate([
-            'type_id'     => 'required|exists:label_types,labeltype_id',
-            'name'        => 'required|string|max:100',
-            'slug'        => 'nullable|string|max:100', // Auto-generated if empty
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $this->labelService->createLabel($request->validated());
 
-        $data = $request->all();
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['name']);
+            return jsonSuccess('Label created successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        Label::create($data);
-
-        return response()->json([
-            'message' => 'Label created successfully.',
-        ]);
     }
 
     public function edit($id)
     {
-        $label = Label::findOrFail($id);
-        $types = LabelType::all();
+        $label = $this->labelService->getLabelById($id);
+        if (! $label) {
+            abort(404);
+        }
+
+        $types = $this->labelService->getAllLabelTypes();
+
         return view('pages.pemtu.labels.edit', compact('label', 'types'));
     }
 
-    public function update(Request $request, $id)
+    public function update(LabelRequest $request, $id)
     {
-        $request->validate([
-            'type_id'     => 'required|exists:label_types,labeltype_id',
-            'name'        => 'required|string|max:100',
-            'slug'        => 'nullable|string|max:100',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $this->labelService->updateLabel($id, $request->validated());
 
-        $label = Label::findOrFail($id);
-
-        $data = $request->all();
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['name']);
+            return jsonSuccess('Label updated successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $label->update($data);
-
-        return response()->json([
-            'message' => 'Label updated successfully.',
-        ]);
     }
 
     public function destroy($id)
     {
-        $label = Label::findOrFail($id);
-        $label->delete();
+        try {
+            $this->labelService->deleteLabel($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Label deleted successfully.',
-        ]);
+            return jsonSuccess('Label deleted successfully.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 }

@@ -45,4 +45,13 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\Sys\PermissionController::class, 'index'])->name('index');
         Route::get('/search', [\App\Http\Controllers\Api\Sys\PermissionController::class, 'search'])->name('search');
     });
+
+    // Users API routes
+    Route::get('/users/search', function (\Illuminate\Http\Request $request) {
+        $query = \App\Models\User::query();
+        if ($request->filled('q')) {
+            $query->where('name', 'like', '%' . $request->q . '%');
+        }
+        return $query->select('id', 'name')->orderBy('name')->limit(50)->get();
+    })->name('api.users.search');
 });

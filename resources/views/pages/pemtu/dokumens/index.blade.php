@@ -4,44 +4,121 @@
 @section('header')
 <x-tabler.page-header title="Dokumen SPMI" pretitle="Documents">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-plus" text="Add Document" class="ajax-modal-btn" data-url="{{ route('pemtu.dokumens.create') }}" data-modal-title="Add New Document" />
+        <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Kebijakan" class="ajax-modal-btn btn-primary" data-url="{{ route('pemtu.dokumens.create') }}" data-modal-title="Tambah Dokumen Kebijakan" />
+        <x-tabler.button type="button" icon="ti ti-file-plus" text="Tambah Standar" class="ajax-modal-btn btn-success ms-2" data-url="{{ route('pemtu.dokumens.create-standar') }}" data-modal-title="Tambah Dokumen Standar" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
 <div class="row row-cards">
-    <!-- Tree View Sidebar -->
+    <!-- Tree View Sidebar with Tabs -->
     <div class="col-lg-4">
         <div class="card">
-            <div class="card-header flex-column align-items-stretch">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h3 class="card-title">Struktur Dokumen</h3>
-                    <div class="card-actions">
-                        {{-- Filter Toggle or Reset --}}
-                        <a href="{{ route('pemtu.dokumens.index') }}" class="btn btn-sm btn-ghost-secondary" title="Reset Filters">
-                            <i class="ti ti-refresh"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <select class="form-select form-select-sm" id="filter-periode" onchange="window.location.href='?periode='+this.value">
-                        <option value="">Semua Periode</option>
-                        @foreach($periods as $p)
-                            <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
-                        @endforeach
-                    </select>
-                    <input type="text" class="form-control form-control-sm" id="tree-search" placeholder="Cari dokumen...">
+            <div class="card-header border-bottom-0">
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                    <li class="nav-item">
+                        <a href="#main-kebijakan" class="nav-link active" data-bs-toggle="tab"><i class="ti ti-gavel me-2"></i>Kebijakan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#main-standar" class="nav-link" data-bs-toggle="tab"><i class="ti ti-certificate me-2"></i>Standar</a>
+                    </li>
+                </ul>
+                <div class="card-actions">
+                     <a href="{{ route('pemtu.dokumens.index') }}" class="btn btn-sm btn-ghost-secondary" title="Reset Filters">
+                        <i class="ti ti-refresh"></i>
+                    </a>
                 </div>
             </div>
-            <div class="card-body overflow-auto" style="max-height: 70vh;">
-                <ul class="list-unstyled" id="dokumen-tree">
-                            @forelse($dokumens as $dok)
-                                @include('pages.pemtu.dokumens._tree_item', ['dok' => $dok, 'level' => 0])
-                            @empty
-                                <li class="text-muted text-center py-3">Tidak ada dokumen.</li>
-                            @endforelse
-                </ul>
+            
+            <div class="tab-content">
+                <!-- PANEL KEBIJAKAN -->
+                <div class="tab-pane active show" id="main-kebijakan">
+                    <!-- Filters & Sub-Tabs -->
+                    <div class="card-body border-bottom bg-light-lt py-3">
+                         <div class="d-flex gap-2 mb-3">
+                            <select class="form-select form-select-sm" id="filter-periode" onchange="window.location.href='?periode='+this.value+'&jenis='+document.querySelector('.nav-link.active')?.dataset.jenis">
+                                <option value="">Semua Periode</option>
+                                @foreach($periods as $p)
+                                    <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
+                                @endforeach
+                            </select>
+                            <input type="text" class="form-control form-control-sm" id="tree-search" placeholder="Cari dokumen...">
+                        </div>
+                        
+                        <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">
+                             <li class="nav-item">
+                                <a href="#tab-visi-misi" class="nav-link py-1 {{ !request('jenis') || request('jenis') == 'visi-misi' ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="visi-misi">VISI & MISI</a>
+                            </li>
+                            @foreach(['rjp' => 'RJP', 'renstra' => 'RENSTRA', 'renop' => 'RENOP'] as $key => $label)
+                            <li class="nav-item">
+                                <a href="#tab-{{ $key }}" class="nav-link py-1 {{ request('jenis') == $key ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="{{ $key }}">{{ $label }}</a>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    
+                    <!-- Content Trees -->
+                    <div class="card-body p-0 overflow-auto" style="max-height: 55vh;">
+                         <div class="tab-content p-3">
+                             <!-- VISI & MISI -->
+                             <div class="tab-pane {{ !request('jenis') || request('jenis') == 'visi-misi' ? 'active show' : '' }}" id="tab-visi-misi">
+                                <ul class="list-unstyled nested-sortable">
+                                    @foreach($dokumentByJenis['visi'] ?? [] as $dok)
+                                        @include('pages.pemtu.dokumens._tree_item', ['dok' => $dok, 'level' => 0])
+                                    @endforeach
+                                    @if(empty($dokumentByJenis['visi']))
+                                        <li class="text-muted text-center py-3">Tidak ada dokumen VISI.</li>
+                                    @endif
+                                </ul>
+                             </div>
+                             
+                             <!-- RJP/RENSTRA/RENOP -->
+                             @foreach(['rjp', 'renstra', 'renop'] as $jenis)
+                             <div class="tab-pane {{ request('jenis') == $jenis ? 'active show' : '' }}" id="tab-{{ $jenis }}">
+                                <ul class="list-unstyled nested-sortable">
+                                    @forelse($dokumentByJenis[$jenis] ?? [] as $dok)
+                                        @include('pages.pemtu.dokumens._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
+                                    @empty
+                                        <li class="text-muted text-center py-3">Tidak ada dokumen {{ strtoupper($jenis) }}.</li>
+                                    @endforelse
+                                </ul>
+                             </div>
+                             @endforeach
+                         </div>
+                    </div>
+                </div>
+
+                <!-- PANEL STANDAR -->
+                <div class="tab-pane" id="main-standar">
+                     <div class="card-body border-bottom bg-light-lt py-3">
+                         <div class="text-muted small mb-2">Filter Jenis:</div>
+                         <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">
+                            <li class="nav-item"><a href="#std-standar" class="nav-link py-1 active" data-bs-toggle="tab">Standar</a></li>
+                            <li class="nav-item"><a href="#std-formulir" class="nav-link py-1" data-bs-toggle="tab">Formulir</a></li>
+                            <li class="nav-item"><a href="#std-sop" class="nav-link py-1" data-bs-toggle="tab">SOP</a></li>
+                         </ul>
+                     </div>
+                     <div class="card-body p-0 overflow-auto" style="max-height: 55vh;">
+                          <div class="tab-content p-3">
+                               @foreach(['standar', 'formulir', 'sop'] as $stType)
+                               <div class="tab-pane {{ $stType == 'standar' ? 'active show' : '' }}" id="std-{{ $stType }}">
+                                    <ul class="list-unstyled nested-sortable">
+                                        @php
+                                            $list = $dokumentByJenis[$stType] ?? [];
+                                        @endphp
+                                        
+                                        @forelse($list as $dok)
+                                            @include('pages.pemtu.dokumens._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
+                                        @empty
+                                            <li class="text-muted text-center py-3">Tidak ada dokumen {{ ucfirst($stType) }}.</li>
+                                        @endforelse
+                                    </ul>
+                               </div>
+                               @endforeach
+                          </div>
+                     </div>
+                </div>
             </div>
         </div>
     </div>
@@ -129,11 +206,28 @@
                 });
         });
 
-        // Toggle children
+        // Toggle children (Standard Tree)
         $(document).on('click', '.tree-toggle', function(e) {
              e.preventDefault();
              e.stopPropagation();
              const target = $(this).closest('li').children('ul');
+             const icon = $(this).find('i');
+             
+             target.toggleClass('d-none');
+             
+             if (target.hasClass('d-none')) {
+                 icon.removeClass('ti-chevron-down').addClass('ti-chevron-right');
+             } else {
+                 icon.removeClass('ti-chevron-right').addClass('ti-chevron-down');
+             }
+        });
+
+        // Toggle children (Custom for VISI/MISI Root)
+        $(document).on('click', '.tree-toggle-custom', function(e) {
+             e.preventDefault();
+             e.stopPropagation();
+             const parentLi = $(this).closest('li');
+             const target = parentLi.children('ul');
              const icon = $(this).find('i');
              
              target.toggleClass('d-none');

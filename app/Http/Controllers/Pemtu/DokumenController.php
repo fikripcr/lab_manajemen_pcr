@@ -2,315 +2,224 @@
 namespace App\Http\Controllers\Pemtu;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pemtu\Dokumen;
+use App\Http\Requests\Pemtu\DokumenRequest;
+use App\Models\Pemtu\DokSub;
+use App\Models\Pemtu\Dokumen; // Still needed for model binding or specific view logic? Service returns models.
+use App\Services\Pemtu\DokumenService;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class DokumenController extends Controller
 {
-    private function getHierarchicalDokumens($parentId = null, $prefix = '')
-    {
-        $docs = Dokumen::where('parent_id', $parentId)
-            ->orderBy('seq')
-            ->orderBy('judul')
-            ->get();
+    protected $dokumenService;
 
-        $result = [];
-        foreach ($docs as $doc) {
-            $doc->judul = $prefix . ' ' . $doc->judul;
-            $result[]   = $doc;
-            $result     = array_merge($result, $this->getHierarchicalDokumens($doc->dok_id, $prefix . '--'));
-        }
-        return $result;
+    public function __construct(DokumenService $dokumenService)
+    {
+        $this->dokumenService = $dokumenService;
     }
 
     public function index(Request $request)
     {
-        // Recursive eager load for Tree View
-        $dokumens = Dokumen::whereNull('parent_id')
-            ->when($request->periode, function ($q) use ($request) {
-                $q->where('periode', $request->periode);
-            })
-            ->orderBy('seq')
-            ->with(['children' => function ($q) {
-                $q->orderBy('seq')->with(['children' => function ($qq) {
-                    $qq->orderBy('seq')->with(['children' => function ($qqq) {
-                        $qqq->orderBy('seq');
-                    }]);
-                }]);
-            }])
-            ->get();
+        $pageTitle = 'Dokumen SPMI';
 
-        // Get unique periods for filter dropdown
-        $periods = Dokumen::select('periode')->distinct()->orderBy('periode', 'desc')->pluck('periode');
+        // Periods for filter
+        // Can be moved to service but simple pluck is fine here or in service.
+        // Let's keep specific view-prep logic here unless it's complex.
+        $periods = Dokumen::select('periode')
+            ->whereNotNull('periode')
+            ->distinct()
+            ->orderBy('periode', 'desc')
+            ->pluck('periode');
 
-        return view('pages.pemtu.dokumens.index', compact('dokumens', 'periods'));
+        // Get all documents by jenis for tab filtering (including children)
+        // Service method: getDokumenByJenis($jenis, $periode)
+        $dokumentByJenis = [];
+        $jenisTypes      = ['visi', 'misi', 'rjp', 'renstra', 'renop', 'standar', 'formulir', 'sop', 'dll'];
+
+        // Optimization: Maybe fetching all in one query is better?
+        // Service has getFilteredQuery.
+        // But the view expects categorized data.
+        // Let's stick to loop for now, or optimise later.
+        foreach ($jenisTypes as $jenis) {
+            $dokumentByJenis[$jenis] = $this->dokumenService->getDokumenByJenis($jenis, $request->periode);
+        }
+
+        return view('pages.pemtu.dokumens.index', compact('pageTitle', 'dokumentByJenis', 'periods'));
     }
 
-    public function show($id)
+    public function create(Request $request)
     {
-        $dokumen = Dokumen::with(['dokSubs', 'children'])->findOrFail($id);
-        return view('pages.pemtu.dokumens.detail', compact('dokumen'));
-    }
+        $pageTitle = 'Tambah Dokumen Kebijakan';
 
-    public function create()
-    {
-        $dokumens     = $this->getHierarchicalDokumens();
+        // Helper for view (can be in service if reused)
+        // $dokumens = $this->dokumenService->getHierarchicalDokumens();
+        // View needs list for Parent selection?
+        // Original Create: $dokumens = Dokumen::all(); (but hierarchical preferred)
+        // Let's use service hierarchical fetch.
+        $dokumens = $this->dokumenService->getHierarchicalDokumens();
+
         $parent       = null;
-        $allowedTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
         $parentDokSub = null;
 
-        // Check for Parent DokSub first (New Flow)
-        if (request()->has('parent_doksub_id')) {
-            $parentDokSub = DokSub::find(request('parent_doksub_id'));
-            if ($parentDokSub) {
-                // The 'Parent' for hierarchy logic is the Dokumen that OWNS this DokSub
-                $parent = $parentDokSub->dokumen;
-                // But we must ensure the new Dokumen is linked to this DokSub
-            }
-        }
-        // Fallback or explicit parent_id
-        elseif (request()->has('parent_id')) {
-            $parent = Dokumen::find(request('parent_id'));
+        if ($request->has('parent_id')) {
+            $parent = $this->dokumenService->getDokumenById($request->parent_id);
         }
 
-        if ($parent) {
-            // Logic for allowed types based on Parent
-            $parentJenis = strtolower(trim($parent->jenis));
-            switch ($parentJenis) {
-                case 'visi':
-                    $allowedTypes = ['misi'];
-                    break;
-                case 'misi':
-                    $allowedTypes = ['rjp']; // Or RPJP
-                    break;
-                case 'rjp':
-                    $allowedTypes = ['renstra'];
-                    break;
-                case 'renstra':
-                    $allowedTypes = ['renop'];
-                    break;
-                case 'renop':
-                    // Stop hierarchy here for this module
-                    $allowedTypes = [];
-                    break;
-                default:
-                    $allowedTypes = [];
-                    break;
-            }
+        // Parent DokSub logic (if linking to sub-doc as parent? logic from previous code)
+        if ($request->has('parent_doksub_id')) {
+            $parentDokSub = DokSub::find($request->parent_doksub_id);
         }
 
-        $pageTitle = 'Tambah Dokumen Baru';
-        if ($parent) {
-            $parentJenis = strtolower(trim($parent->jenis));
-            // Determine label for the child to be created
-            $childType = match ($parentJenis) {
-                'visi'    => 'Misi',
-                'misi'    => 'RPJP',
-                'rjp'     => 'Renstra',
-                'renstra' => 'Renop',
-                default   => ''
-            };
-
-            if ($childType) {
-                $pageTitle = "Tambah $childType";
-                if ($parentDokSub) {
-                    $pageTitle .= " (Turunan dari Poin: {$parentDokSub->judul})";
-                } else {
-                    $pageTitle .= " (Anak dari {$parent->judul})";
-                }
-            }
-        }
+        $allowedTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop', 'standar', 'formulir', 'dll'];
 
         return view('pages.pemtu.dokumens.create', compact('dokumens', 'parent', 'allowedTypes', 'pageTitle', 'parentDokSub'));
     }
 
-    public function store(Request $request)
+    public function createStandar()
     {
-        $request->validate([
-            'judul'     => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:dokumen,dok_id',
-            'kode'      => 'nullable|string|max:20',
-            'jenis'     => 'required|string|in:visi,misi,rjp,renstra,renop,standar,formulir,dll',
-        ]);
+        $pageTitle = 'Tambah Dokumen Standar';
+        return view('pages.pemtu.dokumens.create_standar', compact('pageTitle'));
+    }
 
-        $data = $request->all();
+    public function store(DokumenRequest $request)
+    {
+        try {
+            $data = $request->validated();
 
-        // Default Periode to current year
-        $data['periode'] = date('Y');
+            // Additional Logic handled in Service (Level, Seq, Default Periode)
+            // But redirect logic needs data.
+            $dokumen = $this->dokumenService->createDokumen($data);
 
-        // Default Type (Jenis) to NULL or generic if empty? (User asked to remove type selection)
-        // Migration allows null, model fillable has it. Let's leave it null or set a default if needed.
+            $redirectUrl = route('pemtu.dokumens.index');
+            if ($request->filled('parent_doksub_id')) {
+                $redirectUrl = route('pemtu.dok-subs.show', $request->parent_doksub_id);
+            } elseif ($dokumen->parent_id) {
+                $redirectUrl = route('pemtu.dokumens.show', $dokumen->parent_id);
+            }
 
-        // Calculate Level
-        if (! empty($data['parent_id'])) {
-            $parent        = Dokumen::find($data['parent_id']);
-            $data['level'] = $parent ? $parent->level + 1 : 1;
-        } else {
-            $data['level'] = 1;
+            return jsonSuccess('Dokumen berhasil dibuat.', $redirectUrl);
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
+    }
+
+    public function show($id)
+    {
+        $dokumen = $this->dokumenService->getDokumenById($id);
+        if (! $dokumen) {
+            abort(404);
         }
 
-        // Default Seq
-        if (! empty($data['parent_id'])) {
-            $data['seq'] = Dokumen::where('parent_id', $data['parent_id'])->max('seq') + 1;
-        } else {
-            $data['seq'] = Dokumen::whereNull('parent_id')->max('seq') + 1;
-        }
+        $pageTitle = 'Detail Dokumen: ' . $dokumen->judul;
 
-        Dokumen::create($data);
-
-        $redirectUrl = route('pemtu.dokumens.index');
-
-        if (! empty($data['parent_doksub_id'])) {
-            $redirectUrl = route('pemtu.dok-subs.show', $data['parent_doksub_id']);
-        } elseif (! empty($data['parent_id'])) {
-            // Optional: Redirect to parent detail
-            $redirectUrl = route('pemtu.dokumens.show', $data['parent_id']);
-        }
-
-        return response()->json([
-            'message'  => 'Dokumen berhasil dibuat.',
-            'redirect' => $redirectUrl,
-        ]);
+        return view('pages.pemtu.dokumens.detail', compact('dokumen', 'pageTitle'));
     }
 
     public function edit($id)
     {
-        $dokumen = Dokumen::findOrFail($id);
-        $allDocs = $this->getHierarchicalDokumens();
-        // Exclude self/children to prevent cycles (simple check)
-        $dokumens = collect($allDocs)->filter(function ($d) use ($id) {
-            return $d->dok_id != $id;
+        $dokumen = $this->dokumenService->getDokumenById($id);
+        if (! $dokumen) {
+            abort(404);
+        }
+
+        $allDocs = $this->dokumenService->getHierarchicalDokumens();
+
+        // Exclude self/children to prevent cycles
+        // Logic stays here or move to service 'getPotentialParents($excludeId)'?
+        // Simple filter is fine here.
+        $dokumens = $allDocs->filter(function ($d) use ($id) {
+            return $d->dok_id != $id; // And check children recursively? For now simple check.
         });
 
         return view('pages.pemtu.dokumens.edit', compact('dokumen', 'dokumens'));
     }
 
-    public function update(Request $request, $id)
+    public function update(DokumenRequest $request, $id)
     {
-        $request->validate([
-            'judul'     => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:dokumen,dok_id',
-            'kode'      => 'nullable|string|max:20',
-            'jenis'     => 'required|string|in:visi,misi,rjp,renstra,renop,standar,formulir,dll',
-        ]);
+        try {
+            $this->dokumenService->updateDokumen($id, $request->validated());
 
-        $dokumen = Dokumen::findOrFail($id);
-
-        if ($request->parent_id == $id) {
-            return response()->json(['message' => 'Tidak bisa menjadi parent untuk diri sendiri.'], 422);
-        }
-
-        $data = $request->all();
-
-        // Auto-set Year/Periode if missing (though update usually preserves or updates field)
-        // If user wants "Tahun langsung set tahun ini", maybe on update too? Or only create?
-        // Usually creation time. I'll keep existing unless logic demands change.
-        // Actually, let's ensure periode is set if not present?
-        if (empty($data['periode'])) {
-            $data['periode'] = date('Y');
-        }
-
-        // Recalculate Level if parent changed
-        if ($data['parent_id'] != $dokumen->parent_id) {
-            if (! empty($data['parent_id'])) {
-                $parent        = Dokumen::find($data['parent_id']);
-                $data['level'] = $parent ? $parent->level + 1 : 1;
+            // Determine redirect
+            $dokumen     = $this->dokumenService->getDokumenById($id);
+            $redirectUrl = route('pemtu.dokumens.index');
+            if ($dokumen->parent_id) {
+                $redirectUrl = route('pemtu.dokumens.show', $dokumen->parent_id);
             } else {
-                $data['level'] = 1;
+                // If it was standard, maybe index?
+                $redirectUrl = route('pemtu.dokumens.show', $id);
             }
+
+            return jsonSuccess('Dokumen berhasil diperbarui.', $redirectUrl);
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $dokumen->update($data);
-
-        return response()->json([
-            'message'  => 'Dokumen berhasil diperbarui.',
-            'redirect' => route('pemtu.dokumens.index'),
-        ]);
     }
 
     public function destroy($id)
     {
-        $dokumen = Dokumen::findOrFail($id);
+        try {
+            $dokumen     = $this->dokumenService->getDokumenById($id);
+            $redirectOpt = route('pemtu.dokumens.index');
+            if ($dokumen && $dokumen->parent_id) {
+                $redirectOpt = route('pemtu.dokumens.show', $dokumen->parent_id);
+            }
 
-        if ($dokumen->children()->exists()) {
-            return response()->json([
-                'message' => 'Tidak bisa menghapus dokumen yang memiliki sub-dokumen/anak. Pindahkan atau hapus anak terlebih dahulu.',
-            ], 422);
+            $this->dokumenService->deleteDokumen($id);
+
+            return jsonSuccess('Dokumen berhasil dihapus.', $redirectOpt);
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        $dokumen->delete();
-
-        return response()->json([
-            'success'  => true,
-            'message'  => 'Dokumen berhasil dihapus.',
-            'redirect' => route('pemtu.dokumens.index'),
-        ]);
     }
 
     public function reorder(Request $request)
     {
-        $hierarchy = $request->input('hierarchy');
+        try {
+            $hierarchy = $request->input('hierarchy');
+            $this->dokumenService->reorderDokumens($hierarchy);
 
-        \DB::transaction(function () use ($hierarchy) {
-            $this->updateHierarchy($hierarchy);
-        });
-
-        return response()->json(['message' => 'Urutan berhasil diperbarui.']);
-    }
-
-    private function updateHierarchy($items, $parentId = null, $level = 1)
-    {
-        foreach ($items as $index => $item) {
-            $doc = Dokumen::find($item['id']);
-            if ($doc) {
-                $doc->parent_id = $parentId;
-                $doc->seq       = $index + 1;
-                $doc->level     = $level;
-                $doc->save();
-
-                if (isset($item['children']) && is_array($item['children'])) {
-                    $this->updateHierarchy($item['children'], $doc->dok_id, $level + 1);
-                }
-            }
+            return jsonSuccess('Urutan berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
     }
 
     public function childrenData(Request $request, $id)
     {
-        if ($request->ajax()) {
-            $query = Dokumen::where('parent_id', $id);
+        try {
+            $query = $this->dokumenService->getChildrenQuery($id);
 
-            return \DataTables::of($query)
+            return DataTables::of($query)
                 ->addIndexColumn()
-                ->addColumn('seq', function ($row) {
-                    return '<span class="badge badge-outline text-muted">' . $row->seq . '</span>';
-                })
-                ->editColumn('judul', function ($row) {
-                    $html  = '<div class="d-flex align-items-center">';
-                    $html .= '<a href="' . route('pemtu.dokumens.show', $row->dok_id) . '" class="text-reset fw-bold">' . $row->judul . '</a>';
+                ->addColumn('judul', function ($row) {
+                    $title = '<div class="font-weight-bold">' . $row->judul . '</div>';
                     if ($row->kode) {
-                        $html .= '<span class="text-muted ms-2 small">(' . $row->kode . ')</span>';
+                        $title .= '<div class="text-muted small">' . $row->kode . '</div>';
                     }
-                    $html .= '</div>';
-                    return $html;
+                    if ($row->children_count > 0) {
+                        $title .= '<div class="badge bg-blue-lt mt-1">' . $row->children_count . ' Children</div>';
+                    }
+                    return $title;
                 })
                 ->addColumn('action', function ($row) {
                     $editUrl   = route('pemtu.dokumens.edit', $row->dok_id);
-                    $deleteUrl = route('pemtu.dokumens.destroy', $row->dok_id);
+                    $deleteUrl = route('pemtu.dokumens.destroy', $row->dok_id); // Ensure destroy uses id
 
                     return '
-                        <div class="btn-list flex-nowrap">
-                            <button type="button" class="btn btn-sm btn-icon ajax-modal-btn" data-url="' . $editUrl . '" data-modal-title="Edit Dokumen">
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-icon btn-ghost-primary ajax-modal-btn" data-url="' . $editUrl . '" data-modal-title="Edit Dokumen" title="Edit">
                                 <i class="ti ti-pencil"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-icon btn-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus?" data-text="Dokumen ini akan dihapus permanen.">
+                            <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus?" data-text="Dokumen ini akan dihapus permanen." title="Hapus">
                                 <i class="ti ti-trash"></i>
                             </button>
                         </div>
                     ';
                 })
-                ->rawColumns(['seq', 'judul', 'action'])
+                ->rawColumns(['judul', 'action']) // no seq needed
                 ->make(true);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

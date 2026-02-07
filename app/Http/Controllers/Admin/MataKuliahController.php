@@ -3,15 +3,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MataKuliahRequest;
-use App\Models\MataKuliah;
+use App\Services\Admin\MataKuliahService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class MataKuliahController extends Controller
 {
-    public function __construct()
+    protected $mataKuliahService;
+
+    public function __construct(MataKuliahService $mataKuliahService)
     {
-        // $this->middleware(['permission:manage-mata-kuliah']);
+        $this->mataKuliahService = $mataKuliahService;
     }
 
     /**
@@ -27,12 +29,7 @@ class MataKuliahController extends Controller
      */
     public function paginate(Request $request)
     {
-        $mataKuliahs = MataKuliah::select('*')->whereNull('deleted_at');
-
-        // Apply filters if present
-        if ($request->filled('sks')) {
-            $mataKuliahs->where('sks', $request->sks);
-        }
+        $mataKuliahs = $this->mataKuliahService->getFilteredQuery($request->all());
 
         return DataTables::of($mataKuliahs)
             ->addIndexColumn()
@@ -73,19 +70,12 @@ class MataKuliahController extends Controller
      */
     public function store(MataKuliahRequest $request)
     {
-        \DB::beginTransaction();
         try {
-            MataKuliah::create($request->validated());
+            $this->mataKuliahService->createMataKuliah($request->validated());
 
-            \DB::commit();
-
-            return redirect()->route('mata-kuliah.index')
-                ->with('success', 'Mata Kuliah berhasil dibuat.');
+            return jsonSuccess('Mata Kuliah berhasil dibuat.', route('mata-kuliah.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal membuat mata kuliah: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -95,7 +85,12 @@ class MataKuliahController extends Controller
     public function show($id)
     {
         $realId     = decryptId($id);
-        $mataKuliah = MataKuliah::findOrFail($realId);
+        $mataKuliah = $this->mataKuliahService->getMataKuliahById($realId);
+
+        if (! $mataKuliah) {
+            abort(404);
+        }
+
         return view('pages.admin.mata-kuliah.show', compact('mataKuliah'));
     }
 
@@ -105,7 +100,12 @@ class MataKuliahController extends Controller
     public function edit($id)
     {
         $realId     = decryptId($id);
-        $mataKuliah = MataKuliah::findOrFail($realId);
+        $mataKuliah = $this->mataKuliahService->getMataKuliahById($realId);
+
+        if (! $mataKuliah) {
+            abort(404);
+        }
+
         return view('pages.admin.mata-kuliah.edit', compact('mataKuliah'));
     }
 
@@ -114,22 +114,14 @@ class MataKuliahController extends Controller
      */
     public function update(MataKuliahRequest $request, $id)
     {
-        $realId     = decryptId($id);
-        $mataKuliah = MataKuliah::findOrFail($realId);
+        $realId = decryptId($id);
 
-        \DB::beginTransaction();
         try {
-            $mataKuliah->update($request->validated());
+            $this->mataKuliahService->updateMataKuliah($realId, $request->validated());
 
-            \DB::commit();
-
-            return redirect()->route('mata-kuliah.index')
-                ->with('success', 'Mata Kuliah berhasil diperbarui.');
+            return jsonSuccess('Mata Kuliah berhasil diperbarui.', route('mata-kuliah.index'));
         } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal memperbarui mata kuliah: ' . $e->getMessage())
-                ->withInput();
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -138,30 +130,15 @@ class MataKuliahController extends Controller
      */
     public function destroy($id)
     {
-        $realId     = decryptId($id);
-        $mataKuliah = MataKuliah::findOrFail($realId);
+        try {
+            $realId = decryptId($id);
+            $this->mataKuliahService->deleteMataKuliah($realId);
 
-        // Check if mata kuliah is used in any schedule
-        if ($mataKuliah->jadwals->count() > 0) {
-            return redirect()->back()->with('error', 'Cannot delete mata kuliah that is associated with schedules.');
+            return jsonSuccess('Mata Kuliah berhasil dihapus.', route('mata-kuliah.index'));
+
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
         }
-
-        // Check if mata kuliah is used in any software request
-        if ($mataKuliah->requestSoftwares->count() > 0) {
-            return redirect()->back()->with('error', 'Cannot delete mata kuliah that is associated with software requests.');
-        }
-
-        $mataKuliah->delete();
-
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Mata Kuliah berhasil dihapus.',
-            ]);
-        }
-
-        return redirect()->route('mata-kuliah.index')
-            ->with('success', 'Mata Kuliah deleted successfully.');
     }
 
 }
