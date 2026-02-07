@@ -1,12 +1,12 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header title="Mata Kuliah Details" pretitle="Mata Kuliah">
+    <x-tabler.page-header title="Mata Kuliah Details" pretitle="Mata Kuliah">
         <x-slot:actions>
-            <x-sys.button type="edit" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" />
-            <x-sys.button type="back" :href="route('mata-kuliah.index')" />
+            <x-tabler.button type="a" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" icon="ti ti-pencil" class="btn-warning" text="Edit" />
+            <x-tabler.button type="a" :href="route('mata-kuliah.index')" icon="ti ti-arrow-left" class="btn-secondary" text="Back" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -32,8 +32,7 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-top">
-                        <x-sys.button type="delete" 
-                                    class="ajax-delete"
+                        <x-tabler.button type="button" icon="ti ti-trash" class="btn-danger ajax-delete" 
                                     :data-url="route('mata-kuliah.destroy', $mataKuliah->encrypted_mata_kuliah_id)"
                                     data-title="Hapus Mata Kuliah"
                                     data-text="Apakah Anda yakin ingin menghapus mata kuliah ini?"

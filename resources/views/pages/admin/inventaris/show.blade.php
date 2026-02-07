@@ -1,12 +1,12 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <x-sys.page-header :title="$inventory->nama_alat" pretitle="Inventory Details">
+    <x-tabler.page-header :title="$inventory->nama_alat" pretitle="Inventory Details">
         <x-slot:actions>
-            <x-sys.button type="edit" :href="route('inventaris.edit', $inventory)" />
-            <x-sys.button type="back" :href="route('inventaris.index')" />
+            <x-tabler.button type="a" :href="route('inventaris.edit', $inventory)" icon="ti ti-pencil" class="btn-warning" text="Edit" />
+            <x-tabler.button type="a" :href="route('inventaris.index')" icon="ti ti-arrow-left" class="btn-secondary" text="Back" />
         </x-slot:actions>
-    </x-sys.page-header>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -44,8 +44,7 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-top">
-                        <x-sys.button type="delete" 
-                                    class="ajax-delete"
+                        <x-tabler.button type="button" icon="ti ti-trash" class="btn-danger ajax-delete" 
                                     :data-url="route('inventaris.destroy', $inventory)"
                                     data-title="Hapus Inventaris"
                                     data-text="Apakah Anda yakin ingin menghapus item inventaris ini? Data terkait akan ikut terhapus."

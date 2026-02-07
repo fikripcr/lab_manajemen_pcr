@@ -3,7 +3,7 @@
 
 
 <div class="table-responsive">
-    <table id="{{ $id }}" class="table table-sm table-striped table-vcenter card-table mb-0">
+    <table id="{{ $id }}" class="table table-sm table-striped table-vcenter card-table mb-0 dataTable">
         <thead>
             <tr>
                 @if ($checkbox)
@@ -18,24 +18,56 @@
     </table>
 </div>
 
-@push('scripts')
+@if($attributes->has('ajax-load'))
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const options = {
-                route: '{{ $route }}',
-                checkbox: {{ $checkbox ? 'true' : 'false' }},
-                checkboxKey: '{{ $checkboxKey }}',
-                search: {{ $search ? 'true' : 'false' }},
-                pageLength: {{ $pageLength ? 'true' : 'false' }},
-                columns: @json($columns)
-            };
+        (function() {
+            const initTable = function() {
+                const options = {
+                    route: '{{ $route }}',
+                    checkbox: {{ $checkbox ? 'true' : 'false' }},
+                    checkboxKey: '{{ $checkboxKey }}',
+                    search: {{ $search ? 'true' : 'false' }},
+                    pageLength: {{ $pageLength ? 'true' : 'false' }},
+                    columns: @json($columns)
+                };
 
-            if (window.loadDataTables) {
-                window.loadDataTables().then((CustomDataTables) => {
-                    const dataTableInstance = new CustomDataTables('{{ $id }}', options);
-                    window['DT_{{ $id }}'] = dataTableInstance;
-                });
+                if (window.loadDataTables) {
+                    window.loadDataTables().then((CustomDataTables) => {
+                        const dataTableInstance = new CustomDataTables('{{ $id }}', options);
+                        window['DT_{{ $id }}'] = dataTableInstance;
+                    });
+                }
+            };
+            
+            // If checking readyState in inline script might be redundant if inserted via jQuery, 
+            // but safe to keep. jQuery executes scripts immediately.
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTable);
+            } else {
+                initTable();
             }
-        });
+        })();
     </script>
-@endpush
+@else
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const options = {
+                    route: '{{ $route }}',
+                    checkbox: {{ $checkbox ? 'true' : 'false' }},
+                    checkboxKey: '{{ $checkboxKey }}',
+                    search: {{ $search ? 'true' : 'false' }},
+                    pageLength: {{ $pageLength ? 'true' : 'false' }},
+                    columns: @json($columns)
+                };
+
+                if (window.loadDataTables) {
+                    window.loadDataTables().then((CustomDataTables) => {
+                        const dataTableInstance = new CustomDataTables('{{ $id }}', options);
+                        window['DT_{{ $id }}'] = dataTableInstance;
+                    });
+                }
+            });
+        </script>
+    @endpush
+@endif

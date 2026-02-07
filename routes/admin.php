@@ -113,4 +113,5 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 
     // Global Search
     Route::get('/global-search', [GlobalSearchController::class, 'search'])->name('global-search');
+
 });

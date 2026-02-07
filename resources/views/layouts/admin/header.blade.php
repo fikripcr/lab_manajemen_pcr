@@ -157,11 +157,11 @@
                 @if($hideMenu)
                     {{-- Vertical Layout Mobile Menu (Hidden on Desktop) --}}
                     <div class="d-lg-none">
-                        <x-admin.menu-renderer type="navbar" />
+                        <x-tabler.menu-renderer type="navbar" />
                     </div>
                 @else
                     {{-- Condensed Layout Menu --}}
-                    <x-admin.menu-renderer type="navbar" />
+                    <x-tabler.menu-renderer type="navbar" />
                 @endif
             </div>
             @endif

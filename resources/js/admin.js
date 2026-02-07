@@ -23,6 +23,10 @@ window.Popper = { createPopper };
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 
+// --- SortableJS
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;
+
 // --- SweetAlert2
 import Swal from 'sweetalert2';
 window.Swal = Swal;

@@ -82,12 +82,12 @@ function initAjaxFormHandler() {
                 $form.find('.invalid-feedback').remove();
 
                 // Success (Toast)
-                showSuccessMessage(response.data.message || 'Success').then(() => {
-                    // Redirect if specified in response (wait for toast)
-                    if (response.data.redirect) {
-                        window.location.href = response.data.redirect;
-                    }
-                });
+                showSuccessMessage(response.data.message || 'Success');
+
+                // Redirect immediately if specified
+                if (response.data.redirect) {
+                    window.location.href = response.data.redirect;
+                }
             })
             .catch(function (error) {
                 // Error handling
@@ -167,12 +167,12 @@ function initAjaxFormHandler() {
                             }
 
                             // Show Success Toast
-                            showSuccessMessage(response.data.message || 'Deleted!').then(() => {
-                                // Redirect if specified
-                                if (response.data.redirect) {
-                                    window.location.href = response.data.redirect;
-                                }
-                            });
+                            showSuccessMessage(response.data.message || 'Deleted!');
+
+                            // Redirect if specified (Immediate)
+                            if (response.data.redirect) {
+                                window.location.href = response.data.redirect;
+                            }
                         });
                 }
             });

@@ -82,6 +82,41 @@
             'icon'  => 'ti ti-device-laptop',
         ],
         [
+            'type' => 'dropdown',
+            'title' => 'SPMI (Pemtu)',
+            'icon' => 'ti ti-checkbox',
+            'route' => '#',
+            'active_routes' => ['pemtu.*'],
+            'can' => 'admin',
+            'children' => [
+                [
+                    'title' => 'Struktur Organisasi',
+                    'route' => 'pemtu.org-units.index',
+                    'active_routes' => ['pemtu.org-units.*'],
+                ],
+                [
+                    'title' => 'Dokumen',
+                    'route' => 'pemtu.dokumens.index',
+                    'active_routes' => ['pemtu.dokumens.*'],
+                ],
+                [
+                    'title' => 'Personil',
+                    'route' => 'pemtu.personils.index',
+                    'active_routes' => ['pemtu.personils.*'],
+                ],
+                [
+                    'title' => 'Label',
+                    'route' => 'pemtu.labels.index',
+                    'active_routes' => ['pemtu.labels.*', 'pemtu.label-types.*'],
+                ],
+                [
+                    'title' => 'Indikator',
+                    'route' => 'pemtu.indikators.index',
+                    'active_routes' => ['pemtu.indikators.*'],
+                ],
+            ],
+        ],
+        [
             'type'  => 'header',
             'title' => 'Others',
         ],
@@ -196,36 +231,6 @@
                 ],
             ],
         ],
-         // Dummy Nested Example for User Request (Only on Sys for now if desired, or remove)
-         [
-            'type'  => 'header',
-            'title' => 'Nested Example',
-        ],
-        [
-            'type' => 'dropdown',
-            'title' => 'Level 1',
-            'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" /></svg>',
-            'id' => 'navbar-level1',
-            'children' => [
-                 [
-                    'title' => 'Level 2 Item',
-                    'icon' => 'ti ti-file', 
-                    'route' => 'sys.dashboard',
-                 ],
-                 [
-                    'type' => 'dropdown',
-                    'title' => 'Level 2 Parent',
-                    'icon' => 'ti ti-folder-open',
-                    'children' => [
-                         [
-                            'title' => 'Level 3 Item',
-                            'icon' => 'ti ti-file-text',
-                            'route' => 'sys.dashboard',
-                         ]
-                    ]
-                 ]
-            ]
-        ]
     ];
 
     // --- SELECTION LOGIC ---
@@ -272,7 +277,7 @@
                 </li>
             @elseif(($item['type'] ?? 'item') === 'item')
                 <li class="nav-item{{ $isActive($item['route'] ?? null) ? ' active' : '' }}">
-                    <a class="nav-link" href="{{ isset($item['route']) ? route($item['route']) : '#' }}">
+                    <a class="nav-link" href="{{ (isset($item['route']) && $item['route'] !== '#') ? route($item['route']) : '#' }}">
                         <span class="nav-link-icon d-lg-inline-block">
                             {!! $renderIcon($item['icon'] ?? '') !!}
                         </span>
@@ -314,7 +319,7 @@
                                             <div class="dropdown-menu">
                                                 @foreach($child['children'] as $subchild)
                                                     <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}" 
-                                                       href="{{ isset($subchild['route']) ? route($subchild['route']) : '#' }}">
+                                                       href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
                                                         {{ $subchild['title'] ?? '' }}
                                                     </a>
                                                 @endforeach
@@ -322,7 +327,7 @@
                                         </div>
                                     @else
                                         <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" 
-                                           href="{{ isset($child['route']) ? route($child['route']) : '#' }}">
+                                           href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
                                             {{-- Icons optional in submenus --}}
                                             @if(!empty($child['icon']))
                                                 {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
@@ -344,7 +349,7 @@
         @foreach($menu as $item)
             @if(($item['type'] ?? 'item') === 'item')
                 <li class="nav-item{{ $isActive($item['route'] ?? null) ? ' active' : '' }}">
-                    <a class="nav-link" href="{{ isset($item['route']) ? route($item['route']) : '#' }}">
+                    <a class="nav-link" href="{{ (isset($item['route']) && $item['route'] !== '#') ? route($item['route']) : '#' }}">
                         <span class="nav-link-icon d-lg-inline-block">
                             {!! $renderIcon($item['icon'] ?? '') !!}
                         </span>
@@ -363,7 +368,8 @@
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
                                 @foreach($item['children'] ?? [] as $child)
-                                    <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" href="{{ isset($child['route']) ? route($child['route']) : '#' }}">
+                                    <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" 
+                                       href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
                                         @if(!empty($child['icon']))
                                            {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
                                         @endif

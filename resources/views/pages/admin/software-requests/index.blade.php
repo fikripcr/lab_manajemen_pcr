@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('header')
-<x-sys.page-header title="Software Request Management" pretitle="Tables" />
+<x-tabler.page-header title="Software Request Management" pretitle="Tables" />
 @endsection
 
 @section('content')
@@ -65,7 +65,7 @@
                     ]
                 ];
             @endphp
-            <x-sys.datatable id="software-requests-table" :route="route('software-requests.data')" :columns="$columns" :order="[[0, 'desc']]" />
+            <x-tabler.datatable id="software-requests-table" :route="route('software-requests.data')" :columns="$columns" :order="[[0, 'desc']]" />
         </div>
     </div>
 @endsection

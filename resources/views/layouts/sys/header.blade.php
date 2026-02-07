@@ -185,11 +185,11 @@
                 @if($hideMenu)
                     {{-- Vertical Layout Mobile Menu (Hidden on Desktop) --}}
                     <div class="d-lg-none">
-                        <x-sys.menu-renderer type="navbar" />
+                        <x-tabler.menu-renderer type="navbar" group="sys" />
                     </div>
                 @else
                     {{-- Condensed Layout Menu --}}
-                    <x-sys.menu-renderer type="navbar" />
+                    <x-tabler.menu-renderer type="navbar" group="sys" />
                 @endif
             </div>
             @endif
@@ -204,10 +204,10 @@
     <header class="navbar-expand-md">
         <div class="collapse navbar-collapse" id="navbar-menu">
             <div class="navbar"{{ isset($darkSecondary) && $darkSecondary ? ' data-bs-theme="dark"' : '' }}>
-                <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
-                    @unless($hideMenu)
-                        <x-sys.menu-renderer type="navbar" />
-                    @endunless
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
+                        <x-tabler.menu-renderer type="navbar" group="sys" />
+                    </div>
                 </div>
             </div>
         </div>
