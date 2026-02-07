@@ -61,9 +61,8 @@ class SemesterController extends Controller
             })
             ->addColumn('action', function ($semester) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => 'javascript:void(0)',
-                    'editClass' => 'edit-semester',
-                    'editData'  => ['id' => $semester->encrypted_semester_id],
+                    'editUrl'   => route('semesters.edit-modal.show', $semester->encrypted_semester_id),
+                    'editModal' => true,
                     'viewUrl'   => route('semesters.show', $semester->encrypted_semester_id),
                     'deleteUrl' => route('semesters.destroy', $semester->encrypted_semester_id),
                 ])->render();

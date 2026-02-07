@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Semester" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-plus" text="Create" id="createSemesterBtn" />
+        <x-tabler.button type="button" icon="ti ti-plus" text="Create" class="ajax-modal-btn" data-url="{{ route('semesters.create-modal') }}" data-modal-title="Create New Semester" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -40,29 +40,3 @@
     </div>
 @endsection
 
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle create semester button click
-            $('#createSemesterBtn').on('click', function() {
-                $.get('{{ route('semesters.create-modal') }}', function(data) {
-                    $('#modalContent').html(data);
-                    $('#modalAction').modal('show');
-                }).fail(function() {
-                    Swal.fire('Error!', 'Could not load form', 'error');
-                });
-            });
-
-            // Handle edit semester - using event delegation for dynamically added elements
-            $(document).on('click', '.edit-semester', function() {
-                var semesterId = $(this).data('id');
-                $.get('{{ route('semesters.edit-modal.show', '') }}/' + semesterId, function(data) {
-                    $('#modalContent').html(data);
-                    $('#modalAction').modal('show');
-                }).fail(function() {
-                    Swal.fire('Error!', 'Could not load form', 'error');
-                });
-            });
-        });
-    </script>
-@endpush
