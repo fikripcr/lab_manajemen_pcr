@@ -29,10 +29,16 @@ class InventarisService
             $query->where('kondisi_terakhir', $filters['condition']);
         }
 
-        if (! empty($filters['search'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('nama_alat', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('jenis_alat', 'like', '%' . $filters['search'] . '%');
+        // Handle DataTables search format (array with 'value' key)
+        $searchValue = $filters['search'] ?? '';
+        if (is_array($searchValue)) {
+            $searchValue = $searchValue['value'] ?? '';
+        }
+
+        if (! empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('nama_alat', 'like', '%' . $searchValue . '%')
+                    ->orWhere('jenis_alat', 'like', '%' . $searchValue . '%');
             });
         }
 

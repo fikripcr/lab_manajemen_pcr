@@ -221,7 +221,7 @@
     function switchRole(role) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '{{ route("users.switch-role", "") }}/' + role;
+        form.action = '{{ route("lab.users.switch-role", "") }}/' + role;
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const tokenInput = document.createElement('input');

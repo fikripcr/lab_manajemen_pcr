@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pages.admin.users.index');
+        return view('pages.lab.users.index');
     }
 
     /**
@@ -37,7 +37,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('pages.admin.users.create', compact('roles'));
+        return view('pages.lab.users.create', compact('roles'));
     }
 
     /**
@@ -144,7 +144,7 @@ class UserController extends Controller
             abort(404);
         }
 
-        return view('pages.admin.users.show', compact('user'));
+        return view('pages.lab.users.show', compact('user'));
     }
 
     /**
@@ -234,7 +234,7 @@ class UserController extends Controller
                 'reportDate' => now()->format('d M Y H:i'),
             ];
 
-            $pdf = Pdf::loadView('pages.admin.users.pdf.detail', $data);
+            $pdf = Pdf::loadView('pages.lab.users.pdf.detail', $data);
             return $pdf->download('user-detail-' . $user->name . '-' . now()->format('Y-m-d-H-i') . '.pdf');
         } else {
             // Summary report for all users
@@ -252,7 +252,7 @@ class UserController extends Controller
                 'filters'     => $filters,
             ];
 
-            $pdf = Pdf::loadView('pages.admin.users.pdf.export', $data);
+            $pdf = Pdf::loadView('pages.lab.users.pdf.export', $data);
             return $pdf->download('users-report-' . $type . '-' . now()->format('Y-m-d-H-i') . '.pdf');
         }
     }
@@ -263,7 +263,7 @@ class UserController extends Controller
     public function showImport()
     {
         $roles = Role::all();
-        return view('pages.admin.users.import', compact('roles'));
+        return view('pages.lab.users.import', compact('roles'));
     }
 
     /**

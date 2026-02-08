@@ -15,13 +15,8 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-// --- Popper.js (Bootstrap 5 Dependency)
-import { createPopper } from '@popperjs/core';
-window.Popper = { createPopper };
-
-// --- Bootstrap 5
-import * as bootstrap from 'bootstrap';
-import 'bootstrap';
+// --- Bootstrap 5 (Bundle includes Popper.js internally)
+import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
 window.bootstrap = bootstrap;
 
 // --- SortableJS

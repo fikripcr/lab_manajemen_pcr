@@ -141,11 +141,17 @@ class UserService
         $query = User::with(['roles', 'media'])
             ->select('users.*');
 
+        // Handle DataTables search format (array with 'value' key)
+        $searchValue = $filters['search'] ?? '';
+        if (is_array($searchValue)) {
+            $searchValue = $searchValue['value'] ?? '';
+        }
+
         // Search (Name or Email)
-        if (! empty($filters['search'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('email', 'like', '%' . $filters['search'] . '%');
+        if (! empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('name', 'like', '%' . $searchValue . '%')
+                    ->orWhere('email', 'like', '%' . $searchValue . '%');
             });
         }
 
