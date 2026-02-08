@@ -52,24 +52,26 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Legend -->
+                    <!-- Legend / Detail Panel -->
                     <div class="col-lg-7">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Legenda Tipe Unit</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    @foreach($types as $key => $label)
-                                    <div class="col-md-4 mb-2">
-                                        <span class="badge bg-secondary-lt">{{ $label }}</span>
-                                    </div>
-                                    @endforeach
+                        <div id="detail-panel-container">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Legenda Tipe Unit</h3>
                                 </div>
-                                <hr>
-                                <p class="text-muted mb-0">
-                                    <small>Klik pada unit di panel kiri untuk melihat detail.</small>
-                                </p>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach($types as $key => $label)
+                                        <div class="col-md-4 mb-2">
+                                            <span class="badge bg-secondary-lt">{{ $label }}</span>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    <hr>
+                                    <p class="text-muted mb-0">
+                                        <small>Klik pada unit di panel kiri untuk melihat detail.</small>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -199,14 +201,14 @@
             $(this).addClass('fw-bold text-primary');
             
             const url = $(this).data('url');
-            const container = $('.col-lg-7 .card');
-            container.html('<div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>');
+            const container = $('#detail-panel-container');
+            container.html('<div class="card"><div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div></div>');
             
             axios.get(url)
-                .then(res => container.replaceWith(res.data))
+                .then(res => container.html(res.data))
                 .catch(err => {
                     console.error(err);
-                    container.html('<div class="card-body text-danger">Gagal memuat detail.</div>');
+                    container.html('<div class="card"><div class="card-body text-danger">Gagal memuat detail.</div></div>');
                 });
         });
 

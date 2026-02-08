@@ -104,7 +104,8 @@ export default class CustomDataTables {
             if (col.render) column.render = col.render;
             if (col.orderable !== undefined) column.orderable = col.orderable;
             if (col.searchable !== undefined) column.searchable = col.searchable;
-            if (col.className) column.className = col.className;
+            // Support both 'className' and 'class' for flexibility
+            if (col.className || col.class) column.className = col.className || col.class;
             cols.push(column);
         });
 

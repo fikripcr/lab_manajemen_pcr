@@ -129,29 +129,24 @@
                     'active_routes' => ['hr.pegawai.*'],
                 ],
                 [
-                    'title'         => 'Approval Data',
-                    'route'         => 'hr.approval.index',
-                    'active_routes' => ['hr.approval.*'],
-                ],
-                [
                     'title'         => 'Struktur Organisasi',
                     'route'         => 'hr.org-units.index',
                     'active_routes' => ['hr.org-units.*'],
                 ],
                 [
-                    'title'         => 'Departemen',
-                    'route'         => 'hr.departemen.index',
-                    'active_routes' => ['hr.departemen.*'],
+                    'title'         => 'Approval Data',
+                    'route'         => 'hr.approval.index',
+                    'active_routes' => ['hr.approval.*'],
                 ],
                 [
-                    'title'         => 'Posisi',
-                    'route'         => 'hr.posisi.index',
-                    'active_routes' => ['hr.posisi.*'],
+                    'title'         => 'Perizinan',
+                    'route'         => 'hr.perizinan.index',
+                    'active_routes' => ['hr.perizinan.*'],
                 ],
                 [
-                    'title'         => 'Jabatan Fungsional',
-                    'route'         => 'hr.jabatan-fungsional.index',
-                    'active_routes' => ['hr.jabatan-fungsional.*'],
+                    'title'         => 'Indisipliner',
+                    'route'         => 'hr.indisipliner.index',
+                    'active_routes' => ['hr.indisipliner.*'],
                 ],
                 [
                     'title'         => 'Jabatan Struktural',
@@ -159,9 +154,19 @@
                     'active_routes' => ['hr.jabatan-struktural.*'],
                 ],
                 [
-                    'title'         => 'Status Aktifitas',
-                    'route'         => 'hr.status-aktifitas.index',
-                    'active_routes' => ['hr.status-aktifitas.*'],
+                    'title'         => 'Jabatan Fungsional',
+                    'route'         => 'hr.jabatan-fungsional.index',
+                    'active_routes' => ['hr.jabatan-fungsional.*'],
+                ],
+                [
+                    'title'         => 'Posisi',
+                    'route'         => 'hr.posisi.index',
+                    'active_routes' => ['hr.posisi.*'],
+                ],
+                [
+                    'title'         => 'Departemen',
+                    'route'         => 'hr.departemen.index',
+                    'active_routes' => ['hr.departemen.*'],
                 ],
                 [
                     'title'         => 'Status Pegawai',
@@ -169,19 +174,34 @@
                     'active_routes' => ['hr.status-pegawai.*'],
                 ],
                 [
+                    'title'         => 'Status Aktifitas',
+                    'route'         => 'hr.status-aktifitas.index',
+                    'active_routes' => ['hr.status-aktifitas.*'],
+                ],
+                [
+                    'title'         => 'Jenis Izin',
+                    'route'         => 'hr.jenis-izin.index',
+                    'active_routes' => ['hr.jenis-izin.*'],
+                ],
+                [
+                    'title'         => 'Jenis Indisipliner',
+                    'route'         => 'hr.jenis-indisipliner.index',
+                    'active_routes' => ['hr.jenis-indisipliner.*'],
+                ],
+                [
                     'title'         => 'Jenis Shift',
                     'route'         => 'hr.jenis-shift.index',
                     'active_routes' => ['hr.jenis-shift.*'],
                 ],
                 [
-                    'title'         => 'Mesin Presensi',
-                    'route'         => 'hr.att-device.index',
-                    'active_routes' => ['hr.att-device.*'],
-                ],
-                [
                     'title'         => 'Tanggal Tidak Masuk',
                     'route'         => 'hr.tanggal-tidak-masuk.index',
                     'active_routes' => ['hr.tanggal-tidak-masuk.*'],
+                ],
+                [
+                    'title'         => 'Mesin Presensi',
+                    'route'         => 'hr.att-device.index',
+                    'active_routes' => ['hr.att-device.*'],
                 ],
             ],
         ],

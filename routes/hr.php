@@ -3,11 +3,15 @@
 use App\Http\Controllers\Hr\ApprovalController;
 use App\Http\Controllers\Hr\AttDeviceController;
 use App\Http\Controllers\Hr\DepartemenController;
+use App\Http\Controllers\Hr\IndisiplinerController;
 use App\Http\Controllers\Hr\JabatanFungsionalController;
 use App\Http\Controllers\Hr\JabatanStrukturalController;
+use App\Http\Controllers\Hr\JenisIndisiplinerController;
+use App\Http\Controllers\Hr\JenisIzinController;
 use App\Http\Controllers\Hr\JenisShiftController;
 use App\Http\Controllers\Hr\OrgUnitController;
 use App\Http\Controllers\Hr\PegawaiController;
+use App\Http\Controllers\Hr\PerizinanController;
 use App\Http\Controllers\Hr\PosisiController;
 use App\Http\Controllers\Hr\StatusAktifitasController;
 use App\Http\Controllers\Hr\StatusPegawaiController;
@@ -137,6 +141,22 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     // Mesin Presensi (AttDevice)
     Route::get('att-device/data', [AttDeviceController::class, 'data'])->name('att-device.data');
     Route::resource('att-device', AttDeviceController::class);
+
+    // Indisipliner (Pelanggaran Disiplin)
+    Route::get('indisipliner/data', [IndisiplinerController::class, 'data'])->name('indisipliner.data');
+    Route::resource('indisipliner', IndisiplinerController::class);
+
+    // Jenis Indisipliner (Master Data Tipe Pelanggaran)
+    Route::get('jenis-indisipliner/data', [JenisIndisiplinerController::class, 'data'])->name('jenis-indisipliner.data');
+    Route::resource('jenis-indisipliner', JenisIndisiplinerController::class);
+
+    // Perizinan
+    Route::get('perizinan/data', [PerizinanController::class, 'data'])->name('perizinan.data');
+    Route::resource('perizinan', PerizinanController::class);
+
+    // Jenis Izin
+    Route::get('jenis-izin/data', [JenisIzinController::class, 'data'])->name('jenis-izin.data');
+    Route::resource('jenis-izin', JenisIzinController::class);
 
     // Approval Management
     Route::get('approval', [ApprovalController::class, 'index'])->name('approval.index');
