@@ -14,7 +14,8 @@
  * </form>
  */
 
-import * as bootstrap from 'bootstrap';
+// Note: Bootstrap is already loaded globally via sys.js/admin.js
+// Use window.bootstrap instead of importing again to prevent duplicate instance conflicts
 
 // Wait for both DOM and jQuery to be ready
 if (typeof window.jQuery !== 'undefined') {
@@ -63,8 +64,8 @@ function initAjaxFormHandler() {
             .then(function (response) {
                 // Close modal if exists
                 const $modal = $form.closest('.modal');
-                if ($modal.length && typeof bootstrap !== 'undefined') {
-                    const modalInstance = bootstrap.Modal.getInstance($modal[0]);
+                if ($modal.length && typeof window.bootstrap !== 'undefined') {
+                    const modalInstance = window.bootstrap.Modal.getInstance($modal[0]);
                     if (modalInstance) {
                         modalInstance.hide();
                     }
@@ -194,9 +195,9 @@ function initAjaxFormHandler() {
         const $modalContent = $modal.find('#modalContent');
 
         // Initialize modal if not already initialized
-        let bootstrapModal = bootstrap.Modal.getInstance($modal[0]);
+        let bootstrapModal = window.bootstrap.Modal.getInstance($modal[0]);
         if (!bootstrapModal) {
-            bootstrapModal = new bootstrap.Modal($modal[0]);
+            bootstrapModal = new window.bootstrap.Modal($modal[0]);
         }
 
         // Show modal with loading state

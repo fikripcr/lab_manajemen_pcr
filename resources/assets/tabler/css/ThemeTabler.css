@@ -495,3 +495,29 @@ body.layout-condensed .page-body {
 .offcanvas-backdrop.show {
     opacity: 0% !important;
 }
+
+/* ==========================================================================
+   6. DROPDOWN Z-INDEX FIX
+   ========================================================================== */
+
+/* Ensure dropdown menus appear above page content */
+.navbar .dropdown-menu {
+    z-index: 1050 !important;
+}
+
+/* Fix dropdown in navbar-overlap layout */
+.navbar-overlap .dropdown-menu {
+    z-index: 1050 !important;
+}
+
+/* Ensure the dropdown parent has proper stacking context */
+.navbar .dropdown {
+    position: relative;
+    z-index: 1040;
+}
+
+/* Fix DataTable dropdown buttons */
+.dataTable .dropdown-menu,
+.card .dropdown-menu {
+    z-index: 1060 !important;
+}
