@@ -136,7 +136,7 @@
     @endif
     {{-- Theme Settings Component (Unified with sys) --}}
     @if(env('THEME_CUSTOMIZATION_ENABLED', true))
-        <x-sys.theme-settings mode="auth" :themeData="$themeData" :layoutData="$layoutData" />
+        <x-tabler.theme-settings mode="auth" :themeData="$themeData" :layoutData="$layoutData" />
     @endif
 </body>
 

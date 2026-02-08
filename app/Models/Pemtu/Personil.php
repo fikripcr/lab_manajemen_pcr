@@ -9,7 +9,7 @@ class Personil extends Model
 {
     use HasFactory;
 
-    protected $table      = 'personil';
+    protected $table      = 'pemutu_personil';
     protected $primaryKey = 'personil_id';
     protected $fillable   = [
         'user_id',

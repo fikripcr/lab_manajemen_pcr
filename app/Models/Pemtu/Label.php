@@ -8,7 +8,7 @@ class Label extends Model
 {
     use HasFactory;
 
-    protected $table      = 'label';
+    protected $table      = 'pemutu_label';
     protected $primaryKey = 'label_id';
     protected $fillable   = ['type_id', 'name', 'slug', 'description'];
     public $timestamps    = false; // Migration doesn't have timestamps for this table? checking migration...

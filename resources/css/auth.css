@@ -15,7 +15,7 @@
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
 /* Shared Theme Customization (fonts, cards, selects, etc.) */
-@import './custom/ThemeTabler.css';
+/* @import './custom/ThemeTabler.css'; */
 
 
 /* --- Auth Layout Background (Dark Mode Support) --- */

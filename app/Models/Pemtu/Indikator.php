@@ -8,7 +8,7 @@ class Indikator extends Model
 {
     use HasFactory;
 
-    protected $table      = 'indikator';
+    protected $table      = 'pemutu_indikator';
     protected $primaryKey = 'indikator_id';
     protected $fillable   = [
         'doksub_id',
@@ -44,18 +44,18 @@ class Indikator extends Model
     // Many-to-Many Relationships (Pivots)
     public function labels()
     {
-        return $this->belongsToMany(Label::class, 'indikator_label', 'indikator_id', 'label_id');
+        return $this->belongsToMany(Label::class, 'pemutu_indikator_label', 'indikator_id', 'label_id');
     }
 
     public function orgUnits()
     {
-        return $this->belongsToMany(OrgUnit::class, 'indikator_orgunit', 'indikator_id', 'org_unit_id')
+        return $this->belongsToMany(OrgUnit::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
             ->withPivot('created_at');
     }
 
     public function relatedDokSubs()
     {
-        return $this->belongsToMany(DokSub::class, 'indikator_doksub', 'indikator_id', 'doksub_id')
+        return $this->belongsToMany(DokSub::class, 'pemutu_indikator_doksub', 'indikator_id', 'doksub_id')
             ->withPivot('is_hasilkan_indikator');
     }
 }

@@ -8,7 +8,7 @@ class OrgUnit extends Model
 {
     use HasFactory;
 
-    protected $table      = 'org_unit';
+    protected $table      = 'pemutu_org_unit';
     protected $primaryKey = 'orgunit_id';
     protected $fillable   = ['parent_id', 'name', 'type', 'code', 'level', 'seq', 'is_active', 'successor_id', 'auditee_user_id'];
     public $timestamps    = false;

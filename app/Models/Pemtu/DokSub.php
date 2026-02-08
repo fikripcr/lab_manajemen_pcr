@@ -8,7 +8,7 @@ class DokSub extends Model
 {
     use HasFactory;
 
-    protected $table      = 'dok_sub';
+    protected $table      = 'pemutu_dok_sub';
     protected $primaryKey = 'doksub_id';
     protected $fillable   = [
         'dok_id',

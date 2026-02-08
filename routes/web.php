@@ -19,3 +19,5 @@ require __DIR__ . '/auth.php';
 
 // Laravel Impersonate Routes (needs to be outside auth group to allow switching back)
 Route::impersonate();
+
+require __DIR__ . '/hr.php';

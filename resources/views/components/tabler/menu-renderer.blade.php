@@ -117,6 +117,70 @@
             ],
         ],
         [
+            'type'          => 'dropdown',
+            'title'         => 'HR & Kepegawaian',
+            'id'            => 'navbar-hr',
+            'icon'          => 'ti ti-briefcase',
+            'active_routes' => ['hr.*'],
+            'children'      => [
+                [
+                    'title'         => 'Data Pegawai',
+                    'route'         => 'hr.pegawai.index',
+                    'active_routes' => ['hr.pegawai.*'],
+                ],
+                [
+                    'title'         => 'Approval Data',
+                    'route'         => 'hr.approval.index',
+                    'active_routes' => ['hr.approval.*'],
+                ],
+                [
+                    'title'         => 'Departemen',
+                    'route'         => 'hr.departemen.index',
+                    'active_routes' => ['hr.departemen.*'],
+                ],
+                [
+                    'title'         => 'Posisi',
+                    'route'         => 'hr.posisi.index',
+                    'active_routes' => ['hr.posisi.*'],
+                ],
+                [
+                    'title'         => 'Jabatan Fungsional',
+                    'route'         => 'hr.jabatan-fungsional.index',
+                    'active_routes' => ['hr.jabatan-fungsional.*'],
+                ],
+                [
+                    'title'         => 'Jabatan Struktural',
+                    'route'         => 'hr.jabatan-struktural.index',
+                    'active_routes' => ['hr.jabatan-struktural.*'],
+                ],
+                [
+                    'title'         => 'Status Aktifitas',
+                    'route'         => 'hr.status-aktifitas.index',
+                    'active_routes' => ['hr.status-aktifitas.*'],
+                ],
+                [
+                    'title'         => 'Status Pegawai',
+                    'route'         => 'hr.status-pegawai.index',
+                    'active_routes' => ['hr.status-pegawai.*'],
+                ],
+                [
+                    'title'         => 'Jenis Shift',
+                    'route'         => 'hr.jenis-shift.index',
+                    'active_routes' => ['hr.jenis-shift.*'],
+                ],
+                [
+                    'title'         => 'Mesin Presensi',
+                    'route'         => 'hr.att-device.index',
+                    'active_routes' => ['hr.att-device.*'],
+                ],
+                [
+                    'title'         => 'Tanggal Tidak Masuk',
+                    'route'         => 'hr.tanggal-tidak-masuk.index',
+                    'active_routes' => ['hr.tanggal-tidak-masuk.*'],
+                ],
+            ],
+        ],
+        [
             'type'  => 'header',
             'title' => 'Others',
         ],

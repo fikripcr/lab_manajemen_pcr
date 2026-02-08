@@ -8,7 +8,7 @@ class LabelType extends Model
 {
     use HasFactory;
 
-    protected $table      = 'label_types';
+    protected $table      = 'pemutu_label_types';
     protected $primaryKey = 'labeltype_id';
     protected $fillable   = ['name', 'description', 'color'];
 

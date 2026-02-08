@@ -13,11 +13,12 @@ return new class extends Migration
         | label_types
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('label_types')) {
-            Schema::create('label_types', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_label_types')) {
+            Schema::create('pemutu_label_types', function (Blueprint $table) {
                 $table->id('labeltype_id');
                 $table->string('name', 100);
                 $table->text('description')->nullable();
+                $table->string('color', 20)->default('blue'); // Added from 2026_02_07_145850
                 $table->timestamps();
             });
         }
@@ -27,15 +28,15 @@ return new class extends Migration
         | label
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('label')) {
-            Schema::create('label', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_label')) {
+            Schema::create('pemutu_label', function (Blueprint $table) {
                 $table->id('label_id');
                 $table->unsignedBigInteger('type_id');
                 $table->string('name', 100);
                 $table->string('slug', 100)->nullable();
                 $table->text('description')->nullable();
 
-                $table->foreign('type_id')->references('labeltype_id')->on('label_types')->cascadeOnDelete();
+                $table->foreign('type_id')->references('labeltype_id')->on('pemutu_label_types')->cascadeOnDelete();
             });
         }
 
@@ -44,15 +45,25 @@ return new class extends Migration
         | org_unit
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('org_unit')) {
-            Schema::create('org_unit', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_org_unit')) {
+            Schema::create('pemutu_org_unit', function (Blueprint $table) {
                 $table->id('orgunit_id');
                 $table->unsignedBigInteger('parent_id')->nullable();
                 $table->string('name', 255);
                 $table->string('type', 100)->nullable();
+
+                                                                           // Added from multiple migrations:
+                $table->integer('level')->default(1);                      // 2026_02_07_100112
+                $table->integer('seq')->default(1);                        // 2026_02_07_100112
+                $table->boolean('is_active')->default(true);               // 2026_02_07_161705
+                $table->unsignedBigInteger('successor_id')->nullable();    // 2026_02_07_161705
+                $table->unsignedBigInteger('auditee_user_id')->nullable(); // 2026_02_07_162559
+
                 $table->string('code', 50)->nullable();
 
-                $table->foreign('parent_id')->references('orgunit_id')->on('org_unit')->nullOnDelete();
+                $table->foreign('parent_id')->references('orgunit_id')->on('pemutu_org_unit')->nullOnDelete();
+                $table->foreign('successor_id')->references('orgunit_id')->on('pemutu_org_unit')->nullOnDelete();
+                $table->foreign('auditee_user_id')->references('id')->on('users')->nullOnDelete();
             });
         }
 
@@ -61,8 +72,8 @@ return new class extends Migration
         | personil
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('personil')) {
-            Schema::create('personil', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_personil')) {
+            Schema::create('pemutu_personil', function (Blueprint $table) {
                 $table->id('personil_id');
                 $table->unsignedBigInteger('user_id')->nullable();
                 $table->unsignedBigInteger('org_unit_id')->nullable();
@@ -73,7 +84,7 @@ return new class extends Migration
                 $table->string('external_source', 50)->nullable();
                 $table->string('external_id', 50)->nullable();
 
-                $table->foreign('org_unit_id')->references('orgunit_id')->on('org_unit')->nullOnDelete();
+                $table->foreign('org_unit_id')->references('orgunit_id')->on('pemutu_org_unit')->nullOnDelete();
             });
         }
 
@@ -82,18 +93,26 @@ return new class extends Migration
         | dokumen
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('dokumen')) {
-            Schema::create('dokumen', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_dokumen')) {
+            Schema::create('pemutu_dokumen', function (Blueprint $table) {
                 $table->id('dok_id');
+                $table->unsignedBigInteger('parent_id')->nullable(); // Added from 2026_02_07_101219
                 $table->unsignedBigInteger('parent_doksub_id')->nullable();
                 $table->enum('jenis', ['visi', 'misi', 'rjp', 'renstra', 'renop', 'standar', 'formulir', 'dll'])->nullable();
+
+                // Added from 2026_02_07_101219
+                $table->integer('level')->default(1);
+                $table->integer('seq')->default(1);
+
                 $table->string('judul', 255);
                 $table->string('kode', 20)->nullable();
                 $table->integer('periode')->nullable();
-                $table->date('tgl_berlaku')->nullable();
+                // $table->date('tgl_berlaku')->nullable(); // Removed in 2026_02_07_101219
                 $table->boolean('std_is_staging')->default(false);
                 $table->string('std_amirtn_id', 20)->nullable();
                 $table->unsignedBigInteger('std_jeniskriteria_id')->nullable();
+
+                $table->foreign('parent_id')->references('dok_id')->on('pemutu_dokumen')->onDelete('restrict');
             });
         }
 
@@ -102,15 +121,15 @@ return new class extends Migration
         | dok_sub
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('dok_sub')) {
-            Schema::create('dok_sub', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_dok_sub')) {
+            Schema::create('pemutu_dok_sub', function (Blueprint $table) {
                 $table->id('doksub_id');
                 $table->unsignedBigInteger('dok_id');
                 $table->string('judul', 150);
                 $table->text('isi')->nullable();
                 $table->integer('seq')->nullable();
 
-                $table->foreign('dok_id')->references('dok_id')->on('dokumen')->cascadeOnDelete();
+                $table->foreign('dok_id')->references('dok_id')->on('pemutu_dokumen')->cascadeOnDelete();
             });
         }
 
@@ -119,8 +138,8 @@ return new class extends Migration
         | indikator
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('indikator')) {
-            Schema::create('indikator', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_indikator')) {
+            Schema::create('pemutu_indikator', function (Blueprint $table) {
                 $table->id('indikator_id');
                 $table->unsignedBigInteger('doksub_id')->nullable();
                 $table->string('no_indikator', 20)->nullable();
@@ -139,7 +158,7 @@ return new class extends Migration
                 $table->integer('peningkat_nonaktif_indik')->nullable();
                 $table->integer('is_new_indik_after_peningkatan')->nullable();
 
-                $table->foreign('doksub_id')->references('doksub_id')->on('dok_sub')->nullOnDelete();
+                $table->foreign('doksub_id')->references('doksub_id')->on('pemutu_dok_sub')->nullOnDelete();
             });
         }
 
@@ -148,14 +167,14 @@ return new class extends Migration
         | indikator_label (pivot)
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('indikator_label')) {
-            Schema::create('indikator_label', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_indikator_label')) {
+            Schema::create('pemutu_indikator_label', function (Blueprint $table) {
                 $table->id('indiklabel_id');
                 $table->unsignedBigInteger('indikator_id');
                 $table->unsignedBigInteger('label_id');
 
-                $table->foreign('indikator_id')->references('indikator_id')->on('indikator')->cascadeOnDelete();
-                $table->foreign('label_id')->references('label_id')->on('label')->cascadeOnDelete();
+                $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
+                $table->foreign('label_id')->references('label_id')->on('pemutu_label')->cascadeOnDelete();
             });
         }
 
@@ -164,15 +183,16 @@ return new class extends Migration
         | indikator_orgunit (pivot)
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('indikator_orgunit')) {
-            Schema::create('indikator_orgunit', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_indikator_orgunit')) {
+            Schema::create('pemutu_indikator_orgunit', function (Blueprint $table) {
                 $table->id('indikorgunit_id');
                 $table->unsignedBigInteger('indikator_id');
                 $table->unsignedBigInteger('org_unit_id');
+                $table->string('target', 255)->nullable(); // Added from 2026_02_07_210000
                 $table->dateTime('created_at')->nullable();
 
-                $table->foreign('indikator_id')->references('indikator_id')->on('indikator')->cascadeOnDelete();
-                $table->foreign('org_unit_id')->references('orgunit_id')->on('org_unit')->cascadeOnDelete();
+                $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
+                $table->foreign('org_unit_id')->references('orgunit_id')->on('pemutu_org_unit')->cascadeOnDelete();
             });
         }
 
@@ -181,15 +201,15 @@ return new class extends Migration
         | indikator_doksub (pivot)
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('indikator_doksub')) {
-            Schema::create('indikator_doksub', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_indikator_doksub')) {
+            Schema::create('pemutu_indikator_doksub', function (Blueprint $table) {
                 $table->id('indikdoksub_id');
                 $table->unsignedBigInteger('indikator_id');
                 $table->unsignedBigInteger('doksub_id');
                 $table->boolean('is_hasilkan_indikator')->default(false);
 
-                $table->foreign('indikator_id')->references('indikator_id')->on('indikator')->cascadeOnDelete();
-                $table->foreign('doksub_id')->references('doksub_id')->on('dok_sub')->cascadeOnDelete();
+                $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
+                $table->foreign('doksub_id')->references('doksub_id')->on('pemutu_dok_sub')->cascadeOnDelete();
             });
         }
 
@@ -198,8 +218,8 @@ return new class extends Migration
         | kpi_personil
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('kpi_personil')) {
-            Schema::create('kpi_personil', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_kpi_personil')) {
+            Schema::create('pemutu_kpi_personil', function (Blueprint $table) {
                 $table->id('id');
                 $table->unsignedBigInteger('personil_id');
                 $table->unsignedBigInteger('indikator_id');
@@ -208,8 +228,8 @@ return new class extends Migration
                 $table->decimal('weight', 5, 2)->nullable();
                 $table->decimal('target_value', 10, 2)->nullable();
 
-                $table->foreign('personil_id')->references('personil_id')->on('personil')->cascadeOnDelete();
-                $table->foreign('indikator_id')->references('indikator_id')->on('indikator')->cascadeOnDelete();
+                $table->foreign('personil_id')->references('personil_id')->on('pemutu_personil')->cascadeOnDelete();
+                $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
             });
         }
 
@@ -218,8 +238,8 @@ return new class extends Migration
         | dok_approval
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('dok_approval')) {
-            Schema::create('dok_approval', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_dok_approval')) {
+            Schema::create('pemutu_dok_approval', function (Blueprint $table) {
                 $table->id('dokapproval_id');
                 $table->unsignedBigInteger('dok_id');
                 $table->string('proses', 150)->nullable();
@@ -227,7 +247,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('pegawaiulaz_id')->nullable();
                 $table->string('jabatan', 150)->nullable();
 
-                $table->foreign('dok_id')->references('dok_id')->on('dokumen')->cascadeOnDelete();
+                $table->foreign('dok_id')->references('dok_id')->on('pemutu_dokumen')->cascadeOnDelete();
             });
         }
 
@@ -236,32 +256,37 @@ return new class extends Migration
         | dok_approval_status
         |--------------------------------------------------------------------------
         */
-        if (! Schema::hasTable('dok_approval_status')) {
-            Schema::create('dok_approval_status', function (Blueprint $table) {
+        if (! Schema::hasTable('pemutu_dok_approval_status')) {
+            Schema::create('pemutu_dok_approval_status', function (Blueprint $table) {
                 $table->id('dokstatusapproval_id');
                 $table->unsignedBigInteger('dokapproval_id');
                 $table->string('status_approval', 20);
                 $table->text('komentar')->nullable();
 
-                $table->foreign('dokapproval_id')->references('dokapproval_id')->on('dok_approval')->cascadeOnDelete();
+                $table->foreign('dokapproval_id')->references('dokapproval_id')->on('pemutu_dok_approval')->cascadeOnDelete();
             });
         }
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('dok_approval_status');
-        Schema::dropIfExists('dok_approval');
-        Schema::dropIfExists('kpi_personil');
-        Schema::dropIfExists('indikator_doksub');
-        Schema::dropIfExists('indikator_orgunit');
-        Schema::dropIfExists('indikator_label');
-        Schema::dropIfExists('indikator');
-        Schema::dropIfExists('dok_sub');
-        Schema::dropIfExists('dokumen');
-        Schema::dropIfExists('personil');
-        Schema::dropIfExists('org_unit');
-        Schema::dropIfExists('label');
-        Schema::dropIfExists('label_types');
+        // Add disable foreign key constraints to be safe
+        Schema::disableForeignKeyConstraints();
+
+        Schema::dropIfExists('pemutu_dok_approval_status');
+        Schema::dropIfExists('pemutu_dok_approval');
+        Schema::dropIfExists('pemutu_kpi_personil');
+        Schema::dropIfExists('pemutu_indikator_doksub');
+        Schema::dropIfExists('pemutu_indikator_orgunit');
+        Schema::dropIfExists('pemutu_indikator_label');
+        Schema::dropIfExists('pemutu_indikator');
+        Schema::dropIfExists('pemutu_dok_sub');
+        Schema::dropIfExists('pemutu_dokumen');
+        Schema::dropIfExists('pemutu_personil');
+        Schema::dropIfExists('pemutu_org_unit');
+        Schema::dropIfExists('pemutu_label');
+        Schema::dropIfExists('pemutu_label_types');
+
+        Schema::enableForeignKeyConstraints();
     }
 };

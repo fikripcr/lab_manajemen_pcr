@@ -8,7 +8,7 @@ class Dokumen extends Model
 {
     use HasFactory;
 
-    protected $table      = 'dokumen';
+    protected $table      = 'pemutu_dokumen';
     protected $primaryKey = 'dok_id';
     protected $fillable   = [
         'parent_doksub_id', // For potential future hierarchy if needed, though migration says nullable

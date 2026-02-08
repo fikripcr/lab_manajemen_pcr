@@ -37,6 +37,11 @@ import '../assets/tabler/js/CustomSweetAlerts.js';
 import '../assets/tabler/js/Notification.js';
 import '../assets/tabler/js/FormHandlerAjax.js';
 
+// --- Flatpickr
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+window.flatpickr = flatpickr;
+
 window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
         const hugerte = module.default;
