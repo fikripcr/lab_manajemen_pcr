@@ -8,7 +8,7 @@ class OrgUnitService
 {
     public function getFilteredQuery(array $filters = [])
     {
-        $query = OrgUnit::with(['parent', 'successor', 'auditee'])->select('org_unit.*');
+        $query = OrgUnit::with(['parent', 'successor', 'auditee'])->select('pemutu_org_unit.*');
 
         if (array_key_exists('status', $filters) && $filters['status'] !== '') { // Use array_key_exists to allow '0' or empty string logic if strict
                                                                                      // Controller used: if ($request->has('status') && $request->status !== '')

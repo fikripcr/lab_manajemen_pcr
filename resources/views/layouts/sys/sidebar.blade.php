@@ -35,7 +35,7 @@
                     <span class="avatar avatar-sm" style="background-image: url('{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5' }}')"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ? ' data-bs-theme="light"' : '' }}>
-                    <a href="{{ route('users.show', auth()->user()->encrypted_id) }}" class="dropdown-item">Profile</a>
+                    <a href="{{ route('lab.users.show', auth()->user()->encrypted_id) }}" class="dropdown-item">Profile</a>
                     <a href="#" class="dropdown-item">Settings</a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form-sidebar').submit();">Logout</a>

@@ -10,7 +10,7 @@
         [
             'type'  => 'item',
             'title' => 'Dashboard',
-            'route' => 'dashboard',
+            'route' => 'lab.dashboard',
             'icon'  => 'ti ti-layout-dashboard',
         ],
         [
@@ -20,15 +20,15 @@
         [
             'type'  => 'item',
             'title' => 'Data Lab',
-            'route' => 'labs.index',
-            'active_routes' => ['labs.*'],
+            'route' => 'lab.labs.index',
+            'active_routes' => ['lab.labs.*'],
             'icon'  => 'ti ti-flask',
         ],
         [
             'type'  => 'item',
             'title' => 'Data Inventaris',
-            'route' => 'inventaris.index',
-            'active_routes' => ['inventaris.*'],
+            'route' => 'lab.inventaris.index',
+            'active_routes' => ['lab.inventaris.*'],
             'icon'  => 'ti ti-package',
         ],
         [
@@ -36,22 +36,22 @@
             'title'         => 'Perkuliahan',
             'id'            => 'navbar-extra',
             'icon'          => 'ti ti-book-2',
-            'active_routes' => ['semesters.*', 'mata-kuliah.*', 'jadwal.*'],
+            'active_routes' => ['lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*'],
             'children'      => [
                 [
                     'title'         => 'Data Semester',
-                    'route'         => 'semesters.index',
-                    'active_routes' => ['semesters.*'],
+                    'route'         => 'lab.semesters.index',
+                    'active_routes' => ['lab.semesters.*'],
                 ],
                 [
                     'title'         => 'Data Mata Kuliah',
-                    'route'         => 'mata-kuliah.index',
-                    'active_routes' => ['mata-kuliah.*'],
+                    'route'         => 'lab.mata-kuliah.index',
+                    'active_routes' => ['lab.mata-kuliah.*'],
                 ],
                 [
                     'title'         => 'Jadwal Perkuliahan',
-                    'route'         => 'jadwal.index',
-                    'active_routes' => ['jadwal.*'],
+                    'route'         => 'lab.jadwal.index',
+                    'active_routes' => ['lab.jadwal.*'],
                 ],
             ],
         ],
@@ -60,25 +60,25 @@
             'title'         => 'Info Publik',
             'id'            => 'navbar-info',
             'icon'          => 'ti ti-info-circle',
-            'active_routes' => ['pengumuman.*', 'berita.*'],
+            'active_routes' => ['lab.pengumuman.*', 'lab.berita.*'],
             'children'      => [
                 [
                     'title'         => 'Pengumuman',
-                    'route'         => 'pengumuman.index',
-                    'active_routes' => ['pengumuman.*'],
+                    'route'         => 'lab.pengumuman.index',
+                    'active_routes' => ['lab.pengumuman.*'],
                 ],
                 [
                     'title'         => 'Berita',
-                    'route'         => 'berita.index',
-                    'active_routes' => ['berita.*'],
+                    'route'         => 'lab.berita.index',
+                    'active_routes' => ['lab.berita.*'],
                 ],
             ],
         ],
         [
             'type'  => 'item',
             'title' => 'Software Requests',
-            'route' => 'software-requests.index',
-            'active_routes' => ['admin.software-requests.*'],
+            'route' => 'lab.software-requests.index',
+            'active_routes' => ['lab.software-requests.*'],
             'icon'  => 'ti ti-device-laptop',
         ],
         [
@@ -134,6 +134,11 @@
                     'active_routes' => ['hr.approval.*'],
                 ],
                 [
+                    'title'         => 'Struktur Organisasi',
+                    'route'         => 'hr.org-units.index',
+                    'active_routes' => ['hr.org-units.*'],
+                ],
+                [
                     'title'         => 'Departemen',
                     'route'         => 'hr.departemen.index',
                     'active_routes' => ['hr.departemen.*'],
@@ -187,8 +192,8 @@
         [
             'type'  => 'item',
             'title' => 'Users',
-            'route' => 'users.index',
-            'active_routes' => ['users.*'],
+            'route' => 'lab.users.index',
+            'active_routes' => ['lab.users.*'],
             'icon'  => 'ti ti-users',
         ],
         [
@@ -326,7 +331,7 @@
     <ul class="navbar-nav pt-lg-3">
         {{-- Back to Main Apps (Static) --}}
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('dashboard') }}">
+            <a class="nav-link" href="{{ route('lab.dashboard') }}">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
                 </span>

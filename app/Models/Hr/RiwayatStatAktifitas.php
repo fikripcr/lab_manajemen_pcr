@@ -21,4 +21,9 @@ class RiwayatStatAktifitas extends Model
     {
         return $this->belongsTo(StatusAktifitas::class, 'statusaktifitas_id', 'statusaktifitas_id');
     }
+
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
+    }
 }

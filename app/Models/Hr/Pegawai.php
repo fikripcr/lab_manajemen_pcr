@@ -1,16 +1,24 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pegawai extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table      = 'hr_pegawai';
-    protected $primaryKey = 'pegawai_id';
+    protected $table = 'hr_pegawai';
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'pegawai_id';
+    }
 
     protected $fillable = [
         'latest_riwayatdatadiri_id',
@@ -63,6 +71,16 @@ class Pegawai extends Model
         return $this->belongsTo(RiwayatJabStruktural::class, 'latest_riwayatjabstruktural_id', 'riwayatjabstruktural_id');
     }
 
+    public function latestPenugasan()
+    {
+        return $this->belongsTo(RiwayatPenugasan::class, 'latest_riwayatpenugasan_id', 'riwayatpenugasan_id');
+    }
+
+    public function historyPenugasan()
+    {
+        return $this->hasMany(RiwayatPenugasan::class, 'pegawai_id', 'pegawai_id')->orderBy('tgl_mulai', 'desc');
+    }
+
     public function historyDataDiri()
     {
         return $this->hasMany(RiwayatDataDiri::class, 'pegawai_id', 'pegawai_id')->orderBy('created_at', 'desc');
@@ -81,6 +99,16 @@ class Pegawai extends Model
     public function pengembanganDiri()
     {
         return $this->hasMany(PengembanganDiri::class, 'pegawai_id', 'pegawai_id')->orderBy('tgl_mulai', 'desc');
+    }
+
+    public function atasanSatu()
+    {
+        return $this->belongsTo(Pegawai::class, 'atasan1', 'pegawai_id');
+    }
+
+    public function atasanDua()
+    {
+        return $this->belongsTo(Pegawai::class, 'atasan2', 'pegawai_id');
     }
 
     // History Relations (for lists of all changes)

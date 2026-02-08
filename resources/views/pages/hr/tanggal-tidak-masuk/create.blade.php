@@ -61,7 +61,7 @@
 
                 </div>
                 <div class="card-footer text-end">
-                    <a href="{{ route('hr.tanggal-tidak-masuk.index') }}" class="btn btn-link link-secondary">Cancel</a>
+                    <a href="{{ route('hr.tanggal-tidak-masuk.index') }}" class="btn btn-link link-secondary">Batal</a>
                     <button type="submit" class="btn btn-primary">Save All Entries</button>
                 </div>
             </div>

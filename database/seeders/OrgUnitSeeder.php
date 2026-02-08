@@ -59,29 +59,29 @@ class OrgUnitSeeder extends Seeder
         $seqJurusan = 10;
 
         // Jurusan TI
-        $jti = $this->createUnit($pcr, 'Jurusan Teknologi Industri', 'Jurusan', $seqJurusan++, 'JTI');
-        $this->createUnit($jti, 'Prodi D4 Teknologi Rekayasa Mekatronika', 'Prodi', 1);
-        $this->createUnit($jti, 'Prodi D4 Teknik Mesin', 'Prodi', 2);
-        $this->createUnit($jti, 'Prodi D4 Teknologi Rekayasa Jaringan Telekomunikasi', 'Prodi', 3);
-        $this->createUnit($jti, 'Prodi D4 Teknik Listrik', 'Prodi', 4);
-        $this->createUnit($jti, 'Prodi D4 Teknologi Rekayasa Sistem Elektronika', 'Prodi', 5);
-        $this->createUnit($jti, 'Prodi D4 Teknik Elektronika (Telekomunikasi)', 'Prodi', 6);
-        $this->createUnit($jti, 'Laboratorium JTI', 'Laboratorium', 99);
+        $jti = $this->createUnit($pcr, 'Jurusan Teknologi Industri', 'Jurusan', $seqJurusan++, 'JTIN');
+        $this->createUnit($jti, 'D4 Teknologi Rekayasa Mekatronika', 'Prodi', 1);
+        $this->createUnit($jti, 'D4 Teknik Mesin', 'Prodi', 2);
+        $this->createUnit($jti, 'D4 Teknologi Rekayasa Jaringan Telekomunikasi', 'Prodi', 3);
+        $this->createUnit($jti, 'D4 Teknik Listrik', 'Prodi', 4);
+        $this->createUnit($jti, 'D4 Teknologi Rekayasa Sistem Elektronika', 'Prodi', 5);
+        $this->createUnit($jti, 'D4 Teknik Elektronika (Telekomunikasi)', 'Prodi', 6);
+        $this->createUnit($jti, 'Laboratorium JTIN', 'Laboratorium', 99);
 
         // Jurusan Bisnis
         $jbk = $this->createUnit($pcr, 'Jurusan Bisnis dan Komunikasi', 'Jurusan', $seqJurusan++, 'JBK');
-        $this->createUnit($jbk, 'Prodi D4 Akuntansi Perpajakan', 'Prodi', 1);
-        $this->createUnit($jbk, 'Prodi D4 Bisnis Digital', 'Prodi', 2);
-        $this->createUnit($jbk, 'Prodi D4 Hubungan Masyarakat dan Komunikasi Digital', 'Prodi', 3);
+        $this->createUnit($jbk, 'D4 Akuntansi Perpajakan', 'Prodi', 1);
+        $this->createUnit($jbk, 'D4 Bisnis Digital', 'Prodi', 2);
+        $this->createUnit($jbk, 'D4 Hubungan Masyarakat dan Komunikasi Digital', 'Prodi', 3);
         $this->createUnit($jbk, 'Laboratorium JBK', 'Laboratorium', 99);
 
         // Jurusan TIK
-        $jtik = $this->createUnit($pcr, 'Jurusan Teknologi Informasi', 'Jurusan', $seqJurusan++, 'JTIK');
-        $this->createUnit($jtik, 'Prodi D4 Teknik Informatika', 'Prodi', 1);
-        $this->createUnit($jtik, 'Prodi D4 Sistem Informasi', 'Prodi', 2);
-        $this->createUnit($jtik, 'Prodi D4 Teknologi Rekayasa Komputer', 'Prodi', 3);
-        $this->createUnit($jtik, 'Prodi S2 Teknik Komputer', 'Prodi', 4);
-        $this->createUnit($jtik, 'Laboratorium JTIK', 'Laboratorium', 99);
+        $jtik = $this->createUnit($pcr, 'Jurusan Teknologi Informasi', 'Jurusan', $seqJurusan++, 'JTI');
+        $this->createUnit($jtik, 'D4 Teknik Informatika', 'Prodi', 1);
+        $this->createUnit($jtik, 'D4 Sistem Informasi', 'Prodi', 2);
+        $this->createUnit($jtik, 'D4 Teknologi Rekayasa Komputer', 'Prodi', 3);
+        $this->createUnit($jtik, 'S2 Magister Terapan Teknik Komputer', 'Prodi', 4);
+        $this->createUnit($jtik, 'Laboratorium JTI', 'Laboratorium', 99);
         $this->createUnit($jtik, 'Sekretaris Program Studi', 'Sekretariat', 98); // Chart piece
 
     }

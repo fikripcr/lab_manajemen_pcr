@@ -13,7 +13,7 @@
         <div class="text-muted">NIP: {{ $pegawai->nip }} &bull; {{ $pegawai->email }}</div>
     </div>
     <div class="col-auto ms-auto d-print-none">
-        <a href="{{ route('hr.pegawai.edit', $pegawai->pegawai_id) }}" class="btn btn-primary">
+        <a href="{{ route('hr.pegawai.edit', encryptId($pegawai->pegawai_id)) }}" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>
             Edit Profile
         </a>
@@ -184,333 +184,30 @@
 
             <!-- Tab Kepegawaian -->
              <div class="tab-pane" id="tab-kepegawaian">
-                
-                {{-- 1. Riwayat Status Pegawai --}}
-                <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
-                    <h3>Riwayat Status Pegawai</h3>
-                    <a href="{{ route('hr.pegawai.status-pegawai.create', $pegawai->pegawai_id) }}" class="btn btn-primary btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Ubah Status
-                    </a>
-                </div>
-                <div class="card mb-3">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Status</th>
-                                    <th>TMT</th>
-                                    <th>No. SK</th>
-                                    <th>File SK</th>
-                                    <th>Status Approval</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($pegawai->historyStatPegawai as $item)
-                                <tr>
-                                    <td><span class="badge bg-blue text-blue-fg">{{ $item->statusPegawai->nama_status ?? '-' }}</span></td>
-                                    <td>{{ $item->tmt ? $item->tmt->format('d F Y') : '-' }}</td>
-                                    <td>{{ $item->no_sk ?? '-' }}</td>
-                                    <td>
-                                        @if($item->file_sk)
-                                            <a href="#" target="_blank">Lihat</a>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{-- Determine approval status (generic logic since created_by/approval might differ) --}}
-                                        {{-- For now, if it's the latest confirmed, it's Active. If pending request exists matching this, it's Pending. --}}
-                                        {{-- Simplification: check if this record is linked to a pending approval or is the current active one --}}
-                                        @if($pegawai->latest_riwayatstatpegawai_id == $item->riwayatstatpegawai_id)
-                                            <span class="badge bg-success">Aktif Saat Ini</span>
-                                        @else
-                                            <span class="badge bg-secondary">Riwayat</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="5" class="text-center text-muted">Belum ada data riwayat status</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {{-- 2. Riwayat Jabatan Fungsional --}}
-                <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-                    <h3>Riwayat Jabatan Fungsional</h3>
-                    <a href="{{ route('hr.pegawai.jabatan-fungsional.create', $pegawai->pegawai_id) }}" class="btn btn-primary btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Ubah Jafung
-                    </a>
-                </div>
-                <div class="card mb-3">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Jabatan</th>
-                                    <th>TMT</th>
-                                    <th>No. SK</th>
-                                    <th>Status Approval</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($pegawai->historyJabFungsional as $item)
-                                <tr>
-                                    <td>{{ $item->jabatanFungsional->jabfungsional ?? '-' }}</td>
-                                    <td>{{ $item->tmt ? $item->tmt->format('d F Y') : '-' }}</td>
-                                    <td>{{ $item->no_sk_internal ?? $item->no_sk_kopertis ?? '-' }}</td>
-                                    <td>
-                                        @if($pegawai->latest_riwayatjabfungsional_id == $item->riwayatjabfungsional_id)
-                                            <span class="badge bg-success">Aktif Saat Ini</span>
-                                        @else
-                                            <span class="badge bg-secondary">Riwayat</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="4" class="text-center text-muted">Belum ada data riwayat jabatan fungsional</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                 {{-- 3. Riwayat Jabatan Struktural --}}
-                 <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-                    <h3>Riwayat Jabatan Struktural</h3>
-                    <a href="{{ route('hr.pegawai.jabatan-struktural.create', $pegawai->pegawai_id) }}" class="btn btn-primary btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Ubah Struktural
-                    </a>
-                </div>
-                <div class="card mb-3">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Jabatan</th>
-                                    <th>Tgl Mulai</th>
-                                    <th>Tgl Selesai</th>
-                                    <th>No. SK</th>
-                                    <th>Status Approval</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{-- Assuming historyJabStruktural relation exists --}}
-                                @if($pegawai->historyJabStruktural)
-                                    @forelse($pegawai->historyJabStruktural as $item)
-                                    <tr>
-                                        <td>{{ $item->jabatanStruktural->jabstruktural ?? '-' }}</td>
-                                        <td>{{ $item->tgl_awal ? $item->tgl_awal->format('d F Y') : '-' }}</td>
-                                        <td>{{ $item->tgl_akhir ? $item->tgl_akhir->format('d F Y') : '-' }}</td>
-                                        <td>{{ $item->no_sk ?? '-' }}</td>
-                                        <td>
-                                            @if($pegawai->latest_riwayatjabstruktural_id == $item->riwayatjabstruktural_id)
-                                                <span class="badge bg-success">Aktif Saat Ini</span>
-                                            @else
-                                                <span class="badge bg-secondary">Riwayat</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr><td colspan="5" class="text-center text-muted">Belum ada data riwayat jabatan struktural</td></tr>
-                                    @endforelse
-                                @else
-                                     <tr><td colspan="5" class="text-center text-muted">Relation historyJabStruktural not loaded or defined</td></tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {{-- 4. Riwayat Status Aktifitas --}}
-                <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-                    <h3>Riwayat Status Aktifitas</h3>
-                     <a href="{{ route('hr.pegawai.status-aktifitas.create', $pegawai->pegawai_id) }}" class="btn btn-primary btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Ubah Status Aktifitas
-                    </a>
-                </div>
-                <div class="card mb-3">
-                     <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Status</th>
-                                    <th>TMT</th>
-                                    <th>Tgl Akhir</th>
-                                    <th>Status Approval</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($pegawai->historyStatAktifitas as $item)
-                                <tr>
-                                    <td>{{ $item->statusAktifitas->nama_status ?? '-' }}</td>
-                                    <td>{{ $item->tmt ? $item->tmt->format('d F Y') : '-' }}</td>
-                                    <td>{{ $item->tgl_akhir ? $item->tgl_akhir->format('d F Y') : '-' }}</td>
-                                    <td>
-                                        @if($pegawai->latest_riwayatstataktifitas_id == $item->riwayatstataktifitas_id)
-                                            <span class="badge bg-success">Aktif Saat Ini</span>
-                                        @else
-                                            <span class="badge bg-secondary">Riwayat</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="4" class="text-center text-muted">Belum ada data riwayat status aktifitas</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('pages.hr.pegawai.parts._status_pegawai_list')
+                @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
+                @include('pages.hr.data-diri.penugasan') {{-- Using the Penugasan list view directly --}}
+                @include('pages.hr.pegawai.parts._status_aktifitas_list')
             </div>
 
             <!-- Tab Pendidikan -->
             <div class="tab-pane" id="tab-pendidikan">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>Riwayat Pendidikan</h3>
-                    <a href="{{ route('hr.pegawai.pendidikan.create', $pegawai->pegawai_id) }}" class="btn btn-primary d-none d-sm-inline-block">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Tambah Pendidikan
-                    </a>
-                </div>
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Jenjang</th>
-                                    <th>Nama PT</th>
-                                    <th>Bidang Ilmu</th>
-                                    <th>Tahun Lulus</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($pegawai->riwayatPendidikan as $edu)
-                                <tr>
-                                    <td>{{ $edu->jenjang_pendidikan }}</td>
-                                    <td>{{ $edu->nama_pt }}</td>
-                                    <td>{{ $edu->bidang_ilmu }}</td>
-                                    <td>{{ $edu->tgl_ijazah ? $edu->tgl_ijazah->format('Y') : '-' }}</td>
-                                    <td>
-                                        @if($edu->approval && $edu->approval->status == 'Pending')
-                                            <span class="badge bg-warning">Menunggu Approval</span>
-                                        @elseif($edu->approval && $edu->approval->status == 'Approved')
-                                            <span class="badge bg-success">Disetujui</span>
-                                        @else
-                                            <span class="badge bg-secondary">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($edu->file_ijazah)
-                                        <a href="#" class="btn btn-ghost-secondary btn-sm btn-icon" aria-label="Download">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M12 17v-6" /><path d="M9.5 14.5l2.5 2.5l2.5 -2.5" /></svg>
-                                        </a>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="6" class="text-center text-muted">Belum ada data pendidikan</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('pages.hr.pegawai.parts._pendidikan_list')
             </div>
 
             <!-- Tab Keluarga -->
             <div class="tab-pane" id="tab-keluarga">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>Data Keluarga</h3>
-                    <a href="{{ route('hr.pegawai.keluarga.create', $pegawai->pegawai_id) }}" class="btn btn-primary d-none d-sm-inline-block">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Tambah Anggota Keluarga
-                    </a>
-                </div>
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Nama</th>
-                                    <th>Hubungan</th>
-                                    <th>L/P</th>
-                                    <th>Tgl Lahir</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($pegawai->keluarga as $kel)
-                                <tr>
-                                    <td>{{ $kel->nama }}</td>
-                                    <td>{{ $kel->hubungan }}</td>
-                                    <td>{{ $kel->jenis_kelamin }}</td>
-                                    <td>{{ $kel->tgl_lahir ? \Carbon\Carbon::parse($kel->tgl_lahir)->format('d-m-Y') : '-' }}</td>
-                                    <td>
-                                        @if($kel->approval && $kel->approval->status == 'Pending')
-                                            <span class="badge bg-warning">Menunggu Approval</span>
-                                        @else
-                                            <span class="badge bg-success">Active</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="5" class="text-center text-muted">Belum ada data keluarga</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('pages.hr.pegawai.parts._keluarga_list')
+            </div>
+
+            <!-- Tab Inpassing -->
+            <div class="tab-pane" id="tab-inpassing">
+                @include('pages.hr.pegawai.parts._inpassing_list')
             </div>
 
             <!-- Tab Pengembangan Diri -->
             <div class="tab-pane" id="tab-pengembangan">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>Pengembangan Diri</h3>
-                    <a href="{{ route('hr.pegawai.pengembangan.create', $pegawai->pegawai_id) }}" class="btn btn-primary d-none d-sm-inline-block">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Tambah Kegiatan
-                    </a>
-                </div>
-                <div class="card">
-                     <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Jenis Kegiatan</th>
-                                    <th>Nama Kegiatan</th>
-                                    <th>Penyelenggara</th>
-                                    <th>Tahun</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($pegawai->pengembanganDiri as $dev)
-                                <tr>
-                                    <td>{{ $dev->jenis_kegiatan }}</td>
-                                    <td>{{ $dev->nama_kegiatan }}</td>
-                                    <td>{{ $dev->penyelenggara }}</td>
-                                    <td>{{ $dev->tahun }}</td>
-                                    <td>
-                                        @if($dev->approval && $dev->approval->status == 'Pending')
-                                            <span class="badge bg-warning">Menunggu Approval</span>
-                                        @else
-                                            <span class="badge bg-success">Disetujui</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="5" class="text-center text-muted">Belum ada data pengembangan diri</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('pages.hr.pegawai.parts._pengembangan_list')
             </div>
 
         </div>

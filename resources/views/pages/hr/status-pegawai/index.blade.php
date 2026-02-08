@@ -26,10 +26,11 @@
             id="status-pegawai-table"
             route="{{ route('hr.status-pegawai.data') }}"
             :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
-                ['data' => 'status', 'name' => 'status', 'title' => 'Status Pegawai'],
-                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end'],
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '50px'],
+                ['data' => 'kode_status', 'name' => 'kode_status', 'title' => 'Kode'],
+                ['data' => 'status', 'name' => 'nama_status', 'title' => 'Nama Status'],
+                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center', 'width' => '100px'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end', 'width' => '100px'],
             ]"
         />
     </div>

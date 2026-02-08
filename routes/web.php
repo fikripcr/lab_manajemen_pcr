@@ -1,12 +1,13 @@
 <?php
 // echo phpinfo();
 // die;
+use App\Http\Controllers\Lab\GlobalSearchController;
 use Illuminate\Support\Facades\Route;
 
 // 🔹 Route untuk Guest (tanpa login)
 require __DIR__ . '/guest.php';
 
-require __DIR__ . '/admin.php';
+require __DIR__ . '/lab.php';
 require __DIR__ . '/pemtu.php';
 
 // 🔹 Theme API (public, no auth required)
@@ -21,3 +22,6 @@ require __DIR__ . '/auth.php';
 Route::impersonate();
 
 require __DIR__ . '/hr.php';
+
+// Global Search
+Route::get('/global-search', [GlobalSearchController::class, 'search'])->name('global-search');

@@ -18,7 +18,12 @@ class RiwayatJabFungsional extends Model
 
     public function jabatanFungsional()
     {
-        return $this->belongsTo(JabatanFungsional::class, 'jabfungsional_id', 'jabfungsional_id');
+        return $this->belongsTo(JabatanFungsional::class, 'jabatanfungsional_id', 'jabatanfungsional_id');
+    }
+
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
     public function approval()

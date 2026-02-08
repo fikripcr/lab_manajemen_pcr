@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Pegawai;
 use App\Services\Hr\PegawaiService;
-use Illuminate\Http\Request;
 
 class RiwayatPendidikanController extends Controller
 {
@@ -15,32 +14,50 @@ class RiwayatPendidikanController extends Controller
         $this->pegawaiService = $pegawaiService;
     }
 
+    public function index(\Illuminate\Http\Request $request, Pegawai $pegawai = null)
+    {
+        return view('pages.hr.data-diri.tabs.pendidikan', compact('pegawai'));
+    }
+
     public function create(Pegawai $pegawai)
     {
         return view('pages.hr.pegawai.pendidikan.create', compact('pegawai'));
     }
 
-    public function store(Request $request, Pegawai $pegawai)
+    public function store(\App\Http\Requests\Hr\RiwayatPendidikanRequest $request, Pegawai $pegawai)
     {
-        $data = $request->validate([
-            'jenjang_pendidikan' => 'required|string|max:10',
-            'nama_pt'            => 'required|string|max:100',
-            'bidang_ilmu'        => 'nullable|string|max:100',
-            'tgl_ijazah'         => 'required|date',
-            'kotaasal_pt'        => 'nullable|string|max:100',
-            'kodenegara_pt'      => 'nullable|string|max:100',
-            // File upload logic to be handled if needed, for now assuming string path or handled globally by a Trait/Service.
-            // But since this is a new implementation, I should probably handle file upload here if I want it to work.
-            // For now, let's keep it simple as per "request change" flow.
-        ]);
-
         try {
-            $this->pegawaiService->requestAddition($pegawai, \App\Models\Hr\RiwayatPendidikan::class, $data);
-            return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->pegawai_id));
+            $this->pegawaiService->requestAddition($pegawai, \App\Models\Hr\RiwayatPendidikan::class, $request->validated());
+            return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->hashid));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
+    public function edit(Pegawai $pegawai, \App\Models\Hr\RiwayatPendidikan $pendidikan)
+    {
+        return view('pages.hr.pegawai.pendidikan.edit', compact('pegawai', 'pendidikan'));
+    }
+
+    public function update(\App\Http\Requests\Hr\RiwayatPendidikanRequest $request, Pegawai $pegawai, \App\Models\Hr\RiwayatPendidikan $pendidikan)
+    {
+        try {
+            $pendidikan->update($request->validated());
+            return jsonSuccess('Riwayat Pendidikan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->hashid));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage());
+        }
+    }
+
+    public function destroy(Pegawai $pegawai, \App\Models\Hr\RiwayatPendidikan $pendidikan)
+    {
+        try {
+            $pendidikan->delete();
+            return jsonSuccess('Riwayat Pendidikan berhasil dihapus.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage());
+        }
+    }
+
     public function data()
     {
         $query = \App\Models\Hr\RiwayatPendidikan::with('pegawai')->select('hr_riwayat_pendidikan.*');

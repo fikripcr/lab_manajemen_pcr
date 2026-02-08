@@ -32,9 +32,9 @@ class JabatanFungsionalController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.jabatan-fungsional.edit', ['jabatan_fungsional' => $row->jabfungsional_id]),
+                    'editUrl'   => route('hr.jabatan-fungsional.edit', ['jabatan_fungsional' => $row->hashid]),
                     'editModal' => true,
-                    'deleteUrl' => route('hr.jabatan-fungsional.destroy', ['jabatan_fungsional' => $row->jabfungsional_id]),
+                    'deleteUrl' => route('hr.jabatan-fungsional.destroy', ['jabatan_fungsional' => $row->hashid]),
                 ])->render();
             })
             ->rawColumns(['is_active', 'action'])
@@ -56,27 +56,26 @@ class JabatanFungsionalController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(JabatanFungsional $jabatan_fungsional)
     {
-        $jabatanFungsional = JabatanFungsional::findOrFail($id);
+        $jabatanFungsional = $jabatan_fungsional;
         return view('pages.hr.jabatan-fungsional.edit', compact('jabatanFungsional'));
     }
 
-    public function update(JabatanFungsionalRequest $request, $id)
+    public function update(JabatanFungsionalRequest $request, JabatanFungsional $jabatan_fungsional)
     {
         try {
-            $jabatanFungsional = JabatanFungsional::findOrFail($id);
-            $this->service->update($jabatanFungsional, $request->validated());
+            $this->service->update($jabatan_fungsional, $request->validated());
             return jsonSuccess('Jabatan Fungsional updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(JabatanFungsional $jabatan_fungsional)
     {
         try {
-            $this->service->delete($id);
+            $jabatan_fungsional->delete();
             return jsonSuccess('Jabatan Fungsional deleted successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

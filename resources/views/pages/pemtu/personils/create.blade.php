@@ -39,6 +39,6 @@
     </div>
     <div class="modal-footer">
         <x-tabler.button type="button" text="Close" class="btn-link link-secondary" data-bs-dismiss="modal" />
-        <x-tabler.button type="submit" text="Create" />
+        <x-tabler.button type="submit" text="Simpan" />
     </div>
 </form>

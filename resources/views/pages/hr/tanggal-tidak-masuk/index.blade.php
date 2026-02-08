@@ -5,14 +5,21 @@
     <div class="container-xl">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <h2 class="page-title">Tanggal Tidak Masuk</h2>
-                <div class="text-muted mt-1">Manage National Holidays & Non-Working Days</div>
+                <h2 class="page-title">Tanggal Tidak Masuk / Hari Libur</h2>
+                <div class="text-muted mt-1">Daftar hari libur nasional dan cuti bersama</div>
             </div>
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
+                    <form action="{{ route('hr.tanggal-tidak-masuk.index') }}" method="GET" class="d-inline-block me-2">
+                        <select name="tahun" class="form-select" onchange="this.form.submit()">
+                            @foreach($years as $y)
+                                <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    </form>
                     <a href="{{ route('hr.tanggal-tidak-masuk.create') }}" class="btn btn-primary d-none d-sm-inline-block">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Add New Date(s)
+                        Tambah Tanggal
                     </a>
                 </div>
             </div>
@@ -22,20 +29,43 @@
 
 <div class="page-body">
     <div class="container-xl">
-        <div class="card">
-            <div class="card-body p-0">
-                <x-tabler.flash-message />
-                <x-tabler.datatable 
-                    id="table-tanggal-tidak-masuk"
-                    route="{{ route('hr.tanggal-tidak-masuk.index') }}"
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
-                        ['data' => 'tanggal', 'name' => 'tanggal', 'title' => 'Tanggal'],
-                        ['data' => 'tahun', 'name' => 'tahun', 'title' => 'Tahun'],
-                        ['data' => 'keterangan', 'name' => 'keterangan', 'title' => 'Keterangan'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Action', 'orderable' => false, 'searchable' => false, 'className' => 'text-end'],
-                    ]"
-                />
+        <x-tabler.flash-message />
+        
+        @if($data->isEmpty())
+            <div class="empty">
+                <div class="empty-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><line x1="9" y1="10" x2="9.01" y2="10" /><line x1="15" y1="10" x2="15.01" y2="10" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0" /></svg>
+                </div>
+                <p class="empty-title">Tidak ada data</p>
+                <p class="empty-subtitle text-muted"> Belum ada tanggal libur yang terdaftar untuk tahun {{ $tahun }}. </p>
             </div>
-{{-- No custom script needed, handled by component --}}
+        @else
+            <div class="row row-cards">
+                @foreach($data as $item)
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card card-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="subheader">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->isoFormat('dddd') : '-' }}</div>
+                                <div class="ms-auto">
+                                    <div class="dropdown">
+                                        <a href="#" class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" /></svg>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a href="#" class="dropdown-item text-danger ajax-delete" data-url="{{ route('hr.tanggal-tidak-masuk.destroy', $item->id) }}">Hapus</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="h1 mb-1">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M') : '-' }}</div>
+                            <div class="text-muted">{{ $item->keterangan }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</div>
 @endsection

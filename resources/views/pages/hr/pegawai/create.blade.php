@@ -3,9 +3,7 @@
 @section('header')
 <div class="row g-2 align-items-center">
     <div class="col">
-        <h2 class="page-title">
-            Tambah Pegawai
-        </h2>
+        <h2 class="page-title">Tambah Pegawai</h2>
     </div>
 </div>
 @endsection
@@ -20,7 +18,6 @@
                 <li class="nav-item">
                     <a href="#tab-datadiri" class="nav-link active" data-bs-toggle="tab">Data Diri</a>
                 </li>
-                {{-- Other tabs can be added here as needed, but for initial creation usually basic info is first --}}
                 <li class="nav-item">
                     <a href="#tab-kepegawaian" class="nav-link" data-bs-toggle="tab">Informasi Kepegawaian</a>
                 </li>
@@ -73,40 +70,37 @@
                 <!-- Tab Kepegawaian -->
                 <div class="tab-pane" id="tab-kepegawaian">
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Unit / Departemen</label>
-                            <select class="form-select" name="departemen_id">
-                                <option value="">Pilih Departemen</option>
-                                @foreach($departemen as $d)
-                                    <option value="{{ $d->departemen_id }}">{{ $d->departemen }}</option>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Status Pegawai</label>
+                            <select class="form-select" name="statpegawai_id" required>
+                                <option value="">Pilih Status Pegawai</option>
+                                @foreach($statusPegawai as $sp)
+                                    <option value="{{ $sp->statpegawai_id }}">{{ $sp->statpegawai }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Program Studi (Jika Ada)</label>
-                            <select class="form-select" name="prodi_id">
-                                <option value="">Pilih Prodi</option>
-                                @foreach($prodi as $p)
-                                    <option value="{{ $p->prodi_id }}">{{ $p->nama_prodi }}</option>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Status Aktifitas</label>
+                            <select class="form-select" name="stataktifitas_id" required>
+                                <option value="">Pilih Status Aktifitas</option>
+                                @foreach($statusAktifitas as $sa)
+                                    <option value="{{ $sa->stataktifitas_id }}">{{ $sa->stataktifitas }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Posisi</label>
-                            <select class="form-select" name="posisi_id">
-                                <option value="">Pilih Posisi</option>
-                                @foreach($posisi as $p)
-                                    <option value="{{ $p->posisi_id }}">{{ $p->posisi }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="ti ti-info-circle me-2"></i>
+                        Penugasan ke unit/jabatan dapat dilakukan setelah pegawai tersimpan melalui menu <strong>Riwayat Penugasan</strong>.
                     </div>
                 </div>
             </div>
         </div>
         <div class="card-footer text-end">
-            <a href="{{ route('hr.pegawai.index') }}" class="btn btn-link">Batal</a>
-            <button type="submit" class="btn btn-primary">Simpan Data Pegawai</button>
+            <a href="{{ route('hr.pegawai.index') }}" class="btn btn-link">Kembali</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-device-floppy me-1"></i> Simpan Pegawai
+            </button>
         </div>
     </div>
 </form>

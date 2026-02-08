@@ -1,5 +1,5 @@
 <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('dashboard') }}">
+    <a class="nav-link" href="{{ route('lab.dashboard') }}">
         <span class="nav-link-icon d-md-none d-lg-inline-block">
             <i class="ti ti-layout-dashboard fs-2"></i>
         </span>
@@ -14,7 +14,7 @@
 </li>
 
 <li class="nav-item {{ request()->routeIs('labs.*') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('labs.index') }}">
+    <a class="nav-link" href="{{ route('lab.labs.index') }}">
         <span class="nav-link-icon d-md-none d-lg-inline-block">
             <i class="ti ti-flask fs-2"></i>
         </span>
@@ -23,7 +23,7 @@
 </li>
 
 <li class="nav-item {{ request()->routeIs('inventaris.*') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('inventaris.index') }}">
+    <a class="nav-link" href="{{ route('lab.inventaris.index') }}">
         <span class="nav-link-icon d-md-none d-lg-inline-block">
             <i class="ti ti-package fs-2"></i>
         </span>
@@ -84,7 +84,7 @@
 </li>
 
 <li class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('users.index') }}">
+    <a class="nav-link" href="{{ route('lab.users.index') }}">
         <span class="nav-link-icon d-md-none d-lg-inline-block">
             <i class="ti ti-users fs-2"></i>
         </span>

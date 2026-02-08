@@ -26,7 +26,7 @@
             {{-- Brand/Logo --}}
             @unless($hideBrand)
             <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                <a href="{{ route('dashboard') }}">
+                <a href="{{ route('lab.dashboard') }}">
                     <img src="{{  asset('images/logo-apps.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
                 </a>
             </div>
@@ -48,19 +48,19 @@
                             <div class="card-body p-2">
                                 <div class="row g-2">
                                     <div class="col-4">
-                                        <a href="{{ route('dashboard') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
+                                        <a href="{{ route('lab.dashboard') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
                                             <i class="ti ti-layout-dashboard fs-2 d-block mb-1"></i>
                                             <div class="small">Dashboard</div>
                                         </a>
                                     </div>
                                     <div class="col-4">
-                                        <a href="{{ route('labs.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
+                                        <a href="{{ route('lab.labs.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
                                             <i class="ti ti-flask fs-2 d-block mb-1"></i>
                                             <div class="small">Lab</div>
                                         </a>
                                     </div>
                                     <div class="col-4">
-                                        <a href="{{ route('inventaris.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
+                                        <a href="{{ route('lab.inventaris.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
                                             <i class="ti ti-package fs-2 d-block mb-1"></i>
                                             <div class="small">Inventaris</div>
                                         </a>
@@ -126,7 +126,7 @@
                         </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ? ' data-bs-theme="light"' : '' }}>
-                        <a href="{{ route('users.show', auth()->user()->id) }}" class="dropdown-item">
+                        <a href="{{ route('lab.users.show', auth()->user()->id) }}" class="dropdown-item">
                             <i class="ti ti-user me-2"></i> My Profile
                         </a>
                         
@@ -176,7 +176,7 @@
                 <div class="{{ $layoutData['navbarContainerClass'] ?? 'container-xl' }}">
                      <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}" >
+                            <a class="nav-link" href="{{ route('lab.dashboard') }}" >
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <i class="ti ti-home fs-2"></i>
                                 </span>
@@ -184,7 +184,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('labs.index') }}" >
+                            <a class="nav-link" href="{{ route('lab.labs.index') }}" >
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <i class="ti ti-flask fs-2"></i>
                                 </span>
@@ -192,7 +192,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('inventaris.index') }}" >
+                            <a class="nav-link" href="{{ route('lab.inventaris.index') }}" >
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <i class="ti ti-package fs-2"></i>
                                 </span>
@@ -211,7 +211,7 @@
     function switchRole(role) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '{{ route("users.switch-role") }}/' + role;
+        form.action = '{{ route("lab.users.switch-role") }}/' + role;
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const tokenInput = document.createElement('input');

@@ -27,7 +27,7 @@
             </div>
         </div>
     </div>
-    <div class="card-body">
+    <div class="">
          <x-tabler.flash-message />
         <x-tabler.datatable 
             id="att-device-table"

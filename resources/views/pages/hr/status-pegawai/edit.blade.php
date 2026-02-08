@@ -2,7 +2,7 @@
     <h5 class="modal-title">Edit Status Pegawai</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<form action="{{ route('hr.status-pegawai.update', $statusPegawai->status_pegawai_id) }}" method="POST" class="ajax-form">
+<form action="{{ route('hr.status-pegawai.update', $statusPegawai) }}" method="POST" class="ajax-form">
     @csrf
     @method('PUT')
     <div class="modal-body">

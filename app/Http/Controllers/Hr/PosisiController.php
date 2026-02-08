@@ -29,9 +29,9 @@ class PosisiController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.posisi.edit', $row->posisi_id),
+                    'editUrl'   => route('hr.posisi.edit', $row->hashid),
                     'editModal' => true,
-                    'deleteUrl' => route('hr.posisi.destroy', $row->posisi_id),
+                    'deleteUrl' => route('hr.posisi.destroy', $row->hashid),
                 ])->render();
             })
             ->rawColumns(['action'])
@@ -53,16 +53,14 @@ class PosisiController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(Posisi $posisi)
     {
-        $posisi = Posisi::findOrFail($id);
         return view('pages.hr.posisi.edit', compact('posisi'));
     }
 
-    public function update(PosisiRequest $request, $id)
+    public function update(PosisiRequest $request, Posisi $posisi)
     {
         try {
-            $posisi = Posisi::findOrFail($id);
             $this->service->update($posisi, $request->validated());
             return jsonSuccess('Posisi updated successfully.');
         } catch (\Exception $e) {
@@ -70,10 +68,10 @@ class PosisiController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Posisi $posisi)
     {
         try {
-            $this->service->delete($id);
+            $posisi->delete();
             return jsonSuccess('Posisi deleted successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

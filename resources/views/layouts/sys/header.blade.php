@@ -49,7 +49,7 @@
                             <div class="card-body p-2">
                                 <div class="row g-2">
                                     <div class="col-4">
-                                        <a href="{{ route('dashboard') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
+                                        <a href="{{ route('lab.dashboard') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4h6v8h-6z" /><path d="M4 16h6v4h-6z" /><path d="M14 12h6v8h-6z" /><path d="M14 4h6v4h-6z" /></svg>
                                             <div class="small">Main Apps</div>
                                         </a>
@@ -128,7 +128,7 @@
                         </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ? ' data-bs-theme="light"' : '' }}>
-                        <a href="{{ route('users.show', auth()->user()->encrypted_id) }}" class="dropdown-item">
+                        <a href="{{ route('lab.users.show', auth()->user()->encrypted_id) }}" class="dropdown-item">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
                             My Profile
                         </a>
@@ -161,7 +161,7 @@
                         {{-- Impersonate Switch Back --}}
                         @if(app('impersonate')->isImpersonating())
                         <div class="dropdown-divider"></div>
-                        <a href="{{ route('users.switch-back') }}" class="dropdown-item text-warning">
+                        <a href="{{ route('lab.users.switch-back') }}" class="dropdown-item text-warning">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" /></svg>
                             Switch Back to Original Account
                         </a>

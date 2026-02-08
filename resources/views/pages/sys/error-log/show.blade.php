@@ -65,7 +65,7 @@
                                 <th>User</th>
                                 <td>
                                     @if ($errorLog->user)
-                                        <a href="{{ route('users.show', encryptId($errorLog->user_id)) }}">{{ $errorLog->user->name }}</a>
+                                        <a href="{{ route('lab.users.show', encryptId($errorLog->user_id)) }}">{{ $errorLog->user->name }}</a>
                                     @else
                                         Anonymous User
                                     @endif

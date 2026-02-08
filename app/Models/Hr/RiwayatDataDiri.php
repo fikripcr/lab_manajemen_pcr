@@ -1,13 +1,14 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Traits\Blameable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatDataDiri extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable;
 
     protected $table      = 'hr_riwayat_datadiri';
     protected $primaryKey = 'riwayatdatadiri_id';

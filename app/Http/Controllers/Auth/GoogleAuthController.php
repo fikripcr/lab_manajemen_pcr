@@ -1,12 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
@@ -38,7 +35,7 @@ class GoogleAuthController extends Controller
             // Redirect based on user role or status
             if (Auth::check()) {
                 // Redirect to dashboard or intended location
-                return redirect()->intended(route('dashboard'));
+                return redirect()->intended(route('lab.dashboard'));
             }
 
             return redirect()->route('login')->with('error', 'Authentication failed.');

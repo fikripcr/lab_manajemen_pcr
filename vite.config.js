@@ -10,7 +10,6 @@ export default defineConfig({
         laravel({
             input: [
                 // CSS Entry Points
-                // CSS Entry Points
                 'resources/css/sys.css',
                 'resources/css/admin.css',
                 'resources/css/auth.css',

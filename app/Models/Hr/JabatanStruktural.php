@@ -1,38 +1,34 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JabatanStruktural extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'hr_jabatan_struktural';
     protected $primaryKey = 'jabstruktural_id';
 
     protected $fillable = [
-        'nama',
-        'parent_id',
+        'jabstruktural',
         'is_active',
         'created_by',
         'updated_by',
     ];
 
+    public function getNamaAttribute()
+    {
+        return $this->jabstruktural;
+    }
+
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
-    public function parent()
-    {
-        return $this->belongsTo(JabatanStruktural::class, 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(JabatanStruktural::class, 'parent_id');
-    }
 
     protected static function boot()
     {

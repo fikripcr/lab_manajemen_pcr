@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers\Hr;
 
-use App\Helpers\GlobalHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PegawaiRequest;
 use App\Models\Hr\Pegawai;
@@ -19,6 +18,30 @@ class PegawaiController extends Controller
     }
 
     /**
+     * Search pegawai for Select2 AJAX.
+     */
+    public function select2Search(Request $request)
+    {
+        $search = $request->input('q', '');
+        $query  = Pegawai::with('latestDataDiri')
+            ->whereHas('latestDataDiri', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', "%{$search}%");
+            })
+            ->limit(20)
+            ->get();
+
+        $results = $query->map(function ($p) {
+            return [
+                'id'   => $p->pegawai_id,
+                'text' => $p->nama . ' (' . ($p->nip ?? 'No NIP') . ')',
+            ];
+        });
+
+        return response()->json(['results' => $results]);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -29,22 +52,50 @@ class PegawaiController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'viewUrl'    => route('hr.pegawai.show', $row->pegawai_id),
-                        'editUrl'    => route('hr.pegawai.edit', $row->pegawai_id),
-                        'deleteUrl'  => route('hr.pegawai.destroy', $row->pegawai_id),
+                        'viewUrl'    => route('hr.pegawai.show', $row->hashid),
+                        'editUrl'    => route('hr.pegawai.edit', $row->hashid),
+                        'deleteUrl'  => route('hr.pegawai.destroy', $row->hashid),
                         'deleteName' => $row->nama, // Optional, if component supports it or we need it for JS
                     ])->render();
                 })
                 ->addColumn('nama_lengkap', function ($row) {
                     return $row->nama;
                 })
+                ->addColumn('status_kepegawaian', function ($row) {
+                    return $row->latestStatusPegawai?->statusPegawai?->nama ?? '-';
+                })
+                ->addColumn('email', function ($row) {
+                    return $row->latestDataDiri?->email ?? '-';
+                })
                 ->addColumn('posisi', function ($row) {
-                    return $row->latestDataDiri->posisi->posisi ?? '-';
+                    return $row->latestDataDiri?->posisi?->posisi ?? '-';
                 })
                 ->addColumn('unit', function ($row) {
-                    return $row->latestDataDiri->departemen->departemen ?? ($row->latestDataDiri->prodi->nama_prodi ?? '-');
+                    return $row->latestDataDiri?->departemen?->departemen ?? '-';
                 })
-                ->rawColumns(['action'])
+                ->addColumn('prodi', function ($row) {
+                    return $row->latestDataDiri?->prodi?->nama_prodi ?? '-';
+                })
+                ->addColumn('penyelia', function ($row) {
+                    $atasan1 = $row->atasanSatu?->nama ?? null;
+                    $atasan2 = $row->atasanDua?->nama ?? null;
+
+                    if (! $atasan1 && ! $atasan2) {
+                        return '-';
+                    }
+
+                    $html = '';
+                    if ($atasan1) {
+                        $html .= '<div><small class="text-muted">1:</small> ' . $atasan1 . '</div>';
+                    }
+
+                    if ($atasan2) {
+                        $html .= '<div><small class="text-muted">2:</small> ' . $atasan2 . '</div>';
+                    }
+
+                    return $html;
+                })
+                ->rawColumns(['action', 'penyelia'])
                 ->make(true);
         }
 
@@ -56,16 +107,12 @@ class PegawaiController extends Controller
      */
     public function create()
     {
-        $posisi     = \App\Models\Hr\Posisi::where('is_active', 1)->get();
-        $departemen = \App\Models\Hr\Departemen::where('is_active', 1)->get();
-        $prodi      = \App\Models\Hr\Prodi::all(); // Assuming no is_active column or just all
+        $statusPegawai   = \App\Models\Hr\StatusPegawai::where('is_active', 1)->get();
+        $statusAktifitas = \App\Models\Hr\StatusAktifitas::where('is_active', 1)->get();
 
-        return view('pages.hr.pegawai.create', compact('posisi', 'departemen', 'prodi'));
+        return view('pages.hr.pegawai.create', compact('statusPegawai', 'statusAktifitas'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     /**
      * Store a newly created resource in storage.
      */
@@ -82,9 +129,9 @@ class PegawaiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Pegawai $pegawai)
     {
-        $pegawai = \App\Models\Hr\Pegawai::with([
+        $pegawai->load([
             'latestDataDiri', 'historyDataDiri.approval',
             'keluarga.approval',
             'riwayatPendidikan.approval',
@@ -97,7 +144,7 @@ class PegawaiController extends Controller
             'historyStatAktifitas.statusAktifitas',
             'historyJabFungsional.jabatanFungsional',
             'historyJabStruktural.jabatanStruktural',
-        ])->findOrFail($id);
+        ]);
 
         // Prepare pending changes if any
         $pendingChange = $pegawai->historyDataDiri
@@ -105,19 +152,15 @@ class PegawaiController extends Controller
             ->where('approval.status', 'Pending')
             ->first();
 
-        // If generic tabs (Pendidikan, Keluarga) have pending items, we might want to flag them too
-        // But for now, the main alert is for Data Diri.
-        // We will handle specific alerts inside the tabs (already done in view).
-
         return view('pages.hr.pegawai.show', compact('pegawai', 'pendingChange'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Pegawai $pegawai)
     {
-        $pegawai = Pegawai::with('latestDataDiri')->findOrFail($id);
+        $pegawai->load('latestDataDiri');
 
         $posisi     = \DB::table('hr_posisi')->select('posisi_id', 'posisi')->get();
         $departemen = \DB::table('hr_departemen')->select('departemen_id', 'departemen')->get();
@@ -130,14 +173,13 @@ class PegawaiController extends Controller
      * Update the specified resource in storage.
      * This creates a NEW history record + Pending Approval.
      */
-    public function update(PegawaiRequest $request, $id)
+    public function update(PegawaiRequest $request, Pegawai $pegawai)
     {
         try {
-            $pegawai = Pegawai::findOrFail($id);
             // Request Change Logic
             $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
 
-            return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $id));
+            return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->hashid));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
@@ -146,13 +188,13 @@ class PegawaiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Pegawai $pegawai)
     {
         try {
-            $this->pegawaiService->delete($id);
-            return GlobalHelper::jsonSuccess('Pegawai berhasil dihapus');
+            $pegawai->delete();
+            return jsonSuccess('Pegawai berhasil dihapus');
         } catch (\Exception $e) {
-            return GlobalHelper::jsonError($e->getMessage());
+            return jsonError($e->getMessage());
         }
     }
 }

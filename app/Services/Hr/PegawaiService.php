@@ -190,13 +190,82 @@ class PegawaiService
             return $approval;
         });
     }
+
+    /**
+     * Delete a Pegawai (soft delete).
+     */
+    public function delete($pegawaiId)
+    {
+        return DB::transaction(function () use ($pegawaiId) {
+            $pegawai = Pegawai::findOrFail($pegawaiId);
+            $pegawai->delete();
+            return true;
+        });
+    }
+    /*
+     * Penugasan Logic (Direct Update, No Approval Workflow)
+     */
+    public function addPenugasan(Pegawai $pegawai, array $data)
+    {
+        return DB::transaction(function () use ($pegawai, $data) {
+            $data['pegawai_id']  = $pegawai->pegawai_id;
+            $data['status']      = 'approved';
+            $data['approved_by'] = Auth::id();
+            $data['approved_at'] = now();
+
+            $riwayat = \App\Models\Hr\RiwayatPenugasan::create($data);
+
+            // Update latest on pegawai
+            $pegawai->update(['latest_riwayatpenugasan_id' => $riwayat->riwayatpenugasan_id]);
+
+            return $riwayat;
+        });
+    }
+
+    public function updatePenugasan(\App\Models\Hr\RiwayatPenugasan $penugasan, array $data)
+    {
+        return $penugasan->update($data);
+    }
+
+    public function deletePenugasan(Pegawai $pegawai, \App\Models\Hr\RiwayatPenugasan $penugasan)
+    {
+        return DB::transaction(function () use ($pegawai, $penugasan) {
+            $penugasan->delete();
+
+            // Update latest if deleted was latest
+            if ($pegawai->latest_riwayatpenugasan_id == $penugasan->riwayatpenugasan_id) {
+                $latest = \App\Models\Hr\RiwayatPenugasan::where('pegawai_id', $pegawai->pegawai_id)
+                    ->orderByDesc('tgl_mulai')
+                    ->first();
+                $pegawai->update(['latest_riwayatpenugasan_id' => $latest?->riwayatpenugasan_id]);
+            }
+
+            return true;
+        });
+    }
+
+    public function endPenugasan(\App\Models\Hr\RiwayatPenugasan $penugasan, $tglSelesai)
+    {
+        return $penugasan->update(['tgl_selesai' => $tglSelesai]);
+    }
+
     /**
      * Get filtered query for DataTables.
      */
     public function getFilteredQuery($request)
     {
         $query = Pegawai::query()
-            ->with(['latestDataDiri.posisi', 'latestDataDiri.departemen', 'latestDataDiri.prodi']);
+            ->with([
+                'latestDataDiri.posisi',
+                'latestDataDiri.departemen',
+                'latestDataDiri.prodi',
+                'latestStatusPegawai.statusPegawai',
+                'atasanSatu.latestDataDiri', // Need name of atasan
+                'atasanDua.latestDataDiri',  // Need name of atasan
+            ]);
+
+        // Add filtering if needed
+        // if ($request->filled('status_pegawai')) { ... }
 
         return $query;
     }

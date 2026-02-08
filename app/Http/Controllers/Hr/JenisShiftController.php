@@ -32,9 +32,9 @@ class JenisShiftController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.jenis-shift.edit', ['jenis_shift' => $row->jenis_shift_id]),
+                    'editUrl'   => route('hr.jenis-shift.edit', ['jenis_shift' => $row->hashid]),
                     'editModal' => true,
-                    'deleteUrl' => route('hr.jenis-shift.destroy', ['jenis_shift' => $row->jenis_shift_id]),
+                    'deleteUrl' => route('hr.jenis-shift.destroy', ['jenis_shift' => $row->hashid]),
                 ])->render();
             })
             ->rawColumns(['is_active', 'action'])
@@ -56,27 +56,26 @@ class JenisShiftController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(JenisShift $jenis_shift)
     {
-        $jenisShift = JenisShift::findOrFail($id);
+        $jenisShift = $jenis_shift;
         return view('pages.hr.jenis-shift.edit', compact('jenisShift'));
     }
 
-    public function update(JenisShiftRequest $request, $id)
+    public function update(JenisShiftRequest $request, JenisShift $jenis_shift)
     {
         try {
-            $jenisShift = JenisShift::findOrFail($id);
-            $this->service->update($jenisShift, $request->validated());
+            $this->service->update($jenis_shift, $request->validated());
             return jsonSuccess('Jenis Shift updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(JenisShift $jenis_shift)
     {
         try {
-            $this->service->delete($id);
+            $jenis_shift->delete();
             return jsonSuccess('Jenis Shift deleted successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

@@ -6,7 +6,6 @@ use App\Http\Requests\Hr\TanggalTidakMasukRequest;
 use App\Models\Hr\TanggalTidakMasuk;
 use App\Services\Hr\TanggalTidakMasukService;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class TanggalTidakMasukController extends Controller
 {
@@ -19,20 +18,25 @@ class TanggalTidakMasukController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = TanggalTidakMasuk::query()->latest('tanggal');
+        $tahun = $request->get('tahun', date('Y'));
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('tanggal', function ($row) {
-                    return $row->tanggal ? $row->tanggal->format('d M Y') : '-';
-                })
-                ->addColumn('action', 'components.tabler.datatables-actions')
-                ->rawColumns(['action'])
-                ->make(true);
+        $data = TanggalTidakMasuk::whereYear('tanggal', $tahun)
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        // Get available years for filter
+        $years = TanggalTidakMasuk::selectRaw('YEAR(tanggal) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Ensure current year is in the list
+        if (! in_array(date('Y'), $years)) {
+            array_unshift($years, date('Y'));
         }
 
-        return view('pages.hr.tanggal-tidak-masuk.index');
+        return view('pages.hr.tanggal-tidak-masuk.index', compact('data', 'tahun', 'years'));
     }
 
     public function create()

@@ -29,9 +29,9 @@ class DepartemenController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.departemen.edit', $row->departemen_id),
+                    'editUrl'   => route('hr.departemen.edit', $row->hashid),
                     'editModal' => true,
-                    'deleteUrl' => route('hr.departemen.destroy', $row->departemen_id),
+                    'deleteUrl' => route('hr.departemen.destroy', $row->hashid),
                 ])->render();
             })
             ->rawColumns(['action'])
@@ -53,16 +53,14 @@ class DepartemenController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(Departemen $departemen)
     {
-        $departemen = Departemen::findOrFail($id);
         return view('pages.hr.departemen.edit', compact('departemen'));
     }
 
-    public function update(DepartemenRequest $request, $id)
+    public function update(DepartemenRequest $request, Departemen $departemen)
     {
         try {
-            $departemen = Departemen::findOrFail($id);
             $this->service->update($departemen, $request->validated());
             return jsonSuccess('Departemen updated successfully.');
         } catch (\Exception $e) {
@@ -70,10 +68,10 @@ class DepartemenController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Departemen $departemen)
     {
         try {
-            $this->service->delete($id);
+            $departemen->delete();
             return jsonSuccess('Departemen deleted successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

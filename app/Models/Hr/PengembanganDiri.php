@@ -1,13 +1,14 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PengembanganDiri extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HashidBinding;
     protected $table      = 'hr_pengembangan_diri';
     protected $primaryKey = 'pengembangandiri_id';
     protected $guarded    = ['pengembangandiri_id'];
@@ -21,5 +22,10 @@ class PengembanganDiri extends Model
     public function approval()
     {
         return $this->belongsTo(RiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
+    }
+
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 }

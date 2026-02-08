@@ -34,9 +34,9 @@ class JabatanStrukturalController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.jabatan-struktural.edit', ['jabatan_struktural' => $row->jabstruktural_id]),
+                    'editUrl'   => route('hr.jabatan-struktural.edit', ['jabatan_struktural' => $row->hashid]),
                     'editModal' => true,
-                    'deleteUrl' => route('hr.jabatan-struktural.destroy', ['jabatan_struktural' => $row->jabstruktural_id]),
+                    'deleteUrl' => route('hr.jabatan-struktural.destroy', ['jabatan_struktural' => $row->hashid]),
                 ])->render();
             })
             ->rawColumns(['is_active', 'action'])
@@ -59,30 +59,29 @@ class JabatanStrukturalController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(JabatanStruktural $jabatan_struktural)
     {
-        $jabatanStruktural = JabatanStruktural::findOrFail($id);
+        $jabatanStruktural = $jabatan_struktural;
         $parents           = JabatanStruktural::where('is_active', true)
-            ->where('jabatan_struktural_id', '!=', $id)
-            ->pluck('nama', 'jabatan_struktural_id');
+            ->where('jabstruktural_id', '!=', $jabatan_struktural->jabstruktural_id)
+            ->pluck('jabstruktural', 'jabstruktural_id');
         return view('pages.hr.jabatan-struktural.edit', compact('jabatanStruktural', 'parents'));
     }
 
-    public function update(JabatanStrukturalRequest $request, $id)
+    public function update(JabatanStrukturalRequest $request, JabatanStruktural $jabatan_struktural)
     {
         try {
-            $jabatanStruktural = JabatanStruktural::findOrFail($id);
-            $this->service->update($jabatanStruktural, $request->validated());
+            $this->service->update($jabatan_struktural, $request->validated());
             return jsonSuccess('Jabatan Struktural updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(JabatanStruktural $jabatan_struktural)
     {
         try {
-            $this->service->delete($id);
+            $jabatan_struktural->delete();
             return jsonSuccess('Jabatan Struktural deleted successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

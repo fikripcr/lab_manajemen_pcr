@@ -873,9 +873,105 @@ return new class extends Migration
                 $table->string('created_by', 100)->nullable();
                 $table->string('updated_by', 100)->nullable();
                 $table->string('deleted_by', 100)->nullable();
-                $table->timestamps();
                 $table->softDeletes();
             });
+        }
+
+        // ==========================================
+        // 5. New Tables & Columns (Merged from subsequent migrations)
+        // ==========================================
+
+        // From 2026_02_08_170000_create_hr_org_unit_table.php & 2026_02_08_171100_add_sort_order_to_hr_org_unit.php
+        if (! Schema::hasTable('hr_org_unit')) {
+            Schema::create('hr_org_unit', function (Blueprint $table) {
+                $table->id('org_unit_id');
+                $table->unsignedBigInteger('parent_id')->nullable();
+                $table->string('name', 255);
+                $table->string('code', 50)->nullable();
+                $table->string('type', 100)->nullable(); // departemen, prodi, unit, jabatan_struktural, posisi
+                $table->integer('level')->default(1);
+                $table->integer('sort_order')->default(0); // Merged from add_sort_order
+                $table->boolean('is_active')->default(true);
+                $table->text('description')->nullable();
+
+                $table->unsignedBigInteger('created_by')->nullable();
+                $table->unsignedBigInteger('updated_by')->nullable();
+                $table->softDeletes();
+                $table->timestamps();
+
+                $table->foreign('parent_id')->references('org_unit_id')->on('hr_org_unit')->nullOnDelete();
+            });
+        }
+
+        // From 2026_02_08_084512_create_hr_tanggal_tidak_masuk_table.php
+        if (! Schema::hasTable('hr_tanggal_tidak_masuk')) {
+            Schema::create('hr_tanggal_tidak_masuk', function (Blueprint $table) {
+                $table->id();
+                $table->date('tanggal')->index();
+                $table->integer('tahun');
+                $table->string('keterangan');
+                $table->timestamps();
+            });
+        }
+
+        // From 2026_02_08_171700_create_hr_riwayat_penugasan_table.php
+        if (! Schema::hasTable('hr_riwayat_penugasan')) {
+            Schema::create('hr_riwayat_penugasan', function (Blueprint $table) {
+                $table->id('riwayatpenugasan_id');
+                $table->unsignedBigInteger('pegawai_id');
+                $table->unsignedBigInteger('org_unit_id');
+                $table->date('tgl_mulai');
+                $table->date('tgl_selesai')->nullable();
+                $table->string('no_sk', 100)->nullable();
+                $table->date('tgl_sk')->nullable();
+                $table->text('keterangan')->nullable();
+
+                                                                   // Approval workflow support
+                $table->string('status', 50)->default('approved'); // pending, approved, rejected
+                $table->unsignedBigInteger('approved_by')->nullable();
+                $table->timestamp('approved_at')->nullable();
+
+                $table->unsignedBigInteger('created_by')->nullable();
+                $table->unsignedBigInteger('updated_by')->nullable();
+                $table->unsignedBigInteger('deleted_by')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
+
+                // Constraints
+                $table->foreign('pegawai_id')->references('pegawai_id')->on('hr_pegawai')->cascadeOnDelete();
+                $table->foreign('org_unit_id')->references('org_unit_id')->on('hr_org_unit')->cascadeOnDelete();
+            });
+        }
+
+        // From 2026_02_08_163000_add_boundary_columns_to_hr_jenis_shift.php
+        if (Schema::hasTable('hr_jenis_shift')) {
+            Schema::table('hr_jenis_shift', function (Blueprint $table) {
+                if (! Schema::hasColumn('hr_jenis_shift', 'jam_masuk_awal')) {
+                    $table->time('jam_masuk_awal')->nullable()->after('jam_masuk');
+                    $table->time('jam_masuk_akhir')->nullable()->after('jam_masuk_awal');
+                    $table->time('jam_pulang_awal')->nullable()->after('jam_pulang');
+                    $table->time('jam_pulang_akhir')->nullable()->after('jam_pulang_awal');
+                }
+            });
+        }
+
+        // From 2026_02_08_171300_add_org_unit_id_to_hr_riwayat_jabstruktural.php
+        if (Schema::hasTable('hr_riwayat_jabstruktural')) {
+            Schema::table('hr_riwayat_jabstruktural', function (Blueprint $table) {
+                if (! Schema::hasColumn('hr_riwayat_jabstruktural', 'org_unit_id')) {
+                    $table->unsignedBigInteger('org_unit_id')->nullable()->after('jabstruktural_id');
+                    $table->foreign('org_unit_id')->references('org_unit_id')->on('hr_org_unit')->nullOnDelete();
+                }
+            });
+        }
+
+        // From 2026_02_08_171700_create_hr_riwayat_penugasan_table.php (Column addition to hr_pegawai)
+        if (Schema::hasTable('hr_pegawai')) {
+            if (! Schema::hasColumn('hr_pegawai', 'latest_riwayatpenugasan_id')) {
+                Schema::table('hr_pegawai', function (Blueprint $table) {
+                    $table->unsignedBigInteger('latest_riwayatpenugasan_id')->nullable()->after('latest_riwayatjabstruktural_id');
+                });
+            }
         }
     }
 

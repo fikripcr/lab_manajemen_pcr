@@ -21,6 +21,7 @@ window.Popper = { createPopper };
 
 // --- Bootstrap 5
 import * as bootstrap from 'bootstrap';
+import 'bootstrap';
 window.bootstrap = bootstrap;
 
 // --- SortableJS
