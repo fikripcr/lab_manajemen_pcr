@@ -31,6 +31,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('dokumens/reorder', [App\Http\Controllers\Pemutu\DokumenController::class, 'reorder'])->name('dokumens.reorder');
     Route::get('dokumens/create-standar', [App\Http\Controllers\Pemutu\DokumenController::class, 'createStandar'])->name('dokumens.create-standar');
     Route::get('dokumens/{id}/children-data', [App\Http\Controllers\Pemutu\DokumenController::class, 'childrenData'])->name('dokumens.children-data');
+    Route::get('dokumens/{id}/renop-with-indicators', [App\Http\Controllers\Pemutu\DokumenController::class, 'showRenopWithIndicators'])->name('dokumens.show-renop-with-indicators');
     Route::resource('dokumens', App\Http\Controllers\Pemutu\DokumenController::class);
 
     // Sub-Documents (DokSub)

@@ -228,9 +228,21 @@
             $(this).addClass('fw-bold text-primary');
 
             const url = $(this).data('url');
+            const docJenis = $(this).data('jenis'); // Get the document type directly
+
+            // Check if this is a RENOP document
+            let detailUrl = url;
+            if (docJenis === 'renop') {
+                // Extract document ID from the URL
+                const docId = url.match(/\/(\d+)$/)?.[1];
+                if (docId) {
+                    detailUrl = "{{ route('pemutu.dokumens.show-renop-with-indicators', ':id') }}".replace(':id', docId);
+                }
+            }
+
             $('#document-detail-panel').html('<div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>');
 
-            axios.get(url)
+            axios.get(detailUrl)
                 .then(function(response) {
                     $('#document-detail-panel').html(response.data);
                 })

@@ -115,6 +115,27 @@ class DokumenController extends Controller
         return view('pages.pemutu.dokumens.detail', compact('dokumen', 'pageTitle'));
     }
 
+    public function showRenopWithIndicators($id)
+    {
+        $dokumen = $this->dokumenService->getDokumenById($id);
+        if (! $dokumen) {
+            abort(404);
+        }
+
+        // Get all sub-documents for this document
+        $doksubs = $dokumen->dokSubs;
+
+        // Get all indicators for all sub-documents
+        $indicators = collect();
+        foreach ($doksubs as $doksub) {
+            $indicators = $indicators->merge($doksub->indikators);
+        }
+
+        $pageTitle = 'Indikator untuk: ' . $dokumen->judul;
+
+        return view('pages.pemutu.dokumens.renop_with_indicators', compact('dokumen', 'indicators', 'pageTitle'));
+    }
+
     public function edit($id)
     {
         $dokumen = $this->dokumenService->getDokumenById($id);
