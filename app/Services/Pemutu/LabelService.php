@@ -12,7 +12,7 @@ class LabelService
 
     public function getLabelFilteredQuery(array $filters = [])
     {
-        $query = Label::with('type')->select('label.*');
+        $query = Label::with('type')->select('*');
 
         if (! empty($filters['type_id'])) {
             $query->where('type_id', $filters['type_id']);

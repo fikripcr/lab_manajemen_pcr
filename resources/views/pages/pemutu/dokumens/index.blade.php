@@ -30,7 +30,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="tab-content">
                 <!-- PANEL KEBIJAKAN -->
                 <div class="tab-pane active show" id="main-kebijakan">
@@ -45,7 +45,7 @@
                             </select>
                             <input type="text" class="form-control form-control-sm" id="tree-search" placeholder="Cari dokumen...">
                         </div>
-                        
+
                         <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">
                              <li class="nav-item">
                                 <a href="#tab-visi-misi" class="nav-link py-1 {{ !request('jenis') || request('jenis') == 'visi-misi' ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="visi-misi">VISI & MISI</a>
@@ -57,7 +57,7 @@
                             @endforeach
                         </ul>
                     </div>
-                    
+
                     <!-- Content Trees -->
                     <div class="card-body p-0 overflow-auto" style="max-height: 55vh;">
                          <div class="tab-content p-3">
@@ -72,7 +72,7 @@
                                     @endif
                                 </ul>
                              </div>
-                             
+
                              <!-- RJP/RENSTRA/RENOP -->
                              @foreach(['rjp', 'renstra', 'renop'] as $jenis)
                              <div class="tab-pane {{ request('jenis') == $jenis ? 'active show' : '' }}" id="tab-{{ $jenis }}">
@@ -107,7 +107,7 @@
                                         @php
                                             $list = $dokumentByJenis[$stType] ?? [];
                                         @endphp
-                                        
+
                                         @forelse($list as $dok)
                                             @include('pages.pemutu.dokumens._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
                                         @empty
@@ -138,51 +138,85 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- Drag and Drop Logic ---
-        const nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable, #dokumen-tree'));
+        function initializeDragAndDrop() {
+            // Clear previous instances to avoid duplicates
+            const nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable'));
 
-        function getHierarchyFromUl(ul) {
-            const items = [];
-            Array.from(ul.children).forEach(li => {
-                const id = li.dataset.id;
-                if (!id) return;
-                
-                const item = { id: id };
-                const nestedUl = li.querySelector('ul.nested-sortable');
-                if (nestedUl && nestedUl.children.length > 0) {
-                    item.children = getHierarchyFromUl(nestedUl);
+            // Remove any existing sortable instances
+            nestedSortables.forEach(function (el) {
+                if (el.sortableInstance) {
+                    el.sortableInstance.destroy();
                 }
-                items.push(item);
             });
-            return items;
-        }
 
-        function saveHierarchy() {
-            const rootUl = document.getElementById('dokumen-tree');
-            const hierarchy = getHierarchyFromUl(rootUl);
-            
-            console.log('Saving hierarchy...', hierarchy);
-            
-            axios.post("{{ route('pemutu.dokumens.reorder') }}", { hierarchy: hierarchy })
-                .then(response => {
-                    console.log('Hierarchy saved');
-                })
-                .catch(error => {
-                    console.error('Failed to save hierarchy', error);
-                    alert('Gagal menyimpan urutan baru. Silakan refresh halaman.');
+            function getHierarchyFromUl(ul) {
+                const items = [];
+                Array.from(ul.children).forEach(li => {
+                    const id = li.dataset.id;
+                    if (!id) return;
+
+                    const item = { id: id, name: li.querySelector('.tree-item-name')?.textContent || '' };
+                    const nestedUl = li.querySelector('ul.nested-sortable');
+                    if (nestedUl && nestedUl.children.length > 0) {
+                        item.children = getHierarchyFromUl(nestedUl);
+                    }
+                    items.push(item);
                 });
+                return items;
+            }
+
+            function saveHierarchy() {
+                // Find the currently active tab's tree
+                const activeTabPane = document.querySelector('.tab-pane.active.show');
+                const rootUl = activeTabPane ? activeTabPane.querySelector('.nested-sortable') : null;
+
+                if (!rootUl) {
+                    console.warn('No active tree found to save');
+                    return;
+                }
+
+                const hierarchy = getHierarchyFromUl(rootUl);
+
+                console.log('Saving hierarchy...', hierarchy);
+
+                axios.post("{{ route('pemutu.dokumens.reorder') }}", { hierarchy: hierarchy })
+                    .then(response => {
+                    })
+                    .catch(error => {
+                        console.error('Failed to save hierarchy', error);
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: 'Gagal menyimpan urutan dokumen. Silakan coba lagi.'
+                            });
+                        } else {
+                            alert('Gagal menyimpan urutan baru. Silakan refresh halaman.');
+                        }
+                    });
+            }
+
+            nestedSortables.forEach(function (el) {
+                // Create new sortable instance
+                el.sortableInstance = new Sortable(el, {
+                    group: 'nested',
+                    animation: 150,
+                    fallbackOnBody: true,
+                    swapThreshold: 0.65,
+                    handle: '.d-flex', // Using the flex container as the drag handle
+                    onEnd: function (evt) {
+                        saveHierarchy();
+                    }
+                });
+            });
         }
 
-        nestedSortables.forEach(function (el) {
-            new Sortable(el, {
-                group: 'nested',
-                animation: 150,
-                fallbackOnBody: true,
-                swapThreshold: 0.65,
-                handle: '.d-flex',
-                onEnd: function (evt) {
-                    saveHierarchy();
-                }
-            });
+        // Initialize drag and drop on page load
+        initializeDragAndDrop();
+
+        // Reinitialize when tabs change
+        $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            setTimeout(initializeDragAndDrop, 100); // Small delay to ensure DOM is updated
         });
 
         // --- Existing Logic ---
@@ -212,9 +246,9 @@
              e.stopPropagation();
              const target = $(this).closest('li').children('ul');
              const icon = $(this).find('i');
-             
+
              target.toggleClass('d-none');
-             
+
              if (target.hasClass('d-none')) {
                  icon.removeClass('ti-chevron-down').addClass('ti-chevron-right');
              } else {
@@ -229,9 +263,9 @@
              const parentLi = $(this).closest('li');
              const target = parentLi.children('ul');
              const icon = $(this).find('i');
-             
+
              target.toggleClass('d-none');
-             
+
              if (target.hasClass('d-none')) {
                  icon.removeClass('ti-chevron-down').addClass('ti-chevron-right');
              } else {
@@ -239,16 +273,23 @@
              }
         });
 
-        // Simple Search Filter
+        // Simple Search Filter - Fixed to work with actual tree structure
         $('#tree-search').on('keyup', function() {
             var value = $(this).val().toLowerCase();
-            $("#dokumen-tree li").filter(function() {
-                // Check if current li has text match (excluding children text if possible? No, filter hides li)
-                // Text includes children text in jQuery .text()
-                // Better approach: toggle visibility based on direct text or keep visible if child visible?
-                // For simplicity, existing logic:
-                var text = $(this).text().toLowerCase();
-                $(this).toggle(text.indexOf(value) > -1)
+
+            // First hide all items
+            $('.nested-sortable li').hide();
+
+            // Then show items that match the search term
+            $('.nested-sortable li').each(function() {
+                var text = $(this).find('.tree-item-name').text().toLowerCase();
+                if (text.indexOf(value) > -1) {
+                    // Show this item and all its parents
+                    $(this).show().parents('li').show();
+
+                    // Also show all children of matching items
+                    $(this).find('li').show();
+                }
             });
         });
     });
@@ -256,27 +297,41 @@
 <style>
     .tree-item-link { cursor: pointer; text-decoration: none; color: inherit; }
     .tree-item-link:hover { color: var(--tblr-primary); font-weight: 500; }
-    
+
     /* Tree Lines */
     ul#dokumen-tree, ul.nested-sortable { list-style: none; padding-left: 20px; }
     ul.nested-sortable { margin-left: 5px; border-left: 1px dashed #e6e7e9; min-height: 10px; }
-    
+
     li[data-id] { position: relative; }
     li[data-id]::before {
         content: "";
         position: absolute;
-        top: 15px; 
+        top: 15px;
         left: -20px;
         width: 15px;
         border-top: 1px dashed #e6e7e9;
     }
-    
+
     ul#dokumen-tree > li[data-id]::before { display: none; }
     ul#dokumen-tree > li[data-id] { padding-left: 0; }
-    
+
     .tree-toggle { cursor: pointer; width: 20px; display: inline-block; text-align: center; color: #6e7582; }
     .tree-toggle:hover { color: var(--tblr-primary); }
-    
+
     .sortable-ghost { opacity: 0.4; background-color: #f1f5f9; }
+
+    /* Drag handle styling */
+    .d-flex[draggable] {
+        cursor: move;
+    }
+
+    .d-flex[draggable]:hover {
+        background-color: rgba(0, 105, 217, 0.06);
+    }
+
+    /* Tree item name styling */
+    .tree-item-name {
+        cursor: pointer;
+    }
 </style>
 @endpush

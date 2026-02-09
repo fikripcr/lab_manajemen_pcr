@@ -1,5 +1,5 @@
 <li data-id="{{ $dok->dok_id }}">
-    <div class="d-flex align-items-start mb-2">
+    <div class="d-flex align-items-start mb-2" draggable="true">
         @if($dok->children->count() > 0)
             <span class="tree-toggle text-muted me-2 mt-1">
                 <i class="ti ti-chevron-{{ isset($collapsed) && $collapsed ? 'right' : 'down' }}"></i>
@@ -7,7 +7,7 @@
         @else
             <span class="text-muted me-2 mt-1" style="width: 20px; display: inline-block; text-align: center;">&bull;</span>
         @endif
-        
+
         <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dokumens.show', $dok->dok_id) }}">
             <div class="d-flex align-items-center mb-1">
                 <div class="row align-items-center w-100 gx-2">
@@ -18,7 +18,7 @@
                     </div>
                     <div class="col">
                         <div class="text-truncate">
-                            <span class="fw-bold text-reset">{{ $dok->judul }}</span>
+                            <span class="tree-item-name fw-bold text-reset">{{ $dok->judul }}</span>
                             @if($dok->kode)
                             <div class="text-muted small">{{ $dok->kode }}</div>
                             @endif

@@ -21,6 +21,7 @@ class LabelTypeRequest extends FormRequest
         return [
             'name'        => 'required|string|max:100',
             'description' => 'nullable|string',
+            'color'       => 'nullable|string|max:20',
         ];
     }
 }

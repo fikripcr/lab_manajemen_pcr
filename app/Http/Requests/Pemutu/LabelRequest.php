@@ -19,7 +19,7 @@ class LabelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type_id'     => 'required|exists:label_types,labeltype_id',
+            'type_id'     => 'required|exists:pemutu_label_types,labeltype_id',
             'name'        => 'required|string|max:100',
             'slug'        => 'nullable|string|max:100',
             'description' => 'nullable|string',
