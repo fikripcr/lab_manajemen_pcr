@@ -17,8 +17,8 @@ class IndikatorSeeder extends Seeder
     {
         // Truncate first
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('indikator_label')->truncate();
-        DB::table('indikator_orgunit')->truncate();
+        DB::table('pemutu_indikator_label')->truncate();
+        DB::table('pemutu_indikator_orgunit')->truncate();
         Indikator::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 

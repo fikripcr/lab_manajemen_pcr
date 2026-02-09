@@ -1,12 +1,25 @@
 <?php
 namespace Database\Seeders;
 
-use Database\Seeders\Hr\HrStatusAktifitasSeeder;
-use Database\Seeders\Hr\HrStatusPegawaiSeeder;
-use Database\Seeders\Sys\SysRoleSuperAdminSeeder;
-use Database\Seeders\Sys\SysSeeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\Sys\SysSeeder;
+use Database\Seeders\Pemutu\PersonilSeeder;
+use Database\Seeders\Hr\HrOrgUnitSeeder;
+use Database\Seeders\Lab\InventorySeeder;
+use Database\Seeders\Pemutu\PemutuSeeder;
+use Database\Seeders\Hr\HrJenisIzinSeeder;
+use Database\Seeders\Lab\PengumumanSeeder;
+use Database\Seeders\Pemutu\DokumenSeeder;
+use Database\Seeders\Hr\HrJenisShiftSeeder;
+use Database\Seeders\Hr\HumanCapitalSeeder;
+use Database\Seeders\Lab\AcademicDataSeeder;
+use Database\Seeders\Pemutu\IndikatorSeeder;
+use Database\Seeders\Hr\HrStatusPegawaiSeeder;
+use Database\Seeders\Hr\HrStatusAktifitasSeeder;
+use Database\Seeders\Sys\SysRoleSuperAdminSeeder;
+use Database\Seeders\Hr\HrJabatanFungsionalSeeder;
+use Database\Seeders\Hr\HrJenisIndisiplinerSeeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,27 +31,31 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            SysSeeder::class,
-            SysRoleSuperAdminSeeder::class,
-            UserSeeder::class,
+            // Sys Data
+            // SysSeeder::class,
+            // SysRoleSuperAdminSeeder::class,
+            // UserSeeder::class,
 
-            // HR Master Data
-            \Database\Seeders\Hr\HrJabatanFungsionalSeeder::class,
-            \Database\Seeders\Hr\HrOrgUnitSeeder::class,
-            HrStatusPegawaiSeeder::class,
-            HrStatusAktifitasSeeder::class,
-            \Database\Seeders\Hr\HrJenisIzinSeeder::class,
-            \Database\Seeders\Hr\HrJenisIndisiplinerSeeder::class,
-            \Database\Seeders\Hr\HrJenisShiftSeeder::class,
+            // // HR Data
+            // HrJabatanFungsionalSeeder::class,
+            // HrOrgUnitSeeder::class,
+            // HrStatusPegawaiSeeder::class,
+            // HrStatusAktifitasSeeder::class,
+            // HrJenisIzinSeeder::class,
+            // HrJenisIndisiplinerSeeder::class,
+            // HrJenisShiftSeeder::class,
+            // HumanCapitalSeeder::class,
 
-            // HR Employee Data
-            \Database\Seeders\Hr\HumanCapitalSeeder::class,
-
-            // Lab Data
-            \Database\Seeders\Lab\AcademicDataSeeder::class,
+            // // Lab Data
+            // AcademicDataSeeder::class,
+            // InventorySeeder::class,
+            // PengumumanSeeder::class,
 
             // Pemutu Data
-            \Database\Seeders\Pemutu\PemutuSeeder::class,
+            PemutuSeeder::class,
+            DokumenSeeder::class,
+            IndikatorSeeder::class,
+            PersonilSeeder::class,
         ]);
     }
 }

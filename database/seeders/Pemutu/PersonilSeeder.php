@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders\Hr;
+namespace Database\Seeders\Pemutu;
 
 use App\Models\Pemutu\OrgUnit;
 use App\Models\Pemutu\Personil;
