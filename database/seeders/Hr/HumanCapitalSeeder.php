@@ -1,17 +1,17 @@
 <?php
 namespace Database\Seeders\Hr;
 
-use App\Models\Hr\Departemen;
 use App\Models\Hr\JabatanFungsional;
+use App\Models\Hr\Keluarga;
 use App\Models\Hr\OrgUnit;
 use App\Models\Hr\Pegawai;
+// use App\Models\Hr\Prodi; // Removed
+// use App\Models\Hr\Departemen; // Removed
 use App\Models\Hr\Posisi;
-use App\Models\Hr\Prodi;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
 use App\Models\Hr\RiwayatJabFungsional;
 use App\Models\Hr\RiwayatPendidikan;
-use App\Models\Hr\RiwayatPenugasan;
 use App\Models\Hr\RiwayatStatAktifitas;
 use App\Models\Hr\RiwayatStatPegawai;
 use App\Models\Hr\StatusAktifitas;
@@ -33,32 +33,42 @@ class HumanCapitalSeeder extends Seeder
         $sysUserId = 1;
 
         // Fetch Master Data
-        $depts          = Departemen::all();
-        $prodis         = Prodi::all();
+        // Fetch Master Data
+        // Use OrgUnit for Depts and Prodis
+        $depts = OrgUnit::where('type', 'Jurusan')->get();
+        // $prodis         = OrgUnit::where('type', 'Prodi')->get(); // We will query based on parent
+
         $posisis        = Posisi::all();
         $statusPegawais = StatusPegawai::all();
         $statusAktifs   = StatusAktifitas::where('nama_status', 'Aktif')->first();
         $jabFungsionals = JabatanFungsional::all();
-        $orgUnits       = OrgUnit::whereIn('type', ['jabatan_struktural', 'departemen', 'prodi'])->get(); // for Penugasan/Struktural
+        // OrgUnits for Penugasan (excluding Jurusan/Prodi to avoid double duty, or include all?)
+        // Let's include everything for penugasan
+        $orgUnits = OrgUnit::whereIn('type', ['Direktorat', 'Bagian', 'Unit', 'Jurusan', 'Prodi'])->get();
 
         // If no master data, we can't seed properly
         if ($depts->isEmpty() || $statusPegawais->isEmpty()) {
-            $this->command->error('HR Master Data missing. Please ensure LegacyHrDataSeeder and others ran.');
+            $this->command->error('HR Master Data missing. Please ensure HrOrgUnitSeeder and others ran.');
             return;
         }
 
-        DB::transaction(function () use ($faker, $sysUserId, $depts, $prodis, $posisis, $statusPegawais, $statusAktifs, $jabFungsionals, $orgUnits) {
+        DB::transaction(function () use ($faker, $sysUserId, $depts, $posisis, $statusPegawais, $statusAktifs, $jabFungsionals, $orgUnits) {
 
             for ($i = 0; $i < 30; $i++) {
                 // 1. Create Pegawai Skeleton
                 $pegawai = Pegawai::create(['created_by' => $sysUserId]);
 
                 // 2. Data Diri
+                // 2. Data Diri
                 $gender = $faker->randomElement(['L', 'P']);
-                $dept   = $depts->random();
-                // Find prodi for this dept if exists, else random
-                $deptProdis = $prodis->where('departemen_id', $dept->departemen_id);
-                $prodi      = $deptProdis->isNotEmpty() ? $deptProdis->random() : null;
+
+                // Random Dept
+                $dept = $depts->random();
+                // Find prodi for this dept if exists
+                $prodi = OrgUnit::where('parent_id', $dept->org_unit_id)->where('type', 'Prodi')->inRandomOrder()->first();
+
+                // Assign unit to the most specific one (Prodi if exists, else Dept)
+                $assignedUnitId = $prodi ? $prodi->org_unit_id : $dept->org_unit_id;
 
                 $dataDiri = [
                     'pegawai_id'    => $pegawai->pegawai_id,
@@ -73,8 +83,10 @@ class HumanCapitalSeeder extends Seeder
                     'no_hp'         => $faker->phoneNumber,
                     'status_nikah'  => $faker->randomElement(['Menikah', 'Belum Menikah']),
                     'agama'         => 'Islam',
-                    'departemen_id' => $dept->departemen_id,
-                    'prodi_id'      => $prodi ? $prodi->prodi_id : null,
+                    'org_unit_id'   => $assignedUnitId,
+                    // 'departemen_id' => $dept->departemen_id, // Removed
+                    // 'prodi_id'      => $prodi ? $prodi->prodi_id : null, // Removed
+
                     'posisi_id'     => $posisis->random()->posisi_id,
                     'created_by'    => $sysUserId,
                 ];
@@ -106,7 +118,7 @@ class HumanCapitalSeeder extends Seeder
                         'pegawai_id'       => $pegawai->pegawai_id,
                         'jabfungsional_id' => $jabFungsionals->random()->jabfungsional_id,
                         'tmt'              => $faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
-                        'no_sk'            => $faker->bothify('SK/###/YPCR/????'),
+                        'no_sk_internal'   => $faker->bothify('SK/###/YPCR/????'),
                         'created_by'       => $sysUserId,
                     ];
                     $riwayatJabFung = $this->createApprovedHistory(RiwayatJabFungsional::class, $jabFungData, $sysUserId);
@@ -130,28 +142,28 @@ class HumanCapitalSeeder extends Seeder
                         'pegawai_id'         => $pegawai->pegawai_id,
                         'statusaktifitas_id' => $statusAktifs->statusaktifitas_id,
                         'tmt'                => $faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
-                        'no_sk'              => $faker->bothify('SK/###/YPCR/????'),
+                        // 'no_sk'              => $faker->bothify('SK/###/YPCR/????'), // missing in schema
                         'created_by'         => $sysUserId,
                     ];
                     $riwayatAktif = $this->createApprovedHistory(RiwayatStatAktifitas::class, $statAktifData, $sysUserId);
                     $pegawai->update(['latest_riwayatstataktifitas_id' => $riwayatAktif->getKey()]);
                 }
 
-                // 7. Penugasan (Random)
-                if ($orgUnits->isNotEmpty() && $faker->boolean(70)) {
-                    $unit          = $orgUnits->random();
-                    $penugasanData = [
-                        'pegawai_id'  => $pegawai->pegawai_id,
-                        'org_unit_id' => $unit->org_unit_id,
-                        'tgl_mulai'   => $faker->dateTimeBetween('-2 years', 'now')->format('Y-m-d'),
-                        'no_sk'       => $faker->bothify('SK/###/YPCR/????'),
-                        'status'      => 'approved',
-                        'approved_at' => now(),
-                        'approved_by' => $sysUserId,
-                    ];
-                    $riwayatPenugasan = RiwayatPenugasan::create($penugasanData); // Penugasan has no Approval model
-                    $pegawai->update(['latest_riwayatpenugasan_id' => $riwayatPenugasan->getKey()]);
-                }
+                // 7. Penugasan (Random) - SKIP dulu, tabel belum ada
+                // if ($orgUnits->isNotEmpty() && $faker->boolean(70)) {
+                //     $unit          = $orgUnits->random();
+                //     $penugasanData = [
+                //         'pegawai_id'  => $pegawai->pegawai_id,
+                //         'org_unit_id' => $unit->org_unit_id,
+                //         'tgl_mulai'   => $faker->dateTimeBetween('-2 years', 'now')->format('Y-m-d'),
+                //         'no_sk'       => $faker->bothify('SK/###/YPCR/????'),
+                //         'status'      => 'approved',
+                //         'approved_at' => now(),
+                //         'approved_by' => $sysUserId,
+                //     ];
+                //     $riwayatPenugasan = RiwayatPenugasan::create($penugasanData);
+                //     $pegawai->update(['latest_riwayatpenugasan_id' => $riwayatPenugasan->getKey()]);
+                // }
 
                 // 8. Keluarga
                 $numFam = $faker->numberBetween(0, 3);
@@ -164,7 +176,7 @@ class HumanCapitalSeeder extends Seeder
                         'tgl_lahir'     => $faker->date(),
                         'created_by'    => $sysUserId,
                     ];
-                    $this->createApprovedHistory(Keluarga::class, $famData, $sysUserId);
+                    Keluarga::create($famData);
                 }
             }
         });

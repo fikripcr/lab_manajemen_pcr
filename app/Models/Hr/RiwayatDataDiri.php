@@ -27,6 +27,7 @@ class RiwayatDataDiri extends Model
         'no_hp',
         'no_ktp',
         'status_nikah',
+        'agama',
         'no_kk',
         'gelar_depan',
         'gelar_belakang',
@@ -34,8 +35,7 @@ class RiwayatDataDiri extends Model
         'file_ttd_digital',
         'file_serdos',
         'posisi_id',
-        'departemen_id',
-        'prodi_id',
+        'org_unit_id',
         'nama_buku',
         'no_rekening',
         'bank_pegawai',
@@ -56,14 +56,9 @@ class RiwayatDataDiri extends Model
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
-    public function departemen()
+    public function orgUnit()
     {
-        return $this->belongsTo(Departemen::class, 'departemen_id', 'departemen_id');
-    }
-
-    public function prodi()
-    {
-        return $this->belongsTo(Prodi::class, 'prodi_id', 'prodi_id');
+        return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'org_unit_id');
     }
 
     public function posisi()

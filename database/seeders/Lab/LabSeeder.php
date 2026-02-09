@@ -1,7 +1,7 @@
 <?php
 namespace Database\Seeders\Lab;
 
-use App\Models\Lab as LabModel;
+use App\Models\Lab\Lab as LabModel;
 use Illuminate\Database\Seeder;
 
 class LabSeeder extends Seeder

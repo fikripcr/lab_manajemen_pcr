@@ -110,8 +110,8 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::get('posisi/data', [PosisiController::class, 'data'])->name('posisi.data');
     Route::resource('posisi', PosisiController::class);
 
-    // Tanggal Tidak Masuk (Holidays)
-    Route::resource('tanggal-tidak-masuk', \App\Http\Controllers\Hr\TanggalTidakMasukController::class);
+    // Tanggal Libur (Holidays)
+    Route::resource('tanggal-libur', \App\Http\Controllers\Hr\TanggalLiburController::class);
 
     // Fallback or Dashboard for HR?
     Route::get('/', function () {

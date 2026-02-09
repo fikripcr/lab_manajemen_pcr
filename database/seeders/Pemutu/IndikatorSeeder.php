@@ -1,10 +1,10 @@
 <?php
 namespace Database\Seeders\Pemutu;
 
-use App\Models\Pemtu\DokSub;
-use App\Models\Pemtu\Indikator;
-use App\Models\Pemtu\Label;
-use App\Models\Pemtu\OrgUnit;
+use App\Models\Pemutu\DokSub;
+use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\Label;
+use App\Models\Pemutu\OrgUnit;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

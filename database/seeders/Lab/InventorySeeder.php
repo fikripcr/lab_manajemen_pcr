@@ -1,7 +1,7 @@
 <?php
 namespace Database\Seeders\Lab;
 
-use App\Models\Inventaris;
+use App\Models\Lab\Inventaris;
 use Illuminate\Database\Seeder;
 
 class InventorySeeder extends Seeder

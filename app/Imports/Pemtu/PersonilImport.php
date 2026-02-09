@@ -1,8 +1,8 @@
 <?php
-namespace App\Imports\Pemtu;
+namespace App\Imports\Pemutu;
 
-use App\Models\Pemtu\OrgUnit;
-use App\Models\Pemtu\Personil;
+use App\Models\Pemutu\OrgUnit;
+use App\Models\Pemutu\Personil;
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;

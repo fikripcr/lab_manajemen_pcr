@@ -20,31 +20,19 @@ class RiwayatJabStruktural extends Model
     ];
 
     // Legacy relation - kept for backward compatibility
-    public function jabatanStruktural()
-    {
-        return $this->belongsTo(JabatanStruktural::class, 'jabstruktural_id', 'jabstruktural_id');
-    }
-
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
-    // New relation using OrgUnit
+    // Accessed via OrgUnit
     public function orgUnit()
     {
         return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'org_unit_id');
     }
 
-    // Accessor to get name from either OrgUnit or legacy JabatanStruktural
     public function getNamaJabatanAttribute()
     {
-        if ($this->orgUnit) {
-            return $this->orgUnit->name;
-        }
-        if ($this->jabatanStruktural) {
-            return $this->jabatanStruktural->jabstruktural;
-        }
-        return '-';
+        return $this->orgUnit ? $this->orgUnit->name : '-';
     }
 }

@@ -3,6 +3,7 @@ namespace Database\Seeders\Hr;
 
 use App\Models\Hr\StatusAktifitas;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class HrStatusAktifitasSeeder extends Seeder
 {
@@ -11,6 +12,11 @@ class HrStatusAktifitasSeeder extends Seeder
      */
     public function run(): void
     {
+        // Truncate to refresh
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        StatusAktifitas::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $data = [
             ['kode_status' => '001', 'nama_status' => 'Aktif'],
             ['kode_status' => '003', 'nama_status' => 'Resign'],

@@ -1,8 +1,8 @@
 <?php
 namespace Database\Seeders\Pemutu;
 
-use App\Models\Pemtu\DokSub;
-use App\Models\Pemtu\Dokumen;
+use App\Models\Pemutu\DokSub;
+use App\Models\Pemutu\Dokumen;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

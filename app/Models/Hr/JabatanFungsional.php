@@ -15,8 +15,10 @@ class JabatanFungsional extends Model
     protected $primaryKey = 'jabfungsional_id';
 
     protected $fillable = [
-        'nama',
+        'kode_jabatan',
+        'jabfungsional',
         'is_active',
+        'tunjangan',
         'created_by',
         'updated_by',
     ];

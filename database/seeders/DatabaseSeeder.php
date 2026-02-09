@@ -1,15 +1,8 @@
 <?php
 namespace Database\Seeders;
 
-use Database\Seeders\Hr\HrOrgStructureSeeder;
 use Database\Seeders\Hr\HrStatusAktifitasSeeder;
 use Database\Seeders\Hr\HrStatusPegawaiSeeder;
-use Database\Seeders\Hr\HumanCapitalSeeder;
-use Database\Seeders\Hr\LegacyHrDataSeeder;
-use Database\Seeders\Lab\AcademicDataSeeder;
-use Database\Seeders\Lab\InventorySeeder;
-use Database\Seeders\Lab\LabSeeder;
-use Database\Seeders\Lab\PengumumanSeeder;
 use Database\Seeders\Sys\SysRoleSuperAdminSeeder;
 use Database\Seeders\Sys\SysSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -26,23 +19,24 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SysSeeder::class,
-            PemtuSeeder::class,
+            \Database\Seeders\Pemutu\PemutuSeeder::class,
             SysRoleSuperAdminSeeder::class,
-            UserSeeder::class,
-            LabSeeder::class,
-            InventorySeeder::class,
-            PengumumanSeeder::class,
+            // UserSeeder::class,
+            // LabSeeder::class,
+            // InventorySeeder::class,
+            // PengumumanSeeder::class,
 
             // HR Master Data
-            LegacyHrDataSeeder::class,
-            HrOrgStructureSeeder::class,
+            \Database\Seeders\Hr\HrPosisiSeeder::class,
+            \Database\Seeders\Hr\HrJabatanFungsionalSeeder::class,
+            \Database\Seeders\Hr\HrOrgUnitSeeder::class,
             HrStatusPegawaiSeeder::class,
             HrStatusAktifitasSeeder::class,
 
             // HR Employee Data
-            HumanCapitalSeeder::class,
+            \Database\Seeders\Hr\HumanCapitalSeeder::class,
 
-            AcademicDataSeeder::class,
+            // AcademicDataSeeder::class,
         ]);
     }
 }

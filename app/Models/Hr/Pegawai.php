@@ -11,7 +11,8 @@ class Pegawai extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'hr_pegawai';
+    protected $table      = 'hr_pegawai';
+    protected $primaryKey = 'pegawai_id';
     /**
      * Get the route key for the model.
      */

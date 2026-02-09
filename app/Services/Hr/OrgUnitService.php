@@ -135,9 +135,12 @@ class OrgUnitService
     public function getTypes(): array
     {
         return [
-            'departemen'         => 'Departemen',
+            'institusi'          => 'Institusi',
+            'fakultas'           => 'Fakultas',
+            'jurusan'            => 'Jurusan',
             'prodi'              => 'Prodi',
             'unit'               => 'Unit',
+            'laboratorium'       => 'Laboratorium',
             'jabatan_struktural' => 'Jabatan Struktural',
             'posisi'             => 'Posisi',
         ];
