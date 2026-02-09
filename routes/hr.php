@@ -1,21 +1,18 @@
 <?php
 
-use App\Http\Controllers\Hr\ApprovalController;
-use App\Http\Controllers\Hr\AttDeviceController;
-use App\Http\Controllers\Hr\DepartemenController;
-use App\Http\Controllers\Hr\IndisiplinerController;
-use App\Http\Controllers\Hr\JabatanFungsionalController;
-use App\Http\Controllers\Hr\JabatanStrukturalController;
-use App\Http\Controllers\Hr\JenisIndisiplinerController;
-use App\Http\Controllers\Hr\JenisIzinController;
-use App\Http\Controllers\Hr\JenisShiftController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Hr\OrgUnitController;
 use App\Http\Controllers\Hr\PegawaiController;
+use App\Http\Controllers\Hr\ApprovalController;
+use App\Http\Controllers\Hr\AttDeviceController;
+use App\Http\Controllers\Hr\JenisIzinController;
 use App\Http\Controllers\Hr\PerizinanController;
-use App\Http\Controllers\Hr\PosisiController;
-use App\Http\Controllers\Hr\StatusAktifitasController;
+use App\Http\Controllers\Hr\JenisShiftController;
+use App\Http\Controllers\Hr\IndisiplinerController;
 use App\Http\Controllers\Hr\StatusPegawaiController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Hr\StatusAktifitasController;
+use App\Http\Controllers\Hr\JabatanFungsionalController;
+use App\Http\Controllers\Hr\JenisIndisiplinerController;
 
 Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(function () {
 
@@ -102,14 +99,6 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::get('pegawai/mass-penugasan/{unit}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'massDetail'])->name('pegawai.mass-penugasan.detail');
     Route::post('pegawai/mass-penugasan/assign', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'massAssign'])->name('pegawai.mass-penugasan.assign');
 
-    // Departemen Routes
-    Route::get('departemen/data', [DepartemenController::class, 'data'])->name('departemen.data');
-    Route::resource('departemen', DepartemenController::class);
-
-    // Posisi Routes
-    Route::get('posisi/data', [PosisiController::class, 'data'])->name('posisi.data');
-    Route::resource('posisi', PosisiController::class);
-
     // Tanggal Libur (Holidays)
     Route::resource('tanggal-libur', \App\Http\Controllers\Hr\TanggalLiburController::class);
 
@@ -121,10 +110,6 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     // Jabatan Fungsional
     Route::get('jabatan-fungsional/data', [JabatanFungsionalController::class, 'data'])->name('jabatan-fungsional.data');
     Route::resource('jabatan-fungsional', JabatanFungsionalController::class);
-
-    // Jabatan Struktural
-    Route::get('jabatan-struktural/data', [JabatanStrukturalController::class, 'data'])->name('jabatan-struktural.data');
-    Route::resource('jabatan-struktural', JabatanStrukturalController::class);
 
     // Status Aktifitas
     Route::get('status-aktifitas/data', [StatusAktifitasController::class, 'data'])->name('status-aktifitas.data');

@@ -140,6 +140,14 @@
                                         <div class="datagrid-title">Agama</div>
                                         <div class="datagrid-content">{{ $pegawai->latestDataDiri->agama ?? '-' }}</div>
                                     </div>
+                                    <div class="datagrid-item">
+                                        <div class="datagrid-title">Unit / Departemen</div>
+                                        <div class="datagrid-content">{{ $pegawai->latestDataDiri->departemen->name ?? '-' }}</div>
+                                    </div>
+                                    <div class="datagrid-item">
+                                        <div class="datagrid-title">Posisi</div>
+                                        <div class="datagrid-content">{{ $pegawai->latestDataDiri->posisi->name ?? '-' }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

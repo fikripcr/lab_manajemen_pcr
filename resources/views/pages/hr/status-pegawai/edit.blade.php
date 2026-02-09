@@ -7,9 +7,17 @@
     @method('PUT')
     <div class="modal-body">
         <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label required">Kode Status</label>
+                <input type="text" class="form-control" name="kode_status" value="{{ $statusPegawai->kode_status }}" maxlength="10" required>
+            </div>
+            <div class="col-md-8 mb-3">
+                <label class="form-label required">Nama Status</label>
+                <input type="text" class="form-control" name="nama_status" value="{{ $statusPegawai->nama_status }}" required>
+            </div>
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Status Pegawai</label>
-                <input type="text" class="form-control" name="status" value="{{ $statusPegawai->status }}" required>
+                <label class="form-label">Organisasi</label>
+                <input type="text" class="form-control" name="organisasi" value="{{ $statusPegawai->organisasi }}">
             </div>
             <div class="col-md-12 mb-3">
                 <label class="form-check form-switch">

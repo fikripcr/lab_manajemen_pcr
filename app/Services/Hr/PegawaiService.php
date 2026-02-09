@@ -258,7 +258,6 @@ class PegawaiService
             ->with([
                 'latestDataDiri.posisi',
                 'latestDataDiri.departemen',
-                'latestDataDiri.prodi',
                 'latestStatusPegawai.statusPegawai',
                 'atasanSatu.latestDataDiri', // Need name of atasan
                 'atasanDua.latestDataDiri',  // Need name of atasan

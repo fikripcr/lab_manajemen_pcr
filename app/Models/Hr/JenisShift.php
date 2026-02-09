@@ -27,20 +27,4 @@ class JenisShift extends Model
         'updated_by',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->created_by = auth()->id();
-        });
-
-        static::updating(function ($model) {
-            $model->updated_by = auth()->id();
-        });
-    }
 }

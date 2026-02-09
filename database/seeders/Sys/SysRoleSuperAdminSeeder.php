@@ -1,10 +1,9 @@
 <?php
-
 namespace Database\Seeders\Sys;
 
-use App\Models\User;
-use App\Models\Sys\Role;
 use App\Models\Sys\Permission;
+use App\Models\Sys\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,11 +29,11 @@ class SysRoleSuperAdminSeeder extends Seeder
         $superAdminRole->syncPermissions($sysPermissions->pluck('name')->toArray());
 
         // Create or update the admin user
-        $admin = User::create(
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
             [
-                'name' => 'Super Administrator',
-                'email' => 'admin@gmail.com',
-                'password' => Hash::make('password'), // Use a strong password in production
+                'name'              => 'Super Administrator',
+                'password'          => Hash::make('password'),
                 'email_verified_at' => now(),
             ]
         );

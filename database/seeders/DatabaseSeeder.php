@@ -19,24 +19,26 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SysSeeder::class,
-            \Database\Seeders\Pemutu\PemutuSeeder::class,
             SysRoleSuperAdminSeeder::class,
-            // UserSeeder::class,
-            // LabSeeder::class,
-            // InventorySeeder::class,
-            // PengumumanSeeder::class,
+            UserSeeder::class,
 
             // HR Master Data
-            \Database\Seeders\Hr\HrPosisiSeeder::class,
             \Database\Seeders\Hr\HrJabatanFungsionalSeeder::class,
             \Database\Seeders\Hr\HrOrgUnitSeeder::class,
             HrStatusPegawaiSeeder::class,
             HrStatusAktifitasSeeder::class,
+            \Database\Seeders\Hr\HrJenisIzinSeeder::class,
+            \Database\Seeders\Hr\HrJenisIndisiplinerSeeder::class,
+            \Database\Seeders\Hr\HrJenisShiftSeeder::class,
 
             // HR Employee Data
             \Database\Seeders\Hr\HumanCapitalSeeder::class,
 
-            // AcademicDataSeeder::class,
+            // Lab Data
+            \Database\Seeders\Lab\AcademicDataSeeder::class,
+
+            // Pemutu Data
+            \Database\Seeders\Pemutu\PemutuSeeder::class,
         ]);
     }
 }

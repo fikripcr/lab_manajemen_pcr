@@ -34,8 +34,8 @@ class RiwayatDataDiri extends Model
         'file_foto',
         'file_ttd_digital',
         'file_serdos',
-        'posisi_id',
-        'org_unit_id',
+        'orgunit_posisi_id',
+        'orgunit_departemen_id',
         'nama_buku',
         'no_rekening',
         'bank_pegawai',
@@ -56,14 +56,14 @@ class RiwayatDataDiri extends Model
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
-    public function orgUnit()
+    public function departemen()
     {
-        return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'org_unit_id');
+        return $this->belongsTo(OrgUnit::class, 'orgunit_departemen_id', 'org_unit_id');
     }
 
     public function posisi()
     {
-        return $this->belongsTo(Posisi::class, 'posisi_id', 'posisi_id');
+        return $this->belongsTo(OrgUnit::class, 'orgunit_posisi_id', 'org_unit_id');
     }
 
     public function approval()

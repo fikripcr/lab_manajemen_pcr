@@ -76,6 +76,27 @@ class HrOrgUnitSeeder extends Seeder
             $this->createUnit($jtik, 'D4 Sistem Informasi', 'Prodi', 2);
             $this->createUnit($jtik, 'D4 Teknologi Rekayasa Komputer', 'Prodi', 3);
             $this->createUnit($jtik, 'S2 Magister Terapan Teknik Komputer', 'Prodi', 4);
+
+            // Level 2: Generic Positions (Direct under PCR or units)
+            $posisiDir = $this->createUnit($pcr, 'Daftar Posisi Pegawai', 'posisi_header', 100, 'POS');
+            $this->createUnit($posisiDir, 'Dosen', 'posisi', 1);
+            $this->createUnit($posisiDir, 'Staff Administrasi', 'posisi', 2);
+            $this->createUnit($posisiDir, 'Teknisi', 'posisi', 3);
+            $this->createUnit($posisiDir, 'Kepala Laboratorium', 'posisi', 4);
+            $this->createUnit($posisiDir, 'Asisten Laboratorium', 'posisi', 5);
+            $this->createUnit($posisiDir, 'Welfare Officer', 'posisi', 6);
+
+            // Level 2: Structural Positions (Example structure)
+            $this->createUnit($pcr, 'Direktur', 'jabatan_struktural', 1);
+            $this->createUnit($wadir1, 'Wakil Direktur', 'jabatan_struktural', 1);
+            $this->createUnit($wadir2, 'Wakil Direktur', 'jabatan_struktural', 1);
+            $this->createUnit($wadir3, 'Wakil Direktur', 'jabatan_struktural', 1);
+            $this->createUnit($wadir4, 'Wakil Direktur', 'jabatan_struktural', 1);
+
+            // Jurusan structural
+            $this->createUnit($jti, 'Ketua Jurusan', 'jabatan_struktural', 1);
+            $this->createUnit($jbk, 'Ketua Jurusan', 'jabatan_struktural', 1);
+            $this->createUnit($jtik, 'Ketua Jurusan', 'jabatan_struktural', 1);
         });
     }
 

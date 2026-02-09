@@ -69,33 +69,33 @@
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Unit / Departemen</label>
-                    <select class="form-select" name="departemen_id">
+                    <select class="form-select" name="orgunit_departemen_id">
                         <option value="">Pilih Departemen</option>
                         @foreach($departemen as $d)
-                            <option value="{{ $d->departemen_id }}" {{ (old('departemen_id', $pegawai->latestDataDiri->departemen_id ?? '') == $d->departemen_id) ? 'selected' : '' }}>
-                                {{ $d->departemen }}
+                            <option value="{{ $d->org_unit_id }}" {{ (old('orgunit_departemen_id', $pegawai->latestDataDiri->orgunit_departemen_id ?? '') == $d->org_unit_id) ? 'selected' : '' }}>
+                                {{ $d->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Program Studi</label>
-                    <select class="form-select" name="prodi_id">
+                    <select class="form-select" name="orgunit_prodi_id"> {{-- Optional, reuse unit logic --}}
                         <option value="">Pilih Prodi</option>
                         @foreach($prodi as $p)
-                            <option value="{{ $p->prodi_id }}" {{ (old('prodi_id', $pegawai->latestDataDiri->prodi_id ?? '') == $p->prodi_id) ? 'selected' : '' }}>
-                                {{ $p->nama_prodi }}
+                            <option value="{{ $p->org_unit_id }}" {{ (old('orgunit_prodi_id', $pegawai->latestDataDiri->orgunit_departemen_id ?? '') == $p->org_unit_id) ? 'selected' : '' }}>
+                                {{ $p->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Posisi</label>
-                    <select class="form-select" name="posisi_id">
+                    <select class="form-select" name="orgunit_posisi_id">
                         <option value="">Pilih Posisi</option>
                         @foreach($posisi as $p)
-                            <option value="{{ $p->posisi_id }}" {{ (old('posisi_id', $pegawai->latestDataDiri->posisi_id ?? '') == $p->posisi_id) ? 'selected' : '' }}>
-                                {{ $p->posisi }}
+                            <option value="{{ $p->org_unit_id }}" {{ (old('orgunit_posisi_id', $pegawai->latestDataDiri->orgunit_posisi_id ?? '') == $p->org_unit_id) ? 'selected' : '' }}>
+                                {{ $p->name }}
                             </option>
                         @endforeach
                     </select>

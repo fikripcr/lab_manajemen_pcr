@@ -30,6 +30,9 @@ class JabatanFungsionalController extends Controller
             ->editColumn('is_active', function ($row) {
                 return $row->is_active ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Non-Aktif</span>';
             })
+            ->editColumn('tunjangan', function ($row) {
+                return 'Rp ' . number_format($row->tunjangan, 0, ',', '.');
+            })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('hr.jabatan-fungsional.edit', ['jabatan_fungsional' => $row->hashid]),

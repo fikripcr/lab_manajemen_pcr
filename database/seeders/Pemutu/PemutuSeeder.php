@@ -18,6 +18,18 @@ class PemutuSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        LabelType::truncate();
+        Label::truncate();
+        OrgUnit::truncate();
+        Personil::truncate();
+        Dokumen::truncate();
+        DokSub::truncate();
+        Indikator::truncate();
+        \DB::table('pemutu_indikator_label')->truncate();
+        \DB::table('pemutu_indikator_orgunit')->truncate();
+        \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // 1. Label Types & Labels
         $typeAkreditasi = LabelType::create(['name' => 'Standar Akreditasi', 'description' => 'Standar BAN-PT / LAM']);
         $typeISO        = LabelType::create(['name' => 'Klausul ISO', 'description' => 'ISO 9001:2015']);

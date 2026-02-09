@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hr\OrgUnit;
 use App\Services\Hr\OrgUnitService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;

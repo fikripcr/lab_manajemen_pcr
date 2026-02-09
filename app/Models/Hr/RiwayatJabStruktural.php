@@ -25,7 +25,6 @@ class RiwayatJabStruktural extends Model
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
-    // Accessed via OrgUnit
     public function orgUnit()
     {
         return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'org_unit_id');
@@ -33,6 +32,6 @@ class RiwayatJabStruktural extends Model
 
     public function getNamaJabatanAttribute()
     {
-        return $this->orgUnit ? $this->orgUnit->name : '-';
+        return $this->orgUnit?->name ?? '-';
     }
 }

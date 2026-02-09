@@ -6,9 +6,20 @@
     @csrf
     <div class="modal-body">
         <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label required">Kode Jabatan</label>
+                <input type="text" class="form-control" name="kode_jabatan" placeholder="Contoh: AA" required>
+            </div>
+            <div class="col-md-8 mb-3">
+                <label class="form-label required">Nama Jabatan (Jabfungsional)</label>
+                <input type="text" class="form-control" name="jabfungsional" placeholder="Contoh: Asisten Ahli" required>
+            </div>
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Nama Jabatan</label>
-                <input type="text" class="form-control" name="nama" required>
+                <label class="form-label">Tunjangan</label>
+                <div class="input-group">
+                    <span class="input-group-text">Rp</span>
+                    <input type="number" class="form-control" name="tunjangan" placeholder="0">
+                </div>
             </div>
             <div class="col-md-12 mb-3">
                 <label class="form-check form-switch">

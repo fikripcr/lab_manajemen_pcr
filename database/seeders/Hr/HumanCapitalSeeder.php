@@ -5,13 +5,12 @@ use App\Models\Hr\JabatanFungsional;
 use App\Models\Hr\Keluarga;
 use App\Models\Hr\OrgUnit;
 use App\Models\Hr\Pegawai;
-// use App\Models\Hr\Prodi; // Removed
-// use App\Models\Hr\Departemen; // Removed
-use App\Models\Hr\Posisi;
-use App\Models\Hr\RiwayatApproval;
+use App\Models\Hr\PengembanganDiri;
 use App\Models\Hr\RiwayatDataDiri;
+use App\Models\Hr\RiwayatInpassing;
 use App\Models\Hr\RiwayatJabFungsional;
 use App\Models\Hr\RiwayatPendidikan;
+use App\Models\Hr\RiwayatPenugasan;
 use App\Models\Hr\RiwayatStatAktifitas;
 use App\Models\Hr\RiwayatStatPegawai;
 use App\Models\Hr\StatusAktifitas;
@@ -33,67 +32,59 @@ class HumanCapitalSeeder extends Seeder
         $sysUserId = 1;
 
         // Fetch Master Data
-        // Fetch Master Data
-        // Use OrgUnit for Depts and Prodis
-        $depts = OrgUnit::where('type', 'Jurusan')->get();
-        // $prodis         = OrgUnit::where('type', 'Prodi')->get(); // We will query based on parent
-
-        $posisis        = Posisi::all();
+        $depts          = OrgUnit::where('type', 'Jurusan')->get();
+        $posisis        = OrgUnit::where('type', 'posisi')->get();
         $statusPegawais = StatusPegawai::all();
         $statusAktifs   = StatusAktifitas::where('nama_status', 'Aktif')->first();
         $jabFungsionals = JabatanFungsional::all();
-        // OrgUnits for Penugasan (excluding Jurusan/Prodi to avoid double duty, or include all?)
-        // Let's include everything for penugasan
-        $orgUnits = OrgUnit::whereIn('type', ['Direktorat', 'Bagian', 'Unit', 'Jurusan', 'Prodi'])->get();
+        $orgUnits       = OrgUnit::whereIn('type', ['Bagian', 'Prodi', 'posisi'])->get();
+        $strUnits       = OrgUnit::where('type', 'jabatan_struktural')->get();
 
         // If no master data, we can't seed properly
-        if ($depts->isEmpty() || $statusPegawais->isEmpty()) {
-            $this->command->error('HR Master Data missing. Please ensure HrOrgUnitSeeder and others ran.');
+        if ($orgUnits->whereIn('type', ['Bagian', 'Prodi'])->isEmpty() || $orgUnits->where('type', 'posisi')->isEmpty()) {
+            $this->command->error('HR Master Data (Bagian/Prodi/Posisi) missing. Please ensure HrOrgUnitSeeder ran.');
             return;
         }
 
-        DB::transaction(function () use ($faker, $sysUserId, $depts, $posisis, $statusPegawais, $statusAktifs, $jabFungsionals, $orgUnits) {
+        if ($statusPegawais->isEmpty()) {
+            $this->command->error('Status Pegawai Master Data missing.');
+            return;
+        }
+
+        DB::transaction(function () use ($faker, $sysUserId, $depts, $posisis, $statusPegawais, $statusAktifs, $jabFungsionals, $orgUnits, $strUnits) {
 
             for ($i = 0; $i < 30; $i++) {
                 // 1. Create Pegawai Skeleton
                 $pegawai = Pegawai::create(['created_by' => $sysUserId]);
 
                 // 2. Data Diri
-                // 2. Data Diri
-                $gender = $faker->randomElement(['L', 'P']);
+                $gender      = $faker->randomElement(['L', 'P']);
+                $pegawaiName = $faker->name($gender == 'L' ? 'male' : 'female');
 
-                // Random Dept
-                $dept = $depts->random();
-                // Find prodi for this dept if exists
-                $prodi = OrgUnit::where('parent_id', $dept->org_unit_id)->where('type', 'Prodi')->inRandomOrder()->first();
+                $deptUnits = $orgUnits->whereIn('type', ['Bagian', 'Prodi']);
+                $posUnits  = $orgUnits->where('type', 'posisi');
 
-                // Assign unit to the most specific one (Prodi if exists, else Dept)
-                $assignedUnitId = $prodi ? $prodi->org_unit_id : $dept->org_unit_id;
-
-                $dataDiri = [
-                    'pegawai_id'    => $pegawai->pegawai_id,
-                    'nama'          => $faker->name($gender == 'L' ? 'male' : 'female'),
-                    'nip'           => $faker->unique()->numerify('##########'),
-                    'nidn'          => $faker->optional(0.3)->numerify('##########'),
-                    'jenis_kelamin' => $gender,
-                    'tempat_lahir'  => $faker->city,
-                    'tgl_lahir'     => $faker->dateTimeBetween('-50 years', '-22 years')->format('Y-m-d'),
-                    'alamat'        => $faker->address,
-                    'email'         => $faker->unique()->email,
-                    'no_hp'         => $faker->phoneNumber,
-                    'status_nikah'  => $faker->randomElement(['Menikah', 'Belum Menikah']),
-                    'agama'         => 'Islam',
-                    'org_unit_id'   => $assignedUnitId,
-                    // 'departemen_id' => $dept->departemen_id, // Removed
-                    // 'prodi_id'      => $prodi ? $prodi->prodi_id : null, // Removed
-
-                    'posisi_id'     => $posisis->random()->posisi_id,
-                    'created_by'    => $sysUserId,
-                ];
-
-                $riwayatDiri = $this->createApprovedHistory(RiwayatDataDiri::class, $dataDiri, $sysUserId);
-                $pegawai->update(['latest_riwayatdatadiri_id' => $riwayatDiri->getKey()]);
-
+                if ($deptUnits->isNotEmpty() && $posUnits->isNotEmpty()) {
+                    $riwayatDataDiriData = [
+                        'pegawai_id'            => $pegawai->pegawai_id,
+                        'nama'                  => $pegawaiName,
+                        'email'                 => $faker->unique()->safeEmail,
+                        'nip'                   => $faker->unique()->numerify('19###### ###### # ###'),
+                        'nidn'                  => $faker->optional(0.3)->numerify('##########'),
+                        'jenis_kelamin'         => $gender,
+                        'tempat_lahir'          => $faker->city,
+                        'tgl_lahir'             => $faker->dateTimeBetween('-50 years', '-22 years')->format('Y-m-d'),
+                        'alamat'                => $faker->address,
+                        'no_hp'                 => $faker->phoneNumber,
+                        'status_nikah'          => $faker->randomElement(['Menikah', 'Belum Menikah']),
+                        'agama'                 => 'Islam',
+                        'orgunit_departemen_id' => $deptUnits->random()->org_unit_id,
+                        'orgunit_posisi_id'     => $posUnits->random()->org_unit_id,
+                        'created_by'            => $sysUserId,
+                    ];
+                    $riwayatDiri = $this->createApprovedHistory(RiwayatDataDiri::class, $riwayatDataDiriData, $sysUserId);
+                    $pegawai->update(['latest_riwayatdatadiri_id' => $riwayatDiri->getKey()]);
+                }
                 // 3. Pendidikan (1-2 records)
                 $numPend    = $faker->numberBetween(1, 2);
                 $lastPendId = null;
@@ -114,14 +105,13 @@ class HumanCapitalSeeder extends Seeder
 
                 // 4. Jabatan Fungsional (Random for Lecturers)
                 if ($jabFungsionals->isNotEmpty() && $faker->boolean(60)) {
-                    $jabFungData = [
+                    $riwayatJabFung = $this->createApprovedHistory(RiwayatJabFungsional::class, [
                         'pegawai_id'       => $pegawai->pegawai_id,
                         'jabfungsional_id' => $jabFungsionals->random()->jabfungsional_id,
                         'tmt'              => $faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
                         'no_sk_internal'   => $faker->bothify('SK/###/YPCR/????'),
                         'created_by'       => $sysUserId,
-                    ];
-                    $riwayatJabFung = $this->createApprovedHistory(RiwayatJabFungsional::class, $jabFungData, $sysUserId);
+                    ], $sysUserId);
                     $pegawai->update(['latest_riwayatjabfungsional_id' => $riwayatJabFung->getKey()]);
                 }
 
@@ -142,28 +132,25 @@ class HumanCapitalSeeder extends Seeder
                         'pegawai_id'         => $pegawai->pegawai_id,
                         'statusaktifitas_id' => $statusAktifs->statusaktifitas_id,
                         'tmt'                => $faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
-                        // 'no_sk'              => $faker->bothify('SK/###/YPCR/????'), // missing in schema
                         'created_by'         => $sysUserId,
                     ];
                     $riwayatAktif = $this->createApprovedHistory(RiwayatStatAktifitas::class, $statAktifData, $sysUserId);
                     $pegawai->update(['latest_riwayatstataktifitas_id' => $riwayatAktif->getKey()]);
                 }
 
-                // 7. Penugasan (Random) - SKIP dulu, tabel belum ada
-                // if ($orgUnits->isNotEmpty() && $faker->boolean(70)) {
-                //     $unit          = $orgUnits->random();
-                //     $penugasanData = [
-                //         'pegawai_id'  => $pegawai->pegawai_id,
-                //         'org_unit_id' => $unit->org_unit_id,
-                //         'tgl_mulai'   => $faker->dateTimeBetween('-2 years', 'now')->format('Y-m-d'),
-                //         'no_sk'       => $faker->bothify('SK/###/YPCR/????'),
-                //         'status'      => 'approved',
-                //         'approved_at' => now(),
-                //         'approved_by' => $sysUserId,
-                //     ];
-                //     $riwayatPenugasan = RiwayatPenugasan::create($penugasanData);
-                //     $pegawai->update(['latest_riwayatpenugasan_id' => $riwayatPenugasan->getKey()]);
-                // }
+                // 7. Jabatan Struktural (Random)
+                if ($strUnits->isNotEmpty() && $faker->boolean(20)) {
+                    $strUnit    = $strUnits->random();
+                    $jabStrData = [
+                        'pegawai_id'  => $pegawai->pegawai_id,
+                        'org_unit_id' => $strUnit->org_unit_id,
+                        'tgl_awal'    => $faker->dateTimeBetween('-2 years', 'now')->format('Y-m-d'),
+                        'no_sk'       => $faker->bothify('SK/###/YPCR/????'),
+                        'created_by'  => $sysUserId,
+                    ];
+                    $riwayatJabStr = $this->createApprovedHistory(\App\Models\Hr\RiwayatJabStruktural::class, $jabStrData, $sysUserId);
+                    $pegawai->update(['latest_riwayatjabstruktural_id' => $riwayatJabStr->getKey()]);
+                }
 
                 // 8. Keluarga
                 $numFam = $faker->numberBetween(0, 3);
@@ -178,14 +165,64 @@ class HumanCapitalSeeder extends Seeder
                     ];
                     Keluarga::create($famData);
                 }
+
+                // 9. Pengembangan Diri (Random)
+                if ($faker->boolean(50)) {
+                    $tglMulai = $faker->dateTimeBetween('-3 years', 'now');
+                    $devData  = [
+                        'pegawai_id'         => $pegawai->pegawai_id,
+                        'jenis_kegiatan'     => $faker->randomElement(['Pelatihan', 'Workshop', 'Sertifikasi', 'Seminar']),
+                        'nama_kegiatan'      => $faker->sentence(3),
+                        'nama_penyelenggara' => $faker->company,
+                        'tgl_mulai'          => $tglMulai->format('Y-m-d'),
+                        'tgl_selesai'        => $faker->dateTimeBetween($tglMulai, 'now')->format('Y-m-d'),
+                        'tahun'              => $tglMulai->format('Y'),
+                        'created_by'         => $sysUserId,
+                    ];
+                    $this->createApprovedHistory(PengembanganDiri::class, $devData, $sysUserId);
+                }
+
+                // 10. Inpassing (Random)
+                if (\App\Models\Hr\GolonganInpassing::exists() && $faker->boolean(40)) {
+                    $inpData = [
+                        'pegawai_id'       => $pegawai->pegawai_id,
+                        'gol_inpassing_id' => \App\Models\Hr\GolonganInpassing::all()->random()->gol_inpassing_id,
+                        'no_sk'            => $faker->bothify('SK/###/YPCR/????'),
+                        'tgl_sk'           => $faker->date(),
+                        'tmt'              => $faker->date(),
+                        'masa_kerja_tahun' => $faker->numberBetween(1, 15),
+                        'masa_kerja_bulan' => $faker->numberBetween(0, 11),
+                        'gaji_pokok'       => $faker->numberBetween(3000000, 7000000),
+                        'created_by'       => $sysUserId,
+                    ];
+                    $riwayatInpassing = RiwayatInpassing::create($inpData);
+                    $pegawai->update(['latest_riwayatinpassing_id' => $riwayatInpassing->getKey()]);
+                }
+
+                // 11. Penugasan (Random)
+                if ($orgUnits->isNotEmpty() && $faker->boolean(70)) {
+                    $unit          = $orgUnits->random();
+                    $penugasanData = [
+                        'pegawai_id'  => $pegawai->pegawai_id,
+                        'org_unit_id' => $unit->org_unit_id,
+                        'tgl_mulai'   => $faker->dateTimeBetween('-2 years', 'now')->format('Y-m-d'),
+                        'no_sk'       => $faker->bothify('SK/###/YPCR/????'),
+                        'status'      => 'approved',
+                        'approved_at' => now(),
+                        'approved_by' => $sysUserId,
+                        'created_by'  => $sysUserId,
+                    ];
+                    $riwayatPenugasan = RiwayatPenugasan::create($penugasanData);
+                    $pegawai->update(['latest_riwayatpenugasan_id' => $riwayatPenugasan->getKey()]);
+                }
             }
         });
     }
 
     private function createApprovedHistory($modelClass, $data, $userId)
     {
-        // 1. Create Approval
-        $approval = RiwayatApproval::create([
+        // 1. Create Approval using DB::table to avoid model events/id issues
+        $approvalId = DB::table('hr_riwayat_approval')->insertGetId([
             'model'      => $modelClass,
             'model_id'   => 0, // temp
             'status'     => 'Approved',
@@ -193,27 +230,16 @@ class HumanCapitalSeeder extends Seeder
             'pejabat'    => 'System Seeder',
             'created_by' => $userId,
             'updated_by' => $userId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        // 2. Add approval ID to data if supported
-        // Use reflection or try catch or simple check, but since we know schema:
-        // Most Riwayat tables have 'latest_riwayatapproval_id'
-        // Except Keluarga/Pendidikan? Wait, Keluarga/Pendidikan DO NOT have link to Header directly so no strictly "Latest".
-        // But they DO support Approval workflow.
-
-        $data['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;
-
-        // 3. Create Model using forceCreate to bypass fillable if needed, or simple create
-        // We assume fillable is set or we used guarded=[] in some models.
-        // Safer to use forceCreate or unguard. But let's try standard create.
-
-        // Some models might not have approval column in fillable.
-        // Let's assume standard structure.
+        $data['latest_riwayatapproval_id'] = $approvalId;
 
         $model = $modelClass::create($data);
 
         // 4. Update Approval
-        $approval->update(['model_id' => $model->getKey()]);
+        DB::table('hr_riwayat_approval')->where('riwayatapproval_id', $approvalId)->update(['model_id' => $model->getKey()]);
 
         return $model;
     }

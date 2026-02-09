@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use App\Models\User;
@@ -17,22 +16,21 @@ class UserSeeder extends Seeder
         // Define role names
         $roleNames = [
             'mahasiswa', 'dosen', 'penanggung_jawab_lab', 'teknisi', 'kepala_lab', 'ketua_jurusan',
-            'penyelenggara_kegiatan'
+            'penyelenggara_kegiatan',
         ];
 
         // Create users with different roles
-        for ($i = 1; $i <= 400; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
 
             $firstName = $faker->firstName . ' ' . $faker->lastName;
-            $email = 'user' . $i . '@contoh-lab.ac.id';
-            $role = $roleNames[array_rand($roleNames)];
-
+            $email     = 'user' . $i . '@contoh-lab.ac.id';
+            $role      = $roleNames[array_rand($roleNames)];
 
             $user = User::create([
-                'name' => $firstName,
-                'email' => $email,
-                'password' => Hash::make('password'),
+                'name'              => $firstName,
+                'email'             => $email,
+                'password'          => Hash::make('password'),
                 'email_verified_at' => now(),
             ]);
 
@@ -41,6 +39,6 @@ class UserSeeder extends Seeder
             $user->assignRole($userRole);
         }
 
-        $this->command->info('Berhasil membuat 1000 contoh data pengguna dengan berbagai peran.');
+        $this->command->info('Berhasil membuat 100 contoh data pengguna dengan berbagai peran.');
     }
 }

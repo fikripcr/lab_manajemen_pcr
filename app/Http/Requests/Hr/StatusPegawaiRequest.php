@@ -13,8 +13,10 @@ class StatusPegawaiRequest extends FormRequest
     public function rules()
     {
         return [
-            'status'    => 'required|string|max:255',
-            'is_active' => 'boolean',
+            'kode_status' => 'required|string|max:10',
+            'nama_status' => 'required|string|max:50',
+            'organisasi'  => 'nullable|string|max:50',
+            'is_active'   => 'boolean',
         ];
     }
 }

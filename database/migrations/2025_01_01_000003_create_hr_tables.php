@@ -12,16 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         // Reference Tables
-        Schema::create('hr_posisi', function (Blueprint $table) {
-            $table->id('posisi_id');
-            $table->string('posisi', 50);
-            $table->string('alias', 30)->nullable();
-            $table->integer('is_active')->default(1);
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        // Legacy Tables Removed: hr_departemen, hr_prodi
+        // Legacy Tables Removed: hr_posisi, hr_departemen, hr_prodi
 
         Schema::create('hr_status_pegawai', function (Blueprint $table) {
             $table->id('statuspegawai_id');
@@ -171,7 +162,7 @@ return new class extends Migration
         Schema::create('hr_riwayat_datadiri', function (Blueprint $table) {
             $table->id('riwayatdatadiri_id');
             $table->unsignedBigInteger('pegawai_id')->index();
-            $table->string('nip', 20)->nullable();
+            $table->string('nip', 30)->nullable();
             $table->string('email', 100)->nullable();
             $table->string('nama', 100)->nullable();
             $table->string('inisial', 10)->nullable();
@@ -183,16 +174,16 @@ return new class extends Migration
             $table->string('status_nikah', 30)->nullable();
             $table->string('agama', 20)->nullable();
             $table->string('nidn', 20)->nullable();
-            $table->unsignedBigInteger('org_unit_id')->nullable(); // Replaces departemen_id
-            $table->unsignedBigInteger('posisi_id')->nullable();
+            $table->unsignedBigInteger('orgunit_departemen_id')->nullable();
+            $table->unsignedBigInteger('orgunit_posisi_id')->nullable();
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->string('created_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('org_unit_id')->references('org_unit_id')->on('hr_org_unit')->nullOnDelete();
-            $table->foreign('posisi_id')->references('posisi_id')->on('hr_posisi')->nullOnDelete();
+            $table->foreign('orgunit_departemen_id')->references('org_unit_id')->on('hr_org_unit')->nullOnDelete();
+            $table->foreign('orgunit_posisi_id')->references('org_unit_id')->on('hr_org_unit')->nullOnDelete();
         });
 
         Schema::create('hr_riwayat_pendidikan', function (Blueprint $table) {
@@ -257,6 +248,7 @@ return new class extends Migration
             $table->string('no_sk', 191)->nullable();
             $table->date('tgl_awal')->nullable();
             $table->date('tgl_akhir')->nullable();
+            $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->string('created_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->timestamps();
@@ -356,6 +348,6 @@ return new class extends Migration
         Schema::dropIfExists('hr_status_pegawai');
         // Schema::dropIfExists('hr_prodi');
         // Schema::dropIfExists('hr_departemen');
-        Schema::dropIfExists('hr_posisi');
+        // Schema::dropIfExists('hr_posisi');
     }
 };

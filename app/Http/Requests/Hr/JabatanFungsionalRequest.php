@@ -13,8 +13,10 @@ class JabatanFungsionalRequest extends FormRequest
     public function rules()
     {
         return [
-            'nama'      => 'required|string|max:255',
-            'is_active' => 'boolean',
+            'kode_jabatan'  => 'required|string|max:10',
+            'jabfungsional' => 'required|string|max:50',
+            'tunjangan'     => 'nullable|numeric',
+            'is_active'     => 'boolean',
         ];
     }
 }

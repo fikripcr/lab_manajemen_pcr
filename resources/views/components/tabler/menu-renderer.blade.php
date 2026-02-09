@@ -149,49 +149,9 @@
                     'active_routes' => ['hr.indisipliner.*'],
                 ],
                 [
-                    'title'         => 'Jabatan Struktural',
-                    'route'         => 'hr.jabatan-struktural.index',
-                    'active_routes' => ['hr.jabatan-struktural.*'],
-                ],
-                [
-                    'title'         => 'Jabatan Fungsional',
-                    'route'         => 'hr.jabatan-fungsional.index',
-                    'active_routes' => ['hr.jabatan-fungsional.*'],
-                ],
-                [
-                    'title'         => 'Posisi',
-                    'route'         => 'hr.posisi.index',
-                    'active_routes' => ['hr.posisi.*'],
-                ],
-                [
-                    'title'         => 'Departemen',
-                    'route'         => 'hr.departemen.index',
-                    'active_routes' => ['hr.departemen.*'],
-                ],
-                [
-                    'title'         => 'Status Pegawai',
+                    'title'         => 'Master Data HR',
                     'route'         => 'hr.status-pegawai.index',
-                    'active_routes' => ['hr.status-pegawai.*'],
-                ],
-                [
-                    'title'         => 'Status Aktifitas',
-                    'route'         => 'hr.status-aktifitas.index',
-                    'active_routes' => ['hr.status-aktifitas.*'],
-                ],
-                [
-                    'title'         => 'Jenis Izin',
-                    'route'         => 'hr.jenis-izin.index',
-                    'active_routes' => ['hr.jenis-izin.*'],
-                ],
-                [
-                    'title'         => 'Jenis Indisipliner',
-                    'route'         => 'hr.jenis-indisipliner.index',
-                    'active_routes' => ['hr.jenis-indisipliner.*'],
-                ],
-                [
-                    'title'         => 'Jenis Shift',
-                    'route'         => 'hr.jenis-shift.index',
-                    'active_routes' => ['hr.jenis-shift.*'],
+                    'active_routes' => ['hr.status-pegawai.*', 'hr.status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
                 ],
                 [
                     'title'         => 'Tanggal Libur',

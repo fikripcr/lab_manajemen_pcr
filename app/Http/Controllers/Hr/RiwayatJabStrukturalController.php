@@ -45,7 +45,7 @@ class RiwayatJabStrukturalController extends Controller
 
     public function data()
     {
-        $query = \App\Models\Hr\RiwayatJabStruktural::with(['pegawai', 'jabatanStruktural'])->select('hr_riwayat_jabstruktural.*');
+        $query = \App\Models\Hr\RiwayatJabStruktural::with(['pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
 
         return \Yajra\DataTables\Facades\DataTables::of($query)
             ->addIndexColumn()
@@ -53,7 +53,7 @@ class RiwayatJabStrukturalController extends Controller
                 return $row->pegawai->nama ?? '-';
             })
             ->addColumn('jabatan_nama', function ($row) {
-                return $row->jabatanStruktural->nama ?? '-';
+                return $row->orgUnit->name ?? '-';
             })
             ->editColumn('tgl_awal', function ($row) {
                 return $row->tgl_awal ? \Carbon\Carbon::parse($row->tgl_awal)->format('d-m-Y') : '-';

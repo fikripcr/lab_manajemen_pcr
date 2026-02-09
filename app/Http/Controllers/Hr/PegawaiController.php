@@ -68,10 +68,10 @@ class PegawaiController extends Controller
                     return $row->latestDataDiri?->email ?? '-';
                 })
                 ->addColumn('posisi', function ($row) {
-                    return $row->latestDataDiri?->posisi?->posisi ?? '-';
+                    return $row->latestDataDiri?->posisi?->name ?? '-';
                 })
                 ->addColumn('unit', function ($row) {
-                    return $row->latestDataDiri?->departemen?->departemen ?? '-';
+                    return $row->latestDataDiri?->departemen?->name ?? '-';
                 })
                 ->addColumn('prodi', function ($row) {
                     return $row->latestDataDiri?->prodi?->nama_prodi ?? '-';
@@ -138,12 +138,12 @@ class PegawaiController extends Controller
             'pengembanganDiri.approval',
             'latestStatusPegawai.statusPegawai',
             'latestJabatanFungsional.jabatanFungsional',
-            'latestJabatanStruktural.jabatanStruktural',
+            'latestJabatanStruktural.orgUnit',
             // Load History for Tables in 'Kepegawaian' tab
             'historyStatPegawai.statusPegawai',
             'historyStatAktifitas.statusAktifitas',
             'historyJabFungsional.jabatanFungsional',
-            'historyJabStruktural.jabatanStruktural',
+            'historyJabStruktural.orgUnit',
         ]);
 
         // Prepare pending changes if any
@@ -162,9 +162,9 @@ class PegawaiController extends Controller
     {
         $pegawai->load('latestDataDiri');
 
-        $posisi     = \DB::table('hr_posisi')->select('posisi_id', 'posisi')->get();
-        $departemen = \DB::table('hr_departemen')->select('departemen_id', 'departemen')->get();
-        $prodi      = \DB::table('hr_prodi')->select('prodi_id', 'nama_prodi')->get();
+        $posisi     = \App\Models\Hr\OrgUnit::where('type', 'posisi')->select('org_unit_id', 'name')->get();
+        $departemen = \App\Models\Hr\OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('org_unit_id', 'name')->get();
+        $prodi      = \App\Models\Hr\OrgUnit::where('type', 'Prodi')->select('org_unit_id', 'name')->get();
 
         return view('pages.hr.pegawai.edit', compact('pegawai', 'posisi', 'departemen', 'prodi'));
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\StatusPegawaiRequest;
 use App\Models\Hr\StatusPegawai;
 use App\Services\Hr\StatusPegawaiService;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class StatusPegawaiController extends Controller
@@ -16,9 +17,10 @@ class StatusPegawaiController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('pages.hr.status-pegawai.index');
+        $activeTab = $request->get('tab', 'status-pegawai');
+        return view('pages.hr.master-data.index', compact('activeTab'));
     }
 
     public function data()
