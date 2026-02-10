@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('title', 'Tambah Anggota Tim Lab: ' . $lab->name)
 

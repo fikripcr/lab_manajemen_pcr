@@ -18,10 +18,12 @@ require __DIR__ . '/sys.php';
 // 🔹 Route Auth bawaan Laravel Breeze / Jetstream
 require __DIR__ . '/auth.php';
 
-// Laravel Impersonate Routes (needs to be outside auth group to allow switching back)
-Route::impersonate();
+
 
 require __DIR__ . '/hr.php';
 
 // Global Search
 Route::get('/global-search', [GlobalSearchController::class, 'search'])->name('global-search');
+
+// Laravel Impersonate Routes (needs to be outside auth group to allow switching back)
+Route::impersonate();

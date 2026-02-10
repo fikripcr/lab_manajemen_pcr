@@ -18,25 +18,26 @@ class IndikatorRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
+        return [
+            'type'            => 'required|in:renop,standar,performa',
+            'doksub_ids'      => 'nullable|array',
+            'doksub_ids.*'    => 'exists:pemutu_dok_sub,doksub_id',
+            'parent_id'       => 'nullable|exists:pemutu_indikator,indikator_id',
+            'no_indikator'    => 'nullable|string|max:50',
             'indikator'       => 'required|string',
             'target'          => 'nullable|string',
-            'jenis_indikator' => 'nullable|string|max:20',
-            'labels'          => 'array',
-            'org_units'       => 'array',
-            'assignments'     => 'array',
+            'jenis_indikator' => 'nullable|string|max:30',
+            'jenis_data'      => 'nullable|string|max:30',
+            'periode_jenis'   => 'nullable|string|max:30',
+            'periode_mulai'   => 'nullable|date',
+            'periode_selesai' => 'nullable|date',
+            'keterangan'      => 'nullable|string',
+            'seq'             => 'nullable|integer',
+            'level_risk'      => 'nullable|string|max:20',
+            'origin_from'     => 'nullable|string|max:30',
+            'labels'          => 'nullable|array',
+            'org_units'       => 'nullable|array',
+            'kpi_assignments' => 'nullable|array',
         ];
-
-        if ($this->isMethod('post')) {
-            $rules['doksub_id'] = 'required|exists:dok_sub,doksub_id';
-        }
-
-        if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $rules['no_indikator']    = 'nullable|string|max:20';
-            $rules['seq']             = 'nullable|integer';
-            $rules['related_doksubs'] = 'array';
-        }
-
-        return $rules;
     }
 }

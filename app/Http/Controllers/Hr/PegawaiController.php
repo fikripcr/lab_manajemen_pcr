@@ -131,6 +131,7 @@ class PegawaiController extends Controller
      */
     public function show(Pegawai $pegawai)
     {
+
         $pegawai->load([
             'latestDataDiri', 'historyDataDiri.approval',
             'keluarga.approval',
@@ -139,12 +140,21 @@ class PegawaiController extends Controller
             'latestStatusPegawai.statusPegawai',
             'latestJabatanFungsional.jabatanFungsional',
             'latestJabatanStruktural.orgUnit',
-            // Load History for Tables in 'Kepegawaian' tab
+            'latestInpassing.golonganInpassing',
             'historyStatPegawai.statusPegawai',
+            'historyStatPegawai.before',
+            'historyStatPegawai.after',
             'historyStatAktifitas.statusAktifitas',
+            'historyStatAktifitas.before',
+            'historyStatAktifitas.after',
             'historyJabFungsional.jabatanFungsional',
             'historyJabStruktural.orgUnit',
+            'historyInpassing.golonganInpassing',
+            'historyInpassing.before',
+            'historyInpassing.after',
         ]);
+
+        // dd($pegawai)->toArray();
 
         // Prepare pending changes if any
         $pendingChange = $pegawai->historyDataDiri
@@ -178,7 +188,7 @@ class PegawaiController extends Controller
         try {
             // Request Change Logic
             $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
-
+            dd('fikri');
             return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->hashid));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

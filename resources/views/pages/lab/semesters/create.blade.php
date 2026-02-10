@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">

@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('header')
 <div class="row g-2 align-items-center">

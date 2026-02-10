@@ -21,14 +21,26 @@
             <label for="jenis" class="form-label required">Jenis Dokumen</label>
             <select class="form-select select2-offline" id="jenis" name="jenis" required data-dropdown-parent="#modalAction">
                 <option value="">Pilih Jenis...</option>
-                <option value="visi" {{ $dokumen->jenis == 'visi' ? 'selected' : '' }}>Visi</option>
-                <option value="misi" {{ $dokumen->jenis == 'misi' ? 'selected' : '' }}>Misi</option>
-                <option value="rjp" {{ $dokumen->jenis == 'rjp' ? 'selected' : '' }}>RJP (Rencana Jangka Panjang)</option>
-                <option value="renstra" {{ $dokumen->jenis == 'renstra' ? 'selected' : '' }}>Renstra (Rencana Strategis)</option>
-                <option value="renop" {{ $dokumen->jenis == 'renop' ? 'selected' : '' }}>Renop (Rencana Operasional)</option>
-                <option value="standar" {{ $dokumen->jenis == 'standar' ? 'selected' : '' }}>Standar</option>
-                <option value="formulir" {{ $dokumen->jenis == 'formulir' ? 'selected' : '' }}>Formulir</option>
-                <option value="dll" {{ $dokumen->jenis == 'dll' ? 'selected' : '' }}>Lain-lain</option>
+                @if(isset($allowedTypes))
+                    @foreach($allowedTypes as $type)
+                        <option value="{{ $type }}" {{ $dokumen->jenis == $type ? 'selected' : '' }}>
+                            {{ match($type) {
+                                'visi' => 'Visi',
+                                'misi' => 'Misi',
+                                'rjp' => 'RJP (Rencana Jangka Panjang)',
+                                'renstra' => 'Renstra (Rencana Strategis)',
+                                'renop' => 'Renop (Rencana Operasional)',
+                                'standar' => 'Standar',
+                                'formulir' => 'Formulir',
+                                'manual_prosedur' => 'Manual Prosedur',
+                                default => ucfirst($type)
+                            } }}
+                        </option>
+                    @endforeach
+                @else
+                    {{-- Fallback --}}
+                    <option value="{{ $dokumen->jenis }}" selected>{{ ucfirst($dokumen->jenis) }}</option>
+                @endif
             </select>
         </div>
         <div class="mb-3">

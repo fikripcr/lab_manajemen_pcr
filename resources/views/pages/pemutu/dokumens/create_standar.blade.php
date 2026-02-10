@@ -12,6 +12,7 @@
                 <option value="standar">Standar</option>
                 <option value="formulir">Formulir</option>
                 <option value="sop">SOP</option>
+                <option value="manual_prosedur">Manual Prosedur</option>
             </select>
         </div>
         <div class="mb-3">

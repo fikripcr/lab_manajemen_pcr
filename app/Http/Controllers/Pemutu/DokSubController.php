@@ -56,9 +56,11 @@ class DokSubController extends Controller
     public function store(DokSubRequest $request)
     {
         try {
-            $this->dokSubService->createDokSub($request->validated());
+            $data                          = $request->validated();
+            $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
+            $this->dokSubService->createDokSub($data);
 
-            return jsonSuccess('Sub-Document created successfully.', route('pemutu.dokumens.index'));
+            return jsonSuccess('Sub-Document created successfully.', route('pemutu.dokumens.show', $data['dok_id']));
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -77,7 +79,9 @@ class DokSubController extends Controller
     public function update(DokSubRequest $request, $id)
     {
         try {
-            $this->dokSubService->updateDokSub($id, $request->validated());
+            $data                          = $request->validated();
+            $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
+            $this->dokSubService->updateDokSub($id, $data);
             $dokSub = $this->dokSubService->getDokSubById($id);
 
             return jsonSuccess('Sub-Document updated successfully.', route('pemutu.dokumens.show', $dokSub->dok_id));

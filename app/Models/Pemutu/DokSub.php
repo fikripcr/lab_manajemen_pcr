@@ -15,6 +15,11 @@ class DokSub extends Model
         'judul',
         'isi',
         'seq',
+        'is_hasilkan_indikator',
+    ];
+
+    protected $casts = [
+        'is_hasilkan_indikator' => 'boolean',
     ];
     public $timestamps = false;
 
@@ -26,7 +31,9 @@ class DokSub extends Model
 
     public function indikators()
     {
-        return $this->hasMany(Indikator::class, 'doksub_id', 'doksub_id')->orderBy('seq');
+        return $this->belongsToMany(Indikator::class, 'pemutu_indikator_doksub', 'doksub_id', 'indikator_id')
+            ->withPivot('is_hasilkan_indikator')
+            ->withTimestamps();
     }
 
     public function childDokumens()

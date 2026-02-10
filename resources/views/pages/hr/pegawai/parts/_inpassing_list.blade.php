@@ -16,25 +16,33 @@
                     <th>Masa Kerja</th>
                     <th>Gaji Pokok</th>
                     <th>File</th>
+                    <th>Status Approval</th>
                     <th class="w-1"></th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($pegawai->riwayatInpassing()->orderBy('tmt', 'desc')->get() as $item)
+                @forelse($pegawai->historyInpassing as $item)
                 <tr>
                     <td>{{ $item->golonganInpassing->golongan ?? '-' }} ({{ $item->golonganInpassing->nama_pangkat ?? '-' }})</td>
                     <td>
                         {{ $item->no_sk }}<br>
-                        <small class="text-muted">{{ $item->tgl_sk ? \Carbon\Carbon::parse($item->tgl_sk)->format('d-m-Y') : '' }}</small>
+                        <small class="text-muted">{{ $item->tgl_sk ? $item->tgl_sk->format('d-m-Y') : '' }}</small>
                     </td>
-                    <td>{{ $item->tmt ? \Carbon\Carbon::parse($item->tmt)->format('d-m-Y') : '-' }}</td>
-                    <td>{{ $item->masa_kerja_tahun }} Tahun {{ $item->masa_kerja_bulan }} Bulan</td>
-                     <td>Rp {{ number_format($item->gaji_pokok, 0, ',', '.') }}</td>
+                    <td>{{ $item->tmt ? $item->tmt->format('d-m-Y') : '-' }}</td>
+                    <td>{{ $item->masa_kerja_tahun ?? 0 }} Tahun {{ $item->masa_kerja_bulan ?? 0 }} Bulan</td>
+                     <td>Rp {{ number_format($item->gaji_pokok ?? 0, 0, ',', '.') }}</td>
                     <td>
                         @if($item->file_sk)
                             <a href="{{ Storage::url($item->file_sk) }}" target="_blank" class="text-azure">Lihat</a>
                         @else
                             -
+                        @endif
+                    </td>
+                    <td>
+                        @if($pegawai->latest_riwayatinpassing_id == $item->riwayatinpassing_id)
+                            <span class="badge bg-success">Aktif Saat Ini</span>
+                        @else
+                            <span class="badge bg-secondary">Riwayat</span>
                         @endif
                     </td>
                     <td>
@@ -46,7 +54,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center text-muted">Belum ada data inpassing</td>
+                    <td colspan="8" class="text-center text-muted">Belum ada data inpassing</td>
                 </tr>
                 @endforelse
             </tbody>

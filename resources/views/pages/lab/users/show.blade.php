@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">

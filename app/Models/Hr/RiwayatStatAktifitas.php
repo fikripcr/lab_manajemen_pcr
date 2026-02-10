@@ -1,16 +1,30 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Traits\Blameable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatStatAktifitas extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable;
+    
     protected $table      = 'hr_riwayat_stataktifitas';
     protected $primaryKey = 'riwayatstataktifitas_id';
     protected $guarded    = ['riwayatstataktifitas_id'];
+
+    protected $fillable = [
+        'pegawai_id',
+        'before_id',
+        'statusaktifitas_id',
+        'tmt',
+        'tgl_akhir',
+        'no_sk',
+        'keterangan',
+        'created_by',
+        'updated_by',
+    ];
 
     protected $casts = [
         'tmt'       => 'date',
@@ -25,5 +39,15 @@ class RiwayatStatAktifitas extends Model
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
+    }
+
+    public function before()
+    {
+        return $this->belongsTo(RiwayatStatAktifitas::class, 'before_id', 'riwayatstataktifitas_id');
+    }
+
+    public function after()
+    {
+        return $this->hasOne(RiwayatStatAktifitas::class, 'before_id', 'riwayatstataktifitas_id');
     }
 }

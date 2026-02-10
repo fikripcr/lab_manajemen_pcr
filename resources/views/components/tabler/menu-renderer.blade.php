@@ -5,7 +5,7 @@
     $adminMenu = [
         [
             'type'  => 'header',
-            'title' => 'Summary',
+            'title' => 'Ringkasan',
         ],
         [
             'type'  => 'item',
@@ -76,14 +76,14 @@
         ],
         [
             'type'  => 'item',
-            'title' => 'Software Requests',
+            'title' => 'Permintaan Perangkat Lunak',
             'route' => 'lab.software-requests.index',
             'active_routes' => ['lab.software-requests.*'],
             'icon'  => 'ti ti-device-laptop',
         ],
         [
             'type' => 'dropdown',
-            'title' => 'Pemutu',
+            'title' => 'Penjaminan Mutu',
             'icon' => 'ti ti-checkbox',
             'route' => '#',
             'active_routes' => ['pemutu.*'],
@@ -100,12 +100,12 @@
                     'active_routes' => ['pemutu.dokumens.*'],
                 ],
                 [
-                    'title' => 'Personil',
+                    'title' => 'Personel',
                     'route' => 'pemutu.personils.index',
                     'active_routes' => ['pemutu.personils.*'],
                 ],
                 [
-                    'title' => 'Label',
+                    'title' => 'Label & Kategori',
                     'route' => 'pemutu.labels.index',
                     'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
                 ],
@@ -163,22 +163,32 @@
                     'route'         => 'hr.att-device.index',
                     'active_routes' => ['hr.att-device.*'],
                 ],
+                [
+                    'title'         => 'Presensi Online',
+                    'route'         => 'hr.presensi.index',
+                    'active_routes' => ['hr.presensi.*'],
+                    'icon'          => 'ti ti-fingerprint',
+                    'badge'         => function() {
+                        // Check if user is currently on presensi page
+                        return request()->routeIs('hr.presensi.*');
+                    },
+                ],
             ],
         ],
         [
             'type'  => 'header',
-            'title' => 'Others',
+            'title' => 'Lainnya',
         ],
         [
             'type'  => 'item',
-            'title' => 'Users',
+            'title' => 'Pengguna',
             'route' => 'lab.users.index',
             'active_routes' => ['lab.users.*'],
             'icon'  => 'ti ti-users',
         ],
         [
             'type'  => 'item',
-            'title' => 'System Management',
+            'title' => 'Manajemen Sistem',
             'route' => 'sys.dashboard',
             'icon'  => 'ti ti-settings',
         ],
@@ -188,7 +198,7 @@
     $sysMenu = [
         [
             'type'  => 'header',
-            'title' => 'Summary',
+            'title' => 'Ringkasan',
         ],
         [
             'type'  => 'item',
@@ -197,23 +207,57 @@
             'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>',
         ],
         [
+            'type'          => 'dropdown',
+            'title'         => 'Monitoring / SPMI',
+            'id'            => 'navbar-pemutu',
+            'icon'          => 'ti ti-checkbox',
+            'active_routes' => ['pemutu.*'],
+            'children'      => [
+                [
+                    'title' => 'Struktur Organisasi',
+                    'route' => 'pemutu.org-units.index',
+                    'active_routes' => ['pemutu.org-units.*'],
+                ],
+                [
+                    'title' => 'Dokumen',
+                    'route' => 'pemutu.dokumens.index',
+                    'active_routes' => ['pemutu.dokumens.*'],
+                ],
+                [
+                    'title' => 'Personel',
+                    'route' => 'pemutu.personils.index',
+                    'active_routes' => ['pemutu.personils.*'],
+                ],
+                [
+                    'title' => 'Label & Kategori',
+                    'route' => 'pemutu.labels.index',
+                    'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
+                ],
+                [
+                    'title' => 'Indikator',
+                    'route' => 'pemutu.indikators.index',
+                    'active_routes' => ['pemutu.indikators.*'],
+                ],
+            ],
+        ],
+        [
             'type'  => 'header',
-            'title' => 'Access Control',
+            'title' => 'Kontrol Akses',
         ],
         [
             'type'          => 'dropdown',
-            'title'         => 'Access Control',
+            'title' => 'Kontrol Akses',
             'id'            => 'navbar-access',
             'icon'          => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /><path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12 12l0 2.5" /></svg>',
             'active_routes' => ['sys.roles.*', 'sys.permissions.*'],
             'children'      => [
                 [
-                    'title'         => 'Roles',
+                    'title'         => 'Peran (Roles)',
                     'route'         => 'sys.roles.index',
                     'active_routes' => ['sys.roles.*'],
                 ],
                 [
-                    'title'         => 'Permissions',
+                    'title'         => 'Izin (Permissions)',
                     'route'         => 'sys.permissions.index',
                     'active_routes' => ['sys.permissions.*'],
                 ],
@@ -221,7 +265,7 @@
         ],
         [
             'type'  => 'header',
-            'title' => 'System Log',
+            'title' => 'Log Sistem',
         ],
         [
             'type'          => 'dropdown',
@@ -231,17 +275,17 @@
             'active_routes' => ['notifications.*', 'activity-log.*', 'sys.error-log.*'],
             'children'      => [
                 [
-                    'title'         => 'Notifications',
+                    'title'         => 'Notifikasi',
                     'route'         => 'notifications.index',
                     'active_routes' => ['notifications.*'],
                 ],
                 [
-                    'title'         => 'Activity',
+                    'title'         => 'Aktivitas',
                     'route'         => 'activity-log.index',
                     'active_routes' => ['activity-log.*'],
                 ],
                 [
-                    'title'         => 'Error Log',
+                    'title'         => 'Log Error',
                     'route'         => 'sys.error-log.index',
                     'active_routes' => ['sys.error-log.*'],
                 ],
@@ -249,32 +293,32 @@
         ],
         [
             'type'  => 'header',
-            'title' => 'Others',
+            'title' => 'Lainnya',
         ],
         [
             'type'          => 'dropdown',
-            'title'         => 'Others',
+            'title'         => 'Lainnya',
             'id'            => 'navbar-others',
             'icon'          => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M8 12l.01 0" /><path d="M12 12l.01 0" /><path d="M16 12l.01 0" /></svg>',
             'active_routes' => ['app-config', 'sys.test.*', 'sys.backup.*', 'sys.documentation.*'],
             'children'      => [
                 [
-                    'title'         => 'App Configuration',
+                    'title'         => 'Konfigurasi Aplikasi',
                     'route'         => 'app-config',
                     'active_routes' => ['app-config'],
                 ],
                 [
-                    'title'         => 'Test Features',
+                    'title'         => 'Fitur Uji Coba',
                     'route'         => 'sys.test.index',
                     'active_routes' => ['sys.test.*'],
                 ],
                 [
-                    'title'         => 'Backup Management',
+                    'title'         => 'Manajemen Backup',
                     'route'         => 'sys.backup.index',
                     'active_routes' => ['sys.backup.*'],
                 ],
                 [
-                    'title'         => 'Development Guide',
+                    'title'         => 'Panduan Pengembangan',
                     'route'         => 'sys.documentation.index',
                     'active_routes' => ['sys.documentation.*'],
                 ],
@@ -315,7 +359,7 @@
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
                 </span>
-                <span class="nav-link-title">Back to Main Apps</span>
+                <span class="nav-link-title">Kembali ke Aplikasi Utama</span>
             </a>
         </li>
 

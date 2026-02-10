@@ -13,12 +13,15 @@ use App\Http\Controllers\Hr\StatusPegawaiController;
 use App\Http\Controllers\Hr\StatusAktifitasController;
 use App\Http\Controllers\Hr\JabatanFungsionalController;
 use App\Http\Controllers\Hr\JenisIndisiplinerController;
+use App\Http\Controllers\Hr\PresensiController;
 
 Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(function () {
 
                                                                                           // Pegawai Routes
     Route::get('pegawai/data', [PegawaiController::class, 'data'])->name('pegawai.data'); // Ensure this exists if used, but PegawaiController uses index() for json.
     Route::get('pegawai/select2-search', [PegawaiController::class, 'select2Search'])->name('pegawai.select2-search');
+    Route::get('pegawai/upload-photo', [PresensiController::class, 'showUploadPhoto'])->name('pegawai.upload-photo');
+    Route::post('pegawai/upload-photo', [PresensiController::class, 'storeUploadPhoto'])->name('pegawai.upload-photo.store');
     Route::resource('pegawai', PegawaiController::class);
 
     // OrgUnit Routes (Struktur Organisasi)
@@ -147,4 +150,33 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::get('approval', [ApprovalController::class, 'index'])->name('approval.index');
     Route::post('approval/{id}/approve', [ApprovalController::class, 'approve'])->name('approval.approve');
     Route::post('approval/{id}/reject', [ApprovalController::class, 'reject'])->name('approval.reject');
+
+    // Presensi Routes
+    Route::prefix('presensi')->name('hr.presensi.')->group(function () {
+        Route::get('/', [PresensiController::class, 'index'])->name('index');
+        Route::get('/settings', [PresensiController::class, 'settings'])->name('settings');
+        Route::post('/settings', [PresensiController::class, 'updateSettings'])->name('update-settings');
+        Route::get('/get-settings', [PresensiController::class, 'getSettings'])->name('get-settings');
+        Route::post('/checkin', [PresensiController::class, 'checkIn'])->name('checkin');
+        Route::post('/checkout', [PresensiController::class, 'checkOut'])->name('checkout');
+        Route::get('/employee-face-data', [PresensiController::class, 'getEmployeeFaceData'])->name('employee-face-data');
+        Route::get('/history', [PresensiController::class, 'history'])->name('history');
+        Route::post('/history', [PresensiController::class, 'historyData'])->name('history.data');
+    });
+
+    Route::prefix('pegawai')->name('pegawai.')->group(function () {
+        Route::get('/upload-photo', [PresensiController::class, 'showUploadPhoto'])->name('upload-photo');
+        Route::post('/upload-photo', [PresensiController::class, 'storeUploadPhoto'])->name('upload-photo.store');
+    });
+
+    Route::get('presensi', [PresensiController::class, 'index'])->name('presensi.index');
+    Route::post('presensi/checkin', [PresensiController::class, 'checkIn'])->name('presensi.checkin');
+    Route::post('presensi/checkout', [PresensiController::class, 'checkOut'])->name('presensi.checkout');
+    Route::get('presensi/get-location', [PresensiController::class, 'getCurrentLocation'])->name('presensi.get-location');
+    Route::get('presensi/settings', [PresensiController::class, 'settings'])->name('presensi.settings');
+    Route::get('presensi/get-settings', [PresensiController::class, 'getSettings'])->name('presensi.get-settings');
+    Route::post('presensi/update-settings', [PresensiController::class, 'updateSettings'])->name('presensi.update-settings');
+    Route::get('presensi/history', [PresensiController::class, 'history'])->name('presensi.history');
+    Route::get('presensi/history-data', [PresensiController::class, 'historyData'])->name('presensi.history-data');
+    Route::get('presensi/employee-face-data', [PresensiController::class, 'getEmployeeFaceData'])->name('presensi.employee-face-data');
 });

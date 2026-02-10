@@ -1,13 +1,14 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
+
+@section('header')
+    <x-tabler.page-header title="Edit Semester" pretitle="Master Data">
+        <x-slot:actions>
+            <x-tabler.button type="back" :href="route('semesters.index')" />
+        </x-slot:actions>
+    </x-tabler.page-header>
+@endsection
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0">Edit Semester</h4>
-        <a href="{{ route('semesters.index') }}" class="btn btn-secondary">
-            <i class="bx bx-arrow-back me-1"></i> Back to List
-        </a>
-    </div>
-
     <div class="row">
         <div class="col-12">
             <div class="card mb-4">

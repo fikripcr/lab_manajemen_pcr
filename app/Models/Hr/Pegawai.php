@@ -13,6 +13,9 @@ class Pegawai extends Model
 
     protected $table      = 'hr_pegawai';
     protected $primaryKey = 'pegawai_id';
+
+    protected $appends = ['encrypted_pegawai_id'];
+
     /**
      * Get the route key for the model.
      */
@@ -29,12 +32,24 @@ class Pegawai extends Model
         'latest_riwayatkelas_id',
         'latest_riwayatjabfungsional_id',
         'latest_riwayatjabstruktural_id',
+        'latest_riwayatinpassing_id',
         'atasan1',
         'atasan2',
+        'photo',
+        'face_encoding',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
+
+    
+    public function getEncryptedPegawaiIdAttribute()
+    {
+        return encryptId($this->pegawai_id);
+    }
+
+    
+
 
     // Relationships to Latest History
     public function latestDataDiri()
@@ -55,6 +70,11 @@ class Pegawai extends Model
     public function latestStatusAktifitas()
     {
         return $this->belongsTo(RiwayatStatAktifitas::class, 'latest_riwayatstataktifitas_id', 'riwayatstataktifitas_id');
+    }
+
+    public function latestInpassing()
+    {
+        return $this->belongsTo(RiwayatInpassing::class, 'latest_riwayatinpassing_id', 'riwayatinpassing_id');
     }
 
     public function latestKelas()
@@ -133,6 +153,12 @@ class Pegawai extends Model
         return $this->hasMany(RiwayatJabStruktural::class, 'pegawai_id', 'pegawai_id')->orderBy('tgl_awal', 'desc');
     }
 
+    public function historyInpassing()
+    {
+        return $this->hasMany(RiwayatInpassing::class, 'pegawai_id', 'pegawai_id')->orderBy('tmt', 'desc');
+    }
+
+
     // Direct Accessors (Proxies to latest data diri)
     public function getNamaAttribute()
     {
@@ -153,4 +179,5 @@ class Pegawai extends Model
     {
         return $this->latestDataDiri->inisial ?? '-';
     }
+
 }

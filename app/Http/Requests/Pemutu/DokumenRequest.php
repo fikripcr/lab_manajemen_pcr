@@ -23,7 +23,7 @@ class DokumenRequest extends FormRequest
             'parent_id' => 'nullable|exists:dokumen,dok_id',
             'kode'      => 'nullable|string|max:50',
             'isi'       => 'nullable|string',
-            'jenis'     => 'required|in:visi,misi,rjp,renstra,renop,standar,formulir,sop,dll',
+            'jenis'     => 'required|in:visi,misi,rjp,renstra,renop,standar,formulir,manual_prosedur,dll',
             'periode'   => 'nullable|integer',
         ];
     }

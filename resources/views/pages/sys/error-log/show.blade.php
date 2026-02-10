@@ -1,4 +1,4 @@
-@extends('layouts.sys.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.sys.empty' : 'layouts.sys.app')
 
 @section('title', 'Error Log')
 

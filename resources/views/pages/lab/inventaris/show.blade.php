@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('header')
     <x-tabler.page-header :title="$inventory->nama_alat" pretitle="Inventory Details">

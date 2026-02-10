@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Lab;
 
 use App\Exports\UserExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UserRequest;
+use App\Http\Requests\Lab\UserRequest;
 use App\Imports\UserImport;
 use App\Models\User;
 use App\Services\Sys\UserService;
@@ -182,7 +182,7 @@ class UserController extends Controller
         try {
             $this->userService->updateUser($realId, $validated);
 
-            return jsonSuccess('Pengguna berhasil diperbarui.', route('lab.users.index'));
+            return jsonSuccess('Pengguna berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }

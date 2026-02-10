@@ -49,7 +49,7 @@
                             'renop' => 'Renop (Rencana Operasional)',
                             'standar' => 'Standar',
                             'formulir' => 'Formulir',
-                            'dll' => 'Lain-lain',
+                            'manual_prosedur' => 'Manual Prosedur',
                             default => ucfirst($type)
                         } }}
                     </option>

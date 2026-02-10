@@ -11,13 +11,14 @@ class Indikator extends Model
     protected $table      = 'pemutu_indikator';
     protected $primaryKey = 'indikator_id';
     protected $fillable   = [
-        'doksub_id',
+        'type',
+        'parent_id',
         'no_indikator',
         'indikator',
         'target',
-        'jenis_indikator', // e.g., Kualitatif, Kuantitatif
+        'jenis_indikator',
         'jenis_data',
-        'periode_jenis', // e.g., Tahunan, Semester
+        'periode_jenis',
         'periode_mulai',
         'periode_selesai',
         'keterangan',
@@ -30,15 +31,12 @@ class Indikator extends Model
     ];
     public $timestamps = false;
 
-    protected $casts = [
-        'periode_mulai'   => 'datetime',
-        'periode_selesai' => 'datetime',
-    ];
-
     // Relationships
-    public function dokSub()
+    public function dokSubs()
     {
-        return $this->belongsTo(DokSub::class, 'doksub_id', 'doksub_id');
+        return $this->belongsToMany(DokSub::class, 'pemutu_indikator_doksub', 'indikator_id', 'doksub_id')
+            ->withPivot('is_hasilkan_indikator')
+            ->withTimestamps();
     }
 
     // Many-to-Many Relationships (Pivots)
@@ -50,12 +48,21 @@ class Indikator extends Model
     public function orgUnits()
     {
         return $this->belongsToMany(OrgUnit::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
-            ->withPivot('created_at');
+            ->withPivot('target', 'created_at');
     }
 
-    public function relatedDokSubs()
+    public function parent()
     {
-        return $this->belongsToMany(DokSub::class, 'pemutu_indikator_doksub', 'indikator_id', 'doksub_id')
-            ->withPivot('is_hasilkan_indikator');
+        return $this->belongsTo(Indikator::class, 'parent_id', 'indikator_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Indikator::class, 'parent_id', 'indikator_id')->orderBy('seq');
+    }
+
+    public function personils()
+    {
+        return $this->hasMany(IndikatorPersonil::class, 'indikator_id', 'indikator_id');
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('header')
 <div class="row g-2 align-items-center">
@@ -196,6 +196,7 @@
                 @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
                 @include('pages.hr.data-diri.penugasan') {{-- Using the Penugasan list view directly --}}
                 @include('pages.hr.pegawai.parts._status_aktifitas_list')
+                @include('pages.hr.pegawai.parts._inpassing_list')
             </div>
 
             <!-- Tab Pendidikan -->

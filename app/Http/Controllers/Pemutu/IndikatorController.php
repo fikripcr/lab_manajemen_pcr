@@ -3,7 +3,6 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
-use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\IndikatorService;
@@ -35,10 +34,12 @@ class IndikatorController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('dokumen_judul', function ($row) {
-                return $row->dokSub->dokumen->judul ?? '-';
+                return $row->dokSubs->map(function ($ds) {
+                    return $ds->dokumen->judul ?? '-';
+                })->unique()->implode(', ') ?: '-';
             })
             ->addColumn('doksub_judul', function ($row) {
-                return $row->dokSub->judul ?? '-';
+                return $row->dokSubs->pluck('judul')->implode(', ') ?: '-';
             })
             ->addColumn('labels', function ($row) {
                 return '<div class="d-flex flex-wrap gap-1">' . $row->labels->map(function ($label) {
@@ -70,10 +71,7 @@ class IndikatorController extends Controller
 
     public function create(Request $request)
     {
-        $dokSubId = $request->query('doksub_id');
-        $dokSub   = $dokSubId ? DokSub::with('dokumen')->find($dokSubId) : null;
-
-        // View Dependencies - Can be moved to separate Service helper if reused often
+        // View Dependencies
         $labelTypes = \App\Models\Pemutu\LabelType::with(['labels' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
@@ -81,11 +79,34 @@ class IndikatorController extends Controller
         $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
 
         $dokumens = Dokumen::with('dokSubs')
-            ->where('jenis', 'Renop')
+            ->whereIn('jenis', ['renstra', 'renop', 'standar'])
             ->orderBy('judul')
             ->get();
 
-        return view('pages.pemutu.indikators.create', compact('dokSub', 'labelTypes', 'orgUnits', 'dokumens'));
+        $parents = \App\Models\Pemutu\Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
+
+        $personils = \App\Models\Pemutu\Personil::orderBy('nama')->get();
+
+        // Handle Contextual Pre-selection
+        $parentDok = null;
+        if ($request->has('parent_dok_id')) {
+            $parentDok = Dokumen::with('dokSubs')->find($request->parent_dok_id);
+            if ($parentDok) {
+                // Determine suggested type
+                $suggestedType = match ($parentDok->jenis) {
+                    'renop'   => 'renop',
+                    'standar' => 'standar',
+                    default   => 'renop'
+                };
+
+                $request->merge([
+                    'type'       => $request->get('type', $suggestedType),
+                    'doksub_ids' => $request->get('doksub_ids', $parentDok->dokSubs->pluck('doksub_id')->toArray()),
+                ]);
+            }
+        }
+
+        return view('pages.pemutu.indikators.create', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils', 'parentDok'));
     }
 
     public function store(IndikatorRequest $request)
@@ -93,7 +114,7 @@ class IndikatorController extends Controller
         try {
             $data = $request->validated();
 
-            // Handle Assignments Parsing (prepare for Service)
+            // Handle Assignments Parsing
             if ($request->has('assignments')) {
                 $syncData = [];
                 foreach ($request->assignments as $unitId => $val) {
@@ -104,12 +125,30 @@ class IndikatorController extends Controller
                 $data['org_units'] = $syncData;
             }
 
-            // Labels are usually flat array of IDs, so $request->labels is fine.
-            // Related DokSubs ($request->related_doksubs) also fine.
+            // Handle KPI Assignments Parsing
+            if ($request->has('kpi_assign')) {
+                $kpiData = [];
+                foreach ($request->kpi_assign as $val) {
+                    if (isset($val['selected']) && $val['selected'] == 1) {
+                        unset($val['selected']);
+                        $kpiData[] = $val;
+                    }
+                }
+                $data['kpi_assignments'] = $kpiData;
+            }
 
             $this->indikatorService->createIndikator($data);
 
-            return jsonSuccess('Indikator created successfully.', route('pemutu.indikators.index'));
+            $redirectUrl = route('pemutu.indikators.index');
+            if ($request->has('parent_dok_id')) {
+                $redirectUrl = route('pemutu.dokumens.show-renop-with-indicators', $request->parent_dok_id);
+            }
+
+            if ($request->ajax()) {
+                return jsonSuccess('Indikator created successfully.', $redirectUrl);
+            }
+
+            return redirect($redirectUrl)->with('success', 'Indikator created successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -139,11 +178,18 @@ class IndikatorController extends Controller
         $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
 
         $dokumens = Dokumen::with('dokSubs')
-            ->where('jenis', 'Renop')
+            ->whereIn('jenis', ['renstra', 'renop', 'standar'])
             ->orderBy('judul')
             ->get();
 
-        return view('pages.pemutu.indikators.edit', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens'));
+        $parents = \App\Models\Pemutu\Indikator::where('type', 'standar')
+            ->where('indikator_id', '!=', $id)
+            ->orderBy('no_indikator')
+            ->get();
+
+        $personils = \App\Models\Pemutu\Personil::orderBy('nama')->get();
+
+        return view('pages.pemutu.indikators.edit', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils'));
     }
 
     public function update(IndikatorRequest $request, $id)
@@ -162,9 +208,28 @@ class IndikatorController extends Controller
                 $data['org_units'] = $syncData;
             }
 
+            if ($request->has('kpi_assign')) {
+                $kpiData = [];
+                foreach ($request->kpi_assign as $val) {
+                    if (isset($val['selected']) && $val['selected'] == 1) {
+                        unset($val['selected']);
+                        $kpiData[] = $val;
+                    }
+                }
+                $data['kpi_assignments'] = $kpiData;
+            }
+
+            // doksub_ids is already in $data from validated()
+
             $this->indikatorService->updateIndikator($id, $data);
 
-            return jsonSuccess('Indikator updated successfully.', route('pemutu.indikators.show', $id));
+            $redirectUrl = route('pemutu.indikators.show', $id);
+
+            if ($request->ajax()) {
+                return jsonSuccess('Indikator updated successfully.', $redirectUrl);
+            }
+
+            return redirect($redirectUrl)->with('success', 'Indikator updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
         }

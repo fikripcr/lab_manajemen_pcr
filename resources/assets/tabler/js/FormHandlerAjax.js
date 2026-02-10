@@ -218,6 +218,11 @@ function initAjaxFormHandler() {
         axios.get(url)
             .then(function (response) {
                 $modalContent.html(response.data);
+
+                // Re-initialize components
+                if (typeof window.initOfflineSelect2 === 'function') {
+                    window.initOfflineSelect2();
+                }
             })
             .catch(function (error) {
                 console.error(error);

@@ -17,9 +17,7 @@ class PegawaiService
     {
         return DB::transaction(function () use ($data) {
             // 1. Create Pegawai Header (Skeleton)
-            $pegawai = Pegawai::create([
-                'created_by' => Auth::id(),
-            ]);
+            $pegawai = Pegawai::create();
 
             // 2. Create Initial Approval (Auto-Approved for creation)
             $approval = RiwayatApproval::create([
@@ -27,14 +25,12 @@ class PegawaiService
                 'status'     => 'Approved',
                 'keterangan' => 'Initial Data Creation',
                 'pejabat'    => Auth::user()->name ?? 'System',
-                'created_by' => Auth::id(),
             ]);
 
             // 3. Create Riwayat Data Diri
             // Add pegwai_id and approval_id to data
             $data['pegawai_id']                = $pegawai->pegawai_id;
             $data['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;
-            $data['created_by']                = Auth::id();
 
             $riwayat = RiwayatDataDiri::create($data);
 
@@ -61,21 +57,18 @@ class PegawaiService
                 'model'      => RiwayatDataDiri::class,
                 'status'     => 'Pending',
                 'keterangan' => 'Request Data Update',
-                'created_by' => Auth::id(),
             ]);
-
+            
             // 2. Prepare Data (Link to Pegawai, but DO NOT update Pegawai's pointer yet)
             $data['pegawai_id']                = $pegawai->pegawai_id;
             $data['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;
             $data['before_id']                 = $pegawai->latest_riwayatdatadiri_id; // Link to previous version
-            $data['created_by']                = Auth::id();
 
             // 3. Create New History Record
             $riwayat = RiwayatDataDiri::create($data);
 
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $riwayat->riwayatdatadiri_id]);
-
             return $riwayat;
         });
     }
@@ -83,25 +76,51 @@ class PegawaiService
     /**
      * Generic Request for Change (For Single-Value States like Status, Jabatan)
      */
-    public function requestChange(Pegawai $pegawai, $modelClass, array $data, $headerColumn = null)
+    public function requestChange(Pegawai $pegawai, $modelClass, array $data, $headerColumn = null, $existingModel = null)
     {
-        return DB::transaction(function () use ($pegawai, $modelClass, $data, $headerColumn) {
+        return DB::transaction(function () use ($pegawai, $modelClass, $data, $headerColumn, $existingModel) {
             // 1. Create Pending Approval
             $approval = RiwayatApproval::create([
                 'model'      => $modelClass,
                 'status'     => 'Pending',
-                'keterangan' => 'Request Change',
-                'created_by' => Auth::id(),
+                'keterangan' => $existingModel ? 'Request Update' : 'Request Change',
             ]);
 
             // 2. Prepare Data
             $data['pegawai_id']                = $pegawai->pegawai_id;
-            $data['created_by']                = Auth::id();
             $data['latest_riwayatapproval_id'] = $approval->riwayatapproval_id; // Will be ignored if column doesn't exist
 
-            // Handle 'before_id' or 'old_id' logic if applicable
-            // This requires knowing the column name for the "previous" record on the history table
-            // For now, simple insert.
+            // Add before_id logic for models that support it
+            if (in_array($modelClass, [
+                \App\Models\Hr\RiwayatInpassing::class,
+                \App\Models\Hr\RiwayatStatPegawai::class,
+                \App\Models\Hr\RiwayatStatAktifitas::class,
+                \App\Models\Hr\RiwayatJabFungsional::class,
+                \App\Models\Hr\RiwayatJabStruktural::class,
+                \App\Models\Hr\RiwayatPendidikan::class,
+            ])) {
+                $headerColumnMap = [
+                    \App\Models\Hr\RiwayatInpassing::class => 'latest_riwayatinpassing_id',
+                    \App\Models\Hr\RiwayatStatPegawai::class => 'latest_riwayatstatpegawai_id',
+                    \App\Models\Hr\RiwayatStatAktifitas::class => 'latest_riwayatstataktifitas_id',
+                    \App\Models\Hr\RiwayatJabFungsional::class => 'latest_riwayatjabfungsional_id',
+                    \App\Models\Hr\RiwayatJabStruktural::class => 'latest_riwayatjabstruktural_id',
+                    \App\Models\Hr\RiwayatPendidikan::class => 'latest_riwayatpendidikan_id',
+                ];
+                
+                if (isset($headerColumnMap[$modelClass])) {
+                    $currentHeaderColumn = $headerColumnMap[$modelClass];
+                    $data['before_id'] = $pegawai->{$currentHeaderColumn};
+                }
+            }
+
+            // Handle update case - use existing model data as base
+            if ($existingModel) {
+                $data = array_merge($existingModel->getAttributes(), $data);
+                unset($data[$existingModel->getKeyName()]); // Remove primary key
+                unset($data['created_at']); // Remove timestamps
+                unset($data['updated_at']);
+            }
 
             // 3. Create Model
             $model = $modelClass::create($data);
@@ -124,12 +143,10 @@ class PegawaiService
                 'model'      => $modelClass,
                 'status'     => 'Pending',
                 'keterangan' => 'Request New Item',
-                'created_by' => Auth::id(),
             ]);
 
             // 2. Prepare Data
             $data['pegawai_id'] = $pegawai->pegawai_id;
-            $data['created_by'] = Auth::id();
 
             // Check if model has approval column
             $dummy = new $modelClass;
@@ -163,7 +180,6 @@ class PegawaiService
             $approval->update([
                 'status'     => 'Approved',
                 'pejabat'    => Auth::user()->name ?? 'System',
-                'updated_by' => Auth::id(),
             ]);
 
             // Resolve Model and Update Header Pointer if applicable
@@ -180,6 +196,7 @@ class PegawaiService
                 \App\Models\Hr\RiwayatJabFungsional::class => 'latest_riwayatjabfungsional_id',
                 \App\Models\Hr\RiwayatJabStruktural::class => 'latest_riwayatjabstruktural_id', // Nullable/Missing in some schemas, enable if exists
                 \App\Models\Hr\RiwayatPendidikan::class    => 'latest_riwayatpendidikan_id',    // Usually points to "Highest" education
+                \App\Models\Hr\RiwayatInpassing::class     => 'latest_riwayatinpassing_id',
             ];
 
             if (array_key_exists($modelClass, $headerMap)) {
@@ -259,6 +276,7 @@ class PegawaiService
                 'latestDataDiri.posisi',
                 'latestDataDiri.departemen',
                 'latestStatusPegawai.statusPegawai',
+                'latestInpassing.golonganInpassing',
                 'atasanSatu.latestDataDiri', // Need name of atasan
                 'atasanDua.latestDataDiri',  // Need name of atasan
             ]);

@@ -32,7 +32,7 @@ class DokumenService
             ->when($periode, function ($q) use ($periode) {
                 return $q->where('periode', $periode);
             })
-            ->with('children') // Eager load children for tree view optimization?
+            ->with(['children', 'dokSubs']) // Eager load children and dokSubs for tree view
             ->orderBy('seq')
             ->get();
     }

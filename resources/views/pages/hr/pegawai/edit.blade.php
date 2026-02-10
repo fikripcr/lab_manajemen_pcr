@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('header')
 <div class="row g-2 align-items-center">
@@ -12,7 +12,7 @@
 @endsection
 
 @section('content')
-<form action="{{ route('hr.pegawai.update', $pegawai->pegawai_id) }}" method="POST" id="form-pegawai-edit" class="ajax-form" enctype="multipart/form-data">
+<form action="{{ route('hr.pegawai.update', $pegawai->encrypted_pegawai_id) }}" method="POST" id="form-pegawai-edit" class="ajax-form" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     

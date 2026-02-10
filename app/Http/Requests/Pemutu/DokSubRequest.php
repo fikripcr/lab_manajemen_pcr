@@ -19,13 +19,14 @@ class DokSubRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'judul' => 'required|string|max:150',
-            'isi'   => 'nullable|string',
-            'seq'   => 'nullable|integer',
+            'judul'                 => 'required|string|max:150',
+            'isi'                   => 'nullable|string',
+            'seq'                   => 'nullable|integer',
+            'is_hasilkan_indikator' => 'nullable|boolean',
         ];
 
         if ($this->isMethod('post')) {
-            $rules['dok_id'] = 'required|exists:dokumen,dok_id';
+            $rules['dok_id'] = 'required|exists:pemutu_dokumen,dok_id';
         }
 
         return $rules;

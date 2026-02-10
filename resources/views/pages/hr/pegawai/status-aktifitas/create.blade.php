@@ -2,7 +2,7 @@
     @csrf
     <div class="modal-body">
         <div class="alert alert-info">
-            Status Aktifitas saat ini: <strong>{{ $pegawai->latestStatusAktifitas->statusAktifitas->status_aktifitas ?? 'Belum ada' }}</strong><br>
+            Status Aktifitas saat ini: <strong>{{ $pegawai->latestStatusAktifitas->statusAktifitas->nama_status ?? 'Belum ada' }}</strong><br>
             Perubahan yang Anda ajukan akan menunggu persetujuan admin sebelum efektif.
         </div>
 
@@ -12,7 +12,7 @@
                 <select class="form-select" name="statusaktifitas_id" required>
                     <option value="">Pilih Status</option>
                     @foreach($statusAktifitas as $status)
-                        <option value="{{ $status->statusaktifitas_id }}">{{ $status->status_aktifitas }} ({{ $status->kode }})</option>
+                        <option value="{{ $status->statusaktifitas_id }}">{{ $status->nama_status }} ({{ $status->kode_status }})</option>
                     @endforeach
                 </select>
             </div>

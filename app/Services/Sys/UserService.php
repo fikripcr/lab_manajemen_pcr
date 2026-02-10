@@ -51,7 +51,8 @@ class UserService
 
             // Handle Avatar if provided
             if (isset($data['avatar']) && $data['avatar']) {
-                $user->addMedia($data['avatar'])->toMediaCollection('avatar');
+                $avatar = $this->sanitizeImage($data['avatar']);
+                $user->addMedia($avatar)->toMediaCollection('avatar');
             }
 
             logActivity('user', 'Membuat pengguna baru: ' . $user->name, $user);
@@ -99,7 +100,8 @@ class UserService
             // Handle Avatar
             if (isset($data['avatar']) && $data['avatar']) {
                 $user->clearMediaCollection('avatar');
-                $user->addMedia($data['avatar'])->toMediaCollection('avatar');
+                $avatar = $this->sanitizeImage($data['avatar']);
+                $user->addMedia($avatar)->toMediaCollection('avatar');
             }
 
             logActivity('user', 'Memperbarui pengguna ' . $user->name, $user, [
@@ -109,6 +111,49 @@ class UserService
 
             return true;
         });
+    }
+
+    /**
+     * Sanitize image to fix problematic metadata (e.g. libpng sRGB profile error)
+     */
+    private function sanitizeImage($file)
+    {
+        if (! $file instanceof \Illuminate\Http\UploadedFile) {
+            return $file;
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // Only process PNGs as they are the primary source of the iCCP profile error
+        if ($extension === 'png') {
+            try {
+                // We use GD to re-save the image, which strips problematic metadata
+                $image = @imagecreatefrompng($file->getRealPath());
+                if ($image) {
+                    $tempPath  = tempnam(sys_get_temp_dir(), 'avatar_');
+                    rename($tempPath, $tempPath .= '.png'); // Ensure .png extension
+
+                    imagealphablending($image, false);
+                    imagesavealpha($image, true);
+                    imagepng($image, $tempPath);
+                    imagedestroy($image);
+
+                    // Create a new UploadedFile instance from the sanitized file
+                    return new \Illuminate\Http\UploadedFile(
+                        $tempPath,
+                        $file->getClientOriginalName(),
+                        $file->getClientMimeType(),
+                        null,
+                        true// Mark as test so it doesn't try to move_uploaded_file which might fail on temp
+                    );
+                }
+            } catch (\Exception $e) {
+                // If anything fails, fallback to original file
+                report($e);
+            }
+        }
+
+        return $file;
     }
 
     /**
