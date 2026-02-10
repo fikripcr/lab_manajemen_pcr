@@ -51,6 +51,10 @@
             <label for="kode" class="form-label">Kode Dokumen</label>
             <input type="text" class="form-control" id="kode" name="kode" value="{{ $dokumen->kode }}">
         </div>
+        <div class="mb-3">
+            <label for="isi" class="form-label">Isi / Konten Dokumen</label>
+            <textarea class="form-control rich-text-editor" id="isi" name="isi" rows="10">{{ $dokumen->isi }}</textarea>
+        </div>
         {{-- Hidden fields to preserve or set defaults if needed --}}
         <input type="hidden" name="periode" value="{{ $dokumen->periode }}">
     </div>
@@ -59,3 +63,25 @@
         <x-tabler.button type="submit" text="Simpan Perubahan" />
     </div>
 </form>
+
+<script>
+    (function() {
+        const initEditor = () => {
+            if (window.loadHugeRTE) {
+                window.loadHugeRTE('.rich-text-editor', {
+                    height: 400,
+                    menubar: true,
+                    plugins: 'lists link table image code',
+                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | code'
+                });
+            }
+        };
+
+        if (typeof jQuery !== 'undefined' && jQuery('.modal').is(':visible')) {
+            setTimeout(initEditor, 300);
+        } else {
+            document.addEventListener('DOMContentLoaded', initEditor);
+            initEditor(); 
+        }
+    })();
+</script>

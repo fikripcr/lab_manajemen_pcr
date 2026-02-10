@@ -89,11 +89,9 @@ class DokumenController extends Controller
             $data    = $request->validated();
             $dokumen = $this->dokumenService->createDokumen($data);
 
-            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis);
+            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
             if ($request->filled('parent_doksub_id')) {
                 $redirectUrl = route('pemutu.dok-subs.show', $request->parent_doksub_id);
-            } elseif ($dokumen->parent_id) {
-                $redirectUrl = route('pemutu.dokumens.show', $dokumen->parent_id);
             }
 
             return jsonSuccess('Dokumen berhasil dibuat.', $redirectUrl);
@@ -158,12 +156,7 @@ class DokumenController extends Controller
             $this->dokumenService->updateDokumen($id, $request->validated());
 
             $dokumen     = $this->dokumenService->getDokumenById($id);
-            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis);
-            if ($dokumen->parent_id) {
-                $redirectUrl = route('pemutu.dokumens.show', $dokumen->parent_id);
-            } else {
-                $redirectUrl = route('pemutu.dokumens.show', $id);
-            }
+            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $id . '&type=dokumen';
 
             return jsonSuccess('Dokumen berhasil diperbarui.', $redirectUrl);
         } catch (\Exception $e) {
@@ -176,9 +169,6 @@ class DokumenController extends Controller
         try {
             $dokumen     = $this->dokumenService->getDokumenById($id);
             $redirectOpt = $dokumen ? $this->getIndexUrlByJenis($dokumen->jenis) : route('pemutu.dokumens.index');
-            if ($dokumen && $dokumen->parent_id) {
-                $redirectOpt = route('pemutu.dokumens.show', $dokumen->parent_id);
-            }
 
             $this->dokumenService->deleteDokumen($id);
             return jsonSuccess('Dokumen berhasil dihapus.', $redirectOpt);
@@ -250,10 +240,24 @@ class DokumenController extends Controller
                         if ($row->kode) {
                             $title .= '<div class="text-muted small">' . $row->kode . '</div>';
                         }
-                        if ($row->children_count > 0) {
-                            $title .= '<div class="badge bg-blue-lt mt-1">' . $row->children_count . ' Children</div>';
-                        }
                         return $title;
+                    })
+                    ->addColumn('jumlah_turunan', function ($row) {
+                        if ($row->children_count <= 0) {
+                            return '<span class="text-muted">-</span>';
+                        }
+
+                        $jenis      = strtolower(trim($row->jenis));
+                        $childLabel = match ($jenis) {
+                            'visi'    => 'Misi',
+                            'misi'    => 'RPJP',
+                            'rjp'     => 'Renstra',
+                            'renstra' => 'Renop',
+                            'renop'   => 'Poin',
+                            default   => 'Turunan'
+                        };
+
+                        return '<div class="badge bg-blue-lt">' . $row->children_count . ' ' . $childLabel . '</div>';
                     })
                     ->addColumn('action', function ($row) {
                         $editUrl   = route('pemutu.dokumens.edit', $row->dok_id);
@@ -273,7 +277,7 @@ class DokumenController extends Controller
                                 </button>
                             </div>';
                     })
-                    ->rawColumns(['judul', 'action'])
+                    ->rawColumns(['judul', 'jumlah_turunan', 'action'])
                     ->make(true);
             }
         } catch (\Exception $e) {

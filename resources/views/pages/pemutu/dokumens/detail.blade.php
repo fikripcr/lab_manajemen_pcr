@@ -1,6 +1,25 @@
 @extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('content')
+@php
+    $childLabel = 'Sub Dokumen';
+    $parentJenis = $dokumen->jenis ? strtolower(trim($dokumen->jenis)) : '';
+    
+    if($parentJenis) {
+        $childLabel = match($parentJenis) {
+            'visi' => 'Misi',
+            'misi' => 'RPJP',
+            'rjp' => 'Renstra',
+            'renstra' => 'Renop',
+            'renop' => 'Kegiatan / Poin',
+            default => 'Sub Dokumen'
+        };
+    }
+
+    $isDokSubBased = in_array($parentJenis, ['standar', 'formulir', 'manual_prosedur', 'renop']);
+    $activeSubTab = request()->get('subtab', 'overview');
+@endphp
+
 <div class="container-xl">
     <!-- Page title -->
     <div class="page-header d-print-none">
@@ -33,41 +52,9 @@
                             <i class="ti ti-chart-bar me-2"></i> Akumulasi Indikator
                         </a>
                     @endif
-                    <a href="{{ route('pemutu.dokumens.index', ['tabs' => (in_array($dokumen->jenis, ['standar', 'formulir', 'manual_prosedur']) ? 'standar' : 'kebijakan')]) }}" class="btn btn-secondary">
-                        <i class="ti ti-arrow-left me-2"></i> Kembali
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="page-body">
-    <div class="container-xl">
-        @php
-            $childLabel = 'Sub Dokumen';
-            $parentJenis = $dokumen->jenis ? strtolower(trim($dokumen->jenis)) : '';
-            
-            if($parentJenis) {
-                $childLabel = match($parentJenis) {
-                    'visi' => 'Misi',
-                    'misi' => 'RPJP',
-                    'rjp' => 'Renstra',
-                    'renstra' => 'Renop',
-                    'renop' => 'Kegiatan / Poin',
-                    default => 'Sub Dokumen'
-                };
-            }
-
-            $isDokSubBased = in_array($parentJenis, ['standar', 'formulir', 'manual_prosedur', 'renop']);
-        @endphp
-
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3 class="card-title text-uppercase">Manajemen Dokumen {{ $dokumen->jenis }}</h3>
-                <div class="card-actions">
-                    <div class="btn-group" role="group">
-                        <a href="#" class="btn btn-outline-secondary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $dokumen->dok_id) }}" data-modal-title="Edit Dokumen">
+                    
+                    <div class="btn-group shadow-sm" role="group">
+                        <a href="#" class="btn btn-white ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $dokumen->dok_id) }}" data-modal-title="Edit Dokumen">
                             <i class="ti ti-pencil me-1"></i> Edit
                         </a>
                         @if($isDokSubBased)
@@ -86,24 +73,75 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="container-xl">
 
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Daftar {{ $childLabel }}</h4>
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="doc-detail-tabs">
+                    <li class="nav-item">
+                        <a href="#tab-overview" class="nav-link {{ $activeSubTab === 'overview' ? 'active' : '' }}" data-bs-toggle="tab" data-tab-id="overview">
+                            <i class="ti ti-info-circle me-1"></i> Isi Dokumen
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tab-children" class="nav-link {{ $activeSubTab === 'children' ? 'active' : '' }}" data-bs-toggle="tab" data-tab-id="children">
+                            <i class="ti ti-hierarchy-2 me-1"></i> Daftar {{ $childLabel }}
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <div class="card-body p-0">
-                <x-tabler.datatable
-                    id="table-sub-dokumen"
-                    route="{{ route('pemutu.dokumens.children-data', $dokumen->dok_id) }}"
-                    ajax-load="true"
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false,'class'=>'text-center'],
-                        ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul '.$childLabel],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '15%']
-                    ]"
-                />
+            <div class="tab-content">
+                <!-- Tab Isi -->
+                <div class="tab-pane {{ $activeSubTab === 'overview' ? 'active show' : '' }}" id="tab-overview">
+                    <div class="card-body">
+                        @if($dokumen->isi)
+                            <div class="markdown p-3 border rounded bg-white shadow-sm" style="min-height: 100px; color: var(--tblr-body-color);">
+                                {!! $dokumen->isi !!}
+                            </div>
+                        @else
+                            <div class="text-muted text-center py-5 fst-italic border rounded bg-light-lt">
+                                Belum ada konten isi untuk dokumen ini.
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Tab Children -->
+                <div class="tab-pane {{ $activeSubTab === 'children' ? 'active show' : '' }}" id="tab-children">
+                    <div class="card-body p-0">
+                        <x-tabler.datatable
+                            id="table-sub-dokumen"
+                            route="{{ route('pemutu.dokumens.children-data', $dokumen->dok_id) }}"
+                            ajax-load="true"
+                            :columns="[
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false,'class'=>'text-center', 'width' => '5%'],
+                                ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul '.$childLabel],
+                                ['data' => 'jumlah_turunan', 'name' => 'jumlah_turunan', 'title' => 'Jumlah Turunan', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '15%'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '15%']
+                            ]"
+                        />
+                    </div>
+                </div>
             </div>
         </div>
+
+        <script>
+            (function() {
+                const tabs = document.querySelectorAll('#doc-detail-tabs .nav-link');
+                tabs.forEach(tab => {
+                    tab.addEventListener('shown.bs.tab', function (e) {
+                        const tabId = e.target.dataset.tabId;
+                        const url = new URL(window.location);
+                        url.searchParams.set('subtab', tabId);
+                        window.history.replaceState({}, '', url);
+                    });
+                });
+            })();
+        </script>
     </div>
 </div>
 @endsection

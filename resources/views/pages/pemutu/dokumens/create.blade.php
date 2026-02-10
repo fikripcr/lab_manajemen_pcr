@@ -64,6 +64,10 @@
             <label for="kode" class="form-label">Kode Dokumen</label>
             <input type="text" class="form-control" id="kode" name="kode" placeholder="Contoh: MM-01">
         </div>
+        <div class="mb-3">
+            <label for="isi" class="form-label">Isi / Konten Dokumen</label>
+            <textarea class="form-control rich-text-editor" id="isi" name="isi" rows="10"></textarea>
+        </div>
         {{-- Hidden fields for defaults --}}
         <input type="hidden" name="periode" value="{{ date('Y') }}">
     </div>
@@ -113,4 +117,26 @@
              $('#jenis option:eq(0)').prop('selected', true).trigger('change');
         }
     }, 100);
+</script>
+
+<script>
+    (function() {
+        const initEditor = () => {
+            if (window.loadHugeRTE) {
+                window.loadHugeRTE('.rich-text-editor', {
+                    height: 400,
+                    menubar: true,
+                    plugins: 'lists link table image code',
+                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | code'
+                });
+            }
+        };
+
+        if (typeof jQuery !== 'undefined' && jQuery('.modal').is(':visible')) {
+            setTimeout(initEditor, 300);
+        } else {
+            document.addEventListener('DOMContentLoaded', initEditor);
+            initEditor(); 
+        }
+    })();
 </script>

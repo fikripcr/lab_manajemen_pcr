@@ -17,6 +17,7 @@ class Dokumen extends Model
         'seq',
         'jenis',
         'judul',
+        'isi',
         'kode',
         'periode',
         // 'tgl_berlaku', // Removed per request
