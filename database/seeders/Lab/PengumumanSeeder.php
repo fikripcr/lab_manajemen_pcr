@@ -1,7 +1,7 @@
 <?php
 namespace Database\Seeders\Lab;
 
-use App\Models\Pengumuman;
+use App\Models\Lab\Pengumuman;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 

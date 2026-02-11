@@ -9,7 +9,7 @@ class LabInventaris extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'lab_inventaris';
+    protected $table      = 'lab_inventaris_penempatan';
     protected $primaryKey = 'id';
 
     protected $fillable = [

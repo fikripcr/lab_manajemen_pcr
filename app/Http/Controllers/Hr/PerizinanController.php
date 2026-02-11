@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\PerizinanStoreRequest;
 use App\Models\Hr\JenisIzin;
 use App\Models\Hr\Perizinan;
 use App\Models\Hr\RiwayatApproval;
@@ -103,39 +104,29 @@ class PerizinanController extends Controller
         return view('pages.hr.perizinan.create', compact('jenisIzin'));
     }
 
-    public function store(Request $request)
+    public function store(PerizinanStoreRequest $request)
     {
-        $request->validate([
-            'jenisizin_id'           => 'required|exists:hr_jenis_izin,jenisizin_id',
-            'pengusul'               => 'required|exists:hr_pegawai,pegawai_id',
-            'pekerjaan_ditinggalkan' => 'nullable|string|max:500',
-            'keterangan'             => 'nullable|string',
-            'alamat_izin'            => 'nullable|string',
-            'tgl_awal'               => 'required|date',
-            'tgl_akhir'              => 'required|date|after_or_equal:tgl_awal',
-            'jam_awal'               => 'nullable',
-            'jam_akhir'              => 'nullable',
-        ]);
+        $validated = $request->validated();
 
         // Create perizinan
         $perizinan = Perizinan::create([
-            'jenisizin_id'           => $request->jenisizin_id,
-            'pengusul'               => $request->pengusul,
-            'pekerjaan_ditinggalkan' => $request->pekerjaan_ditinggalkan,
-            'keterangan'             => $request->keterangan,
-            'alamat_izin'            => $request->alamat_izin,
-            'tgl_awal'               => $request->tgl_awal,
-            'tgl_akhir'              => $request->tgl_akhir,
-            'jam_awal'               => $request->jam_awal,
-            'jam_akhir'              => $request->jam_akhir,
-            'periode'                => date('Y'),
+            'jenisizin_id' => $validated['jenisizin_id'],
+            'pengusul' => $validated['pengusul'],
+            'pekerjaan_ditinggalkan' => $validated['pekerjaan_ditinggalkan'] ?? null,
+            'keterangan' => $validated['keterangan'] ?? null,
+            'alamat_izin' => $validated['alamat_izin'] ?? null,
+            'tgl_awal' => $validated['tgl_mulai'],
+            'tgl_akhir' => $validated['tgl_selesai'],
+            'jam_awal' => $validated['jam_awal'] ?? null,
+            'jam_akhir' => $validated['jam_akhir'] ?? null,
+            'periode' => date('Y'),
         ]);
 
         // Create initial approval record
         $approval = RiwayatApproval::create([
-            'model'            => 'Perizinan',
-            'model_id'         => $perizinan->perizinan_id,
-            'status'           => 'Draft',
+            'model' => 'Perizinan',
+            'model_id' => $perizinan->perizinan_id,
+            'status' => 'Draft',
             'created_by_email' => Auth::user()?->email,
         ]);
 

@@ -2,16 +2,19 @@
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AttDevice extends Model
 {
-    use HasFactory, SoftDeletes, Blameable;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'hr_att_device';
     protected $primaryKey = 'att_device_id';
+    
+    protected $appends = ['encrypted_att_device_id'];
 
     protected $fillable = [
         'name',
@@ -27,16 +30,8 @@ class AttDevice extends Model
         'is_active' => 'boolean',
     ];
 
-    protected static function boot()
+    public function getEncryptedAttDeviceIdAttribute()
     {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->created_by = auth()->id();
-        });
-
-        static::updating(function ($model) {
-            $model->updated_by = auth()->id();
-        });
+        return encryptId($this->att_device_id);
     }
 }

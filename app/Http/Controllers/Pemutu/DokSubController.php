@@ -138,7 +138,7 @@ class DokSubController extends Controller
                     ->rawColumns(['seq', 'judul', 'action'])
                     ->make(true);
             } catch (\Exception $e) {
-                return response()->json(['error' => $e->getMessage()], 500);
+                return jsonError($e->getMessage(), 500);
             }
         }
     }

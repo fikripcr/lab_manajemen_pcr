@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,16 +13,20 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Lab extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
+    use HasFactory, SoftDeletes, InteractsWithMedia, Blameable, HashidBinding;
 
-    protected $table      = 'labs';
+    protected $table      = 'lab_labs';
     protected $primaryKey = 'lab_id';
+    
+    protected $appends = ['encrypted_lab_id'];
 
     protected $fillable = [
         'name',
         'location',
         'capacity',
         'description',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
@@ -81,7 +87,7 @@ class Lab extends Model implements HasMedia
      */
     public function inventaris()
     {
-        return $this->belongsToMany(Inventaris::class, 'lab_inventaris', 'lab_id', 'inventaris_id')
+        return $this->belongsToMany(Inventaris::class, 'lab_inventaris_penempatan', 'lab_id', 'inventaris_id')
             ->withPivot(['kode_inventaris', 'no_series', 'tanggal_penempatan', 'tanggal_penghapusan', 'status', 'keterangan'])
             ->withTimestamps();
     }

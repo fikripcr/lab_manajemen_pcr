@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\PersonilImportRequest;
 use App\Http\Requests\Pemutu\PersonilRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\PersonilService; // Import Service
@@ -95,15 +96,11 @@ class PersonilController extends Controller
         }
     }
 
-    public function import(Request $request)
+    public function import(PersonilImportRequest $request)
     {
         if ($request->isMethod('get')) {
             return view('pages.pemutu.personils.import');
         }
-
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
-        ]);
 
         try {
             $this->personilService->importPersonils($request->file('file'));

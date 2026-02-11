@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\PresensiCheckInRequest;
+use App\Http\Requests\Hr\PresensiCheckOutRequest;
 use App\Services\Hr\PresensiService;
 use Illuminate\Http\Request;
 
@@ -19,16 +21,10 @@ class PresensiController extends Controller
         return view('pages.hr.presensi.index');
     }
 
-    public function checkIn(Request $request)
+    public function checkIn(PresensiCheckInRequest $request)
     {
         try {
-            $data = $request->validate([
-                'latitude'  => 'required|numeric',
-                'longitude' => 'required|numeric',
-                'address'   => 'nullable|string|max:500',
-                'photo'     => 'nullable|string',
-                'face_verified' => 'required|boolean',
-            ]);
+            $data = $request->validated();
 
             $result = $this->service->checkIn($data);
 
@@ -45,16 +41,10 @@ class PresensiController extends Controller
         }
     }
 
-    public function checkOut(Request $request)
+    public function checkOut(PresensiCheckOutRequest $request)
     {
         try {
-            $data = $request->validate([
-                'latitude'  => 'required|numeric',
-                'longitude' => 'required|numeric',
-                'address'   => 'nullable|string|max:500',
-                'photo'     => 'nullable|string',
-                'face_verified' => 'nullable|boolean',
-            ]);
+            $data = $request->validated();
 
             $result = $this->service->checkOut($data);
 

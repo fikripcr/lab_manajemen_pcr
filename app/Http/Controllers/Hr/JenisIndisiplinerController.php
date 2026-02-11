@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\JenisIndisiplinerStoreRequest;
+use App\Http\Requests\Hr\JenisIndisiplinerUpdateRequest;
 use App\Models\Hr\JenisIndisipliner;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -35,17 +37,15 @@ class JenisIndisiplinerController extends Controller
         return view('pages.hr.jenis-indisipliner.create');
     }
 
-    public function store(Request $request)
+    public function store(JenisIndisiplinerStoreRequest $request)
     {
-        $validated = $request->validate([
-            'jenis_indisipliner' => 'required|string|max:100|unique:hr_jenis_indisipliner,jenis_indisipliner',
-        ]);
+        $validated = $request->validated();
 
         try {
             JenisIndisipliner::create($validated);
-            return jsonSuccess('Jenis Indisipliner berhasil ditambahkan.');
+            return response()->json(['success' => true, 'message' => 'Jenis indisipliner berhasil dibuat.']);
         } catch (\Exception $e) {
-            return jsonError('Gagal menyimpan data: ' . $e->getMessage(), 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -55,11 +55,9 @@ class JenisIndisiplinerController extends Controller
         return view('pages.hr.jenis-indisipliner.edit', compact('jenisIndisipliner'));
     }
 
-    public function update(Request $request, JenisIndisipliner $jenis_indisipliner)
+    public function update(JenisIndisiplinerUpdateRequest $request, JenisIndisipliner $jenis_indisipliner)
     {
-        $validated = $request->validate([
-            'jenis_indisipliner' => 'required|string|max:100|unique:hr_jenis_indisipliner,jenis_indisipliner,' . $jenis_indisipliner->jenisindisipliner_id . ',jenisindisipliner_id',
-        ]);
+        $validated = $request->validated();
 
         try {
             $jenis_indisipliner->update($validated);

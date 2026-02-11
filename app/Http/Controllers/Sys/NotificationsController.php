@@ -2,10 +2,13 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Sys\NotificationSendRequest;
 use App\Models\User;
+use App\Notifications\SysTestNotification;
 use App\Services\Sys\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
@@ -180,18 +183,13 @@ class NotificationsController extends Controller
     /**
      * Send notification (unified function for email/database)
      */
-    public function send(Request $request)
+    public function send(NotificationSendRequest $request)
     {
-        $request->validate([
-            'type'               => 'required|in:database,email',
-            // user_id is optional when sending to authenticated user
-            'user_id'            => 'nullable',
-            'notification_class' => 'required|string', // Notification class name
-        ]);
+        $validated = $request->validated();
 
-        $type              = $request->input('type');
-        $userId            = $request->input('user_id');
-        $notificationClass = $request->input('notification_class');
+        $type = $validated['type'];
+        $userId = $validated['user_id'];
+        $notificationClass = $validated['notification_class'];
 
         // Determine recipient - if no user_id provided, use authenticated user
         if ($userId) {

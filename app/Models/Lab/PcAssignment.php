@@ -9,7 +9,7 @@ class PcAssignment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'pc_assignments';
+    protected $table      = 'lab_pc_assignments';
     protected $primaryKey = 'pc_assignments_id';
 
     protected $fillable = [

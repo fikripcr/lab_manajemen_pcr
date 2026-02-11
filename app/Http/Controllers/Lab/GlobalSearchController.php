@@ -16,7 +16,7 @@ class GlobalSearchController extends Controller
             $query = $request->input('q');
 
             if (empty($query)) {
-                return response()->json([
+                return jsonSuccess('Search results', null, [
                     'users'       => [],
                     'roles'       => [],
                     'permissions' => [],
@@ -30,7 +30,7 @@ class GlobalSearchController extends Controller
                 ->registerModel(Permission::class, 'name')
                 ->search($query);
 
-            return response()->json([
+            return jsonSuccess('Search results', null, [
                 'users'       => $users,
                 'roles'       => $roles,
                 'permissions' => $permissions,
@@ -38,11 +38,10 @@ class GlobalSearchController extends Controller
             ]);
         } catch (\Exception $e) {
             \Log::error('Global search error: ' . $e->getMessage());
-            return response()->json([
+            return jsonError('Search failed', 500, [
                 'users'       => [],
                 'roles'       => [],
                 'permissions' => [],
-                'error'       => 'Search error occurred',
             ]);
         }
     }

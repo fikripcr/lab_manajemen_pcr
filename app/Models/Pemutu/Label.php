@@ -1,24 +1,32 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Label extends Model
 {
-    use HasFactory;
+    use HasFactory, Blameable, HashidBinding;
 
-    protected $table      = 'pemutu_label';
+    protected $table = 'pemutu_label';
     protected $primaryKey = 'label_id';
-    protected $fillable   = ['type_id', 'name', 'slug', 'description'];
-    public $timestamps    = false; // Migration doesn't have timestamps for this table? checking migration...
-                                   // Migration: table 'label' has no timestamps defined in schema, only label_types has.
-                                   // Wait, let me check the migration content again.
-                                   // 2026_02_07_011017_create_table_pemutuv1.php:
-                                   // Schema::create('label', ... function(Blueprint $table) { ... $table->timestamps(); IS MISSING in the snippet I saw?
-                                   // Let's re-read the migration file snippet for 'label'.
-                                   // line 31: Schema::create('label'...
-                                   // line 39: }); // No timestamps() call relative to label_types which has it on line 21.
+    protected $appends = ['encrypted_label_id'];
+    protected $fillable = [
+        'type_id', 
+        'name', 
+        'slug', 
+        'description',
+        'created_by',
+        'updated_by',
+    ];
+    public $timestamps = false;
+
+    public function getEncryptedLabelIdAttribute()
+    {
+        return encryptId($this->label_id);
+    }
 
     // Relationships
     public function type()

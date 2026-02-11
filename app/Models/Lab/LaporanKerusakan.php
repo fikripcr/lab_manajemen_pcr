@@ -9,7 +9,7 @@ class LaporanKerusakan extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'laporan_kerusakan';
+    protected $table      = 'lab_laporan_kerusakan';
     protected $primaryKey = 'laporan_kerusakan_id';
 
     protected $fillable = [

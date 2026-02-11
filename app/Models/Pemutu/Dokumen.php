@@ -1,15 +1,20 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Dokumen extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'pemutu_dokumen';
     protected $primaryKey = 'dok_id';
+    
+    protected $appends = ['encrypted_dok_id'];
     protected $fillable   = [
         'parent_doksub_id', // For potential future hierarchy if needed, though migration says nullable
         'parent_id',
@@ -24,8 +29,15 @@ class Dokumen extends Model
         'std_is_staging',
         'std_amirtn_id',
         'std_jeniskriteria_id',
+        'created_by',
+        'updated_by',
     ];
     public $timestamps = false; // Migration doesn't have timestamps
+
+    public function getEncryptedDokIdAttribute()
+    {
+        return encryptId($this->dok_id);
+    }
 
     protected $casts = [
         'tgl_berlaku'    => 'date',

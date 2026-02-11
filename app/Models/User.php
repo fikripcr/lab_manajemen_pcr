@@ -3,6 +3,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Notification;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,7 +22,7 @@ use Spatie\Searchable\SearchResult;
 
 class User extends Authenticatable implements HasMedia, Searchable
 {
-    use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity, HasApiTokens;
+    use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity, HasApiTokens, Blameable, HashidBinding;
 
     /**
      * The attributes that are mass assignable.
@@ -35,7 +37,11 @@ class User extends Authenticatable implements HasMedia, Searchable
         'avatar',
         'email_verified_at',
         'expired_at',
+        'created_by',
+        'updated_by',
     ];
+
+    protected $appends = ['encrypted_id'];
 
     /**
      * The attributes that should be hidden for serialization.

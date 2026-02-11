@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\Hr;
 
+use App\Events\Hr\ApprovalProcessed;
+use App\Events\Hr\ApprovalRequested;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
@@ -69,6 +71,10 @@ class PegawaiService
 
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $riwayat->riwayatdatadiri_id]);
+            
+            // 5. Dispatch Event for Notification
+            ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
+            
             return $riwayat;
         });
     }

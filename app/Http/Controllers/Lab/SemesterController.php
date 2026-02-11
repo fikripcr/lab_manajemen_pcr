@@ -150,7 +150,7 @@ class SemesterController extends Controller
         $semester = $this->semesterService->getSemesterById($realId);
 
         if (! $semester) {
-            return response()->json(['error' => 'Semester not found'], 404);
+            return jsonError('Semester not found', 404);
         }
 
         return view('pages.admin.semesters.edit-ajax', compact('semester'));

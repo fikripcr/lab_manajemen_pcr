@@ -9,7 +9,7 @@ class JadwalKuliah extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'jadwal_kuliah';
+    protected $table      = 'lab_jadwal_kuliah';
     protected $primaryKey = 'jadwal_kuliah_id';
 
     protected $fillable = [

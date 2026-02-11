@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Lab;
 
 use App\Exports\UserExport;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\UserImportRequest;
 use App\Http\Requests\Lab\UserRequest;
 use App\Imports\UserImport;
 use App\Models\User;
@@ -269,12 +270,8 @@ class UserController extends Controller
     /**
      * Import users from Excel file.
      */
-    public function import(Request $request)
+    public function import(UserImportRequest $request)
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:10240', // Max 10MB
-        ]);
-
         try {
             $file = $request->file('file');
 
@@ -337,10 +334,8 @@ class UserController extends Controller
 
         logActivity('impersonation', 'User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')', $targetUser);
 
-        return response()->json([
-            'success'  => true,
-            'message'  => 'Impersonation successful',
-            'redirect' => route('lab.dashboard'),
+        return jsonSuccess('Impersonation successful', route('lab.dashboard'), [
+            'user_id' => $targetUser->id,
         ]);
     }
 

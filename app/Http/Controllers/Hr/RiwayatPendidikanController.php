@@ -28,7 +28,7 @@ class RiwayatPendidikanController extends Controller
     {
         try {
             $this->pegawaiService->requestAddition($pegawai, \App\Models\Hr\RiwayatPendidikan::class, $request->validated());
-            return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->hashid));
+            return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
@@ -42,7 +42,7 @@ class RiwayatPendidikanController extends Controller
     {
         try {
             $pendidikan->update($request->validated());
-            return jsonSuccess('Riwayat Pendidikan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->hashid));
+            return jsonSuccess('Riwayat Pendidikan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }

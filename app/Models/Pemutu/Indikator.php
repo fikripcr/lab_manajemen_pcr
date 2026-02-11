@@ -1,16 +1,19 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Indikator extends Model
 {
-    use HasFactory;
+    use HasFactory, Blameable, HashidBinding;
 
-    protected $table      = 'pemutu_indikator';
+    protected $table = 'pemutu_indikator';
     protected $primaryKey = 'indikator_id';
-    protected $fillable   = [
+    protected $appends = ['encrypted_indikator_id'];
+    protected $fillable = [
         'type',
         'parent_id',
         'no_indikator',
@@ -28,8 +31,15 @@ class Indikator extends Model
         'hash',
         'peningkat_nonaktif_indik',
         'is_new_indik_after_peningkatan',
+        'created_by',
+        'updated_by',
     ];
     public $timestamps = false;
+
+    public function getEncryptedIndikatorIdAttribute()
+    {
+        return encryptId($this->indikator_id);
+    }
 
     // Relationships
     public function dokSubs()

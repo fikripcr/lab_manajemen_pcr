@@ -29,7 +29,7 @@ class RiwayatStatAktifitasController extends Controller
     {
         try {
             $this->pegawaiService->requestChange($pegawai, \App\Models\Hr\RiwayatStatAktifitas::class, $request->validated(), 'latest_riwayatstataktifitas_id');
-            return jsonSuccess('Perubahan Status Aktifitas berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
+            return jsonSuccess('Riwayat Status Aktifitas berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }

@@ -188,8 +188,7 @@ class PegawaiController extends Controller
         try {
             // Request Change Logic
             $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
-            dd('fikri');
-            return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->hashid));
+            return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }

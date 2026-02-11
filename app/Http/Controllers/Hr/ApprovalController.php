@@ -66,12 +66,11 @@ class ApprovalController extends Controller
         }
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
         try {
-            $approval = RiwayatApproval::findOrFail($id);
-            $approval->update(['status' => 'Rejected']);
-            // Note: We might want to add a "reject_reason" column later.
+            $reason = $request->input('reason', 'Ditolak tanpa keterangan');
+            $this->pegawaiService->rejectRequest($id, $reason);
 
             return jsonSuccess('Pengajuan berhasil ditolak.');
         } catch (\Exception $e) {

@@ -9,7 +9,7 @@ class LogPenggunaanPc extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'log_penggunaan_pcs';
+    protected $table      = 'lab_log_penggunaan_pcs';
     protected $primaryKey = 'log_penggunaan_pcs_id';
 
     protected $fillable = [

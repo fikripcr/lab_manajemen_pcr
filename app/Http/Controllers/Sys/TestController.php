@@ -1,11 +1,12 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
-use App\Exports\Sys\ActivityLogExport;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Sys\Activity;
 use App\Models\Sys\ErrorLog;
 use App\Models\Sys\ServerMonitorCheck;
+use App\Exports\Sys\ActivityLogExport;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -37,17 +38,11 @@ class TestController extends Controller
 
             logActivity('test_dashboard', 'Test email sent successfully to ' . $user->email, $user);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Test email sent successfully to ' . $user->email,
-            ]);
+            return jsonSuccess('Test email sent successfully to ' . $user->email);
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error sending test email: ' . $e->getMessage(), $user);
 
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -61,17 +56,11 @@ class TestController extends Controller
 
             logActivity('test_dashboard', 'Test notification sent successfully to ' . $user->name, $user);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Test notification sent successfully to ' . $user->name,
-            ]);
+            return jsonSuccess('Test notification sent successfully to ' . $user->name);
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error sending test notification: ' . $e->getMessage(), $user);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error sending test notification: ' . $e->getMessage(),
-            ], 500);
+            return jsonError('Error sending test notification: ' . $e->getMessage(), 500);
         }
     }
 
@@ -116,10 +105,7 @@ class TestController extends Controller
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error generating test PDF export: ' . $e->getMessage(), $user);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error generating test PDF export: ' . $e->getMessage(),
-            ], 500);
+            return jsonError('Error generating test PDF export: ' . $e->getMessage(), 500);
         }
     }
 
@@ -138,10 +124,7 @@ class TestController extends Controller
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error generating test Excel export: ' . $e->getMessage(), $user);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error generating test Excel export: ' . $e->getMessage(),
-            ], 500);
+            return jsonError('Error generating test Excel export: ' . $e->getMessage(), 500);
         }
     }
 
@@ -313,10 +296,7 @@ class TestController extends Controller
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error generating test Word export: ' . $e->getMessage(), $user);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error generating test Word export: ' . $e->getMessage(),
-            ], 500);
+            return jsonError('Error generating test Word export: ' . $e->getMessage(), 500);
         }
     }
 
@@ -335,11 +315,7 @@ class TestController extends Controller
         $writer    = new Writer($renderer);
         $qrCodeSvg = $writer->writeString($text);
 
-        return response()->json([
-            'success' => true,
-            'svg'     => base64_encode($qrCodeSvg),
-            'message' => 'QR code generated successfully',
-        ]);
+        return jsonSuccess('QR code generated successfully', null, ['svg' => base64_encode($qrCodeSvg)]);
     }
 
     public function qrCode()
@@ -375,7 +351,7 @@ class TestController extends Controller
         return view('pages.sys.test.features');
     }
 
-    public function testDocxTemplate(Request $request)
+    public function processDocxTemplate(Request $request)
     {
         $user = auth()->user();
 
@@ -390,10 +366,7 @@ class TestController extends Controller
             // Get the temporary path of the uploaded file
             $fullTemplatePath = $file->getRealPath();
             if (! $fullTemplatePath || ! file_exists($fullTemplatePath)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Temporary file not created properly',
-                ], 400);
+                return jsonError('Temporary file not created properly', 400);
             }
 
             // Define replacement variables directly in the controller
@@ -421,10 +394,7 @@ class TestController extends Controller
 
             // Copy the original template to the temporary location
             if (! copy($fullTemplatePath, $tempPath)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to copy template file',
-                ], 500);
+                return jsonError('Failed to copy template file', 500);
             }
 
             // Use TemplateProcessor to safely replace variables
@@ -449,10 +419,7 @@ class TestController extends Controller
 
             // Move the processed file from temp to public folder
             if (! copy($tempPath, $publicPath)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to move processed file to public folder',
-                ], 500);
+                return jsonError('Failed to move processed file to public folder', 500);
             }
 
             // Clean up temporary file
@@ -461,26 +428,17 @@ class TestController extends Controller
             }
 
             // Generate the public URL for download
-            $downloadUrl = asset('storage/uploads/docx/' . $fileName);
-
             logActivity('test_dashboard', 'Test DOCX template processed and saved successfully by ' . $user->name, $user);
 
             // Return a JSON response with the download URL
-            return response()->json([
-                'success' => true,
-                'message' => 'DOCX template processed successfully',
-                'data'    => [
-                    'download_url' => $downloadUrl,
-                    'file_name'    => $fileName,
-                ],
+            return jsonSuccess('DOCX template processed successfully', null, [
+                'download_url' => asset('templates/processed/' . basename($publicPath)),
+                'filename'    => basename($publicPath),
             ]);
         } catch (\Exception $e) {
-            logActivity('test_dashboard', 'Error processing test DOCX template: ' . $e->getMessage(), $user);
+            logActivity('test_dashboard', 'Error processing DOCX template: ' . $e->getMessage(), $user);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error processing DOCX template: ' . $e->getMessage(),
-            ], 500);
+            return jsonError('Error processing DOCX template: ' . $e->getMessage(), 500);
         }
     }
 
@@ -499,21 +457,14 @@ class TestController extends Controller
 
             logActivity('test_dashboard', 'DOCX template uploaded successfully by ' . $user->name, $user);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Template uploaded successfully',
-                'data'    => [
-                    'file_path' => $filePath,
-                    'file_name' => $fileName,
-                ],
+            return jsonSuccess('Template uploaded successfully', null, [
+                'file_path' => $filePath,
+                'file_name' => $fileName,
             ]);
         } catch (\Exception $e) {
             logActivity('test_dashboard', 'Error uploading DOCX template: ' . $e->getMessage(), $user);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error uploading template: ' . $e->getMessage(),
-            ], 500);
+            return jsonError('Error uploading template: ' . $e->getMessage(), 500);
         }
     }
 

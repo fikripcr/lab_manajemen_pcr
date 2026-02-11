@@ -193,7 +193,7 @@ class DokumenController extends Controller
         try {
             $dokumen = $this->dokumenService->getDokumenById($id);
             if (! $dokumen) {
-                return response()->json(['error' => 'Not found'], 404);
+                return jsonError('Not found', 404);
             }
 
             $isDokSubBased = in_array(strtolower(trim($dokumen->jenis)), ['standar', 'formulir', 'manual_prosedur', 'renop']);
@@ -281,7 +281,7 @@ class DokumenController extends Controller
                     ->make(true);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 

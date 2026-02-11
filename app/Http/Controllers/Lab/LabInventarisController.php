@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\LabInventarisStoreRequest;
+use App\Http\Requests\Lab\LabInventarisUpdateRequest;
 use App\Models\Lab\Inventaris;
 use App\Models\Lab\Lab;
 use App\Services\Lab\InventarisService;
@@ -107,16 +109,8 @@ class LabInventarisController extends Controller
         return view('pages.lab.labs.inventaris.create', compact('lab', 'inventarisList'));
     }
 
-    public function store(Request $request, $labId)
+    public function store(LabInventarisStoreRequest $request, $labId)
     {
-        $request->validate([
-            'inventaris_id'      => 'required|exists:inventaris,inventaris_id',
-            'no_series'          => 'nullable|string|max:255',
-            'keterangan'         => 'nullable|string|max:1000',
-            'tanggal_penempatan' => 'nullable|date',
-            'status'             => 'nullable|in:active,moved,inactive',
-        ]);
-
         $realLabId = decryptId($labId);
 
         try {
@@ -141,19 +135,14 @@ class LabInventarisController extends Controller
         return view('pages.lab.labs.inventaris.edit', compact('lab', 'labInventaris', 'inventarisList'));
     }
 
-    public function update(Request $request, $labId, $id)
+    public function update(LabInventarisUpdateRequest $request, $labId, $id)
     {
-        $request->validate([
-            'inventaris_id'       => 'required|exists:inventaris,inventaris_id',
-            'no_series'           => 'nullable|string|max:255',
-            'keterangan'          => 'nullable|string|max:1000',
-            'tanggal_penempatan'  => 'nullable|date',
-            'tanggal_penghapusan' => 'nullable|date',
-            'status'              => 'nullable|in:active,moved,inactive',
-        ]);
+        $realLabId = decryptId($labId);
+        $realId    = decryptId($id);
+        $validated = $request->validated();
 
         try {
-            $this->labInventarisService->updateAssignment(decryptId($id), $request->all());
+            $this->labInventarisService->updateAssignment($realId, $validated);
 
             return jsonSuccess('Data inventaris lab berhasil diperbarui.', route('lab.labs.inventaris.index', $labId));
         } catch (\Exception $e) {
@@ -199,7 +188,7 @@ class LabInventarisController extends Controller
             ];
         });
 
-        return response()->json([
+        return jsonSuccess('Data retrieved', null, [
             'results' => $results,
         ]);
     }

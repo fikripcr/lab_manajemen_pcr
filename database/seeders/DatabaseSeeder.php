@@ -1,25 +1,12 @@
 <?php
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Database\Seeders\Sys\SysSeeder;
-use Database\Seeders\Pemutu\PersonilSeeder;
-use Database\Seeders\Hr\HrOrgUnitSeeder;
-use Database\Seeders\Lab\InventorySeeder;
-use Database\Seeders\Pemutu\PemutuSeeder;
-use Database\Seeders\Hr\HrJenisIzinSeeder;
-use Database\Seeders\Lab\PengumumanSeeder;
 use Database\Seeders\Pemutu\DokumenSeeder;
-use Database\Seeders\Hr\HrJenisShiftSeeder;
-use Database\Seeders\Hr\HumanCapitalSeeder;
-use Database\Seeders\Lab\AcademicDataSeeder;
 use Database\Seeders\Pemutu\IndikatorSeeder;
-use Database\Seeders\Hr\HrStatusPegawaiSeeder;
-use Database\Seeders\Hr\HrStatusAktifitasSeeder;
-use Database\Seeders\Sys\SysRoleSuperAdminSeeder;
-use Database\Seeders\Hr\HrJabatanFungsionalSeeder;
-use Database\Seeders\Hr\HrJenisIndisiplinerSeeder;
+use Database\Seeders\Pemutu\PemutuSeeder;
+use Database\Seeders\Pemutu\PersonilSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -56,6 +43,7 @@ class DatabaseSeeder extends Seeder
             DokumenSeeder::class,
             IndikatorSeeder::class,
             PersonilSeeder::class,
+            Eoffice\EofficeSeeder::class,
         ]);
     }
 }

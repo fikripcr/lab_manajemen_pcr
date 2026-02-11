@@ -9,7 +9,7 @@ class MataKuliah extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'mata_kuliahs';
+    protected $table      = 'lab_mata_kuliahs';
     protected $primaryKey = 'mata_kuliah_id';
 
     protected $fillable = [
@@ -35,7 +35,7 @@ class MataKuliah extends Model
      */
     public function requestSoftwares()
     {
-        return $this->belongsToMany(RequestSoftware::class, 'request_software_mata_kuliah', 'mata_kuliah_id', 'request_software_id');
+        return $this->belongsToMany(RequestSoftware::class, 'lab_request_software_mata_kuliah', 'mata_kuliah_id', 'request_software_id');
     }
 
     /**

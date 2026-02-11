@@ -28,7 +28,7 @@ class PengembanganDiriController extends Controller
     {
         try {
             $this->pegawaiService->requestAddition($pegawai, \App\Models\Hr\PengembanganDiri::class, $request->validated());
-            return jsonSuccess('Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->hashid));
+            return jsonSuccess('Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }

@@ -13,6 +13,8 @@ class OrgUnit extends Model
 
     protected $table      = 'hr_org_unit';
     protected $primaryKey = 'org_unit_id';
+    
+    protected $appends = ['encrypted_org_unit_id'];
 
     protected $fillable = [
         'parent_id',
@@ -32,6 +34,11 @@ class OrgUnit extends Model
         'is_active' => 'boolean',
         'level'     => 'integer',
     ];
+
+    public function getEncryptedOrgUnitIdAttribute()
+    {
+        return encryptId($this->org_unit_id);
+    }
 
     public function parent()
     {

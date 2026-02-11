@@ -1,27 +1,37 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DokSub extends Model
 {
-    use HasFactory;
+    use HasFactory, Blameable, HashidBinding;
 
-    protected $table      = 'pemutu_dok_sub';
+    protected $table = 'pemutu_dok_sub';
     protected $primaryKey = 'doksub_id';
-    protected $fillable   = [
+    protected $appends = ['encrypted_doksub_id'];
+    protected $fillable = [
         'dok_id',
         'judul',
         'isi',
         'seq',
         'is_hasilkan_indikator',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
         'is_hasilkan_indikator' => 'boolean',
     ];
     public $timestamps = false;
+
+    public function getEncryptedDoksubIdAttribute()
+    {
+        return encryptId($this->doksub_id);
+    }
 
     // Relationships
     public function dokumen()

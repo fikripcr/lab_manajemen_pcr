@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Sys\ThemeTablerRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -55,31 +56,13 @@ class ThemeTablerController extends Controller
     }
 
     /**
-     * Save theme settings (AJAX endpoint)
+     * Store theme settings
      */
-    public function save(Request $request): JsonResponse
+    public function store(ThemeTablerRequest $request)
     {
         $mode = $request->input('mode', 'sys');
 
-        $validated = $request->validate([
-            'mode'                    => 'required|in:sys,auth',
-            'theme'                   => 'nullable|in:light,dark',
-            'theme-primary'           => 'nullable|string',
-            'theme-font'              => 'nullable|in:sans-serif,serif,monospace,comic,inter,roboto,poppins,public-sans,nunito',
-            'theme-base'              => 'nullable|in:slate,gray,zinc,neutral,stone',
-            'theme-radius'            => 'nullable|in:0,0.25,0.5,0.75,1',
-            'theme-bg'                => 'nullable|string',
-            'theme-sidebar-bg'        => 'nullable|string',
-            'theme-header-top-bg'     => 'nullable|string',
-            'theme-header-overlap-bg' => 'nullable|string',
-            'theme-header-sticky'     => 'nullable|in:true,false,hidden',
-            'theme-card-style'        => 'nullable|in:flat,shadow,border,modern',
-            'theme-boxed-bg'          => 'nullable|string',
-            'layout'                  => 'nullable|in:vertical,horizontal,condensed',
-            'container-width'         => 'nullable|in:standard,fluid,boxed',
-            'auth-layout'             => 'nullable|in:basic,cover,illustration',
-            'auth-form-position'      => 'nullable|in:left,right',
-        ]);
+        $validated = $request->validated();
 
         // Remove mode from data
         unset($validated['mode']);

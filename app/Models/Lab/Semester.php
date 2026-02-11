@@ -9,7 +9,7 @@ class Semester extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'semesters';
+    protected $table      = 'lab_semesters';
     protected $primaryKey = 'semester_id';
 
     protected $fillable = [

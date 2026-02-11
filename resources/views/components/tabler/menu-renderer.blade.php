@@ -174,6 +174,48 @@
                     },
                 ],
             ],
+        },
+        [
+            'type'          => 'dropdown',
+            'title'         => 'E-Office',
+            'id'            => 'navbar-eoffice',
+            'icon'          => 'ti ti-mail-opened',
+            'active_routes' => ['eoffice.*'],
+            'children'      => [
+                [
+                    'title'         => 'Layanan Saya',
+                    'route'         => 'eoffice.layanan.index',
+                    'active_routes' => ['eoffice.layanan.*'],
+                ],
+                [
+                    'title'         => 'Buat Pengajuan',
+                    'route'         => 'eoffice.layanan.services',
+                ],
+                [
+                    'type'  => 'header',
+                    'title' => 'Master Data',
+                ],
+                [
+                    'title'         => 'Jenis Layanan',
+                    'route'         => 'eoffice.jenis-layanan.index',
+                    'active_routes' => ['eoffice.jenis-layanan.*'],
+                ],
+                [
+                    'title'         => 'Master Isian',
+                    'route'         => 'eoffice.kategori-isian.index',
+                    'active_routes' => ['eoffice.kategori-isian.*'],
+                ],
+                [
+                    'title'         => 'Daftar Perusahaan',
+                    'route'         => 'eoffice.perusahaan.index',
+                    'active_routes' => ['eoffice.perusahaan.*'],
+                ],
+                [
+                    'title'         => 'Kategori Perusahaan',
+                    'route'         => 'eoffice.kategori-perusahaan.index',
+                    'active_routes' => ['eoffice.kategori-perusahaan.*'],
+                ],
+            ],
         ],
         [
             'type'  => 'header',

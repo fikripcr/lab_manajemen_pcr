@@ -54,14 +54,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .done(function(res) {
                     if(res.status === 'success') {
-                        alert('Berhasil disetujui');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Pengajuan berhasil disetujui',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                         table.ajax.reload();
                     } else {
-                        alert('Gagal: ' + res.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Gagal: ' + res.message
+                        });
                     }
                 })
                 .fail(function() {
-                    alert('Terjadi kesalahan sistem.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan sistem.'
+                    });
                 });
             }
         });
@@ -69,22 +83,61 @@ document.addEventListener('DOMContentLoaded', function () {
         // Handle Reject
         $(document).on('click', '.btn-reject', function() {
             const url = $(this).data('url');
-            if(confirm('Apakah Anda yakin ingin menolak pengajuan ini?')) {
-                $.post(url, {
-                    _token: "{{ csrf_token() }}"
-                })
-                .done(function(res) {
-                    if(res.status === 'success') {
-                        alert('Berhasil ditolak');
-                        table.ajax.reload();
-                    } else {
-                        alert('Gagal: ' + res.message);
+            
+            Swal.fire({
+                title: 'Tolak Pengajuan',
+                text: 'Apakah Anda yakin ingin menolak pengajuan ini?',
+                input: 'textarea',
+                inputLabel: 'Alasan Penolakan',
+                inputPlaceholder: 'Masukkan alasan penolakan...',
+                inputAttributes: {
+                    'aria-label': 'Alasan Penolakan'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Tolak',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc3545',
+                showLoaderOnConfirm: true,
+                preConfirm: (reason) => {
+                    if (!reason) {
+                        Swal.showValidationMessage('Alasan penolakan harus diisi');
+                        return false;
                     }
-                })
-                .fail(function() {
-                    alert('Terjadi kesalahan sistem.');
-                });
-            }
+                    return reason;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(url, {
+                        _token: "{{ csrf_token() }}",
+                        reason: result.value
+                    })
+                    .done(function(res) {
+                        if(res.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Pengajuan berhasil ditolak',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            table.ajax.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: 'Gagal: ' + res.message
+                            });
+                        }
+                    })
+                    .fail(function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan sistem.'
+                        });
+                    });
+                }
+            });
         });
     });
 });

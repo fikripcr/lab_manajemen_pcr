@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\LabTeamRequest;
+use App\Http\Requests\Lab\LabTeamStoreRequest;
 use App\Models\Lab\Lab;
 use App\Models\User;
 use App\Services\Lab\LabTeamService;
@@ -58,7 +58,7 @@ class LabTeamController extends Controller
             ];
         });
 
-        return response()->json([
+        return jsonSuccess('Data retrieved', null, [
             'results' => $results,
         ]);
     }
@@ -66,20 +66,15 @@ class LabTeamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(LabTeamRequest $request, $labId)
+    public function store(LabTeamStoreRequest $request, $labId)
     {
         $realLabId = decryptId($labId);
+        $validated = $request->validated();
+        $validated['user_id'] = decryptId($request->user_id); // Decrypt user_id
 
-        try {
-            $data            = $request->all();
-            $data['user_id'] = decryptId($request->user_id); // Decrypt user_id
+        $this->labTeamService->assignUserToLab($realLabId, $validated);
 
-            $this->labTeamService->assignUserToLab($realLabId, $data);
-
-            return jsonSuccess('Anggota tim berhasil ditambahkan ke lab.', route('lab.labs.teams.index', $labId));
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        return jsonSuccess('Anggota tim berhasil ditambahkan ke lab.', route('lab.labs.teams.index', $labId));
     }
 
     /**

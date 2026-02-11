@@ -13,7 +13,7 @@ class Pengumuman extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, InteractsWithMedia;
 
-    protected $table      = 'pengumuman';
+    protected $table      = 'lab_pengumuman';
     protected $primaryKey = 'pengumuman_id';
 
     protected $fillable = [

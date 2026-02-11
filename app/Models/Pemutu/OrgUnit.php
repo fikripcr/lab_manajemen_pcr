@@ -1,21 +1,41 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrgUnit extends Model
 {
-    use HasFactory;
+    use HasFactory, Blameable, HashidBinding;
 
-    protected $table      = 'pemutu_org_unit';
+    protected $table = 'pemutu_org_unit';
     protected $primaryKey = 'orgunit_id';
-    protected $fillable   = ['parent_id', 'name', 'type', 'code', 'level', 'seq', 'is_active', 'successor_id', 'auditee_user_id'];
-    public $timestamps    = false;
+    protected $appends = ['encrypted_org_unit_id'];
+    protected $fillable = [
+        'parent_id', 
+        'name', 
+        'type', 
+        'code', 
+        'level', 
+        'seq', 
+        'is_active', 
+        'successor_id', 
+        'auditee_user_id',
+        'created_by',
+        'updated_by',
+    ];
+    public $timestamps = false;
 
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function getEncryptedOrgUnitIdAttribute()
+    {
+        return encryptId($this->orgunit_id);
+    }
 
     // Scopes
     public function scopeActive($query)

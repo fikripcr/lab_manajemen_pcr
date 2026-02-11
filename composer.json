@@ -51,7 +51,8 @@
         },
         "files": [
             "app/Helpers/GlobalHelper.php",
-            "app/Helpers/SysHelper.php"
+            "app/Helpers/SysHelper.php",
+            "app/Helpers/ApprovalHelpers.php"
         ]
     },
     "autoload-dev": {

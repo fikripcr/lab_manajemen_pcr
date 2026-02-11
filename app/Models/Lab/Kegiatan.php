@@ -9,7 +9,7 @@ class Kegiatan extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'kegiatans';
+    protected $table      = 'lab_kegiatans';
     protected $primaryKey = 'kegiatan_id';
 
     protected $fillable = [

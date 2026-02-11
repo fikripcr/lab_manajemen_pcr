@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\JenisIzinStoreRequest;
 use App\Models\Hr\JenisIzin;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -48,27 +49,16 @@ class JenisIzinController extends Controller
         return view('pages.hr.jenis-izin.create');
     }
 
-    public function store(Request $request)
+    public function store(JenisIzinStoreRequest $request)
     {
-        $request->validate([
-            'nama'            => 'required|string|max:50',
-            'kategori'        => 'nullable|string|max:10',
-            'max_hari'        => 'nullable|integer',
-            'pemilihan_waktu' => 'nullable|string|max:20',
-        ]);
+        $validated = $request->validated();
 
-        JenisIzin::create([
-            'nama'            => $request->nama,
-            'kategori'        => $request->kategori,
-            'max_hari'        => $request->max_hari,
-            'pemilihan_waktu' => $request->pemilihan_waktu,
-            'is_active'       => 1,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Jenis Izin berhasil ditambahkan.',
-        ]);
+        try {
+            JenisIzin::create($validated);
+            return response()->json(['success' => true, 'message' => 'Jenis izin berhasil dibuat.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function edit(JenisIzin $jenis_izin)
@@ -76,19 +66,11 @@ class JenisIzinController extends Controller
         return view('pages.hr.jenis-izin.edit', compact('jenis_izin'));
     }
 
-    public function update(Request $request, JenisIzin $jenis_izin)
+    public function update(JenisIzinStoreRequest $request, JenisIzin $jenis_izin)
     {
-        $request->validate([
-            'nama'            => 'required|string|max:50',
-            'kategori'        => 'nullable|string|max:10',
-            'max_hari'        => 'nullable|integer',
-            'pemilihan_waktu' => 'nullable|string|max:20',
-            'is_active'       => 'required|boolean',
-        ]);
+        $validated = $request->validated();
 
-        $jenis_izin->update($request->only([
-            'nama', 'kategori', 'max_hari', 'pemilihan_waktu', 'is_active',
-        ]));
+        $jenis_izin->update($validated);
 
         return response()->json([
             'success' => true,

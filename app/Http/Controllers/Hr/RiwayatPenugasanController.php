@@ -42,7 +42,7 @@ class RiwayatPenugasanController extends Controller
     {
         try {
             $this->pegawaiService->addPenugasan($pegawai, $request->validated());
-            return jsonSuccess('Penugasan berhasil ditambahkan.', route('hr.pegawai.show', $pegawai->pegawai_id));
+            return jsonSuccess('Penugasan berhasil ditambahkan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
@@ -63,7 +63,7 @@ class RiwayatPenugasanController extends Controller
     {
         try {
             $this->pegawaiService->updatePenugasan($penugasan, $request->validated());
-            return jsonSuccess('Penugasan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->pegawai_id));
+            return jsonSuccess('Penugasan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }

@@ -97,6 +97,14 @@ class Pegawai extends Model
         return $this->belongsTo(RiwayatPenugasan::class, 'latest_riwayatpenugasan_id', 'riwayatpenugasan_id');
     }
 
+    /**
+     * Get the user account associated with this pegawai
+     */
+    public function user()
+    {
+        return $this->hasOne(\App\Models\User::class, 'pegawai_id', 'pegawai_id');
+    }
+
     public function historyPenugasan()
     {
         return $this->hasMany(RiwayatPenugasan::class, 'pegawai_id', 'pegawai_id')->orderBy('tgl_mulai', 'desc');

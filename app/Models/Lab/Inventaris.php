@@ -9,7 +9,7 @@ class Inventaris extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table      = 'inventaris';
+    protected $table      = 'lab_inventarises';
     protected $primaryKey = 'inventaris_id';
 
     protected $fillable = [
@@ -28,7 +28,7 @@ class Inventaris extends Model
      */
     public function labs()
     {
-        return $this->belongsToMany(Lab::class, 'lab_inventaris', 'inventaris_id', 'lab_id')
+        return $this->belongsToMany(Lab::class, 'lab_inventaris_penempatan', 'inventaris_id', 'lab_id')
             ->withPivot(['kode_inventaris', 'no_series', 'tanggal_penempatan', 'tanggal_penghapusan', 'status', 'keterangan'])
             ->withTimestamps();
     }

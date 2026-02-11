@@ -28,7 +28,7 @@ class KeluargaController extends Controller
     {
         try {
             $this->pegawaiService->requestAddition($pegawai, \App\Models\Hr\Keluarga::class, $request->validated());
-            return jsonSuccess('Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->hashid));
+            return jsonSuccess('Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }

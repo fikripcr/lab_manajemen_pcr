@@ -26,10 +26,8 @@
                     <td>{{ $edu->bidang_ilmu }}</td>
                     <td>{{ $edu->tgl_ijazah ? $edu->tgl_ijazah->format('Y') : '-' }}</td>
                     <td>
-                        @if($edu->approval && $edu->approval->status == 'Pending')
-                            <span class="badge bg-warning">Menunggu Approval</span>
-                        @elseif($edu->approval && $edu->approval->status == 'Approved')
-                            <span class="badge bg-success">Disetujui</span>
+                        @if($edu->approval)
+                            {!! getApprovalBadge($edu->approval->status) !!}
                         @else
                             <span class="badge bg-secondary">-</span>
                         @endif

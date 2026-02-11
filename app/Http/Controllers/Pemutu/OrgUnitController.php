@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\OrgUnitAuditeeRequest;
 use App\Http\Requests\Pemutu\OrgUnitRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\OrgUnitService;
@@ -110,16 +111,10 @@ class OrgUnitController extends Controller
         }
     }
 
-    public function setAuditee(Request $request, $id)
+    public function setAuditee(OrgUnitAuditeeRequest $request, $id)
     {
-        // Simple internal method validation, kept here or could be Separate Request
-        // Given simplicity, inline is acceptable, but let's stick to standard response.
-        $request->validate([
-            'auditee_user_id' => 'nullable|exists:users,id',
-        ]);
-
         try {
-            $this->orgUnitService->setAuditee($id, $request->auditee_user_id);
+            $this->orgUnitService->setAuditee($id, $request->validated()['auditee_user_id']);
 
             return jsonSuccess('Auditee berhasil diset.');
         } catch (\Exception $e) {

@@ -37,7 +37,7 @@ class RiwayatJabStrukturalController extends Controller
         try {
             $headerCol = 'latest_riwayatjabstruktural_id';
             $this->pegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
-            return jsonSuccess('Perubahan Jabatan Struktural berhasil diajukan.', route('hr.pegawai.show', $pegawai->pegawai_id));
+            return jsonSuccess('Perubahan Jabatan Struktural berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }

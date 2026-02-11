@@ -2,10 +2,11 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\IndisiplinerStoreRequest;
+use App\Http\Requests\Hr\IndisiplinerUpdateRequest;
 use App\Models\Hr\Indisipliner;
 use App\Models\Hr\IndisiplinerPegawai;
 use App\Models\Hr\JenisIndisipliner;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -59,41 +60,40 @@ class IndisiplinerController extends Controller
         return view('pages.hr.indisipliner.create', compact('jenisIndisipliner'));
     }
 
-    public function store(Request $request)
+    public function store(IndisiplinerStoreRequest $request)
     {
-        $validated = $request->validate([
-            'jenisindisipliner_id' => 'required|exists:hr_jenis_indisipliner,jenisindisipliner_id',
-            'tgl_indisipliner'     => 'required|date',
-            'pegawai_id'           => 'required|array|min:1',
-            'pegawai_id.*'         => 'exists:hr_pegawai,pegawai_id',
-            'keterangan'           => 'required|string',
-            'file_pendukung'       => 'nullable|string|max:250',
-        ]);
+        $validated = $request->validated();
 
         try {
             DB::beginTransaction();
 
+            // Create indisipliner record
             $indisipliner = Indisipliner::create([
                 'jenisindisipliner_id' => $validated['jenisindisipliner_id'],
-                'tgl_indisipliner'     => $validated['tgl_indisipliner'],
-                'keterangan'           => $validated['keterangan'],
-                'file_pendukung'       => $validated['file_pendukung'] ?? null,
+                'tgl_indisipliner' => $validated['tgl_indisipliner'],
+                'keterangan' => $validated['keterangan'] ?? null,
             ]);
+
+            // Handle file upload
+            if ($request->hasFile('bukti')) {
+                $file = $request->file('bukti');
+                $path = $file->store('hr/indisipliner', 'public');
+                $indisipliner->update(['bukti' => $path]);
+            }
 
             // Attach pegawai
             foreach ($validated['pegawai_id'] as $pegawaiId) {
                 IndisiplinerPegawai::create([
                     'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id'      => $pegawaiId,
+                    'pegawai_id' => $pegawaiId,
                 ]);
             }
 
             DB::commit();
-
-            return jsonSuccess('Data indisipliner berhasil ditambahkan.');
+            return response()->json(['success' => true, 'message' => 'Indisipliner berhasil dibuat.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return jsonError('Gagal menyimpan data: ' . $e->getMessage(), 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -107,43 +107,41 @@ class IndisiplinerController extends Controller
         return view('pages.hr.indisipliner.edit', compact('indisipliner', 'jenisIndisipliner'));
     }
 
-    public function update(Request $request, Indisipliner $indisipliner)
+    public function update(IndisiplinerUpdateRequest $request, Indisipliner $indisipliner)
     {
-        $validated = $request->validate([
-            'jenisindisipliner_id' => 'required|exists:hr_jenis_indisipliner,jenisindisipliner_id',
-            'tgl_indisipliner'     => 'required|date',
-            'pegawai_id'           => 'required|array|min:1',
-            'pegawai_id.*'         => 'exists:hr_pegawai,pegawai_id',
-            'keterangan'           => 'required|string',
-            'file_pendukung'       => 'nullable|string|max:250',
-        ]);
+        $validated = $request->validated();
 
         try {
             DB::beginTransaction();
 
+            // Update indisipliner record
             $indisipliner->update([
                 'jenisindisipliner_id' => $validated['jenisindisipliner_id'],
-                'tgl_indisipliner'     => $validated['tgl_indisipliner'],
-                'keterangan'           => $validated['keterangan'],
-                'file_pendukung'       => $validated['file_pendukung'] ?? null,
+                'tgl_indisipliner' => $validated['tgl_indisipliner'],
+                'keterangan' => $validated['keterangan'] ?? null,
             ]);
 
-            // Remove old pegawai associations and add new ones
-            IndisiplinerPegawai::where('indisipliner_id', $indisipliner->indisipliner_id)->forceDelete();
+            // Handle file upload
+            if ($request->hasFile('bukti')) {
+                $file = $request->file('bukti');
+                $path = $file->store('hr/indisipliner', 'public');
+                $indisipliner->update(['bukti' => $path]);
+            }
 
+            // Sync pegawai
+            $indisipliner->indisiplinerPegawai()->delete();
             foreach ($validated['pegawai_id'] as $pegawaiId) {
                 IndisiplinerPegawai::create([
                     'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id'      => $pegawaiId,
+                    'pegawai_id' => $pegawaiId,
                 ]);
             }
 
             DB::commit();
-
-            return jsonSuccess('Data indisipliner berhasil diperbarui.');
+            return response()->json(['success' => true, 'message' => 'Indisipliner berhasil diperbarui.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return jsonError('Gagal memperbarui data: ' . $e->getMessage(), 500);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
