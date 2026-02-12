@@ -17,25 +17,25 @@
     <div class="card-header">
         <div class="d-flex flex-wrap gap-2">
             <div>
-                <x-sys.datatable-page-length :dataTableId="'backups-table'" />
+                <x-tabler.datatable-page-length :dataTableId="'backups-table'" />
             </div>
             <div>
-                <x-sys.datatable-search :dataTableId="'backups-table'" />
+                <x-tabler.datatable-search :dataTableId="'backups-table'" />
             </div>
         </div>
     </div>
 
     <div class="card-body p-0">
         @if (count($backups) > 0)
-            <x-sys.datatable-client 
-                id="backups-table" 
+            <x-tabler.datatable-client
+                id="backups-table"
                 :columns="[
                     ['title' => 'Filename'],
                     ['title' => 'Size'],
                     ['title' => 'Date Modified'],
                     ['title' => 'Actions', 'orderable' => false, 'searchable' => false],
                 ]">
-                
+
                 {{-- User controls the loop and variable names --}}
                 @foreach ($backups as $backup)
                     <tr>
@@ -43,22 +43,22 @@
                         <td>{{ $backup['formatted_size'] }}</td>
                         <td>{{ $backup['formatted_date'] }}</td>
                         <td>
-                            <a href="{{ route('sys.backup.download', $backup['name']) }}" 
-                                class="btn btn-action text-primary" 
+                            <a href="{{ route('sys.backup.download', $backup['name']) }}"
+                                class="btn btn-action text-primary"
                                 title="Download">
                                 <i class="ti ti-download fs-2"></i>
                             </a>
-                            <button type="button" 
-                                    class="btn btn-action text-danger delete-backup" 
-                                    data-filename="{{ $backup['name'] }}" 
+                            <button type="button"
+                                    class="btn btn-action text-danger delete-backup"
+                                    data-filename="{{ $backup['name'] }}"
                                     title="Delete">
                                 <i class="ti ti-trash fs-2"></i>
                             </button>
                         </td>
                     </tr>
                 @endforeach
-                
-            </x-sys.datatable-client>
+
+            </x-tabler.datatable-client>
         @else
             <div class="text-center py-5">
                 <i class="ti ti-data mb-3" style="font-size: 3rem;"></i>
@@ -74,16 +74,16 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const createBackup = (type) => {
-                const message = type === 'db' 
-                    ? 'Creating database backup, please wait...' 
+                const message = type === 'db'
+                    ? 'Creating database backup, please wait...'
                     : 'Creating web files backup, please wait...';
-                
+
                 showLoadingMessage('Processing Backup...', message);
 
                 axios.post('{{ route('sys.backup.store') }}', { type })
                     .then(({ data }) => {
                         Swal.close();
-                        data.success 
+                        data.success
                             ? showSuccessMessage('Success!', data.message).then(() => location.reload())
                             : showErrorMessage('Error!', data.message);
                     })
@@ -101,7 +101,7 @@
             $(document).on('click', '.delete-backup', function(e) {
                 e.preventDefault();
                 const filename = $(this).data('filename');
-                
+
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
@@ -114,7 +114,7 @@
                     if (!isConfirmed) return;
 
                     const deleteUrl = '{{ route('sys.backup.destroy', ':filename') }}'.replace(':filename', encodeURIComponent(filename));
-                    
+
                     axios.delete(deleteUrl)
                         .then(({ data }) => {
                             data.success

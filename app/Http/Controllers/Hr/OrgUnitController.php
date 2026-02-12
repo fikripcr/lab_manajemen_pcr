@@ -9,25 +9,25 @@ use Yajra\DataTables\DataTables;
 
 class OrgUnitController extends Controller
 {
-    protected $orgUnitService;
+    protected $OrgUnitService;
 
-    public function __construct(OrgUnitService $orgUnitService)
+    public function __construct(OrgUnitService $OrgUnitService)
     {
-        $this->orgUnitService = $orgUnitService;
+        $this->OrgUnitService = $OrgUnitService;
     }
 
     public function index()
     {
-        $rootUnits = $this->orgUnitService->getActiveHierarchicalUnits();
-        $allUnits  = $this->orgUnitService->getAllUnits();
-        $types     = $this->orgUnitService->getTypes();
+        $rootUnits = $this->OrgUnitService->getActiveHierarchicalUnits();
+        $allUnits  = $this->OrgUnitService->getAllUnits();
+        $types     = $this->OrgUnitService->getTypes();
 
         return view('pages.hr.org-units.index', compact('rootUnits', 'allUnits', 'types'));
     }
 
     public function show($id)
     {
-        $orgUnit = $this->orgUnitService->getOrgUnitById($id);
+        $orgUnit = $this->OrgUnitService->getOrgUnitById($id);
         if (! $orgUnit) {
             abort(404);
         }
@@ -37,7 +37,7 @@ class OrgUnitController extends Controller
 
     public function data(Request $request)
     {
-        $query = $this->orgUnitService->getFilteredQuery($request->all());
+        $query = $this->OrgUnitService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -68,7 +68,7 @@ class OrgUnitController extends Controller
     public function toggleStatus($id)
     {
         try {
-            $orgUnit = $this->orgUnitService->toggleStatus($id);
+            $orgUnit = $this->OrgUnitService->toggleStatus($id);
             return jsonSuccess('Status updated.', null, ['is_active' => $orgUnit->is_active]);
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -78,9 +78,9 @@ class OrgUnitController extends Controller
     public function create(Request $request)
     {
         $parentId = $request->query('parent_id');
-        $parent   = $parentId ? $this->orgUnitService->getOrgUnitById($parentId) : null;
-        $units    = $this->orgUnitService->getHierarchicalList();
-        $types    = $this->orgUnitService->getTypes();
+        $parent   = $parentId ? $this->OrgUnitService->getOrgUnitById($parentId) : null;
+        $units    = $this->OrgUnitService->getHierarchicalList();
+        $types    = $this->OrgUnitService->getTypes();
 
         return view('pages.hr.org-units.create', compact('parent', 'units', 'types'));
     }
@@ -99,7 +99,7 @@ class OrgUnitController extends Controller
             $data              = $request->only(['name', 'type', 'parent_id', 'code', 'description']);
             $data['is_active'] = $request->boolean('is_active', true);
 
-            $this->orgUnitService->createOrgUnit($data);
+            $this->OrgUnitService->createOrgUnit($data);
             return jsonSuccess('OrgUnit created.', route('hr.org-units.index'));
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -109,9 +109,9 @@ class OrgUnitController extends Controller
     public function edit(OrgUnit $org_unit)
     {
         $orgUnit  = $org_unit;
-        $allUnits = $this->orgUnitService->getHierarchicalList();
+        $allUnits = $this->OrgUnitService->getHierarchicalList();
         $units    = collect($allUnits)->filter(fn($u) => $u->org_unit_id != $orgUnit->org_unit_id);
-        $types    = $this->orgUnitService->getTypes();
+        $types    = $this->OrgUnitService->getTypes();
 
         return view('pages.hr.org-units.edit', compact('orgUnit', 'units', 'types'));
     }
@@ -130,7 +130,7 @@ class OrgUnitController extends Controller
             $data              = $request->only(['name', 'type', 'parent_id', 'code', 'description']);
             $data['is_active'] = $request->boolean('is_active', true);
 
-            $this->orgUnitService->updateOrgUnit($org_unit->org_unit_id, $data);
+            $this->OrgUnitService->updateOrgUnit($org_unit->org_unit_id, $data);
             return jsonSuccess('OrgUnit updated.', route('hr.org-units.index'));
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -140,7 +140,7 @@ class OrgUnitController extends Controller
     public function destroy(OrgUnit $org_unit)
     {
         try {
-            $this->orgUnitService->deleteOrgUnit($org_unit->org_unit_id);
+            $this->OrgUnitService->deleteOrgUnit($org_unit->org_unit_id);
             return jsonSuccess('OrgUnit deleted.', route('hr.org-units.index'));
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -151,7 +151,7 @@ class OrgUnitController extends Controller
     {
         try {
             $hierarchy = $request->input('hierarchy', []);
-            $this->orgUnitService->reorderUnits($hierarchy);
+            $this->OrgUnitService->reorderUnits($hierarchy);
             return jsonSuccess('Hierarchy updated.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

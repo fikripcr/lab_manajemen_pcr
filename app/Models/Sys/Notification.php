@@ -5,10 +5,13 @@ namespace App\Models\Sys;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class Notification extends DatabaseNotification
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes, Blameable, HashidBinding;
 
     protected $table = 'sys_notifications'; // Use the correct table name
 
@@ -20,7 +23,10 @@ class Notification extends DatabaseNotification
         'data',
         'read_at',
         'created_at',
-        'updated_at',
+        'updated_at',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $dates = [

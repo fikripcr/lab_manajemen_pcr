@@ -9,11 +9,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AttDeviceController extends Controller
 {
-    protected $service;
+    protected $AttDeviceService;
 
-    public function __construct(AttDeviceService $service)
+    public function __construct(AttDeviceService $AttDeviceService)
     {
-        $this->service = $service;
+        $this->AttDeviceService = $AttDeviceService;
     }
 
     public function index()
@@ -49,7 +49,7 @@ class AttDeviceController extends Controller
     public function store(AttDeviceRequest $request)
     {
         try {
-            $this->service->create($request->validated());
+            $this->AttDeviceService->create($request->validated());
             return jsonSuccess('Mesin Presensi created successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -66,7 +66,7 @@ class AttDeviceController extends Controller
     {
         try {
             $attDevice = AttDevice::findOrFail($id);
-            $this->service->update($attDevice, $request->validated());
+            $this->AttDeviceService->update($attDevice, $request->validated());
             return jsonSuccess('Mesin Presensi updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -76,7 +76,7 @@ class AttDeviceController extends Controller
     public function destroy($id)
     {
         try {
-            $this->service->delete($id);
+            $this->AttDeviceService->delete($id);
             return jsonSuccess('Mesin Presensi deleted successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

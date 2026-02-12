@@ -19,7 +19,8 @@ class StatusAktifitas extends Model
         'nama_status',
         'is_active',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

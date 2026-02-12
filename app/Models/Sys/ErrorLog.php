@@ -3,10 +3,12 @@ namespace App\Models\Sys;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class ErrorLog extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Blameable, HashidBinding;
 
     protected $table = 'sys_error_log';
 
@@ -22,7 +24,10 @@ class ErrorLog extends Model
         'method',
         'ip_address',
         'user_agent',
-        'user_id',
+        'user_id',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

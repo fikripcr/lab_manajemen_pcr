@@ -21,15 +21,15 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/data', [JenisLayananController::class, 'paginate'])->name('data');
             Route::get('/create', [JenisLayananController::class, 'create'])->name('create');
             Route::post('/', [JenisLayananController::class, 'store'])->name('store');
-            Route::get('/{id}', [JenisLayananController::class, 'show'])->name('show');
-            Route::get('/{id}/edit', [JenisLayananController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [JenisLayananController::class, 'update'])->name('update');
-            Route::delete('/{id}', [JenisLayananController::class, 'destroy'])->name('destroy');
+            Route::get('/{jenis_layanan}', [JenisLayananController::class, 'show'])->name('show');
+            Route::get('/{jenis_layanan}/edit', [JenisLayananController::class, 'edit'])->name('edit');
+            Route::put('/{jenis_layanan}', [JenisLayananController::class, 'update'])->name('update');
+            Route::delete('/{jenis_layanan}', [JenisLayananController::class, 'destroy'])->name('destroy');
 
             // PIC & Isian
-            Route::post('/{id}/pic', [JenisLayananController::class, 'storePic'])->name('store-pic');
+            Route::post('/{jenis_layanan}/pic', [JenisLayananController::class, 'storePic'])->name('store-pic');
             Route::delete('/pic/{id}', [JenisLayananController::class, 'destroyPic'])->name('destroy-pic');
-            Route::post('/{id}/isian', [JenisLayananController::class, 'storeIsian'])->name('store-isian');
+            Route::post('/{jenis_layanan}/isian', [JenisLayananController::class, 'storeIsian'])->name('store-isian');
             Route::post('/isian/{id}/toggle', [JenisLayananController::class, 'updateIsianField'])->name('update-isian-field');
             Route::post('/isian/{id}/rule', [JenisLayananController::class, 'updateIsianRule'])->name('update-isian-rule');
             Route::post('/isian/{id}/info', [JenisLayananController::class, 'updateIsianInfo'])->name('update-isian-info');
@@ -37,22 +37,22 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::delete('/isian/{id}', [JenisLayananController::class, 'destroyIsian'])->name('destroy-isian');
 
             // 🔹 Disposisi Chain
-            Route::prefix('{jenislayananId}/disposisi')->name('disposisi.')->group(function () {
+            Route::prefix('{jenis_layanan}/disposisi')->name('disposisi.')->group(function () {
                 Route::get('/data', [JenisLayananDisposisiController::class, 'data'])->name('data');
-                Route::get('/{id}/data', [JenisLayananDisposisiController::class, 'show'])->name('get-data');
+                Route::get('/{disposisi}/data', [JenisLayananDisposisiController::class, 'show'])->name('get-data');
                 Route::post('/', [JenisLayananDisposisiController::class, 'store'])->name('store');
-                Route::post('/{id}/seq', [JenisLayananDisposisiController::class, 'updateSeq'])->name('update-seq');
-                Route::put('/{id}/{action?}', [JenisLayananDisposisiController::class, 'update'])->name('update');
-                Route::delete('/{id}', [JenisLayananDisposisiController::class, 'destroy'])->name('destroy');
+                Route::post('/{disposisi}/seq', [JenisLayananDisposisiController::class, 'updateSeq'])->name('update-seq');
+                Route::put('/{disposisi}/{action?}', [JenisLayananDisposisiController::class, 'update'])->name('update');
+                Route::delete('/{disposisi}', [JenisLayananDisposisiController::class, 'destroy'])->name('destroy');
             });
 
             // 🔹 Periode
-            Route::prefix('{jenislayananId}/periode')->name('periode.')->group(function () {
+            Route::prefix('{jenis_layanan}/periode')->name('periode.')->group(function () {
                 Route::get('/data', [JenisLayananPeriodeController::class, 'data'])->name('data');
-                Route::get('/{id}', [JenisLayananPeriodeController::class, 'show'])->name('show');
+                Route::get('/{periode}', [JenisLayananPeriodeController::class, 'show'])->name('show');
                 Route::post('/', [JenisLayananPeriodeController::class, 'store'])->name('store');
-                Route::put('/{id}', [JenisLayananPeriodeController::class, 'update'])->name('update');
-                Route::delete('/{id}', [JenisLayananPeriodeController::class, 'destroy'])->name('destroy');
+                Route::put('/{periode}', [JenisLayananPeriodeController::class, 'update'])->name('update');
+                Route::delete('/{periode}', [JenisLayananPeriodeController::class, 'destroy'])->name('destroy');
             });
         });
 
@@ -62,9 +62,9 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/data', [KategoriIsianController::class, 'paginate'])->name('data');
             Route::get('/create', [KategoriIsianController::class, 'create'])->name('create');
             Route::post('/', [KategoriIsianController::class, 'store'])->name('store');
-            Route::get('/{id}/edit', [KategoriIsianController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [KategoriIsianController::class, 'update'])->name('update');
-            Route::delete('/{id}', [KategoriIsianController::class, 'destroy'])->name('destroy');
+            Route::get('/{kategori_isian}/edit', [KategoriIsianController::class, 'edit'])->name('edit');
+            Route::put('/{kategori_isian}', [KategoriIsianController::class, 'update'])->name('update');
+            Route::delete('/{kategori_isian}', [KategoriIsianController::class, 'destroy'])->name('destroy');
         });
 
         // 🔹 Kategori Perusahaan Master
@@ -73,9 +73,9 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/data', [KategoriPerusahaanController::class, 'paginate'])->name('data');
             Route::get('/create', [KategoriPerusahaanController::class, 'create'])->name('create');
             Route::post('/', [KategoriPerusahaanController::class, 'store'])->name('store');
-            Route::get('/{id}/edit', [KategoriPerusahaanController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [KategoriPerusahaanController::class, 'update'])->name('update');
-            Route::delete('/{id}', [KategoriPerusahaanController::class, 'destroy'])->name('destroy');
+            Route::get('/{kategori_perusahaan}/edit', [KategoriPerusahaanController::class, 'edit'])->name('edit');
+            Route::put('/{kategori_perusahaan}', [KategoriPerusahaanController::class, 'update'])->name('update');
+            Route::delete('/{kategori_perusahaan}', [KategoriPerusahaanController::class, 'destroy'])->name('destroy');
         });
 
         // 🔹 Perusahaan Master
@@ -84,10 +84,10 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/data', [PerusahaanController::class, 'paginate'])->name('data');
             Route::get('/create', [PerusahaanController::class, 'create'])->name('create');
             Route::post('/', [PerusahaanController::class, 'store'])->name('store');
-            Route::get('/{id}/edit', [PerusahaanController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [PerusahaanController::class, 'update'])->name('update');
-            Route::delete('/{id}', [PerusahaanController::class, 'destroy'])->name('destroy');
-            Route::get('/{id}', [PerusahaanController::class, 'show'])->name('show');
+            Route::get('/{perusahaan}/edit', [PerusahaanController::class, 'edit'])->name('edit');
+            Route::put('/{perusahaan}', [PerusahaanController::class, 'update'])->name('update');
+            Route::delete('/{perusahaan}', [PerusahaanController::class, 'destroy'])->name('destroy');
+            Route::get('/{perusahaan}', [PerusahaanController::class, 'show'])->name('show');
         });
 
         // 🔹 Feedback
@@ -97,22 +97,21 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::post('/', [FeedbackController::class, 'store'])->name('store');
         });
 
-    });
+        // --- Layanan (Transactions) ---
+        Route::prefix('layanan')->name('layanan.')->group(function () {
+            Route::get('/', [LayananController::class, 'index'])->name('index');
+            Route::get('/data', [LayananController::class, 'data'])->name('data');
+            Route::get('/pilih', [LayananController::class, 'services'])->name('services');
+            Route::get('/buat/{jenis_layanan}', [LayananController::class, 'create'])->name('create');
+            Route::post('/simpan', [LayananController::class, 'store'])->name('store');
+            Route::get('/{layanan}', [LayananController::class, 'show'])->name('show');
+            Route::get('/{layanan}/download-pdf', [LayananController::class, 'downloadPdf'])->name('download-pdf');
 
-    // --- Layanan (Transactions) ---
-    Route::prefix('layanan')->name('layanan.')->group(function () {
-        Route::get('/', [LayananController::class, 'index'])->name('index');
-        Route::get('/data', [LayananController::class, 'data'])->name('data');
-        Route::get('/pilih', [LayananController::class, 'services'])->name('services');
-        Route::get('/buat/{jenis_id}', [LayananController::class, 'create'])->name('create');
-        Route::post('/simpan', [LayananController::class, 'store'])->name('store');
-        Route::get('/{id}', [LayananController::class, 'show'])->name('show');
-        Route::get('/{id}/download-pdf', [LayananController::class, 'downloadPdf'])->name('download-pdf');
+            // 🔹 Status Update (dedicated controller)
+            Route::post('/{layanan}/status/{status?}', [LayananStatusController::class, 'update'])->name('update-status');
 
-        // 🔹 Status Update (dedicated controller)
-        Route::post('/{id}/status/{status?}', [LayananStatusController::class, 'update'])->name('update-status');
-
-        // 🔹 Discussion
-        Route::post('/diskusi', [LayananDiskusiController::class, 'store'])->name('diskusi.store');
+            // 🔹 Discussion
+            Route::post('/diskusi', [LayananDiskusiController::class, 'store'])->name('diskusi.store');
+        });
     });
 });

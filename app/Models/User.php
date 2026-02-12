@@ -38,7 +38,8 @@ class User extends Authenticatable implements HasMedia, Searchable
         'email_verified_at',
         'expired_at',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $appends = ['encrypted_id'];

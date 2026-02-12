@@ -7,11 +7,11 @@ use App\Services\Hr\PegawaiService;
 
 class RiwayatPendidikanController extends Controller
 {
-    protected $pegawaiService;
+    protected $PegawaiService;
 
-    public function __construct(PegawaiService $pegawaiService)
+    public function __construct(PegawaiService $PegawaiService)
     {
-        $this->pegawaiService = $pegawaiService;
+        $this->PegawaiService = $PegawaiService;
     }
 
     public function index(\Illuminate\Http\Request $request, Pegawai $pegawai = null)
@@ -27,7 +27,7 @@ class RiwayatPendidikanController extends Controller
     public function store(\App\Http\Requests\Hr\RiwayatPendidikanRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->pegawaiService->requestAddition($pegawai, \App\Models\Hr\RiwayatPendidikan::class, $request->validated());
+            $this->PegawaiService->requestAddition($pegawai, \App\Models\Hr\RiwayatPendidikan::class, $request->validated());
             return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

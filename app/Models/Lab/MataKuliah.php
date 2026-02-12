@@ -4,10 +4,12 @@ namespace App\Models\Lab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class MataKuliah extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_mata_kuliahs';
     protected $primaryKey = 'mata_kuliah_id';
@@ -15,7 +17,10 @@ class MataKuliah extends Model
     protected $fillable = [
         'kode_mk',
         'nama_mk',
-        'sks',
+        'sks',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

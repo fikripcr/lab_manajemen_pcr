@@ -10,11 +10,11 @@ use Yajra\DataTables\DataTables;
 
 class SemesterController extends Controller
 {
-    protected $semesterService;
+    protected $SemesterService;
 
-    public function __construct(SemesterService $semesterService)
+    public function __construct(SemesterService $SemesterService)
     {
-        $this->semesterService = $semesterService;
+        $this->SemesterService = $SemesterService;
     }
 
     /**
@@ -27,7 +27,7 @@ class SemesterController extends Controller
 
     public function paginate(Request $request)
     {
-        $semesters = $this->semesterService->getFilteredQuery($request->all());
+        $semesters = $this->SemesterService->getFilteredQuery($request->all());
 
         return DataTables::of($semesters)
             ->addIndexColumn()
@@ -87,7 +87,7 @@ class SemesterController extends Controller
     public function store(SemesterRequest $request)
     {
         try {
-            $this->semesterService->createSemester($request->validated());
+            $this->SemesterService->createSemester($request->validated());
 
             return jsonSuccess('Semester berhasil dibuat.', route('lab.semesters.index'));
         } catch (\Exception $e) {
@@ -101,7 +101,7 @@ class SemesterController extends Controller
     public function show($id)
     {
         $realId   = decryptId($id);
-        $semester = $this->semesterService->getSemesterById($realId);
+        $semester = $this->SemesterService->getSemesterById($realId);
 
         if (! $semester) {
             abort(404);
@@ -116,7 +116,7 @@ class SemesterController extends Controller
     public function edit($id)
     {
         $realId   = decryptId($id);
-        $semester = $this->semesterService->getSemesterById($realId);
+        $semester = $this->SemesterService->getSemesterById($realId);
 
         if (! $semester) {
             abort(404);
@@ -133,7 +133,7 @@ class SemesterController extends Controller
         $realId = decryptId($id);
 
         try {
-            $this->semesterService->updateSemester($realId, $request->validated());
+            $this->SemesterService->updateSemester($realId, $request->validated());
 
             return jsonSuccess('Semester berhasil diperbarui.', route('lab.semesters.index'));
         } catch (\Exception $e) {
@@ -147,7 +147,7 @@ class SemesterController extends Controller
     public function editModal($id)
     {
         $realId   = decryptId($id);
-        $semester = $this->semesterService->getSemesterById($realId);
+        $semester = $this->SemesterService->getSemesterById($realId);
 
         if (! $semester) {
             return jsonError('Semester not found', 404);
@@ -163,7 +163,7 @@ class SemesterController extends Controller
     {
         try {
             $realId = decryptId($id);
-            $this->semesterService->deleteSemester($realId);
+            $this->SemesterService->deleteSemester($realId);
 
             return jsonSuccess('Semester deleted successfully.', route('lab.semesters.index'));
 

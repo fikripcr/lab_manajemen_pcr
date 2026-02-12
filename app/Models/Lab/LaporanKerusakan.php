@@ -4,10 +4,12 @@ namespace App\Models\Lab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class LaporanKerusakan extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_laporan_kerusakan';
     protected $primaryKey = 'laporan_kerusakan_id';
@@ -19,7 +21,10 @@ class LaporanKerusakan extends Model
         'status',
         'catatan_perbaikan',
         'foto_sebelum',
-        'foto_sesudah',
+        'foto_sesudah',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

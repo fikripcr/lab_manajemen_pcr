@@ -10,18 +10,18 @@ use Yajra\DataTables\DataTables;
 
 class DokSubController extends Controller
 {
-    protected $dokSubService;
-    protected $dokumenService;
+    protected $DokSubService;
+    protected $DokumenService;
 
-    public function __construct(DokSubService $dokSubService, DokumenService $dokumenService)
+    public function __construct(DokSubService $DokSubService, DokumenService $DokumenService)
     {
-        $this->dokSubService  = $dokSubService;
-        $this->dokumenService = $dokumenService;
+        $this->DokSubService  = $DokSubService;
+        $this->DokumenService = $DokumenService;
     }
 
     public function show($id)
     {
-        $dokSub = $this->dokSubService->getDokSubById($id);
+        $dokSub = $this->DokSubService->getDokSubById($id);
         if (! $dokSub) {
             abort(404);
         }
@@ -45,7 +45,7 @@ class DokSubController extends Controller
     public function create(Request $request)
     {
         $dokId   = $request->query('dok_id');
-        $dokumen = $this->dokumenService->getDokumenById($dokId);
+        $dokumen = $this->DokumenService->getDokumenById($dokId);
         if (! $dokumen) {
             abort(404);
         }
@@ -58,7 +58,7 @@ class DokSubController extends Controller
         try {
             $data                          = $request->validated();
             $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
-            $this->dokSubService->createDokSub($data);
+            $this->DokSubService->createDokSub($data);
 
             return jsonSuccess('Sub-Document created successfully.', route('pemutu.dokumens.show', $data['dok_id']));
         } catch (\Exception $e) {
@@ -68,7 +68,7 @@ class DokSubController extends Controller
 
     public function edit($id)
     {
-        $dokSub = $this->dokSubService->getDokSubById($id);
+        $dokSub = $this->DokSubService->getDokSubById($id);
         if (! $dokSub) {
             abort(404);
         }
@@ -81,8 +81,8 @@ class DokSubController extends Controller
         try {
             $data                          = $request->validated();
             $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
-            $this->dokSubService->updateDokSub($id, $data);
-            $dokSub = $this->dokSubService->getDokSubById($id);
+            $this->DokSubService->updateDokSub($id, $data);
+            $dokSub = $this->DokSubService->getDokSubById($id);
 
             return jsonSuccess('Sub-Document updated successfully.', route('pemutu.dokumens.show', $dokSub->dok_id));
         } catch (\Exception $e) {
@@ -93,7 +93,7 @@ class DokSubController extends Controller
     public function destroy($id)
     {
         try {
-            $this->dokSubService->deleteDokSub($id);
+            $this->DokSubService->deleteDokSub($id);
 
             return jsonSuccess('Sub-Document deleted successfully.');
         } catch (\Exception $e) {
@@ -105,7 +105,7 @@ class DokSubController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $query = $this->dokSubService->getFilteredQuery(['dok_id' => $dokId]);
+                $query = $this->DokSubService->getFilteredQuery(['dok_id' => $dokId]);
 
                 return DataTables::of($query)
                     ->addIndexColumn()

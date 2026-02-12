@@ -28,7 +28,8 @@ class PengembanganDiri extends Model
         'file_sertifikat',
         'keterangan',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

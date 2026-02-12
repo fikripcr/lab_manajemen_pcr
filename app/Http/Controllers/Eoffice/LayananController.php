@@ -16,11 +16,11 @@ use Yajra\DataTables\DataTables;
 
 class LayananController extends Controller
 {
-    protected $layananService;
+    protected $LayananService;
 
-    public function __construct(LayananService $layananService)
+    public function __construct(LayananService $LayananService)
     {
-        $this->layananService = $layananService;
+        $this->LayananService = $LayananService;
     }
 
     /**
@@ -41,7 +41,7 @@ class LayananController extends Controller
         // Scope logic: if admin/pic show all or assigned, if user show mine
         $scope = Auth::user()->hasRole('admin') ? 'all' : 'user';
 
-        $query = $this->layananService->getFilteredQuery($request, $scope);
+        $query = $this->LayananService->getFilteredQuery($request, $scope);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -58,7 +58,7 @@ class LayananController extends Controller
                 return '<span class="badge ' . $class . '">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                return '<a href="' . route('eoffice.layanan.show', $row->layanan_id) . '" class="btn btn-sm btn-outline-primary">
+                return '<a href="' . route('eoffice.layanan.show', $row->hashid) . '" class="btn btn-sm btn-outline-primary">
                             <i class="ti ti-eye"></i> Detail
                         </a>';
             })
@@ -83,11 +83,9 @@ class LayananController extends Controller
     /**
      * Show dynamic submission form
      */
-    public function create($id)
+    public function create(\App\Models\Eoffice\JenisLayanan $jenisLayanan)
     {
-        $realId       = decryptId($id);
-        $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')->findOrFail($realId);
-        $pageTitle    = 'Pengajuan: ' . $jenisLayanan->nama_layanan;
+        $pageTitle = 'Pengajuan: ' . $jenisLayanan->nama_layanan;
 
         return view('pages.eoffice.layanan.create', compact('pageTitle', 'jenisLayanan'));
     }
@@ -97,15 +95,15 @@ class LayananController extends Controller
      */
     public function store(LayananStoreRequest $request)
     {
-        $validated = $request->validated();
+        $validated    = $request->validated();
         $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')->findOrFail($validated['jenislayanan_id']);
 
-        $data = $request->only(['jenislayanan_id', 'keterangan']);
+        $data          = $request->only(['jenislayanan_id', 'keterangan']);
         $dynamicFields = [];
 
         // Handle dynamic fields from the request
         foreach ($jenisLayanan->isians as $item) {
-            $field = $item->kategoriIsian;
+            $field     = $item->kategoriIsian;
             $fieldName = 'field_' . $field->kategoriisian_id;
 
             if ($request->has($fieldName)) {
@@ -113,8 +111,8 @@ class LayananController extends Controller
 
                 // Handle file upload
                 if ($field->type === 'file' && $request->hasFile($fieldName)) {
-                    $file = $request->file($fieldName);
-                    $path = $file->store('eoffice/requests/' . date('Y/m'), 'public');
+                    $file  = $request->file($fieldName);
+                    $path  = $file->store('eoffice/requests/' . date('Y/m'), 'public');
                     $value = $path;
                 }
 
@@ -123,7 +121,7 @@ class LayananController extends Controller
         }
 
         try {
-            $this->layananService->createLayanan($data, $dynamicFields);
+            $this->LayananService->createLayanan($data, $dynamicFields);
             return jsonSuccess('Pengajuan berhasil dikirim.', route('eoffice.layanan.index'));
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -133,10 +131,9 @@ class LayananController extends Controller
     /**
      * Show detail
      */
-    public function show($id)
+    public function show(\App\Models\Eoffice\Layanan $layanan)
     {
-        $realId  = decryptId($id);
-        $layanan = Layanan::with([
+        $layanan->load([
             'jenisLayanan.isians.kategoriIsian',
             'jenisLayanan.disposisis',
             'jenisLayanan.pics.user',
@@ -145,7 +142,7 @@ class LayananController extends Controller
             'latestStatus.user',
             'diskusi.user',
             'keterlibatan.user',
-        ])->findOrFail($realId);
+        ]);
 
         $pageTitle = 'Detail Pengajuan: ' . $layanan->no_layanan;
 
@@ -197,7 +194,7 @@ class LayananController extends Controller
 
         try {
             $realId = decryptId($id);
-            $this->layananService->updateStatus($realId, $data);
+            $this->LayananService->updateStatus($realId, $data);
             return jsonSuccess('Status berhasil dirubah.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -207,21 +204,20 @@ class LayananController extends Controller
     /**
      * Download PDF with QR Code
      */
-    public function downloadPdf($id)
+    public function downloadPdf(\App\Models\Eoffice\Layanan $layanan)
     {
-        $realId  = decryptId($id);
-        $layanan = Layanan::with([
+        $layanan->load([
             'jenisLayanan.isians.kategoriIsian',
             'jenisLayanan.disposisis',
             'statuses.user',
             'isians.isian',
             'latestStatus.user',
-        ])->findOrFail($realId);
+        ]);
 
         // Generate QR Code base64
         $renderer = new GDLibRenderer(400);
         $writer   = new Writer($renderer);
-        $pngData  = $writer->writeString(route('eoffice.layanan.show', $id));
+        $pngData  = $writer->writeString(route('eoffice.layanan.show', $layanan->hashid));
         $qrcode   = base64_encode($pngData);
 
         $data = [

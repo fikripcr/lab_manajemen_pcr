@@ -5,10 +5,11 @@ use App\Traits\Blameable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HashidBinding;
 
 class RiwayatInpassing extends Model
 {
-    use HasFactory, SoftDeletes, Blameable;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
     
     protected $table      = 'hr_riwayat_inpassing';
     protected $primaryKey = 'riwayatinpassing_id';
@@ -31,7 +32,8 @@ class RiwayatInpassing extends Model
         'gaji_pokok',
         'file_sk',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     public function pegawai()

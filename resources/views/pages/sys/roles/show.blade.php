@@ -25,7 +25,7 @@
 
 @section('content')
     <div class="card-body">
-        <x-sys.flash-message />
+        <x-tabler.flash-message />
 
         <div class="row">
             <div class="col-md-6 mb-3">

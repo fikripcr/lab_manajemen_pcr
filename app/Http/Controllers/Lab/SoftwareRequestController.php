@@ -10,11 +10,11 @@ use Yajra\DataTables\DataTables;
 
 class SoftwareRequestController extends Controller
 {
-    protected $softwareRequestService;
+    protected $SoftwareRequestService;
 
-    public function __construct(SoftwareRequestService $softwareRequestService)
+    public function __construct(SoftwareRequestService $SoftwareRequestService)
     {
-        $this->softwareRequestService = $softwareRequestService;
+        $this->SoftwareRequestService = $SoftwareRequestService;
     }
 
     /**
@@ -27,7 +27,7 @@ class SoftwareRequestController extends Controller
 
     public function paginate(Request $request)
     {
-        $softwareRequests = $this->softwareRequestService->getFilteredQuery($request->all());
+        $softwareRequests = $this->SoftwareRequestService->getFilteredQuery($request->all());
 
         return DataTables::of($softwareRequests)
             ->addIndexColumn()
@@ -77,7 +77,7 @@ class SoftwareRequestController extends Controller
      */
     public function show($id)
     {
-        $softwareRequest = $this->softwareRequestService->getRequestById($id);
+        $softwareRequest = $this->SoftwareRequestService->getRequestById($id);
 
         if (! $softwareRequest) {
             abort(404);
@@ -91,7 +91,7 @@ class SoftwareRequestController extends Controller
      */
     public function edit($id)
     {
-        $softwareRequest = $this->softwareRequestService->getRequestById($id);
+        $softwareRequest = $this->SoftwareRequestService->getRequestById($id);
 
         if (! $softwareRequest) {
             abort(404);
@@ -107,7 +107,7 @@ class SoftwareRequestController extends Controller
     public function update(SoftwareRequestUpdateRequest $request, $id)
     {
         try {
-            $this->softwareRequestService->updateRequest($id, $request->validated());
+            $this->SoftwareRequestService->updateRequest($id, $request->validated());
 
             return jsonSuccess('Status permintaan software berhasil diperbarui.', route('lab.software-requests.index'));
         } catch (\Exception $e) {

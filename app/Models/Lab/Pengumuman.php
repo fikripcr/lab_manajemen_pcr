@@ -8,10 +8,12 @@ use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class Pengumuman extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
+    use HasFactory, SoftDeletes, InteractsWithMedia, Blameable, HashidBinding;
 
     protected $table      = 'lab_pengumuman';
     protected $primaryKey = 'pengumuman_id';
@@ -22,7 +24,10 @@ class Pengumuman extends Model implements HasMedia
         'jenis',
         'penulis_id',
         'is_published',
-        'published_at',
+        'published_at',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

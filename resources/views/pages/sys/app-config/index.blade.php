@@ -3,7 +3,7 @@
 @section('title', 'App Configuration')
 
 @section('header')
-<x-sys.page-header title="App Configuration" pretitle="Others" />
+<x-tabler.page-header title="App Configuration" pretitle="Others" />
 @endsection
 
 @section('content')
@@ -53,8 +53,8 @@
             </div>
 
             <div class="pt-4">
-                <x-sys.button type="submit" class="me-sm-3 me-1" />
-                <x-sys.button type="reset" class="btn-label-secondary" />
+                <x-tabler.button type="submit" class="me-sm-3 me-1" />
+                <x-tabler.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -141,8 +141,8 @@
             </div>
 
             <div class="pt-4">
-                <x-sys.button type="submit" class="me-sm-3 me-1" />
-                <x-sys.button type="reset" class="btn-label-secondary" />
+                <x-tabler.button type="submit" class="me-sm-3 me-1" />
+                <x-tabler.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -183,8 +183,8 @@
             </div>
 
             <div class="pt-4">
-                <x-sys.button type="submit" class="me-sm-3 me-1" />
-                <x-sys.button type="reset" class="btn-label-secondary" />
+                <x-tabler.button type="submit" class="me-sm-3 me-1" />
+                <x-tabler.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -208,8 +208,8 @@
             </div>
 
             <div class="pt-4">
-                <x-sys.button type="submit" class="me-sm-3 me-1" />
-                <x-sys.button type="reset" class="btn-label-secondary" />
+                <x-tabler.button type="submit" class="me-sm-3 me-1" />
+                <x-tabler.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -240,8 +240,8 @@
             </div>
 
             <div class="pt-4">
-                <x-sys.button type="submit" class="me-sm-3 me-1" />
-                <x-sys.button type="reset" class="btn-label-secondary" />
+                <x-tabler.button type="submit" class="me-sm-3 me-1" />
+                <x-tabler.button type="reset" class="btn-label-secondary" />
             </div>
         </form>
 
@@ -253,7 +253,7 @@
                 <p class="text-muted">Clear application cache to refresh configuration and other cached data.</p>
                 <form action="{{ route('app-config.clear-cache') }}" method="POST" class="d-inline">
                     @csrf
-                    <x-sys.button type="submit" text="Clear Cache" class="btn-warning me-2" icon="ti ti-trash" />
+                    <x-tabler.button type="submit" text="Clear Cache" class="btn-warning me-2" icon="ti ti-trash" />
                 </form>
             </div>
 
@@ -262,7 +262,7 @@
                 <p class="text-muted">Optimize application performance by caching configuration, routes, and views.</p>
                 <form action="{{ route('app-config.optimize') }}" method="POST" class="d-inline">
                     @csrf
-                    <x-sys.button type="submit" text="Optimize Application" class="btn-success" icon="ti ti-rocket" />
+                    <x-tabler.button type="submit" text="Optimize Application" class="btn-success" icon="ti ti-rocket" />
                 </form>
             </div>
         </div>

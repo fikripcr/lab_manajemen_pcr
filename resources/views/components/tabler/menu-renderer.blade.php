@@ -174,7 +174,7 @@
                     },
                 ],
             ],
-        },
+        ],
         [
             'type'          => 'dropdown',
             'title'         => 'E-Office',
@@ -247,40 +247,6 @@
             'title' => 'Dashboard',
             'route' => 'sys.dashboard',
             'icon'  => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>',
-        ],
-        [
-            'type'          => 'dropdown',
-            'title'         => 'Monitoring / SPMI',
-            'id'            => 'navbar-pemutu',
-            'icon'          => 'ti ti-checkbox',
-            'active_routes' => ['pemutu.*'],
-            'children'      => [
-                [
-                    'title' => 'Struktur Organisasi',
-                    'route' => 'pemutu.org-units.index',
-                    'active_routes' => ['pemutu.org-units.*'],
-                ],
-                [
-                    'title' => 'Dokumen',
-                    'route' => 'pemutu.dokumens.index',
-                    'active_routes' => ['pemutu.dokumens.*'],
-                ],
-                [
-                    'title' => 'Personel',
-                    'route' => 'pemutu.personils.index',
-                    'active_routes' => ['pemutu.personils.*'],
-                ],
-                [
-                    'title' => 'Label & Kategori',
-                    'route' => 'pemutu.labels.index',
-                    'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
-                ],
-                [
-                    'title' => 'Indikator',
-                    'route' => 'pemutu.indikators.index',
-                    'active_routes' => ['pemutu.indikators.*'],
-                ],
-            ],
         ],
         [
             'type'  => 'header',

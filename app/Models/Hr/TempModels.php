@@ -4,10 +4,12 @@ namespace App\Models\Hr;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class Keluarga extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
     protected $table      = 'hr_keluarga';
     protected $primaryKey = 'keluarga_id';
     protected $guarded    = ['keluarga_id'];

@@ -9,11 +9,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ApprovalController extends Controller
 {
-    protected $pegawaiService;
+    protected $PegawaiService;
 
-    public function __construct(PegawaiService $pegawaiService)
+    public function __construct(PegawaiService $PegawaiService)
     {
-        $this->pegawaiService = $pegawaiService;
+        $this->PegawaiService = $PegawaiService;
     }
 
     public function index(Request $request)
@@ -59,7 +59,7 @@ class ApprovalController extends Controller
     public function approve($id)
     {
         try {
-            $this->pegawaiService->approveRequest($id);
+            $this->PegawaiService->approveRequest($id);
             return jsonSuccess('Pengajuan berhasil didsetujui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -70,7 +70,7 @@ class ApprovalController extends Controller
     {
         try {
             $reason = $request->input('reason', 'Ditolak tanpa keterangan');
-            $this->pegawaiService->rejectRequest($id, $reason);
+            $this->PegawaiService->rejectRequest($id, $reason);
 
             return jsonSuccess('Pengajuan berhasil ditolak.');
         } catch (\Exception $e) {

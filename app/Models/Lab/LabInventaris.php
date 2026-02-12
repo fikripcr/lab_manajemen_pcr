@@ -4,10 +4,12 @@ namespace App\Models\Lab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class LabInventaris extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_inventaris_penempatan';
     protected $primaryKey = 'id';
@@ -20,7 +22,10 @@ class LabInventaris extends Model
         'tanggal_penempatan',
         'tanggal_penghapusan',
         'status',
-        'keterangan',
+        'keterangan',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

@@ -11,11 +11,11 @@ use Yajra\DataTables\DataTables;
 
 class DokumenController extends Controller
 {
-    protected $dokumenService;
+    protected $DokumenService;
 
-    public function __construct(DokumenService $dokumenService)
+    public function __construct(DokumenService $DokumenService)
     {
-        $this->dokumenService = $dokumenService;
+        $this->DokumenService = $DokumenService;
     }
 
     public function index(Request $request)
@@ -38,7 +38,7 @@ class DokumenController extends Controller
 
         $dokumentByJenis = [];
         foreach ($jenisTypes as $jenis) {
-            $dokumentByJenis[$jenis] = $this->dokumenService->getDokumenByJenis($jenis, $request->periode);
+            $dokumentByJenis[$jenis] = $this->DokumenService->getDokumenByJenis($jenis, $request->periode);
         }
 
         return view('pages.pemutu.dokumens.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
@@ -49,13 +49,13 @@ class DokumenController extends Controller
         $pageTitle = 'Tambah Dokumen';
         $activeTab = $request->query('tabs', 'kebijakan');
 
-        $dokumens = $this->dokumenService->getHierarchicalDokumens();
+        $dokumens = $this->DokumenService->getHierarchicalDokumens();
 
         $parent       = null;
         $parentDokSub = null;
 
         if ($request->has('parent_id')) {
-            $parent = $this->dokumenService->getDokumenById($request->parent_id);
+            $parent = $this->DokumenService->getDokumenById($request->parent_id);
             if ($parent) {
                 $activeTab = $this->getTabByJenis($parent->jenis);
             }
@@ -87,7 +87,7 @@ class DokumenController extends Controller
     {
         try {
             $data    = $request->validated();
-            $dokumen = $this->dokumenService->createDokumen($data);
+            $dokumen = $this->DokumenService->createDokumen($data);
 
             $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
             if ($request->filled('parent_doksub_id')) {
@@ -102,7 +102,7 @@ class DokumenController extends Controller
 
     public function show($id)
     {
-        $dokumen = $this->dokumenService->getDokumenById($id);
+        $dokumen = $this->DokumenService->getDokumenById($id);
         if (! $dokumen) {
             abort(404);
         }
@@ -113,7 +113,7 @@ class DokumenController extends Controller
 
     public function showRenopWithIndicators($id)
     {
-        $dokumen = $this->dokumenService->getDokumenById($id);
+        $dokumen = $this->DokumenService->getDokumenById($id);
         if (! $dokumen) {
             abort(404);
         }
@@ -130,12 +130,12 @@ class DokumenController extends Controller
 
     public function edit($id)
     {
-        $dokumen = $this->dokumenService->getDokumenById($id);
+        $dokumen = $this->DokumenService->getDokumenById($id);
         if (! $dokumen) {
             abort(404);
         }
 
-        $allDocs  = $this->dokumenService->getHierarchicalDokumens();
+        $allDocs  = $this->DokumenService->getHierarchicalDokumens();
         $dokumens = $allDocs->filter(function ($d) use ($id) {
             return $d->dok_id != $id;
         });
@@ -153,9 +153,9 @@ class DokumenController extends Controller
     public function update(DokumenRequest $request, $id)
     {
         try {
-            $this->dokumenService->updateDokumen($id, $request->validated());
+            $this->DokumenService->updateDokumen($id, $request->validated());
 
-            $dokumen     = $this->dokumenService->getDokumenById($id);
+            $dokumen     = $this->DokumenService->getDokumenById($id);
             $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $id . '&type=dokumen';
 
             return jsonSuccess('Dokumen berhasil diperbarui.', $redirectUrl);
@@ -167,10 +167,10 @@ class DokumenController extends Controller
     public function destroy($id)
     {
         try {
-            $dokumen     = $this->dokumenService->getDokumenById($id);
+            $dokumen     = $this->DokumenService->getDokumenById($id);
             $redirectOpt = $dokumen ? $this->getIndexUrlByJenis($dokumen->jenis) : route('pemutu.dokumens.index');
 
-            $this->dokumenService->deleteDokumen($id);
+            $this->DokumenService->deleteDokumen($id);
             return jsonSuccess('Dokumen berhasil dihapus.', $redirectOpt);
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -181,7 +181,7 @@ class DokumenController extends Controller
     {
         try {
             $hierarchy = $request->input('hierarchy');
-            $this->dokumenService->reorderDokumens($hierarchy);
+            $this->DokumenService->reorderDokumens($hierarchy);
             return jsonSuccess('Urutan berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -191,7 +191,7 @@ class DokumenController extends Controller
     public function childrenData(Request $request, $id)
     {
         try {
-            $dokumen = $this->dokumenService->getDokumenById($id);
+            $dokumen = $this->DokumenService->getDokumenById($id);
             if (! $dokumen) {
                 return jsonError('Not found', 404);
             }
@@ -232,7 +232,7 @@ class DokumenController extends Controller
                     ->rawColumns(['judul', 'action'])
                     ->make(true);
             } else {
-                $query = $this->dokumenService->getChildrenQuery($id);
+                $query = $this->DokumenService->getChildrenQuery($id);
                 return DataTables::of($query)
                     ->addIndexColumn()
                     ->addColumn('judul', function ($row) {

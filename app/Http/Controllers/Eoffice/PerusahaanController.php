@@ -10,11 +10,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PerusahaanController extends Controller
 {
-    protected $service;
+    protected $PerusahaanService;
 
-    public function __construct(PerusahaanService $service)
+    public function __construct(PerusahaanService $PerusahaanService)
     {
-        $this->service = $service;
+        $this->PerusahaanService = $PerusahaanService;
     }
 
     public function index()
@@ -26,7 +26,7 @@ class PerusahaanController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->service->getPaginateData($request);
+        $query = $this->PerusahaanService->getPaginateData($request);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -34,9 +34,9 @@ class PerusahaanController extends Controller
                 return $row->kategori->nama_kategori ?? '-';
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('eoffice.perusahaan.edit', $row->perusahaan_id);
-                $deleteUrl = route('eoffice.perusahaan.destroy', $row->perusahaan_id);
-                $showUrl   = route('eoffice.perusahaan.show', $row->perusahaan_id);
+                $editUrl   = route('eoffice.perusahaan.edit', $row->hashid);
+                $deleteUrl = route('eoffice.perusahaan.destroy', $row->hashid);
+                $showUrl   = route('eoffice.perusahaan.show', $row->hashid);
 
                 return '
                     <div class="btn-group btn-group-sm">
@@ -64,41 +64,39 @@ class PerusahaanController extends Controller
     public function store(PerusahaanRequest $request)
     {
         try {
-            $this->service->createPerusahaan($request->validated());
+            $this->PerusahaanService->createPerusahaan($request->validated());
             return jsonSuccess('Perusahaan berhasil ditambahkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function show($id)
+    public function show(\App\Models\Eoffice\Perusahaan $perusahaan)
     {
-        $perusahaan = $this->service->getById($id);
-        $pageTitle  = 'Detail Perusahaan: ' . $perusahaan->nama_perusahaan;
+        $pageTitle = 'Detail Perusahaan: ' . $perusahaan->nama_perusahaan;
         return view('pages.eoffice.perusahaan.show', compact('perusahaan', 'pageTitle'));
     }
 
-    public function edit($id)
+    public function edit(\App\Models\Eoffice\Perusahaan $perusahaan)
     {
-        $perusahaan = $this->service->getById($id);
         $categories = KategoriPerusahaan::all();
         return view('pages.eoffice.perusahaan.edit', compact('perusahaan', 'categories'));
     }
 
-    public function update(PerusahaanRequest $request, $id)
+    public function update(PerusahaanRequest $request, \App\Models\Eoffice\Perusahaan $perusahaan)
     {
         try {
-            $this->service->updatePerusahaan($id, $request->validated());
+            $this->PerusahaanService->updatePerusahaan($perusahaan->perusahaan_id, $request->validated());
             return jsonSuccess('Perusahaan berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(\App\Models\Eoffice\Perusahaan $perusahaan)
     {
         try {
-            $this->service->deletePerusahaan($id);
+            $this->PerusahaanService->deletePerusahaan($perusahaan->perusahaan_id);
             return jsonSuccess('Perusahaan berhasil dihapus.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

@@ -11,11 +11,11 @@ use Yajra\DataTables\DataTables;
 
 class IndikatorController extends Controller
 {
-    protected $indikatorService;
+    protected $IndikatorService;
 
-    public function __construct(IndikatorService $indikatorService)
+    public function __construct(IndikatorService $IndikatorService)
     {
-        $this->indikatorService = $indikatorService;
+        $this->IndikatorService = $IndikatorService;
     }
 
     public function index()
@@ -29,7 +29,7 @@ class IndikatorController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->indikatorService->getFilteredQuery($request->all());
+        $query = $this->IndikatorService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -137,7 +137,7 @@ class IndikatorController extends Controller
                 $data['kpi_assignments'] = $kpiData;
             }
 
-            $this->indikatorService->createIndikator($data);
+            $this->IndikatorService->createIndikator($data);
 
             $redirectUrl = route('pemutu.indikators.index');
             if ($request->has('parent_dok_id')) {
@@ -156,7 +156,7 @@ class IndikatorController extends Controller
 
     public function show($id)
     {
-        $indikator = $this->indikatorService->getIndikatorById($id);
+        $indikator = $this->IndikatorService->getIndikatorById($id);
         if (! $indikator) {
             abort(404);
         }
@@ -166,7 +166,7 @@ class IndikatorController extends Controller
 
     public function edit($id)
     {
-        $indikator = $this->indikatorService->getIndikatorById($id);
+        $indikator = $this->IndikatorService->getIndikatorById($id);
         if (! $indikator) {
             abort(404);
         }
@@ -221,7 +221,7 @@ class IndikatorController extends Controller
 
             // doksub_ids is already in $data from validated()
 
-            $this->indikatorService->updateIndikator($id, $data);
+            $this->IndikatorService->updateIndikator($id, $data);
 
             $redirectUrl = route('pemutu.indikators.show', $id);
 
@@ -238,7 +238,7 @@ class IndikatorController extends Controller
     public function destroy($id)
     {
         try {
-            $this->indikatorService->deleteIndikator($id);
+            $this->IndikatorService->deleteIndikator($id);
 
             return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikators.index'));
         } catch (\Exception $e) {

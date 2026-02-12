@@ -9,11 +9,11 @@ use Yajra\DataTables\DataTables;
 
 class MataKuliahController extends Controller
 {
-    protected $mataKuliahService;
+    protected $MataKuliahService;
 
-    public function __construct(MataKuliahService $mataKuliahService)
+    public function __construct(MataKuliahService $MataKuliahService)
     {
-        $this->mataKuliahService = $mataKuliahService;
+        $this->MataKuliahService = $MataKuliahService;
     }
 
     /**
@@ -29,7 +29,7 @@ class MataKuliahController extends Controller
      */
     public function paginate(Request $request)
     {
-        $mataKuliahs = $this->mataKuliahService->getFilteredQuery($request->all());
+        $mataKuliahs = $this->MataKuliahService->getFilteredQuery($request->all());
 
         return DataTables::of($mataKuliahs)
             ->addIndexColumn()
@@ -71,7 +71,7 @@ class MataKuliahController extends Controller
     public function store(MataKuliahRequest $request)
     {
         try {
-            $this->mataKuliahService->createMataKuliah($request->validated());
+            $this->MataKuliahService->createMataKuliah($request->validated());
 
             return jsonSuccess('Mata Kuliah berhasil dibuat.', route('lab.mata-kuliah.index'));
         } catch (\Exception $e) {
@@ -85,7 +85,7 @@ class MataKuliahController extends Controller
     public function show($id)
     {
         $realId     = decryptId($id);
-        $mataKuliah = $this->mataKuliahService->getMataKuliahById($realId);
+        $mataKuliah = $this->MataKuliahService->getMataKuliahById($realId);
 
         if (! $mataKuliah) {
             abort(404);
@@ -100,7 +100,7 @@ class MataKuliahController extends Controller
     public function edit($id)
     {
         $realId     = decryptId($id);
-        $mataKuliah = $this->mataKuliahService->getMataKuliahById($realId);
+        $mataKuliah = $this->MataKuliahService->getMataKuliahById($realId);
 
         if (! $mataKuliah) {
             abort(404);
@@ -117,7 +117,7 @@ class MataKuliahController extends Controller
         $realId = decryptId($id);
 
         try {
-            $this->mataKuliahService->updateMataKuliah($realId, $request->validated());
+            $this->MataKuliahService->updateMataKuliah($realId, $request->validated());
 
             return jsonSuccess('Mata Kuliah berhasil diperbarui.', route('lab.mata-kuliah.index'));
         } catch (\Exception $e) {
@@ -132,7 +132,7 @@ class MataKuliahController extends Controller
     {
         try {
             $realId = decryptId($id);
-            $this->mataKuliahService->deleteMataKuliah($realId);
+            $this->MataKuliahService->deleteMataKuliah($realId);
 
             return jsonSuccess('Mata Kuliah berhasil dihapus.', route('lab.mata-kuliah.index'));
 

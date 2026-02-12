@@ -11,11 +11,11 @@ use Yajra\DataTables\DataTables;
 
 class InventarisController extends Controller
 {
-    protected $inventarisService;
+    protected $InventarisService;
 
-    public function __construct(InventarisService $inventarisService)
+    public function __construct(InventarisService $InventarisService)
     {
-        $this->inventarisService = $inventarisService;
+        $this->InventarisService = $InventarisService;
     }
 
     /**
@@ -32,7 +32,7 @@ class InventarisController extends Controller
     public function paginate(Request $request)
     {
         // Use Service Query
-        $inventaris = $this->inventarisService->getFilteredQuery($request->all());
+        $inventaris = $this->InventarisService->getFilteredQuery($request->all());
 
         return DataTables::of($inventaris)
             ->addIndexColumn()
@@ -92,7 +92,7 @@ class InventarisController extends Controller
     public function store(InventarisRequest $request)
     {
         try {
-            $this->inventarisService->createInventaris($request->validated());
+            $this->InventarisService->createInventaris($request->validated());
 
             return jsonSuccess('Inventaris berhasil dibuat.', route('lab.inventaris.index'));
         } catch (\Exception $e) {
@@ -107,7 +107,7 @@ class InventarisController extends Controller
     {
         $realId = decryptId($id);
 
-        $inventory = $this->inventarisService->getInventarisById($realId); // Uses Service
+        $inventory = $this->InventarisService->getInventarisById($realId); // Uses Service
         if (! $inventory) {
             abort(404);
         }
@@ -122,7 +122,7 @@ class InventarisController extends Controller
     {
         $realId = decryptId($id);
 
-        $inventory = $this->inventarisService->getInventarisById($realId);
+        $inventory = $this->InventarisService->getInventarisById($realId);
         if (! $inventory) {
             abort(404);
         }
@@ -139,7 +139,7 @@ class InventarisController extends Controller
         $realId = decryptId($id);
 
         try {
-            $this->inventarisService->updateInventaris($realId, $request->validated());
+            $this->InventarisService->updateInventaris($realId, $request->validated());
 
             return jsonSuccess('Inventaris berhasil diperbarui.', route('lab.inventaris.index'));
         } catch (\Exception $e) {
@@ -154,7 +154,7 @@ class InventarisController extends Controller
     {
         try {
             $realId = decryptId($id);
-            $this->inventarisService->deleteInventaris($realId);
+            $this->InventarisService->deleteInventaris($realId);
 
             return jsonSuccess('Inventaris berhasil dihapus.', route('lab.inventaris.index'));
 
@@ -176,7 +176,7 @@ class InventarisController extends Controller
         ];
         $columns = $request->get('columns', ['id', 'nama_alat', 'jenis_alat', 'kondisi_terakhir', 'tanggal_pengecekan', 'lab_name']);
 
-        $export = $this->inventarisService->exportInventaris($filters, $columns);
+        $export = $this->InventarisService->exportInventaris($filters, $columns);
 
         return Excel::download($export, 'inventory_' . date('Y-m-d_H-i-s') . '.xlsx');
     }

@@ -6,16 +6,15 @@ use App\Http\Requests\Pemutu\PersonilImportRequest;
 use App\Http\Requests\Pemutu\PersonilRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\PersonilService; // Import Service
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class PersonilController extends Controller
 {
-    protected $personilService;
+    protected $PersonilService;
 
-    public function __construct(PersonilService $personilService)
+    public function __construct(PersonilService $PersonilService)
     {
-        $this->personilService = $personilService;
+        $this->PersonilService = $PersonilService;
     }
 
     public function index()
@@ -25,7 +24,7 @@ class PersonilController extends Controller
 
     public function paginate()
     {
-        $query = $this->personilService->getFilteredQuery();
+        $query = $this->PersonilService->getFilteredQuery();
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -55,7 +54,7 @@ class PersonilController extends Controller
     public function store(PersonilRequest $request)
     {
         try {
-            $this->personilService->createPersonil($request->validated());
+            $this->PersonilService->createPersonil($request->validated());
 
             return jsonSuccess('Personil created successfully.');
         } catch (\Exception $e) {
@@ -65,7 +64,7 @@ class PersonilController extends Controller
 
     public function edit($id)
     {
-        $personil = $this->personilService->getPersonilById($id);
+        $personil = $this->PersonilService->getPersonilById($id);
         if (! $personil) {
             abort(404);
         }
@@ -77,7 +76,7 @@ class PersonilController extends Controller
     public function update(PersonilRequest $request, $id)
     {
         try {
-            $this->personilService->updatePersonil($id, $request->validated());
+            $this->PersonilService->updatePersonil($id, $request->validated());
 
             return jsonSuccess('Personil updated successfully.');
         } catch (\Exception $e) {
@@ -88,7 +87,7 @@ class PersonilController extends Controller
     public function destroy($id)
     {
         try {
-            $this->personilService->deletePersonil($id);
+            $this->PersonilService->deletePersonil($id);
 
             return jsonSuccess('Personil deleted successfully.');
         } catch (\Exception $e) {
@@ -103,7 +102,7 @@ class PersonilController extends Controller
         }
 
         try {
-            $this->personilService->importPersonils($request->file('file'));
+            $this->PersonilService->importPersonils($request->file('file'));
 
             return jsonSuccess('Personils imported successfully.', route('pemutu.personils.index'));
         } catch (\Exception $e) {

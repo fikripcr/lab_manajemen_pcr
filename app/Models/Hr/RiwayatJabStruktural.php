@@ -25,7 +25,8 @@ class RiwayatJabStruktural extends Model
         'tgl_pengesahan',
         'keterangan',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

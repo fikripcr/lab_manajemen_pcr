@@ -4,27 +4,26 @@ namespace App\Http\Controllers\Eoffice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\JenisLayananPeriodeStoreRequest;
 use App\Services\Eoffice\JenisLayananPeriodeService;
-use Illuminate\Http\Request;
 
 class JenisLayananPeriodeController extends Controller
 {
-    protected $service;
+    protected $JenisLayananPeriodeService;
 
-    public function __construct(JenisLayananPeriodeService $service)
+    public function __construct(JenisLayananPeriodeService $JenisLayananPeriodeService)
     {
-        $this->service = $service;
+        $this->JenisLayananPeriodeService = $JenisLayananPeriodeService;
     }
 
     /**
      * Store a new periode for a Jenis Layanan.
      */
-    public function store(JenisLayananPeriodeStoreRequest $request, $jenislayananId)
+    public function store(JenisLayananPeriodeStoreRequest $request, \App\Models\Eoffice\JenisLayanan $jenis_layanan)
     {
-        $validated = $request->validated();
-        $validated['jenislayanan_id'] = $jenislayananId;
+        $validated                    = $request->validated();
+        $validated['jenislayanan_id'] = $jenis_layanan->jenislayanan_id;
 
         try {
-            $this->service->createPeriode($validated);
+            $this->JenisLayananPeriodeService->createPeriode($validated);
             return jsonSuccess('Periode berhasil dibuat.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -34,12 +33,12 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Update an existing periode.
      */
-    public function update(JenisLayananPeriodeStoreRequest $request, $id)
+    public function update(JenisLayananPeriodeStoreRequest $request, \App\Models\Eoffice\JenisLayananPeriode $periode)
     {
         $validated = $request->validated();
 
         try {
-            $this->service->update($id, $validated);
+            $this->JenisLayananPeriodeService->update($periode->jlperiode_id, $validated);
             return jsonSuccess('Periode berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -49,10 +48,10 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Delete a periode.
      */
-    public function destroy($id)
+    public function destroy(\App\Models\Eoffice\JenisLayananPeriode $periode)
     {
         try {
-            $this->service->destroy($id);
+            $this->JenisLayananPeriodeService->destroy($periode->jlperiode_id);
             return jsonSuccess('Periode berhasil dihapus.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -62,9 +61,9 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Get periode data for AJAX.
      */
-    public function data($jenislayananId)
+    public function data(\App\Models\Eoffice\JenisLayanan $jenis_layanan)
     {
-        $data = $this->service->getByJenisLayanan($jenislayananId);
+        $data = $this->JenisLayananPeriodeService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
 
         // Format dates for display
         $formatted = $data->map(function ($item) {
@@ -85,9 +84,8 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Get a single periode (for edit form pre-fill).
      */
-    public function show($id)
+    public function show(\App\Models\Eoffice\JenisLayananPeriode $periode)
     {
-        $periode = $this->service->getById($id);
         return jsonSuccess('Data retrieved', null, [
             'jlperiode_id' => $periode->jlperiode_id,
             'tgl_mulai'    => $periode->tgl_mulai->format('Y-m-d'),

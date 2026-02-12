@@ -3,7 +3,7 @@
 @section('title', 'Activity Log')
 
 @section('header')
-<x-sys.page-header title="Activity Log" pretitle="System Log" />
+<x-tabler.page-header title="Activity Log" pretitle="System Log" />
 @endsection
 
 @section('content')
@@ -13,17 +13,17 @@
         <div class="d-flex flex-wrap justify-content-between">
             <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
                 <div>
-                    <x-sys.datatable-page-length :dataTableId="'activity-log-table'" />
+                    <x-tabler.datatable-page-length :dataTableId="'activity-log-table'" />
                 </div>
                 <div>
-                    <x-sys.datatable-search :dataTableId="'activity-log-table'" />
+                    <x-tabler.datatable-search :dataTableId="'activity-log-table'" />
                 </div>
             </div>
         </div>
     </div>
 
     <div class="card-body p-0">
-        <x-sys.datatable
+        <x-tabler.datatable
             id="activity-log-table"
             route="{{ route('activity-log.data') }}"
             :columns="[
@@ -83,7 +83,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <x-sys.button type="cancel" data-bs-dismiss="modal" class="btn-secondary" />
+                <x-tabler.button type="cancel" data-bs-dismiss="modal" class="btn-secondary" />
             </div>
         </div>
     </div>

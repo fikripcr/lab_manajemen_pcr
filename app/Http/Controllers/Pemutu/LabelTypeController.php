@@ -7,11 +7,11 @@ use App\Services\Pemutu\LabelService;
 
 class LabelTypeController extends Controller
 {
-    protected $labelService;
+    protected $LabelService;
 
-    public function __construct(LabelService $labelService)
+    public function __construct(LabelService $LabelService)
     {
-        $this->labelService = $labelService;
+        $this->LabelService = $LabelService;
     }
 
     public function create()
@@ -22,7 +22,7 @@ class LabelTypeController extends Controller
     public function store(LabelTypeRequest $request)
     {
         try {
-            $this->labelService->createLabelType($request->validated());
+            $this->LabelService->createLabelType($request->validated());
 
             return jsonSuccess('Label Type created successfully.', route('pemutu.labels.index'));
         } catch (\Exception $e) {
@@ -32,7 +32,7 @@ class LabelTypeController extends Controller
 
     public function edit($id)
     {
-        $labelType = $this->labelService->getLabelTypeById($id);
+        $labelType = $this->LabelService->getLabelTypeById($id);
         if (! $labelType) {
             abort(404);
         }
@@ -43,7 +43,7 @@ class LabelTypeController extends Controller
     public function update(LabelTypeRequest $request, $id)
     {
         try {
-            $this->labelService->updateLabelType($id, $request->validated());
+            $this->LabelService->updateLabelType($id, $request->validated());
 
             return jsonSuccess('Label Type updated successfully.', route('pemutu.labels.index'));
         } catch (\Exception $e) {
@@ -54,7 +54,7 @@ class LabelTypeController extends Controller
     public function destroy($id)
     {
         try {
-            $this->labelService->deleteLabelType($id);
+            $this->LabelService->deleteLabelType($id);
 
             return jsonSuccess('Label Type deleted successfully.', route('pemutu.labels.index'));
         } catch (\Exception $e) {

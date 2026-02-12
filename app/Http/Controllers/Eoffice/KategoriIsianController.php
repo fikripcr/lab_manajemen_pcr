@@ -9,11 +9,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KategoriIsianController extends Controller
 {
-    protected $service;
+    protected $KategoriIsianService;
 
-    public function __construct(KategoriIsianService $service)
+    public function __construct(KategoriIsianService $KategoriIsianService)
     {
-        $this->service = $service;
+        $this->KategoriIsianService = $KategoriIsianService;
     }
 
     public function index()
@@ -24,7 +24,7 @@ class KategoriIsianController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->service->getPaginateData($request);
+        $query = $this->KategoriIsianService->getPaginateData($request);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -32,8 +32,8 @@ class KategoriIsianController extends Controller
                 return ucwords(str_replace('_', ' ', $row->type));
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('eoffice.kategori-isian.edit', $row->kategoriisian_id);
-                $deleteUrl = route('eoffice.kategori-isian.destroy', $row->kategoriisian_id);
+                $editUrl   = route('eoffice.kategori-isian.edit', $row->hashid);
+                $deleteUrl = route('eoffice.kategori-isian.destroy', $row->hashid);
 
                 return '
                     <div class="btn-group btn-group-sm">
@@ -57,33 +57,33 @@ class KategoriIsianController extends Controller
     public function store(KategoriIsianRequest $request)
     {
         try {
-            $this->service->createKategori($request->validated());
+            $this->KategoriIsianService->createKategori($request->validated());
             return jsonSuccess('Isian berhasil ditambahkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function edit($id)
+    public function edit(\App\Models\Eoffice\KategoriIsian $kategori_isian)
     {
-        $kategori = $this->service->getById($id);
+        $kategori = $kategori_isian;
         return view('pages.eoffice.kategori_isian.edit', compact('kategori'));
     }
 
-    public function update(KategoriIsianRequest $request, $id)
+    public function update(KategoriIsianRequest $request, \App\Models\Eoffice\KategoriIsian $kategori_isian)
     {
         try {
-            $this->service->updateKategori($id, $request->validated());
+            $this->KategoriIsianService->updateKategori($kategori_isian->kategoriisian_id, $request->validated());
             return jsonSuccess('Isian berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(\App\Models\Eoffice\KategoriIsian $kategori_isian)
     {
         try {
-            $this->service->deleteKategori($id);
+            $this->KategoriIsianService->deleteKategori($kategori_isian->kategoriisian_id);
             return jsonSuccess('Isian berhasil dihapus.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

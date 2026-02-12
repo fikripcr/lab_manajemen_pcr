@@ -5,9 +5,13 @@ namespace App\Models\Sys;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class Role extends SpatieRole implements \Spatie\Searchable\Searchable
 {
+    use SoftDeletes, Blameable, HashidBinding;
     protected $table = 'sys_roles';
 
     /**

@@ -7,11 +7,11 @@ use App\Services\Hr\PegawaiService;
 
 class RiwayatJabFungsionalController extends Controller
 {
-    protected $pegawaiService;
+    protected $PegawaiService;
 
-    public function __construct(PegawaiService $pegawaiService)
+    public function __construct(PegawaiService $PegawaiService)
     {
-        $this->pegawaiService = $pegawaiService;
+        $this->PegawaiService = $PegawaiService;
     }
 
     public function index()
@@ -28,7 +28,7 @@ class RiwayatJabFungsionalController extends Controller
     public function store(\App\Http\Requests\Hr\RiwayatJabFungsionalRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->pegawaiService->requestChange($pegawai, \App\Models\Hr\RiwayatJabFungsional::class, $request->validated(), 'latest_riwayatjabfungsional_id');
+            $this->PegawaiService->requestChange($pegawai, \App\Models\Hr\RiwayatJabFungsional::class, $request->validated(), 'latest_riwayatjabfungsional_id');
             return jsonSuccess('Perubahan Jabatan Fungsional berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

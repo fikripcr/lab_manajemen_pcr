@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 
 class PresensiController extends Controller
 {
-    protected $service;
+    protected $PresensiService;
 
-    public function __construct(PresensiService $service)
+    public function __construct(PresensiService $PresensiService)
     {
-        $this->service = $service;
+        $this->PresensiService = $PresensiService;
     }
 
     public function index()
@@ -26,7 +26,7 @@ class PresensiController extends Controller
         try {
             $data = $request->validated();
 
-            $result = $this->service->checkIn($data);
+            $result = $this->PresensiService->checkIn($data);
 
             return response()->json([
                 'success' => true,
@@ -46,7 +46,7 @@ class PresensiController extends Controller
         try {
             $data = $request->validated();
 
-            $result = $this->service->checkOut($data);
+            $result = $this->PresensiService->checkOut($data);
 
             return response()->json([
                 'success' => true,
@@ -69,7 +69,7 @@ class PresensiController extends Controller
                 'longitude' => 'required|numeric',
             ]);
 
-            $location = $this->service->getLocationFromCoordinates($data['latitude'], $data['longitude']);
+            $location = $this->PresensiService->getLocationFromCoordinates($data['latitude'], $data['longitude']);
 
             return response()->json([
                 'success' => true,
@@ -90,7 +90,7 @@ class PresensiController extends Controller
 
     public function getSettings()
     {
-        $settings = $this->service->getPresensiSettings();
+        $settings = $this->PresensiService->getPresensiSettings();
         return response()->json([
             'success'  => true,
             'settings' => $settings,
@@ -110,7 +110,7 @@ class PresensiController extends Controller
             // Handle checkbox properly
             $data['is_active'] = $request->has('is_active');
 
-            $this->service->updateSettings($data);
+            $this->PresensiService->updateSettings($data);
 
             return response()->json([
                 'success' => true,
@@ -137,7 +137,7 @@ class PresensiController extends Controller
 
     public function historyData(Request $request)
     {
-        $data = $this->service->getPresensiHistory($request->all());
+        $data = $this->PresensiService->getPresensiHistory($request->all());
         return response()->json($data);
     }
 
@@ -150,26 +150,26 @@ class PresensiController extends Controller
     {
         try {
             $request->validate([
-                'photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'photo'         => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'face_encoding' => 'nullable|string',
             ]);
 
-            $user = auth()->user();
+            $user    = auth()->user();
             $pegawai = \App\Models\Hr\Pegawai::where('user_id', $user->id)->first();
-            
-            if (!$pegawai) {
+
+            if (! $pegawai) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data pegawai tidak ditemukan'
+                    'message' => 'Data pegawai tidak ditemukan',
                 ], 404);
             }
 
             // Handle photo upload
             if ($request->hasFile('photo')) {
-                $photo = $request->file('photo');
+                $photo     = $request->file('photo');
                 $photoName = 'pegawai_' . $pegawai->pegawai_id . '_' . time() . '.' . $photo->getClientOriginalExtension();
                 $photoPath = $photo->storeAs('pegawai/photos', $photoName, 'public');
-                
+
                 // Update photo path
                 $pegawai->photo = $photoPath;
             }
@@ -194,15 +194,15 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Foto berhasil diupload!',
-                'data' => [
-                    'photo_path' => $pegawai->photo,
-                    'has_face_encoding' => !empty($pegawai->face_encoding)
-                ]
+                'data'    => [
+                    'photo_path'        => $pegawai->photo,
+                    'has_face_encoding' => ! empty($pegawai->face_encoding),
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
@@ -228,24 +228,24 @@ class PresensiController extends Controller
             0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
             0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
             0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
-            0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8
+            0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
         ];
     }
 
     public function getEmployeeFaceData()
     {
         try {
-            $user = auth()->user();
-            $faceData = $this->service->getEmployeeFaceData($user->id);
-            
+            $user     = auth()->user();
+            $faceData = $this->PresensiService->getEmployeeFaceData($user->id);
+
             return response()->json([
-                'success' => true,
-                'faceData' => $faceData
+                'success'  => true,
+                'faceData' => $faceData,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }

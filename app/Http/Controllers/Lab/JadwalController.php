@@ -13,11 +13,11 @@ use Yajra\DataTables\DataTables;
 
 class JadwalController extends Controller
 {
-    protected $jadwalService;
+    protected $JadwalService;
 
-    public function __construct(JadwalService $jadwalService)
+    public function __construct(JadwalService $JadwalService)
     {
-        $this->jadwalService = $jadwalService;
+        $this->JadwalService = $JadwalService;
     }
 
     /**
@@ -34,7 +34,7 @@ class JadwalController extends Controller
     public function paginate(Request $request)
     {
         // Use Service Query
-        $jadwals = $this->jadwalService->getFilteredQuery($request->all());
+        $jadwals = $this->JadwalService->getFilteredQuery($request->all());
 
         return DataTables::of($jadwals)
             ->addIndexColumn()
@@ -117,7 +117,7 @@ class JadwalController extends Controller
     public function store(JadwalRequest $request)
     {
         try {
-            $this->jadwalService->createJadwal($request->validated());
+            $this->JadwalService->createJadwal($request->validated());
 
             return jsonSuccess('Jadwal berhasil dibuat.', route('lab.jadwal.index'));
         } catch (\Exception $e) {
@@ -132,7 +132,7 @@ class JadwalController extends Controller
     {
         $realId = decryptId($id);
 
-        $jadwal = $this->jadwalService->getJadwalById($realId);
+        $jadwal = $this->JadwalService->getJadwalById($realId);
         if (! $jadwal) {
             abort(404);
         }
@@ -147,7 +147,7 @@ class JadwalController extends Controller
     {
         $realId = decryptId($id);
 
-        $jadwal = $this->jadwalService->getJadwalById($realId); // Use Service
+        $jadwal = $this->JadwalService->getJadwalById($realId); // Use Service
         if (! $jadwal) {
             abort(404);
         }
@@ -170,7 +170,7 @@ class JadwalController extends Controller
         $realId = decryptId($id);
 
         try {
-            $this->jadwalService->updateJadwal($realId, $request->validated());
+            $this->JadwalService->updateJadwal($realId, $request->validated());
 
             return jsonSuccess('Jadwal berhasil diperbarui.', route('lab.jadwal.index'));
         } catch (\Exception $e) {
@@ -185,7 +185,7 @@ class JadwalController extends Controller
     {
         try {
             $realId = decryptId($id);
-            $this->jadwalService->deleteJadwal($realId);
+            $this->JadwalService->deleteJadwal($realId);
 
             return jsonSuccess('Jadwal berhasil dihapus.', route('lab.jadwal.index'));
 
@@ -211,7 +211,7 @@ class JadwalController extends Controller
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
         try {
-            $this->jadwalService->importJadwal($request->file('file'));
+            $this->JadwalService->importJadwal($request->file('file'));
 
             return jsonSuccess('Jadwal berhasil diimpor.', route('lab.jadwal.index'));
         } catch (\Exception $e) {

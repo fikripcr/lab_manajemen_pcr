@@ -42,14 +42,10 @@ class Pegawai extends Model
         'deleted_by',
     ];
 
-    
     public function getEncryptedPegawaiIdAttribute()
     {
         return encryptId($this->pegawai_id);
     }
-
-    
-
 
     // Relationships to Latest History
     public function latestDataDiri()
@@ -166,6 +162,10 @@ class Pegawai extends Model
         return $this->hasMany(RiwayatInpassing::class, 'pegawai_id', 'pegawai_id')->orderBy('tmt', 'desc');
     }
 
+    public function files()
+    {
+        return $this->hasMany(FilePegawai::class, 'pegawai_id', 'pegawai_id')->orderBy('created_at', 'desc');
+    }
 
     // Direct Accessors (Proxies to latest data diri)
     public function getNamaAttribute()

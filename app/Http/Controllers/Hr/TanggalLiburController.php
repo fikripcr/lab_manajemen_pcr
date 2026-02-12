@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 
 class TanggalLiburController extends Controller
 {
-    protected $service;
+    protected $TanggalLiburService;
 
-    public function __construct(TanggalLiburService $service)
+    public function __construct(TanggalLiburService $TanggalLiburService)
     {
-        $this->service = $service;
+        $this->TanggalLiburService = $TanggalLiburService;
     }
 
     public function index(Request $request)
@@ -47,7 +47,7 @@ class TanggalLiburController extends Controller
     public function store(TanggalLiburRequest $request)
     {
         try {
-            $count = $this->service->createBatch($request->validated());
+            $count = $this->TanggalLiburService->createBatch($request->validated());
             return jsonSuccess("Berhasil menambahkan $count tanggal libur.", route('hr.tanggal-libur.index'));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -57,7 +57,7 @@ class TanggalLiburController extends Controller
     public function destroy($id)
     {
         try {
-            $this->service->delete($id);
+            $this->TanggalLiburService->delete($id);
             return jsonSuccess('Data berhasil dihapus');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

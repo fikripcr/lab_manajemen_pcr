@@ -11,7 +11,7 @@ use Yajra\DataTables\DataTables;
 
 class OrgUnitController extends Controller
 {
-    protected $orgUnitService;
+    protected $OrgUnitService;
 
     private static $UNIT_TYPES = [
         'Institusi',
@@ -26,25 +26,25 @@ class OrgUnitController extends Controller
         'Pimpinan',
     ];
 
-    public function __construct(OrgUnitService $orgUnitService)
+    public function __construct(OrgUnitService $OrgUnitService)
     {
-        $this->orgUnitService = $orgUnitService;
+        $this->OrgUnitService = $OrgUnitService;
     }
 
     public function index()
     {
         // Eager load ONLY ACTIVE units up to 5 levels deep for Hierarchy List via Service
-        $rootUnits = $this->orgUnitService->getActiveHierarchicalUnits();
+        $rootUnits = $this->OrgUnitService->getActiveHierarchicalUnits();
 
         // Get ALL units for Manage tab (including inactive)
-        $allUnits = $this->orgUnitService->getAllUnits();
+        $allUnits = $this->OrgUnitService->getAllUnits();
 
         return view('pages.pemutu.org-units.index', compact('rootUnits', 'allUnits'));
     }
 
     public function show($id)
     {
-        $orgUnit = $this->orgUnitService->getOrgUnitById($id);
+        $orgUnit = $this->OrgUnitService->getOrgUnitById($id);
         if (! $orgUnit) {
             abort(404);
         }
@@ -54,7 +54,7 @@ class OrgUnitController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->orgUnitService->getFilteredQuery($request->all());
+        $query = $this->OrgUnitService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -103,7 +103,7 @@ class OrgUnitController extends Controller
     public function toggleStatus($id)
     {
         try {
-            $orgUnit = $this->orgUnitService->toggleStatus($id);
+            $orgUnit = $this->OrgUnitService->toggleStatus($id);
 
             return jsonSuccess('Status updated successfully.', null, ['is_active' => $orgUnit->is_active]);
         } catch (\Exception $e) {
@@ -114,7 +114,7 @@ class OrgUnitController extends Controller
     public function setAuditee(OrgUnitAuditeeRequest $request, $id)
     {
         try {
-            $this->orgUnitService->setAuditee($id, $request->validated()['auditee_user_id']);
+            $this->OrgUnitService->setAuditee($id, $request->validated()['auditee_user_id']);
 
             return jsonSuccess('Auditee berhasil diset.');
         } catch (\Exception $e) {
@@ -125,9 +125,9 @@ class OrgUnitController extends Controller
     public function create(Request $request)
     {
         $parentId = $request->query('parent_id');
-        $parent   = $parentId ? $this->orgUnitService->getOrgUnitById($parentId) : null;
+        $parent   = $parentId ? $this->OrgUnitService->getOrgUnitById($parentId) : null;
 
-        $units = $this->orgUnitService->getHierarchicalList();
+        $units = $this->OrgUnitService->getHierarchicalList();
 
         // Auto-suggest seq via service (helper or directly in logic?)
         // Controller logic handles suggestion for view.
@@ -146,7 +146,7 @@ class OrgUnitController extends Controller
         // Better to use Model query for View Prep to save time OR update Service.
         // I'll update Service quickly or just query.
         // Let's Query Model here directly as it's View Prep.
-        // Or cleaner: `$this->orgUnitService->getNextSeq($parentId?->orgunit_id);`
+        // Or cleaner: `$this->OrgUnitService->getNextSeq($parentId?->orgunit_id);`
         // I'll assume I update service.
 
         // Actually, looking at Step 367 again...
@@ -166,7 +166,7 @@ class OrgUnitController extends Controller
     public function store(OrgUnitRequest $request)
     {
         try {
-            $this->orgUnitService->createOrgUnit($request->validated());
+            $this->OrgUnitService->createOrgUnit($request->validated());
 
             return jsonSuccess('OrgUnit created successfully.', route('pemutu.org-units.index'));
         } catch (\Exception $e) {
@@ -176,12 +176,12 @@ class OrgUnitController extends Controller
 
     public function edit($id)
     {
-        $orgUnit = $this->orgUnitService->getOrgUnitById($id);
+        $orgUnit = $this->OrgUnitService->getOrgUnitById($id);
         if (! $orgUnit) {
             abort(404);
         }
 
-        $allUnits = $this->orgUnitService->getHierarchicalList();
+        $allUnits = $this->OrgUnitService->getHierarchicalList();
         $units    = collect($allUnits)->filter(function ($u) use ($id) {
             return $u->orgunit_id != $id;
         });
@@ -193,7 +193,7 @@ class OrgUnitController extends Controller
     public function update(OrgUnitRequest $request, $id)
     {
         try {
-            $this->orgUnitService->updateOrgUnit($id, $request->validated());
+            $this->OrgUnitService->updateOrgUnit($id, $request->validated());
 
             return jsonSuccess('OrgUnit updated successfully.', route('pemutu.org-units.index'));
         } catch (\Exception $e) {
@@ -204,7 +204,7 @@ class OrgUnitController extends Controller
     public function destroy($id)
     {
         try {
-            $this->orgUnitService->deleteOrgUnit($id);
+            $this->OrgUnitService->deleteOrgUnit($id);
 
             return jsonSuccess('OrgUnit deleted successfully.', route('pemutu.org-units.index'));
         } catch (\Exception $e) {
@@ -216,7 +216,7 @@ class OrgUnitController extends Controller
     {
         try {
             $hierarchy = $request->input('hierarchy');
-            $this->orgUnitService->reorderUnits($hierarchy);
+            $this->OrgUnitService->reorderUnits($hierarchy);
 
             return jsonSuccess('Hierarchy updated successfully.');
         } catch (\Exception $e) {

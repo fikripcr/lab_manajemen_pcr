@@ -4,10 +4,13 @@ namespace App\Models\Sys;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\Models\Activity as SpatieActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class Activity extends SpatieActivity
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $fillable = [
         'log_name',
@@ -20,7 +23,10 @@ class Activity extends SpatieActivity
         'properties',
         'batch_uuid',
         'ip_address',
-        'user_agent',
+        'user_agent',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     /**

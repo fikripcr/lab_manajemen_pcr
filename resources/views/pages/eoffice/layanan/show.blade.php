@@ -10,7 +10,7 @@
             <div class="dropdown">
                 <button type="button" class="btn btn-ghost-secondary dropdown-toggle" data-bs-toggle="dropdown">Action</button>
                 <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item {{ in_array($layanan->latestStatus->status_layanan, ['Selesai', 'Selesai (Otomatis)']) ? '' : 'disabled' }}" href="{{ route('eoffice.layanan.download-pdf', encryptId($layanan->layanan_id)) }}">
+                    <a class="dropdown-item {{ in_array($layanan->latestStatus->status_layanan, ['Selesai', 'Selesai (Otomatis)']) ? '' : 'disabled' }}" href="{{ route('eoffice.layanan.download-pdf', $layanan->hashid) }}">
                         <i class="ti ti-file-download me-1"></i> Unduh Bukti PDF
                     </a>
                     <div class="dropdown-divider"></div>
@@ -97,7 +97,7 @@
             <div class="card-footer border-top">
                 <form action="{{ route('eoffice.layanan.diskusi.store') }}" method="POST" class="ajax-form" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="layanan_id" value="{{ encryptId($layanan->layanan_id) }}">
+                    <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
                     <div class="input-group">
                         <textarea name="pesan" class="form-control" rows="1" placeholder="Ketik pesan..." required></textarea>
                         <button type="submit" class="btn btn-primary btn-icon" title="Kirim">
@@ -212,13 +212,13 @@
                     <div class="row g-2">
                         @if($layanan->latestStatus->status_layanan === 'Diajukan')
                             <div class="col-12">
-                                <a href="{{ route('eoffice.layanan.update-status', [encryptId($layanan->layanan_id), 'proses']) }}" class="btn btn-primary w-100">
+                                <a href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'proses']) }}" class="btn btn-primary w-100">
                                     <i class="ti ti-player-play"></i> Terima & Proses
                                 </a>
                             </div>
                         @else
                             {{-- Unified form for status updates --}}
-                            <form action="{{ route('eoffice.layanan.update-status', encryptId($layanan->layanan_id)) }}" method="POST" class="ajax-form w-100" enctype="multipart/form-data">
+                            <form action="{{ route('eoffice.layanan.update-status', $layanan->hashid) }}" method="POST" class="ajax-form w-100" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label required">Update Status Pengolahan</label>
@@ -295,7 +295,7 @@
 
                         @if($layanan->latestStatus->status_layanan !== 'Diajukan')
                             <div class="col-12 mt-2">
-                                <a href="{{ route('eoffice.layanan.update-status', [encryptId($layanan->layanan_id), 'batal']) }}" class="btn btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan.">
+                                <a href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'batal']) }}" class="btn btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan.">
                                     <i class="ti ti-history"></i> Batal Proses
                                 </a>
                             </div>

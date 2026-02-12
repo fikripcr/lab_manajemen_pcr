@@ -22,7 +22,10 @@ class LayananKeterlibatan extends Model
     protected $fillable = [
         'layanan_id',
         'user_id',
-        'peran',
+        'peran',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     public function layanan()

@@ -7,17 +7,17 @@ use Illuminate\Http\Request;
 
 class LayananStatusController extends Controller
 {
-    protected $service;
+    protected $LayananStatusService;
 
-    public function __construct(LayananStatusService $service)
+    public function __construct(LayananStatusService $LayananStatusService)
     {
-        $this->service = $service;
+        $this->LayananStatusService = $LayananStatusService;
     }
 
     /**
      * Update the status of a layanan (disposition workflow).
      */
-    public function update(Request $request, $id, $status = null)
+    public function update(Request $request, \App\Models\Eoffice\Layanan $layanan, $status = null)
     {
         // Quick actions (proses/batal) don't need full validation
         if (! in_array($status, ['proses', 'batal'])) {
@@ -28,8 +28,7 @@ class LayananStatusController extends Controller
             ]);
         }
 
-        $layananId = decryptId($id);
-        $data      = $request->only(['status_layanan', 'keterangan', 'disposisi_seq']);
+        $data = $request->only(['status_layanan', 'keterangan', 'disposisi_seq']);
 
         if ($request->hasFile('file_lampiran')) {
             $data['file_lampiran'] = $request->file('file_lampiran')
@@ -37,7 +36,7 @@ class LayananStatusController extends Controller
         }
 
         try {
-            $this->service->update($layananId, $status, $data);
+            $this->LayananStatusService->update($layanan->layanan_id, $status, $data);
 
             if (in_array($status, ['proses', 'batal'])) {
                 return redirect()->back()->with('success', 'Status berhasil diperbarui.');

@@ -10,11 +10,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class FeedbackController extends Controller
 {
-    protected $service;
+    protected $FeedbackService;
 
-    public function __construct(FeedbackService $service)
+    public function __construct(FeedbackService $FeedbackService)
     {
-        $this->service = $service;
+        $this->FeedbackService = $FeedbackService;
     }
 
     /**
@@ -33,11 +33,11 @@ class FeedbackController extends Controller
      */
     public function store(FeedbackStoreRequest $request)
     {
-        $validated = $request->validated();
+        $validated               = $request->validated();
         $validated['layanan_id'] = decryptId($validated['layanan_id']);
 
         try {
-            $this->service->store($validated);
+            $this->FeedbackService->store($validated);
             return jsonSuccess('Feedback berhasil disimpan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -49,7 +49,7 @@ class FeedbackController extends Controller
      */
     public function data(Request $request)
     {
-        $query = $this->service->getPaginateData($request);
+        $query = $this->FeedbackService->getPaginateData($request);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -57,7 +57,20 @@ class FeedbackController extends Controller
                 return $row->layanan->jenisLayanan->nama_layanan ?? '-';
             })
             ->addColumn('no_layanan', function ($row) {
-                return $row->layanan->no_layanan ?? '-';
+                if (! $row->layanan) {
+                    return '-';
+                }
+
+                return '<a href="' . route('eoffice.layanan.show', $row->layanan->hashid) . '">' . $row->layanan->no_layanan . '</a>';
+            })
+            ->addColumn('action', function ($row) {
+                if (! $row->layanan) {
+                    return '-';
+                }
+
+                return '<a href="' . route('eoffice.layanan.show', $row->layanan->hashid) . '" class="btn btn-sm btn-outline-primary">
+                            <i class="ti ti-eye"></i> Detail
+                        </a>';
             })
             ->addColumn('rating_stars', function ($row) {
                 $stars = str_repeat('<i class="ti ti-star-filled text-yellow"></i>', $row->rating);
@@ -67,7 +80,7 @@ class FeedbackController extends Controller
             ->addColumn('tanggal', function ($row) {
                 return $row->created_at ? $row->created_at->format('d M Y H:i') : '-';
             })
-            ->rawColumns(['rating_stars'])
+            ->rawColumns(['rating_stars', 'no_layanan', 'action'])
             ->make(true);
     }
 }

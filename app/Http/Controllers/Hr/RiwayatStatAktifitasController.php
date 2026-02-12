@@ -7,11 +7,11 @@ use App\Services\Hr\PegawaiService;
 
 class RiwayatStatAktifitasController extends Controller
 {
-    protected $pegawaiService;
+    protected $PegawaiService;
 
-    public function __construct(PegawaiService $pegawaiService)
+    public function __construct(PegawaiService $PegawaiService)
     {
-        $this->pegawaiService = $pegawaiService;
+        $this->PegawaiService = $PegawaiService;
     }
 
     public function index()
@@ -28,7 +28,7 @@ class RiwayatStatAktifitasController extends Controller
     public function store(\App\Http\Requests\Hr\RiwayatStatAktifitasRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->pegawaiService->requestChange($pegawai, \App\Models\Hr\RiwayatStatAktifitas::class, $request->validated(), 'latest_riwayatstataktifitas_id');
+            $this->PegawaiService->requestChange($pegawai, \App\Models\Hr\RiwayatStatAktifitas::class, $request->validated(), 'latest_riwayatstataktifitas_id');
             return jsonSuccess('Riwayat Status Aktifitas berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

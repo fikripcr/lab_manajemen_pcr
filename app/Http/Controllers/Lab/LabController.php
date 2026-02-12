@@ -10,11 +10,11 @@ use Yajra\DataTables\DataTables;
 
 class LabController extends Controller
 {
-    protected $labService;
+    protected $LabService;
 
-    public function __construct(LabService $labService)
+    public function __construct(LabService $LabService)
     {
-        $this->labService = $labService;
+        $this->LabService = $LabService;
     }
 
     /**
@@ -31,7 +31,7 @@ class LabController extends Controller
     public function paginate(Request $request)
     {
         // Use Service Query
-        $labs = $this->labService->getFilteredQuery($request->all());
+        $labs = $this->LabService->getFilteredQuery($request->all());
 
         return DataTables::of($labs)
             ->addIndexColumn()
@@ -76,7 +76,7 @@ class LabController extends Controller
         }
 
         try {
-            $this->labService->createLab($data);
+            $this->LabService->createLab($data);
             return jsonSuccess('Lab berhasil ditambahkan.', route('lab.labs.index'));
         } catch (\Exception $e) {
             \Log::error('Error creation lab: ' . $e->getMessage());
@@ -91,7 +91,7 @@ class LabController extends Controller
     {
         $realId = decryptId($id);
 
-        $lab = $this->labService->getLabById($realId); // Uses Service
+        $lab = $this->LabService->getLabById($realId); // Uses Service
         if (! $lab) {
             abort(404);
         }
@@ -106,7 +106,7 @@ class LabController extends Controller
     {
         $realId = decryptId($id);
 
-        $lab = $this->labService->getLabById($realId);
+        $lab = $this->LabService->getLabById($realId);
         if (! $lab) {
             abort(404);
         }
@@ -131,7 +131,7 @@ class LabController extends Controller
         }
 
         try {
-            $this->labService->updateLab($realId, $data);
+            $this->LabService->updateLab($realId, $data);
 
             return jsonSuccess('Lab berhasil diperbarui.', route('lab.labs.index'));
         } catch (\Exception $e) {
@@ -146,7 +146,7 @@ class LabController extends Controller
     {
         try {
             $realId = decryptId($id);
-            $this->labService->deleteLab($realId);
+            $this->LabService->deleteLab($realId);
 
             return jsonSuccess('Lab berhasil dihapus.', route('lab.labs.index'));
 

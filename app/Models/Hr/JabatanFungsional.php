@@ -20,7 +20,8 @@ class JabatanFungsional extends Model
         'is_active',
         'tunjangan',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

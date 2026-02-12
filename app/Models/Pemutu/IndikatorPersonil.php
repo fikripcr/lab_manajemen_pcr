@@ -3,10 +3,13 @@ namespace App\Models\Pemutu;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class IndikatorPersonil extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table    = 'pemutu_indikator_personil';
     protected $fillable = [
@@ -15,7 +18,10 @@ class IndikatorPersonil extends Model
         'year',
         'semester',
         'weight',
-        'target_value',
+        'target_value',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     public function personil()

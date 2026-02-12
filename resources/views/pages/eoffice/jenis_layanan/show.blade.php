@@ -44,7 +44,7 @@
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" 
-                                        data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->pic_id) }}" 
+                                        data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->hashid) }}" 
                                         data-title="Hapus PIC?" data-text="Pegawai ini tidak lagi menjadi PIC untuk layanan ini.">
                                         <i class="ti ti-trash"></i>
                                     </button>
@@ -86,7 +86,7 @@
                     </thead>
                     <tbody class="sortable-isian">
                         @forelse($layanan->isians->sortBy('seq') as $isian)
-                            <tr data-id="{{ $isian->jenislayananisian_id }}">
+                            <tr data-id="{{ $isian->hashid }}">
                                 <td class="handle cursor-move"><i class="ti ti-drag-drop text-muted"></i></td>
                                 <td>
                                     <div class="fw-bold">{{ $isian->kategori->nama_isian }}</div>
@@ -119,7 +119,7 @@
                                             <i class="ti ti-info-circle"></i>
                                         </button>
                                         <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" 
-                                            data-url="{{ route('eoffice.jenis-layanan.destroy-isian', $isian->jenislayananisian_id) }}" 
+                                            data-url="{{ route('eoffice.jenis-layanan.destroy-isian', $isian->hashid) }}" 
                                             data-title="Hapus Field?" data-text="Field ini akan dihapus dari form layanan.">
                                             <i class="ti ti-trash"></i>
                                         </button>
@@ -163,7 +163,7 @@
                     </thead>
                     <tbody class="sortable-disposisi">
                         @forelse($layanan->disposisis->sortBy('seq') as $d)
-                            <tr data-id="{{ $d->jldisposisi_id }}">
+                            <tr data-id="{{ $d->hashid }}">
                                 <td class="handle cursor-move"><i class="ti ti-drag-drop text-muted"></i></td>
                                 <td>
                                     <div class="fw-medium">{{ $d->value }}</div>
@@ -241,7 +241,7 @@
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete"
-                                        data-url="{{ route('eoffice.jenis-layanan.periode.destroy', [$layanan->jenislayanan_id, $p->jlperiode_id]) }}"
+                                        data-url="{{ route('eoffice.jenis-layanan.periode.destroy', [$layanan->hashid, $p->hashid]) }}"
                                         data-title="Hapus Periode?" data-text="Periode ini akan dihapus.">
                                         <i class="ti ti-trash"></i>
                                     </button>
@@ -263,7 +263,7 @@
 <div class="modal modal-blur fade" id="modal-add-pic" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.store-pic', $layanan->jenislayanan_id) }}" method="POST" class="ajax-form">
+            <form action="{{ route('eoffice.jenis-layanan.store-pic', $layanan->hashid) }}" method="POST" class="ajax-form">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah PIC Layanan</h5>
@@ -293,7 +293,7 @@
 <div class="modal modal-blur fade" id="modal-add-isian" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.store-isian', $layanan->jenislayanan_id) }}" method="POST" class="ajax-form">
+            <form action="{{ route('eoffice.jenis-layanan.store-isian', $layanan->hashid) }}" method="POST" class="ajax-form">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Isian Form</h5>
@@ -335,7 +335,7 @@
 <div class="modal modal-blur fade" id="modal-add-disposisi" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.disposisi.store', $layanan->jenislayanan_id) }}" method="POST" class="ajax-form">
+            <form action="{{ route('eoffice.jenis-layanan.disposisi.store', $layanan->hashid) }}" method="POST" class="ajax-form">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Alur Disposisi</h5>
@@ -385,7 +385,7 @@
 <div class="modal modal-blur fade" id="modal-add-periode" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.periode.store', $layanan->jenislayanan_id) }}" method="POST" class="ajax-form">
+            <form action="{{ route('eoffice.jenis-layanan.periode.store', $layanan->hashid) }}" method="POST" class="ajax-form">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Periode Pengajuan</h5>
@@ -547,7 +547,7 @@
             let id = tr.data('id');
             let val = $(this).is(':checked') ? 1 : 0;
 
-            axios.put(`{{ url('eoffice/jenis-layanan/' . $layanan->jenislayanan_id . '/disposisi') }}/${id}/notify`, { is_notify_email: val })
+            axios.put(`{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}/notify`, { is_notify_email: val })
                 .then(res => {
                     toastr.success(res.data.message);
                 })
@@ -582,10 +582,10 @@
             let tr = $(this).closest('tr');
             let id = tr.data('id');
 
-            axios.get(`{{ url('eoffice/jenis-layanan/' . $layanan->jenislayanan_id . '/disposisi') }}/${id}/data`)
+            axios.get(`{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}/data`)
                 .then(res => {
                     let d = res.data;
-                    $('#form-edit-disposisi').attr('action', `{{ url('eoffice/jenis-layanan/' . $layanan->jenislayanan_id . '/disposisi') }}/${id}`);
+                    $('#form-edit-disposisi').attr('action', `{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}`);
                     $('#form-edit-disposisi [name="text"]').val(d.text);
                     $('#form-edit-disposisi [name="keterangan"]').val(d.keterangan);
                     $('#form-edit-disposisi [name="batas_pengerjaan"]').val(d.batas_pengerjaan);
@@ -614,7 +614,7 @@
                 onEnd: function() {
                     $('.sortable-disposisi tr').each(function(index) {
                         let id = $(this).data('id');
-                        axios.post(`{{ url('eoffice/jenis-layanan/' . $layanan->jenislayanan_id . '/disposisi') }}/${id}/seq`, { seq: index + 1 });
+                        axios.post(`{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}/seq`, { seq: index + 1 });
                     });
                     toastr.success('Urutan disposisi diperbarui');
                 }

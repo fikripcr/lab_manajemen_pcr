@@ -5,10 +5,11 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Label extends Model
 {
-    use HasFactory, Blameable, HashidBinding;
+    use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
     protected $table = 'pemutu_label';
     protected $primaryKey = 'label_id';
@@ -19,7 +20,8 @@ class Label extends Model
         'slug', 
         'description',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
     public $timestamps = false;
 

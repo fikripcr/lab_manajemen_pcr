@@ -4,10 +4,12 @@ namespace App\Models\Lab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class PcAssignment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_pc_assignments';
     protected $primaryKey = 'pc_assignments_id';
@@ -19,7 +21,10 @@ class PcAssignment extends Model
         'nomor_pc',
         'nomor_loker',
         'assigned_date',
-        'is_active',
+        'is_active',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

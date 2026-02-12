@@ -10,11 +10,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StatusPegawaiController extends Controller
 {
-    protected $service;
+    protected $StatusPegawaiService;
 
-    public function __construct(StatusPegawaiService $service)
+    public function __construct(StatusPegawaiService $StatusPegawaiService)
     {
-        $this->service = $service;
+        $this->StatusPegawaiService = $StatusPegawaiService;
     }
 
     public function index(Request $request)
@@ -57,7 +57,7 @@ class StatusPegawaiController extends Controller
     public function store(StatusPegawaiRequest $request)
     {
         try {
-            $this->service->create($request->validated());
+            $this->StatusPegawaiService->create($request->validated());
             return jsonSuccess('Status Pegawai created successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -73,7 +73,7 @@ class StatusPegawaiController extends Controller
     public function update(StatusPegawaiRequest $request, StatusPegawai $status_pegawai)
     {
         try {
-            $this->service->update($status_pegawai, $request->validated());
+            $this->StatusPegawaiService->update($status_pegawai, $request->validated());
             return jsonSuccess('Status Pegawai updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

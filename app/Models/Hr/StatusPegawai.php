@@ -20,7 +20,8 @@ class StatusPegawai extends Model
         'organisasi',
         'is_active',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

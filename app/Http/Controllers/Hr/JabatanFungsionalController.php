@@ -9,11 +9,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JabatanFungsionalController extends Controller
 {
-    protected $service;
+    protected $JabatanFungsionalService;
 
-    public function __construct(JabatanFungsionalService $service)
+    public function __construct(JabatanFungsionalService $JabatanFungsionalService)
     {
-        $this->service = $service;
+        $this->JabatanFungsionalService = $JabatanFungsionalService;
     }
 
     public function index()
@@ -52,7 +52,7 @@ class JabatanFungsionalController extends Controller
     public function store(JabatanFungsionalRequest $request)
     {
         try {
-            $this->service->create($request->validated());
+            $this->JabatanFungsionalService->create($request->validated());
             return jsonSuccess('Jabatan Fungsional created successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -68,7 +68,7 @@ class JabatanFungsionalController extends Controller
     public function update(JabatanFungsionalRequest $request, JabatanFungsional $jabatan_fungsional)
     {
         try {
-            $this->service->update($jabatan_fungsional, $request->validated());
+            $this->JabatanFungsionalService->update($jabatan_fungsional, $request->validated());
             return jsonSuccess('Jabatan Fungsional updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

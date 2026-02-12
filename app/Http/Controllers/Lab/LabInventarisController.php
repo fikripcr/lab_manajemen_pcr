@@ -13,15 +13,15 @@ use Yajra\DataTables\DataTables;
 
 class LabInventarisController extends Controller
 {
-    protected $labInventarisService;
-    protected $inventarisService; // Inject Master Inventory Service for "Get Unassigned" helper
+    protected $LabInventarisService;
+    protected $InventarisService; // Inject Master Inventory Service for "Get Unassigned" helper
 
     public function __construct(
-        LabInventarisService $labInventarisService,
-        InventarisService $inventarisService
+        LabInventarisService $LabInventarisService,
+        InventarisService $InventarisService
     ) {
-        $this->labInventarisService = $labInventarisService;
-        $this->inventarisService    = $inventarisService;
+        $this->LabInventarisService = $LabInventarisService;
+        $this->InventarisService    = $InventarisService;
     }
 
     public function index($labId)
@@ -35,7 +35,7 @@ class LabInventarisController extends Controller
         $labIdDecrypted = decryptId($labId);
 
         // Use Service Query
-        $labInventaris = $this->labInventarisService->getLabInventarisQuery($labIdDecrypted);
+        $labInventaris = $this->LabInventarisService->getLabInventarisQuery($labIdDecrypted);
 
         return DataTables::of($labInventaris)
             ->addIndexColumn()
@@ -104,7 +104,7 @@ class LabInventarisController extends Controller
         $lab    = Lab::findOrFail($realId);
 
                                                                                               // Fetch unassigned items using helper from InventarisService
-        $inventarisList = $this->inventarisService->getUnassignedForLab($realId, null, 1000); // Fetch all or reasonable limit
+        $inventarisList = $this->InventarisService->getUnassignedForLab($realId, null, 1000); // Fetch all or reasonable limit
 
         return view('pages.lab.labs.inventaris.create', compact('lab', 'inventarisList'));
     }
@@ -115,7 +115,7 @@ class LabInventarisController extends Controller
 
         try {
             // Service handles Assignment Creation and Code Generation
-            $this->labInventarisService->assignInventaris($realLabId, $request->all());
+            $this->LabInventarisService->assignInventaris($realLabId, $request->all());
 
             return jsonSuccess('Inventaris berhasil ditambahkan ke lab.', route('lab.labs.inventaris.index', $labId));
         } catch (\Exception $e) {
@@ -126,7 +126,7 @@ class LabInventarisController extends Controller
     public function edit($labId, $id)
     {
         $lab           = Lab::findOrFail(decryptId($labId));
-        $labInventaris = $this->labInventarisService->getAssignmentById(decryptId($id));
+        $labInventaris = $this->LabInventarisService->getAssignmentById(decryptId($id));
 
         $inventarisList = Inventaris::all(); // Or filtered? Edit usually allows selecting any or just changing details.
                                              // If changing item is allowed, we might need all items.
@@ -142,7 +142,7 @@ class LabInventarisController extends Controller
         $validated = $request->validated();
 
         try {
-            $this->labInventarisService->updateAssignment($realId, $validated);
+            $this->LabInventarisService->updateAssignment($realId, $validated);
 
             return jsonSuccess('Data inventaris lab berhasil diperbarui.', route('lab.labs.inventaris.index', $labId));
         } catch (\Exception $e) {
@@ -156,7 +156,7 @@ class LabInventarisController extends Controller
         $realLabId = decryptId($labId);
 
         // Use Service to get unassigned items
-        $inventaris = $this->inventarisService->getUnassignedForLab($realLabId, $search, 5);
+        $inventaris = $this->InventarisService->getUnassignedForLab($realLabId, $search, 5);
 
         $results = $inventaris->map(function ($item) {
             return [
@@ -196,7 +196,7 @@ class LabInventarisController extends Controller
     public function destroy($labId, $id)
     {
         try {
-            $this->labInventarisService->deleteAssignment(decryptId($id));
+            $this->LabInventarisService->deleteAssignment(decryptId($id));
 
             return jsonSuccess('Inventaris berhasil dihapus dari lab.', route('labs.inventaris.index', $labId));
         } catch (\Exception $e) {

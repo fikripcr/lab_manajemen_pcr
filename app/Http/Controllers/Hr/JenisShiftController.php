@@ -9,11 +9,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JenisShiftController extends Controller
 {
-    protected $service;
+    protected $JenisShiftService;
 
-    public function __construct(JenisShiftService $service)
+    public function __construct(JenisShiftService $JenisShiftService)
     {
-        $this->service = $service;
+        $this->JenisShiftService = $JenisShiftService;
     }
 
     public function index()
@@ -49,7 +49,7 @@ class JenisShiftController extends Controller
     public function store(JenisShiftRequest $request)
     {
         try {
-            $this->service->create($request->validated());
+            $this->JenisShiftService->create($request->validated());
             return jsonSuccess('Jenis Shift created successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -65,7 +65,7 @@ class JenisShiftController extends Controller
     public function update(JenisShiftRequest $request, JenisShift $jenis_shift)
     {
         try {
-            $this->service->update($jenis_shift, $request->validated());
+            $this->JenisShiftService->update($jenis_shift, $request->validated());
             return jsonSuccess('Jenis Shift updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);

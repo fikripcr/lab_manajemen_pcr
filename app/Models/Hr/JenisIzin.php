@@ -20,7 +20,10 @@ class JenisIzin extends Model
         'max_hari',
         'pemilihan_waktu',
         'urutan_approval',
-        'is_active',
+        'is_active',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

@@ -9,11 +9,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KategoriPerusahaanController extends Controller
 {
-    protected $service;
+    protected $KategoriPerusahaanService;
 
-    public function __construct(KategoriPerusahaanService $service)
+    public function __construct(KategoriPerusahaanService $KategoriPerusahaanService)
     {
-        $this->service = $service;
+        $this->KategoriPerusahaanService = $KategoriPerusahaanService;
     }
 
     public function index()
@@ -24,13 +24,13 @@ class KategoriPerusahaanController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->service->getPaginateData($request);
+        $query = $this->KategoriPerusahaanService->getPaginateData($request);
 
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $editUrl   = route('eoffice.kategori-perusahaan.edit', $row->kategoriperusahaan_id);
-                $deleteUrl = route('eoffice.kategori-perusahaan.destroy', $row->kategoriperusahaan_id);
+                $editUrl   = route('eoffice.kategori-perusahaan.edit', $row->hashid);
+                $deleteUrl = route('eoffice.kategori-perusahaan.destroy', $row->hashid);
 
                 return '
                     <div class="btn-group btn-group-sm">
@@ -54,33 +54,33 @@ class KategoriPerusahaanController extends Controller
     public function store(KategoriPerusahaanRequest $request)
     {
         try {
-            $this->service->createKategori($request->validated());
+            $this->KategoriPerusahaanService->createKategori($request->validated());
             return jsonSuccess('Kategori berhasil ditambahkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function edit($id)
+    public function edit(\App\Models\Eoffice\KategoriPerusahaan $kategori_perusahaan)
     {
-        $kategori = $this->service->getById($id);
+        $kategori = $kategori_perusahaan;
         return view('pages.eoffice.kategori_perusahaan.edit', compact('kategori'));
     }
 
-    public function update(KategoriPerusahaanRequest $request, $id)
+    public function update(KategoriPerusahaanRequest $request, \App\Models\Eoffice\KategoriPerusahaan $kategori_perusahaan)
     {
         try {
-            $this->service->updateKategori($id, $request->validated());
+            $this->KategoriPerusahaanService->updateKategori($kategori_perusahaan->kategoriperusahaan_id, $request->validated());
             return jsonSuccess('Kategori berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(\App\Models\Eoffice\KategoriPerusahaan $kategori_perusahaan)
     {
         try {
-            $this->service->deleteKategori($id);
+            $this->KategoriPerusahaanService->deleteKategori($kategori_perusahaan->kategoriperusahaan_id);
             return jsonSuccess('Kategori berhasil dihapus.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

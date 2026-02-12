@@ -23,7 +23,8 @@ class RiwayatJabFungsional extends Model
         'no_sk',
         'keterangan',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

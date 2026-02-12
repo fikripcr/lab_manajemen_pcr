@@ -5,10 +5,11 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DokSub extends Model
 {
-    use HasFactory, Blameable, HashidBinding;
+    use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
     protected $table = 'pemutu_dok_sub';
     protected $primaryKey = 'doksub_id';
@@ -20,7 +21,8 @@ class DokSub extends Model
         'seq',
         'is_hasilkan_indikator',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

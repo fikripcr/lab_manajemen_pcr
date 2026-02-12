@@ -30,7 +30,10 @@ class Perizinan extends Model
         'latest_riwayatapproval_id',
         'uang_cuti_bayar',
         'keluarga_id',
-        'periode',
+        'periode',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

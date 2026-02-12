@@ -10,11 +10,11 @@ use Yajra\DataTables\DataTables;
 
 class PengumumanController extends Controller
 {
-    protected $pengumumanService;
+    protected $PengumumanService;
 
-    public function __construct(PengumumanService $pengumumanService)
+    public function __construct(PengumumanService $PengumumanService)
     {
-        $this->pengumumanService = $pengumumanService;
+        $this->PengumumanService = $PengumumanService;
     }
 
     /**
@@ -57,7 +57,7 @@ class PengumumanController extends Controller
                 $data['attachments'] = $request->file('attachments');
             }
 
-            $pengumuman = $this->pengumumanService->createPengumuman($data);
+            $pengumuman = $this->PengumumanService->createPengumuman($data);
 
             $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
 
@@ -74,7 +74,7 @@ class PengumumanController extends Controller
     {
         $realId = decryptId($id);
 
-        $pengumuman = $this->pengumumanService->getPengumumanById($realId); // Uses Service
+        $pengumuman = $this->PengumumanService->getPengumumanById($realId); // Uses Service
         if (! $pengumuman) {
             abort(404);
         }
@@ -89,7 +89,7 @@ class PengumumanController extends Controller
     {
         $realId = decryptId($id);
 
-        $pengumuman = $this->pengumumanService->getPengumumanById($realId);
+        $pengumuman = $this->PengumumanService->getPengumumanById($realId);
         if (! $pengumuman) {
             abort(404);
         }
@@ -117,10 +117,10 @@ class PengumumanController extends Controller
                 $data['attachments'] = $request->file('attachments');
             }
 
-            $this->pengumumanService->updatePengumuman($realId, $data);
+            $this->PengumumanService->updatePengumuman($realId, $data);
 
             // Fetch updated model to determine redirect route (or store type in hidden field, but fetch is safer)
-            $pengumuman    = $this->pengumumanService->getPengumumanById($realId);
+            $pengumuman    = $this->PengumumanService->getPengumumanById($realId);
             $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
 
             return jsonSuccess(ucfirst($pengumuman->jenis) . ' updated successfully.', route($redirectRoute));
@@ -137,14 +137,14 @@ class PengumumanController extends Controller
         try {
             $realId = decryptId($id);
             // Get type before deleting for redirect
-            $pengumuman = $this->pengumumanService->getPengumumanById($realId);
+            $pengumuman = $this->PengumumanService->getPengumumanById($realId);
             if (! $pengumuman) {
                 abort(404);
             }
 
             $jenis = $pengumuman->jenis;
 
-            $this->pengumumanService->deletePengumuman($realId);
+            $this->PengumumanService->deletePengumuman($realId);
 
             $redirectRoute = $jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
             return jsonSuccess(ucfirst($jenis) . ' deleted successfully.', route($redirectRoute));
@@ -168,7 +168,7 @@ class PengumumanController extends Controller
         $type = ($routeName === 'berita.data' || $request->type === 'berita') ? 'berita' : 'pengumuman';
 
         // Use Service Query
-        $query = $this->pengumumanService->getFilteredQuery($type);
+        $query = $this->PengumumanService->getFilteredQuery($type);
 
         return DataTables::of($query)
             ->addIndexColumn()

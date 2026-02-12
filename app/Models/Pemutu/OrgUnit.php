@@ -5,10 +5,11 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrgUnit extends Model
 {
-    use HasFactory, Blameable, HashidBinding;
+    use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
     protected $table = 'pemutu_org_unit';
     protected $primaryKey = 'orgunit_id';
@@ -24,7 +25,8 @@ class OrgUnit extends Model
         'successor_id', 
         'auditee_user_id',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
     public $timestamps = false;
 

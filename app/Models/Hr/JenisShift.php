@@ -24,7 +24,8 @@ class JenisShift extends Model
         'jam_pulang_akhir',
         'is_active',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
 }

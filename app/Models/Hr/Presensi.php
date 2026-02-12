@@ -45,7 +45,10 @@ class Presensi extends Model
         'late_minutes',
         'shift_id',
         'notes',
-        'is_active',
+        'is_active',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

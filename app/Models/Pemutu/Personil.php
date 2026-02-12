@@ -6,10 +6,11 @@ use App\Traits\HashidBinding;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Personil extends Model
 {
-    use HasFactory, Blameable, HashidBinding;
+    use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
     protected $table = 'pemutu_personil';
     protected $primaryKey = 'personil_id';
@@ -24,7 +25,8 @@ class Personil extends Model
         'external_source',
         'external_id',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
     public $timestamps = false; // No timestamps in migration
 

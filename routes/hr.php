@@ -1,19 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Hr\OrgUnitController;
-use App\Http\Controllers\Hr\PegawaiController;
 use App\Http\Controllers\Hr\ApprovalController;
 use App\Http\Controllers\Hr\AttDeviceController;
-use App\Http\Controllers\Hr\JenisIzinController;
-use App\Http\Controllers\Hr\PerizinanController;
-use App\Http\Controllers\Hr\JenisShiftController;
 use App\Http\Controllers\Hr\IndisiplinerController;
-use App\Http\Controllers\Hr\StatusPegawaiController;
-use App\Http\Controllers\Hr\StatusAktifitasController;
 use App\Http\Controllers\Hr\JabatanFungsionalController;
 use App\Http\Controllers\Hr\JenisIndisiplinerController;
+use App\Http\Controllers\Hr\JenisIzinController;
+use App\Http\Controllers\Hr\JenisShiftController;
+use App\Http\Controllers\Hr\OrgUnitController;
+use App\Http\Controllers\Hr\PegawaiController;
+use App\Http\Controllers\Hr\PerizinanController;
 use App\Http\Controllers\Hr\PresensiController;
+use App\Http\Controllers\Hr\StatusAktifitasController;
+use App\Http\Controllers\Hr\StatusPegawaiController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(function () {
 
@@ -95,6 +95,10 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::put('penugasan/{penugasan}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'update'])->name('penugasan.update');
         Route::delete('penugasan/{penugasan}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'destroy'])->name('penugasan.destroy');
         Route::post('penugasan/{penugasan}/end', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'endAssignment'])->name('penugasan.end');
+
+        // File Pegawai
+        Route::get('files/data', [\App\Http\Controllers\Hr\FilePegawaiController::class, 'index'])->name('files.data');
+        Route::resource('files', \App\Http\Controllers\Hr\FilePegawaiController::class)->only(['store', 'destroy']);
     });
 
     // Mass Penugasan Routes

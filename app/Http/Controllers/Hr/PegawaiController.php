@@ -10,11 +10,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PegawaiController extends Controller
 {
-    protected $pegawaiService;
+    protected $PegawaiService;
 
-    public function __construct(PegawaiService $pegawaiService)
+    public function __construct(PegawaiService $PegawaiService)
     {
-        $this->pegawaiService = $pegawaiService;
+        $this->PegawaiService = $PegawaiService;
     }
 
     /**
@@ -47,7 +47,7 @@ class PegawaiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->pegawaiService->getFilteredQuery($request);
+            $query = $this->PegawaiService->getFilteredQuery($request);
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -119,7 +119,7 @@ class PegawaiController extends Controller
     public function store(PegawaiRequest $request)
     {
         try {
-            $this->pegawaiService->createPegawai($request->validated());
+            $this->PegawaiService->createPegawai($request->validated());
             return jsonSuccess('Pegawai berhasil ditambahkan', route('hr.pegawai.index'));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -187,7 +187,7 @@ class PegawaiController extends Controller
     {
         try {
             // Request Change Logic
-            $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
+            $this->PegawaiService->requestDataDiriChange($pegawai, $request->validated());
             return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

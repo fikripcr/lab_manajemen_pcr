@@ -4,15 +4,14 @@ namespace App\Http\Controllers\Eoffice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\LayananDiskusiStoreRequest;
 use App\Services\Eoffice\LayananDiskusiService;
-use Illuminate\Http\Request;
 
 class LayananDiskusiController extends Controller
 {
-    protected $service;
+    protected $LayananDiskusiService;
 
-    public function __construct(LayananDiskusiService $service)
+    public function __construct(LayananDiskusiService $LayananDiskusiService)
     {
-        $this->service = $service;
+        $this->LayananDiskusiService = $LayananDiskusiService;
     }
 
     /**
@@ -29,7 +28,7 @@ class LayananDiskusiController extends Controller
                     ->store('eoffice/diskusi/' . date('Y/m'), 'public');
             }
 
-            $this->service->store($layananId, $validated);
+            $this->LayananDiskusiService->store($layananId, $validated);
             return jsonSuccess('Diskusi berhasil dikirim.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

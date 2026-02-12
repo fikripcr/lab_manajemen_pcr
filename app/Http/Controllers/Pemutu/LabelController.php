@@ -9,22 +9,22 @@ use Yajra\DataTables\DataTables;
 
 class LabelController extends Controller
 {
-    protected $labelService;
+    protected $LabelService;
 
-    public function __construct(LabelService $labelService)
+    public function __construct(LabelService $LabelService)
     {
-        $this->labelService = $labelService;
+        $this->LabelService = $LabelService;
     }
 
     public function index()
     {
-        $types = $this->labelService->getAllLabelTypes();
+        $types = $this->LabelService->getAllLabelTypes();
         return view('pages.pemutu.labels.index', compact('types'));
     }
 
     public function paginate(Request $request)
     {
-        $query = $this->labelService->getLabelFilteredQuery($request->all());
+        $query = $this->LabelService->getLabelFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -51,14 +51,14 @@ class LabelController extends Controller
 
     public function create()
     {
-        $types = $this->labelService->getAllLabelTypes();
+        $types = $this->LabelService->getAllLabelTypes();
         return view('pages.pemutu.labels.create', compact('types'));
     }
 
     public function store(LabelRequest $request)
     {
         try {
-            $this->labelService->createLabel($request->validated());
+            $this->LabelService->createLabel($request->validated());
 
             return jsonSuccess('Label created successfully.');
         } catch (\Exception $e) {
@@ -68,12 +68,12 @@ class LabelController extends Controller
 
     public function edit($id)
     {
-        $label = $this->labelService->getLabelById($id);
+        $label = $this->LabelService->getLabelById($id);
         if (! $label) {
             abort(404);
         }
 
-        $types = $this->labelService->getAllLabelTypes();
+        $types = $this->LabelService->getAllLabelTypes();
 
         return view('pages.pemutu.labels.edit', compact('label', 'types'));
     }
@@ -81,7 +81,7 @@ class LabelController extends Controller
     public function update(LabelRequest $request, $id)
     {
         try {
-            $this->labelService->updateLabel($id, $request->validated());
+            $this->LabelService->updateLabel($id, $request->validated());
 
             return jsonSuccess('Label updated successfully.');
         } catch (\Exception $e) {
@@ -92,7 +92,7 @@ class LabelController extends Controller
     public function destroy($id)
     {
         try {
-            $this->labelService->deleteLabel($id);
+            $this->LabelService->deleteLabel($id);
 
             return jsonSuccess('Label deleted successfully.');
         } catch (\Exception $e) {

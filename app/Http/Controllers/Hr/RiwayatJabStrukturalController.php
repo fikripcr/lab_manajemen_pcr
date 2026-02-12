@@ -9,11 +9,11 @@ use App\Services\Hr\PegawaiService;
 
 class RiwayatJabStrukturalController extends Controller
 {
-    protected $pegawaiService;
+    protected $PegawaiService;
 
-    public function __construct(PegawaiService $pegawaiService)
+    public function __construct(PegawaiService $PegawaiService)
     {
-        $this->pegawaiService = $pegawaiService;
+        $this->PegawaiService = $PegawaiService;
     }
 
     public function index()
@@ -36,7 +36,7 @@ class RiwayatJabStrukturalController extends Controller
     {
         try {
             $headerCol = 'latest_riwayatjabstruktural_id';
-            $this->pegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
+            $this->PegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
             return jsonSuccess('Perubahan Jabatan Struktural berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

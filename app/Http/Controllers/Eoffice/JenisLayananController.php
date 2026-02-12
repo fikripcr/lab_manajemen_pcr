@@ -13,11 +13,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JenisLayananController extends Controller
 {
-    protected $service;
+    protected $JenisLayananService;
 
-    public function __construct(JenisLayananService $service)
+    public function __construct(JenisLayananService $JenisLayananService)
     {
-        $this->service = $service;
+        $this->JenisLayananService = $JenisLayananService;
     }
 
     public function index()
@@ -28,7 +28,7 @@ class JenisLayananController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->service->getFilteredQuery($request);
+        $query = $this->JenisLayananService->getFilteredQuery($request);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -38,9 +38,9 @@ class JenisLayananController extends Controller
                     : '<span class="badge bg-red text-red-fg">Non-Aktif</span>';
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('eoffice.jenis-layanan.edit', $row->jenislayanan_id);
-                $deleteUrl = route('eoffice.jenis-layanan.destroy', $row->jenislayanan_id);
-                $showUrl   = route('eoffice.jenis-layanan.show', $row->jenislayanan_id);
+                $editUrl   = route('eoffice.jenis-layanan.edit', $row->hashid);
+                $deleteUrl = route('eoffice.jenis-layanan.destroy', $row->hashid);
+                $showUrl   = route('eoffice.jenis-layanan.show', $row->hashid);
 
                 return '
                     <div class="btn-group btn-group-sm">
@@ -67,17 +67,16 @@ class JenisLayananController extends Controller
     public function store(JenisLayananRequest $request)
     {
         try {
-            $this->service->createJenisLayanan($request->validated());
+            $this->JenisLayananService->createJenisLayanan($request->validated());
             return jsonSuccess('Jenis layanan berhasil ditambahkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function show($id)
+    public function show(\App\Models\Eoffice\JenisLayanan $jenisLayanan)
     {
-        $realId         = decryptId($id);
-        $layanan        = $this->service->getById($realId);
+        $layanan        = $jenisLayanan;
         $pageTitle      = 'Manage Layanan: ' . $layanan->nama_layanan;
         $users          = User::orderBy('name')->get();
         $kategoriIsians = KategoriIsian::orderBy('nama_isian')->get();
@@ -85,31 +84,30 @@ class JenisLayananController extends Controller
         return view('pages.eoffice.jenis_layanan.show', compact('layanan', 'pageTitle', 'users', 'kategoriIsians'));
     }
 
-    public function edit($id)
+    public function edit(\App\Models\Eoffice\JenisLayanan $jenisLayanan)
     {
-        $realId  = decryptId($id);
-        $layanan = $this->service->getById($realId);
+        $layanan = $jenisLayanan;
         return view('pages.eoffice.jenis_layanan.edit', compact('layanan'));
     }
 
-    public function update(JenisLayananRequest $request, $id)
+    public function update(JenisLayananRequest $request, \App\Models\Eoffice\JenisLayanan $jenisLayanan)
     {
         try {
-            $this->service->updateJenisLayanan($id, $request->validated());
+            $this->JenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, $request->validated());
             return jsonSuccess('Jenis layanan berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(\App\Models\Eoffice\JenisLayanan $jenisLayanan)
     {
         try {
             // Check for transactions first
-            $this->service->updateJenisLayanan($id, ['is_active' => false]);
+            $this->JenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, ['is_active' => false]);
             // For now, just deactivate or hard delete if no data?
             // Usually, soft delete is safer.
-            // $this->service->deleteJenisLayanan($id);
+            // $this->JenisLayananService->deleteJenisLayanan($id);
             return jsonSuccess('Jenis layanan berhasil dinonaktifkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -117,75 +115,70 @@ class JenisLayananController extends Controller
     }
 
     // PIC & Isian Handlers
-    public function storePic(JenisLayananPicStoreRequest $request, $id)
+    public function storePic(JenisLayananPicStoreRequest $request, \App\Models\Eoffice\JenisLayanan $jenis_layanan)
     {
         try {
-            $this->service->storePic($id, $request->all());
+            $this->JenisLayananService->storePic($jenis_layanan->jenislayanan_id, $request->all());
             return jsonSuccess('PIC berhasil ditambahkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroyPic($id)
+    public function destroyPic(\App\Models\Eoffice\JenisLayananPic $pic)
     {
         try {
-            $realId = decryptId($id);
-            $this->service->deletePic($realId);
+            $this->JenisLayananService->deletePic($pic->jlpic_id);
             return jsonSuccess('PIC berhasil dihapus.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function storeIsian(JenisLayananIsianStoreRequest $request, $id)
+    public function storeIsian(JenisLayananIsianStoreRequest $request, \App\Models\Eoffice\JenisLayanan $jenis_layanan)
     {
         try {
-            $this->service->storeIsian($id, $request->all());
+            $this->JenisLayananService->storeIsian($jenis_layanan->jenislayanan_id, $request->all());
             return jsonSuccess('Isian berhasil ditambahkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroyIsian($id)
+    public function destroyIsian(\App\Models\Eoffice\JenisLayananIsian $isian)
     {
         try {
-            $realId = decryptId($id);
-            $this->service->deleteIsian($realId);
+            $this->JenisLayananService->deleteIsian($isian->jlisian_id);
             return jsonSuccess('Isian berhasil dihapus.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function updateIsianField(Request $request, $id)
+    public function updateIsianField(Request $request, \App\Models\Eoffice\JenisLayananIsian $isian)
     {
         try {
-            $realId = decryptId($id);
-            $this->service->updateIsian($realId, $request->only(['is_required', 'is_show_on_validasi', 'fill_by']));
+            $this->JenisLayananService->updateIsian($isian->jlisian_id, $request->only(['is_required', 'is_show_on_validasi', 'fill_by']));
             return jsonSuccess('Field berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function updateIsianRule(Request $request, $id)
+    public function updateIsianRule(Request $request, \App\Models\Eoffice\JenisLayananIsian $isian)
     {
         try {
-            $realId = decryptId($id);
-            $this->service->updateIsian($realId, $request->only(['rule']));
+            $this->JenisLayananService->updateIsian($isian->jlisian_id, $request->only(['rule']));
             return jsonSuccess('Rule berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function updateIsianInfo(Request $request, $id)
+    public function updateIsianInfo(Request $request, \App\Models\Eoffice\JenisLayananIsian $isian)
     {
         try {
-            $realId = decryptId($id);
-            $this->service->updateIsian($realId, $request->only(['info_tambahan']));
+            $this->JenisLayananService->updateIsian($isian->jlisian_id, $request->only(['info_tambahan']));
             return jsonSuccess('Info tambahan berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -195,7 +188,7 @@ class JenisLayananController extends Controller
     public function updateIsianSeq(Request $request)
     {
         try {
-            $this->service->updateIsianSeq($request->get('sequences'));
+            $this->JenisLayananService->updateIsianSeq($request->get('sequences'));
             return jsonSuccess('Urutan berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

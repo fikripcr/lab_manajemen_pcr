@@ -4,10 +4,12 @@ namespace App\Models\Lab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class LogPenggunaanLab extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_log_penggunaan_labs';
     protected $primaryKey = 'log_penggunaan_labs_id';
@@ -21,7 +23,10 @@ class LogPenggunaanLab extends Model
         'nomor_pc',
         'kondisi',
         'catatan_umum',
-        'waktu_isi',
+        'waktu_isi',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

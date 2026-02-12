@@ -23,7 +23,8 @@ class AttDevice extends Model
         'port',
         'is_active',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

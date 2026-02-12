@@ -26,7 +26,8 @@ class Lab extends Model implements HasMedia
         'capacity',
         'description',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

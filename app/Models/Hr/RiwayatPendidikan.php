@@ -27,7 +27,8 @@ class RiwayatPendidikan extends Model
         'ipk',
         'keterangan',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
 
     protected $casts = [

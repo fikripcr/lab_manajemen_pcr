@@ -8,20 +8,20 @@ use Illuminate\Http\Request;
 
 class JenisLayananDisposisiController extends Controller
 {
-    protected $service;
+    protected $JenisLayananDisposisiService;
 
-    public function __construct(JenisLayananDisposisiService $service)
+    public function __construct(JenisLayananDisposisiService $JenisLayananDisposisiService)
     {
-        $this->service = $service;
+        $this->JenisLayananDisposisiService = $JenisLayananDisposisiService;
     }
 
     /**
      * Store a new disposisi for a Jenis Layanan.
      */
-    public function store(JenisLayananDisposisiRequest $request, $jenislayananId)
+    public function store(JenisLayananDisposisiRequest $request, \App\Models\Eoffice\JenisLayanan $jenis_layanan)
     {
         try {
-            $this->service->store($jenislayananId, $request->validated());
+            $this->JenisLayananDisposisiService->store($jenis_layanan->jenislayanan_id, $request->validated());
             return jsonSuccess('Disposisi berhasil ditambahkan.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -31,15 +31,16 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Update disposisi (seq, notify email, or text/ket).
      */
-    public function update(Request $request, $id, $action = null)
+    public function update(Request $request, \App\Models\Eoffice\JenisLayananDisposisi $disposisi, $action = null)
     {
         try {
+            $id = $disposisi->jldisposisi_id;
             if ($action === 'seq') {
-                $this->service->updateSeq($id, $request->input('seq'));
+                $this->JenisLayananDisposisiService->updateSeq($id, $request->input('seq'));
             } elseif ($action === 'notify') {
-                $this->service->updateNotifyEmail($id, $request->input('is_notify_email'));
+                $this->JenisLayananDisposisiService->updateNotifyEmail($id, $request->input('is_notify_email'));
             } else {
-                $this->service->updateTextKet($id, $request->all());
+                $this->JenisLayananDisposisiService->updateTextKet($id, $request->all());
             }
             return jsonSuccess('Disposisi berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -50,10 +51,10 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Delete a disposisi (and re-sequence).
      */
-    public function destroy($id)
+    public function destroy(\App\Models\Eoffice\JenisLayananDisposisi $disposisi)
     {
         try {
-            $this->service->destroy($id);
+            $this->JenisLayananDisposisiService->destroy($disposisi->jldisposisi_id);
             return jsonSuccess('Disposisi berhasil dihapus.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -63,19 +64,19 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Get disposisi data for AJAX (e.g., on Jenis Layanan show page).
      */
-    public function data($jenislayananId)
+    public function data(\App\Models\Eoffice\JenisLayanan $jenis_layanan)
     {
-        $data = $this->service->getByJenisLayanan($jenislayananId);
+        $data = $this->JenisLayananDisposisiService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
         return jsonSuccess('Data retrieved', null, $data);
     }
 
     /**
      * Get single disposisi data for edit modal
      */
-    public function show($id)
+    public function show(\App\Models\Eoffice\JenisLayananDisposisi $disposisi)
     {
         try {
-            $data = $this->service->getById($id);
+            $data = $disposisi;
             return jsonSuccess('Data retrieved', null, $data);
         } catch (\Exception $e) {
             return jsonError($e->getMessage());
@@ -88,7 +89,7 @@ class JenisLayananDisposisiController extends Controller
     public function updateSeq(Request $request, $id)
     {
         try {
-            $this->service->updateSeq($id, $request->input('seq'));
+            $this->JenisLayananDisposisiService->updateSeq($id, $request->input('seq'));
             return jsonSuccess('Urutan berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

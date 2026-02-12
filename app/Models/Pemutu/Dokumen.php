@@ -30,7 +30,8 @@ class Dokumen extends Model
         'std_amirtn_id',
         'std_jeniskriteria_id',
         'created_by',
-        'updated_by',
+        'updated_by',        'deleted_by',
+    
     ];
     public $timestamps = false; // Migration doesn't have timestamps
 

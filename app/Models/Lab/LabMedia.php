@@ -3,10 +3,13 @@ namespace App\Models\Lab;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 
 class LabMedia extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_media';
     protected $primaryKey = 'lab_media_id';
@@ -15,7 +18,10 @@ class LabMedia extends Model
         'lab_id',
         'media_id',
         'judul',
-        'keterangan',
+        'keterangan',        'created_by',        'updated_by',        'deleted_by',
+    
+    
+    
     ];
 
     protected $casts = [

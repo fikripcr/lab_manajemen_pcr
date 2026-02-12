@@ -9,11 +9,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StatusAktifitasController extends Controller
 {
-    protected $service;
+    protected $StatusAktifitasService;
 
-    public function __construct(StatusAktifitasService $service)
+    public function __construct(StatusAktifitasService $StatusAktifitasService)
     {
-        $this->service = $service;
+        $this->StatusAktifitasService = $StatusAktifitasService;
     }
 
     public function index()
@@ -55,7 +55,7 @@ class StatusAktifitasController extends Controller
     public function store(StatusAktifitasRequest $request)
     {
         try {
-            $this->service->create($request->validated());
+            $this->StatusAktifitasService->create($request->validated());
             return jsonSuccess('Status Aktifitas created successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -71,7 +71,7 @@ class StatusAktifitasController extends Controller
     public function update(StatusAktifitasRequest $request, StatusAktifitas $status_aktifita)
     {
         try {
-            $this->service->update($status_aktifita, $request->validated());
+            $this->StatusAktifitasService->update($status_aktifita, $request->validated());
             return jsonSuccess('Status Aktifitas updated successfully.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
