@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PerizinanStoreRequest;
+use App\Http\Requests\Hr\PerizinanUpdateRequest;
 use App\Models\Hr\JenisIzin;
 use App\Models\Hr\Perizinan;
 use App\Models\Hr\RiwayatApproval;
@@ -110,23 +111,23 @@ class PerizinanController extends Controller
 
         // Create perizinan
         $perizinan = Perizinan::create([
-            'jenisizin_id' => $validated['jenisizin_id'],
-            'pengusul' => $validated['pengusul'],
+            'jenisizin_id'           => $validated['jenisizin_id'],
+            'pengusul'               => $validated['pengusul'],
             'pekerjaan_ditinggalkan' => $validated['pekerjaan_ditinggalkan'] ?? null,
-            'keterangan' => $validated['keterangan'] ?? null,
-            'alamat_izin' => $validated['alamat_izin'] ?? null,
-            'tgl_awal' => $validated['tgl_mulai'],
-            'tgl_akhir' => $validated['tgl_selesai'],
-            'jam_awal' => $validated['jam_awal'] ?? null,
-            'jam_akhir' => $validated['jam_akhir'] ?? null,
-            'periode' => date('Y'),
+            'keterangan'             => $validated['keterangan'] ?? null,
+            'alamat_izin'            => $validated['alamat_izin'] ?? null,
+            'tgl_awal'               => $validated['tgl_mulai'],
+            'tgl_akhir'              => $validated['tgl_selesai'],
+            'jam_awal'               => $validated['jam_awal'] ?? null,
+            'jam_akhir'              => $validated['jam_akhir'] ?? null,
+            'periode'                => date('Y'),
         ]);
 
         // Create initial approval record
         $approval = RiwayatApproval::create([
-            'model' => 'Perizinan',
-            'model_id' => $perizinan->perizinan_id,
-            'status' => 'Draft',
+            'model'            => 'Perizinan',
+            'model_id'         => $perizinan->perizinan_id,
+            'status'           => 'Draft',
             'created_by_email' => Auth::user()?->email,
         ]);
 
@@ -154,7 +155,7 @@ class PerizinanController extends Controller
         return view('pages.hr.perizinan.edit', compact('perizinan', 'jenisIzin'));
     }
 
-    public function update(Request $request, Perizinan $perizinan)
+    public function update(PerizinanUpdateRequest $request, Perizinan $perizinan)
     {
         // Only allow update if still Draft
         if ($perizinan->status !== 'Draft') {
@@ -164,22 +165,7 @@ class PerizinanController extends Controller
             ], 400);
         }
 
-        $request->validate([
-            'jenisizin_id'           => 'required|exists:hr_jenis_izin,jenisizin_id',
-            'pengusul'               => 'required|exists:hr_pegawai,pegawai_id',
-            'pekerjaan_ditinggalkan' => 'nullable|string|max:500',
-            'keterangan'             => 'nullable|string',
-            'alamat_izin'            => 'nullable|string',
-            'tgl_awal'               => 'required|date',
-            'tgl_akhir'              => 'required|date|after_or_equal:tgl_awal',
-            'jam_awal'               => 'nullable',
-            'jam_akhir'              => 'nullable',
-        ]);
-
-        $perizinan->update($request->only([
-            'jenisizin_id', 'pengusul', 'pekerjaan_ditinggalkan', 'keterangan',
-            'alamat_izin', 'tgl_awal', 'tgl_akhir', 'jam_awal', 'jam_akhir',
-        ]));
+        $perizinan->update($request->validated());
 
         return response()->json([
             'success' => true,

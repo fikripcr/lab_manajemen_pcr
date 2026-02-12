@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Eoffice;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -21,27 +20,25 @@ class LayananStatusUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        // If status is present in route/request, we might need conditional logic here or in controller.
+        // Controller logic was: if (! in_array($status, ['proses', 'batal'])) validate...
+        // FormRequest doesn't easily know about route params unless we ask.
+        // $status = $this->route('status');
+
         return [
-            'status_layanan' => 'required|string',
-            'keterangan' => 'nullable|string',
-            'file_lampiran' => 'nullable|file|mimes:pdf,docx,zip,jpg,png|max:5120',
+            'status_layanan' => 'required_unless:status,proses,batal|string',
+            'keterangan'     => 'nullable|string',
+            'disposisi_seq'  => 'nullable|integer',
+            'file_lampiran'  => 'nullable|file|mimes:pdf,docx,zip,jpg,png|max:5120',
+            // 'status' param is from route, so we can use required_unless if we merge route params or check logic.
+            // A simpler approach for now is to replicate the controller logic:
+            // The controller passed $status.
+            // We can check $this->route('status').
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    protected function prepareForValidation()
     {
-        return [
-            'status_layanan.required' => 'Status layanan harus diisi.',
-            'status_layanan.string' => 'Status layanan harus berupa string.',
-            'keterangan.string' => 'Keterangan harus berupa string.',
-            'file_lampiran.file' => 'File lampiran harus berupa file.',
-            'file_lampiran.mimes' => 'File harus berformat PDF, DOCX, ZIP, JPG, atau PNG.',
-            'file_lampiran.max' => 'File maksimal 5MB.',
-        ];
+        $this->merge(['status' => $this->route('status')]);
     }
 }

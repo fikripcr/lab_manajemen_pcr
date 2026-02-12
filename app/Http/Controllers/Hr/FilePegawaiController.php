@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\FilePegawaiStoreRequest;
 use App\Services\Hr\FilePegawaiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -59,14 +60,8 @@ class FilePegawaiController extends Controller
     /**
      * Store a newly uploaded file.
      */
-    public function store(Request $request)
+    public function store(FilePegawaiStoreRequest $request)
     {
-        $request->validate([
-            'pegawai_id'   => 'required',
-            'jenisfile_id' => 'required|exists:hr_jenis_file,jenisfile_id',
-            'file'         => 'required|file|max:10240', // Max 10MB
-            'keterangan'   => 'nullable|string',
-        ]);
 
         try {
             $pegawaiId = decryptId($request->pegawai_id);

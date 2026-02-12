@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PresensiCheckInRequest;
 use App\Http\Requests\Hr\PresensiCheckOutRequest;
+use App\Http\Requests\Hr\PresensiLocationRequest;
+use App\Http\Requests\Hr\PresensiUpdateSettingsRequest;
+use App\Http\Requests\Hr\PresensiUploadPhotoRequest;
 use App\Services\Hr\PresensiService;
 use Illuminate\Http\Request;
 
@@ -61,13 +64,10 @@ class PresensiController extends Controller
         }
     }
 
-    public function getCurrentLocation(Request $request)
+    public function getCurrentLocation(PresensiLocationRequest $request)
     {
         try {
-            $data = $request->validate([
-                'latitude'  => 'required|numeric',
-                'longitude' => 'required|numeric',
-            ]);
+            $data = $request->validated();
 
             $location = $this->PresensiService->getLocationFromCoordinates($data['latitude'], $data['longitude']);
 
@@ -97,15 +97,10 @@ class PresensiController extends Controller
         ]);
     }
 
-    public function updateSettings(Request $request)
+    public function updateSettings(PresensiUpdateSettingsRequest $request)
     {
         try {
-            $data = $request->validate([
-                'office_latitude'  => 'required|numeric',
-                'office_longitude' => 'required|numeric',
-                'office_address'   => 'required|string|max:500',
-                'allowed_radius'   => 'required|integer|min:10|max:1000',
-            ]);
+            $data = $request->validated();
 
             // Handle checkbox properly
             $data['is_active'] = $request->has('is_active');
@@ -146,13 +141,11 @@ class PresensiController extends Controller
         return view('pages.hr.pegawai.upload-photo');
     }
 
-    public function storeUploadPhoto(Request $request)
+    public function storeUploadPhoto(PresensiUploadPhotoRequest $request)
     {
         try {
-            $request->validate([
-                'photo'         => 'required|image|mimes:jpeg,png,jpg|max:2048',
-                'face_encoding' => 'nullable|string',
-            ]);
+            // $request->validated() is sufficient, we can access params directly or via validated()
+            $request->validated();
 
             $user    = auth()->user();
             $pegawai = \App\Models\Hr\Pegawai::where('user_id', $user->id)->first();

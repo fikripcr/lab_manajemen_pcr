@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\OrgUnitRequest;
 use App\Models\Hr\OrgUnit;
 use App\Services\Hr\OrgUnitService;
 use Illuminate\Http\Request;
@@ -85,18 +86,10 @@ class OrgUnitController extends Controller
         return view('pages.hr.org-units.create', compact('parent', 'units', 'types'));
     }
 
-    public function store(Request $request)
+    public function store(OrgUnitRequest $request)
     {
-        $request->validate([
-            'name'      => 'required|string|max:255',
-            'type'      => 'required|string',
-            'parent_id' => 'nullable|exists:hr_org_unit,org_unit_id',
-            'code'      => 'nullable|string|max:50',
-            'is_active' => 'nullable|boolean',
-        ]);
-
         try {
-            $data              = $request->only(['name', 'type', 'parent_id', 'code', 'description']);
+            $data              = $request->validated();
             $data['is_active'] = $request->boolean('is_active', true);
 
             $this->OrgUnitService->createOrgUnit($data);
@@ -116,18 +109,10 @@ class OrgUnitController extends Controller
         return view('pages.hr.org-units.edit', compact('orgUnit', 'units', 'types'));
     }
 
-    public function update(Request $request, OrgUnit $org_unit)
+    public function update(OrgUnitRequest $request, OrgUnit $org_unit)
     {
-        $request->validate([
-            'name'      => 'required|string|max:255',
-            'type'      => 'required|string',
-            'parent_id' => 'nullable|exists:hr_org_unit,org_unit_id',
-            'code'      => 'nullable|string|max:50',
-            'is_active' => 'nullable|boolean',
-        ]);
-
         try {
-            $data              = $request->only(['name', 'type', 'parent_id', 'code', 'description']);
+            $data              = $request->validated();
             $data['is_active'] = $request->boolean('is_active', true);
 
             $this->OrgUnitService->updateOrgUnit($org_unit->org_unit_id, $data);

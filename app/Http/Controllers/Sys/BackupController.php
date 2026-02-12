@@ -2,8 +2,8 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Sys\BackupStoreRequest;
 use App\Services\Sys\BackupService;
-use Illuminate\Http\Request;
 
 class BackupController extends Controller
 {
@@ -27,7 +27,7 @@ class BackupController extends Controller
     /**
      * Store a newly created backup
      */
-    public function store(Request $request)
+    public function store(BackupStoreRequest $request)
     {
         $type = $request->input('type', 'files');
 
