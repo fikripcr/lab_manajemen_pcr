@@ -75,8 +75,8 @@ if (! function_exists('generateKodeInventaris')) {
      */
     function generateKodeInventaris($labId, $inventarisId)
     {
-        $lab        = \App\Models\Lab::find($labId);
-        $inventaris = \App\Models\Inventaris::find($inventarisId);
+        $lab        = \App\Models\Lab\Lab::find($labId);
+        $inventaris = \App\Models\Lab\Inventaris::find($inventarisId);
 
         if (! $lab || ! $inventaris) {
             return null;
@@ -84,13 +84,14 @@ if (! function_exists('generateKodeInventaris')) {
 
         $labCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $lab->name ?? ''), 0, 3));
         $invCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $inventaris->nama_alat ?? ''), 0, 3));
+        $prefix  = sprintf('%s-%s', $labCode, $invCode);
 
-        // Ambil jumlah inventaris yang sudah ada di lab ini untuk urutan
-        $count = \App\Models\LabInventaris::where('lab_id', $labId)
-            ->where('inventaris_id', $inventarisId)
+        // Ambil jumlah inventaris yang sudah ada di lab ini dengan prefix yang sama untuk urutan
+        $count = \App\Models\Lab\LabInventaris::where('lab_id', $labId)
+            ->where('kode_inventaris', 'like', $prefix . '-%')
             ->count() + 1;
 
-        return sprintf('%s-%s-%04d', $labCode, $invCode, $count);
+        return sprintf('%s-%04d', $prefix, $count);
     }
 }
 

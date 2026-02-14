@@ -2,8 +2,10 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\SoftwareRequestStoreRequest;
 use App\Http\Requests\Lab\SoftwareRequestUpdateRequest;
 use App\Models\Lab\MataKuliah;
+use App\Models\Lab\PeriodSoftRequest;
 use App\Services\Lab\SoftwareRequestService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -23,6 +25,50 @@ class SoftwareRequestController extends Controller
     public function index(Request $request)
     {
         return view('pages.lab.software-requests.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $activePeriod = PeriodSoftRequest::where('is_active', true)
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->first();
+
+        if (! $activePeriod) {
+            // If no active period, maybe show all or show error?
+            // User request suggests it should be scheduled.
+            // For now, let's get courses from the latest active semester if no specific software period found,
+            // or just notify that no active period is open.
+            return view('pages.lab.software-requests.create', [
+                'mataKuliahs'  => collect(),
+                'activePeriod' => null,
+                'error'        => 'Tidak ada periode pengajuan software yang aktif saat ini.',
+            ]);
+        }
+
+        // Filter Mata Kuliah based on the semester in the active period
+        $mataKuliahs = MataKuliah::whereHas('jadwals', function ($q) use ($activePeriod) {
+            $q->where('semester_id', $activePeriod->semester_id);
+        })->get();
+
+        return view('pages.lab.software-requests.create', compact('mataKuliahs', 'activePeriod'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(SoftwareRequestStoreRequest $request)
+    {
+        try {
+            $this->SoftwareRequestService->createRequest($request->validated());
+
+            return jsonSuccess('Permintaan software berhasil dibuat.', route('lab.software-requests.index'));
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     public function paginate(Request $request)
@@ -97,8 +143,17 @@ class SoftwareRequestController extends Controller
             abort(404);
         }
 
-        $mataKuliahs = MataKuliah::all();
-        return view('pages.lab.software-requests.edit', compact('softwareRequest', 'mataKuliahs'));
+        $activePeriod = $softwareRequest->period ?? PeriodSoftRequest::where('is_active', true)->first();
+
+        if ($activePeriod) {
+            $mataKuliahs = MataKuliah::whereHas('jadwals', function ($q) use ($activePeriod) {
+                $q->where('semester_id', $activePeriod->semester_id);
+            })->get();
+        } else {
+            $mataKuliahs = MataKuliah::all();
+        }
+
+        return view('pages.lab.software-requests.edit', compact('softwareRequest', 'mataKuliahs', 'activePeriod'));
     }
 
     /**

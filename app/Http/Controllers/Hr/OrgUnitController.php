@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\OrgUnitRequest;
-use App\Models\Hr\OrgUnit;
+use App\Models\Hr\OrgUnit as HrOrgUnit;
 use App\Services\Hr\OrgUnitService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -71,7 +71,7 @@ class OrgUnitController extends Controller
         try {
             $orgUnit = $this->OrgUnitService->toggleStatus($id);
             return jsonSuccess('Status updated.', null, ['is_active' => $orgUnit->is_active]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -94,12 +94,12 @@ class OrgUnitController extends Controller
 
             $this->OrgUnitService->createOrgUnit($data);
             return jsonSuccess('OrgUnit created.', route('hr.org-units.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function edit(OrgUnit $org_unit)
+    public function edit(HrOrgUnit $org_unit)
     {
         $orgUnit  = $org_unit;
         $allUnits = $this->OrgUnitService->getHierarchicalList();
@@ -109,7 +109,7 @@ class OrgUnitController extends Controller
         return view('pages.hr.org-units.edit', compact('orgUnit', 'units', 'types'));
     }
 
-    public function update(OrgUnitRequest $request, OrgUnit $org_unit)
+    public function update(OrgUnitRequest $request, HrOrgUnit $org_unit)
     {
         try {
             $data              = $request->validated();
@@ -117,17 +117,17 @@ class OrgUnitController extends Controller
 
             $this->OrgUnitService->updateOrgUnit($org_unit->org_unit_id, $data);
             return jsonSuccess('OrgUnit updated.', route('hr.org-units.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy(OrgUnit $org_unit)
+    public function destroy(HrOrgUnit $org_unit)
     {
         try {
             $this->OrgUnitService->deleteOrgUnit($org_unit->org_unit_id);
             return jsonSuccess('OrgUnit deleted.', route('hr.org-units.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -138,7 +138,7 @@ class OrgUnitController extends Controller
             $hierarchy = $request->input('hierarchy', []);
             $this->OrgUnitService->reorderUnits($hierarchy);
             return jsonSuccess('Hierarchy updated.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

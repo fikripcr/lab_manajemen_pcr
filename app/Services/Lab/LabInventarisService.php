@@ -4,6 +4,7 @@ namespace App\Services\Lab;
 use App\Models\Lab\Inventaris;
 use App\Models\Lab\Lab;
 use App\Models\Lab\LabInventaris;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class LabInventarisService
@@ -101,7 +102,7 @@ class LabInventarisService
     {
         $model = LabInventaris::find($id);
         if (! $model) {
-            throw new \Exception("Data Inventaris Lab dengan ID {$id} tidak ditemukan.");
+            throw new Exception("Data Inventaris Lab dengan ID {$id} tidak ditemukan.");
         }
         return $model;
     }

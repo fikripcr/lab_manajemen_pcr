@@ -1,11 +1,12 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class LogPenggunaanPc extends Model
 {
@@ -22,10 +23,8 @@ class LogPenggunaanPc extends Model
         'status_pc',
         'kondisi',
         'catatan_umum',
-        'waktu_isi',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'waktu_isi', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

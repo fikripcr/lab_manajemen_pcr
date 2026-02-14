@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\AttDeviceRequest;
 use App\Models\Hr\AttDevice;
 use App\Services\Hr\AttDeviceService;
+use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class AttDeviceController extends Controller
@@ -51,7 +52,7 @@ class AttDeviceController extends Controller
         try {
             $this->AttDeviceService->create($request->validated());
             return jsonSuccess('Mesin Presensi created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -68,7 +69,7 @@ class AttDeviceController extends Controller
             $attDevice = AttDevice::findOrFail($id);
             $this->AttDeviceService->update($attDevice, $request->validated());
             return jsonSuccess('Mesin Presensi updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -78,7 +79,7 @@ class AttDeviceController extends Controller
         try {
             $this->AttDeviceService->delete($id);
             return jsonSuccess('Mesin Presensi deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\TanggalLiburRequest;
 use App\Models\Hr\TanggalLibur;
 use App\Services\Hr\TanggalLiburService;
+use Exception;
 use Illuminate\Http\Request;
 
 class TanggalLiburController extends Controller
@@ -49,7 +50,7 @@ class TanggalLiburController extends Controller
         try {
             $count = $this->TanggalLiburService->createBatch($request->validated());
             return jsonSuccess("Berhasil menambahkan $count tanggal libur.", route('hr.tanggal-libur.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -59,7 +60,7 @@ class TanggalLiburController extends Controller
         try {
             $this->TanggalLiburService->delete($id);
             return jsonSuccess('Data berhasil dihapus');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

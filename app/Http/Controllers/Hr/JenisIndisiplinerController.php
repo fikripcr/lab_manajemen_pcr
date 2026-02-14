@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JenisIndisiplinerStoreRequest;
 use App\Http\Requests\Hr\JenisIndisiplinerUpdateRequest;
 use App\Models\Hr\JenisIndisipliner;
-use Illuminate\Http\Request;
+use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class JenisIndisiplinerController extends Controller
@@ -44,7 +44,7 @@ class JenisIndisiplinerController extends Controller
         try {
             JenisIndisipliner::create($validated);
             return response()->json(['success' => true, 'message' => 'Jenis indisipliner berhasil dibuat.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -62,7 +62,7 @@ class JenisIndisiplinerController extends Controller
         try {
             $jenis_indisipliner->update($validated);
             return jsonSuccess('Jenis Indisipliner berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError('Gagal memperbarui data: ' . $e->getMessage(), 500);
         }
     }
@@ -77,7 +77,7 @@ class JenisIndisiplinerController extends Controller
 
             $jenis_indisipliner->delete();
             return jsonSuccess('Jenis Indisipliner berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError('Gagal menghapus data: ' . $e->getMessage(), 500);
         }
     }

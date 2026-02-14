@@ -1,15 +1,17 @@
 <?php
 namespace App\Http\Controllers\Sys;
 
+use App\Exports\Sys\ActivityLogExport;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Sys\Activity;
 use App\Models\Sys\ErrorLog;
 use App\Models\Sys\ServerMonitorCheck;
-use App\Exports\Sys\ActivityLogExport;
+use App\Models\User;
+use App\Notifications\SysTestNotification;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -39,7 +41,7 @@ class TestController extends Controller
             logActivity('test_dashboard', 'Test email sent successfully to ' . $user->email, $user);
 
             return jsonSuccess('Test email sent successfully to ' . $user->email);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logActivity('test_dashboard', 'Error sending test email: ' . $e->getMessage(), $user);
 
             return jsonError($e->getMessage(), 500);
@@ -52,12 +54,12 @@ class TestController extends Controller
 
         try {
             // Send the test notification to the user using the existing TestNotification class
-            $user->notify(new \App\Notifications\SysTestNotification());
+            $user->notify(new SysTestNotification());
 
             logActivity('test_dashboard', 'Test notification sent successfully to ' . $user->name, $user);
 
             return jsonSuccess('Test notification sent successfully to ' . $user->name);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logActivity('test_dashboard', 'Error sending test notification: ' . $e->getMessage(), $user);
 
             return jsonError('Error sending test notification: ' . $e->getMessage(), 500);
@@ -102,7 +104,7 @@ class TestController extends Controller
             logActivity('test_dashboard', 'Test PDF export generated successfully by ' . $user->name, $user);
 
             return $pdf->download('test-report-' . now()->format('Y-m-d-H-i') . '.pdf');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logActivity('test_dashboard', 'Error generating test PDF export: ' . $e->getMessage(), $user);
 
             return jsonError('Error generating test PDF export: ' . $e->getMessage(), 500);
@@ -121,7 +123,7 @@ class TestController extends Controller
                 new ActivityLogExport(),
                 $fileName
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logActivity('test_dashboard', 'Error generating test Excel export: ' . $e->getMessage(), $user);
 
             return jsonError('Error generating test Excel export: ' . $e->getMessage(), 500);
@@ -293,7 +295,7 @@ class TestController extends Controller
             logActivity('test_dashboard', 'Test Word export generated successfully by ' . $user->name, $user);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logActivity('test_dashboard', 'Error generating test Word export: ' . $e->getMessage(), $user);
 
             return jsonError('Error generating test Word export: ' . $e->getMessage(), 500);
@@ -433,9 +435,9 @@ class TestController extends Controller
             // Return a JSON response with the download URL
             return jsonSuccess('DOCX template processed successfully', null, [
                 'download_url' => asset('templates/processed/' . basename($publicPath)),
-                'filename'    => basename($publicPath),
+                'filename'     => basename($publicPath),
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logActivity('test_dashboard', 'Error processing DOCX template: ' . $e->getMessage(), $user);
 
             return jsonError('Error processing DOCX template: ' . $e->getMessage(), 500);
@@ -461,7 +463,7 @@ class TestController extends Controller
                 'file_path' => $filePath,
                 'file_name' => $fileName,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logActivity('test_dashboard', 'Error uploading DOCX template: ' . $e->getMessage(), $user);
 
             return jsonError('Error uploading template: ' . $e->getMessage(), 500);

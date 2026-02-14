@@ -1,0 +1,123 @@
+@extends('layouts.admin.app')
+
+@section('title', 'Detail Peminjaman')
+
+@section('content')
+<div class="container-xl">
+    <div class="page-header d-print-none">
+        <div class="row align-items-center">
+            <div class="col">
+                <h2 class="page-title">
+                    Detail Peminjaman #{{ $kegiatan->kegiatan_id }}
+                </h2>
+            </div>
+            <div class="col-auto ms-auto d-print-none">
+                <a href="{{ route('lab.kegiatan.index') }}" class="btn btn-secondary">
+                    <i class="bx bx-arrow-back me-2"></i> Kembali
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="row row-cards">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Informasi Kegiatan</h3>
+                        <div class="card-actions">
+                            @php
+                                $badges = [
+                                    'pending' => 'warning',
+                                    'approved' => 'success',
+                                    'rejected' => 'danger',
+                                    'completed' => 'info'
+                                ];
+                                $color = $badges[$kegiatan->status] ?? 'secondary';
+                            @endphp
+                            <span class="badge bg-{{ $color }}">{{ ucfirst($kegiatan->status) }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="datagrid">
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Nama Kegiatan</div>
+                                <div class="datagrid-content">{{ $kegiatan->nama_kegiatan }}</div>
+                            </div>
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Lab</div>
+                                <div class="datagrid-content">{{ $kegiatan->lab->name }}</div>
+                            </div>
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Waktu</div>
+                                <div class="datagrid-content">
+                                    {{ $kegiatan->tanggal->format('d M Y') }} <br>
+                                    {{ $kegiatan->jam_mulai->format('H:i') }} - {{ $kegiatan->jam_selesai->format('H:i') }}
+                                </div>
+                            </div>
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Penyelenggara</div>
+                                <div class="datagrid-content">{{ $kegiatan->penyelenggara->name }}</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3"></div>
+                        <label class="form-label text-muted">Deskripsi</label>
+                        <div class="form-control-plaintext border p-2 rounded bg-light mb-3">
+                            {{ $kegiatan->deskripsi }}
+                        </div>
+
+                        @if($kegiatan->dokumentasi_path)
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Dokumen Pendukung</label>
+                                <div>
+                                    <a href="{{ asset('storage/' . $kegiatan->dokumentasi_path) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bx bx-file me-2"></i> Lihat Dokumen
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Approval Action</h3>
+                    </div>
+                    <div class="card-body">
+                        @if($kegiatan->status == 'pending')
+                            <form action="{{ route('lab.kegiatan.status', encryptId($kegiatan->kegiatan_id)) }}" method="POST" class="ajax-form">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label">Catatan (Optional)</label>
+                                    <textarea name="catatan" class="form-control" rows="3" placeholder="Alasan approval/rejection..."></textarea>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" name="status" value="approved" class="btn btn-success w-100">
+                                        <i class="bx bx-check me-2"></i> Setuju
+                                    </button>
+                                    <button type="submit" name="status" value="rejected" class="btn btn-danger w-100">
+                                        <i class="bx bx-x me-2"></i> Tolak
+                                    </button>
+                                </div>
+                            </form>
+                        @else
+                            <div class="text-center py-4">
+                                <i class="bx bx-check-circle h1 text-success"></i>
+                                <p class="text-muted">Status sudah diproses: <strong>{{ ucfirst($kegiatan->status) }}</strong></p>
+                                @if($kegiatan->catatan_pic)
+                                    <div class="alert alert-info">
+                                        Catatan: {{ $kegiatan->catatan_pic }}
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

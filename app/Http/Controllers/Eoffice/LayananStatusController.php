@@ -3,7 +3,9 @@ namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\LayananStatusUpdateRequest;
+use App\Models\Eoffice\Layanan;
 use App\Services\Eoffice\LayananStatusService;
+use Exception;
 
 class LayananStatusController extends Controller
 {
@@ -17,7 +19,7 @@ class LayananStatusController extends Controller
     /**
      * Update the status of a layanan (disposition workflow).
      */
-    public function update(LayananStatusUpdateRequest $request, \App\Models\Eoffice\Layanan $layanan, $status = null)
+    public function update(LayananStatusUpdateRequest $request, Layanan $layanan, $status = null)
     {
         // Quick actions (proses/batal) don't need full validation, Request handles this via prepareForValidation or rules
 
@@ -52,7 +54,7 @@ class LayananStatusController extends Controller
             }
 
             return jsonSuccess('Status berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if (in_array($status, ['proses', 'batal'])) {
                 return redirect()->back()->with('error', $e->getMessage());
             }

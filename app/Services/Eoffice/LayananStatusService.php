@@ -5,6 +5,7 @@ use App\Models\Eoffice\Layanan;
 use App\Models\Eoffice\LayananIsian;
 use App\Models\Eoffice\LayananStatus;
 use App\Models\Eoffice\TanggalTidakHadir;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -132,7 +133,7 @@ class LayananStatusService
             // Check if this isian is assigned to the current disposisi step
             // and is not filled yet — pattern from original e-office
             if (isset($item->fill_by) && $item->fill_by === 'Disposisi ' . $currentSeq && empty($item->isi)) {
-                throw new \Exception('Anda perlu mengisi Data Isian: "' . $item->nama_isian . '"');
+                throw new Exception('Anda perlu mengisi Data Isian: "' . $item->nama_isian . '"');
             }
         }
     }

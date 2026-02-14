@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Services\Sys\SysGlobalSearchService;
+use Exception;
 use Illuminate\Http\Request;
 
 class SysGlobalSearchController extends Controller
@@ -21,17 +21,17 @@ class SysGlobalSearchController extends Controller
             $results = $this->sysGlobalSearchService->globalSearch($query);
 
             return response()->json($results);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Log::error('Global search error: ' . $e->getMessage());
             return response()->json([
-                'users' => [],
-                'roles' => [],
-                'permissions' => [],
-                'activities' => [],
-                'error_logs' => [],
-                'server_hosts' => [],
+                'users'         => [],
+                'roles'         => [],
+                'permissions'   => [],
+                'activities'    => [],
+                'error_logs'    => [],
+                'server_hosts'  => [],
                 'server_checks' => [],
-                'error' => 'Terjadi kesalahan saat pencarian global.'
+                'error'         => 'Terjadi kesalahan saat pencarian global.',
             ]);
         }
     }

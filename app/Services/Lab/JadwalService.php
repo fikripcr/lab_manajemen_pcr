@@ -3,10 +3,7 @@ namespace App\Services\Lab;
 
 use App\Imports\JadwalImport;
 use App\Models\Lab\JadwalKuliah;
-use App\Models\Lab\Lab;
-use App\Models\Lab\MataKuliah;
-use App\Models\Lab\Semester;
-use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -17,25 +14,27 @@ class JadwalService
      */
     public function getFilteredQuery(array $filters = [])
     {
-        $query = JadwalKuliah::select([
-            'jadwal_kuliah.jadwal_kuliah_id',
-            'jadwal_kuliah.semester_id',
-            'jadwal_kuliah.mata_kuliah_id',
-            'jadwal_kuliah.dosen_id',
-            'jadwal_kuliah.hari',
-            'jadwal_kuliah.jam_mulai',
-            'jadwal_kuliah.jam_selesai',
-            'jadwal_kuliah.lab_id',
-            'jadwal_kuliah.created_at',
-            'jadwal_kuliah.updated_at',
-            'jadwal_kuliah.deleted_at',
-            'semesters.tahun_ajaran',
-            'semesters.semester as semester_nama',
-            'mata_kuliahs.kode_mk',
-            'mata_kuliahs.nama_mk',
-            'users.name as dosen_name',
-            'labs.name as lab_name',
-        ])
+        $query = JadwalKuliah::withTrashed()
+            ->from('lab_jadwal_kuliah as jadwal_kuliah')
+            ->select([
+                'jadwal_kuliah.jadwal_kuliah_id',
+                'jadwal_kuliah.semester_id',
+                'jadwal_kuliah.mata_kuliah_id',
+                'jadwal_kuliah.dosen_id',
+                'jadwal_kuliah.hari',
+                'jadwal_kuliah.jam_mulai',
+                'jadwal_kuliah.jam_selesai',
+                'jadwal_kuliah.lab_id',
+                'jadwal_kuliah.created_at',
+                'jadwal_kuliah.updated_at',
+                'jadwal_kuliah.deleted_at',
+                'semesters.tahun_ajaran',
+                'semesters.semester as semester_nama',
+                'mata_kuliahs.kode_mk',
+                'mata_kuliahs.nama_mk',
+                'users.name as dosen_name',
+                'labs.name as lab_name',
+            ])
             ->with(['semester', 'mataKuliah', 'dosen', 'lab'])
             ->leftJoin('semesters', 'jadwal_kuliah.semester_id', '=', 'semesters.semester_id')
             ->leftJoin('mata_kuliahs', 'jadwal_kuliah.mata_kuliah_id', '=', 'mata_kuliahs.mata_kuliah_id')
@@ -108,7 +107,7 @@ class JadwalService
 
             // Dependency Check
             if ($jadwal->pcAssignments()->count() > 0 || $jadwal->logPenggunaanPcs()->count() > 0) {
-                throw new \Exception('Tidak dapat menghapus jadwal yang terkait dengan penggunaan PC (Assignments/Logs).');
+                throw new Exception('Tidak dapat menghapus jadwal yang terkait dengan penggunaan PC (Assignments/Logs).');
             }
 
             $jadwal->delete();

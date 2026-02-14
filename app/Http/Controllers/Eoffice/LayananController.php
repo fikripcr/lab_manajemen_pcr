@@ -83,7 +83,7 @@ class LayananController extends Controller
     /**
      * Show dynamic submission form
      */
-    public function create(\App\Models\Eoffice\JenisLayanan $jenisLayanan)
+    public function create(JenisLayanan $jenisLayanan)
     {
         $pageTitle = 'Pengajuan: ' . $jenisLayanan->nama_layanan;
 
@@ -123,7 +123,7 @@ class LayananController extends Controller
         try {
             $this->LayananService->createLayanan($data, $dynamicFields);
             return jsonSuccess('Pengajuan berhasil dikirim.', route('eoffice.layanan.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -131,7 +131,7 @@ class LayananController extends Controller
     /**
      * Show detail
      */
-    public function show(\App\Models\Eoffice\Layanan $layanan)
+    public function show(Layanan $layanan)
     {
         $layanan->load([
             'jenisLayanan.isians.kategoriIsian',
@@ -196,7 +196,7 @@ class LayananController extends Controller
             $realId = decryptId($id);
             $this->LayananService->updateStatus($realId, $data);
             return jsonSuccess('Status berhasil dirubah.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -204,7 +204,7 @@ class LayananController extends Controller
     /**
      * Download PDF with QR Code
      */
-    public function downloadPdf(\App\Models\Eoffice\Layanan $layanan)
+    public function downloadPdf(Layanan $layanan)
     {
         $layanan->load([
             'jenisLayanan.isians.kategoriIsian',

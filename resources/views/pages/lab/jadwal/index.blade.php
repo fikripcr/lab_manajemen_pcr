@@ -3,8 +3,8 @@
 @section('header')
 <x-tabler.page-header title="Jadwal Kuliah" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-tabler.button type="import" :href="route('jadwal.import.form')" text="Import Jadwal" />
-        <x-tabler.button type="create" :href="route('jadwal.create')" text="Tambah" />
+        <x-tabler.button type="import" :href="route('lab.jadwal.import.form')" text="Import Jadwal" />
+        <x-tabler.button type="create" :href="route('lab.jadwal.create')" text="Tambah" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -25,7 +25,7 @@
             <x-tabler.flash-message />
             <x-tabler.datatable 
                 id="jadwal-table" 
-                :route="route('jadwal.data')" 
+                :route="route('lab.jadwal.data')" 
                 :columns="[
                     ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
                     ['title' => 'Hari', 'data' => 'tanggal', 'name' => 'tanggal'],

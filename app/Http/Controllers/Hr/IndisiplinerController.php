@@ -7,6 +7,8 @@ use App\Http\Requests\Hr\IndisiplinerUpdateRequest;
 use App\Models\Hr\Indisipliner;
 use App\Models\Hr\IndisiplinerPegawai;
 use App\Models\Hr\JenisIndisipliner;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -70,8 +72,8 @@ class IndisiplinerController extends Controller
             // Create indisipliner record
             $indisipliner = Indisipliner::create([
                 'jenisindisipliner_id' => $validated['jenisindisipliner_id'],
-                'tgl_indisipliner' => $validated['tgl_indisipliner'],
-                'keterangan' => $validated['keterangan'] ?? null,
+                'tgl_indisipliner'     => $validated['tgl_indisipliner'],
+                'keterangan'           => $validated['keterangan'] ?? null,
             ]);
 
             // Handle file upload
@@ -85,13 +87,13 @@ class IndisiplinerController extends Controller
             foreach ($validated['pegawai_id'] as $pegawaiId) {
                 IndisiplinerPegawai::create([
                     'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id' => $pegawaiId,
+                    'pegawai_id'      => $pegawaiId,
                 ]);
             }
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Indisipliner berhasil dibuat.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
@@ -117,8 +119,8 @@ class IndisiplinerController extends Controller
             // Update indisipliner record
             $indisipliner->update([
                 'jenisindisipliner_id' => $validated['jenisindisipliner_id'],
-                'tgl_indisipliner' => $validated['tgl_indisipliner'],
-                'keterangan' => $validated['keterangan'] ?? null,
+                'tgl_indisipliner'     => $validated['tgl_indisipliner'],
+                'keterangan'           => $validated['keterangan'] ?? null,
             ]);
 
             // Handle file upload
@@ -133,13 +135,13 @@ class IndisiplinerController extends Controller
             foreach ($validated['pegawai_id'] as $pegawaiId) {
                 IndisiplinerPegawai::create([
                     'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id' => $pegawaiId,
+                    'pegawai_id'      => $pegawaiId,
                 ]);
             }
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Indisipliner berhasil diperbarui.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
@@ -158,7 +160,7 @@ class IndisiplinerController extends Controller
             DB::commit();
 
             return jsonSuccess('Data indisipliner berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return jsonError('Gagal menghapus data: ' . $e->getMessage(), 500);
         }

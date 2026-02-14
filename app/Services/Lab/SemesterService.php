@@ -2,6 +2,7 @@
 namespace App\Services\Lab;
 
 use App\Models\Lab\Semester;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class SemesterService
@@ -81,7 +82,7 @@ class SemesterService
 
             // Dependency Checks
             if ($semester->jadwals()->count() > 0) {
-                throw new \Exception('Tidak dapat menghapus semester karena masih digunakan dalam Jadwal.');
+                throw new Exception('Tidak dapat menghapus semester karena masih digunakan dalam Jadwal.');
             }
 
             $name = "{$semester->tahun_ajaran} " . ($semester->semester == 1 ? 'Ganjil' : 'Genap');
@@ -97,7 +98,7 @@ class SemesterService
     {
         $model = Semester::find($id);
         if (! $model) {
-            throw new \Exception("Semester dengan ID {$id} tidak ditemukan.");
+            throw new Exception("Semester dengan ID {$id} tidak ditemukan.");
         }
         return $model;
     }

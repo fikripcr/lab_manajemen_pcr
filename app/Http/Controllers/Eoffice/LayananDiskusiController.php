@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Eoffice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\LayananDiskusiStoreRequest;
 use App\Services\Eoffice\LayananDiskusiService;
+use Exception;
 
 class LayananDiskusiController extends Controller
 {
@@ -30,7 +31,7 @@ class LayananDiskusiController extends Controller
 
             $this->LayananDiskusiService->store($layananId, $validated);
             return jsonSuccess('Diskusi berhasil dikirim.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

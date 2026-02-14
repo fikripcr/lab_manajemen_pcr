@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Services\Sys\ActivityLogsService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
@@ -61,7 +62,7 @@ class ActivityLogController extends Controller
                 ->rawColumns(['description', 'action'])
                 ->make(true);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

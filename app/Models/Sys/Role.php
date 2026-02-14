@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Models\Sys;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
-class Role extends SpatieRole implements \Spatie\Searchable\Searchable
+class Role extends SpatieRole implements Searchable
 {
     use SoftDeletes, Blameable, HashidBinding;
     protected $table = 'sys_roles';

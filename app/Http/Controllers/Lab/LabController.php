@@ -6,6 +6,7 @@ use App\Http\Requests\Lab\LabRequest;
 use App\Models\Lab\Lab; // Still needed for type hinting or specific direct queries if any (e.g., DataTables if not via Service)
 use App\Services\Lab\LabService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 
 class LabController extends Controller
@@ -79,7 +80,7 @@ class LabController extends Controller
             $this->LabService->createLab($data);
             return jsonSuccess('Lab berhasil ditambahkan.', route('lab.labs.index'));
         } catch (\Exception $e) {
-            \Log::error('Error creation lab: ' . $e->getMessage());
+            Log::error('Error creation lab: ' . $e->getMessage());
             return jsonError('Gagal membuat lab: ' . $e->getMessage(), 500);
         }
     }

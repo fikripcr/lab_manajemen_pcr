@@ -6,6 +6,7 @@ use App\Http\Requests\Pemutu\PersonilImportRequest;
 use App\Http\Requests\Pemutu\PersonilRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\PersonilService; // Import Service
+use Exception;
 use Yajra\DataTables\DataTables;
 
 class PersonilController extends Controller
@@ -57,7 +58,7 @@ class PersonilController extends Controller
             $this->PersonilService->createPersonil($request->validated());
 
             return jsonSuccess('Personil created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -79,7 +80,7 @@ class PersonilController extends Controller
             $this->PersonilService->updatePersonil($id, $request->validated());
 
             return jsonSuccess('Personil updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -90,7 +91,7 @@ class PersonilController extends Controller
             $this->PersonilService->deletePersonil($id);
 
             return jsonSuccess('Personil deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -105,7 +106,7 @@ class PersonilController extends Controller
             $this->PersonilService->importPersonils($request->file('file'));
 
             return jsonSuccess('Personils imported successfully.', route('pemutu.personils.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

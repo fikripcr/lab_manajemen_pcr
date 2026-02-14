@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('labs', function (Blueprint $table) {
+        // 1. Labs (Renamed to lab_labs)
+        Schema::create('lab_labs', function (Blueprint $table) {
             $table->id('lab_id');
             $table->string('name');
             $table->string('location', 191)->nullable();
@@ -19,9 +20,15 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
-        Schema::create('semesters', function (Blueprint $table) {
+        // 2. Semesters (Renamed to lab_semesters)
+        Schema::create('lab_semesters', function (Blueprint $table) {
             $table->id('semester_id');
             $table->string('tahun_ajaran', 50);
             $table->enum('semester', ['Ganjil', 'Genap']);
@@ -30,18 +37,30 @@ return new class extends Migration
             $table->boolean('is_active')->default(false)->index();
             $table->timestamps();
             $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
-        Schema::create('mata_kuliahs', function (Blueprint $table) {
+        // 3. Mata Kuliahs (Renamed to lab_mata_kuliahs)
+        Schema::create('lab_mata_kuliahs', function (Blueprint $table) {
             $table->id('mata_kuliah_id');
             $table->string('kode_mk', 50);
             $table->string('nama_mk', 191);
             $table->integer('sks');
             $table->timestamps();
             $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
-        Schema::create('jadwal_kuliah', function (Blueprint $table) {
+        // 4. Jadwal Kuliah (Renamed to lab_jadwal_kuliah)
+        Schema::create('lab_jadwal_kuliah', function (Blueprint $table) {
             $table->id('jadwal_kuliah_id');
             $table->unsignedBigInteger('semester_id');
             $table->unsignedBigInteger('mata_kuliah_id');
@@ -53,14 +72,20 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('semester_id')->references('semester_id')->on('semesters');
-            $table->foreign('mata_kuliah_id')->references('mata_kuliah_id')->on('mata_kuliahs');
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('semester_id')->references('semester_id')->on('lab_semesters');
+            $table->foreign('mata_kuliah_id')->references('mata_kuliah_id')->on('lab_mata_kuliahs');
             $table->foreign('dosen_id')->references('id')->on('users');
-            $table->foreign('lab_id')->references('lab_id')->on('labs');
+            $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
             $table->index(['semester_id', 'mata_kuliah_id', 'dosen_id', 'lab_id'], 'idx_jadwal_main');
         });
 
-        Schema::create('pc_assignments', function (Blueprint $table) {
+        // 5. PC Assignments (Renamed to lab_pc_assignments)
+        Schema::create('lab_pc_assignments', function (Blueprint $table) {
             $table->id('pc_assignment_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('jadwal_id');
@@ -71,13 +96,19 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('jadwal_id')->references('jadwal_kuliah_id')->on('jadwal_kuliah');
-            $table->foreign('lab_id')->references('lab_id')->on('labs');
+            $table->foreign('jadwal_id')->references('jadwal_kuliah_id')->on('lab_jadwal_kuliah');
+            $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
             $table->index(['user_id', 'jadwal_id', 'lab_id'], 'idx_pc_assign_main');
         });
 
-        Schema::create('log_penggunaan_pcs', function (Blueprint $table) {
+        // 6. Log Penggunaan PCs (Renamed to lab_log_penggunaan_pcs)
+        Schema::create('lab_log_penggunaan_pcs', function (Blueprint $table) {
             $table->id('log_penggunaan_pcs_id');
             $table->unsignedBigInteger('pc_assignment_id');
             $table->unsignedBigInteger('user_id');
@@ -88,14 +119,20 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('pc_assignment_id')->references('pc_assignment_id')->on('pc_assignments');
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('pc_assignment_id')->references('pc_assignment_id')->on('lab_pc_assignments');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('jadwal_id')->references('jadwal_kuliah_id')->on('jadwal_kuliah');
-            $table->foreign('lab_id')->references('lab_id')->on('labs');
+            $table->foreign('jadwal_id')->references('jadwal_kuliah_id')->on('lab_jadwal_kuliah');
+            $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
             $table->index(['waktu_isi', 'status'], 'idx_pc_log_main');
         });
 
-        Schema::create('kegiatans', function (Blueprint $table) {
+        // 7. Kegiatans (Renamed to lab_kegiatans)
+        Schema::create('lab_kegiatans', function (Blueprint $table) {
             $table->id('kegiatan_id');
             $table->unsignedBigInteger('lab_id');
             $table->unsignedBigInteger('penyelenggara_id');
@@ -109,25 +146,46 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('lab_id')->references('lab_id')->on('labs');
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
             $table->foreign('penyelenggara_id')->references('id')->on('users');
             $table->index(['tanggal', 'status']);
         });
 
-        Schema::create('log_penggunaan_labs', function (Blueprint $table) {
+        // 8. Log Penggunaan Labs (Renamed to lab_log_penggunaan_labs)
+        Schema::create('lab_log_penggunaan_labs', function (Blueprint $table) {
             $table->id('log_penggunaan_labs_id');
             $table->unsignedBigInteger('kegiatan_id');
             $table->unsignedBigInteger('lab_id');
+
+            // New Columns
+            $table->string('nama_peserta')->nullable();
+            $table->string('email_peserta')->nullable();
+            $table->string('npm_peserta')->nullable();
+            $table->integer('nomor_pc')->nullable();
+            $table->string('kondisi')->nullable();
+            $table->text('catatan_umum')->nullable();
+
             $table->timestamp('waktu_isi');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('kegiatan_id')->references('kegiatan_id')->on('kegiatans');
-            $table->foreign('lab_id')->references('lab_id')->on('labs');
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('kegiatan_id')->references('kegiatan_id')->on('lab_kegiatans');
+            $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
             $table->index(['waktu_isi']);
         });
 
-        Schema::create('request_software', function (Blueprint $table) {
+        // 9. Request Software (Renamed to lab_request_software)
+        Schema::create('lab_request_software', function (Blueprint $table) {
             $table->id('request_software_id');
             $table->unsignedBigInteger('dosen_id');
             $table->string('nama_software', 191);
@@ -137,11 +195,28 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
             $table->foreign('dosen_id')->references('id')->on('users');
             $table->index(['status']);
         });
 
-        Schema::create('inventaris', function (Blueprint $table) {
+        // Pivot for lab_request_software_mata_kuliah (if exists/needed)
+        Schema::create('lab_request_software_mata_kuliah', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('request_software_id');
+            $table->unsignedBigInteger('mata_kuliah_id');
+            $table->timestamps();
+
+            $table->foreign('request_software_id', 'fk_req_soft_mk_req')->references('request_software_id')->on('lab_request_software')->onDelete('cascade');
+            $table->foreign('mata_kuliah_id', 'fk_req_soft_mk_mk')->references('mata_kuliah_id')->on('lab_mata_kuliahs')->onDelete('cascade');
+        });
+
+        // 10. Inventaris (Renamed to lab_inventarises)
+        Schema::create('lab_inventarises', function (Blueprint $table) {
             $table->id('inventaris_id');
             $table->string('nama_alat', 191);
             $table->string('jenis_alat', 100);
@@ -149,9 +224,15 @@ return new class extends Migration
             $table->date('tanggal_pengecekan')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
-        Schema::create('laporan_kerusakan', function (Blueprint $table) {
+        // 11. Laporan Kerusakan (Renamed to lab_laporan_kerusakan)
+        Schema::create('lab_laporan_kerusakan', function (Blueprint $table) {
             $table->id('laporan_kerusakan_id');
             $table->unsignedBigInteger('inventaris_id');
             $table->unsignedBigInteger('teknisi_id');
@@ -161,12 +242,18 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('inventaris_id')->references('inventaris_id')->on('inventaris');
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventarises');
             $table->foreign('teknisi_id')->references('id')->on('users');
             $table->index(['status']);
         });
 
-        Schema::create('pengumuman', function (Blueprint $table) {
+        // 12. Pengumuman (Renamed to lab_pengumuman)
+        Schema::create('lab_pengumuman', function (Blueprint $table) {
             $table->id('pengumuman_id');
             $table->unsignedBigInteger('penulis_id');
             $table->string('judul', 191);
@@ -177,11 +264,17 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
             $table->foreign('penulis_id')->references('id')->on('users');
             $table->index(['jenis', 'is_published', 'published_at'], 'idx_pengumuman_main');
         });
 
-        Schema::create('lab_inventaris', function (Blueprint $table) {
+        // 13. Lab Inventaris (Renamed to lab_inventaris_penempatan)
+        Schema::create('lab_inventaris_penempatan', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('inventaris_id');
             $table->unsignedBigInteger('lab_id');
@@ -194,11 +287,17 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('inventaris_id')->references('inventaris_id')->on('inventaris')->onDelete('cascade');
-            $table->foreign('lab_id')->references('lab_id')->on('labs')->onDelete('cascade');
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventarises')->onDelete('cascade');
+            $table->foreign('lab_id')->references('lab_id')->on('lab_labs')->onDelete('cascade');
             $table->index(['inventaris_id', 'lab_id']);
         });
 
+        // 14. Lab Teams
         Schema::create('lab_teams', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('lab_id');
@@ -207,12 +306,78 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamp('tanggal_mulai')->nullable();
             $table->timestamp('tanggal_selesai')->nullable();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('lab_id')->references('lab_id')->on('labs')->onDelete('cascade');
+            $table->foreign('lab_id')->references('lab_id')->on('lab_labs')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unique(['lab_id', 'user_id']);
+        });
+
+        // 15. Surat Bebas Lab
+        Schema::create('surat_bebas_labs', function (Blueprint $table) {
+            $table->id('surat_bebas_lab_id');
+            $table->unsignedBigInteger('student_id');
+            $table->string('status', 20)->default('pending'); // pending, approved, rejected
+            $table->string('file_path')->nullable();          // Path to generated PDF
+            $table->text('remarks')->nullable();              // Catatan penolakan/approval
+            $table->unsignedBigInteger('approved_by')->nullable();
+            $table->timestamp('approved_at')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Blameable columns
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('student_id')->references('id')->on('users');
+            $table->foreign('approved_by')->references('id')->on('users');
+        });
+
+        // 16. Lab Mahasiswa
+        Schema::create('lab_mahasiswa', function (Blueprint $table) {
+            $table->id('mahasiswa_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('nim')->unique();
+            $table->string('nama');
+            $table->string('email')->unique();
+            $table->string('program_studi')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+        });
+
+        // 17. Lab Personil
+        Schema::create('lab_personil', function (Blueprint $table) {
+            $table->id('personil_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('nama');
+            $table->string('email')->unique();
+            $table->string('nip')->unique()->nullable();
+            $table->string('jabatan')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
@@ -221,19 +386,23 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('lab_personil');
+        Schema::dropIfExists('lab_mahasiswa');
+        Schema::dropIfExists('surat_bebas_labs');
         Schema::dropIfExists('lab_teams');
-        Schema::dropIfExists('lab_inventaris');
-        Schema::dropIfExists('pengumuman');
-        Schema::dropIfExists('laporan_kerusakan');
-        Schema::dropIfExists('inventaris');
-        Schema::dropIfExists('request_software');
-        Schema::dropIfExists('log_penggunaan_labs');
-        Schema::dropIfExists('kegiatans');
-        Schema::dropIfExists('log_penggunaan_pcs');
-        Schema::dropIfExists('pc_assignments');
-        Schema::dropIfExists('jadwal_kuliah');
-        Schema::dropIfExists('mata_kuliahs');
-        Schema::dropIfExists('semesters');
-        Schema::dropIfExists('labs');
+        Schema::dropIfExists('lab_inventaris_penempatan');
+        Schema::dropIfExists('lab_pengumuman');
+        Schema::dropIfExists('lab_laporan_kerusakan');
+        Schema::dropIfExists('lab_inventarises');
+        Schema::dropIfExists('lab_request_software_mata_kuliah');
+        Schema::dropIfExists('lab_request_software');
+        Schema::dropIfExists('lab_log_penggunaan_labs');
+        Schema::dropIfExists('lab_kegiatans');
+        Schema::dropIfExists('lab_log_penggunaan_pcs');
+        Schema::dropIfExists('lab_pc_assignments');
+        Schema::dropIfExists('lab_jadwal_kuliah');
+        Schema::dropIfExists('lab_mata_kuliahs');
+        Schema::dropIfExists('lab_semesters');
+        Schema::dropIfExists('lab_labs');
     }
 };

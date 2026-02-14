@@ -61,7 +61,7 @@ class ApprovalController extends Controller
         try {
             $this->PegawaiService->approveRequest($id);
             return jsonSuccess('Pengajuan berhasil didsetujui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -73,7 +73,7 @@ class ApprovalController extends Controller
             $this->PegawaiService->rejectRequest($id, $reason);
 
             return jsonSuccess('Pengajuan berhasil ditolak.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

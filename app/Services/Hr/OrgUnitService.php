@@ -2,6 +2,7 @@
 namespace App\Services\Hr;
 
 use App\Models\Hr\OrgUnit;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class OrgUnitService
@@ -82,7 +83,7 @@ class OrgUnitService
             $orgUnit = $this->findOrFail($id);
 
             if (isset($data['parent_id']) && $data['parent_id'] == $id) {
-                throw new \Exception('Cannot be parent of itself.');
+                throw new Exception('Cannot be parent of itself.');
             }
 
             if (isset($data['parent_id']) && $data['parent_id'] != $orgUnit->parent_id) {
@@ -127,7 +128,7 @@ class OrgUnitService
     {
         $model = OrgUnit::find($id);
         if (! $model) {
-            throw new \Exception("OrgUnit dengan ID {$id} tidak ditemukan.");
+            throw new Exception("OrgUnit dengan ID {$id} tidak ditemukan.");
         }
         return $model;
     }

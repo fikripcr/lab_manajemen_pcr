@@ -174,11 +174,14 @@
             </div>
 
             <!-- Team Widget -->
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header">
                     <h3 class="card-title">Tim Aktif</h3>
-                    <div class="card-actions">
+                    <div class="card-actions btn-group">
                         <a href="{{ route('lab.labs.teams.index', $lab->encrypted_lab_id) }}" class="btn btn-xs btn-outline-primary">Manage</a>
+                        <button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#modalTeamAdd">
+                            <i class="ti ti-plus"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="list-group list-group-flush">
@@ -206,6 +209,40 @@
                     @endforelse
                 </div>
             </div>
+
+            <!-- Inventaris Widget -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Inventaris Terbaru</h3>
+                    <div class="card-actions btn-group">
+                        <a href="{{ route('lab.labs.inventaris.index', $lab->encrypted_lab_id) }}" class="btn btn-xs btn-outline-primary">Manage</a>
+                        <button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#modalInventarisAdd">
+                            <i class="ti ti-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="list-group list-group-flush">
+                    @forelse ($lab->labInventaris()->with('inventaris')->orderBy('tanggal_penempatan', 'desc')->take(5)->get() as $item)
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="avatar avatar-sm bg-blue-lt">
+                                        <i class="ti ti-package"></i>
+                                    </span>
+                                </div>
+                                <div class="col text-truncate">
+                                    <a href="#" class="text-reset d-block">{{ $item->inventaris->nama_alat ?? 'Unknown' }}</a>
+                                    <div class="d-block text-muted text-truncate mt-n1 small">{{ $item->kode_inventaris }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="list-group-item text-center text-muted small">
+                            Belum ada inventaris.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
     </div>
 
@@ -223,4 +260,193 @@
             Last updated: {{ $lab->updated_at->diffForHumans() }}
         </div>
     </div>
+@endsection
+
+@push('modals')
+    <!-- Modal Add Team -->
+    <div class="modal modal-blur fade" id="modalTeamAdd" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Anggota Tim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('lab.labs.teams.store', $lab->encrypted_lab_id) }}" method="POST" class="lab-assignment-form" id="formTeamAdd">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label required">Pilih User</label>
+                            <select class="form-select select2-user" name="user_id" required style="width: 100%;"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jabatan</label>
+                            <input type="text" class="form-control" name="jabatan" placeholder="Misal: Teknisi">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control" name="tanggal_mulai" value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Inventaris -->
+    <div class="modal modal-blur fade" id="modalInventarisAdd" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Inventaris</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('lab.labs.inventaris.store', $lab->encrypted_lab_id) }}" method="POST" class="lab-assignment-form" id="formInventarisAdd">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label required">Nama Alat</label>
+                            <select class="form-select select2-inventaris" name="inventaris_id" required style="width: 100%;"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">No Series</label>
+                            <input type="text" class="form-control" name="no_series" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Tanggal Penempatan</label>
+                            <input type="date" class="form-control" name="tanggal_penempatan" value="{{ date('Y-m-d') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status">
+                                <option value="active" selected>Active</option>
+                                <option value="moved">Moved</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Keterangan</label>
+                            <textarea class="form-control" name="keterangan" rows="3"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endpush
+
+@push('scripts')
+    <!-- Select2 CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fix Select2 in Bootstrap Modal
+            $.fn.select2.defaults.set( "theme", "bootstrap-5" );
+
+            // Init Select2 for User
+            $('#modalTeamAdd').on('shown.bs.modal', function () {
+                $('.select2-user').select2({
+                    dropdownParent: $('#modalTeamAdd'),
+                    placeholder: 'Cari User...',
+                    ajax: {
+                        url: '{{ route("lab.labs.teams.get-users", $lab->encrypted_lab_id) }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: params => ({ search: params.term }),
+                        processResults: data => ({
+                            results: (data.results || data).map(item => ({ id: item.id, text: item.text }))
+                        }),
+                        cache: true
+                    }
+                });
+            });
+
+             // Init Select2 for Inventaris
+             $('#modalInventarisAdd').on('shown.bs.modal', function () {
+                $('.select2-inventaris').select2({
+                    dropdownParent: $('#modalInventarisAdd'),
+                    placeholder: 'Cari Inventaris...',
+                    ajax: {
+                        url: '{{ route("lab.labs.inventaris.get-inventaris", $lab->encrypted_lab_id) }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: params => ({ search: params.term }),
+                        processResults: data => ({
+                            results: (data.results || data).map(item => ({ id: item.id, text: item.text }))
+                        }),
+                        cache: true
+                    }
+                });
+            });
+
+            // Handle Custom Form Submit
+            $('.lab-assignment-form').on('submit', function(e) {
+                e.preventDefault();
+                const $form = $(this);
+                const $btn = $form.find('button[type="submit"]');
+                const originalText = $btn.html();
+
+                $btn.prop('disabled', true).html('Proses...');
+                
+                // Clear errors
+                $form.find('.is-invalid').removeClass('is-invalid');
+                $form.find('.invalid-feedback').remove();
+
+                const formData = new FormData(this);
+
+                axios.post($form.attr('action'), formData)
+                    .then(response => {
+                        // Show success (you can use your Toast/Swal here)
+                        // Assuming window.Swal is available from admin.js
+                        if(window.Swal) {
+                            window.Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.data.message || 'Data berhasil disimpan',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            alert(response.data.message);
+                             window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        $btn.prop('disabled', false).html(originalText);
+                        console.error(error);
+                        let msg = "Terjadi kesalahan";
+                        if(error.response && error.response.data && error.response.data.message) {
+                             msg = error.response.data.message;
+                             // Display validation errors if any
+                             if(error.response.data.errors) {
+                                  // Simplistic error display for now
+                                  msg += "\n" + Object.values(error.response.data.errors).flat().join("\n");
+                             }
+                        }
+                         if(window.Swal) {
+                            window.Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: msg
+                            });
+                        } else {
+                            alert(msg);
+                        }
+                    });
+            });
+        });
+    </script>
+@endpush
 @endsection

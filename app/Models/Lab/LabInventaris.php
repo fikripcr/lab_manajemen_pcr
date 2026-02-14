@@ -1,11 +1,11 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class LabInventaris extends Model
 {
@@ -22,10 +22,8 @@ class LabInventaris extends Model
         'tanggal_penempatan',
         'tanggal_penghapusan',
         'status',
-        'keterangan',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'keterangan', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
@@ -55,7 +53,7 @@ class LabInventaris extends Model
      */
     public static function generateKodeInventaris($labId, $inventarisId)
     {
-        return \App\Helpers\Helper::generateKodeInventaris($labId, $inventarisId);
+        return generateKodeInventaris($labId, $inventarisId);
     }
 
     /**

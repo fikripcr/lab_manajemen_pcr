@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PegawaiRequest;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\StatusPegawai;
 use App\Services\Hr\PegawaiService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -107,8 +109,8 @@ class PegawaiController extends Controller
      */
     public function create()
     {
-        $statusPegawai   = \App\Models\Hr\StatusPegawai::where('is_active', 1)->get();
-        $statusAktifitas = \App\Models\Hr\StatusAktifitas::where('is_active', 1)->get();
+        $statusPegawai   = StatusPegawai::where('is_active', 1)->get();
+        $statusAktifitas = StatusAktifitas::where('is_active', 1)->get();
 
         return view('pages.hr.pegawai.create', compact('statusPegawai', 'statusAktifitas'));
     }
@@ -121,7 +123,7 @@ class PegawaiController extends Controller
         try {
             $this->PegawaiService->createPegawai($request->validated());
             return jsonSuccess('Pegawai berhasil ditambahkan', route('hr.pegawai.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -172,9 +174,9 @@ class PegawaiController extends Controller
     {
         $pegawai->load('latestDataDiri');
 
-        $posisi     = \App\Models\Hr\OrgUnit::where('type', 'posisi')->select('org_unit_id', 'name')->get();
-        $departemen = \App\Models\Hr\OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('org_unit_id', 'name')->get();
-        $prodi      = \App\Models\Hr\OrgUnit::where('type', 'Prodi')->select('org_unit_id', 'name')->get();
+        $posisi     = OrgUnit::where('type', 'posisi')->select('org_unit_id', 'name')->get();
+        $departemen = OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('org_unit_id', 'name')->get();
+        $prodi      = OrgUnit::where('type', 'Prodi')->select('org_unit_id', 'name')->get();
 
         return view('pages.hr.pegawai.edit', compact('pegawai', 'posisi', 'departemen', 'prodi'));
     }
@@ -189,7 +191,7 @@ class PegawaiController extends Controller
             // Request Change Logic
             $this->PegawaiService->requestDataDiriChange($pegawai, $request->validated());
             return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -202,7 +204,7 @@ class PegawaiController extends Controller
         try {
             $pegawai->delete();
             return jsonSuccess('Pegawai berhasil dihapus');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

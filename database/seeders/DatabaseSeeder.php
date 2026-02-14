@@ -33,10 +33,8 @@ class DatabaseSeeder extends Seeder
             // HrJenisShiftSeeder::class,
             // HumanCapitalSeeder::class,
 
-            // // Lab Data
-            // AcademicDataSeeder::class,
-            // InventorySeeder::class,
-            // PengumumanSeeder::class,
+            // Lab Data
+            Lab\LabSeeder::class,
 
             // Pemutu Data
             PemutuSeeder::class,

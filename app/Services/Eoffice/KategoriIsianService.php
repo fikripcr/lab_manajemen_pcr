@@ -2,6 +2,7 @@
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\KategoriIsian;
+use Exception;
 use Illuminate\Http\Request;
 
 class KategoriIsianService
@@ -52,7 +53,7 @@ class KategoriIsianService
 
         // Check for dependencies (JenisLayananIsian)
         if ($kategori->jenisLayananIsians()->exists()) {
-            throw new \Exception('Kategori Isian tidak dapat dihapus karena sedang digunakan oleh jenis layanan.');
+            throw new Exception('Kategori Isian tidak dapat dihapus karena sedang digunakan oleh jenis layanan.');
         }
 
         return $kategori->delete();

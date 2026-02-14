@@ -2,16 +2,18 @@
 namespace App\Services\Lab;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
 
-    protected function getUserById(int $id): Role
+    protected function getUserById(int $id): User
     {
         $user = User::find($id);
         if (! $user) {
-            throw new \Exception("Users not found!");
+            throw new Exception("Users not found!");
         }
         return $user;
     }
@@ -65,17 +67,28 @@ class UserService
         return DB::transaction(function () use ($id, $data) {
             $user = $this->getUserById($id);
 
-            $oldName = $role->name;
-            $role->update(['name' => $data['name']]);
+            $oldName = $user->name;
+            $user->update([
+                'name'  => $data['name'],
+                'email' => $data['email'],
+            ]);
 
-            if (! empty($data['permissions']) && is_array($data['permissions'])) {
-                $role->syncPermissions($data['permissions']);
+            if (isset($data['password']) && ! empty($data['password'])) {
+                $user->update(['password' => Hash::make($data['password'])]);
             }
 
-            if ($oldName !== $role->name) {
-                logActivity('role_management', "Mengubah nama role dari '{$oldName}' menjadi '{$role->name}'");
+            if (isset($data['role'])) {
+                if (is_array($data['role'])) {
+                    $user->syncRoles($data['role']);
+                } else {
+                    $user->syncRoles([$data['role']]);
+                }
+            }
+
+            if ($oldName !== $user->name) {
+                logActivity('user_management', "Mengubah nama user dari '{$oldName}' menjadi '{$user->name}'");
             } else {
-                logActivity('role_management', "Memperbarui hak akses role: {$role->name}");
+                logActivity('user_management', "Memperbarui data user: {$user->name}");
             }
 
             return true;

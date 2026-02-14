@@ -39,7 +39,7 @@ class FeedbackController extends Controller
         try {
             $this->FeedbackService->store($validated);
             return jsonSuccess('Feedback berhasil disimpan.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

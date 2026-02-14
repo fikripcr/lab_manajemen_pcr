@@ -1,10 +1,11 @@
 <?php
 namespace App\Models\Sys;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ErrorLog extends Model
 {
@@ -24,10 +25,8 @@ class ErrorLog extends Model
         'method',
         'ip_address',
         'user_agent',
-        'user_id',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'user_id', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
@@ -43,7 +42,7 @@ class ErrorLog extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

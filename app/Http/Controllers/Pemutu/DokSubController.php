@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DokSubRequest;
 use App\Services\Pemutu\DokSubService;
 use App\Services\Pemutu\DokumenService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -61,7 +62,7 @@ class DokSubController extends Controller
             $this->DokSubService->createDokSub($data);
 
             return jsonSuccess('Sub-Document created successfully.', route('pemutu.dokumens.show', $data['dok_id']));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -85,7 +86,7 @@ class DokSubController extends Controller
             $dokSub = $this->DokSubService->getDokSubById($id);
 
             return jsonSuccess('Sub-Document updated successfully.', route('pemutu.dokumens.show', $dokSub->dok_id));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -96,7 +97,7 @@ class DokSubController extends Controller
             $this->DokSubService->deleteDokSub($id);
 
             return jsonSuccess('Sub-Document deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -137,7 +138,7 @@ class DokSubController extends Controller
                     })
                     ->rawColumns(['seq', 'judul', 'action'])
                     ->make(true);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return jsonError($e->getMessage(), 500);
             }
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JenisIzinStoreRequest;
 use App\Models\Hr\JenisIzin;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -56,7 +57,7 @@ class JenisIzinController extends Controller
         try {
             JenisIzin::create($validated);
             return response()->json(['success' => true, 'message' => 'Jenis izin berhasil dibuat.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }

@@ -6,6 +6,7 @@ use App\Http\Requests\Pemutu\DokumenRequest;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Services\Pemutu\DokumenService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -95,7 +96,7 @@ class DokumenController extends Controller
             }
 
             return jsonSuccess('Dokumen berhasil dibuat.', $redirectUrl);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -159,7 +160,7 @@ class DokumenController extends Controller
             $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $id . '&type=dokumen';
 
             return jsonSuccess('Dokumen berhasil diperbarui.', $redirectUrl);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -172,7 +173,7 @@ class DokumenController extends Controller
 
             $this->DokumenService->deleteDokumen($id);
             return jsonSuccess('Dokumen berhasil dihapus.', $redirectOpt);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -183,7 +184,7 @@ class DokumenController extends Controller
             $hierarchy = $request->input('hierarchy');
             $this->DokumenService->reorderDokumens($hierarchy);
             return jsonSuccess('Urutan berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -280,7 +281,7 @@ class DokumenController extends Controller
                     ->rawColumns(['judul', 'jumlah_turunan', 'action'])
                     ->make(true);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

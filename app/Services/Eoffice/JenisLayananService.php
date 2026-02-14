@@ -5,6 +5,7 @@ use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\JenisLayananIsian;
 use App\Models\Eoffice\JenisLayananPic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class JenisLayananService

@@ -4,6 +4,7 @@ namespace App\Services\Lab;
 use App\Models\Lab\Lab;
 use App\Models\Lab\LabTeam;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class LabTeamService
@@ -49,7 +50,7 @@ class LabTeamService
                 ->first();
 
             if ($existingAssignment) {
-                throw new \Exception('User ini sudah menjadi bagian dari lab ini.');
+                throw new Exception('User ini sudah menjadi bagian dari lab ini.');
             }
 
             $labTeam = LabTeam::create([
@@ -75,7 +76,7 @@ class LabTeamService
             $labTeam = LabTeam::findOrFail($labTeamId);
 
             if ($labTeam->lab_id != $labId) {
-                throw new \Exception('Data tidak ditemukan atau tidak sesuai dengan Lab ini.');
+                throw new Exception('Data tidak ditemukan atau tidak sesuai dengan Lab ini.');
             }
 
             // Soft delete logic / Deactivate as per requirement

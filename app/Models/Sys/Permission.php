@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Models\Sys;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
-class Permission extends SpatiePermission implements \Spatie\Searchable\Searchable
+class Permission extends SpatiePermission implements Searchable
 {
     use SoftDeletes, Blameable, HashidBinding;
     protected $table = 'sys_permissions';
@@ -18,10 +17,10 @@ class Permission extends SpatiePermission implements \Spatie\Searchable\Searchab
         'name',
         'guard_name',
         'category',
-        'sub_category'        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'sub_category',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [

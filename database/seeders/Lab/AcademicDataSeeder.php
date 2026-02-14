@@ -7,7 +7,6 @@ use App\Models\Lab\MataKuliah;
 use App\Models\Lab\Semester;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class AcademicDataSeeder extends Seeder
 {
@@ -16,14 +15,6 @@ class AcademicDataSeeder extends Seeder
      */
     public function run(): void
     {
-        // Truncate first
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Semester::truncate();
-        MataKuliah::truncate();
-        Lab::truncate();
-        JadwalKuliah::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
         // Create 10 semester records
         $tahunSekarang = date('Y');
         for ($tahun = $tahunSekarang - 2; $tahun <= $tahunSekarang + 2; $tahun++) {
@@ -66,8 +57,8 @@ class AcademicDataSeeder extends Seeder
         }
 
         // Create 20 lab records
+        $faker = \Faker\Factory::create('id_ID');
         for ($i = 1; $i <= 20; $i++) {
-            $faker = \Faker\Factory::create('id_ID');
             Lab::create([
                 'name'        => 'Laboratorium ' . $faker->colorName . ' ' . $i,
                 'location'    => $faker->address(),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\BackupStoreRequest;
 use App\Services\Sys\BackupService;
+use Exception;
 
 class BackupController extends Controller
 {
@@ -35,7 +36,7 @@ class BackupController extends Controller
             $this->backupService->createBackup($type);
 
             return jsonSuccess('Backup created successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logError($e, 'error', [
                 'backup_type' => $type,
                 'description' => 'Error during backup creation',
@@ -54,7 +55,7 @@ class BackupController extends Controller
             $filePath = $this->backupService->getBackupFilePath($filename);
 
             return response()->download($filePath);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             abort(404, $e->getMessage());
         }
     }
@@ -68,7 +69,7 @@ class BackupController extends Controller
             $this->backupService->deleteBackup($filename);
 
             return jsonSuccess('Backup deleted successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 404);
         }
     }

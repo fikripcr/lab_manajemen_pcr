@@ -2,15 +2,25 @@
 
 use App\Http\Controllers\Hr\ApprovalController;
 use App\Http\Controllers\Hr\AttDeviceController;
+use App\Http\Controllers\Hr\FilePegawaiController;
 use App\Http\Controllers\Hr\IndisiplinerController;
 use App\Http\Controllers\Hr\JabatanFungsionalController;
 use App\Http\Controllers\Hr\JenisIndisiplinerController;
 use App\Http\Controllers\Hr\JenisIzinController;
 use App\Http\Controllers\Hr\JenisShiftController;
+use App\Http\Controllers\Hr\KeluargaController;
 use App\Http\Controllers\Hr\OrgUnitController;
 use App\Http\Controllers\Hr\PegawaiController;
+use App\Http\Controllers\Hr\PengembanganDiriController;
 use App\Http\Controllers\Hr\PerizinanController;
 use App\Http\Controllers\Hr\PresensiController;
+use App\Http\Controllers\Hr\RiwayatInpassingController;
+use App\Http\Controllers\Hr\RiwayatJabFungsionalController;
+use App\Http\Controllers\Hr\RiwayatJabStrukturalController;
+use App\Http\Controllers\Hr\RiwayatPendidikanController;
+use App\Http\Controllers\Hr\RiwayatPenugasanController;
+use App\Http\Controllers\Hr\RiwayatStatAktifitasController; // Check if this is correct, list_dir showed StatusAktifitasController
+use App\Http\Controllers\Hr\RiwayatStatPegawaiController;
 use App\Http\Controllers\Hr\StatusAktifitasController;
 use App\Http\Controllers\Hr\StatusPegawaiController;
 use Illuminate\Support\Facades\Route;
@@ -31,83 +41,83 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::resource('org-units', OrgUnitController::class);
 
     // Global Data Routes
-    Route::get('keluarga/data', [\App\Http\Controllers\Hr\KeluargaController::class, 'data'])->name('keluarga.data');
-    Route::get('pendidikan/data', [\App\Http\Controllers\Hr\RiwayatPendidikanController::class, 'data'])->name('pendidikan.data');
-    Route::get('pengembangan/data', [\App\Http\Controllers\Hr\PengembanganDiriController::class, 'data'])->name('pengembangan.data');
-    Route::get('status-pegawai-history/data', [\App\Http\Controllers\Hr\RiwayatStatPegawaiController::class, 'data'])->name('status-pegawai-history.data');
-    Route::get('status-aktifitas-history/data', [\App\Http\Controllers\Hr\RiwayatStatAktifitasController::class, 'data'])->name('status-aktifitas-history.data');
-    Route::get('jabatan-fungsional-history/data', [\App\Http\Controllers\Hr\RiwayatJabFungsionalController::class, 'data'])->name('jabatan-fungsional-history.data');
-    Route::get('jabatan-struktural-history/data', [\App\Http\Controllers\Hr\RiwayatJabStrukturalController::class, 'data'])->name('jabatan-struktural-history.data');
+    Route::get('keluarga/data', [KeluargaController::class, 'data'])->name('keluarga.data');
+    Route::get('pendidikan/data', [RiwayatPendidikanController::class, 'data'])->name('pendidikan.data');
+    Route::get('pengembangan/data', [PengembanganDiriController::class, 'data'])->name('pengembangan.data');
+    Route::get('status-pegawai-history/data', [RiwayatStatPegawaiController::class, 'data'])->name('status-pegawai-history.data');
+    Route::get('status-aktifitas-history/data', [RiwayatStatAktifitasController::class, 'data'])->name('status-aktifitas-history.data');
+    Route::get('jabatan-fungsional-history/data', [RiwayatJabFungsionalController::class, 'data'])->name('jabatan-fungsional-history.data');
+    Route::get('jabatan-struktural-history/data', [RiwayatJabStrukturalController::class, 'data'])->name('jabatan-struktural-history.data');
 
     // Global Tab View Routes (Server-Side Redirects)
-    Route::get('keluarga', [\App\Http\Controllers\Hr\KeluargaController::class, 'index'])->name('keluarga.index');
-    Route::get('pendidikan', [\App\Http\Controllers\Hr\RiwayatPendidikanController::class, 'index'])->name('pendidikan.index');
-    Route::get('status-pegawai', [\App\Http\Controllers\Hr\RiwayatStatPegawaiController::class, 'index'])->name('status-pegawai.index');
-    Route::get('status-aktifitas', [\App\Http\Controllers\Hr\RiwayatStatAktifitasController::class, 'index'])->name('status-aktifitas.index');
-    Route::get('jabatan-fungsional', [\App\Http\Controllers\Hr\RiwayatJabFungsionalController::class, 'index'])->name('jabatan-fungsional.index');
-    Route::get('jabatan-struktural', [\App\Http\Controllers\Hr\RiwayatJabStrukturalController::class, 'index'])->name('jabatan-struktural.index');
-    Route::get('pengembangan', [\App\Http\Controllers\Hr\PengembanganDiriController::class, 'index'])->name('pengembangan.index');
-    Route::get('penugasan', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'index'])->name('penugasan.index');
-    Route::get('inpassing', [\App\Http\Controllers\Hr\RiwayatInpassingController::class, 'index'])->name('inpassing.index');
-    Route::get('inpassing/data', [\App\Http\Controllers\Hr\RiwayatInpassingController::class, 'data'])->name('inpassing.data');
+    Route::get('keluarga', [KeluargaController::class, 'index'])->name('keluarga.index');
+    Route::get('pendidikan', [RiwayatPendidikanController::class, 'index'])->name('pendidikan.index');
+    Route::get('status-pegawai', [RiwayatStatPegawaiController::class, 'index'])->name('status-pegawai.index');
+    Route::get('status-aktifitas', [RiwayatStatAktifitasController::class, 'index'])->name('status-aktifitas.index');
+    Route::get('jabatan-fungsional', [RiwayatJabFungsionalController::class, 'index'])->name('jabatan-fungsional.index');
+    Route::get('jabatan-struktural', [RiwayatJabStrukturalController::class, 'index'])->name('jabatan-struktural.index');
+    Route::get('pengembangan', [PengembanganDiriController::class, 'index'])->name('pengembangan.index');
+    Route::get('penugasan', [RiwayatPenugasanController::class, 'index'])->name('penugasan.index');
+    Route::get('inpassing', [RiwayatInpassingController::class, 'index'])->name('inpassing.index');
+    Route::get('inpassing/data', [RiwayatInpassingController::class, 'data'])->name('inpassing.data');
 
     // Nested Resources for Pegawai (History & Approval Workflow)
     Route::prefix('pegawai/{pegawai}')->name('pegawai.')->group(function () {
         // Multi-Value Lists (Add New)
         // Multi-Value Lists (Add New)
-        Route::resource('keluarga', \App\Http\Controllers\Hr\KeluargaController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-        Route::resource('pendidikan', \App\Http\Controllers\Hr\RiwayatPendidikanController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-        Route::resource('pengembangan', \App\Http\Controllers\Hr\PengembanganDiriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-        Route::resource('inpassing', \App\Http\Controllers\Hr\RiwayatInpassingController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+        Route::resource('keluarga', KeluargaController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+        Route::resource('pendidikan', RiwayatPendidikanController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+        Route::resource('pengembangan', PengembanganDiriController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+        Route::resource('inpassing', RiwayatInpassingController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
         // Single-Value State Changes (Request Change) - These are "Riwayat" lists too, so they need index if we tab them.
         // Status Pegawai
         Route::get('status-pegawai', [\App\Http\Controllers\Hr\RiwayatStatPegawaiController::class, 'index'])->name('status-pegawai.index');
         Route::get('status-pegawai/change', [\App\Http\Controllers\Hr\RiwayatStatPegawaiController::class, 'create'])->name('status-pegawai.create');
-        Route::post('status-pegawai/change', [\App\Http\Controllers\Hr\RiwayatStatPegawaiController::class, 'store'])->name('status-pegawai.store');
+        Route::post('status-pegawai/change', [RiwayatStatPegawaiController::class, 'store'])->name('status-pegawai.store');
 
         // Status Aktifitas
         Route::get('status-aktifitas', [\App\Http\Controllers\Hr\RiwayatStatAktifitasController::class, 'index'])->name('status-aktifitas.index');
         Route::get('status-aktifitas/change', [\App\Http\Controllers\Hr\RiwayatStatAktifitasController::class, 'create'])->name('status-aktifitas.create');
-        Route::post('status-aktifitas/change', [\App\Http\Controllers\Hr\RiwayatStatAktifitasController::class, 'store'])->name('status-aktifitas.store');
+        Route::post('status-aktifitas/change', [RiwayatStatAktifitasController::class, 'store'])->name('status-aktifitas.store');
 
         // Jabatan Fungsional
         Route::get('jabatan-fungsional', [\App\Http\Controllers\Hr\RiwayatJabFungsionalController::class, 'index'])->name('jabatan-fungsional.index');
         Route::get('jabatan-fungsional/change', [\App\Http\Controllers\Hr\RiwayatJabFungsionalController::class, 'create'])->name('jabatan-fungsional.create');
-        Route::post('jabatan-fungsional/change', [\App\Http\Controllers\Hr\RiwayatJabFungsionalController::class, 'store'])->name('jabatan-fungsional.store');
+        Route::post('jabatan-fungsional/change', [RiwayatJabFungsionalController::class, 'store'])->name('jabatan-fungsional.store');
 
         // Jabatan Struktural (Replacing with Penugasan Index? Or keeping custom view?)
         // User said "Struktural harusnya ke riwayat penugasan".
         // So I will point "jabatan-struktural" tab to RiwayatPenugasanController::index ?
         // Or should I just route it to penugasan.index?
         // Let's create a route for 'penugasan' index first.
-        Route::get('penugasan', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'index'])->name('penugasan.index');
+        Route::get('penugasan', [RiwayatPenugasanController::class, 'index'])->name('penugasan.index');
 
         // Jabatan Struktural legacy/specific route if needed, otherwise we rely on Penugasan.
         // I will keep the change routes but maybe Redirect index?
         Route::get('jabatan-struktural/change', [\App\Http\Controllers\Hr\RiwayatJabStrukturalController::class, 'create'])->name('jabatan-struktural.create');
-        Route::post('jabatan-struktural/change', [\App\Http\Controllers\Hr\RiwayatJabStrukturalController::class, 'store'])->name('jabatan-struktural.store');
+        Route::post('jabatan-struktural/change', [RiwayatJabStrukturalController::class, 'store'])->name('jabatan-struktural.store');
 
         // Penugasan (Kepala Prodi, Wadir, Direktur, etc.)
         Route::get('penugasan/create', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'create'])->name('penugasan.create');
-        Route::post('penugasan', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'store'])->name('penugasan.store');
+        Route::post('penugasan', [RiwayatPenugasanController::class, 'store'])->name('penugasan.store');
         Route::get('penugasan/{penugasan}/edit', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'edit'])->name('penugasan.edit');
         Route::put('penugasan/{penugasan}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'update'])->name('penugasan.update');
         Route::delete('penugasan/{penugasan}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'destroy'])->name('penugasan.destroy');
         Route::post('penugasan/{penugasan}/end', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'endAssignment'])->name('penugasan.end');
 
         // File Pegawai
-        Route::get('files/data', [\App\Http\Controllers\Hr\FilePegawaiController::class, 'index'])->name('files.data');
-        Route::resource('files', \App\Http\Controllers\Hr\FilePegawaiController::class)->only(['store', 'destroy']);
+        Route::get('files/data', [FilePegawaiController::class, 'index'])->name('files.data');
+        Route::resource('files', FilePegawaiController::class)->only(['store', 'destroy']);
     });
 
     // Mass Penugasan Routes
-    Route::get('pegawai/mass-penugasan', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'massIndex'])->name('pegawai.mass-penugasan.index');
-    Route::get('pegawai/mass-penugasan/{unit}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'massDetail'])->name('pegawai.mass-penugasan.detail');
-    Route::post('pegawai/mass-penugasan/assign', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'massAssign'])->name('pegawai.mass-penugasan.assign');
+    Route::get('pegawai/mass-penugasan', [RiwayatPenugasanController::class, 'massIndex'])->name('pegawai.mass-penugasan.index');
+    Route::get('pegawai/mass-penugasan/{unit}', [RiwayatPenugasanController::class, 'massDetail'])->name('pegawai.mass-penugasan.detail');
+    Route::post('pegawai/mass-penugasan/assign', [RiwayatPenugasanController::class, 'massAssign'])->name('pegawai.mass-penugasan.assign');
 
     // Tanggal Libur (Holidays)
-    Route::resource('tanggal-libur', \App\Http\Controllers\Hr\TanggalLiburController::class);
+    Route::resource('tanggal-libur', TanggalLiburController::class);
 
     // Fallback or Dashboard for HR?
     Route::get('/', function () {

@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header :title="'Edit Request: ' . $softwareRequest->nama_software" pretitle="Software Request">
         <x-slot:actions>
-            <x-tabler.button type="back" :href="route('software-requests.index')" />
+            <x-tabler.button type="back" :href="route('lab.software-requests.index')" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection
@@ -12,7 +12,7 @@
 
     <div class="row row-cards">
         <div class="col-12">
-            <form action="{{ route('software-requests.update', $softwareRequest->id) }}" method="POST" class="card">
+            <form action="{{ route('lab.software-requests.update', $softwareRequest->id) }}" method="POST" class="card ajax-form">
                 @csrf
                 @method('PUT')
                 <div class="card-body">
@@ -39,7 +39,7 @@
                                     <div class="row">
                                         @foreach($softwareRequest->mataKuliahs as $mataKuliah)
                                             <div class="col-md-6 mb-2">
-                                                <span class="badge bg-label-primary me-1">{{ $mataKuliah->kode }} - {{ $mataKuliah->nama }}</span>
+                                                <span class="badge bg-label-primary me-1">{{ $mataKuliah->kode_mk }} - {{ $mataKuliah->nama_mk }}</span>
                                             </div>
                                         @endforeach
                                     </div>
@@ -54,8 +54,10 @@
                         </div>
 
                         <div class="mb-3">
-                            <h6 class="text-muted">Alasan / Keperluan:</h6>
-                            <p class="mb-0">{{ $softwareRequest->alasan }}</p>
+                            <h6 class="text-muted">Keterangan / Deskripsi:</h6>
+                            <div class="p-3 border rounded bg-light">
+                                {!! $softwareRequest->deskripsi !!}
+                            </div>
                         </div>
 
                         <div class="row">
@@ -79,16 +81,16 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="catatan_admin" class="form-label fw-bold">Catatan Admin</label>
-                            <textarea name="catatan_admin" id="catatan_admin" class="form-control @error('catatan_admin') is-invalid @enderror" rows="4" placeholder="Tambahkan catatan untuk dosen...">{{ old('catatan_admin', $softwareRequest->catatan_admin) }}</textarea>
-                            @error('catatan_admin')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                            <label for="catatan" class="form-label fw-bold">Catatan Admin</label>
+                            <x-tabler.editor name="catatan" id="catatan-editor" :value="old('catatan', $softwareRequest->catatan)" height="200" />
+                            @error('catatan')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
                 </div>
                 <div class="card-footer text-end">
                     <x-tabler.button type="submit" text="Update Status" />
-                    <x-tabler.button type="cancel" :href="route('software-requests.index')" />
+                    <x-tabler.button type="cancel" :href="route('lab.software-requests.index')" />
                 </div>
             </form>
         </div>

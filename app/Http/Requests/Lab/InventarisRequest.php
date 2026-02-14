@@ -23,7 +23,7 @@ class InventarisRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lab_id'             => ['required', 'exists:labs,lab_id'],
+            'lab_id'             => ['required', 'exists:lab_labs,lab_id'],
             'nama_alat'          => ['required', 'string', 'max:255'],
             'jenis_alat'         => ['required', 'string', 'max:255'],
             'kondisi_terakhir'   => ['required', 'string', 'max:255'],

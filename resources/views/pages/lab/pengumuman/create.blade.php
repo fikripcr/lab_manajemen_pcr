@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header :title="'Create ' . ucfirst($type)" :pretitle="ucfirst($type)">
         <x-slot:actions>
-            <x-tabler.button type="back" :href="route($type . '.index')" />
+            <x-tabler.button type="back" :href="route('lab.'.$type . '.index')" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection
@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <x-tabler.flash-message />
 
-                    <form action="{{ route($type . '.store') }}" method="POST" enctype="multipart/form-data" class="ajax-form">
+                    <form action="{{ route('lab.'.$type . '.store') }}" method="POST" enctype="multipart/form-data" class="ajax-form">
                         @csrf
 
                         <div class="row mb-3">
@@ -82,7 +82,7 @@
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
                                 <x-tabler.button type="submit" text="Simpan" />
-                                <x-tabler.button type="cancel" :href="route($type . '.index')" />
+                                <x-tabler.button type="cancel" :href="route('lab.'.$type . '.index')" />
                             </div>
                         </div>
                     </form>

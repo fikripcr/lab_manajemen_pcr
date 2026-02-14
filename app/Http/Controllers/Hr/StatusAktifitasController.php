@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\StatusAktifitasRequest;
 use App\Models\Hr\StatusAktifitas;
 use App\Services\Hr\StatusAktifitasService;
+use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class StatusAktifitasController extends Controller
@@ -57,7 +58,7 @@ class StatusAktifitasController extends Controller
         try {
             $this->StatusAktifitasService->create($request->validated());
             return jsonSuccess('Status Aktifitas created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -73,7 +74,7 @@ class StatusAktifitasController extends Controller
         try {
             $this->StatusAktifitasService->update($status_aktifita, $request->validated());
             return jsonSuccess('Status Aktifitas updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -83,7 +84,7 @@ class StatusAktifitasController extends Controller
         try {
             $status_aktifita->delete();
             return jsonSuccess('Status Aktifitas deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

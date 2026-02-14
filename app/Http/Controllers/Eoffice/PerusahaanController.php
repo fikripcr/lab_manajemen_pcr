@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Eoffice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\PerusahaanRequest;
 use App\Models\Eoffice\KategoriPerusahaan;
+use App\Models\Eoffice\Perusahaan;
 use App\Services\Eoffice\PerusahaanService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -66,39 +68,39 @@ class PerusahaanController extends Controller
         try {
             $this->PerusahaanService->createPerusahaan($request->validated());
             return jsonSuccess('Perusahaan berhasil ditambahkan.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function show(\App\Models\Eoffice\Perusahaan $perusahaan)
+    public function show(Perusahaan $perusahaan)
     {
         $pageTitle = 'Detail Perusahaan: ' . $perusahaan->nama_perusahaan;
         return view('pages.eoffice.perusahaan.show', compact('perusahaan', 'pageTitle'));
     }
 
-    public function edit(\App\Models\Eoffice\Perusahaan $perusahaan)
+    public function edit(Perusahaan $perusahaan)
     {
         $categories = KategoriPerusahaan::all();
         return view('pages.eoffice.perusahaan.edit', compact('perusahaan', 'categories'));
     }
 
-    public function update(PerusahaanRequest $request, \App\Models\Eoffice\Perusahaan $perusahaan)
+    public function update(PerusahaanRequest $request, Perusahaan $perusahaan)
     {
         try {
             $this->PerusahaanService->updatePerusahaan($perusahaan->perusahaan_id, $request->validated());
             return jsonSuccess('Perusahaan berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroy(\App\Models\Eoffice\Perusahaan $perusahaan)
+    public function destroy(Perusahaan $perusahaan)
     {
         try {
             $this->PerusahaanService->deletePerusahaan($perusahaan->perusahaan_id);
             return jsonSuccess('Perusahaan berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

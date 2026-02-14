@@ -1,11 +1,12 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class Kegiatan extends Model
 {
@@ -25,10 +26,8 @@ class Kegiatan extends Model
         'status',
         'catatan_pic',
         'qr_code_path',
-        'berita_acara_path',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'berita_acara_path', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

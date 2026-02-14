@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\PermissionRequest;
 use App\Services\Sys\PermissionService;
+use Exception;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Yajra\DataTables\DataTables;
@@ -63,7 +64,7 @@ class PermissionController extends Controller
                 })
                 ->rawColumns(['action'])
                 ->make(true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -86,7 +87,7 @@ class PermissionController extends Controller
             $this->permissionService->createPermission($data);
 
             return jsonSuccess('Izin berhasildibuat . ');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -121,7 +122,7 @@ class PermissionController extends Controller
             $this->permissionService->updatePermission($realId, $data);
 
             return jsonSuccess();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -137,7 +138,7 @@ class PermissionController extends Controller
 
             return jsonSuccess('Izin berhasildihapus . ');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

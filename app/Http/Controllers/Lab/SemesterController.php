@@ -153,7 +153,7 @@ class SemesterController extends Controller
             return jsonError('Semester not found', 404);
         }
 
-        return view('pages.admin.semesters.edit-ajax', compact('semester'));
+        return view('pages.lab.semesters.edit-ajax', compact('semester'));
     }
 
     /**

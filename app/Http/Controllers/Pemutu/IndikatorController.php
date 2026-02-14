@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
 use App\Models\Pemutu\Dokumen;
+use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
+use App\Models\Pemutu\Personil;
 use App\Services\Pemutu\IndikatorService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -22,7 +26,7 @@ class IndikatorController extends Controller
     {
         // Filters data
         $dokumens   = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id')->toArray();
-        $labelTypes = \App\Models\Pemutu\LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
+        $labelTypes = LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
 
         return view('pages.pemutu.indikators.index', compact('dokumens', 'labelTypes'));
     }
@@ -72,7 +76,7 @@ class IndikatorController extends Controller
     public function create(Request $request)
     {
         // View Dependencies
-        $labelTypes = \App\Models\Pemutu\LabelType::with(['labels' => function ($q) {
+        $labelTypes = LabelType::with(['labels' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
@@ -83,9 +87,9 @@ class IndikatorController extends Controller
             ->orderBy('judul')
             ->get();
 
-        $parents = \App\Models\Pemutu\Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
+        $parents = Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
 
-        $personils = \App\Models\Pemutu\Personil::orderBy('nama')->get();
+        $personils = Personil::orderBy('nama')->get();
 
         // Handle Contextual Pre-selection
         $parentDok = null;
@@ -149,7 +153,7 @@ class IndikatorController extends Controller
             }
 
             return redirect($redirectUrl)->with('success', 'Indikator created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -171,7 +175,7 @@ class IndikatorController extends Controller
             abort(404);
         }
 
-        $labelTypes = \App\Models\Pemutu\LabelType::with(['labels' => function ($q) {
+        $labelTypes = LabelType::with(['labels' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
@@ -182,12 +186,12 @@ class IndikatorController extends Controller
             ->orderBy('judul')
             ->get();
 
-        $parents = \App\Models\Pemutu\Indikator::where('type', 'standar')
+        $parents = Indikator::where('type', 'standar')
             ->where('indikator_id', '!=', $id)
             ->orderBy('no_indikator')
             ->get();
 
-        $personils = \App\Models\Pemutu\Personil::orderBy('nama')->get();
+        $personils = Personil::orderBy('nama')->get();
 
         return view('pages.pemutu.indikators.edit', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils'));
     }
@@ -230,7 +234,7 @@ class IndikatorController extends Controller
             }
 
             return redirect($redirectUrl)->with('success', 'Indikator updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -241,7 +245,7 @@ class IndikatorController extends Controller
             $this->IndikatorService->deleteIndikator($id);
 
             return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikators.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

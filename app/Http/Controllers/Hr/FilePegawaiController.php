@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\FilePegawaiStoreRequest;
 use App\Services\Hr\FilePegawaiService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -68,7 +69,7 @@ class FilePegawaiController extends Controller
             $this->FilePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
 
             return jsonSuccess('File berhasil diunggah');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError('Gagal mengunggah file: ' . $e->getMessage());
         }
     }
@@ -83,7 +84,7 @@ class FilePegawaiController extends Controller
             $this->FilePegawaiService->deleteFile($decryptedId);
 
             return jsonSuccess('File berhasil dihapus');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError('Gagal menghapus file: ' . $e->getMessage());
         }
     }

@@ -3,7 +3,9 @@ namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\KategoriPerusahaanRequest;
+use App\Models\Eoffice\KategoriPerusahaan;
 use App\Services\Eoffice\KategoriPerusahaanService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -56,33 +58,33 @@ class KategoriPerusahaanController extends Controller
         try {
             $this->KategoriPerusahaanService->createKategori($request->validated());
             return jsonSuccess('Kategori berhasil ditambahkan.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function edit(\App\Models\Eoffice\KategoriPerusahaan $kategori_perusahaan)
+    public function edit(KategoriPerusahaan $kategori_perusahaan)
     {
         $kategori = $kategori_perusahaan;
         return view('pages.eoffice.kategori_perusahaan.edit', compact('kategori'));
     }
 
-    public function update(KategoriPerusahaanRequest $request, \App\Models\Eoffice\KategoriPerusahaan $kategori_perusahaan)
+    public function update(KategoriPerusahaanRequest $request, KategoriPerusahaan $kategori_perusahaan)
     {
         try {
             $this->KategoriPerusahaanService->updateKategori($kategori_perusahaan->kategoriperusahaan_id, $request->validated());
             return jsonSuccess('Kategori berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroy(\App\Models\Eoffice\KategoriPerusahaan $kategori_perusahaan)
+    public function destroy(KategoriPerusahaan $kategori_perusahaan)
     {
         try {
             $this->KategoriPerusahaanService->deleteKategori($kategori_perusahaan->kategoriperusahaan_id);
             return jsonSuccess('Kategori berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

@@ -55,13 +55,30 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Versi:</h6>
+                            <p class="mb-0">{{ $softwareRequest->versi ?: '-' }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">URL Download:</h6>
+                            @if($softwareRequest->url_download)
+                                <a href="{{ $softwareRequest->url_download }}" target="_blank" class="text-truncate d-block">
+                                    {{ $softwareRequest->url_download }}
+                                </a>
+                            @else
+                                <p class="mb-0">-</p>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <h6 class="text-muted">Mata Kuliah Terkait:</h6>
                         @if($softwareRequest->mataKuliahs->count() > 0)
                             <div class="row">
                                 @foreach($softwareRequest->mataKuliahs as $mataKuliah)
                                     <div class="col-md-6 mb-2">
-                                        <span class="badge bg-label-primary me-1">{{ $mataKuliah->kode }} - {{ $mataKuliah->nama }}</span>
+                                        <span class="badge bg-label-primary me-1">{{ $mataKuliah->kode_mk }} - {{ $mataKuliah->nama_mk }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -71,14 +88,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <h6 class="text-muted">Alasan / Keperluan:</h6>
-                        <p class="mb-0">{{ $softwareRequest->alasan }}</p>
+                        <h6 class="text-muted">Keterangan / Deskripsi:</h6>
+                        <div class="p-3 border rounded bg-light">
+                            {!! $softwareRequest->deskripsi !!}
+                        </div>
                     </div>
 
-                    @if($softwareRequest->catatan_admin)
+                    @if($softwareRequest->catatan)
                         <div class="mb-3">
                             <h6 class="text-muted">Catatan Admin:</h6>
-                            <p class="mb-0">{{ $softwareRequest->catatan_admin }}</p>
+                            <p class="mb-0">{{ $softwareRequest->catatan }}</p>
                         </div>
                     @endif
                 </div>

@@ -1,11 +1,12 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class JadwalKuliah extends Model
 {
@@ -21,10 +22,8 @@ class JadwalKuliah extends Model
         'hari',
         'jam_mulai',
         'jam_selesai',
-        'lab_id',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'lab_id', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

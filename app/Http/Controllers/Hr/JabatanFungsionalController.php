@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JabatanFungsionalRequest;
 use App\Models\Hr\JabatanFungsional;
 use App\Services\Hr\JabatanFungsionalService;
+use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class JabatanFungsionalController extends Controller
@@ -54,7 +55,7 @@ class JabatanFungsionalController extends Controller
         try {
             $this->JabatanFungsionalService->create($request->validated());
             return jsonSuccess('Jabatan Fungsional created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -70,7 +71,7 @@ class JabatanFungsionalController extends Controller
         try {
             $this->JabatanFungsionalService->update($jabatan_fungsional, $request->validated());
             return jsonSuccess('Jabatan Fungsional updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -80,7 +81,7 @@ class JabatanFungsionalController extends Controller
         try {
             $jabatan_fungsional->delete();
             return jsonSuccess('Jabatan Fungsional deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

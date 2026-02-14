@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\PengumumanRequest;
 use App\Models\User;
 use App\Services\Lab\PengumumanService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -59,10 +60,10 @@ class PengumumanController extends Controller
 
             $pengumuman = $this->PengumumanService->createPengumuman($data);
 
-            $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
+            $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
 
             return jsonSuccess(ucfirst($pengumuman->jenis) . ' created successfully.', route($redirectRoute));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -121,10 +122,10 @@ class PengumumanController extends Controller
 
             // Fetch updated model to determine redirect route (or store type in hidden field, but fetch is safer)
             $pengumuman    = $this->PengumumanService->getPengumumanById($realId);
-            $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
+            $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
 
             return jsonSuccess(ucfirst($pengumuman->jenis) . ' updated successfully.', route($redirectRoute));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -146,10 +147,10 @@ class PengumumanController extends Controller
 
             $this->PengumumanService->deletePengumuman($realId);
 
-            $redirectRoute = $jenis === 'pengumuman' ? 'pengumuman.index' : 'berita.index';
+            $redirectRoute = $jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
             return jsonSuccess(ucfirst($jenis) . ' deleted successfully.', route($redirectRoute));
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -165,7 +166,7 @@ class PengumumanController extends Controller
         // If route('lab.pengumuman.data', it's pengumuman.
         // Or pass type as parameter?
         // Existing code checked route name.
-        $type = ($routeName === 'berita.data' || $request->type === 'berita') ? 'berita' : 'pengumuman';
+        $type = (str_contains($routeName, 'berita.data') || $request->type === 'berita') ? 'berita' : 'pengumuman';
 
         // Use Service Query
         $query = $this->PengumumanService->getFilteredQuery($type);
@@ -174,7 +175,7 @@ class PengumumanController extends Controller
             ->addIndexColumn()
             ->editColumn('judul', function ($item) {
                 $encryptedId = encryptId($item->pengumuman_id);
-                $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
+                $routePrefix = $item->jenis === 'berita' ? 'lab.berita' : 'lab.pengumuman';
                 return '<a href="' . route($routePrefix . '.show', $encryptedId) . '" class="fw-medium">' . e($item->judul) . '</a>';
             })
             ->addColumn('cover', function ($item) {
@@ -199,7 +200,7 @@ class PengumumanController extends Controller
             })
             ->addColumn('action', function ($item) {
                 $encryptedId = encryptId($item->pengumuman_id);
-                $routePrefix = $item->jenis === 'berita' ? 'berita' : 'pengumuman';
+                $routePrefix = $item->jenis === 'berita' ? 'lab.berita' : 'lab.pengumuman';
 
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route($routePrefix . '.edit', $encryptedId),

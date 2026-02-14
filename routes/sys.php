@@ -11,6 +11,7 @@ use App\Http\Controllers\Sys\PermissionController;
 use App\Http\Controllers\Sys\RoleController;
 use App\Http\Controllers\Sys\SysGlobalSearchController;
 use App\Http\Controllers\Sys\TestController;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 // 🔹 Public System Routes (Accessible by Guest)
@@ -128,7 +129,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Get current server time
         Route::get('/server-time', function () {
             return response()->json([
-                'server_time' => \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm:ss'),
+                'server_time' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY HH:mm:ss'),
             ]);
         })->name('sys.server-time');
     });

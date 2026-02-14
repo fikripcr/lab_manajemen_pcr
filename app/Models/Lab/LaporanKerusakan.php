@@ -1,11 +1,12 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class LaporanKerusakan extends Model
 {
@@ -21,10 +22,8 @@ class LaporanKerusakan extends Model
         'status',
         'catatan_perbaikan',
         'foto_sebelum',
-        'foto_sesudah',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'foto_sesudah', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
@@ -69,5 +68,13 @@ class LaporanKerusakan extends Model
     public function getEncryptedTeknisiIdAttribute()
     {
         return encryptId($this->teknisi_id);
+    }
+
+    /**
+     * Relationship: Created By (Reporter)
+     */
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

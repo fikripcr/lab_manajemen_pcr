@@ -6,9 +6,9 @@ use App\Http\Requests\Sys\NotificationSendRequest;
 use App\Models\User;
 use App\Notifications\SysTestNotification;
 use App\Services\Sys\NotificationService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
@@ -187,8 +187,8 @@ class NotificationsController extends Controller
     {
         $validated = $request->validated();
 
-        $type = $validated['type'];
-        $userId = $validated['user_id'];
+        $type              = $validated['type'];
+        $userId            = $validated['user_id'];
         $notificationClass = $validated['notification_class'];
 
         // Determine recipient - if no user_id provided, use authenticated user
@@ -197,7 +197,7 @@ class NotificationsController extends Controller
             $decryptedId = null;
             try {
                 $decryptedId = decryptId($userId, false);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // If decryption fails, we'll try to find by the original value
                 $decryptedId = null;
             }
@@ -215,7 +215,7 @@ class NotificationsController extends Controller
         // Get the notification class - for now using TestNotification
         if ($notificationClass === 'SysTestNotification') {
             $channel      = $type === 'email' ? 'mail' : 'database';
-            $notification = new \App\Notifications\SysTestNotification($channel);
+            $notification = new SysTestNotification($channel);
         } else {
             // Handle other notification classes as needed
             $notification = new $notificationClass();
@@ -239,7 +239,7 @@ class NotificationsController extends Controller
             logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
 
             return jsonSuccess($message);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Log::error('Notification sending failed: ' . $e->getMessage() . ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
             return jsonError('Failed to send notification: ' . $e->getMessage(), 500);
         }

@@ -7,7 +7,9 @@ use App\Http\Requests\Hr\PresensiCheckOutRequest;
 use App\Http\Requests\Hr\PresensiLocationRequest;
 use App\Http\Requests\Hr\PresensiUpdateSettingsRequest;
 use App\Http\Requests\Hr\PresensiUploadPhotoRequest;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\PresensiService;
+use Exception;
 use Illuminate\Http\Request;
 
 class PresensiController extends Controller
@@ -36,7 +38,7 @@ class PresensiController extends Controller
                 'message' => 'Check-in berhasil!',
                 'data'    => $result,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -56,7 +58,7 @@ class PresensiController extends Controller
                 'message' => 'Check-out berhasil!',
                 'data'    => $result,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -75,7 +77,7 @@ class PresensiController extends Controller
                 'success' => true,
                 'address' => $location,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -111,13 +113,13 @@ class PresensiController extends Controller
                 'success' => true,
                 'message' => 'Pengaturan presensi berhasil diperbarui!',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
                 'errors'  => $e->errors(),
             ], 422);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -148,7 +150,7 @@ class PresensiController extends Controller
             $request->validated();
 
             $user    = auth()->user();
-            $pegawai = \App\Models\Hr\Pegawai::where('user_id', $user->id)->first();
+            $pegawai = Pegawai::where('user_id', $user->id)->first();
 
             if (! $pegawai) {
                 return response()->json([
@@ -177,8 +179,8 @@ class PresensiController extends Controller
                     if ($faceEncoding) {
                         $pegawai->face_encoding = json_encode($faceEncoding);
                     }
-                } catch (\Exception $e) {
-                    \Log::warning('Failed to extract face encoding: ' . $e->getMessage());
+                } catch (Exception $e) {
+                    Log::warning('Failed to extract face encoding: ' . $e->getMessage());
                 }
             }
 
@@ -192,7 +194,7 @@ class PresensiController extends Controller
                     'has_face_encoding' => ! empty($pegawai->face_encoding),
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -235,7 +237,7 @@ class PresensiController extends Controller
                 'success'  => true,
                 'faceData' => $faceData,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,22 +12,22 @@ class OrgUnit extends Model
 {
     use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
-    protected $table = 'pemutu_org_unit';
+    protected $table      = 'pemutu_org_unit';
     protected $primaryKey = 'orgunit_id';
-    protected $appends = ['encrypted_org_unit_id'];
-    protected $fillable = [
-        'parent_id', 
-        'name', 
-        'type', 
-        'code', 
-        'level', 
-        'seq', 
-        'is_active', 
-        'successor_id', 
+    protected $appends    = ['encrypted_org_unit_id'];
+    protected $fillable   = [
+        'parent_id',
+        'name',
+        'type',
+        'code',
+        'level',
+        'seq',
+        'is_active',
+        'successor_id',
         'auditee_user_id',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
     public $timestamps = false;
 
@@ -78,6 +79,6 @@ class OrgUnit extends Model
 
     public function auditee()
     {
-        return $this->belongsTo(\App\Models\User::class, 'auditee_user_id', 'id');
+        return $this->belongsTo(User::class, 'auditee_user_id', 'id');
     }
 }

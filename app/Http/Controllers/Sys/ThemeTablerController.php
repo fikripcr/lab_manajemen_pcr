@@ -3,8 +3,7 @@ namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\ThemeTablerRequest;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 
 class ThemeTablerController extends Controller
@@ -288,7 +287,7 @@ class ThemeTablerController extends Controller
                 if (is_array($config)) {
                     return array_merge($this->getDefaultConfig(), $config);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Log error and return defaults
                 \Log::warning("Failed to load theme config for {$mode}: " . $e->getMessage());
             }

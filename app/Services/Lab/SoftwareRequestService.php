@@ -2,6 +2,7 @@
 namespace App\Services\Lab;
 
 use App\Models\Lab\RequestSoftware;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class SoftwareRequestService
@@ -61,11 +62,38 @@ class SoftwareRequestService
         });
     }
 
+    /**
+     * Create New Software Request
+     */
+    public function createRequest(array $data): RequestSoftware
+    {
+        return DB::transaction(function () use ($data) {
+            $request = RequestSoftware::create([
+                'dosen_id'         => auth()->id(),
+                'periodsoftreq_id' => $data['periodsoftreq_id'],
+                'nama_software'    => $data['nama_software'],
+                'versi'            => $data['versi'] ?? null,
+                'url_download'     => $data['url_download'] ?? null,
+                'deskripsi'        => $data['deskripsi'],
+                'status'           => 'pending',
+            ]);
+
+            // Sync Mata Kuliah
+            if (! empty($data['mata_kuliah_ids'])) {
+                $request->mataKuliahs()->sync($data['mata_kuliah_ids']);
+            }
+
+            logActivity('software_request_management', "Membuat request software baru: {$data['nama_software']}");
+
+            return $request;
+        });
+    }
+
     protected function findOrFail(string $id): RequestSoftware
     {
         $model = RequestSoftware::find($id);
         if (! $model) {
-            throw new \Exception("Request Software dengan ID {$id} tidak ditemukan.");
+            throw new Exception("Request Software dengan ID {$id} tidak ditemukan.");
         }
         return $model;
     }

@@ -6,6 +6,7 @@ use App\Http\Requests\Pemutu\OrgUnitAuditeeRequest;
 use App\Http\Requests\Pemutu\OrgUnitRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\OrgUnitService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -106,7 +107,7 @@ class OrgUnitController extends Controller
             $orgUnit = $this->OrgUnitService->toggleStatus($id);
 
             return jsonSuccess('Status updated successfully.', null, ['is_active' => $orgUnit->is_active]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -117,7 +118,7 @@ class OrgUnitController extends Controller
             $this->OrgUnitService->setAuditee($id, $request->validated()['auditee_user_id']);
 
             return jsonSuccess('Auditee berhasil diset.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -169,7 +170,7 @@ class OrgUnitController extends Controller
             $this->OrgUnitService->createOrgUnit($request->validated());
 
             return jsonSuccess('OrgUnit created successfully.', route('pemutu.org-units.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -196,7 +197,7 @@ class OrgUnitController extends Controller
             $this->OrgUnitService->updateOrgUnit($id, $request->validated());
 
             return jsonSuccess('OrgUnit updated successfully.', route('pemutu.org-units.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -207,7 +208,7 @@ class OrgUnitController extends Controller
             $this->OrgUnitService->deleteOrgUnit($id);
 
             return jsonSuccess('OrgUnit deleted successfully.', route('pemutu.org-units.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -219,7 +220,7 @@ class OrgUnitController extends Controller
             $this->OrgUnitService->reorderUnits($hierarchy);
 
             return jsonSuccess('Hierarchy updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

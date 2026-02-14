@@ -2,6 +2,7 @@
 namespace App\Services\Eoffice;
 
 use App\Models\Eoffice\JenisLayananPeriode;
+use Exception;
 
 class JenisLayananPeriodeService
 {
@@ -21,7 +22,7 @@ class JenisLayananPeriodeService
     public function store($jenislayananId, array $data)
     {
         if (JenisLayananPeriode::hasOverlap($jenislayananId, $data['tgl_mulai'], $data['tgl_selesai'])) {
-            throw new \Exception('Tanggal overlap dengan periode yang sudah tersedia.');
+            throw new Exception('Tanggal overlap dengan periode yang sudah tersedia.');
         }
 
         $data['jenislayanan_id'] = $jenislayananId;
@@ -36,7 +37,7 @@ class JenisLayananPeriodeService
         $periode = JenisLayananPeriode::findOrFail($id);
 
         if (JenisLayananPeriode::hasOverlap($periode->jenislayanan_id, $data['tgl_mulai'], $data['tgl_selesai'], $id)) {
-            throw new \Exception('Tanggal overlap dengan periode yang sudah tersedia.');
+            throw new Exception('Tanggal overlap dengan periode yang sudah tersedia.');
         }
 
         $periode->update($data);

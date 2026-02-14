@@ -1,11 +1,12 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class RequestSoftware extends Model
 {
@@ -16,18 +17,29 @@ class RequestSoftware extends Model
 
     protected $fillable = [
         'dosen_id',
+        'periodsoftreq_id',
         'nama_software',
-        'alasan',
+        'versi',
+        'url_download',
+        'deskripsi',
         'status',
-        'catatan_admin',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'catatan',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [
         'status' => 'string',
     ];
+
+    /**
+     * Relationship: Software request belongs to a period
+     */
+    public function period()
+    {
+        return $this->belongsTo(PeriodSoftRequest::class, 'periodsoftreq_id', 'periodsoftreq_id');
+    }
 
     /**
      * Relationship: Software request belongs to a dosen (user)

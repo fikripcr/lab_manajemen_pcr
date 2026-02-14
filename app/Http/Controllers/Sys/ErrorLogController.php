@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Services\Sys\ErrorLogService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -85,7 +86,7 @@ class ErrorLogController extends Controller
                 ->rawColumns(['message', 'error_type', 'user_info', 'actions'])
                 ->make(true);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -101,7 +102,7 @@ class ErrorLogController extends Controller
             $errorLog = $this->errorLogService->findOrFail($realId);
 
             return view('pages.sys.error-log.show', compact('errorLog'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -123,7 +124,7 @@ class ErrorLogController extends Controller
             $this->errorLogService->clearAllErrorLogs();
 
             return jsonSuccess('All error logs cleared successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError('Terjadi kesalahan saat membersihkan log error.', 500);
         }
     }

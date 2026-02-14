@@ -1,11 +1,12 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Models\User;
 use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HashidBinding;
 
 class RiwayatPenugasan extends Model
 {
@@ -34,7 +35,7 @@ class RiwayatPenugasan extends Model
 
     public function approvedBy()
     {
-        return $this->belongsTo(\App\Models\User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     // Helper to check if currently active

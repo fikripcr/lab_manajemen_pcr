@@ -42,4 +42,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('api/indikators', [App\Http\Controllers\Pemutu\IndikatorController::class, 'paginate'])->name('indikators.data');
     Route::resource('indikators', App\Http\Controllers\Pemutu\IndikatorController::class);
 
+    // KPI (Sasaran Kinerja)
+    Route::get('api/kpi', [App\Http\Controllers\Pemutu\KpiController::class, 'paginate'])->name('kpi.data');
+    Route::resource('kpi', App\Http\Controllers\Pemutu\KpiController::class);
+
 });

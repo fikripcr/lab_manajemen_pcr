@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Eoffice;
 
+use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,9 +14,9 @@ class Layanan extends Model
 
     protected $table      = 'eoffice_layanan';
     protected $primaryKey = 'layanan_id';
-    
-    protected $appends = ['encrypted_layanan_id'];
-    protected $fillable   = [
+
+    protected $appends  = ['encrypted_layanan_id'];
+    protected $fillable = [
         'no_layanan',
         'jenislayanan_id',
         'pengusul_nama',
@@ -87,7 +88,7 @@ class Layanan extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
     public function periode()

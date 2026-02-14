@@ -50,14 +50,14 @@ class PengumumanSeeder extends Seeder
             'Peminjaman peralatan laboratorium hanya dapat dilakukan oleh mahasiswa yang telah menyelesaikan pelatihan keselamatan dan telah mendapatkan izin dari dosen pembimbing praktikum.',
         ];
 
-        // Create 500 pengumuman
-        for ($i = 1; $i <= 500; $i++) {
-            $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
+        $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
 
+        // Create 200 pengumuman (Reduced for efficiency)
+        for ($i = 1; $i <= 200; $i++) {
             $title = $faker->sentence();
             Pengumuman::create([
                 'judul'        => $title,
-                'isi'          => $faker->paragraphs(5, true),
+                'isi'          => $faker->paragraphs(3, true),
                 'jenis'        => 'pengumuman',
                 'penulis_id'   => $userIds[array_rand($userIds)],
                 'is_published' => $faker->boolean(80), // 80% chance of being published
@@ -65,14 +65,12 @@ class PengumumanSeeder extends Seeder
             ]);
         }
 
-        // Create 500 berita
-        for ($i = 1; $i <= 500; $i++) {
-            $faker = \Faker\Factory::create('id_ID'); // Use Indonesian locale
-
+        // Create 200 berita (Reduced for efficiency)
+        for ($i = 1; $i <= 200; $i++) {
             $title = $faker->sentence();
             Pengumuman::create([
                 'judul'        => $title,
-                'isi'          => $faker->paragraphs(5, true),
+                'isi'          => $faker->paragraphs(3, true),
                 'jenis'        => 'artikel_berita', // Using the type from our migration
                 'penulis_id'   => $userIds[array_rand($userIds)],
                 'is_published' => $faker->boolean(80), // 80% chance of being published

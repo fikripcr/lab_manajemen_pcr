@@ -6,6 +6,7 @@ use App\Models\Sys\Permission;
 use App\Models\Sys\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Spatie\Searchable\Search;
 
 class GlobalSearchController extends Controller
@@ -30,6 +31,10 @@ class GlobalSearchController extends Controller
                 ->registerModel(Permission::class, 'name')
                 ->search($query);
 
+            $users       = $searchResults->where('type', 'users');
+            $roles       = $searchResults->where('type', 'roles');
+            $permissions = $searchResults->where('type', 'permissions');
+
             return jsonSuccess('Search results', null, [
                 'users'       => $users,
                 'roles'       => $roles,
@@ -37,7 +42,7 @@ class GlobalSearchController extends Controller
                 'query'       => $query,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Global search error: ' . $e->getMessage());
+            Log::error('Global search error: ' . $e->getMessage());
             return jsonError('Search failed', 500, [
                 'users'       => [],
                 'roles'       => [],

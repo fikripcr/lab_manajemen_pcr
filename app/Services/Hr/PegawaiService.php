@@ -1,11 +1,12 @@
 <?php
 namespace App\Services\Hr;
 
-use App\Events\Hr\ApprovalProcessed;
 use App\Events\Hr\ApprovalRequested;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
+use App\Models\Hr\RiwayatPenugasan;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -60,7 +61,7 @@ class PegawaiService
                 'status'     => 'Pending',
                 'keterangan' => 'Request Data Update',
             ]);
-            
+
             // 2. Prepare Data (Link to Pegawai, but DO NOT update Pegawai's pointer yet)
             $data['pegawai_id']                = $pegawai->pegawai_id;
             $data['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;
@@ -71,10 +72,10 @@ class PegawaiService
 
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $riwayat->riwayatdatadiri_id]);
-            
+
             // 5. Dispatch Event for Notification
             ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
-            
+
             return $riwayat;
         });
     }
@@ -106,17 +107,17 @@ class PegawaiService
                 \App\Models\Hr\RiwayatPendidikan::class,
             ])) {
                 $headerColumnMap = [
-                    \App\Models\Hr\RiwayatInpassing::class => 'latest_riwayatinpassing_id',
-                    \App\Models\Hr\RiwayatStatPegawai::class => 'latest_riwayatstatpegawai_id',
-                    \App\Models\Hr\RiwayatStatAktifitas::class => 'latest_riwayatstataktifitas_id',
-                    \App\Models\Hr\RiwayatJabFungsional::class => 'latest_riwayatjabfungsional_id',
-                    \App\Models\Hr\RiwayatJabStruktural::class => 'latest_riwayatjabstruktural_id',
-                    \App\Models\Hr\RiwayatPendidikan::class => 'latest_riwayatpendidikan_id',
+                    RiwayatInpassing::class     => 'latest_riwayatinpassing_id',
+                    RiwayatStatPegawai::class   => 'latest_riwayatstatpegawai_id',
+                    RiwayatStatAktifitas::class => 'latest_riwayatstataktifitas_id',
+                    RiwayatJabFungsional::class => 'latest_riwayatjabfungsional_id',
+                    RiwayatJabStruktural::class => 'latest_riwayatjabstruktural_id',
+                    RiwayatPendidikan::class    => 'latest_riwayatpendidikan_id',
                 ];
-                
+
                 if (isset($headerColumnMap[$modelClass])) {
                     $currentHeaderColumn = $headerColumnMap[$modelClass];
-                    $data['before_id'] = $pegawai->{$currentHeaderColumn};
+                    $data['before_id']   = $pegawai->{$currentHeaderColumn};
                 }
             }
 
@@ -124,7 +125,7 @@ class PegawaiService
             if ($existingModel) {
                 $data = array_merge($existingModel->getAttributes(), $data);
                 unset($data[$existingModel->getKeyName()]); // Remove primary key
-                unset($data['created_at']); // Remove timestamps
+                unset($data['created_at']);                 // Remove timestamps
                 unset($data['updated_at']);
             }
 
@@ -179,13 +180,13 @@ class PegawaiService
             $approval = RiwayatApproval::findOrFail($approvalId);
 
             if ($approval->status !== 'Pending') {
-                throw new \Exception("Request is not pending.");
+                throw new Exception("Request is not pending.");
             }
 
             // Update Status
             $approval->update([
-                'status'     => 'Approved',
-                'pejabat'    => Auth::user()->name ?? 'System',
+                'status'  => 'Approved',
+                'pejabat' => Auth::user()->name ?? 'System',
             ]);
 
             // Resolve Model and Update Header Pointer if applicable
@@ -196,13 +197,13 @@ class PegawaiService
             // Mapping of Model Class to Pegawai Header Column
             // This acts as a registry for which models affect the Pegawai header status
             $headerMap = [
-                \App\Models\Hr\RiwayatDataDiri::class      => 'latest_riwayatdatadiri_id',
-                \App\Models\Hr\RiwayatStatPegawai::class   => 'latest_riwayatstatpegawai_id',
-                \App\Models\Hr\RiwayatStatAktifitas::class => 'latest_riwayatstataktifitas_id',
-                \App\Models\Hr\RiwayatJabFungsional::class => 'latest_riwayatjabfungsional_id',
-                \App\Models\Hr\RiwayatJabStruktural::class => 'latest_riwayatjabstruktural_id', // Nullable/Missing in some schemas, enable if exists
-                \App\Models\Hr\RiwayatPendidikan::class    => 'latest_riwayatpendidikan_id',    // Usually points to "Highest" education
-                \App\Models\Hr\RiwayatInpassing::class     => 'latest_riwayatinpassing_id',
+                RiwayatDataDiri::class      => 'latest_riwayatdatadiri_id',
+                RiwayatStatPegawai::class   => 'latest_riwayatstatpegawai_id',
+                RiwayatStatAktifitas::class => 'latest_riwayatstataktifitas_id',
+                RiwayatJabFungsional::class => 'latest_riwayatjabfungsional_id',
+                RiwayatJabStruktural::class => 'latest_riwayatjabstruktural_id', // Nullable/Missing in some schemas, enable if exists
+                RiwayatPendidikan::class    => 'latest_riwayatpendidikan_id',    // Usually points to "Highest" education
+                RiwayatInpassing::class     => 'latest_riwayatinpassing_id',
             ];
 
             if (array_key_exists($modelClass, $headerMap)) {
@@ -236,7 +237,7 @@ class PegawaiService
             $data['approved_by'] = Auth::id();
             $data['approved_at'] = now();
 
-            $riwayat = \App\Models\Hr\RiwayatPenugasan::create($data);
+            $riwayat = RiwayatPenugasan::create($data);
 
             // Update latest on pegawai
             $pegawai->update(['latest_riwayatpenugasan_id' => $riwayat->riwayatpenugasan_id]);
@@ -245,19 +246,19 @@ class PegawaiService
         });
     }
 
-    public function updatePenugasan(\App\Models\Hr\RiwayatPenugasan $penugasan, array $data)
+    public function updatePenugasan(RiwayatPenugasan $penugasan, array $data)
     {
         return $penugasan->update($data);
     }
 
-    public function deletePenugasan(Pegawai $pegawai, \App\Models\Hr\RiwayatPenugasan $penugasan)
+    public function deletePenugasan(Pegawai $pegawai, RiwayatPenugasan $penugasan)
     {
         return DB::transaction(function () use ($pegawai, $penugasan) {
             $penugasan->delete();
 
             // Update latest if deleted was latest
             if ($pegawai->latest_riwayatpenugasan_id == $penugasan->riwayatpenugasan_id) {
-                $latest = \App\Models\Hr\RiwayatPenugasan::where('pegawai_id', $pegawai->pegawai_id)
+                $latest = RiwayatPenugasan::where('pegawai_id', $pegawai->pegawai_id)
                     ->orderByDesc('tgl_mulai')
                     ->first();
                 $pegawai->update(['latest_riwayatpenugasan_id' => $latest?->riwayatpenugasan_id]);
@@ -267,7 +268,7 @@ class PegawaiService
         });
     }
 
-    public function endPenugasan(\App\Models\Hr\RiwayatPenugasan $penugasan, $tglSelesai)
+    public function endPenugasan(RiwayatPenugasan $penugasan, $tglSelesai)
     {
         return $penugasan->update(['tgl_selesai' => $tglSelesai]);
     }

@@ -3,8 +3,9 @@ namespace App\Services\Hr;
 
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
+use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class PresensiService
 {
@@ -15,11 +16,11 @@ class PresensiService
     {
         return Cache::remember('presensi_settings', 3600, function () {
             return [
-                'office_latitude' => config('presensi.default_latitude', -6.208763),
+                'office_latitude'  => config('presensi.default_latitude', -6.208763),
                 'office_longitude' => config('presensi.default_longitude', 106.845599),
-                'office_address' => config('presensi.default_address', 'Jakarta, Indonesia'),
-                'allowed_radius' => config('presensi.default_radius', 100), // meters
-                'is_active' => true,
+                'office_address'   => config('presensi.default_address', 'Jakarta, Indonesia'),
+                'allowed_radius'   => config('presensi.default_radius', 100), // meters
+                'is_active'        => true,
             ];
         });
     }
@@ -30,19 +31,19 @@ class PresensiService
     public function updateSettings(array $data): void
     {
         $settings = [
-            'office_latitude' => $data['office_latitude'],
+            'office_latitude'  => $data['office_latitude'],
             'office_longitude' => $data['office_longitude'],
-            'office_address' => $data['office_address'],
-            'allowed_radius' => $data['allowed_radius'],
-            'is_active' => $data['is_active'] ?? true,
+            'office_address'   => $data['office_address'],
+            'allowed_radius'   => $data['allowed_radius'],
+            'is_active'        => $data['is_active'] ?? true,
         ];
-        
+
         // Clear existing cache first
         Cache::forget('presensi_settings');
-        
+
         // Store in cache for 1 hour
         Cache::put('presensi_settings', $settings, 3600);
-        
+
         // Log for debugging
         \Log::info('Presensi settings updated', $settings);
     }
@@ -53,14 +54,14 @@ class PresensiService
     public function checkIn(array $data): array
     {
         $settings = $this->getPresensiSettings();
-        
-        if (!$settings['is_active']) {
+
+        if (! $settings['is_active']) {
             throw new \Exception('Presensi tidak aktif');
         }
 
-        $user = auth()->user();
+        $user        = auth()->user();
         $currentTime = Carbon::now();
-        
+
         // Check if already checked in today
         if ($this->hasCheckedInToday($user)) {
             throw new \Exception('Anda sudah melakukan check-in hari ini');
@@ -68,9 +69,9 @@ class PresensiService
 
         // Validate location
         $distance = $this->calculateDistance(
-            $data['latitude'], 
-            $data['longitude'], 
-            $settings['office_latitude'], 
+            $data['latitude'],
+            $data['longitude'],
+            $settings['office_latitude'],
             $settings['office_longitude']
         );
 
@@ -79,22 +80,22 @@ class PresensiService
         }
 
         // Validate face verification
-        if (!$data['face_verified']) {
+        if (! $data['face_verified']) {
             throw new \Exception('Verifikasi wajah gagal. Silakan coba lagi.');
         }
 
         // For now, return mock data (without database)
         return [
-            'user_id' => $user->id,
-            'check_in_time' => $currentTime->format('H:i:s'),
-            'check_in_date' => $currentTime->format('Y-m-d'),
-            'latitude' => $data['latitude'],
-            'longitude' => $data['longitude'],
-            'address' => $data['address'] ?? $this->getLocationFromCoordinates($data['latitude'], $data['longitude']),
+            'user_id'              => $user->id,
+            'check_in_time'        => $currentTime->format('H:i:s'),
+            'check_in_date'        => $currentTime->format('Y-m-d'),
+            'latitude'             => $data['latitude'],
+            'longitude'            => $data['longitude'],
+            'address'              => $data['address'] ?? $this->getLocationFromCoordinates($data['latitude'], $data['longitude']),
             'distance_from_office' => round($distance, 2),
-            'status' => 'on_time', // Can be calculated based on shift
-            'face_verified' => $data['face_verified'],
-            'photo' => $data['photo'] ?? null,
+            'status'               => 'on_time', // Can be calculated based on shift
+            'face_verified'        => $data['face_verified'],
+            'photo'                => $data['photo'] ?? null,
         ];
     }
 
@@ -104,16 +105,16 @@ class PresensiService
     public function checkOut(array $data): array
     {
         $settings = $this->getPresensiSettings();
-        
-        if (!$settings['is_active']) {
+
+        if (! $settings['is_active']) {
             throw new \Exception('Presensi tidak aktif');
         }
 
-        $user = auth()->user();
+        $user        = auth()->user();
         $currentTime = Carbon::now();
-        
+
         // Check if has checked in today
-        if (!$this->hasCheckedInToday($user)) {
+        if (! $this->hasCheckedInToday($user)) {
             throw new \Exception('Anda belum melakukan check-in hari ini');
         }
 
@@ -124,9 +125,9 @@ class PresensiService
 
         // Validate location
         $distance = $this->calculateDistance(
-            $data['latitude'], 
-            $data['longitude'], 
-            $settings['office_latitude'], 
+            $data['latitude'],
+            $data['longitude'],
+            $settings['office_latitude'],
             $settings['office_longitude']
         );
 
@@ -135,21 +136,21 @@ class PresensiService
         }
 
         // Validate face verification (optional for check-out)
-        if (isset($data['face_verified']) && !$data['face_verified']) {
+        if (isset($data['face_verified']) && ! $data['face_verified']) {
             throw new \Exception('Verifikasi wajah gagal. Silakan coba lagi.');
         }
 
         // For now, return mock data (without database)
         return [
-            'user_id' => $user->id,
-            'check_out_time' => $currentTime->format('H:i:s'),
-            'check_out_date' => $currentTime->format('Y-m-d'),
-            'latitude' => $data['latitude'],
-            'longitude' => $data['longitude'],
-            'address' => $data['address'] ?? $this->getLocationFromCoordinates($data['latitude'], $data['longitude']),
+            'user_id'              => $user->id,
+            'check_out_time'       => $currentTime->format('H:i:s'),
+            'check_out_date'       => $currentTime->format('Y-m-d'),
+            'latitude'             => $data['latitude'],
+            'longitude'            => $data['longitude'],
+            'address'              => $data['address'] ?? $this->getLocationFromCoordinates($data['latitude'], $data['longitude']),
             'distance_from_office' => round($distance, 2),
-            'face_verified' => $data['face_verified'] ?? false,
-            'photo' => $data['photo'] ?? null,
+            'face_verified'        => $data['face_verified'] ?? false,
+            'photo'                => $data['photo'] ?? null,
         ];
     }
 
@@ -161,10 +162,10 @@ class PresensiService
         try {
             // Using Nominatim (OpenStreetMap) for free reverse geocoding
             $response = Http::get("https://nominatim.openstreetmap.org/reverse", [
-                'format' => 'json',
-                'lat' => $lat,
-                'lon' => $lng,
-                'zoom' => 18,
+                'format'         => 'json',
+                'lat'            => $lat,
+                'lon'            => $lng,
+                'zoom'           => 18,
                 'addressdetails' => 1,
             ]);
 
@@ -172,7 +173,7 @@ class PresensiService
                 $data = $response->json();
                 return $data['display_name'] ?? 'Alamat tidak ditemukan';
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Fallback if API fails
         }
 
@@ -190,8 +191,8 @@ class PresensiService
         $lngDiff = deg2rad($lng2 - $lng1);
 
         $a = sin($latDiff / 2) * sin($latDiff / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($lngDiff / 2) * sin($lngDiff / 2);
+        cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+        sin($lngDiff / 2) * sin($lngDiff / 2);
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
@@ -223,24 +224,24 @@ class PresensiService
     {
         // Mock data for demonstration
         return [
-            'data' => [
+            'data'     => [
                 [
-                    'date' => '2026-02-10',
-                    'check_in' => '08:15:00',
+                    'date'      => '2026-02-10',
+                    'check_in'  => '08:15:00',
                     'check_out' => '17:30:00',
-                    'status' => 'on_time',
-                    'address' => 'Jakarta, Indonesia',
+                    'status'    => 'on_time',
+                    'address'   => 'Jakarta, Indonesia',
                 ],
                 [
-                    'date' => '2026-02-09',
-                    'check_in' => '08:05:00',
+                    'date'      => '2026-02-09',
+                    'check_in'  => '08:05:00',
                     'check_out' => '17:45:00',
-                    'status' => 'on_time',
-                    'address' => 'Jakarta, Indonesia',
+                    'status'    => 'on_time',
+                    'address'   => 'Jakarta, Indonesia',
                 ],
             ],
-            'total' => 2,
-            'page' => 1,
+            'total'    => 2,
+            'page'     => 1,
             'per_page' => 10,
         ];
     }
@@ -252,9 +253,9 @@ class PresensiService
     {
         try {
             // Get pegawai data based on user_id
-            $pegawai = \App\Models\Hr\Pegawai::where('user_id', $userId)->first();
-            
-            if (!$pegawai || !$pegawai->face_encoding) {
+            $pegawai = Pegawai::where('user_id', $userId)->first();
+
+            if (! $pegawai || ! $pegawai->face_encoding) {
                 // Return mock face data for testing
                 return [
                     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
@@ -272,16 +273,16 @@ class PresensiService
                     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
                     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
                     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
-                    0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8
+                    0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
                 ];
             }
-            
+
             // Return actual face encoding from database
             return json_decode($pegawai->face_encoding, true);
-            
-        } catch (\Exception $e) {
+
+        } catch (Exception $e) {
             \Log::error('Error getting employee face data: ' . $e->getMessage());
-            
+
             // Return mock data as fallback
             return [
                 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
@@ -299,7 +300,7 @@ class PresensiService
                 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
                 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
                 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
-                0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8
+                0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
             ];
         }
     }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Lab;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,9 +21,9 @@ class LabInventarisStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'inventaris_id' => 'required|exists:inventaris,inventaris_id',
-            'no_series' => 'nullable|string|max:255',
-            'keterangan' => 'nullable|string|max:1000',
+            'inventaris_id' => 'required|exists:lab_inventaris,inventaris_id',
+            'no_series'     => 'nullable|string|max:255',
+            'keterangan'    => 'nullable|string|max:1000',
         ];
     }
 
@@ -37,11 +36,11 @@ class LabInventarisStoreRequest extends FormRequest
     {
         return [
             'inventaris_id.required' => 'Inventaris harus dipilih.',
-            'inventaris_id.exists' => 'Inventaris tidak ditemukan.',
-            'no_series.string' => 'Nomor seri harus berupa string.',
-            'no_series.max' => 'Nomor seri maksimal 255 karakter.',
-            'keterangan.string' => 'Keterangan harus berupa string.',
-            'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
+            'inventaris_id.exists'   => 'Inventaris tidak ditemukan.',
+            'no_series.string'       => 'Nomor seri harus berupa string.',
+            'no_series.max'          => 'Nomor seri maksimal 255 karakter.',
+            'keterangan.string'      => 'Keterangan harus berupa string.',
+            'keterangan.max'         => 'Keterangan maksimal 1000 karakter.',
         ];
     }
 }

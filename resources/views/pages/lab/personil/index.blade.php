@@ -1,0 +1,69 @@
+@extends('layouts.admin.app')
+
+@section('header')
+    <div class="row g-2 align-items-center">
+        <div class="col">
+            <h2 class="page-title">
+                Master Personil
+            </h2>
+            <div class="text-muted mt-1">Master Data / Personil</div>
+        </div>
+        <div class="col-auto ms-auto d-print-none">
+            <div class="btn-list">
+                <a href="{{ route('lab.personil.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                    <i class="ti ti-plus me-1"></i>
+                    Tambah Personil
+                </a>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('content')
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex flex-wrap gap-2">
+                <div>
+                    <x-tabler.datatable-page-length :dataTableId="'personil-table'" />
+                </div>
+                <div>
+                    <x-tabler.datatable-search :dataTableId="'personil-table'" />
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <x-tabler.flash-message />
+
+            <x-tabler.datatable
+                id="personil-table" route="{{ route('lab.personil.data') }}" :columns="[
+                [
+                    'title' => 'NIP/NIK',
+                    'data' => 'nip',
+                    'name' => 'nip',
+                ],
+                [
+                    'title' => 'Nama Personil',
+                    'data' => 'nama',
+                    'name' => 'nama',
+                ],
+                [
+                    'title' => 'Jabatan',
+                    'data' => 'jabatan',
+                    'name' => 'jabatan',
+                ],
+                [
+                    'title' => 'Jenis Personil',
+                    'data' => 'jenis_personil',
+                    'name' => 'jenis_personil',
+                ],
+                [
+                    'title' => 'Actions',
+                    'data' => 'action',
+                    'name' => 'action',
+                    'orderable' => false,
+                    'searchable' => false,
+                ],
+            ]" />
+        </div>
+    </div>
+@endsection

@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\JenisLayananDisposisiRequest;
+use App\Models\Eoffice\JenisLayanan;
+use App\Models\Eoffice\JenisLayananDisposisi;
 use App\Services\Eoffice\JenisLayananDisposisiService;
 use Illuminate\Http\Request;
 
@@ -18,12 +20,12 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Store a new disposisi for a Jenis Layanan.
      */
-    public function store(JenisLayananDisposisiRequest $request, \App\Models\Eoffice\JenisLayanan $jenis_layanan)
+    public function store(JenisLayananDisposisiRequest $request, JenisLayanan $jenis_layanan)
     {
         try {
             $this->JenisLayananDisposisiService->store($jenis_layanan->jenislayanan_id, $request->validated());
             return jsonSuccess('Disposisi berhasil ditambahkan.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -31,7 +33,7 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Update disposisi (seq, notify email, or text/ket).
      */
-    public function update(Request $request, \App\Models\Eoffice\JenisLayananDisposisi $disposisi, $action = null)
+    public function update(Request $request, JenisLayananDisposisi $disposisi, $action = null)
     {
         try {
             $id = $disposisi->jldisposisi_id;
@@ -43,7 +45,7 @@ class JenisLayananDisposisiController extends Controller
                 $this->JenisLayananDisposisiService->updateTextKet($id, $request->all());
             }
             return jsonSuccess('Disposisi berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -51,12 +53,12 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Delete a disposisi (and re-sequence).
      */
-    public function destroy(\App\Models\Eoffice\JenisLayananDisposisi $disposisi)
+    public function destroy(JenisLayananDisposisi $disposisi)
     {
         try {
             $this->JenisLayananDisposisiService->destroy($disposisi->jldisposisi_id);
             return jsonSuccess('Disposisi berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -64,7 +66,7 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Get disposisi data for AJAX (e.g., on Jenis Layanan show page).
      */
-    public function data(\App\Models\Eoffice\JenisLayanan $jenis_layanan)
+    public function data(JenisLayanan $jenis_layanan)
     {
         $data = $this->JenisLayananDisposisiService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
         return jsonSuccess('Data retrieved', null, $data);
@@ -73,12 +75,12 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Get single disposisi data for edit modal
      */
-    public function show(\App\Models\Eoffice\JenisLayananDisposisi $disposisi)
+    public function show(JenisLayananDisposisi $disposisi)
     {
         try {
             $data = $disposisi;
             return jsonSuccess('Data retrieved', null, $data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelTypeRequest;
 use App\Services\Pemutu\LabelService;
+use Exception;
 
 class LabelTypeController extends Controller
 {
@@ -25,7 +26,7 @@ class LabelTypeController extends Controller
             $this->LabelService->createLabelType($request->validated());
 
             return jsonSuccess('Label Type created successfully.', route('pemutu.labels.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -46,7 +47,7 @@ class LabelTypeController extends Controller
             $this->LabelService->updateLabelType($id, $request->validated());
 
             return jsonSuccess('Label Type updated successfully.', route('pemutu.labels.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -57,7 +58,7 @@ class LabelTypeController extends Controller
             $this->LabelService->deleteLabelType($id);
 
             return jsonSuccess('Label Type deleted successfully.', route('pemutu.labels.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

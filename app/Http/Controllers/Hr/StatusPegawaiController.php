@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\StatusPegawaiRequest;
 use App\Models\Hr\StatusPegawai;
 use App\Services\Hr\StatusPegawaiService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -59,7 +60,7 @@ class StatusPegawaiController extends Controller
         try {
             $this->StatusPegawaiService->create($request->validated());
             return jsonSuccess('Status Pegawai created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -75,7 +76,7 @@ class StatusPegawaiController extends Controller
         try {
             $this->StatusPegawaiService->update($status_pegawai, $request->validated());
             return jsonSuccess('Status Pegawai updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -85,7 +86,7 @@ class StatusPegawaiController extends Controller
         try {
             $status_pegawai->delete();
             return jsonSuccess('Status Pegawai deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

@@ -87,9 +87,17 @@ class JadwalController extends Controller
                 // Ensure ID is encrypted
                 $encryptedId = encryptId($jadwal->jadwal_kuliah_id);
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.jadwal.edit', $encryptedId),
-                    'viewUrl'   => route('lab.jadwal.show', $encryptedId),
-                    'deleteUrl' => route('lab.jadwal.destroy', $encryptedId),
+                    'editUrl'     => route('lab.jadwal.edit', $encryptedId),
+                    'viewUrl'     => route('lab.jadwal.show', $encryptedId),
+                    'deleteUrl'   => route('lab.jadwal.destroy', $encryptedId),
+                    'customLinks' => [
+                        [
+                            'url'   => route('lab.jadwal.assignments.index', $encryptedId),
+                            'icon'  => 'bx bx-desktop',
+                            'title' => 'Atur PC',
+                            'class' => 'btn-outline-info',
+                        ],
+                    ],
                 ])->render();
             })
             ->rawColumns(['mata_kuliah_nama', 'action'])

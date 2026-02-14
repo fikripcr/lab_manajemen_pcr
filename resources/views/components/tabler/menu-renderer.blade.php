@@ -18,69 +18,152 @@
             'title' => 'Master Data',
         ],
         [
-            'type'  => 'item',
-            'title' => 'Data Lab',
-            'route' => 'lab.labs.index',
-            'active_routes' => ['lab.labs.*'],
-            'icon'  => 'ti ti-flask',
-        ],
-        [
-            'type'  => 'item',
-            'title' => 'Data Inventaris',
-            'route' => 'lab.inventaris.index',
-            'active_routes' => ['lab.inventaris.*'],
-            'icon'  => 'ti ti-package',
-        ],
-        [
             'type'          => 'dropdown',
-            'title'         => 'Perkuliahan',
-            'id'            => 'navbar-extra',
-            'icon'          => 'ti ti-book-2',
-            'active_routes' => ['lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*'],
+            'title'         => 'Layanan Lab',
+            'id'            => 'navbar-services',
+            'icon'          => 'ti ti-activity',
+            'active_routes' => [
+                'lab.labs.*',
+                'lab.inventaris.*',
+                'lab.kegiatan.*',
+                'lab.log-lab.*',
+                'lab.surat-bebas.*',
+                'lab.laporan-kerusakan.*',
+                'lab.log-pc.*',
+                'lab.software-requests.*',
+                'lab.pengumuman.*',
+                'lab.berita.*',
+                'lab.semesters.*',
+                'lab.mata-kuliah.*',
+                'lab.jadwal.*',
+                'lab.mahasiswa.*',
+                'lab.personil.*',
+                'lab.periode-request.*'
+            ],
             'children'      => [
                 [
-                    'title'         => 'Data Semester',
-                    'route'         => 'lab.semesters.index',
-                    'active_routes' => ['lab.semesters.*'],
+                    'title'         => 'Master Data Lab',
+                    'id'            => 'navbar-master-lab',
+                    'icon'          => 'ti ti-database',
+                    'active_routes' => ['lab.labs.*', 'lab.inventaris.*', 'lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*', 'lab.mahasiswa.*', 'lab.personil.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Data Lab',
+                            'route'         => 'lab.labs.index',
+                            'active_routes' => ['lab.labs.*'],
+                            'icon'          => 'ti ti-flask',
+                        ],
+                        [
+                            'title'         => 'Data Inventaris',
+                            'route'         => 'lab.inventaris.index',
+                            'active_routes' => ['lab.inventaris.*'],
+                            'icon'          => 'ti ti-package',
+                        ],
+                        [
+                            'title'         => 'Data Semester',
+                            'route'         => 'lab.semesters.index',
+                            'active_routes' => ['lab.semesters.*'],
+                            'icon'          => 'ti ti-calendar-stats',
+                        ],
+                        [
+                            'title'         => 'Data Mata Kuliah',
+                            'route'         => 'lab.mata-kuliah.index',
+                            'active_routes' => ['lab.mata-kuliah.*'],
+                            'icon'          => 'ti ti-book',
+                        ],
+                        [
+                            'title'         => 'Jadwal Perkuliahan',
+                            'route'         => 'lab.jadwal.index',
+                            'active_routes' => ['lab.jadwal.*'],
+                            'icon'          => 'ti ti-calendar-event',
+                        ],
+                        [
+                            'title'         => 'Data Mahasiswa',
+                            'route'         => 'lab.mahasiswa.index',
+                            'active_routes' => ['lab.mahasiswa.*'],
+                            'icon'          => 'ti ti-users-group',
+                        ],
+                        [
+                            'title'         => 'Data Personil',
+                            'route'         => 'lab.personil.index',
+                            'active_routes' => ['lab.personil.*'],
+                            'icon'          => 'ti ti-user-check',
+                        ],
+                    ],
                 ],
                 [
-                    'title'         => 'Data Mata Kuliah',
-                    'route'         => 'lab.mata-kuliah.index',
-                    'active_routes' => ['lab.mata-kuliah.*'],
+                    'title'         => 'Peminjaman Lab',
+                    'route'         => 'lab.kegiatan.index',
+                    'active_routes' => ['lab.kegiatan.*'],
+                    'icon'          => 'ti ti-calendar',
                 ],
                 [
-                    'title'         => 'Jadwal Perkuliahan',
-                    'route'         => 'lab.jadwal.index',
-                    'active_routes' => ['lab.jadwal.*'],
+                    'title'         => 'Log Penggunaan Lab',
+                    'route'         => 'lab.log-lab.index',
+                    'active_routes' => ['lab.log-lab.*'],
+                    'icon'          => 'ti ti-file-time',
+                ],
+                [
+                    'title'         => 'Log Penggunaan PC',
+                    'route'         => 'lab.log-pc.index',
+                    'active_routes' => ['lab.log-pc.*'],
+                    'icon'          => 'ti ti-device-desktop-analytics',
+                ],
+                [
+                    'title'         => 'Surat Bebas Lab',
+                    'route'         => 'lab.surat-bebas.index',
+                    'active_routes' => ['lab.surat-bebas.*'],
+                    'icon'          => 'ti ti-certificate',
+                ],
+                [
+                    'title'         => 'Laporan Kerusakan',
+                    'route'         => 'lab.laporan-kerusakan.index',
+                    'active_routes' => ['lab.laporan-kerusakan.*'],
+                    'icon'          => 'ti ti-report-medical',
+                ],
+                [
+                    'title'         => 'Software Requests',
+                    'id'            => 'navbar-software-nested',
+                    'icon'          => 'ti ti-device-laptop',
+                    'active_routes' => ['lab.software-requests.*', 'lab.periode-request.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Daftar Pengajuan',
+                            'route'         => 'lab.software-requests.index',
+                            'active_routes' => ['lab.software-requests.index'],
+                            'icon'          => 'ti ti-list',
+                        ],
+                        [
+                            'title'         => 'Periode Pengajuan',
+                            'route'         => 'lab.periode-request.index',
+                            'active_routes' => ['lab.periode-request.*'],
+                            'icon'          => 'ti ti-calendar-stats',
+                        ],
+                    ],
+                ],
+                [
+                    'title'         => 'Info Publik',
+                    'id'            => 'navbar-info-nested',
+                    'icon'          => 'ti ti-info-circle',
+                    'active_routes' => ['lab.pengumuman.*', 'lab.berita.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Pengumuman',
+                            'route'         => 'lab.pengumuman.index',
+                            'active_routes' => ['lab.pengumuman.*'],
+                            'icon'          => 'ti ti-speakerphone',
+                        ],
+                        [
+                            'title'         => 'Berita',
+                            'route'         => 'lab.berita.index',
+                            'active_routes' => ['lab.berita.*'],
+                            'icon'          => 'ti ti-news',
+                        ],
+                    ],
                 ],
             ],
         ],
-        [
-            'type'          => 'dropdown',
-            'title'         => 'Info Publik',
-            'id'            => 'navbar-info',
-            'icon'          => 'ti ti-info-circle',
-            'active_routes' => ['lab.pengumuman.*', 'lab.berita.*'],
-            'children'      => [
-                [
-                    'title'         => 'Pengumuman',
-                    'route'         => 'lab.pengumuman.index',
-                    'active_routes' => ['lab.pengumuman.*'],
-                ],
-                [
-                    'title'         => 'Berita',
-                    'route'         => 'lab.berita.index',
-                    'active_routes' => ['lab.berita.*'],
-                ],
-            ],
-        ],
-        [
-            'type'  => 'item',
-            'title' => 'Permintaan Perangkat Lunak',
-            'route' => 'lab.software-requests.index',
-            'active_routes' => ['lab.software-requests.*'],
-            'icon'  => 'ti ti-device-laptop',
-        ],
+
         [
             'type' => 'dropdown',
             'title' => 'Penjaminan Mutu',
@@ -88,31 +171,42 @@
             'route' => '#',
             'active_routes' => ['pemutu.*'],
             'can' => 'admin',
-            'children' => [
+            'children'      => [
                 [
                     'title' => 'Struktur Organisasi',
                     'route' => 'pemutu.org-units.index',
                     'active_routes' => ['pemutu.org-units.*'],
+                    'icon' => 'ti ti-hierarchy-2',
                 ],
                 [
                     'title' => 'Dokumen',
                     'route' => 'pemutu.dokumens.index',
                     'active_routes' => ['pemutu.dokumens.*'],
+                    'icon' => 'ti ti-file-text',
                 ],
                 [
                     'title' => 'Personel',
                     'route' => 'pemutu.personils.index',
                     'active_routes' => ['pemutu.personils.*'],
+                    'icon' => 'ti ti-users',
                 ],
                 [
                     'title' => 'Label & Kategori',
                     'route' => 'pemutu.labels.index',
                     'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
+                    'icon' => 'ti ti-tags',
                 ],
                 [
                     'title' => 'Indikator',
                     'route' => 'pemutu.indikators.index',
                     'active_routes' => ['pemutu.indikators.*'],
+                    'icon' => 'ti ti-target',
+                ],
+                [
+                    'title' => 'Sasaran Kinerja (KPI)',
+                    'route' => 'pemutu.kpi.index',
+                    'active_routes' => ['pemutu.kpi.*'],
+                    'icon' => 'ti ti-chart-arrows',
                 ],
             ],
         ],
@@ -127,41 +221,49 @@
                     'title'         => 'Data Pegawai',
                     'route'         => 'hr.pegawai.index',
                     'active_routes' => ['hr.pegawai.*'],
+                    'icon'          => 'ti ti-users',
                 ],
                 [
                     'title'         => 'Struktur Organisasi',
                     'route'         => 'hr.org-units.index',
                     'active_routes' => ['hr.org-units.*'],
+                    'icon'          => 'ti ti-hierarchy-2',
                 ],
                 [
                     'title'         => 'Approval Data',
                     'route'         => 'hr.approval.index',
                     'active_routes' => ['hr.approval.*'],
+                    'icon'          => 'ti ti-check',
                 ],
                 [
                     'title'         => 'Perizinan',
                     'route'         => 'hr.perizinan.index',
                     'active_routes' => ['hr.perizinan.*'],
+                    'icon'          => 'ti ti-file-certificate',
                 ],
                 [
                     'title'         => 'Indisipliner',
                     'route'         => 'hr.indisipliner.index',
                     'active_routes' => ['hr.indisipliner.*'],
+                    'icon'          => 'ti ti-alert-circle',
                 ],
                 [
                     'title'         => 'Master Data HR',
                     'route'         => 'hr.status-pegawai.index',
                     'active_routes' => ['hr.status-pegawai.*', 'hr.status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
+                    'icon'          => 'ti ti-database',
                 ],
                 [
                     'title'         => 'Tanggal Libur',
                     'route'         => 'hr.tanggal-libur.index',
                     'active_routes' => ['hr.tanggal-libur.*'],
+                    'icon'          => 'ti ti-calendar-off',
                 ],
                 [
                     'title'         => 'Mesin Presensi',
                     'route'         => 'hr.att-device.index',
                     'active_routes' => ['hr.att-device.*'],
+                    'icon'          => 'ti ti-device-computer-camera',
                 ],
                 [
                     'title'         => 'Presensi Online',
@@ -186,34 +288,44 @@
                     'title'         => 'Layanan Saya',
                     'route'         => 'eoffice.layanan.index',
                     'active_routes' => ['eoffice.layanan.*'],
+                    'icon'          => 'ti ti-user-check',
                 ],
                 [
                     'title'         => 'Buat Pengajuan',
                     'route'         => 'eoffice.layanan.services',
+                    'icon'          => 'ti ti-plus',
                 ],
                 [
-                    'type'  => 'header',
-                    'title' => 'Master Data',
-                ],
-                [
-                    'title'         => 'Jenis Layanan',
-                    'route'         => 'eoffice.jenis-layanan.index',
-                    'active_routes' => ['eoffice.jenis-layanan.*'],
-                ],
-                [
-                    'title'         => 'Master Isian',
-                    'route'         => 'eoffice.kategori-isian.index',
-                    'active_routes' => ['eoffice.kategori-isian.*'],
-                ],
-                [
-                    'title'         => 'Daftar Perusahaan',
-                    'route'         => 'eoffice.perusahaan.index',
-                    'active_routes' => ['eoffice.perusahaan.*'],
-                ],
-                [
-                    'title'         => 'Kategori Perusahaan',
-                    'route'         => 'eoffice.kategori-perusahaan.index',
-                    'active_routes' => ['eoffice.kategori-perusahaan.*'],
+                    'title'         => 'Master Data',
+                    'id'            => 'navbar-eoffice-master',
+                    'icon'          => 'ti ti-database',
+                    'active_routes' => ['eoffice.jenis-layanan.*', 'eoffice.kategori-isian.*', 'eoffice.perusahaan.*', 'eoffice.kategori-perusahaan.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Jenis Layanan',
+                            'route'         => 'eoffice.jenis-layanan.index',
+                            'active_routes' => ['eoffice.jenis-layanan.*'],
+                            'icon'          => 'ti ti-category',
+                        ],
+                        [
+                            'title'         => 'Master Isian',
+                            'route'         => 'eoffice.kategori-isian.index',
+                            'active_routes' => ['eoffice.kategori-isian.*'],
+                            'icon'          => 'ti ti-forms',
+                        ],
+                        [
+                            'title'         => 'Daftar Perusahaan',
+                            'route'         => 'eoffice.perusahaan.index',
+                            'active_routes' => ['eoffice.perusahaan.*'],
+                            'icon'          => 'ti ti-building',
+                        ],
+                        [
+                            'title'         => 'Kategori Perusahaan',
+                            'route'         => 'eoffice.kategori-perusahaan.index',
+                            'active_routes' => ['eoffice.kategori-perusahaan.*'],
+                            'icon'          => 'ti ti-building-arch',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -263,11 +375,13 @@
                     'title'         => 'Peran (Roles)',
                     'route'         => 'sys.roles.index',
                     'active_routes' => ['sys.roles.*'],
+                    'icon'          => 'ti ti-lock-access',
                 ],
                 [
                     'title'         => 'Izin (Permissions)',
                     'route'         => 'sys.permissions.index',
                     'active_routes' => ['sys.permissions.*'],
+                    'icon'          => 'ti ti-shield-lock',
                 ],
             ],
         ],
@@ -286,16 +400,19 @@
                     'title'         => 'Notifikasi',
                     'route'         => 'notifications.index',
                     'active_routes' => ['notifications.*'],
+                    'icon'          => 'ti ti-bell',
                 ],
                 [
                     'title'         => 'Aktivitas',
                     'route'         => 'activity-log.index',
                     'active_routes' => ['activity-log.*'],
+                    'icon'          => 'ti ti-activity',
                 ],
                 [
                     'title'         => 'Log Error',
                     'route'         => 'sys.error-log.index',
                     'active_routes' => ['sys.error-log.*'],
+                    'icon'          => 'ti ti-bug',
                 ],
             ],
         ],
@@ -314,21 +431,25 @@
                     'title'         => 'Konfigurasi Aplikasi',
                     'route'         => 'app-config',
                     'active_routes' => ['app-config'],
+                    'icon'          => 'ti ti-settings',
                 ],
                 [
                     'title'         => 'Fitur Uji Coba',
                     'route'         => 'sys.test.index',
                     'active_routes' => ['sys.test.*'],
+                    'icon'          => 'ti ti-flask-2',
                 ],
                 [
                     'title'         => 'Manajemen Backup',
                     'route'         => 'sys.backup.index',
                     'active_routes' => ['sys.backup.*'],
+                    'icon'          => 'ti ti-database-export',
                 ],
                 [
                     'title'         => 'Panduan Pengembangan',
                     'route'         => 'sys.documentation.index',
                     'active_routes' => ['sys.documentation.*'],
+                    'icon'          => 'ti ti-book-2',
                 ],
             ],
         ],
@@ -402,25 +523,32 @@
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
                                 @foreach($item['children'] ?? [] as $child)
-                                    @if(isset($child['children']) && count($child['children']) > 0)
-                                        {{-- Recursive Nesting (Tabler Dropend for deep nesting, or simple indentation?) 
-                                             Tabler sidebar usually supports one level of dropdown.
-                                             For deeper nesting, 'dropend' is used but in sidebar it might look odd. 
-                                             Let's stick to standard dropdown-item.
-                                        --}}
+                                    @if(($child['type'] ?? 'item') === 'header')
+                                        <span class="dropdown-header">{{ $child['title'] ?? '' }}</span>
+                                    @elseif(isset($child['children']) && count($child['children']) > 0)
+                                        {{-- Recursive Nesting --}}
+                                        @php
+                                            $isChildActive = $isActive($child['active_routes'] ?? []);
+                                        @endphp
                                         <div class="dropend">
-                                            <a class="dropdown-item dropdown-toggle" 
+                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}" 
                                                href="#{{ $child['id'] ?? 'submenu-'.Str::random(5) }}" 
                                                data-bs-toggle="dropdown" 
                                                data-bs-auto-close="false" 
                                                role="button" 
-                                               aria-expanded="false">
+                                               aria-expanded="{{ $isChildActive ? 'true' : 'false' }}">
+                                                @if(!empty($child['icon']))
+                                                    {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
+                                                @endif
                                                 {{ $child['title'] ?? '' }}
                                             </a>
-                                            <div class="dropdown-menu">
+                                            <div class="dropdown-menu{{ $isChildActive ? ' show' : '' }}">
                                                 @foreach($child['children'] as $subchild)
                                                     <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}" 
                                                        href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
+                                                        @if(!empty($subchild['icon']))
+                                                            {!! $renderIcon($subchild['icon'], 'icon-inline me-1') !!}
+                                                        @endif
                                                         {{ $subchild['title'] ?? '' }}
                                                     </a>
                                                 @endforeach
@@ -469,13 +597,17 @@
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
                                 @foreach($item['children'] ?? [] as $child)
-                                    <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" 
-                                       href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
-                                        @if(!empty($child['icon']))
-                                           {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
-                                        @endif
-                                        {{ $child['title'] ?? '' }}
-                                    </a>
+                                    @if(($child['type'] ?? 'item') === 'header')
+                                         <h6 class="dropdown-header">{{ $child['title'] ?? '' }}</h6>
+                                    @else
+                                        <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" 
+                                           href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
+                                            @if(!empty($child['icon']))
+                                               {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
+                                            @endif
+                                            {{ $child['title'] ?? '' }}
+                                        </a>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>

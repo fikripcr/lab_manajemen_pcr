@@ -3,7 +3,10 @@ namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\JenisLayananPeriodeStoreRequest;
+use App\Models\Eoffice\JenisLayanan;
+use App\Models\Eoffice\JenisLayananPeriode;
 use App\Services\Eoffice\JenisLayananPeriodeService;
+use Exception;
 
 class JenisLayananPeriodeController extends Controller
 {
@@ -17,7 +20,7 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Store a new periode for a Jenis Layanan.
      */
-    public function store(JenisLayananPeriodeStoreRequest $request, \App\Models\Eoffice\JenisLayanan $jenis_layanan)
+    public function store(JenisLayananPeriodeStoreRequest $request, JenisLayanan $jenis_layanan)
     {
         $validated                    = $request->validated();
         $validated['jenislayanan_id'] = $jenis_layanan->jenislayanan_id;
@@ -25,7 +28,7 @@ class JenisLayananPeriodeController extends Controller
         try {
             $this->JenisLayananPeriodeService->createPeriode($validated);
             return jsonSuccess('Periode berhasil dibuat.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -33,14 +36,14 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Update an existing periode.
      */
-    public function update(JenisLayananPeriodeStoreRequest $request, \App\Models\Eoffice\JenisLayananPeriode $periode)
+    public function update(JenisLayananPeriodeStoreRequest $request, JenisLayananPeriode $periode)
     {
         $validated = $request->validated();
 
         try {
             $this->JenisLayananPeriodeService->update($periode->jlperiode_id, $validated);
             return jsonSuccess('Periode berhasil diperbarui.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -48,12 +51,12 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Delete a periode.
      */
-    public function destroy(\App\Models\Eoffice\JenisLayananPeriode $periode)
+    public function destroy(JenisLayananPeriode $periode)
     {
         try {
             $this->JenisLayananPeriodeService->destroy($periode->jlperiode_id);
             return jsonSuccess('Periode berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
@@ -61,7 +64,7 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Get periode data for AJAX.
      */
-    public function data(\App\Models\Eoffice\JenisLayanan $jenis_layanan)
+    public function data(JenisLayanan $jenis_layanan)
     {
         $data = $this->JenisLayananPeriodeService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
 
@@ -84,7 +87,7 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Get a single periode (for edit form pre-fill).
      */
-    public function show(\App\Models\Eoffice\JenisLayananPeriode $periode)
+    public function show(JenisLayananPeriode $periode)
     {
         return jsonSuccess('Data retrieved', null, [
             'jlperiode_id' => $periode->jlperiode_id,

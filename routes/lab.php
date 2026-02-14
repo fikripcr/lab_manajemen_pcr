@@ -3,13 +3,22 @@
 use App\Http\Controllers\Lab\DashboardController;
 use App\Http\Controllers\Lab\InventarisController;
 use App\Http\Controllers\Lab\JadwalController;
+use App\Http\Controllers\Lab\KegiatanController;
 use App\Http\Controllers\Lab\LabController;
 use App\Http\Controllers\Lab\LabInventarisController;
 use App\Http\Controllers\Lab\LabTeamController;
+use App\Http\Controllers\Lab\LaporanKerusakanController;
+use App\Http\Controllers\Lab\LogPenggunaanLabController;
+use App\Http\Controllers\Lab\LogPenggunaanPcController;
+use App\Http\Controllers\Lab\MahasiswaController;
 use App\Http\Controllers\Lab\MataKuliahController;
+use App\Http\Controllers\Lab\PcAssignmentController;
 use App\Http\Controllers\Lab\PengumumanController;
+use App\Http\Controllers\Lab\PeriodSoftRequestController;
+use App\Http\Controllers\Lab\PersonilController;
 use App\Http\Controllers\Lab\SemesterController;
 use App\Http\Controllers\Lab\SoftwareRequestController;
+use App\Http\Controllers\Lab\SuratBebasLabController;
 use App\Http\Controllers\Lab\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -70,6 +79,15 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::get('import/form', [JadwalController::class, 'showImport'])->name('import.form');
         Route::post('import', [JadwalController::class, 'import'])->name('import.store');
         Route::get('api', [JadwalController::class, 'paginate'])->name('data');
+
+        // PC Assignments Nested Routes
+        Route::prefix('{jadwal}/assignments')->name('assignments.')->controller(PcAssignmentController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/data', 'data')->name('data');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{assignment}', 'destroy')->name('destroy');
+        });
     });
     Route::resource('jadwal', JadwalController::class);
 
@@ -81,6 +99,8 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
     Route::prefix('software-requests')->name('software-requests.')->controller(SoftwareRequestController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/data', 'paginate')->name('data');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
         Route::get('/{id}', 'show')->name('show');
         Route::get('/{id}/edit', 'edit')->name('edit');
         Route::put('/{id}', 'update')->name('update');
@@ -109,5 +129,63 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::delete('/{berita}', 'destroy')->name('destroy');
         Route::get('/api/data', 'paginate')->name('data');
     });
+
+    // Log Penggunaan PC
+    Route::prefix('log-pc')->name('log-pc.')->controller(LogPenggunaanPcController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/data', 'paginate')->name('data');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+    });
+
+    // Laporan Kerusakan
+    Route::prefix('laporan-kerusakan')->name('laporan-kerusakan.')->controller(LaporanKerusakanController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/data', 'data')->name('data');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{id}', 'show')->name('show');
+        Route::get('/ajax/inventaris', 'getInventaris')->name('inventaris');
+    });
+
+    // Peminjaman Lab (Kegiatan)
+    Route::prefix('kegiatan')->name('kegiatan.')->controller(KegiatanController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/data', 'data')->name('data');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{id}', 'show')->name('show');
+        Route::post('/{id}/status', 'updateStatus')->name('status');
+    });
+
+    // Log Penggunaan Lab (Guest/Event)
+    Route::prefix('log-lab')->name('log-lab.')->controller(LogPenggunaanLabController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/data', 'data')->name('data');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+    });
+
+    // Surat Bebas Lab
+    Route::prefix('surat-bebas')->name('surat-bebas.')->controller(SuratBebasLabController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/data', 'data')->name('data');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{id}', 'show')->name('show');
+        Route::post('/{id}/status', 'updateStatus')->name('status');
+    });
+
+    // Period Requests
+    Route::get('api/periode-request', [PeriodSoftRequestController::class, 'paginate'])->name('periode-request.data');
+    Route::resource('periode-request', PeriodSoftRequestController::class);
+
+    // Mahasiswa
+    Route::get('api/mahasiswa', [MahasiswaController::class, 'paginate'])->name('mahasiswa.data');
+    Route::resource('mahasiswa', MahasiswaController::class);
+
+    // Personil
+    Route::get('api/personil', [PersonilController::class, 'paginate'])->name('personil.data');
+    Route::resource('personil', PersonilController::class);
 
 });

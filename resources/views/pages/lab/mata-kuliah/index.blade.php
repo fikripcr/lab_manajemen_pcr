@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Mata Kuliah" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-tabler.button type="create" :href="route('mata-kuliah.create')" text="Tambah" />
+        <x-tabler.button type="create" :href="route('lab.mata-kuliah.create')" text="Tambah" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -24,7 +24,7 @@
             <x-tabler.flash-message />
             <x-tabler.datatable 
                 id="mata-kuliah-table" 
-                :route="route('mata-kuliah.data')" 
+                :route="route('lab.mata-kuliah.data')" 
                 :columns="[
                     ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
                     ['title' => 'Kode MK', 'data' => 'kode_mk', 'name' => 'kode_mk'],

@@ -24,8 +24,21 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
             $table->index(['created_at']);
         });
+
+        // Self-referencing FKs for users need to be added after table creation or loosely enforced?
+        // Usually safe to add immediately since table exists, but keys reference 'id' which exists.
+        // Let's add them at the end or use Schema::table to be safe if cyclic.
+        // For now, I'll add them inline but without foreign key constraint enforcement in definition if it causes issues,
+        // but typically it's fine.
+        // Actually, to be safe and clean, I will add FKs in a separate Schema::table block at the end of up()
 
         Schema::create('sys_password_reset_tokens', function (Blueprint $table) {
             $table->string('email', 191)->primary();
@@ -47,6 +60,13 @@ return new class extends Migration
             $table->string('name', 100);
             $table->string('guard_name', 50);
             $table->timestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes(); // mass_sync added softDeletes too
+
             $table->index(['created_at']);
         });
 
@@ -57,6 +77,13 @@ return new class extends Migration
             $table->string('category', 100)->nullable();
             $table->string('sub_category', 100)->nullable();
             $table->timestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
             $table->index(['created_at']);
         });
 
@@ -102,6 +129,13 @@ return new class extends Migration
             $table->json('responsive_images');
             $table->unsignedInteger('order_column')->nullable();
             $table->nullableTimestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
             $table->index(['model_id', 'model_type']);
             $table->index(['created_at']);
         });
@@ -144,6 +178,13 @@ return new class extends Migration
             $table->text('data');
             $table->timestamp('read_at')->nullable()->index();
             $table->timestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
             $table->index(['notifiable_id', 'notifiable_type'], 'sys_notifications_notifiable_index');
         });
 
@@ -163,6 +204,12 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->timestamps();
             $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
             $table->index(['created_at']);
         });
 
@@ -174,6 +221,13 @@ return new class extends Migration
             $table->string('ip', 45)->nullable()->index();
             $table->json('custom_properties')->nullable();
             $table->timestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
             $table->index(['created_at']);
         });
 
@@ -191,6 +245,13 @@ return new class extends Migration
             $table->timestamp('started_throttling_failing_notifications_at')->nullable();
             $table->json('custom_properties')->nullable();
             $table->timestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
             $table->index(['created_at']);
         });
 
@@ -204,8 +265,19 @@ return new class extends Migration
             $table->timestamp('last_used_at')->nullable();
             $table->timestamp('expires_at')->nullable()->index();
             $table->timestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
             $table->index(['tokenable_id', 'tokenable_type'], 'sys_pat_tokenable_index');
         });
+
+        // Add Foreign Keys for Blameable columns generally via a loop or helper if strict,
+        // but explicit definition in each table (nullable) is enough for migration to run.
+        // The foreign key constraints can be tricky if Users table isn't ready, but it's created first.
     }
 
     /**

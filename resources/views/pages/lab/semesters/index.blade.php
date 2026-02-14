@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Semester" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-plus" text="Tambah" class="ajax-modal-btn" data-url="{{ route('semesters.create-modal') }}" data-modal-title="Tambah Semester" />
+        <x-tabler.button type="button" icon="ti ti-plus" text="Tambah" class="ajax-modal-btn" data-url="{{ route('lab.semesters.create-modal') }}" data-modal-title="Tambah Semester" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -24,7 +24,7 @@
             <x-tabler.flash-message />
             <x-tabler.datatable 
                 id="semesters-table" 
-                :route="route('semesters.data')" 
+                :route="route('lab.semesters.data')" 
                 :columns="[
                     ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
                     ['title' => 'Tahun Ajaran', 'data' => 'tahun_ajaran', 'name' => 'tahun_ajaran'],

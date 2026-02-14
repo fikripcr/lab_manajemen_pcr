@@ -2,8 +2,12 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\RiwayatPendidikanRequest;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\RiwayatPendidikan;
 use App\Services\Hr\PegawaiService;
+use Exception;
+use Illuminate\Http\Request;
 
 class RiwayatPendidikanController extends Controller
 {
@@ -14,7 +18,7 @@ class RiwayatPendidikanController extends Controller
         $this->PegawaiService = $PegawaiService;
     }
 
-    public function index(\Illuminate\Http\Request $request, Pegawai $pegawai = null)
+    public function index(Request $request, Pegawai $pegawai = null)
     {
         return view('pages.hr.data-diri.tabs.pendidikan', compact('pegawai'));
     }
@@ -24,51 +28,51 @@ class RiwayatPendidikanController extends Controller
         return view('pages.hr.pegawai.pendidikan.create', compact('pegawai'));
     }
 
-    public function store(\App\Http\Requests\Hr\RiwayatPendidikanRequest $request, Pegawai $pegawai)
+    public function store(RiwayatPendidikanRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->requestAddition($pegawai, \App\Models\Hr\RiwayatPendidikan::class, $request->validated());
+            $this->PegawaiService->requestAddition($pegawai, RiwayatPendidikan::class, $request->validated());
             return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
-    public function edit(Pegawai $pegawai, \App\Models\Hr\RiwayatPendidikan $pendidikan)
+    public function edit(Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
         return view('pages.hr.pegawai.pendidikan.edit', compact('pegawai', 'pendidikan'));
     }
 
-    public function update(\App\Http\Requests\Hr\RiwayatPendidikanRequest $request, Pegawai $pegawai, \App\Models\Hr\RiwayatPendidikan $pendidikan)
+    public function update(RiwayatPendidikanRequest $request, Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
         try {
             $pendidikan->update($request->validated());
             return jsonSuccess('Riwayat Pendidikan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
-    public function destroy(Pegawai $pegawai, \App\Models\Hr\RiwayatPendidikan $pendidikan)
+    public function destroy(Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
         try {
             $pendidikan->delete();
             return jsonSuccess('Riwayat Pendidikan berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
     public function data()
     {
-        $query = \App\Models\Hr\RiwayatPendidikan::with('pegawai')->select('hr_riwayat_pendidikan.*');
+        $query = RiwayatPendidikan::with('pegawai')->select('hr_riwayat_pendidikan.*');
 
-        return \Yajra\DataTables\Facades\DataTables::of($query)
+        return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('pegawai_nama', function ($row) {
                 return $row->pegawai->nama ?? '-';
             })
             ->editColumn('tgl_ijazah', function ($row) {
-                return $row->tgl_ijazah ? \Carbon\Carbon::parse($row->tgl_ijazah)->format('d-m-Y') : '-';
+                return $row->tgl_ijazah ? Carbon::parse($row->tgl_ijazah)->format('d-m-Y') : '-';
             })
             ->addColumn('action', function ($row) {
                 return '';

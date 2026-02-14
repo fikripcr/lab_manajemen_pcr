@@ -1,6 +1,9 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -8,8 +11,6 @@ use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class Pengumuman extends Model implements HasMedia
 {
@@ -24,10 +25,8 @@ class Pengumuman extends Model implements HasMedia
         'jenis',
         'penulis_id',
         'is_published',
-        'published_at',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'published_at', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

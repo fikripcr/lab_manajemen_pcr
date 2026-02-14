@@ -2,6 +2,7 @@
 namespace App\Services\Lab;
 
 use App\Models\Lab\MataKuliah;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class MataKuliahService
@@ -75,10 +76,10 @@ class MataKuliahService
 
             // Dependency Checks
             if ($mataKuliah->jadwals()->count() > 0) {
-                throw new \Exception('Tidak dapat menghapus mata kuliah karena masih digunakan dalam Jadwal.');
+                throw new Exception('Tidak dapat menghapus mata kuliah karena masih digunakan dalam Jadwal.');
             }
             if ($mataKuliah->requestSoftwares()->count() > 0) {
-                throw new \Exception('Tidak dapat menghapus mata kuliah karena masih digunakan dalam Request Software.');
+                throw new Exception('Tidak dapat menghapus mata kuliah karena masih digunakan dalam Request Software.');
             }
 
             $name = $mataKuliah->nama_mk;
@@ -94,7 +95,7 @@ class MataKuliahService
     {
         $model = MataKuliah::find($id);
         if (! $model) {
-            throw new \Exception("Mata Kuliah dengan ID {$id} tidak ditemukan.");
+            throw new Exception("Mata Kuliah dengan ID {$id} tidak ditemukan.");
         }
         return $model;
     }

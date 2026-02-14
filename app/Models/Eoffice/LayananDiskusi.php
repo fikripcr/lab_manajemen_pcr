@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Eoffice;
 
+use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,10 +26,8 @@ class LayananDiskusi extends Model
         'pesan',
         'file_lampiran',
         'status_pengirim',
-        'created_by_email',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'created_by_email', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     public function layanan()
@@ -38,6 +37,6 @@ class LayananDiskusi extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

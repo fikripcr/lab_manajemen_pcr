@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelRequest;
 use App\Services\Pemutu\LabelService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -61,7 +62,7 @@ class LabelController extends Controller
             $this->LabelService->createLabel($request->validated());
 
             return jsonSuccess('Label created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -84,7 +85,7 @@ class LabelController extends Controller
             $this->LabelService->updateLabel($id, $request->validated());
 
             return jsonSuccess('Label updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -95,7 +96,7 @@ class LabelController extends Controller
             $this->LabelService->deleteLabel($id);
 
             return jsonSuccess('Label deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -98,7 +99,7 @@ class Pegawai extends Model
      */
     public function user()
     {
-        return $this->hasOne(\App\Models\User::class, 'pegawai_id', 'pegawai_id');
+        return $this->hasOne(User::class, 'pegawai_id', 'pegawai_id');
     }
 
     public function historyPenugasan()

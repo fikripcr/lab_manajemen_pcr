@@ -6,6 +6,7 @@ use App\Http\Requests\Sys\RoleRequest;
 use App\Models\Sys\Role;
 use App\Services\Sys\PermissionService;
 use App\Services\Sys\RoleService;
+use Exception;
 
 class RoleController extends Controller
 {
@@ -45,7 +46,7 @@ class RoleController extends Controller
             $this->roleService->createRole($data);
 
             return jsonSuccess('Peran berhasil dibuat.', route('sys.roles.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -85,7 +86,7 @@ class RoleController extends Controller
             $this->roleService->updateRole($roleId, $data);
 
             return jsonSuccess('Data berhasil diperbarui.', route('sys.roles.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -99,7 +100,7 @@ class RoleController extends Controller
             $this->roleService->deleteRole($role->id);
 
             return jsonSuccess('Data berhasil dihapus.', route('sys.roles.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }

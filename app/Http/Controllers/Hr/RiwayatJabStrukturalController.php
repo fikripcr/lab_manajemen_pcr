@@ -2,10 +2,12 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\RiwayatJabStrukturalRequest;
 use App\Models\Hr\OrgUnit;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatJabStruktural;
 use App\Services\Hr\PegawaiService;
+use Exception;
 
 class RiwayatJabStrukturalController extends Controller
 {
@@ -32,22 +34,22 @@ class RiwayatJabStrukturalController extends Controller
         return view('pages.hr.pegawai.jabatan-struktural.create', compact('pegawai', 'jabatan'));
     }
 
-    public function store(\App\Http\Requests\Hr\RiwayatJabStrukturalRequest $request, Pegawai $pegawai)
+    public function store(RiwayatJabStrukturalRequest $request, Pegawai $pegawai)
     {
         try {
             $headerCol = 'latest_riwayatjabstruktural_id';
             $this->PegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
             return jsonSuccess('Perubahan Jabatan Struktural berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
     }
 
     public function data()
     {
-        $query = \App\Models\Hr\RiwayatJabStruktural::with(['pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
+        $query = RiwayatJabStruktural::with(['pegawai', 'orgUnit'])->select('hr_riwayat_jabstruktural.*');
 
-        return \Yajra\DataTables\Facades\DataTables::of($query)
+        return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('pegawai_nama', function ($row) {
                 return $row->pegawai->nama ?? '-';
@@ -56,7 +58,7 @@ class RiwayatJabStrukturalController extends Controller
                 return $row->orgUnit->name ?? '-';
             })
             ->editColumn('tgl_awal', function ($row) {
-                return $row->tgl_awal ? \Carbon\Carbon::parse($row->tgl_awal)->format('d-m-Y') : '-';
+                return $row->tmt ? Carbon::parse($row->tmt)->format('d-m-Y') : '-';
             })
             ->editColumn('tgl_akhir', function ($row) {
                 return $row->tgl_akhir ? \Carbon\Carbon::parse($row->tgl_akhir)->format('d-m-Y') : '-';
