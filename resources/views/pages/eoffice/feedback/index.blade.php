@@ -13,21 +13,18 @@
     <div class="card-body border-bottom py-3">
         <div class="row g-2 align-items-end">
             <div class="col-md-3">
-                <label class="form-label">Jenis Layanan</label>
-                <select id="f_jenislayanan" class="form-select">
+                <x-tabler.form-select name="f_jenislayanan" label="Jenis Layanan">
                     <option value="">Semua Jenis Layanan</option>
                     @foreach($jenisLayananList as $jl)
                         <option value="{{ encryptId($jl->jenislayanan_id) }}">{{ $jl->nama_layanan }}</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-3">
-                <label class="form-label">Tanggal Mulai</label>
-                <input type="date" id="f_tgl_start" class="form-control">
+                <x-tabler.form-input type="date" name="f_tgl_start" label="Tanggal Mulai" />
             </div>
             <div class="col-md-3">
-                <label class="form-label">Tanggal Akhir</label>
-                <input type="date" id="f_tgl_end" class="form-control">
+                <x-tabler.form-input type="date" name="f_tgl_end" label="Tanggal Akhir" />
             </div>
             <div class="col-md-3">
                 <button type="button" class="btn btn-primary w-100" id="btn-filter">

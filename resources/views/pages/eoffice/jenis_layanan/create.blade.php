@@ -1,25 +1,20 @@
 <form action="{{ route('eoffice.jenis-layanan.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    <div class="mb-3">
-        <label class="form-label required">Nama Layanan</label>
-        <input type="text" name="nama_layanan" class="form-control" placeholder="Contoh: Surat Keterangan Mahasiswa Aktif" required>
-    </div>
+    <x-tabler.form-input name="nama_layanan" label="Nama Layanan" placeholder="Contoh: Surat Keterangan Mahasiswa Aktif" required />
     
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label required">Kategori</label>
-            <select name="kategori" class="form-select" required>
+        <div class="col-md-6">
+            <x-tabler.form-select name="kategori" label="Kategori" required>
                 <option value="layanan">Layanan Umum</option>
                 <option value="umum">Administrasi Umum</option>
                 <option value="akademik">Akademik</option>
                 <option value="keuangan">Keuangan</option>
                 <option value="sdm">SDM</option>
                 <option value="sarpras">Sarpras</option>
-            </select>
+            </x-tabler.form-select>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label required">Batas Pengerjaan (Jam)</label>
-            <input type="number" name="batas_pengerjaan" class="form-control" value="24" required>
+        <div class="col-md-6">
+            <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Jam)" value="24" required />
         </div>
     </div>
 
@@ -41,11 +36,7 @@
         </div>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Template Word (.docx)</label>
-        <input type="file" name="file_template" class="form-control" accept=".docx">
-        <small class="text-muted">Upload template jika layanan ini memerlukan generate dokumen otomatis.</small>
-    </div>
+    <x-tabler.form-input type="file" name="file_template" label="Template Word (.docx)" accept=".docx" help="Upload template jika layanan ini memerlukan generate dokumen otomatis." />
 
     <div class="divider">Fitur Tambahan</div>
 

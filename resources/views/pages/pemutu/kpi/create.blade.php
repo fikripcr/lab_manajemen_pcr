@@ -21,19 +21,28 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 mb-3">
-                        <label class="form-label required">Indikator Standar (Induk)</label>
-                        <select class="form-select select2" name="parent_id" required data-placeholder="Cari indikator standar...">
-                            <option value=""></option>
-                            @foreach($parents as $p)
-                                <option value="{{ $p->indikator_id }}">[{{ $p->no_indikator }}] {{ \Str::limit($p->indikator, 150) }}</option>
-                            @endforeach
-                        </select>
+                        <x-tabler.form-input 
+                            name="parent_id" 
+                            label="Indikator Standar (Induk)" 
+                            type="select2" 
+                            :options="$parents->mapWithKeys(function($p) {
+                                return '[' . $p->no_indikator . '] ' . Str::limit($p->indikator, 150);
+                            })->toArray()"
+                            :selected="old('parent_id')" 
+                            placeholder="Cari indikator standar..." 
+                            required="true" 
+                        />
                         <div class="form-hint">Pilih Indikator Standar yang menjadi acuan untuk sasaran kinerja ini.</div>
                     </div>
 
                     <div class="col-md-4 mb-3">
-                         <label class="form-label">Kode / No. Sasaran</label>
-                         <input type="text" name="no_indikator" class="form-control" placeholder="cth: KPI.01" value="{{ old('no_indikator') }}">
+                         <x-tabler.form-input 
+                            name="no_indikator" 
+                            label="Kode / No. Sasaran" 
+                            type="text" 
+                            placeholder="cth: KPI.01" 
+                            value="{{ old('no_indikator') }}"
+                        />
                     </div>
                 
                     <div class="col-md-12 mb-3">

@@ -1,23 +1,18 @@
 <form action="{{ route('eoffice.jenis-layanan.update', $layanan->jenislayanan_id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
-    <div class="mb-3">
-        <label class="form-label required">Nama Layanan</label>
-        <input type="text" name="nama_layanan" class="form-control" value="{{ $layanan->nama_layanan }}" required>
-    </div>
+    <x-tabler.form-input name="nama_layanan" label="Nama Layanan" value="{{ $layanan->nama_layanan }}" required />
     
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label required">Kategori</label>
-            <select name="kategori" class="form-select" required>
+        <div class="col-md-6">
+            <x-tabler.form-select name="kategori" label="Kategori" required>
                 @foreach(['layanan', 'umum', 'akademik', 'keuangan', 'sdm', 'sarpras'] as $cat)
                     <option value="{{ $cat }}" {{ $layanan->kategori == $cat ? 'selected' : '' }}>{{ ucwords($cat) }}</option>
                 @endforeach
-            </select>
+            </x-tabler.form-select>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label required">Batas Pengerjaan (Jam)</label>
-            <input type="number" name="batas_pengerjaan" class="form-control" value="{{ $layanan->batas_pengerjaan }}" required>
+        <div class="col-md-6">
+            <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Jam)" value="{{ $layanan->batas_pengerjaan }}" required />
         </div>
     </div>
 
@@ -37,13 +32,11 @@
         </div>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Template Word (.docx)</label>
-        <input type="file" name="file_template" class="form-control" accept=".docx">
+    <x-tabler.form-input type="file" name="file_template" label="Template Word (.docx)" accept=".docx">
         @if($layanan->file_template)
-            <small class="text-success">Template saat ini: {{ basename($layanan->file_template) }}</small>
+            <small class="text-success d-block mt-1">Template saat ini: {{ basename($layanan->file_template) }}</small>
         @endif
-    </div>
+    </x-tabler.form-input>
 
     <div class="row">
         <div class="col-md-6 mb-2">

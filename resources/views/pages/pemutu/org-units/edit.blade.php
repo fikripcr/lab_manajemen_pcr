@@ -6,33 +6,49 @@
     @csrf
     @method('PUT')
     <div class="modal-body">
-            <div class="col-md-12 mb-3">
-                <label for="parent_id" class="form-label">Parent Unit</label>
-                <select class="form-select select2-offline" id="parent_id" name="parent_id" data-dropdown-parent="#modalAction">
-                    <option value="">No Parent (Root)</option>
-                    @foreach($units as $u)
-                        <option value="{{ $u->orgunit_id }}" {{ $orgUnit->parent_id == $u->orgunit_id ? 'selected' : '' }}>
-                            {{ $u->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
         <div class="mb-3">
-            <label for="name" class="form-label required">Unit Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $orgUnit->name }}" required>
+            <x-tabler.form-input 
+                name="parent_id" 
+                label="Parent Unit" 
+                type="select2" 
+                :options="$units->pluck('name', 'orgunit_id')->toArray()"
+                :selected="old('parent_id', $orgUnit->parent_id)" 
+                placeholder="No Parent (Root)" 
+            />
         </div>
         <div class="mb-3">
-            <label for="code" class="form-label">Code</label>
-            <input type="text" class="form-control" id="code" name="code" value="{{ $orgUnit->code }}">
+            <x-tabler.form-input 
+                name="name" 
+                label="Unit Name" 
+                type="text" 
+                value="{{ old('name', $orgUnit->name) }}"
+                placeholder="e.g. Departemen Komputer" 
+                required="true" 
+            />
         </div>
         <div class="mb-3">
-            <label for="type" class="form-label required">Type</label>
-            <select class="form-select" id="type" name="type" required>
-                <option value="" disabled>Select Type</option>
-                @foreach($types as $t)
-                    <option value="{{ $t }}" {{ $orgUnit->type == $t ? 'selected' : '' }}>{{ $t }}</option>
-                @endforeach
-            </select>
+            <x-tabler.form-input 
+                name="code" 
+                label="Code" 
+                type="text" 
+                value="{{ old('code', $orgUnit->code) }}"
+                placeholder="e.g. JTK" 
+            />
+        </div>
+        <div class="mb-3">
+            <x-tabler.form-input 
+                name="type" 
+                label="Type" 
+                type="select" 
+                :options="[ 
+                    'Fakultas' => 'Fakultas',
+                    'Jurusan' => 'Jurusan',
+                    'Program Studi' => 'Program Studi',
+                    'Lainnya' => 'Lainnya'
+                ]"
+                :selected="old('type', $orgUnit->type)" 
+                required="true" 
+            />
         </div>
     </div>
     <div class="modal-footer">

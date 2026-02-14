@@ -13,7 +13,7 @@
             <span class="text-muted me-2 mt-1" style="width: 20px; display: inline-block; text-align: center;">&bull;</span>
         @endif
 
-        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dokumens.show', $dok->dok_id) }}" data-jenis="{{ $dok->jenis }}">
+        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dokumens.show', $dok) }}" data-jenis="{{ $dok->jenis }}">
             <div class="d-flex align-items-center mb-1">
                 <div class="row align-items-center w-100 gx-2">
                     <div class="col-auto">
@@ -46,7 +46,7 @@
                 <li data-id="{{ $sub->doksub_id }}" data-type="doksub" id="tree-node-sub-{{ $sub->doksub_id }}">
                     <div class="d-flex align-items-start mb-2">
                         <span class="text-muted me-2 mt-1" style="width: 20px; display: inline-block; text-align: center;">&bull;</span>
-                        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dok-subs.show', $sub->doksub_id) }}" data-jenis="doksub">
+                        <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dok-subs.show', $sub) }}" data-jenis="doksub">
                             <div class="d-flex align-items-center mb-1">
                                 <div class="row align-items-center w-100 gx-2">
                                     <div class="col-auto">

@@ -23,13 +23,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="inventaris_id">Nama Alat</label>
                             <div class="col-sm-10">
-                                <select
-                                    class="form-select"
-                                    id="inventaris_id"
-                                    name="inventaris_id"
-                                    required
-                                    style="width: 100%;"
-                                >
+                                <x-tabler.form-select name="inventaris_id" id="inventaris_id" required class="mb-0" style="width: 100%;">
                                     @if(old('inventaris_id'))
                                         @php
                                             $selectedInventaris = \App\Models\Inventaris::find(decryptId(old('inventaris_id')));
@@ -38,78 +32,35 @@
                                             <option value="{{ old('inventaris_id') }}" selected>{{ $selectedInventaris->nama_alat }} ({{ $selectedInventaris->jenis_alat }})</option>
                                         @endif
                                     @endif
-                                </select>
-                                @error('inventaris_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
+                                </x-tabler.form-select>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="no_series">No Series</label>
                             <div class="col-sm-10">
-                                <input
-                                    type="text"
-                                    class="form-control @error('no_series') is-invalid @enderror"
-                                    id="no_series"
-                                    name="no_series"
-                                    value="{{ old('no_series') }}"
-                                    placeholder="Nomor seri atau kode tambahan" required
-                                >
-                                @error('no_series')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="no_series" placeholder="Nomor seri atau kode tambahan" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="tanggal_penempatan">Tanggal Penempatan</label>
                             <div class="col-sm-10">
-                                <input
-                                    type="date"
-                                    class="form-control @error('tanggal_penempatan') is-invalid @enderror"
-                                    id="tanggal_penempatan"
-                                    name="tanggal_penempatan"
-                                    value="{{ old('tanggal_penempatan') ?: date('Y-m-d') }}" required
-                                >
-                                @error('tanggal_penempatan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="date" name="tanggal_penempatan" value="{{ date('Y-m-d') }}" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="status">Status</label>
                             <div class="col-sm-10">
-                                <x-form.select2
-                                    id="status"
-                                    name="status"
-                                    :options="[
-                                        'active' => 'Active',
-                                        'moved' => 'Moved',
-                                        'inactive' => 'Inactive'
-                                    ]"
-                                    :selected="old('status', 'active')"
-                                />
-                                @error('status')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-select name="status" :options="['active' => 'Active', 'moved' => 'Moved', 'inactive' => 'Inactive']" selected="active" class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="keterangan">Keterangan</label>
                             <div class="col-sm-10">
-                                <textarea
-                                    class="form-control @error('keterangan') is-invalid @enderror"
-                                    id="keterangan"
-                                    name="keterangan"
-                                    rows="3"
-                                    placeholder="Tambahkan keterangan tambahan"
-                                >{{ old('keterangan') }}</textarea>
-                                @error('keterangan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-textarea name="keterangan" rows="3" placeholder="Tambahkan keterangan tambahan" class="mb-0" />
                             </div>
                         </div>
 

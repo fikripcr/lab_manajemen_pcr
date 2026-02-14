@@ -22,13 +22,7 @@
                 <div>
                     <x-tabler.datatable-filter dataTableId="inventaris-table">
                         <div style="min-width: 150px;">
-                            <select name="condition" id="conditionFilter" class="form-select">
-                                <option value="">All Conditions</option>
-                                <option value="Baik">Good</option>
-                                <option value="Rusak Ringan">Minor Damage</option>
-                                <option value="Rusak Berat">Major Damage</option>
-                                <option value="Tidak Dapat Digunakan">Cannot Be Used</option>
-                            </select>
+                            <x-tabler.form-select name="condition" id="conditionFilter" :options="['Baik' => 'Good', 'Rusak Ringan' => 'Minor Damage', 'Rusak Berat' => 'Major Damage', 'Tidak Dapat Digunakan' => 'Cannot Be Used']" placeholder="All Conditions" class="mb-0" />
                         </div>
                     </x-tabler.datatable-filter>
                 </div>

@@ -52,9 +52,9 @@
                     'name' => 'jabatan',
                 ],
                 [
-                    'title' => 'Jenis Personil',
-                    'data' => 'jenis_personil',
-                    'name' => 'jenis_personil',
+                    'title' => 'User',
+                    'data' => 'user_info',
+                    'name' => 'user_info',
                 ],
                 [
                     'title' => 'Actions',

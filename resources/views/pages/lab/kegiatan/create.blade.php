@@ -27,53 +27,28 @@
                     <div class="card">
                         <div class="card-body">
                             
-                            <div class="mb-3">
-                                <label class="form-label required">Nama Kegiatan</label>
-                                <input type="text" name="nama_kegiatan" class="form-control" placeholder="Contoh: Workshop Laravel" required>
-                            </div>
+                            <x-tabler.form-input name="nama_kegiatan" label="Nama Kegiatan" placeholder="Contoh: Workshop Laravel" required />
 
                             <div class="mb-3">
-                                <label class="form-label required">Lab Target</label>
-                                <select name="lab_id" class="form-select select2-offline" required>
-                                    <option value="">Pilih Lab</option>
-                                    @foreach($labs as $lab)
-                                        <option value="{{ encryptId($lab->lab_id) }}">{{ $lab->name }} (Kapasitas: {{ $lab->capacity }})</option>
-                                    @endforeach
-                                </select>
+                                <x-tabler.form-select name="lab_id" label="Lab Target" :options="$labs->mapWithKeys(fn($lab) => [encryptId($lab->lab_id) => $lab->name . ' (Kapasitas: ' . $lab->capacity . ')'])->toArray()" placeholder="Pilih Lab" required />
                             </div>
 
 
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Tanggal</label>
-                                        <input type="date" name="tanggal" class="form-control" required>
-                                    </div>
+                                    <x-tabler.form-input type="date" name="tanggal" label="Tanggal" required />
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Jam Mulai</label>
-                                        <input type="time" name="jam_mulai" class="form-control" required>
-                                    </div>
+                                    <x-tabler.form-input type="time" name="jam_mulai" label="Jam Mulai" required />
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Jam Selesai</label>
-                                        <input type="time" name="jam_selesai" class="form-control" required>
-                                    </div>
+                                    <x-tabler.form-input type="time" name="jam_selesai" label="Jam Selesai" required />
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label required">Deskripsi</label>
-                                <textarea name="deskripsi" class="form-control" rows="4" placeholder="Jelaskan tujuan dan detail kegiatan..." required></textarea>
-                            </div>
+                            <x-tabler.form-textarea name="deskripsi" label="Deskripsi" rows="4" placeholder="Jelaskan tujuan dan detail kegiatan..." required />
 
-                            <div class="mb-3">
-                                <label class="form-label">Dokumen Pendukung (Surat Permohonan)</label>
-                                <input type="file" name="dokumentasi_path" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
-                                <small class="form-hint">Max 2MB. Disarankan format PDF.</small>
-                            </div>
+                            <x-tabler.form-input type="file" name="dokumentasi_path" label="Dokumen Pendukung (Surat Permohonan)" accept=".pdf,.jpg,.jpeg,.png" help="Max 2MB. Disarankan format PDF." />
 
                         </div>
                         <div class="card-footer text-end">

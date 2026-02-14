@@ -5,6 +5,8 @@ use Database\Seeders\Pemutu\DokumenSeeder;
 use Database\Seeders\Pemutu\IndikatorSeeder;
 use Database\Seeders\Pemutu\PemutuSeeder;
 use Database\Seeders\Pemutu\PersonilSeeder;
+use Database\Seeders\Sys\SysRoleSuperAdminSeeder;
+use Database\Seeders\Sys\SysSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,9 +21,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             // Sys Data
-            // SysSeeder::class,
-            // SysRoleSuperAdminSeeder::class,
-            // UserSeeder::class,
+            SysSeeder::class,
+            SysRoleSuperAdminSeeder::class,
+            UserSeeder::class,
 
             // // HR Data
             // HrJabatanFungsionalSeeder::class,

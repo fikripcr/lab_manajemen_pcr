@@ -23,7 +23,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="user_id">Pilih User</label>
                             <div class="col-sm-10">
-                                <select class="form-select" id="user_id" name="user_id" required style="width: 100%;">
+                                <x-tabler.form-select name="user_id" id="user_id" required class="mb-0" style="width: 100%;">
                                     @if(old('user_id'))
                                         @php
                                             $selectedUser = \App\Models\User::find(decryptId(old('user_id')));
@@ -32,30 +32,21 @@
                                             <option value="{{ old('user_id') }}" selected>{{ $selectedUser->name }} ({{ $selectedUser->email }})</option>
                                         @endif
                                     @endif
-                                </select>
-                                @error('user_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
+                                </x-tabler.form-select>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="jabatan">Jabatan (Opsional)</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('jabatan') is-invalid @enderror" id="jabatan" name="jabatan" value="{{ old('jabatan') }}" placeholder="Misal: PIC, Teknisi, dll">
-                                @error('jabatan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="jabatan" placeholder="Misal: PIC, Teknisi, dll" class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="tanggal_mulai">Tanggal Mulai (Opsional)</label>
                             <div class="col-sm-10">
-                                <input type="date" class="form-control @error('tanggal_mulai') is-invalid @enderror" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}">
-                                @error('tanggal_mulai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="date" name="tanggal_mulai" class="mb-0" />
                             </div>
                         </div>
 

@@ -30,45 +30,40 @@
                             $required = $item->is_required ? 'required' : '';
                         @endphp
                         
-                        <div class="col-12 mb-3">
-                            <label class="form-label {{ $item->is_required ? 'required' : '' }}">
-                                {{ $field->nama_isian }}
-                            </label>
-                            
+                        <div class="col-12">
                             @if($field->type === 'textarea')
-                                <textarea name="{{ $fieldName }}" class="form-control" rows="3" {{ $required }}></textarea>
+                                <x-tabler.form-textarea name="{{ $fieldName }}" label="{{ $field->nama_isian }}" rows="3" required="{{ $item->is_required }}" help="{{ $field->keterangan_isian }}" />
                             
                             @elseif($field->type === 'select')
-                                <select name="{{ $fieldName }}" class="form-select" {{ $required }}>
+                                <x-tabler.form-select name="{{ $fieldName }}" label="{{ $field->nama_isian }}" required="{{ $item->is_required }}" help="{{ $field->keterangan_isian }}">
                                     <option value="">-- Pilih --</option>
                                     @foreach($field->type_value ?? [] as $opt)
                                         <option value="{{ $opt }}">{{ $opt }}</option>
                                     @endforeach
-                                </select>
+                                </x-tabler.form-select>
                             
                             @elseif($field->type === 'date')
-                                <input type="date" name="{{ $fieldName }}" class="form-control" {{ $required }}>
+                                <x-tabler.form-input type="date" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" required="{{ $item->is_required }}" help="{{ $field->keterangan_isian }}" />
                             
                             @elseif($field->type === 'number')
-                                <input type="number" name="{{ $fieldName }}" class="form-control" {{ $required }}>
+                                <x-tabler.form-input type="number" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" required="{{ $item->is_required }}" help="{{ $field->keterangan_isian }}" />
                             
                             @elseif($field->type === 'file')
-                                <input type="file" name="{{ $fieldName }}" class="form-control" {{ $required }}>
-                                <small class="text-muted">Format yang diizinkan: PDF, DOCX, JPG (Maks 2MB)</small>
+                                <x-tabler.form-input type="file" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" required="{{ $item->is_required }}">
+                                    <small class="text-muted d-block mt-1">Format yang diizinkan: PDF, DOCX, JPG (Maks 2MB)</small>
+                                    @if($field->keterangan_isian)
+                                        <small class="form-hint">{{ $field->keterangan_isian }}</small>
+                                    @endif
+                                </x-tabler.form-input>
                             
                             @else
-                                <input type="text" name="{{ $fieldName }}" class="form-control" {{ $required }}>
-                            @endif
-                            
-                            @if($field->keterangan_isian)
-                                <small class="form-hint">{{ $field->keterangan_isian }}</small>
+                                <x-tabler.form-input type="text" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" required="{{ $item->is_required }}" help="{{ $field->keterangan_isian }}" />
                             @endif
                         </div>
                     @endforeach
                     
-                    <div class="col-12 mb-3">
-                        <label class="form-label">Keterangan Tambahan (Opsional)</label>
-                        <textarea name="keterangan" class="form-control" rows="2" placeholder="Sampaikan pesan tambahan jika ada..."></textarea>
+                    <div class="col-12">
+                        <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan (Opsional)" rows="2" placeholder="Sampaikan pesan tambahan jika ada..." />
                     </div>
                 </div>
             </div>

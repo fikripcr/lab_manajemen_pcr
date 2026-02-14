@@ -1,34 +1,27 @@
 <form action="{{ route('eoffice.perusahaan.store') }}" method="POST">
     @csrf
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label required">Kategori Perusahaan</label>
-            <select name="kategoriperusahaan_id" class="form-select" required>
+        <div class="col-md-6">
+            <x-tabler.form-select name="kategoriperusahaan_id" label="Kategori Perusahaan" required>
                 <option value="">Pilih Kategori</option>
                 @foreach($categories as $cat)
                     <option value="{{ $cat->kategoriperusahaan_id }}">{{ $cat->nama_kategori }}</option>
                 @endforeach
-            </select>
+            </x-tabler.form-select>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label required">Nama Perusahaan</label>
-            <input type="text" name="nama_perusahaan" class="form-control" placeholder="Masukkan nama perusahaan" required>
+        <div class="col-md-6">
+            <x-tabler.form-input name="nama_perusahaan" label="Nama Perusahaan" placeholder="Masukkan nama perusahaan" required />
         </div>
     </div>
     
-    <div class="mb-3">
-        <label class="form-label">Alamat</label>
-        <textarea name="alamat" class="form-control" rows="2" placeholder="Alamat lengkap"></textarea>
-    </div>
+    <x-tabler.form-textarea name="alamat" label="Alamat" rows="2" placeholder="Alamat lengkap" />
     
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Kota</label>
-            <input type="text" name="kota" class="form-control" placeholder="Kota">
+        <div class="col-md-6">
+            <x-tabler.form-input name="kota" label="Kota" placeholder="Kota" />
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Telepon</label>
-            <input type="text" name="telp" class="form-control" placeholder="No. Telepon">
+        <div class="col-md-6">
+            <x-tabler.form-input name="telp" label="Telepon" placeholder="No. Telepon" />
         </div>
     </div>
     

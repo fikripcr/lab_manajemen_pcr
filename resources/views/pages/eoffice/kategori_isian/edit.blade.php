@@ -1,15 +1,12 @@
 <form action="{{ route('eoffice.kategori-isian.update', $kategori->kategoriisian_id) }}" method="POST">
     @csrf
     @method('PUT')
-    <div class="mb-3">
-        <label class="form-label required">Nama Isian</label>
-        <input type="text" name="nama_isian" class="form-control" value="{{ $kategori->nama_isian }}" required>
-    </div>
+    <x-tabler.form-input name="nama_isian" label="Nama Isian" value="{{ $kategori->nama_isian }}" required />
     
     <div class="row">
         <div class="col-md-6 mb-3">
-            <label class="form-label required">Tipe Isian</label>
-            <select name="type" id="type-select-edit" class="form-select" required>
+        <div class="col-md-6">
+            <x-tabler.form-select name="type" id="type-select-edit" label="Tipe Isian" required>
                 <option value="text" {{ $kategori->type == 'text' ? 'selected' : '' }}>Text (Short)</option>
                 <option value="textarea" {{ $kategori->type == 'textarea' ? 'selected' : '' }}>Textarea (Long)</option>
                 <option value="number" {{ $kategori->type == 'number' ? 'selected' : '' }}>Number</option>
@@ -18,11 +15,10 @@
                 <option value="select" {{ $kategori->type == 'select' ? 'selected' : '' }}>Select (Pilihan)</option>
                 <option value="select_api" {{ $kategori->type == 'select_api' ? 'selected' : '' }}>Select via API</option>
                 <option value="file" {{ $kategori->type == 'file' ? 'selected' : '' }}>File Upload (DOCX/PDF)</option>
-            </select>
+            </x-tabler.form-select>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Alias di Dokumen</label>
-            <input type="text" name="alias_on_document" class="form-control" value="{{ $kategori->alias_on_document }}">
+        <div class="col-md-6">
+            <x-tabler.form-input name="alias_on_document" label="Alias di Dokumen" value="{{ $kategori->alias_on_document }}" />
         </div>
     </div>
 
@@ -51,10 +47,7 @@
         </button>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Keterangan</label>
-        <textarea name="keterangan_isian" class="form-control" rows="2">{{ $kategori->keterangan_isian }}</textarea>
-    </div>
+    <x-tabler.form-textarea name="keterangan_isian" label="Keterangan" rows="2" value="{{ $kategori->keterangan_isian }}" />
 
     <div class="text-end">
         <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>

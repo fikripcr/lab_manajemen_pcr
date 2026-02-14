@@ -62,21 +62,23 @@
                 <div class="card-body">
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <x-form.select2 
+                            <x-tabler.form-select 
                                 id="singleSelect" 
                                 name="singleSelect" 
                                 label="Single Select" 
                                 placeholder="Select an option" 
+                                type="select2"
                                 :options="['option1'=>'Option 1', 'option2'=>'Option 2', 'option3'=>'Option 3', 'option4'=>'Option 4']" 
                             />
                         </div>
                         <div class="col-md-6">
-                            <x-form.select2 
+                            <x-tabler.form-select 
                                 id="multiSelect" 
                                 name="multiSelect" 
                                 label="Multi Select" 
                                 placeholder="Select multiple options" 
-                                multiple="true"
+                                multiple
+                                type="select2"
                                 :options="['option1'=>'Option 1', 'option2'=>'Option 2', 'option3'=>'Option 3', 'option4'=>'Option 4', 'option5'=>'Option 5']" 
                             />
                         </div>

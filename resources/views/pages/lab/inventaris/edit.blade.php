@@ -10,69 +10,18 @@
             <x-tabler.flash-message />
 
             <div class="mb-3">
-                <label class="form-label required" for="lab_id">Lab</label>
-                <x-form.select2
-                    id="lab_id"
-                    name="lab_id"
-                    :options="$labs->pluck('name', 'lab_id')->toArray()"
-                    :selected="old('lab_id', $inventory->lab_id)"
-                    placeholder="Select Lab"
-                    required="true"
-                />
-                @error('lab_id')
-                <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
+                <x-tabler.form-select name="lab_id" label="Lab" :options="$labs->pluck('name', 'lab_id')->toArray()" selected="{{ old('lab_id', $inventory->lab_id) }}" placeholder="Select Lab" required />
             </div>
 
-            <div class="mb-3">
-                <label class="form-label required" for="nama_alat">Equipment Name</label>
-                <input type="text" class="form-control @error('nama_alat') is-invalid @enderror"
-                       id="nama_alat" name="nama_alat" value="{{ old('nama_alat', $inventory->nama_alat) }}"
-                       placeholder="e.g., Laptop, Microscope, etc." required>
-                @error('nama_alat')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input name="nama_alat" label="Equipment Name" value="{{ $inventory->nama_alat }}" placeholder="e.g., Laptop, Microscope, etc." required />
+
+            <x-tabler.form-input name="jenis_alat" label="Type" value="{{ $inventory->jenis_alat }}" placeholder="e.g., Electronic, Chemical, Equipment" required />
 
             <div class="mb-3">
-                <label class="form-label required" for="jenis_alat">Type</label>
-                <input type="text" class="form-control @error('jenis_alat') is-invalid @enderror"
-                       id="jenis_alat" name="jenis_alat" value="{{ old('jenis_alat', $inventory->jenis_alat) }}"
-                       placeholder="e.g., Electronic, Chemical, Equipment" required>
-                @error('jenis_alat')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <x-tabler.form-select name="kondisi_terakhir" label="Condition" :options="['Baik' => 'Good', 'Rusak Ringan' => 'Minor Damage', 'Rusak Berat' => 'Major Damage', 'Tidak Dapat Digunakan' => 'Cannot Be Used']" selected="{{ old('kondisi_terakhir', $inventory->kondisi_terakhir) }}" placeholder="Select Condition" required />
             </div>
 
-            <div class="mb-3">
-                <label class="form-label required" for="kondisi_terakhir">Condition</label>
-                <x-form.select2
-                    id="kondisi_terakhir"
-                    name="kondisi_terakhir"
-                    :options="[
-                        'Baik' => 'Good',
-                        'Rusak Ringan' => 'Minor Damage',
-                        'Rusak Berat' => 'Major Damage',
-                        'Tidak Dapat Digunakan' => 'Cannot Be Used'
-                    ]"
-                    :selected="old('kondisi_terakhir', $inventory->kondisi_terakhir)"
-                    placeholder="Select Condition"
-                    required="true"
-                />
-                @error('kondisi_terakhir')
-                <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label required" for="tanggal_pengecekan">Last Check Date</label>
-                <input type="date" class="form-control @error('tanggal_pengecekan') is-invalid @enderror"
-                       id="tanggal_pengecekan" name="tanggal_pengecekan"
-                       value="{{ old('tanggal_pengecekan', $inventory->tanggal_pengecekan ? $inventory->tanggal_pengecekan->format('Y-m-d') : '') }}" required>
-                @error('tanggal_pengecekan')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input type="date" name="tanggal_pengecekan" label="Last Check Date" value="{{ $inventory->tanggal_pengecekan ? $inventory->tanggal_pengecekan->format('Y-m-d') : '' }}" required />
         </div>
         <div class="modal-footer">
             <x-tabler.button type="cancel" data-bs-dismiss="modal" />
@@ -104,75 +53,35 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="lab_id">Lab</label>
                                 <div class="col-sm-10">
-                                    <x-form.select2
-                                        id="lab_id"
-                                        name="lab_id"
-                                        :options="$labs->pluck('name', 'lab_id')->toArray()"
-                                        :selected="old('lab_id', $inventory->lab_id)"
-                                        placeholder="Select Lab"
-                                        required="true"
-                                    />
-                                    @error('lab_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-select name="lab_id" :options="$labs->pluck('name', 'lab_id')->toArray()" selected="{{ old('lab_id', $inventory->lab_id) }}" placeholder="Select Lab" required class="mb-0" />
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="nama_alat">Equipment Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control @error('nama_alat') is-invalid @enderror"
-                                           id="nama_alat" name="nama_alat" value="{{ old('nama_alat', $inventory->nama_alat) }}"
-                                           placeholder="e.g., Laptop, Microscope, etc." required>
-                                    @error('nama_alat')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-input name="nama_alat" value="{{ $inventory->nama_alat }}" placeholder="e.g., Laptop, Microscope, etc." required class="mb-0" />
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="jenis_alat">Type</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control @error('jenis_alat') is-invalid @enderror"
-                                           id="jenis_alat" name="jenis_alat" value="{{ old('jenis_alat', $inventory->jenis_alat) }}"
-                                           placeholder="e.g., Electronic, Chemical, Equipment" required>
-                                    @error('jenis_alat')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-input name="jenis_alat" value="{{ $inventory->jenis_alat }}" placeholder="e.g., Electronic, Chemical, Equipment" required class="mb-0" />
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="kondisi_terakhir">Condition</label>
                                 <div class="col-sm-10">
-                                    <x-form.select2
-                                        id="kondisi_terakhir"
-                                        name="kondisi_terakhir"
-                                        :options="[
-                                            'Baik' => 'Good',
-                                            'Rusak Ringan' => 'Minor Damage',
-                                            'Rusak Berat' => 'Major Damage',
-                                            'Tidak Dapat Digunakan' => 'Cannot Be Used'
-                                        ]"
-                                        :selected="old('kondisi_terakhir', $inventory->kondisi_terakhir)"
-                                        placeholder="Select Condition"
-                                        required="true"
-                                    />
-                                    @error('kondisi_terakhir')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-select name="kondisi_terakhir" :options="['Baik' => 'Good', 'Rusak Ringan' => 'Minor Damage', 'Rusak Berat' => 'Major Damage', 'Tidak Dapat Digunakan' => 'Cannot Be Used']" selected="{{ old('kondisi_terakhir', $inventory->kondisi_terakhir) }}" placeholder="Select Condition" required class="mb-0" />
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="tanggal_pengecekan">Last Check Date</label>
                                 <div class="col-sm-10">
-                                    <input type="date" class="form-control @error('tanggal_pengecekan') is-invalid @enderror"
-                                           id="tanggal_pengecekan" name="tanggal_pengecekan"
-                                           value="{{ old('tanggal_pengecekan', $inventory->tanggal_pengecekan ? $inventory->tanggal_pengecekan->format('Y-m-d') : '') }}" required>
-                                    @error('tanggal_pengecekan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-input type="date" name="tanggal_pengecekan" value="{{ $inventory->tanggal_pengecekan ? $inventory->tanggal_pengecekan->format('Y-m-d') : '' }}" required class="mb-0" />
                                 </div>
                             </div>
 

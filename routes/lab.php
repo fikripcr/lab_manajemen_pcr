@@ -182,10 +182,16 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
 
     // Mahasiswa
     Route::get('api/mahasiswa', [MahasiswaController::class, 'paginate'])->name('mahasiswa.data');
+    Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+        Route::get('edit-modal/{id}', [MahasiswaController::class, 'editModal'])->name('edit-modal.show');
+    });
     Route::resource('mahasiswa', MahasiswaController::class);
 
     // Personil
     Route::get('api/personil', [PersonilController::class, 'paginate'])->name('personil.data');
+    Route::prefix('personil')->name('personil.')->group(function () {
+        Route::get('edit-modal/{id}', [PersonilController::class, 'editModal'])->name('edit-modal.show');
+    });
     Route::resource('personil', PersonilController::class);
 
 });

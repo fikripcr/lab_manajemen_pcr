@@ -8,25 +8,9 @@
         <div class="modal-body">
             <x-tabler.flash-message />
             
-            <div class="mb-3">
-                <label class="form-label required" for="name">Full Name</label>
-                <input type="text" class="form-control @error('name') is-invalid @enderror"
-                       id="name" name="name" value="{{ old('name', $user->name) }}"
-                       placeholder="John Doe" required>
-                @error('name')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input name="name" label="Full Name" value="{{ $user->name }}" placeholder="John Doe" required />
 
-            <div class="mb-3">
-                <label class="form-label required" for="email">Email</label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror"
-                       id="email" name="email" value="{{ old('email', $user->email) }}"
-                       placeholder="john@example.com" required>
-                @error('email')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input type="email" name="email" label="Email" value="{{ $user->email }}" placeholder="john@example.com" required />
 
             <div class="mb-3">
                 <label class="form-label" for="password">New Password (Optional)</label>
@@ -54,11 +38,13 @@
 
             <div class="mb-3">
                 <label class="form-label required" for="role">Role(s)</label>
-                <x-form.select2 
+                <x-tabler.form-select 
                     id="role" 
                     name="role" 
+                    label="Role(s)"
                     placeholder="Select roles..." 
-                    multiple="true" 
+                    multiple
+                    type="select2"
                     :options="$roles->pluck('name', 'name')->toArray()"
                     :selected="old('role', $user->roles->pluck('name')->toArray())" 
                     required="true"
@@ -68,15 +54,7 @@
                 @enderror
             </div>
 
-            <div class="mb-3">
-                <label class="form-label" for="expired_at">Expiration Date (Optional)</label>
-                <input type="date" class="form-control @error('expired_at') is-invalid @enderror"
-                       id="expired_at" name="expired_at" value="{{ old('expired_at', $user->expired_at ? $user->expired_at->format('Y-m-d') : '') }}">
-                <div class="form-text">Leave empty for no expiration.</div>
-                @error('expired_at')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input type="date" name="expired_at" label="Expiration Date (Optional)" value="{{ $user->expired_at ? $user->expired_at->format('Y-m-d') : '' }}" help="Leave empty for no expiration." />
 
             <div class="mb-3">
                 <label class="form-label" for="avatar">Avatar</label>
@@ -95,11 +73,7 @@
                         </div>
                     @endif
                 </div>
-                <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/gif">
-                <div class="form-hint">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.</div>
-                @error('avatar')
-                <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
+                <x-tabler.form-input type="file" name="avatar" accept="image/png, image/jpeg, image/gif" help="Allowed formats: jpeg, png, jpg, gif. Max size: 2MB." class="mb-0" />
             </div>
         </div>
         <div class="modal-footer">

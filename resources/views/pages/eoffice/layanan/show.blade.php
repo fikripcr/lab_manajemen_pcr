@@ -105,7 +105,7 @@
                         </button>
                     </div>
                     <div class="mt-2">
-                        <input type="file" name="file_lampiran" class="form-control form-control-sm" title="Lampiran (PDF/IMG)">
+                        <x-tabler.form-input type="file" name="file_lampiran" class="form-control-sm" title="Lampiran (PDF/IMG)" />
                     </div>
                 </form>
             </div>
@@ -277,15 +277,9 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Keterangan / Pesan ke Pemohon</label>
-                                    <textarea name="keterangan" class="form-control" rows="3" placeholder="Wajib jika Tolak / Revisi"></textarea>
-                                </div>
+                                <x-tabler.form-textarea name="keterangan" label="Keterangan / Pesan ke Pemohon" rows="3" placeholder="Wajib jika Tolak / Revisi" />
 
-                                <div class="mb-3">
-                                    <label class="form-label">File Output / Lampiran</label>
-                                    <input type="file" name="file_lampiran" class="form-control">
-                                </div>
+                                <x-tabler.form-input type="file" name="file_lampiran" label="File Output / Lampiran" />
 
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary w-100">Kirim Perubahan Status</button>

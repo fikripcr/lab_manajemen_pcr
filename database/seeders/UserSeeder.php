@@ -27,16 +27,21 @@ class UserSeeder extends Seeder
             $email     = 'user' . $i . '@contoh-lab.ac.id';
             $role      = $roleNames[array_rand($roleNames)];
 
-            $user = User::create([
-                'name'              => $firstName,
-                'email'             => $email,
-                'password'          => Hash::make('password'),
-                'email_verified_at' => now(),
-            ]);
+            try {
+                // Create user
+                $user = User::create([
+                    'name'              => $firstName,
+                    'email'             => $email,
+                    'password'          => Hash::make('password'),
+                    'email_verified_at' => now(),
+                ]);
 
-            // Assign role to user
-            $userRole = Role::firstOrCreate(['name' => $role]);
-            $user->assignRole($userRole);
+                // Assign role to user
+                $userRole = Role::firstOrCreate(['name' => $role]);
+                $user->assignRole($userRole);
+            } catch (\Exception $e) {
+                $this->command->error("Error creating user $email: " . $e->getMessage());
+            }
         }
 
         $this->command->info('Berhasil membuat 100 contoh data pengguna dengan berbagai peran.');

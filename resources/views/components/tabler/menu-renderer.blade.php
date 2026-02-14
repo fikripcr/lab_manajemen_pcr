@@ -208,6 +208,12 @@
                     'active_routes' => ['pemutu.kpi.*'],
                     'icon' => 'ti ti-chart-arrows',
                 ],
+                [
+                    'title' => 'Meeting / Rapat',
+                    'route' => 'pemutu.rapat.index',
+                    'active_routes' => ['pemutu.rapat.*'],
+                    'icon' => 'ti ti-calendar-event',
+                ],
             ],
         ],
         [

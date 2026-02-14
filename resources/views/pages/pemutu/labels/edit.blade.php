@@ -16,16 +16,32 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="name" class="form-label required">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $label->name }}" required>
+            <x-tabler.form-input 
+                name="name" 
+                label="Name" 
+                type="text" 
+                value="{{ old('name', $label->name) }}"
+                placeholder="Label Name" 
+                required="true" 
+            />
         </div>
         <div class="mb-3">
-            <label for="slug" class="form-label">Slug</label>
-            <input type="text" class="form-control" id="slug" name="slug" value="{{ $label->slug }}">
+            <x-tabler.form-input 
+                name="slug" 
+                label="Slug" 
+                type="text" 
+                value="{{ old('slug', $label->slug) }}"
+                placeholder="Auto-generated if empty" 
+            />
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3">{{ $label->description }}</textarea>
+            <x-tabler.form-input 
+                name="description" 
+                label="Description" 
+                type="textarea" 
+                value="{{ old('description', $label->description) }}"
+                rows="3" 
+            />
         </div>
     </div>
     <div class="modal-footer">

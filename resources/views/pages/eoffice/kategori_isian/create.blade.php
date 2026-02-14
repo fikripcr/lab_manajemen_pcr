@@ -1,14 +1,10 @@
 <form action="{{ route('eoffice.kategori-isian.store') }}" method="POST">
     @csrf
-    <div class="mb-3">
-        <label class="form-label required">Nama Isian</label>
-        <input type="text" name="nama_isian" class="form-control" placeholder="Contoh: Nama Lengkap, NIP, dsb." required>
-    </div>
+    <x-tabler.form-input name="nama_isian" label="Nama Isian" placeholder="Contoh: Nama Lengkap, NIP, dsb." required />
     
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label required">Tipe Isian</label>
-            <select name="type" id="type-select" class="form-select" required>
+        <div class="col-md-6">
+            <x-tabler.form-select name="type" id="type-select" label="Tipe Isian" required>
                 <option value="text">Text (Short)</option>
                 <option value="textarea">Textarea (Long)</option>
                 <option value="number">Number</option>
@@ -17,12 +13,10 @@
                 <option value="select">Select (Pilihan)</option>
                 <option value="select_api">Select via API</option>
                 <option value="file">File Upload (DOCX/PDF)</option>
-            </select>
+            </x-tabler.form-select>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Alias di Dokumen</label>
-            <input type="text" name="alias_on_document" class="form-control" placeholder="Contoh: ${nama_lengkap}">
-            <small class="text-muted">Gunakan format ${nama_field} untuk template Word.</small>
+        <div class="col-md-6">
+            <x-tabler.form-input name="alias_on_document" label="Alias di Dokumen" placeholder="Contoh: ${nama_lengkap}" help="Gunakan format ${nama_field} untuk template Word." />
         </div>
     </div>
 
@@ -38,10 +32,7 @@
         </button>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Keterangan</label>
-        <textarea name="keterangan_isian" class="form-control" rows="2" placeholder="Keterangan tambahan untuk pengusul"></textarea>
-    </div>
+    <x-tabler.form-textarea name="keterangan_isian" label="Keterangan" rows="2" placeholder="Keterangan tambahan untuk pengusul" />
 
     <div class="text-end">
         <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>

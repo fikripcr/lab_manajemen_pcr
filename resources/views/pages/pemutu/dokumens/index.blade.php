@@ -112,14 +112,16 @@
                          </ul>
                      </div>
                      <div class="card-body p-0 overflow-auto" style="max-height: 55vh;">
-                          <div class="tab-content p-3">
+                           <div class="tab-content p-3">
                                @foreach(['standar', 'formulir', 'manual_prosedur'] as $stType)
-                               <div class="tab-pane {{ $stType == 'standar' ? 'active show' : '' }}" id="std-{{ $stType }}">
+                               @php
+                                   $isInitialActive = (!request('jenis') && $stType === 'standar') || request('jenis') == $stType;
+                               @endphp
+                               <div class="tab-pane {{ $isInitialActive ? 'active show' : '' }}" id="std-{{ $stType }}">
                                     <ul class="list-unstyled nested-sortable">
                                         @php
                                             $list = $dokumentByJenis[$stType] ?? [];
                                         @endphp
-
                                         @forelse($list as $dok)
                                             @include('pages.pemutu.dokumens._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
                                         @empty
@@ -128,7 +130,7 @@
                                     </ul>
                                </div>
                                @endforeach
-                          </div>
+                           </div>
                      </div>
                 </div>
                 @endif

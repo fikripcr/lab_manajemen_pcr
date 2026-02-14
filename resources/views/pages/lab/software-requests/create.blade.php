@@ -53,34 +53,26 @@
                             @endif
                             
                             <div class="mb-3">
-                                <x-form.select2 
-                                    name="mata_kuliah_ids" 
+                                <x-tabler.form-select 
+                                    name="mata_kuliah_ids[]" 
                                     label="Mata Kuliah" 
                                     :options="$mataKuliahs->pluck('nama_mk', 'mata_kuliah_id')->toArray()" 
-                                    multiple="true" 
-                                    required="true" 
+                                    multiple 
+                                    required
                                     placeholder="Pilih Mata Kuliah"
+                                    class="select2"
+                                    help="Pilih satu atau lebih mata kuliah yang membutuhkan software ini."
                                 />
-                                <small class="form-hint">Pilih satu atau lebih mata kuliah yang membutuhkan software ini.</small>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label required">Nama Software</label>
-                                <input type="text" name="nama_software" class="form-control" placeholder="Misal: Visual Studio Code, MATLAB 2024" required {{ !$activePeriod ? 'disabled' : '' }}>
-                            </div>
+                            <x-tabler.form-input name="nama_software" label="Nama Software" placeholder="Misal: Visual Studio Code, MATLAB 2024" required :disabled="!$activePeriod" />
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Versi (Opsional)</label>
-                                        <input type="text" name="versi" class="form-control" placeholder="Contoh: v1.8.0" {{ !$activePeriod ? 'disabled' : '' }}>
-                                    </div>
+                                    <x-tabler.form-input name="versi" label="Versi (Opsional)" placeholder="Contoh: v1.8.0" :disabled="!$activePeriod" />
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">URL Download (Opsional)</label>
-                                        <input type="url" name="url_download" class="form-control" placeholder="https://..." {{ !$activePeriod ? 'disabled' : '' }}>
-                                    </div>
+                                    <x-tabler.form-input type="url" name="url_download" label="URL Download (Opsional)" placeholder="https://..." :disabled="!$activePeriod" />
                                 </div>
                             </div>
 

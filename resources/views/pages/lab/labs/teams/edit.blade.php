@@ -24,37 +24,28 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="user_id">User</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" value="{{ $teamMember->user->name }} ({{ $teamMember->user->email }})" disabled>
+                                <x-tabler.form-input name="user_id_display" value="{{ $teamMember->user->name }} ({{ $teamMember->user->email }})" disabled class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="jabatan">Jabatan (Opsional)</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('jabatan') is-invalid @enderror" id="jabatan" name="jabatan" value="{{ old('jabatan', $teamMember->jabatan) }}" placeholder="Misal: PIC, Teknisi, dll">
-                                @error('jabatan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="jabatan" value="{{ $teamMember->jabatan }}" placeholder="Misal: PIC, Teknisi, dll" class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="tanggal_mulai">Tanggal Mulai (Opsional)</label>
                             <div class="col-sm-10">
-                                <input type="date" class="form-control @error('tanggal_mulai') is-invalid @enderror" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai', $teamMember->tanggal_mulai?->format('Y-m-d')) }}">
-                                @error('tanggal_mulai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="date" name="tanggal_mulai" value="{{ $teamMember->tanggal_mulai?->format('Y-m-d') }}" class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="tanggal_selesai">Tanggal Selesai (Opsional)</label>
                             <div class="col-sm-10">
-                                <input type="date" class="form-control @error('tanggal_selesai') is-invalid @enderror" id="tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai', $teamMember->tanggal_selesai?->format('Y-m-d')) }}">
-                                @error('tanggal_selesai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="date" name="tanggal_selesai" value="{{ $teamMember->tanggal_selesai?->format('Y-m-d') }}" class="mb-0" />
                             </div>
                         </div>
 

@@ -35,10 +35,7 @@
                                 <div class="form-control-plaintext font-weight-bold">{{ auth()->user()->name }}</div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Catatan Tambahan (Opsional)</label>
-                                <textarea name="remarks" class="form-control" rows="3" placeholder="Keterangan tambahan jika diperlukan..."></textarea>
-                            </div>
+                            <x-tabler.form-textarea name="remarks" label="Catatan Tambahan (Opsional)" rows="3" placeholder="Keterangan tambahan jika diperlukan..." />
 
                         </div>
                         <div class="card-footer text-end">

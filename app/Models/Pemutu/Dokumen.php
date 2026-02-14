@@ -13,9 +13,9 @@ class Dokumen extends Model
 
     protected $table      = 'pemutu_dokumen';
     protected $primaryKey = 'dok_id';
-    
-    protected $appends = ['encrypted_dok_id'];
-    protected $fillable   = [
+
+    protected $appends  = ['encrypted_dok_id'];
+    protected $fillable = [
         'parent_doksub_id', // For potential future hierarchy if needed, though migration says nullable
         'parent_id',
         'level',
@@ -30,8 +30,8 @@ class Dokumen extends Model
         'std_amirtn_id',
         'std_jeniskriteria_id',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
     public $timestamps = false; // Migration doesn't have timestamps
 
@@ -65,5 +65,10 @@ class Dokumen extends Model
     public function children()
     {
         return $this->hasMany(Dokumen::class, 'parent_id', 'dok_id')->orderBy('seq');
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(DokumenApproval::class, 'dok_id', 'dok_id')->orderBy('created_at', 'desc');
     }
 }

@@ -73,7 +73,7 @@ class IndikatorSeeder extends Seeder
             $dokSub = $dokSubs[$index % $dokSubs->count()];
 
             $indikator = Indikator::create([
-                'doksub_id'       => $dokSub->doksub_id,
+                // 'doksub_id' removed as it is a pivot
                 'no_indikator'    => 'IND-' . str_pad($seq, 3, '0', STR_PAD_LEFT),
                 'indikator'       => $data['indikator'],
                 'target'          => $data['target'],
@@ -85,6 +85,9 @@ class IndikatorSeeder extends Seeder
                 'level_risk'      => ['Low', 'Medium', 'High'][rand(0, 2)],
                 'origin_from'     => ['Renstra', 'Renop', 'Audit'][rand(0, 2)],
             ]);
+
+            // Attach DokSub
+            $indikator->dokSubs()->attach($dokSub->doksub_id, ['is_hasilkan_indikator' => false]);
 
             // Attach 1-3 random labels
             if ($labels->count() > 0) {

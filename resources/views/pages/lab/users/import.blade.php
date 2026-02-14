@@ -41,23 +41,16 @@
                     <form action="{{ route('lab.users.import.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="mb-3">
-                            <label class="form-label required" for="file">Pilih File</label>
-                            <input type="file" class="filepond-input"
-                                   id="file" name="file" accept=".xlsx,.xls,.csv" required>
-                            <div class="form-hint">Format yang didukung: .xlsx, .xls, .csv</div>
-                            @error('file')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <x-tabler.form-input type="file" name="file" label="Pilih File" class="filepond-input" accept=".xlsx,.xls,.csv" required help="Format yang didukung: .xlsx, .xls, .csv" />
 
                         <div class="mb-3">
-                            <x-form.select2
+                            <x-tabler.form-select
                                 id="role_default"
                                 name="role_default"
                                 label="Role Default"
                                 placeholder="Pilih role default jika tidak disertakan di file"
                                 :options="$roles->pluck('name', 'name')->toArray()"
+                                type="select2"
                             />
                             @error('role_default')
                             <div class="invalid-feedback d-block">{{ $message }}</div>

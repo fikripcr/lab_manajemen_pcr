@@ -23,31 +23,50 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 mb-3">
-                        <label class="form-label required">Indikator Standar (Induk)</label>
-                        <select class="form-select select2" name="parent_id" required data-placeholder="Cari indikator standar...">
-                            <option value=""></option>
-                            @foreach($parents as $p)
-                                <option value="{{ $p->indikator_id }}" {{ $indikator->parent_id == $p->indikator_id ? 'selected' : '' }}>
-                                    [{{ $p->no_indikator }}] {{ \Str::limit($p->indikator, 150) }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-tabler.form-input 
+                            name="parent_id" 
+                            label="Indikator Standar (Induk)" 
+                            type="select2" 
+                            :options="$parents->mapWithKeys(function($p) {
+                                return '[' . $p->no_indikator . '] ' . Str::limit($p->indikator, 150);
+                            })->toArray()"
+                            :selected="old('parent_id', $indikator->parent_id)" 
+                            placeholder="Cari indikator standar..." 
+                            required="true" 
+                        />
                         <div class="form-hint">Pilih Indikator Standar yang menjadi acuan untuk sasaran kinerja ini.</div>
                     </div>
 
                     <div class="col-md-4 mb-3">
-                         <label class="form-label">Kode / No. Sasaran</label>
-                         <input type="text" name="no_indikator" class="form-control" placeholder="cth: KPI.01" value="{{ old('no_indikator', $indikator->no_indikator) }}">
+                         <x-tabler.form-input 
+                            name="no_indikator" 
+                            label="Kode / No. Sasaran" 
+                            type="text" 
+                            value="{{ old('no_indikator', $indikator->no_indikator) }}"
+                            placeholder="cth: KPI.01" 
+                        />
                     </div>
                 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label required">Nama Sasaran Kinerja</label>
-                        <textarea name="indikator" class="form-control" rows="3" placeholder="Deskripsikan sasaran kinerja..." required>{{ old('indikator', $indikator->indikator) }}</textarea>
+                        <x-tabler.form-input 
+                            name="indikator" 
+                            label="Nama Sasaran Kinerja" 
+                            type="textarea" 
+                            value="{{ old('indikator', $indikator->indikator) }}"
+                            rows="3" 
+                            required="true" 
+                        />
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">Definisi / Keterangan</label>
-                        <textarea name="keterangan" class="form-control rich-text-editor">{{ old('keterangan', $indikator->keterangan) }}</textarea>
+                        <x-tabler.form-input 
+                            name="keterangan" 
+                            label="Definisi / Keterangan" 
+                            type="textarea" 
+                            value="{{ old('keterangan', $indikator->keterangan) }}"
+                            rows="3" 
+                            class="rich-text-editor" 
+                        />
                     </div>
                 </div>
 

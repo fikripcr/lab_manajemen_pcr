@@ -26,7 +26,7 @@ class LabInventarisController extends Controller
 
     public function index($labId)
     {
-        $lab = Lab::findOrFail(decryptId($labId));
+        $lab = Lab::with(['labInventaris.inventaris'])->findOrFail(decryptId($labId));
         return view('pages.lab.labs.inventaris.index', compact('lab'));
     }
 

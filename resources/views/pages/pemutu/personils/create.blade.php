@@ -6,35 +6,57 @@
     @csrf
     <div class="modal-body">
         <div class="mb-3">
-            <label for="nama" class="form-label required">Nama Lengkap</label>
-            <input type="text" class="form-control" id="nama" name="nama" required placeholder="Nama Personil">
+            <x-tabler.form-input 
+                name="nama" 
+                label="Nama Lengkap" 
+                type="text" 
+                value="{{ old('nama') }}"
+                placeholder="Nama Personil" 
+                required="true" 
+            />
         </div>
         <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="example@pcr.ac.id">
-            <small class="form-hint">Used to link with User account automatically.</small>
+            <x-tabler.form-input 
+                name="email" 
+                label="Email" 
+                type="email" 
+                value="{{ old('email') }}"
+                placeholder="example@pcr.ac.id" 
+                help="Used to link with User account automatically." 
+            />
         </div>
         <div class="mb-3">
-            <label for="org_unit_id" class="form-label">Unit Organisasi</label>
-            <select class="form-select select2-offline" id="org_unit_id" name="org_unit_id" data-dropdown-parent="#modalAction">
-                <option value="">Select Unit</option>
-                @foreach($units as $u)
-                    <option value="{{ $u->orgunit_id }}">{{ $u->name }}</option>
-                @endforeach
-            </select>
+            <x-tabler.form-input 
+                name="org_unit_id" 
+                label="Unit Organisasi" 
+                type="select2" 
+                :options="$units->pluck('name', 'orgunit_id')->toArray()"
+                :selected="old('org_unit_id')" 
+                placeholder="Select Unit" 
+            />
         </div>
         <div class="mb-3">
-            <label for="jenis" class="form-label">Jenis</label>
-            <select class="form-select" id="jenis" name="jenis">
-                <option value="Dosen">Dosen</option>
-                <option value="Staff">Staff</option>
-                <option value="Mahasiswa">Mahasiswa</option>
-                <option value="Lainnya">Lainnya</option>
-            </select>
+            <x-tabler.form-input 
+                name="jenis" 
+                label="Jenis" 
+                type="select" 
+                :options="[ 
+                    'Dosen' => 'Dosen',
+                    'Staff' => 'Staff',
+                    'Mahasiswa' => 'Mahasiswa',
+                    'Lainnya' => 'Lainnya'
+                ]"
+                :selected="old('jenis')" 
+            />
         </div>
         <div class="mb-3">
-            <label for="nip" class="form-label">NIP / ID External</label>
-            <input type="text" class="form-control" id="external_id" name="external_id">
+            <x-tabler.form-input 
+                name="external_id" 
+                label="NIP / ID External" 
+                type="text" 
+                value="{{ old('external_id') }}"
+                placeholder="NIP / ID External" 
+            />
         </div>
     </div>
     <div class="modal-footer">

@@ -18,17 +18,15 @@
     <div class="card-body">
         <form id="filter-form" class="row g-3">
             <div class="col-md-4">
-                <label class="form-label">Jenis Layanan</label>
-                <select name="jenislayanan_id" class="form-select select2">
+                <x-tabler.form-select name="jenislayanan_id" label="Jenis Layanan" class="select2">
                     <option value="">Semua Jenis Layanan</option>
                     @foreach($jenisLayanans as $jl)
                         <option value="{{ $jl->jenislayanan_id }}">{{ $jl->nama_layanan }}</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-3">
-                <label class="form-label">Status</label>
-                <select name="status" class="form-select">
+                <x-tabler.form-select name="status" label="Status">
                     <option value="">Semua Status</option>
                     <option value="Diajukan">Diajukan</option>
                     <option value="Diproses">Diproses</option>
@@ -36,11 +34,10 @@
                     <option value="Direvisi">Butuh Revisi</option>
                     <option value="Selesai">Selesai</option>
                     <option value="Ditolak">Ditolak</option>
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-3">
-                <label class="form-label">Rentang Tanggal</label>
-                <input type="text" name="date_range" class="form-control" placeholder="Pilih Tanggal...">
+                <x-tabler.form-input name="date_range" label="Rentang Tanggal" placeholder="Pilih Tanggal..." />
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary w-100">

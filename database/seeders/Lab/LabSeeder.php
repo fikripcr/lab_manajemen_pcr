@@ -88,30 +88,45 @@ class LabSeeder extends Seeder
         // 2. Seed Lab Teams
         $this->command->info('Seeding Lab Teams...');
         foreach ($labs as $lab) {
-            // Assign 1 Kepala Lab, 1 Teknisi, 2 Asisten per lab
-            $this->createLabTeamMember($lab->lab_id, 'Kepala Lab', $users);
-            $this->createLabTeamMember($lab->lab_id, 'Teknisi', $users);
-            $this->createLabTeamMember($lab->lab_id, 'Asisten', $users);
-            $this->createLabTeamMember($lab->lab_id, 'Asisten', $users);
+            // Pick 4 distinct users for this lab
+            if ($users->count() >= 4) {
+                $teamUsers = $users->random(4);
+
+                // Assign 1 Kepala Lab, 1 Teknisi, 2 Asisten per lab
+                $this->createLabTeamMember($lab->lab_id, 'Kepala Lab', $teamUsers[0]);
+                $this->createLabTeamMember($lab->lab_id, 'Teknisi', $teamUsers[1]);
+                $this->createLabTeamMember($lab->lab_id, 'Asisten', $teamUsers[2]);
+                $this->createLabTeamMember($lab->lab_id, 'Asisten', $teamUsers[3]);
+            }
         }
 
         // 3. Seed Lab Inventory Placement (LabInventaris)
         $this->command->info('Seeding Lab Inventory Placements...');
-        if ($inventories->isNotEmpty()) {
-            foreach ($labs as $lab) {
-                // Assign random 20-50 items to each lab
-                $labItems = $inventories->random(min($inventories->count(), rand(20, 50)));
-                foreach ($labItems as $item) {
-                    LabInventaris::create([
-                        'lab_id'             => $lab->lab_id,
-                        'inventaris_id'      => $item->inventaris_id,
-                        'kode_inventaris'    => LabInventaris::generateKodeInventaris($lab->lab_id, $item->inventaris_id),
-                        'no_series'          => fake()->bothify('SN-#####-?????'),
-                        'tanggal_penempatan' => fake()->dateTimeBetween('-2 years', 'now'),
-                        'status'             => 'active',
-                        'keterangan'         => 'Penempatan awal',
-                        'created_by'         => $users->random()->id,
-                    ]);
+        if ($inventories->isNotEmpty() && $labs->isNotEmpty()) {
+            // Shuffle inventories to randomize order
+            $shuffledInventories = $inventories->shuffle();
+
+            // Calculate items per lab (distribute all items across labs)
+            // or just take extensive chunks.
+            // Better: loop through shuffled items and assign to random lab?
+            // Or assign chunks to labs.
+
+            $chunks = $shuffledInventories->split($labs->count());
+
+            foreach ($labs as $index => $lab) {
+                if (isset($chunks[$index])) {
+                    foreach ($chunks[$index] as $item) {
+                        LabInventaris::create([
+                            'lab_id'             => $lab->lab_id,
+                            'inventaris_id'      => $item->inventaris_id,
+                            'kode_inventaris'    => LabInventaris::generateKodeInventaris($lab->lab_id, $item->inventaris_id),
+                            'no_series'          => fake()->bothify('SN-#####-?????'),
+                            'tanggal_penempatan' => fake()->dateTimeBetween('-2 years', 'now'),
+                            'status'             => 'active',
+                            'keterangan'         => 'Penempatan awal',
+                            'created_by'         => $users->random()->id,
+                        ]);
+                    }
                 }
             }
         }
@@ -184,15 +199,15 @@ class LabSeeder extends Seeder
         }
     }
 
-    private function createLabTeamMember($labId, $jabatan, $users)
+    private function createLabTeamMember($labId, $jabatan, $user)
     {
         LabTeam::create([
             'lab_id'        => $labId,
-            'user_id'       => $users->random()->id,
+            'user_id'       => $user->id,
             'jabatan'       => $jabatan,
             'is_active'     => true,
             'tanggal_mulai' => now()->subMonths(rand(1, 12)),
-            'created_by'    => $users->first()->id,
+            'created_by'    => $user->id, // Assuming user creator is themselves or first admin? Let's use user->id for simplicity or pass creator.
         ]);
     }
 }

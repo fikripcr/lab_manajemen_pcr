@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DokumenRequest;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
+use App\Models\Pemutu\Personil;
 use App\Services\Pemutu\DokumenService;
 use Exception;
 use Illuminate\Http\Request;
@@ -101,23 +102,17 @@ class DokumenController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(Dokumen $dokumen)
     {
-        $dokumen = $this->DokumenService->getDokumenById($id);
-        if (! $dokumen) {
-            abort(404);
-        }
-
         $pageTitle = 'Detail Dokumen: ' . $dokumen->judul;
-        return view('pages.pemutu.dokumens.detail', compact('dokumen', 'pageTitle'));
+        $personils = Personil::orderBy('nama')->get();
+        $dokumen->load(['approvals.approver', 'approvals.statuses']);
+
+        return view('pages.pemutu.dokumens.detail', compact('dokumen', 'pageTitle', 'personils'));
     }
 
-    public function showRenopWithIndicators($id)
+    public function showRenopWithIndicators(Dokumen $dokumen)
     {
-        $dokumen = $this->DokumenService->getDokumenById($id);
-        if (! $dokumen) {
-            abort(404);
-        }
 
         $doksubs    = $dokumen->dokSubs;
         $indicators = collect();
@@ -129,16 +124,11 @@ class DokumenController extends Controller
         return view('pages.pemutu.dokumens.renop_with_indicators', compact('dokumen', 'indicators', 'pageTitle'));
     }
 
-    public function edit($id)
+    public function edit(Dokumen $dokumen)
     {
-        $dokumen = $this->DokumenService->getDokumenById($id);
-        if (! $dokumen) {
-            abort(404);
-        }
-
         $allDocs  = $this->DokumenService->getHierarchicalDokumens();
-        $dokumens = $allDocs->filter(function ($d) use ($id) {
-            return $d->dok_id != $id;
+        $dokumens = $allDocs->filter(function ($d) use ($dokumen) {
+            return $d->dok_id != $dokumen->dok_id;
         });
 
         $activeTab = $this->getTabByJenis($dokumen->jenis);
@@ -151,13 +141,11 @@ class DokumenController extends Controller
         return view('pages.pemutu.dokumens.edit', compact('dokumen', 'dokumens', 'allowedTypes'));
     }
 
-    public function update(DokumenRequest $request, $id)
+    public function update(DokumenRequest $request, Dokumen $dokumen)
     {
         try {
-            $this->DokumenService->updateDokumen($id, $request->validated());
-
-            $dokumen     = $this->DokumenService->getDokumenById($id);
-            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $id . '&type=dokumen';
+            $this->DokumenService->updateDokumen($dokumen->dok_id, $request->validated());
+            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
 
             return jsonSuccess('Dokumen berhasil diperbarui.', $redirectUrl);
         } catch (Exception $e) {
@@ -165,13 +153,11 @@ class DokumenController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Dokumen $dokumen)
     {
         try {
-            $dokumen     = $this->DokumenService->getDokumenById($id);
-            $redirectOpt = $dokumen ? $this->getIndexUrlByJenis($dokumen->jenis) : route('pemutu.dokumens.index');
-
-            $this->DokumenService->deleteDokumen($id);
+            $redirectOpt = $this->getIndexUrlByJenis($dokumen->jenis);
+            $this->DokumenService->deleteDokumen($dokumen->dok_id);
             return jsonSuccess('Dokumen berhasil dihapus.', $redirectOpt);
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -189,18 +175,13 @@ class DokumenController extends Controller
         }
     }
 
-    public function childrenData(Request $request, $id)
+    public function childrenData(Request $request, Dokumen $dokumen)
     {
         try {
-            $dokumen = $this->DokumenService->getDokumenById($id);
-            if (! $dokumen) {
-                return jsonError('Not found', 404);
-            }
-
             $isDokSubBased = in_array(strtolower(trim($dokumen->jenis)), ['standar', 'formulir', 'manual_prosedur', 'renop']);
 
             if ($isDokSubBased) {
-                $query = DokSub::where('dok_id', $id)->orderBy('seq');
+                $query = DokSub::where('dok_id', $dokumen->dok_id)->orderBy('seq');
                 return DataTables::of($query)
                     ->addIndexColumn()
                     ->addColumn('judul', function ($row) use ($dokumen) {
@@ -212,9 +193,9 @@ class DokumenController extends Controller
                         return $title;
                     })
                     ->addColumn('action', function ($row) use ($dokumen) {
-                        $editUrl    = route('pemutu.dok-subs.edit', $row->doksub_id);
-                        $deleteUrl  = route('pemutu.dok-subs.destroy', $row->doksub_id);
-                        $detailUrl  = route('pemutu.dok-subs.show', $row->doksub_id);
+                        $editUrl    = route('pemutu.dok-subs.edit', $row);
+                        $deleteUrl  = route('pemutu.dok-subs.destroy', $row);
+                        $detailUrl  = route('pemutu.dok-subs.show', $row);
                         $modalTitle = in_array($dokumen->jenis, ['renop']) ? 'Edit Kegiatan' : 'Edit Sub Standar';
 
                         return '
@@ -233,7 +214,7 @@ class DokumenController extends Controller
                     ->rawColumns(['judul', 'action'])
                     ->make(true);
             } else {
-                $query = $this->DokumenService->getChildrenQuery($id);
+                $query = $this->DokumenService->getChildrenQuery($dokumen->dok_id);
                 return DataTables::of($query)
                     ->addIndexColumn()
                     ->addColumn('judul', function ($row) {
@@ -261,9 +242,9 @@ class DokumenController extends Controller
                         return '<div class="badge bg-blue-lt">' . $row->children_count . ' ' . $childLabel . '</div>';
                     })
                     ->addColumn('action', function ($row) {
-                        $editUrl   = route('pemutu.dokumens.edit', $row->dok_id);
-                        $deleteUrl = route('pemutu.dokumens.destroy', $row->dok_id);
-                        $detailUrl = route('pemutu.dokumens.show', $row->dok_id);
+                        $editUrl   = route('pemutu.dokumens.edit', $row);
+                        $deleteUrl = route('pemutu.dokumens.destroy', $row);
+                        $detailUrl = route('pemutu.dokumens.show', $row);
 
                         return '
                             <div class="btn-group btn-group-sm">

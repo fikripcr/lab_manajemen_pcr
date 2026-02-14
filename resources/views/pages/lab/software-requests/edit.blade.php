@@ -62,21 +62,12 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="status" class="form-label fw-bold">Status <span class="text-danger">*</span></label>
-                                <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" >
-                                    <option value="menunggu_approval" {{ old('status', $softwareRequest->status) === 'menunggu_approval' ? 'selected' : '' }}>
-                                        Menunggu Approval
-                                    </option>
-                                    <option value="disetujui" {{ old('status', $softwareRequest->status) === 'disetujui' ? 'selected' : '' }}>
-                                        Disetujui
-                                    </option>
-                                    <option value="ditolak" {{ old('status', $softwareRequest->status) === 'ditolak' ? 'selected' : '' }}>
-                                        Ditolak
-                                    </option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-select 
+                                    name="status" 
+                                    label="Status *" 
+                                    :options="['menunggu_approval' => 'Menunggu Approval', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak']" 
+                                    :selected="$softwareRequest->status"
+                                />
                             </div>
                         </div>
 

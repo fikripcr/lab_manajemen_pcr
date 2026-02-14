@@ -56,20 +56,33 @@
                         <div class="tab-pane active show" id="tabs-info">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label required">Tipe Indikator</label>
-                                    <select class="form-select @if(isset($parentDok)) bg-light @endif" name="type" id="type-selector" required @if(isset($parentDok)) readonly @endif style="{{ isset($parentDok) ? 'pointer-events: none;' : '' }}">
-                                        <option value="renop" {{ request('type') == 'renop' ? 'selected' : '' }}>Indikator Renop</option>
-                                        <option value="standar" {{ request('type') == 'standar' ? 'selected' : '' }}>Indikator Standar</option>
-                                        <option value="performa" {{ request('type') == 'performa' ? 'selected' : '' }}>Indikator Performa (KPI)</option>
-                                    </select>
+                                    <x-tabler.form-input 
+                                        name="type" 
+                                        label="Tipe Indikator" 
+                                        type="select" 
+                                        :options="[
+                                            'renop' => 'Indikator Renop',
+                                            'standar' => 'Indikator Standar',
+                                            'performa' => 'Indikator Performa (KPI)'
+                                        ]"
+                                        :selected="old('type')" 
+                                        required="true" 
+                                        :readonly="isset($parentDok)"
+                                        class="@if(isset($parentDok)) bg-light @endif"
+                                    />
                                     @if(isset($parentDok))
                                         <input type="hidden" name="type" value="{{ request('type') }}">
                                         <div class="form-hint text-success small">Tipe dikunci karena menambah dari context dokumen.</div>
                                     @endif
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Kode / No Indikator</label>
-                                    <input type="text" name="no_indikator" class="form-control" placeholder="cth: IND.01" value="{{ old('no_indikator') }}">
+                                    <x-tabler.form-input 
+                                        name="no_indikator" 
+                                        label="Kode / No Indikator" 
+                                        type="text" 
+                                        value="{{ old('no_indikator') }}"
+                                        placeholder="cth: IND.01" 
+                                    />
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label required">Dokumen Penjaminan Mutu Terkait</label>

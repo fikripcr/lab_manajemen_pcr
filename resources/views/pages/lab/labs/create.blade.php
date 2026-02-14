@@ -21,36 +21,21 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="name">Lab Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                       id="name" name="name" value="{{ old('name') }}"
-                                       placeholder="Computer Lab A" required>
-                                @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="name" placeholder="Computer Lab A" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="location">Location</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('location') is-invalid @enderror"
-                                       id="location" name="location" value="{{ old('location') }}"
-                                       placeholder="Building A, Floor 2" required>
-                                @error('location')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="location" placeholder="Building A, Floor 2" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="capacity">Capacity</label>
                             <div class="col-sm-10">
-                                <input type="number" class="form-control @error('capacity') is-invalid @enderror"
-                                       id="capacity" name="capacity" value="{{ old('capacity') }}"
-                                       placeholder="30" min="1" required>
-                                @error('capacity')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="number" name="capacity" placeholder="30" min="1" required class="mb-0" />
                             </div>
                         </div>
 
@@ -68,26 +53,14 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label">Lab Images</label>
                             <div class="col-sm-10">
-                                <input type="file" class="filepond-input" 
-                                       id="lab_images" name="lab_images[]" multiple 
-                                       data-allow-multiple="true" accept="image/*">
-                                <div class="form-hint">Upload photos of the lab (multiple allowed).</div>
-                                @error('lab_images')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="file" name="lab_images[]" id="lab_images" class="filepond-input mb-0" multiple data-allow-multiple="true" accept="image/*" help="Upload photos of the lab (multiple allowed)." />
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label">Attachments</label>
                             <div class="col-sm-10">
-                                <input type="file" class="filepond-input" 
-                                       id="lab_attachments" name="lab_attachments[]" multiple 
-                                       data-allow-multiple="true">
-                                <div class="form-hint">Upload documents or other attachments (multiple allowed).</div>
-                                @error('lab_attachments')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="file" name="lab_attachments[]" id="lab_attachments" class="filepond-input mb-0" multiple data-allow-multiple="true" help="Upload documents or other attachments (multiple allowed)." />
                             </div>
                         </div>
 

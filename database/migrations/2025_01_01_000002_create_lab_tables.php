@@ -184,11 +184,39 @@ return new class extends Migration
             $table->index(['waktu_isi']);
         });
 
+        // 9.a Periode Soft Request (Consolidated)
+        Schema::create('lab_periode_softrequest', function (Blueprint $table) {
+            $table->id('periodsoftreq_id');
+            $table->unsignedBigInteger('semester_id');
+            $table->string('nama_periode');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->boolean('is_active')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('semester_id')->references('semester_id')->on('lab_semesters')->onDelete('cascade');
+        });
+
         // 9. Request Software (Renamed to lab_request_software)
         Schema::create('lab_request_software', function (Blueprint $table) {
             $table->id('request_software_id');
+
+            // Added periodsoftreq_id FK
+            $table->unsignedBigInteger('periodsoftreq_id')->nullable();
+
             $table->unsignedBigInteger('dosen_id');
             $table->string('nama_software', 191);
+
+            // Added details
+            $table->string('versi', 50)->nullable();
+            $table->string('url_download')->nullable();
+
             $table->text('deskripsi');
             $table->string('status', 20)->default('pending');
             $table->text('catatan')->nullable();
@@ -201,6 +229,7 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
 
             $table->foreign('dosen_id')->references('id')->on('users');
+            $table->foreign('periodsoftreq_id')->references('periodsoftreq_id')->on('lab_periode_softrequest')->onDelete('set null');
             $table->index(['status']);
         });
 
@@ -213,10 +242,12 @@ return new class extends Migration
 
             $table->foreign('request_software_id', 'fk_req_soft_mk_req')->references('request_software_id')->on('lab_request_software')->onDelete('cascade');
             $table->foreign('mata_kuliah_id', 'fk_req_soft_mk_mk')->references('mata_kuliah_id')->on('lab_mata_kuliahs')->onDelete('cascade');
+
+            $table->index(['request_software_id', 'mata_kuliah_id'], 'fk_req_soft_mk_idx');
         });
 
-        // 10. Inventaris (Renamed to lab_inventarises)
-        Schema::create('lab_inventarises', function (Blueprint $table) {
+        // 10. Inventaris (Renamed to lab_inventaris)
+        Schema::create('lab_inventaris', function (Blueprint $table) {
             $table->id('inventaris_id');
             $table->string('nama_alat', 191);
             $table->string('jenis_alat', 100);
@@ -247,7 +278,7 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
 
-            $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventarises');
+            $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventaris');
             $table->foreign('teknisi_id')->references('id')->on('users');
             $table->index(['status']);
         });
@@ -292,7 +323,7 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
 
-            $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventarises')->onDelete('cascade');
+            $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventaris')->onDelete('cascade');
             $table->foreign('lab_id')->references('lab_id')->on('lab_labs')->onDelete('cascade');
             $table->index(['inventaris_id', 'lab_id']);
         });
@@ -320,8 +351,8 @@ return new class extends Migration
             $table->unique(['lab_id', 'user_id']);
         });
 
-        // 15. Surat Bebas Lab
-        Schema::create('surat_bebas_labs', function (Blueprint $table) {
+        // 15. Surat Bebas Lab (Renamed to lab_surat_bebas_labs)
+        Schema::create('lab_surat_bebas_labs', function (Blueprint $table) {
             $table->id('surat_bebas_lab_id');
             $table->unsignedBigInteger('student_id');
             $table->string('status', 20)->default('pending'); // pending, approved, rejected
@@ -369,6 +400,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('nip')->unique()->nullable();
             $table->string('jabatan')->nullable();
+            // added jenis_personil
+            $table->string('jenis_personil')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -388,14 +421,15 @@ return new class extends Migration
     {
         Schema::dropIfExists('lab_personil');
         Schema::dropIfExists('lab_mahasiswa');
-        Schema::dropIfExists('surat_bebas_labs');
+        Schema::dropIfExists('lab_surat_bebas_labs');
         Schema::dropIfExists('lab_teams');
         Schema::dropIfExists('lab_inventaris_penempatan');
         Schema::dropIfExists('lab_pengumuman');
         Schema::dropIfExists('lab_laporan_kerusakan');
-        Schema::dropIfExists('lab_inventarises');
+        Schema::dropIfExists('lab_inventaris');
         Schema::dropIfExists('lab_request_software_mata_kuliah');
         Schema::dropIfExists('lab_request_software');
+        Schema::dropIfExists('lab_periode_softrequest');
         Schema::dropIfExists('lab_log_penggunaan_labs');
         Schema::dropIfExists('lab_kegiatans');
         Schema::dropIfExists('lab_log_penggunaan_pcs');

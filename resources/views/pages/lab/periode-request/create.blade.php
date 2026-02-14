@@ -17,42 +17,19 @@
                     <x-tabler.flash-message />
 
                     <div class="mb-3">
-                        <label class="form-label required">Semester</label>
-                        <select name="semester_id" class="form-select @error('semester_id') is-invalid @enderror" required>
-                            <option value="">-- Pilih Semester --</option>
-                            @foreach($semesters as $semester)
-                                <option value="{{ $semester->semester_id }}" {{ old('semester_id') == $semester->semester_id ? 'selected' : '' }}>
-                                    {{ $semester->tahun_ajaran }} - {{ $semester->semester }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('semester_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <x-tabler.form-select name="semester_id" label="Semester" :options="$semesters->mapWithKeys(fn($s) => [$s->semester_id => $s->tahun_ajaran . ' - ' . $s->semester])->toArray()" placeholder="-- Pilih Semester --" required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label required">Nama Periode</label>
-                        <input type="text" name="nama_periode" class="form-control @error('nama_periode') is-invalid @enderror" value="{{ old('nama_periode') }}" placeholder="Misal: Periode Ganjil 2024/2025" required>
-                        @error('nama_periode')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <x-tabler.form-input name="nama_periode" label="Nama Periode" placeholder="Misal: Periode Ganjil 2024/2025" required />
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label required">Tanggal Mulai</label>
-                            <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}" required>
-                            @error('start_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <x-tabler.form-input type="date" name="start_date" label="Tanggal Mulai" required />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label required">Tanggal Selesai</label>
-                            <input type="date" name="end_date" class="form-control @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}" required>
-                            @error('end_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <x-tabler.form-input type="date" name="end_date" label="Tanggal Selesai" required />
                         </div>
                     </div>
 

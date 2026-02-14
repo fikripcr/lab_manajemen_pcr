@@ -20,41 +20,23 @@
                         @method('PUT')
 
                         <div class="row mb-3">
-                            <label for="kode_mk" class="col-sm-2 col-form-label required">Kode MK</label>
+                            <label class="col-sm-2 col-form-label required" for="kode_mk">Kode MK</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('kode_mk') is-invalid @enderror"
-                                       id="kode_mk" name="kode_mk"
-                                       value="{{ old('kode_mk', $mataKuliah->kode_mk) }}"
-                                       placeholder="e.g. IF101" required>
-                                @error('kode_mk')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="kode_mk" value="{{ old('kode_mk', $mataKuliah->kode_mk) }}" placeholder="e.g. IF101" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="nama_mk" class="col-sm-2 col-form-label required">Nama MK</label>
+                            <label class="col-sm-2 col-form-label required" for="nama_mk">Nama MK</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('nama_mk') is-invalid @enderror"
-                                       id="nama_mk" name="nama_mk"
-                                       value="{{ old('nama_mk', $mataKuliah->nama_mk) }}"
-                                       placeholder="e.g. Pemrograman Web" required>
-                                @error('nama_mk')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="nama_mk" value="{{ old('nama_mk', $mataKuliah->nama_mk) }}" placeholder="e.g. Pemrograman Web" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="sks" class="col-sm-2 col-form-label required">SKS</label>
+                            <label class="col-sm-2 col-form-label required" for="sks">SKS</label>
                             <div class="col-sm-10">
-                                <input type="number" class="form-control @error('sks') is-invalid @enderror"
-                                       id="sks" name="sks"
-                                       value="{{ old('sks', $mataKuliah->sks) }}"
-                                       min="1" max="6" required>
-                                @error('sks')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="number" name="sks" value="{{ old('sks', $mataKuliah->sks) }}" min="1" max="6" required class="mb-0" />
                             </div>
                         </div>
 

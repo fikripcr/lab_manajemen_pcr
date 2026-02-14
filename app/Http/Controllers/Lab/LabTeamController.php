@@ -23,7 +23,7 @@ class LabTeamController extends Controller
     public function index(Request $request, $labId)
     {
         $realLabId = decryptId($labId);
-        $lab       = Lab::findOrFail($realLabId);
+        $lab       = Lab::with(['labTeams.user'])->findOrFail($realLabId);
         $labTeams  = $this->labTeamService->getLabTeamsQuery($realLabId)->paginate(10);
 
         return view('pages.lab.labs.teams.index', compact('lab', 'labTeams'));
@@ -36,7 +36,7 @@ class LabTeamController extends Controller
     {
         $realLabId = decryptId($labId);
         $lab       = Lab::findOrFail($realLabId);
-        $users     = User::all();
+        $users     = User::with('roles')->get();
 
         return view('pages.lab.labs.teams.create', compact('lab', 'users'));
     }

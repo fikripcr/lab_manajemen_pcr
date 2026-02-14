@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DokSubRequest;
+use App\Models\Pemutu\DokSub;
+use App\Models\Pemutu\Dokumen;
 use App\Services\Pemutu\DokSubService;
 use App\Services\Pemutu\DokumenService;
 use Exception;
@@ -20,17 +22,11 @@ class DokSubController extends Controller
         $this->DokumenService = $DokumenService;
     }
 
-    public function show($id)
+    public function show(DokSub $dokSub)
     {
-        $dokSub = $this->DokSubService->getDokSubById($id);
-        if (! $dokSub) {
-            abort(404);
-        }
-
         $parent = $dokSub->dokumen;
 
         // Determine Child Type based on Parent Dokumen Type
-        // Logic remains here as it's view-specific presentation logic
         $parentJenis = strtolower(trim($parent->jenis));
         $childType   = match ($parentJenis) {
             'visi'    => 'Misi',
@@ -67,23 +63,17 @@ class DokSubController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(DokSub $dokSub)
     {
-        $dokSub = $this->DokSubService->getDokSubById($id);
-        if (! $dokSub) {
-            abort(404);
-        }
-
         return view('pages.pemutu.dok-subs.edit', compact('dokSub'));
     }
 
-    public function update(DokSubRequest $request, $id)
+    public function update(DokSubRequest $request, DokSub $dokSub)
     {
         try {
             $data                          = $request->validated();
             $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
-            $this->DokSubService->updateDokSub($id, $data);
-            $dokSub = $this->DokSubService->getDokSubById($id);
+            $this->DokSubService->updateDokSub($dokSub->doksub_id, $data);
 
             return jsonSuccess('Sub-Document updated successfully.', route('pemutu.dokumens.show', $dokSub->dok_id));
         } catch (Exception $e) {
@@ -91,22 +81,21 @@ class DokSubController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(DokSub $dokSub)
     {
         try {
-            $this->DokSubService->deleteDokSub($id);
-
+            $this->DokSubService->deleteDokSub($dokSub->doksub_id);
             return jsonSuccess('Sub-Document deleted successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function data(Request $request, $dokId)
+    public function data(Request $request, Dokumen $dokumen)
     {
         if ($request->ajax()) {
             try {
-                $query = $this->DokSubService->getFilteredQuery(['dok_id' => $dokId]);
+                $query = $this->DokSubService->getFilteredQuery(['dok_id' => $dokumen->dok_id]);
 
                 return DataTables::of($query)
                     ->addIndexColumn()
@@ -114,7 +103,7 @@ class DokSubController extends Controller
                         return '<span class="badge badge-outline text-muted">' . $row->seq . '</span>';
                     })
                     ->addColumn('judul', function ($row) {
-                        $detailUrl = route('pemutu.dok-subs.show', $row->doksub_id);
+                        $detailUrl = route('pemutu.dok-subs.show', $row);
                         return '
                             <a href="' . $detailUrl . '" class="fw-medium text-reset" title="Lihat Detail & Turunan">
                                 ' . $row->judul . '
@@ -123,8 +112,8 @@ class DokSubController extends Controller
                         ';
                     })
                     ->addColumn('action', function ($row) {
-                        $editUrl   = route('pemutu.dok-subs.edit', $row->doksub_id);
-                        $deleteUrl = route('pemutu.dok-subs.destroy', $row->doksub_id);
+                        $editUrl   = route('pemutu.dok-subs.edit', $row);
+                        $deleteUrl = route('pemutu.dok-subs.destroy', $row);
 
                         return '
                             <div class="btn-list flex-nowrap">

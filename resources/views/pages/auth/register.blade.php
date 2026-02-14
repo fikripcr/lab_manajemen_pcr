@@ -8,30 +8,23 @@
         <form action="{{ route('register') }}" method="POST" autocomplete="off">
             @csrf
             
-            <div class="mb-3">
-                <label class="form-label">Name</label>
-                <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                       name="name" 
-                       placeholder="Enter name" 
-                       value="{{ old('name') }}" 
-                       required 
-                       autofocus>
-                @error('name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input 
+                name="name" 
+                label="Name" 
+                value="{{ old('name') }}" 
+                placeholder="Enter name" 
+                required="true" 
+                autofocus
+            />
             
-            <div class="mb-3">
-                <label class="form-label">Email address</label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                       name="email" 
-                       placeholder="Enter email" 
-                       value="{{ old('email') }}" 
-                       required>
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input 
+                name="email" 
+                label="Email address" 
+                type="email" 
+                value="{{ old('email') }}" 
+                placeholder="Enter email" 
+                required="true" 
+            />
             
             <div class="mb-3">
                 <label class="form-label">Password</label>

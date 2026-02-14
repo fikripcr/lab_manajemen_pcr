@@ -19,7 +19,7 @@ class LabService
      */
     public function getLabById(string $id): ?Lab
     {
-        return Lab::find($id);
+        return Lab::with(['labTeams.user', 'labInventaris.inventaris', 'media'])->find($id);
     }
 
     /**

@@ -46,14 +46,9 @@
                         @csrf
 
                         <div class="row mb-3">
-                            <label for="file" class="col-sm-2 col-form-label required">File Jadwal</label>
+                            <label class="col-sm-2 col-form-label required" for="file">File Jadwal</label>
                             <div class="col-sm-10">
-                                <input type="file" class="form-control @error('file') is-invalid @enderror"
-                                       id="file" name="file"
-                                       accept=".xlsx,.xls,.csv" required>
-                                @error('file')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="file" name="file" accept=".xlsx,.xls,.csv" required class="mb-0" />
                             </div>
                         </div>
 

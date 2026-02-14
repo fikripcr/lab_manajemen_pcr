@@ -90,10 +90,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Catatan (Opsional)</label>
-                                        <textarea class="form-control" name="catatan_umum" rows="3" placeholder="Contoh: Mouse agak macet, Keyboard tombol A keras..."></textarea>
-                                    </div>
+                                    <x-tabler.form-textarea name="catatan_umum" label="Catatan (Opsional)" rows="3" placeholder="Contoh: Mouse agak macet, Keyboard tombol A keras..." />
 
                                     <div class="form-footer">
                                         <button type="submit" class="btn btn-primary w-100">Simpan Log</button>

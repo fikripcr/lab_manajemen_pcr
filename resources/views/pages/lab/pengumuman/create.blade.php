@@ -21,11 +21,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label required" for="judul">Title</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control @error('judul') is-invalid @enderror" 
-                                       id="judul" name="judul" value="{{ old('judul') }}" required>
-                                @error('judul')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input name="judul" value="{{ old('judul') }}" required class="mb-0" />
                             </div>
                         </div>
 

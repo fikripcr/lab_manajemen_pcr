@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Hr;
 
+use App\Events\Hr\ApprovalProcessed;
 use App\Events\Hr\ApprovalRequested;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatApproval;
@@ -135,6 +136,9 @@ class PegawaiService
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $model->getKey()]);
 
+            // 5. Dispatch Event for Notification
+            ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
+
             return $model;
         });
     }
@@ -166,6 +170,9 @@ class PegawaiService
 
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $model->getKey()]);
+
+            // 5. Dispatch Event for Notification
+            ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
 
             return $model;
         });
@@ -210,6 +217,40 @@ class PegawaiService
                 $col = $headerMap[$modelClass];
                 $pegawai->update([$col => $model->getKey()]);
             }
+
+            // Dispatch Event for Notification
+            ApprovalProcessed::dispatch($approval, $pegawai, Auth::user(), 'approved');
+
+            return $approval;
+        });
+    }
+
+    /**
+     * Reject a specific request (Approval Record).
+     */
+    public function rejectRequest($approvalId, $reason = null)
+    {
+        return DB::transaction(function () use ($approvalId, $reason) {
+            $approval = RiwayatApproval::findOrFail($approvalId);
+
+            if ($approval->status !== 'Pending') {
+                throw new Exception("Request is not pending.");
+            }
+
+            // Update Status
+            $approval->update([
+                'status'     => 'Rejected',
+                'pejabat'    => Auth::user()->name ?? 'System',
+                'keterangan' => $reason ?? $approval->keterangan,
+            ]);
+
+            // Resolve Model and Pegawai for notification
+            $modelClass = $approval->model;
+            $model      = $modelClass::findOrFail($approval->model_id);
+            $pegawai    = Pegawai::findOrFail($model->pegawai_id);
+
+            // Dispatch Event for Notification
+            ApprovalProcessed::dispatch($approval, $pegawai, Auth::user(), 'rejected');
 
             return $approval;
         });

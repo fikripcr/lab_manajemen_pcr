@@ -22,18 +22,15 @@
         <form method="POST" action="{{ route('password.email') }}" autocomplete="off">
             @csrf
             
-            <div class="mb-3">
-                <label class="form-label">Email address</label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                       name="email" 
-                       placeholder="Enter email" 
-                       value="{{ old('email') }}" 
-                       required 
-                       autofocus>
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input 
+                name="email" 
+                label="Email address" 
+                type="email" 
+                value="{{ old('email') }}" 
+                placeholder="Enter email" 
+                required="true" 
+                autofocus
+            />
             
             <div class="form-footer">
                 <button type="submit" class="btn btn-primary w-100">

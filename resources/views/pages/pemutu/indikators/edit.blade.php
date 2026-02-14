@@ -47,39 +47,47 @@
                     <div class="tab-pane active show" id="tabs-info">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label required">Tipe Indikator</label>
-                                <select class="form-select" name="type" id="type-selector" required>
-                                    <option value="renop" {{ $indikator->type == 'renop' ? 'selected' : '' }}>Indikator Renop</option>
-                                    <option value="standar" {{ $indikator->type == 'standar' ? 'selected' : '' }}>Indikator Standar</option>
-                                    <option value="performa" {{ $indikator->type == 'performa' ? 'selected' : '' }}>Indikator Performa (KPI)</option>
-                                </select>
+                                <x-tabler.form-input 
+                                    name="type" 
+                                    label="Tipe Indikator" 
+                                    type="select" 
+                                    :options="[
+                                        'renop' => 'Indikator Renop',
+                                        'standar' => 'Indikator Standar',
+                                        'performa' => 'Indikator Performa (KPI)'
+                                    ]"
+                                    :selected="old('type', $indikator->type)" 
+                                    required="true" 
+                                />
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Kode / No Indikator</label>
-                                <input type="text" name="no_indikator" class="form-control" value="{{ $indikator->no_indikator }}" placeholder="cth: IND.01">
+                                <x-tabler.form-input 
+                                    name="no_indikator" 
+                                    label="Kode / No Indikator" 
+                                    type="text" 
+                                    value="{{ old('no_indikator', $indikator->no_indikator) }}"
+                                    placeholder="cth: IND.01" 
+                                />
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label class="form-label required">Dokumen Penjaminan Mutu Terkait</label>
-                                <select class="form-select select2" name="doksub_ids[]" multiple required data-placeholder="Pilih satu atau lebih dokumen...">
-                                    @php $selectedDokSubIds = $indikator->dokSubs->pluck('doksub_id')->toArray(); @endphp
-                                    @foreach($dokumens as $dok)
-                                        <optgroup label="[{{ strtoupper($dok->jenis) }}] {{ $dok->judul }}">
-                                            @foreach($dok->dokSubs as $sub)
-                                                <option value="{{ $sub->doksub_id }}" {{ in_array($sub->doksub_id, $selectedDokSubIds) ? 'selected' : '' }}>
-                                                    {{ $sub->judul }}
-                                                </option>
-                                            @endforeach
-                                        </optgroup>
-                                    @endforeach
-                                </select>
+                                <x-tabler.form-input 
+                                    name="indikator" 
+                                    label="Nama Indikator" 
+                                    type="textarea" 
+                                    value="{{ old('indikator', $indikator->indikator) }}"
+                                    rows="3" 
+                                    required="true" 
+                                />
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label class="form-label required">Nama Indikator</label>
-                                <textarea name="indikator" class="form-control" rows="3" required>{{ $indikator->indikator }}</textarea>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Definisi / Keterangan</label>
-                                <textarea name="keterangan" class="form-control rich-text-editor">{{ $indikator->keterangan }}</textarea>
+                                <x-tabler.form-input 
+                                    name="keterangan" 
+                                    label="Definisi / Keterangan" 
+                                    type="textarea" 
+                                    value="{{ old('keterangan', $indikator->keterangan) }}"
+                                    rows="3" 
+                                    class="rich-text-editor" 
+                                />
                             </div>
                         </div>
                     </div>

@@ -25,10 +25,10 @@
             <div>
                 <x-tabler.datatable-filter :dataTableId="'permissions-table'" >
                     <div>
-                        <x-form.select2 name="category" placeholder="All Categories" :options="$categories" />
+                        <x-tabler.form-select name="category" placeholder="All Categories" :options="$categories" type="select2" />
                     </div>
                     <div>
-                        <x-form.select2 name="sub_category" placeholder="All Sub Categories" :options="$subCategories" />
+                        <x-tabler.form-select name="sub_category" placeholder="All Sub Categories" :options="$subCategories" type="select2" />
                     </div>
                 </x-tabler.datatable-filter>
             </div>

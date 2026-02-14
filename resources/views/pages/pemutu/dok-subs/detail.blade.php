@@ -8,7 +8,7 @@
                 <div class="page-pretitle">
                     <ol class="breadcrumb" aria-label="breadcrumbs">
                         <li class="breadcrumb-item"><a href="{{ route('pemutu.dokumens.index', ['tabs' => (in_array($parent->jenis, ['standar', 'formulir', 'sop', 'manual_prosedur']) ? 'standar' : 'kebijakan')]) }}">Dokumen SPMI</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('pemutu.dokumens.show', $parent->dok_id) }}">{{ $parent->judul }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('pemutu.dokumens.show', $parent) }}">{{ $parent->judul }}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Sub-Dokumen</li>
                     </ol>
                 </div>
@@ -69,8 +69,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="card-actions bg-transparent border-0">
-                                <a href="#" class="btn btn-sm btn-outline-primary ajax-modal-btn" 
-                                   data-url="{{ route('pemutu.dok-subs.edit', $dokSub->doksub_id) }}" 
+                                   data-url="{{ route('pemutu.dok-subs.edit', $dokSub) }}" 
                                    data-modal-title="Edit Isi Dokumen"
                                    title="Edit Isi">
                                     <i class="ti ti-pencil me-1"></i> Edit Konten
@@ -97,7 +96,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h4 class="card-title mb-0">Daftar {{ $tab2Label }}</h4>
                                 <div class="card-actions bg-transparent border-0">
-                                    <a href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $parent->dok_id, 'doksub_ids[]' => $dokSub->doksub_id, 'type' => ($parent->jenis === 'standar' ? 'standar' : 'renop')]) }}" 
+                                    <a href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $parent->hashid, 'doksub_ids[]' => $dokSub->hashid, 'type' => ($parentJenis === 'standar' ? 'standar' : 'renop')]) }}" 
                                        class="btn btn-sm btn-success">
                                         <i class="ti ti-plus me-1"></i> Tambah Indikator
                                     </a>
@@ -106,7 +105,7 @@
                             <div class="table-responsive">
                                 <x-tabler.datatable
                                     id="table-indicators"
-                                    route="{{ route('pemutu.indikators.data', ['doksub_id' => $dokSub->doksub_id]) }}"
+                                    route="{{ route('pemutu.indikators.data', ['doksub_id' => $dokSub->hashid]) }}"
                                     ajax-load="true"
                                     :columns="[
                                         ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
@@ -124,7 +123,7 @@
                                 <h4 class="card-title mb-0">Daftar {{ $childType }}</h4>
                                 <div class="card-actions bg-transparent border-0">
                                     <a href="#" class="btn btn-sm btn-primary ajax-modal-btn" 
-                                       data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $parent->dok_id, 'parent_doksub_id' => $dokSub->doksub_id]) }}" 
+                                       data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $parent->hashid, 'parent_doksub_id' => $dokSub->hashid]) }}" 
                                        data-modal-title="Tambah {{ $childType }}">
                                         <i class="ti ti-plus me-1"></i> Tambah {{ $childType }}
                                     </a>
@@ -145,17 +144,17 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>
-                                                    <a href="{{ route('pemutu.dokumens.show', $child->dok_id) }}" class="fw-bold text-reset">
+                                                    <a href="{{ route('pemutu.dokumens.show', $child) }}" class="fw-bold text-reset">
                                                         {{ $child->judul }}
                                                     </a>
                                                 </td>
                                                 <td>{{ $child->kode ?? '-' }}</td>
                                                 <td class="text-end">
                                                     <div class="btn-list flex-nowrap justify-content-end">
-                                                        <a href="#" class="btn btn-icon btn-sm btn-outline-secondary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $child->dok_id) }}" data-modal-title="Edit {{ $childType }}">
+                                                        <a href="#" class="btn btn-icon btn-sm btn-outline-secondary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $child) }}" data-modal-title="Edit {{ $childType }}">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
-                                                        <a href="#" class="btn btn-icon btn-sm btn-danger ajax-delete" data-url="{{ route('pemutu.dokumens.destroy', $child->dok_id) }}" data-title="Hapus?">
+                                                        <a href="#" class="btn btn-icon btn-sm btn-danger ajax-delete" data-url="{{ route('pemutu.dokumens.destroy', $child) }}" data-title="Hapus?">
                                                             <i class="ti ti-trash"></i>
                                                         </a>
                                                     </div>

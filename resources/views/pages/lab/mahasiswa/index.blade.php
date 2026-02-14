@@ -47,14 +47,14 @@
                     'name' => 'nama',
                 ],
                 [
-                    'title' => 'Prodi',
-                    'data' => 'prodi',
-                    'name' => 'prodi',
+                    'title' => 'Program Studi',
+                    'data' => 'program_studi',
+                    'name' => 'program_studi',
                 ],
                 [
-                    'title' => 'Angkatan',
-                    'data' => 'angkatan',
-                    'name' => 'angkatan',
+                    'title' => 'User',
+                    'data' => 'user_info',
+                    'name' => 'user_info',
                 ],
                 [
                     'title' => 'Actions',

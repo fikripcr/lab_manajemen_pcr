@@ -283,6 +283,96 @@ return new class extends Migration
 
             $table->foreign('dokapproval_id')->references('dokapproval_id')->on('pemutu_dok_approval')->cascadeOnDelete();
         });
+
+        // ---------------------------------------------------------------------
+        // Consolidated from: 2026_02_14_000001_create_pemutu_periode_spmi_table
+        // ---------------------------------------------------------------------
+        Schema::create('pemutu_periode_spmi', function (Blueprint $table) {
+            $table->id('periodespmi_id');
+            $table->integer('periode');
+            $table->string('jenis_periode', 20);
+
+            // Penetapan
+            $table->date('penetapan_awal')->nullable();
+            $table->date('penetapan_akhir')->nullable();
+
+            // Pelaksanaan (ED)
+            $table->date('ed_awal')->nullable();
+            $table->date('ed_akhir')->nullable();
+
+            // Evaluasi (AMI)
+            $table->date('ami_awal')->nullable();
+            $table->date('ami_akhir')->nullable();
+
+            // Pengendalian
+            $table->date('pengendalian_awal')->nullable();
+            $table->date('pengendalian_akhir')->nullable();
+
+            // Peningkatan
+            $table->date('peningkatan_awal')->nullable();
+            $table->date('peningkatan_akhir')->nullable();
+
+            $table->timestamps();
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+        });
+
+        // ---------------------------------------------------------------------
+        // Consolidated from: 2026_02_14_170800_create_rapats_table
+        // ---------------------------------------------------------------------
+
+        // 1. Main Table: pemutu_rapat
+        Schema::create('pemutu_rapat', function (Blueprint $table) {
+            $table->id('rapat_id');
+            $table->string('jenis_rapat', 20);
+            $table->string('judul_kegiatan', 100);
+            $table->date('tgl_rapat');
+            $table->time('waktu_mulai');
+            $table->time('waktu_selesai');
+            $table->string('tempat_rapat', 200);
+            $table->foreignId('ketua_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('notulen_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('author_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // 2. Child Table: pemutu_rapat_agenda
+        Schema::create('pemutu_rapat_agenda', function (Blueprint $table) {
+            $table->id('rapatagenda_id');
+            $table->foreignId('rapat_id')->constrained('pemutu_rapat', 'rapat_id')->onDelete('cascade');
+            $table->string('judul_agenda', 250);
+            $table->text('isi');
+            $table->integer('seq');
+            $table->timestamps();
+        });
+
+        // 3. Child Table: pemutu_rapat_peserta
+        Schema::create('pemutu_rapat_peserta', function (Blueprint $table) {
+            $table->id('rapatpeserta_id');
+            $table->foreignId('rapat_id')->constrained('pemutu_rapat', 'rapat_id')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('jabatan', 100);
+            $table->timestamps();
+        });
+
+        // 4. Child Table: pemutu_rapat_entitas
+        Schema::create('pemutu_rapat_entitas', function (Blueprint $table) {
+            $table->id('rapatentitas_id');
+            $table->foreignId('rapat_id')->constrained('pemutu_rapat', 'rapat_id')->onDelete('cascade');
+            $table->string('model', 50);
+            $table->unsignedBigInteger('model_id');
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
+        });
     }
 
     public function down(): void
@@ -290,6 +380,13 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('pemutu_dok_approval_status');
         Schema::dropIfExists('pemutu_dok_approval');
+
+        Schema::dropIfExists('pemutu_rapat_entitas');
+        Schema::dropIfExists('pemutu_rapat_peserta');
+        Schema::dropIfExists('pemutu_rapat_agenda');
+        Schema::dropIfExists('pemutu_rapat');
+        Schema::dropIfExists('pemutu_periode_spmi');
+
         Schema::dropIfExists('pemutu_indikator_personil');
         Schema::dropIfExists('pemutu_indikator_orgunit');
         Schema::dropIfExists('pemutu_indikator_label');

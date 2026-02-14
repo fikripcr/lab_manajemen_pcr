@@ -28,32 +28,16 @@
                         <div class="card-body">
                             
                             <div class="mb-3">
-                                <label class="form-label required">Lab</label>
-                                <select id="select-lab" name="lab_id" class="form-select select2" required>
-                                    <option value="">Pilih Lab</option>
-                                    @foreach($labs as $lab)
-                                        <option value="{{ encryptId($lab->lab_id) }}">{{ $lab->name }}</option>
-                                    @endforeach
-                                </select>
+                                <x-tabler.form-select id="select-lab" name="lab_id" label="Lab" :options="$labs->mapWithKeys(fn($lab) => [encryptId($lab->lab_id) => $lab->name])->toArray()" placeholder="Pilih Lab" required class="select2" />
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label required">Inventaris / Alat</label>
-                                <select id="select-inventaris" name="inventaris_id" class="form-select select2" required disabled>
-                                    <option value="">Pilih Lab Terlebih Dahulu</option>
-                                </select>
-                                <small class="form-hint">Pilih alat yang rusak. Jika fasilitas umum (AC, Pintu), pilih item terkait jika ada.</small>
+                                <x-tabler.form-select id="select-inventaris" name="inventaris_id" label="Inventaris / Alat" :options="[]" placeholder="Pilih Lab Terlebih Dahulu" required disabled class="select2" help="Pilih alat yang rusak. Jika fasilitas umum (AC, Pintu), pilih item terkait jika ada." />
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label required">Deskripsi Kerusakan</label>
-                                <textarea name="deskripsi_kerusakan" class="form-control" rows="4" placeholder="Jelaskan detail kerusakan..." required></textarea>
-                            </div>
+                            <x-tabler.form-textarea name="deskripsi_kerusakan" label="Deskripsi Kerusakan" rows="4" placeholder="Jelaskan detail kerusakan..." required />
 
-                            <div class="mb-3">
-                                <label class="form-label">Bukti Foto</label>
-                                <input type="file" name="bukti_foto" class="form-control" accept="image/*">
-                            </div>
+                            <x-tabler.form-input type="file" name="bukti_foto" label="Bukti Foto" accept="image/*" />
 
                         </div>
                         <div class="card-footer text-end">

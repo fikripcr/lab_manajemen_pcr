@@ -18,13 +18,15 @@
         <form action="{{ route('login') }}" method="POST" autocomplete="off" novalidate>
             @csrf
 
-            <div class="mb-3">
-                <label class="form-label">Email address</label>
-                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="your@email.com" autocomplete="off" value="{{ old('email', 'user1@contoh-lab.ac.id') }}">
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input 
+                name="email" 
+                label="Email address" 
+                type="email" 
+                value="{{ old('email', 'user1@contoh-lab.ac.id') }}" 
+                placeholder="your@email.com" 
+                required="true" 
+                autofocus
+            />
 
             <div class="mb-2">
                 <label class="form-label">

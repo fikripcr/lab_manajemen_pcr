@@ -8,25 +8,9 @@
         <div class="modal-body">
             <x-tabler.flash-message />
             
-            <div class="mb-3">
-                <label class="form-label required" for="name">Full Name</label>
-                <input type="text" class="form-control @error('name') is-invalid @enderror"
-                       id="name" name="name" value="{{ old('name') }}"
-                       placeholder="John Doe" required>
-                @error('name')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input name="name" label="Full Name" placeholder="John Doe" required />
 
-            <div class="mb-3">
-                <label class="form-label required" for="email">Email</label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror"
-                       id="email" name="email" value="{{ old('email') }}"
-                       placeholder="john@example.com" required>
-                @error('email')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input type="email" name="email" label="Email" placeholder="john@example.com" required />
 
             <div class="mb-3">
                 <label class="form-label required" for="password">Password</label>
@@ -53,11 +37,13 @@
 
             <div class="mb-3">
                 <label class="form-label required" for="role">Role(s)</label>
-                <x-form.select2 
+                <x-tabler.form-select 
                     id="role" 
                     name="role" 
+                    label="Role(s)"
                     placeholder="Select roles..." 
-                    multiple="true" 
+                    multiple
+                    type="select2"
                     :options="$roles->pluck('name', 'name')->toArray()"
                     :selected="old('role', [])" 
                     required="true"
@@ -67,24 +53,9 @@
                 @enderror
             </div>
 
-            <div class="mb-3">
-                <label class="form-label" for="expired_at">Expiration Date (Optional)</label>
-                <input type="date" class="form-control @error('expired_at') is-invalid @enderror"
-                       id="expired_at" name="expired_at" value="{{ old('expired_at') }}">
-                <div class="form-text">Leave empty for no expiration.</div>
-                @error('expired_at')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input type="date" name="expired_at" label="Expiration Date (Optional)" help="Leave empty for no expiration." />
 
-            <div class="mb-3">
-                <label class="form-label" for="avatar">Avatar (Optional)</label>
-                <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/gif">
-                <div class="form-hint">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.</div>
-                @error('avatar')
-                <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
+            <x-tabler.form-input type="file" name="avatar" label="Avatar (Optional)" accept="image/png, image/jpeg, image/gif" help="Allowed formats: jpeg, png, jpg, gif. Max size: 2MB." />
         </div>
         <div class="modal-footer">
             <x-tabler.button type="cancel" data-bs-dismiss="modal" />
@@ -156,24 +127,14 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="name">Full Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                           id="name" name="name" value="{{ old('name') }}"
-                                           placeholder="John Doe" required>
-                                    @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-input name="name" placeholder="John Doe" required class="mb-0" />
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="email">Email</label>
                                 <div class="col-sm-10">
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                           id="email" name="email" value="{{ old('email') }}"
-                                           placeholder="john@example.com" required>
-                                    @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-input type="email" name="email" placeholder="john@example.com" required class="mb-0" />
                                 </div>
                             </div>
 
@@ -207,11 +168,12 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label required" for="role">Role(s)</label>
                                 <div class="col-sm-10">
-                                    <x-form.select2 
+                                    <x-tabler.form-select 
                                         id="role" 
                                         name="role" 
                                         placeholder="Select roles..." 
-                                        multiple="true" 
+                                        multiple
+                                        type="select2"
                                         :options="$roles->pluck('name', 'name')->toArray()"
                                         :selected="old('role', [])" 
                                         required="true"
@@ -225,23 +187,14 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label" for="expired_at">Expiration Date (Optional)</label>
                                 <div class="col-sm-10">
-                                    <input type="date" class="form-control @error('expired_at') is-invalid @enderror"
-                                           id="expired_at" name="expired_at" value="{{ old('expired_at') }}">
-                                    <div class="form-text">Leave empty for no expiration.</div>
-                                    @error('expired_at')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-input type="date" name="expired_at" help="Leave empty for no expiration." class="mb-0" />
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label" for="avatar_full">Avatar (Optional)</label>
                                 <div class="col-sm-10">
-                                    <input type="file" id="avatar_full" name="avatar" accept="image/png, image/jpeg, image/gif">
-                                    <div class="form-hint">Allowed formats: jpeg, png, jpg, gif. Max size: 2MB.</div>
-                                    @error('avatar')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
+                                    <x-tabler.form-input type="file" id="avatar_full" name="avatar" accept="image/png, image/jpeg, image/gif" help="Allowed formats: jpeg, png, jpg, gif. Max size: 2MB." class="mb-0" />
                                 </div>
                             </div>
 

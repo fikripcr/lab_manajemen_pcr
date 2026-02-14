@@ -20,96 +20,52 @@
                         @method('PUT')
 
                         <div class="row mb-3">
-                            <label for="semester_id" class="col-sm-3 col-form-label required">Semester</label>
+                            <label class="col-sm-3 col-form-label required" for="semester_id">Semester</label>
                             <div class="col-sm-9">
-                                    @endforeach
-                                </select>
-                                @error('semester_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-select name="semester_id" :options="$semesters->mapWithKeys(fn($s) => [$s->semester_id => $s->tahun_ajaran . ' - ' . ($s->semester == 1 ? 'Ganjil' : 'Genap')])->toArray()" selected="{{ old('semester_id', $jadwal->semester_id) }}" placeholder="Pilih Semester" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="mata_kuliah_id" class="col-sm-3 col-form-label required">Mata Kuliah</label>
+                            <label class="col-sm-3 col-form-label required" for="mata_kuliah_id">Mata Kuliah</label>
                             <div class="col-sm-9">
-                                <select class="form-select @error('mata_kuliah_id') is-invalid @enderror" id="mata_kuliah_id" name="mata_kuliah_id" required>
-                                    <option value="">Pilih Mata Kuliah</option>
-                                    @foreach($mataKuliahs as $mataKuliah)
-                                        <option value="{{ $mataKuliah->id }}" {{ old('mata_kuliah_id', $jadwal->mata_kuliah_id) == $mataKuliah->id ? 'selected' : '' }}>
-                                            {{ $mataKuliah->kode_mk }} - {{ $mataKuliah->nama_mk }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('mata_kuliah_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-select name="mata_kuliah_id" :options="$mataKuliahs->mapWithKeys(fn($mk) => [$mk->id => $mk->kode_mk . ' - ' . $mk->nama_mk])->toArray()" selected="{{ old('mata_kuliah_id', $jadwal->mata_kuliah_id) }}" placeholder="Pilih Mata Kuliah" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="dosen_id" class="col-sm-3 col-form-label required">Dosen</label>
+                            <label class="col-sm-3 col-form-label required" for="dosen_id">Dosen</label>
                             <div class="col-sm-9">
-                                <select class="form-select @error('dosen_id') is-invalid @enderror" id="dosen_id" name="dosen_id" required>
-                                    <option value="">Pilih Dosen</option>
-                                    @foreach($dosens as $dosen)
-                                        <option value="{{ $dosen->id }}" {{ old('dosen_id', $jadwal->dosen_id) == $dosen->id ? 'selected' : '' }}>
-                                            {{ $dosen->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('dosen_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-select name="dosen_id" :options="$dosens->pluck('name', 'id')->toArray()" selected="{{ old('dosen_id', $jadwal->dosen_id) }}" placeholder="Pilih Dosen" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="lab_id" class="col-sm-3 col-form-label required">Lab</label>
+                            <label class="col-sm-3 col-form-label required" for="lab_id">Lab</label>
                             <div class="col-sm-9">
-                                <select class="form-select @error('lab_id') is-invalid @enderror" id="lab_id" name="lab_id" required>
-                                    <option value="">Pilih Lab</option>
-                                    @foreach($labs as $lab)
-                                        <option value="{{ $lab->lab_id }}" {{ old('lab_id', $jadwal->lab_id) == $lab->lab_id ? 'selected' : '' }}>
-                                            {{ $lab->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('lab_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-select name="lab_id" :options="$labs->pluck('name', 'lab_id')->toArray()" selected="{{ old('lab_id', $jadwal->lab_id) }}" placeholder="Pilih Lab" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="hari" class="col-sm-3 col-form-label required">Hari</label>
+                            <label class="col-sm-3 col-form-label required" for="hari">Hari</label>
                             <div class="col-sm-9">
-                                <select class="form-select @error('hari') is-invalid @enderror" id="hari" name="hari" required>
-                                    <option value="">Pilih Hari</option>
-                                    @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $h)
-                                        <option value="{{ $h }}" {{ old('hari', $jadwal->hari) == $h ? 'selected' : '' }}>{{ $h }}</option>
-                                    @endforeach
-                                </select>
-                                @error('hari')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-select name="hari" :options="array_combine(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'], ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'])" selected="{{ old('hari', $jadwal->hari) }}" placeholder="Pilih Hari" required class="mb-0" />
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="jam_mulai" class="col-sm-3 col-form-label required">Waktu</label>
+                            <label class="col-sm-3 col-form-label required">Waktu</label>
                             <div class="col-sm-9">
                                 <div class="row g-2">
                                     <div class="col-auto">
-                                        <input type="time" class="form-control @error('jam_mulai') is-invalid @enderror" id="jam_mulai" name="jam_mulai" value="{{ old('jam_mulai', $jadwal->jam_mulai) }}" required>
+                                        <x-tabler.form-input type="time" name="jam_mulai" value="{{ old('jam_mulai', $jadwal->jam_mulai) }}" required class="mb-0" />
                                     </div>
                                     <div class="col-auto pt-2">sampai</div>
                                     <div class="col-auto">
-                                        <input type="time" class="form-control @error('jam_selesai') is-invalid @enderror" id="jam_selesai" name="jam_selesai" value="{{ old('jam_selesai', $jadwal->jam_selesai) }}" required>
+                                        <x-tabler.form-input type="time" name="jam_selesai" value="{{ old('jam_selesai', $jadwal->jam_selesai) }}" required class="mb-0" />
                                     </div>
                                 </div>
-                                @error('jam_mulai') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                                @error('jam_selesai') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>
                         </div>
 

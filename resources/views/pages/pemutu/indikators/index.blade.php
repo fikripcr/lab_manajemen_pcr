@@ -24,7 +24,7 @@
             <div>
                 <x-tabler.datatable-filter :dataTableId="'indikator-table'">
                     <div>
-                        <x-form.select2 name="dokumen_id" placeholder="Filter Dokumen" :options="$dokumens" />
+                        <x-tabler.form-select name="dokumen_id" placeholder="Filter Dokumen" :options="$dokumens" type="select2" />
                     </div>
                 </x-tabler.datatable-filter>
             </div>
