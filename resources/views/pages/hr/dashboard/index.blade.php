@@ -325,7 +325,7 @@
                                 <i class="ti ti-clock me-2"></i>
                                 Ajukan Lembur
                             </a>
-                            <a href="{{ route('hr.reports.index') }}" class="btn btn-outline-secondary">
+                            <a href="" class="btn btn-outline-secondary">
                                 <i class="ti ti-chart-bar me-2"></i>
                                 Laporan HR
                             </a>

@@ -1,8 +1,11 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Pengembangan Diri</h3>
-    <a href="#" class="btn btn-primary ajax-modal-btn" data-url="{{ route('hr.pegawai.pengembangan.create', $pegawai->encrypted_pegawai_id) }}" data-modal-title="Tambah Pengembangan Diri">
-        <i class="ti ti-plus me-1"></i> Tambah Kegiatan
-    </a>
+    <x-tabler.button 
+        icon="ti ti-plus" 
+        modal-url="{{ route('hr.pegawai.pengembangan.create', $pegawai->encrypted_pegawai_id) }}" 
+        modal-title="Tambah Pengembangan Diri">
+        Tambah Kegiatan
+    </x-tabler.button>
 </div>
 <div class="card">
     <div class="table-responsive">
@@ -32,12 +35,18 @@
                         @endif
                     </td>
                     <td class="text-end">
-                        <a href="#" class="btn btn-sm btn-ghost-primary ajax-modal-btn" data-url="{{ route('hr.pegawai.pengembangan.edit', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}" data-modal-title="Edit Pengembangan Diri">
-                            <i class="ti ti-edit"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-ghost-danger ajax-delete" data-url="{{ route('hr.pegawai.pengembangan.destroy', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}">
-                            <i class="ti ti-trash"></i>
-                        </button>
+                        <x-tabler.button 
+                            class="btn-sm btn-ghost-primary" 
+                            icon="ti ti-edit" 
+                            modal-url="{{ route('hr.pegawai.pengembangan.edit', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}" 
+                            modal-title="Edit Pengembangan Diri"
+                        />
+                        <x-tabler.button 
+                            type="button" 
+                            class="btn-sm btn-ghost-danger ajax-delete" 
+                            icon="ti ti-trash" 
+                            data-url="{{ route('hr.pegawai.pengembangan.destroy', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}"
+                        />
                     </td>
                 </tr>
                 @empty

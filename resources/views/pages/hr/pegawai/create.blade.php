@@ -97,10 +97,8 @@
             </div>
         </div>
         <div class="card-footer text-end">
-            <a href="{{ route('hr.pegawai.index') }}" class="btn btn-link">Kembali</a>
-            <button type="submit" class="btn btn-primary">
-                <i class="ti ti-device-floppy me-1"></i> Simpan Pegawai
-            </button>
+            <x-tabler.button href="{{ route('hr.pegawai.index') }}" class="btn-link">Kembali</x-tabler.button>
+            <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy">Simpan Pegawai</x-tabler.button>
         </div>
     </div>
 </form>

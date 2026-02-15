@@ -6,7 +6,13 @@ use App\Events\Hr\ApprovalRequested;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
+use App\Models\Hr\RiwayatInpassing;
+use App\Models\Hr\RiwayatJabFungsional;
+use App\Models\Hr\RiwayatJabStruktural;
+use App\Models\Hr\RiwayatPendidikan;
 use App\Models\Hr\RiwayatPenugasan;
+use App\Models\Hr\RiwayatStatAktifitas;
+use App\Models\Hr\RiwayatStatPegawai;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -100,12 +106,12 @@ class PegawaiService
 
             // Add before_id logic for models that support it
             if (in_array($modelClass, [
-                \App\Models\Hr\RiwayatInpassing::class,
-                \App\Models\Hr\RiwayatStatPegawai::class,
-                \App\Models\Hr\RiwayatStatAktifitas::class,
-                \App\Models\Hr\RiwayatJabFungsional::class,
-                \App\Models\Hr\RiwayatJabStruktural::class,
-                \App\Models\Hr\RiwayatPendidikan::class,
+                RiwayatInpassing::class,
+                RiwayatStatPegawai::class,
+                RiwayatStatAktifitas::class,
+                RiwayatJabFungsional::class,
+                RiwayatJabStruktural::class,
+                RiwayatPendidikan::class,
             ])) {
                 $headerColumnMap = [
                     RiwayatInpassing::class     => 'latest_riwayatinpassing_id',

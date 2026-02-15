@@ -3,14 +3,12 @@
 @section('header')
 <x-tabler.page-header title="Data Pegawai" pretitle="Manajemen Data Pegawai">
     <x-slot:actions>
-        <a href="{{ route('hr.pegawai.upload-photo') }}" class="btn btn-outline-primary d-none d-sm-inline-block me-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M4 13h3"/><path d="M4 17h5"/><path d="M21 4v6"/><path d="M18 4v2"/></svg>
+        <x-tabler.button href="{{ route('hr.pegawai.upload-photo') }}" class="btn-outline-primary d-none d-sm-inline-block me-2" icon="ti ti-upload">
             Upload Foto Pegawai
-        </a>
-        <a href="{{ route('hr.pegawai.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+        </x-tabler.button>
+        <x-tabler.button href="{{ route('hr.pegawai.create') }}" class="btn-primary d-none d-sm-inline-block" icon="ti ti-plus">
             Tambah Pegawai
-        </a>
+        </x-tabler.button>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

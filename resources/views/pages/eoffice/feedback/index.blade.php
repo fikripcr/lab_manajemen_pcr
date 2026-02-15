@@ -27,9 +27,9 @@
                 <x-tabler.form-input type="date" name="f_tgl_end" label="Tanggal Akhir" />
             </div>
             <div class="col-md-3">
-                <button type="button" class="btn btn-primary w-100" id="btn-filter">
-                    <i class="ti ti-filter"></i> Filter
-                </button>
+                <x-tabler.button type="button" class="btn-primary w-100" id="btn-filter" icon="ti ti-filter">
+                    Filter
+                </x-tabler.button>
             </div>
         </div>
     </div>

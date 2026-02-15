@@ -233,7 +233,7 @@
                 //     'icon' => 'ti ti-target',
                 // ],
                 [
-                    'title' => 'Indikator (Semua Tipe)',
+                    'title' => 'Indikator',
                     'route' => 'pemutu.indikators.index',
                     'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
                     'icon' => 'ti ti-target',
@@ -259,12 +259,6 @@
             'icon'          => 'ti ti-briefcase',
             'active_routes' => ['hr.*'],
             'children'      => [
-                [
-                    'title'         => 'Dashboard',
-                    'route'         => 'hr.dashboard',
-                    'active_routes' => ['hr.dashboard'],
-                    'icon'          => 'ti ti-layout-dashboard',
-                ],
                 [
                     'title'         => 'Data Pegawai',
                     'route'         => 'hr.pegawai.index',
@@ -338,12 +332,6 @@
             'icon'          => 'ti ti-mail-opened',
             'active_routes' => ['eoffice.*'],
             'children'      => [
-                [
-                    'title'         => 'Dashboard',
-                    'route'         => 'eoffice.dashboard',
-                    'active_routes' => ['eoffice.dashboard'],
-                    'icon'          => 'ti ti-layout-dashboard',
-                ],
                 [
                     'title'         => 'Layanan Saya',
                     'route'         => 'eoffice.layanan.index',

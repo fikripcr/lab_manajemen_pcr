@@ -274,22 +274,18 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ route('eoffice.layanan.services') }}" class="btn btn-primary">
-                        <i class="ti ti-plus me-2"></i>
+                    <x-tabler.button href="{{ route('eoffice.layanan.services') }}" class="btn-primary" icon="ti ti-plus">
                         Buat Layanan Baru
-                    </a>
-                    <a href="{{ route('eoffice.layanan.index') }}" class="btn btn-secondary">
-                        <i class="ti ti-list me-2"></i>
+                    </x-tabler.button>
+                    <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-secondary" icon="ti ti-list">
                         Daftar Layanan
-                    </a>
-                    <a href="#" class="btn btn-outline-secondary disabled">
-                        <i class="ti ti-chart-bar me-2"></i>
+                    </x-tabler.button>
+                    <x-tabler.button href="#" class="btn-outline-secondary disabled" icon="ti ti-chart-bar">
                         Laporan (Coming Soon)
-                    </a>
-                    <a href="#" class="btn btn-outline-secondary disabled">
-                        <i class="ti ti-settings me-2"></i>
+                    </x-tabler.button>
+                    <x-tabler.button href="#" class="btn-outline-secondary disabled" icon="ti ti-settings">
                         Pengaturan (Coming Soon)
-                    </a>
+                    </x-tabler.button>
                 </div>
             </div>
         </div>

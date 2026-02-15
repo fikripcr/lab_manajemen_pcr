@@ -32,4 +32,5 @@ class LayananIsian extends Model
     {
         return $this->belongsTo(Layanan::class, 'layanan_id', 'layanan_id');
     }
+
 }

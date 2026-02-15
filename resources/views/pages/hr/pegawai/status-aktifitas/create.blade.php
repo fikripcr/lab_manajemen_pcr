@@ -21,11 +21,6 @@
                 <label class="form-label required">TMT (Terhitung Mulai Tanggal)</label>
                 <input type="date" class="form-control" name="tmt" required>
             </div>
-
-            <div class="col-md-6 mb-3">
-                <label class="form-label">No SK</label>
-                <input type="text" class="form-control" name="no_sk">
-            </div>
             
             <div class="col-md-12 mb-3">
                 <label class="form-label">Keterangan</label>
@@ -34,7 +29,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-        <button type="submit" class="btn btn-primary">Ajukan Perubahan</button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+        <x-tabler.button type="submit" class="btn-primary">Ajukan Perubahan</x-tabler.button>
     </div>
 </form>

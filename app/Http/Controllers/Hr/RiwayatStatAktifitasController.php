@@ -2,9 +2,14 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\RiwayatStatAktifitasRequest;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\RiwayatStatAktifitas;
 use App\Models\Hr\StatusAktifitas;
 use App\Services\Hr\PegawaiService;
+use Carbon\Carbon;
+use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatStatAktifitasController extends Controller
 {

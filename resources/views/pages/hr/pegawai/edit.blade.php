@@ -104,8 +104,8 @@
 
         </div>
         <div class="card-footer text-end">
-            <a href="{{ route('hr.pegawai.show', $pegawai->pegawai_id) }}" class="btn btn-link">Batal</a>
-            <button type="submit" class="btn btn-primary">Ajukan Perubahan</button>
+            <x-tabler.button href="{{ route('hr.pegawai.show', $pegawai->pegawai_id) }}" class="btn-link">Batal</x-tabler.button>
+            <x-tabler.button type="submit" class="btn-primary">Ajukan Perubahan</x-tabler.button>
         </div>
     </div>
 </form>

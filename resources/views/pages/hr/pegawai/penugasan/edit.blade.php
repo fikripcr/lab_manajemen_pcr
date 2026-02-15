@@ -47,7 +47,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-        <button type="submit" class="btn btn-primary">Update</button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+        <x-tabler.button type="submit" class="btn-primary">Update</x-tabler.button>
     </div>
 </form>

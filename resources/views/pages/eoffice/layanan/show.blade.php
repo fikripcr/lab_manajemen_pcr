@@ -4,9 +4,9 @@
 <x-tabler.page-header title="{{ $layanan->no_layanan }}" pretitle="{{ $layanan->jenisLayanan->nama_layanan }}">
     <x-slot:actions>
         <div class="btn-list">
-            <a href="{{ route('eoffice.layanan.index') }}" class="btn btn-link link-secondary">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
+            <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-link link-secondary" icon="ti ti-arrow-left">
+                Kembali
+            </x-tabler.button>
             <div class="dropdown">
                 <button type="button" class="btn btn-ghost-secondary dropdown-toggle" data-bs-toggle="dropdown">Action</button>
                 <div class="dropdown-menu dropdown-menu-end">
@@ -100,9 +100,7 @@
                     <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
                     <div class="input-group">
                         <textarea name="pesan" class="form-control" rows="1" placeholder="Ketik pesan..." required></textarea>
-                        <button type="submit" class="btn btn-primary btn-icon" title="Kirim">
-                            <i class="ti ti-send"></i>
-                        </button>
+                        <x-tabler.button type="submit" class="btn-primary btn-icon" title="Kirim" icon="ti ti-send" />
                     </div>
                     <div class="mt-2">
                         <x-tabler.form-input type="file" name="file_lampiran" class="form-control-sm" label="Lampiran (PDF/IMG)" />
@@ -136,9 +134,9 @@
                                     <label class="form-label text-muted small uppercase fw-bold">{{ $field->nama_isian }}</label>
                                     <div class="form-control-plaintext">
                                         @if(str_contains($field->isi, 'eoffice/requests/'))
-                                            <a href="{{ Storage::url($field->isi) }}" target="_blank" class="btn btn-sm btn-outline-info">
-                                                <i class="ti ti-download"></i> Unduh Berkas
-                                            </a>
+                                            <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-outline-info" icon="ti ti-download">
+                                                Unduh Berkas
+                                            </x-tabler.button>
                                         @else
                                             {!! nl2br(e($field->isi)) ?? '-' !!}
                                         @endif
@@ -161,9 +159,9 @@
                                         <div class="datagrid-title">{{ $field->nama_isian }}</div>
                                         <div class="datagrid-content">
                                             @if(str_contains($field->isi, 'eoffice/requests/'))
-                                                <a href="{{ Storage::url($field->isi) }}" target="_blank" class="btn btn-sm btn-pill btn-ghost-info">
-                                                    <i class="ti ti-file"></i> Berkas
-                                                </a>
+                                                <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-pill btn-ghost-info" icon="ti ti-file">
+                                                    Berkas
+                                                </x-tabler.button>
                                             @else
                                                 {{ $field->isi ?? '-' }}
                                             @endif
@@ -212,9 +210,9 @@
                     <div class="row g-2">
                         @if($layanan->latestStatus->status_layanan === 'Diajukan')
                             <div class="col-12">
-                                <a href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'proses']) }}" class="btn btn-primary w-100">
-                                    <i class="ti ti-player-play"></i> Terima & Proses
-                                </a>
+                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'proses']) }}" class="btn-primary w-100" icon="ti ti-player-play">
+                                    Terima & Proses
+                                </x-tabler.button>
                             </div>
                         @else
                             {{-- Unified form for status updates --}}
@@ -282,16 +280,16 @@
                                 <x-tabler.form-input type="file" name="file_lampiran" label="File Output / Lampiran" />
 
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-primary w-100">Kirim Perubahan Status</button>
+                                    <x-tabler.button type="submit" class="btn-primary w-100">Kirim Perubahan Status</x-tabler.button>
                                 </div>
                             </form>
                         @endif
 
                         @if($layanan->latestStatus->status_layanan !== 'Diajukan')
                             <div class="col-12 mt-2">
-                                <a href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'batal']) }}" class="btn btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan.">
-                                    <i class="ti ti-history"></i> Batal Proses
-                                </a>
+                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'batal']) }}" class="btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan." icon="ti ti-history">
+                                    Batal Proses
+                                </x-tabler.button>
                             </div>
                         @endif
                     </div>

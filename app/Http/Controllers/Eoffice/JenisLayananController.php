@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Eoffice;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Eoffice\JenisLayananIsianStoreRequest;
+use App\Http\Requests\Eoffice\JenisLayananPicStoreRequest;
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\JenisLayananIsian;
 use App\Models\Eoffice\JenisLayananPic;

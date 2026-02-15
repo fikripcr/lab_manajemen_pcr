@@ -89,8 +89,8 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::post('status-pegawai/change', [RiwayatStatPegawaiController::class, 'store'])->name('status-pegawai.store');
 
         // Status Aktifitas
-        Route::get('status-aktifitas', [\App\Http\Controllers\Hr\RiwayatStatAktifitasController::class, 'index'])->name('status-aktifitas.index');
-        Route::get('status-aktifitas/change', [\App\Http\Controllers\Hr\RiwayatStatAktifitasController::class, 'create'])->name('status-aktifitas.create');
+        Route::get('status-aktifitas', [RiwayatStatAktifitasController::class, 'index'])->name('status-aktifitas.index');
+        Route::get('status-aktifitas/change', [RiwayatStatAktifitasController::class, 'create'])->name('status-aktifitas.create');
         Route::post('status-aktifitas/change', [RiwayatStatAktifitasController::class, 'store'])->name('status-aktifitas.store');
 
         // Jabatan Fungsional

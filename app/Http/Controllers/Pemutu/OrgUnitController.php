@@ -128,7 +128,7 @@ class OrgUnitController extends Controller
         $parentId = $request->query('parent_id');
         $parent   = $parentId ? $this->OrgUnitService->getOrgUnitById($parentId) : null;
 
-        $units = $this->OrgUnitService->getHierarchicalList();
+        $units = collect($this->OrgUnitService->getHierarchicalList());
 
         // Auto-suggest seq via service (helper or directly in logic?)
         // Controller logic handles suggestion for view.

@@ -1,9 +1,12 @@
 <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
     <h3>Riwayat Jabatan Fungsional</h3>
-    <a href="#" class="btn btn-primary btn-sm ajax-modal-btn" data-url="{{ route('hr.pegawai.jabatan-fungsional.create', $pegawai->encrypted_pegawai_id) }}" data-modal-title="Ubah Jabatan Fungsional">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+    <x-tabler.button 
+        class="btn-sm" 
+        icon="ti ti-edit" 
+        modal-url="{{ route('hr.pegawai.jabatan-fungsional.create', $pegawai->encrypted_pegawai_id) }}" 
+        modal-title="Ubah Jabatan Fungsional">
         Ubah Jafung
-    </a>
+    </x-tabler.button>
 </div>
 <div class="card mb-3">
     <div class="table-responsive">

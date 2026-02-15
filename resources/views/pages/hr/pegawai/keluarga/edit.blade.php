@@ -55,9 +55,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-        <button type="submit" class="btn btn-primary">
-            <i class="ti ti-device-floppy me-1"></i> Simpan Perubahan
-        </button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy">Simpan Perubahan</x-tabler.button>
     </div>
 </form>

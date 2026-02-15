@@ -2,10 +2,9 @@
     <div class="card-header">
         <h3 class="card-title">Daftar File Pegawai</h3>
         <div class="card-actions">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg>
-                Unggah File
-            </button>
+        <x-tabler.button class="btn-primary" icon="ti ti-upload" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
+            Unggah File
+        </x-tabler.button>
         </div>
     </div>
     <div class="card-body">
@@ -58,8 +57,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Unggah Sekarang</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary">Unggah Sekarang</x-tabler.button>
                 </div>
             </form>
         </div>

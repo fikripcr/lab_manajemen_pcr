@@ -17,9 +17,9 @@
             <div class="card-header">
                 <h3 class="card-title">Manajemen PIC (Petugas)</h3>
                 <div class="card-actions">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-pic">
-                        <i class="ti ti-plus"></i> Tambah PIC
-                    </button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-pic" icon="ti ti-plus">
+                        Tambah PIC
+                    </x-tabler.button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -43,11 +43,9 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" 
+                                    <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
                                         data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->hashid) }}" 
-                                        data-title="Hapus PIC?" data-text="Pegawai ini tidak lagi menjadi PIC untuk layanan ini.">
-                                        <i class="ti ti-trash"></i>
-                                    </button>
+                                        data-title="Hapus PIC?" data-text="Pegawai ini tidak lagi menjadi PIC untuk layanan ini." icon="ti ti-trash" />
                                 </td>
                             </tr>
                         @empty
@@ -67,9 +65,9 @@
             <div class="card-header">
                 <h3 class="card-title">Form Isian (Fields)</h3>
                 <div class="card-actions">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-isian">
-                        <i class="ti ti-plus"></i> Tambah Field
-                    </button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-isian" icon="ti ti-plus">
+                        Tambah Field
+                    </x-tabler.button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -89,8 +87,8 @@
                             <tr data-id="{{ $isian->hashid }}">
                                 <td class="handle cursor-move"><i class="ti ti-drag-drop text-muted"></i></td>
                                 <td>
-                                    <div class="fw-bold">{{ $isian->kategori->nama_isian }}</div>
-                                    <div class="text-muted small">{{ jenisIsian($isian->kategori->type) }}</div>
+                                    <div class="fw-bold">{{ $isian->nama_isian }}</div>
+                                    <div class="text-muted small">{{ jenisIsian($isian->type) }}</div>
                                 </td>
                                 <td>
                                     <select class="form-select form-select-sm isian-toggle" data-field="fill_by">
@@ -112,17 +110,11 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-icon btn-ghost-primary edit-rule" title="Set Rule Validasi">
-                                            <i class="ti ti-shield-check"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-ghost-info edit-info" title="Set Info Tambahan">
-                                            <i class="ti ti-info-circle"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" 
+                                        <x-tabler.button type="button" class="btn-icon btn-ghost-primary edit-rule" title="Set Rule Validasi" icon="ti ti-shield-check" />
+                                        <x-tabler.button type="button" class="btn-icon btn-ghost-info edit-info" title="Set Info Tambahan" icon="ti ti-info-circle" />
+                                        <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
                                             data-url="{{ route('eoffice.jenis-layanan.destroy-isian', $isian->hashid) }}" 
-                                            data-title="Hapus Field?" data-text="Field ini akan dihapus dari form layanan.">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                            data-title="Hapus Field?" data-text="Field ini akan dihapus dari form layanan." icon="ti ti-trash" />
                                     </div>
                                     <input type="hidden" class="isian-rule" value="{{ $isian->rule }}">
                                     <input type="hidden" class="isian-info" value="{{ $isian->info_tambahan }}">
@@ -145,9 +137,9 @@
             <div class="card-header">
                 <h3 class="card-title">Alur Disposisi</h3>
                 <div class="card-actions">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-disposisi">
-                        <i class="ti ti-plus"></i> Tambah Disposisi
-                    </button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-disposisi" icon="ti ti-plus">
+                        Tambah Disposisi
+                    </x-tabler.button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -180,14 +172,10 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-icon btn-ghost-primary edit-disposisi" title="Edit Detail Info">
-                                            <i class="ti ti-pencil"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete"
+                                        <x-tabler.button type="button" class="btn-icon btn-ghost-primary edit-disposisi" title="Edit Detail Info" icon="ti ti-pencil" />
+                                        <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
                                             data-url="{{ route('eoffice.jenis-layanan.disposisi.destroy', [$layanan->jenislayanan_id, $d->jldisposisi_id]) }}"
-                                            data-title="Hapus Disposisi?" data-text="Disposisi akan dihapus dan urutan otomatis disesuaikan.">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                            data-title="Hapus Disposisi?" data-text="Disposisi akan dihapus dan urutan otomatis disesuaikan." icon="ti ti-trash" />
                                     </div>
                                 </td>
                             </tr>
@@ -208,9 +196,9 @@
             <div class="card-header">
                 <h3 class="card-title">Periode Pengajuan</h3>
                 <div class="card-actions">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-periode">
-                        <i class="ti ti-plus"></i> Tambah Periode
-                    </button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-periode" icon="ti ti-plus">
+                        Tambah Periode
+                    </x-tabler.button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -240,11 +228,9 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete"
+                                    <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
                                         data-url="{{ route('eoffice.jenis-layanan.periode.destroy', [$layanan->hashid, $p->hashid]) }}"
-                                        data-title="Hapus Periode?" data-text="Periode ini akan dihapus.">
-                                        <i class="ti ti-trash"></i>
-                                    </button>
+                                        data-title="Hapus Periode?" data-text="Periode ini akan dihapus." icon="ti ti-trash" />
                                 </td>
                             </tr>
                         @empty
@@ -281,8 +267,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Tambah PIC</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah PIC</x-tabler.button>
                 </div>
             </form>
         </div>
@@ -323,8 +309,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Tambah Field</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah Field</x-tabler.button>
                 </div>
             </form>
         </div>
@@ -373,8 +359,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Tambah Disposisi</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah Disposisi</x-tabler.button>
                 </div>
             </form>
         </div>
@@ -418,21 +404,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Tambah Periode</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah Periode</x-tabler.button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
-<script>
-    document.addEventListener('form-success', function(e) {
-        location.reload();
-    });
-</script>
 <!-- Modal Edit Disposisi Info -->
 <div class="modal modal-blur fade" id="modal-edit-disposisi" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -458,8 +437,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Simpan Perubahan</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan Perubahan</x-tabler.button>
                 </div>
             </form>
         </div>
@@ -484,8 +463,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Simpan Rule</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan Rule</x-tabler.button>
                 </div>
             </form>
         </div>
@@ -509,8 +488,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Simpan Keterangan</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan Keterangan</x-tabler.button>
                 </div>
             </form>
         </div>
@@ -603,8 +582,10 @@
                     $('.sortable-isian tr').each(function(index) {
                         sequences.push({ id: $(this).data('id'), seq: index + 1 });
                     });
-                    axios.post(`{{ route('eoffice.jenis-layanan.update-isian-seq') }}`, { sequences: sequences })
-                        .then(res => toastr.success(res.data.message));
+                    axios.post(`/eoffice/jenis-layanan/{{ $layanan->hashid }}/isian/seq`, {
+                        sequences: sequences
+                    })
+                    .then(res => toastr.success(res.data.message));
                 }
             });
 
@@ -614,7 +595,9 @@
                 onEnd: function() {
                     $('.sortable-disposisi tr').each(function(index) {
                         let id = $(this).data('id');
-                        axios.post(`{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}/seq`, { seq: index + 1 });
+                        let url = `/eoffice/jenis-layanan/{{ $layanan->hashid }}/disposisi/${id}/seq`;
+
+                        axios.post(url, { seq: index + 1 });
                     });
                     toastr.success('Urutan disposisi diperbarui');
                 }

@@ -35,7 +35,7 @@ class DokumenController extends Controller
         if ($activeTab === 'standar') {
             $jenisTypes = ['standar', 'formulir', 'manual_prosedur'];
         } else {
-            $jenisTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+            $jenisTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
         }
 
         $dokumentByJenis = [];
@@ -72,7 +72,7 @@ class DokumenController extends Controller
             $allowedTypes = ['standar', 'formulir', 'manual_prosedur'];
             $pageTitle    = 'Tambah Dokumen Standar';
         } else {
-            $allowedTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+            $allowedTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
             $pageTitle    = 'Tambah Dokumen Kebijakan';
         }
 
@@ -135,7 +135,7 @@ class DokumenController extends Controller
         if ($activeTab === 'standar') {
             $allowedTypes = ['standar', 'formulir', 'manual_prosedur'];
         } else {
-            $allowedTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+            $allowedTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
         }
 
         return view('pages.pemutu.dokumens.edit', compact('dokumen', 'dokumens', 'allowedTypes'));

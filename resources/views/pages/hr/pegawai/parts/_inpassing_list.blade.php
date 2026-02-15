@@ -1,9 +1,12 @@
 <div class="d-flex justify-content-between align-items-center mb-3 mt-3 px-3">
     <h3>Riwayat Inpassing</h3>
-    <a href="#" class="btn btn-primary btn-sm ajax-modal-btn" data-url="{{ route('hr.pegawai.inpassing.create', $pegawai->encrypted_pegawai_id) }}" data-modal-title="Tambah Inpassing">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+    <x-tabler.button 
+        class="btn-sm" 
+        icon="ti ti-plus" 
+        modal-url="{{ route('hr.pegawai.inpassing.create', $pegawai->encrypted_pegawai_id) }}" 
+        modal-title="Tambah Inpassing">
         Tambah
-    </a>
+    </x-tabler.button>
 </div>
 <div class="card mb-3 mx-3">
     <div class="table-responsive">
@@ -47,8 +50,19 @@
                     </td>
                     <td>
                          <div class="btn-group">
-                            <a href="#" class="btn btn-sm btn-outline-primary ajax-modal-btn" data-url="{{ route('hr.pegawai.inpassing.edit', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->riwayatinpassing_id]) }}" data-modal-title="Edit Inpassing">Edit</a>
-                             <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="{{ route('hr.pegawai.inpassing.destroy', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->riwayatinpassing_id]) }}" data-confirm-msg="Yakin ingin menghapus data inpassing ini?">Hapus</button>
+                            <x-tabler.button 
+                                class="btn-sm btn-outline-primary" 
+                                modal-url="{{ route('hr.pegawai.inpassing.edit', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->riwayatinpassing_id]) }}" 
+                                modal-title="Edit Inpassing">
+                                Edit
+                            </x-tabler.button>
+                             <x-tabler.button 
+                                type="button" 
+                                class="btn-sm btn-outline-danger delete-btn" 
+                                data-url="{{ route('hr.pegawai.inpassing.destroy', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->riwayatinpassing_id]) }}" 
+                                data-confirm-msg="Yakin ingin menghapus data inpassing ini?">
+                                Hapus
+                             </x-tabler.button>
                         </div>
                     </td>
                 </tr>
