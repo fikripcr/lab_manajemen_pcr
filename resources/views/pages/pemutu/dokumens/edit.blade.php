@@ -50,7 +50,7 @@
             <x-tabler.form-input name="kode" id="kode" label="Kode Dokumen" :value="$dokumen->kode" />
         </div>
         <div class="mb-3">
-            <x-tabler.form-textarea name="isi" id="isi" label="Isi / Konten Dokumen" class="rich-text-editor" rows="10" :value="$dokumen->isi" />
+            <x-tabler.form-textarea name="isi" id="isi" label="Isi / Konten Dokumen" type="editor" height="400" rows="10" :value="$dokumen->isi" />
         </div>
         {{-- Hidden fields to preserve or set defaults if needed --}}
         <input type="hidden" name="periode" value="{{ $dokumen->periode }}">
@@ -61,24 +61,3 @@
     </div>
 </form>
 
-<script>
-    (function() {
-        const initEditor = () => {
-            if (window.loadHugeRTE) {
-                window.loadHugeRTE('.rich-text-editor', {
-                    height: 400,
-                    menubar: true,
-                    plugins: 'lists link table image code',
-                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | code'
-                });
-            }
-        };
-
-        if (typeof jQuery !== 'undefined' && jQuery('.modal').is(':visible')) {
-            setTimeout(initEditor, 300);
-        } else {
-            document.addEventListener('DOMContentLoaded', initEditor);
-            initEditor(); 
-        }
-    })();
-</script>

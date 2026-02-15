@@ -83,27 +83,4 @@
     </div>
 </div>
 
-@push('scripts')
-<script>
-    (function() {
-        const initEditor = () => {
-            if (window.loadHugeRTE) {
-                window.loadHugeRTE('.rich-text-editor', {
-                    height: 400,
-                    menubar: true,
-                    plugins: 'lists link table image code',
-                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | code'
-                });
-            }
-        };
-
-        if (typeof jQuery !== 'undefined' && jQuery('.modal').is(':visible')) {
-            setTimeout(initEditor, 300);
-        } else {
-            document.addEventListener('DOMContentLoaded', initEditor);
-            initEditor(); 
-        }
-    })();
-</script>
-@endpush
 @endsection

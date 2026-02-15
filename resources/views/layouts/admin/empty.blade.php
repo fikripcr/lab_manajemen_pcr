@@ -1,1 +1,2 @@
 @yield('content')
+@stack('scripts')

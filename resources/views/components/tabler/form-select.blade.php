@@ -1,6 +1,7 @@
 @props([
     'name', 
     'label' => null,
+    'id' => null,
     'options' => [], 
     'selected' => null, 
     'placeholder' => 'Pilih...',
@@ -12,40 +13,40 @@
 ])
 
 @php
+    $id = $id ?? $name;
     $attributes = $attributes->merge(['class' => 'mb-3']);
     $selectClasses = 'form-select ' . ($type === 'select2' ? 'select2-offline' : '') . ' ' . ($errors->has($name) ? 'is-invalid' : '');
 @endphp
 
-<div {{ $attributes }}>
+<div {{ $attributes->only('class') }}>
     @if($label)
-        <label for="{{ $name }}" class="form-label">
+        <label for="{{ $id }}" class="form-label">
             {{ $label }} @if($required)<span class="text-danger">*</span>@endif
         </label>
     @endif
     
     <select 
         class="{{ $selectClasses }}" 
-        id="{{ $name }}" 
+        id="{{ $id }}" 
         name="{{ $name . ($multiple ? '[]' : '') }}" 
-        @if($required) required="true"@endif
-        @if($disabled) disabled="true"@endif
-        @if($multiple) multiple="true"@endif
-        {{ $attributes->except(['class', 'options', 'selected']) }}
+        @if($required) required="required"@endif
+        @if($disabled) disabled="disabled"@endif
+        @if($multiple) multiple="multiple"@endif
+        {{ $attributes->except(['class', 'options', 'selected', 'id']) }}
     >
         @if($placeholder && !$multiple)
             <option value="">{{ $placeholder }}</option>
         @endif
 
         @foreach($options as $key => $value)
-            @if(is_object($value))
-                 <option value="{{ $value->id ?? $key }}" {{ (is_array($selected) ? in_array($value->id ?? $key, $selected) : $selected == ($value->id ?? $key)) ? 'selected' : '' }}>
-                    {{ $value->name ?? $value }}
-                 </option>
-            @else
-                <option value="{{ $key }}" {{ (is_array($selected) ? in_array($key, $selected) : $selected == $key) ? 'selected' : '' }}>
-                    {{ $value }}
-                </option>
-            @endif
+            @php
+                $val = is_object($value) ? ($value->id ?? $key) : $key;
+                $text = is_object($value) ? ($value->name ?? $value) : $value;
+                $is_selected = is_array($selected) ? in_array($val, $selected) : $selected == $val;
+            @endphp
+            <option value="{{ $val }}" {{ $is_selected ? 'selected' : '' }}>
+                {{ $text }}
+            </option>
         @endforeach
 
         {{ $slot }}
@@ -54,10 +55,4 @@
     @if($help)
         <div class="form-text">{{ $help }}</div>
     @endif
-    
-    @error($name)
-        <div class="invalid-feedback">
-            {{ $message }}
-        </div>
-    @enderror
 </div>

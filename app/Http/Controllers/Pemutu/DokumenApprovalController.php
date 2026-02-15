@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class DokumenApprovalController extends Controller
 {
+    public function create(Dokumen $dokumen)
+    {
+        $personils = Personil::orderBy('nama')->get();
+        return view('pages.pemutu.dokumens._approval_form', compact('dokumen', 'personils'));
+    }
+
     public function store(Request $request, Dokumen $dokumen)
     {
         $request->validate([

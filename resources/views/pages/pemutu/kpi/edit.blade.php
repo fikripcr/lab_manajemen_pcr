@@ -63,7 +63,8 @@
                             label="Definisi / Keterangan" 
                             value="{{ old('keterangan', $indikator->keterangan) }}"
                             rows="3" 
-                            class="rich-text-editor" 
+                            type="editor"
+                            height="200"
                         />
                     </div>
                 </div>
@@ -140,26 +141,6 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Init Select2
-        if (window.loadSelect2) {
-            window.loadSelect2().then(() => {
-                $('.select2').select2({
-                    theme: 'bootstrap-5',
-                    width: '100%'
-                });
-            });
-        }
-
-        // Initialize HugeRTE
-        if (window.loadHugeRTE) {
-            window.loadHugeRTE('.rich-text-editor', {
-                height: 200,
-                menubar: false,
-                plugins: 'lists link table image code',
-                toolbar: 'undo redo | blocks | bold italic | bullist numlist | link | code'
-            });
-        }
-
         // KPI Checkbox Logic
         const kpiCheckboxes = document.querySelectorAll('.kpi-checkbox');
         kpiCheckboxes.forEach(function(checkbox) {

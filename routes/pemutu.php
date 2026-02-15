@@ -73,6 +73,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::resource('kpi', App\Http\Controllers\Pemutu\KpiController::class);
 
     // Document Approvals
+    Route::get('dokumens/{dokumen}/approve', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'create'])->name('dokumens.approve.create');
     Route::post('dokumens/{dokumen}/approve', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'store'])->name('dokumens.approve');
     Route::delete('dokumens/approval/{approval}', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'destroy'])->name('dokumens.approval.destroy');
 

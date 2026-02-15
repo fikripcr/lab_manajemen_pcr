@@ -52,7 +52,7 @@
             <x-tabler.form-input name="kode" id="kode" label="Kode Dokumen" placeholder="Contoh: MM-01" />
         </div>
         <div class="mb-3">
-            <x-tabler.form-textarea name="isi" id="isi" label="Isi / Konten Dokumen" class="rich-text-editor" rows="10" />
+            <x-tabler.form-textarea name="isi" id="isi" label="Isi / Konten Dokumen" type="editor" height="400" rows="10" />
         </div>
         {{-- Hidden fields for defaults --}}
         <input type="hidden" name="periode" value="{{ date('Y') }}">
@@ -105,24 +105,3 @@
     }, 100);
 </script>
 
-<script>
-    (function() {
-        const initEditor = () => {
-            if (window.loadHugeRTE) {
-                window.loadHugeRTE('.rich-text-editor', {
-                    height: 400,
-                    menubar: true,
-                    plugins: 'lists link table image code',
-                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | code'
-                });
-            }
-        };
-
-        if (typeof jQuery !== 'undefined' && jQuery('.modal').is(':visible')) {
-            setTimeout(initEditor, 300);
-        } else {
-            document.addEventListener('DOMContentLoaded', initEditor);
-            initEditor(); 
-        }
-    })();
-</script>

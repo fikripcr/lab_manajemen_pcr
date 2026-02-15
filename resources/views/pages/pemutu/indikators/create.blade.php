@@ -87,7 +87,7 @@
 
                             <div class="row">
                                 <div class="col-md-12 mb-3">
-                                    <x-tabler.form-select name="doksub_ids[]" label="Dokumen Penjaminan Mutu Terkait" required="true" class="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
+                                    <x-tabler.form-select name="doksub_ids" label="Dokumen Penjaminan Mutu Terkait" required="true" type="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
                                         @foreach($dokumens as $doc)
                                             @if($doc->dokSubs->count() > 0)
                                                 <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
@@ -124,7 +124,7 @@
                         <div class="tab-pane" id="tabs-hierarchy">
                             <div class="row">
                                 <div class="col-md-12 mb-3">
-                                    <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" required="true" class="select2">
+                                    <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" required="true" type="select2">
                                         <option value="">-- Pilih Indikator Standar --</option>
                                         @foreach($parents as $p)
                                             <option value="{{ $p->indikator_id }}">[{{ $p->no_indikator }}] {{ \Str::limit($p->indikator, 150) }}</option>
@@ -246,7 +246,7 @@
                                 @foreach($labelTypes as $type)
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ $type->name }}</label>
-                                    <x-tabler.form-select name="labels[]" class="select2" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
+                                    <x-tabler.form-select name="labels" id="label-{{ $type->labeltype_id }}" type="select2" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
                                         @foreach($type->labels as $label)
                                             <option value="{{ $label->label_id }}">{{ $label->name }}</option>
                                         @endforeach
@@ -293,26 +293,9 @@
 
         typeSelector.addEventListener('change', toggleTabs);
         toggleTabs(); // Initial state
-
-        // Init Select2
-        if (window.loadSelect2) {
-            window.loadSelect2().then(() => {
-                $('.select2').select2({
-                    theme: 'bootstrap-5',
-                    width: '100%'
-                });
-            });
-        }
-
-        // Initialize HugeRTE
-        if (window.loadHugeRTE) {
-            window.loadHugeRTE('.rich-text-editor', {
-                height: 300,
-                menubar: false,
-                plugins: 'lists link table image code',
-                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | code'
-            });
-        }
+ 
+ 
+        // Checkbox Logic for Target Input
 
         // Checkbox Logic for Target Input
         const checkboxes = document.querySelectorAll('.unit-checkbox');

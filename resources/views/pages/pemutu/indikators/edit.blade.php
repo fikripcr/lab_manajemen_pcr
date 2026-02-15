@@ -83,7 +83,8 @@
                                     label="Definisi / Keterangan" 
                                     value="{{ old('keterangan', $indikator->keterangan) }}"
                                     rows="3" 
-                                    class="rich-text-editor" 
+                                    type="editor"
+                                    height="300"
                                 />
                             </div>
                         </div>
@@ -93,8 +94,7 @@
                     <div class="tab-pane" id="tabs-hierarchy">
                         <div class="row">
                             <div class="col-md-12 mb-3">
-                                <label class="form-label required">Indikator Induk</label>
-                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" required="true" class="select2">
+                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" required="true" type="select2">
                                     <option value="">-- Pilih Indikator Standar --</option>
                                     @foreach($parents as $p)
                                         <option value="{{ $p->indikator_id }}" {{ $p->indikator_id == $indikator->parent_id ? 'selected' : '' }}>
@@ -234,8 +234,7 @@
 
                             @foreach($labelTypes as $type)
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ $type->name }}</label>
-                                <x-tabler.form-select name="labels[]" class="select2" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
+                                <x-tabler.form-select name="labels" id="label-{{ $type->labeltype_id }}" type="select2" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
                                     @php 
                                         // Get selected labels for this type
                                         $selectedLabelIds = $indikator->labels->where('type_id', $type->labeltype_id)->pluck('label_id')->toArray();
@@ -289,27 +288,7 @@
 
         typeSelector.addEventListener('change', toggleTabs);
         toggleTabs(); // Initial state
-
-        // Init Select2
-        if (window.loadSelect2) {
-            window.loadSelect2().then(() => {
-                $('.select2').select2({
-                    theme: 'bootstrap-5',
-                    width: '100%'
-                });
-            });
-        }
         
-        // Initialize HugeRTE
-        if (window.loadHugeRTE) {
-            window.loadHugeRTE('.rich-text-editor', {
-                height: 300,
-                menubar: false,
-                plugins: 'lists link table image code',
-                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | code'
-            });
-        }
-
         // Checkbox Logic for Target Input
         const checkboxes = document.querySelectorAll('.unit-checkbox');
         checkboxes.forEach(function(checkbox) {
