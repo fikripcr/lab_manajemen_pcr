@@ -126,5 +126,24 @@ class DokumenSeeder extends Seeder
                 }
             }
         }
+
+        // ==========================================
+        // GOLDEN PATH DATA (Standar Pendidikan)
+        // ==========================================
+        $stdPendidikan = Dokumen::create([
+            'judul'   => 'Standar Pendidikan',
+            'periode' => $periode,
+            'jenis'   => 'standar',
+            'level'   => 1,
+            'seq'     => 10,
+            'kode'    => 'STD-DIK-001',
+        ]);
+
+        DokSub::create([
+            'dok_id' => $stdPendidikan->dok_id,
+            'judul'  => 'Standar Isi Pembelajaran',
+            'isi'    => '<p>Kedalaman dan keluasan materi pembelajaran mengacu pada CPL.</p>',
+            'seq'    => 1,
+        ]);
     }
 }

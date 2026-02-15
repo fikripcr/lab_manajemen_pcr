@@ -58,8 +58,19 @@ class KegiatanService
                 'jam_mulai'        => $data['jam_mulai'],
                 'jam_selesai'      => $data['jam_selesai'],
                 'status'           => 'pending',
-                'dokumentasi_path' => $data['dokumentasi_path'] ?? null, // Surat permohonan etc
+                'dokumentasi_path' => $data['dokumentasi_path'] ?? null,
             ]);
+
+            // Create Initial Approval (Pending)
+            $approval = \App\Models\Lab\LabRiwayatApproval::create([
+                'model'      => Kegiatan::class,
+                'model_id'   => $kegiatan->kegiatan_id,
+                'status'     => 'pending',
+                'keterangan' => 'Menunggu persetujuan',
+                'created_by' => auth()->id(),
+            ]);
+
+            $kegiatan->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
 
             logActivity('peminjaman_lab', "Membuat booking baru: {$data['nama_kegiatan']}");
 
@@ -75,9 +86,20 @@ class KegiatanService
         }
 
         return DB::transaction(function () use ($kegiatan, $status, $catatan) {
+            // Create New Approval Record
+            $approval = \App\Models\Lab\LabRiwayatApproval::create([
+                'model'      => Kegiatan::class,
+                'model_id'   => $kegiatan->kegiatan_id,
+                'status'     => $status,
+                'pejabat'    => auth()->user()->name,
+                'keterangan' => $catatan,
+                'created_by' => auth()->id(),
+            ]);
+
             $kegiatan->update([
-                'status'      => $status,
-                'catatan_pic' => $catatan,
+                'status'                    => $status,
+                'catatan_pic'               => $catatan, // Maintain legacy column for quick access if needed, or remove? Better keep for now.
+                'latest_riwayatapproval_id' => $approval->riwayatapproval_id,
             ]);
 
             logActivity('peminjaman_lab', "Update status booking ID {$id} menjadi {$status}");

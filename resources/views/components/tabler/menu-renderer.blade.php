@@ -196,16 +196,22 @@
                     'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
                     'icon' => 'ti ti-tags',
                 ],
+                // [
+                //     'title' => 'Indikator',
+                //     'route' => 'pemutu.indikators.index',
+                //     'active_routes' => ['pemutu.indikators.*'],
+                //     'icon' => 'ti ti-target',
+                // ],
                 [
-                    'title' => 'Indikator',
+                    'title' => 'Indikator (Semua Tipe)',
                     'route' => 'pemutu.indikators.index',
-                    'active_routes' => ['pemutu.indikators.*'],
+                    'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
                     'icon' => 'ti ti-target',
                 ],
                 [
                     'title' => 'Sasaran Kinerja (KPI)',
-                    'route' => 'pemutu.kpi.index',
-                    'active_routes' => ['pemutu.kpi.*'],
+                    'route' => 'pemutu.mykpi.index', // Changed from pemutu.kpi.index to mykpi.index as per new controller
+                    'active_routes' => ['pemutu.mykpi.*', 'pemutu.kpi.*'],
                     'icon' => 'ti ti-chart-arrows',
                 ],
                 [
@@ -246,6 +252,12 @@
                     'route'         => 'hr.perizinan.index',
                     'active_routes' => ['hr.perizinan.*'],
                     'icon'          => 'ti ti-file-certificate',
+                ],
+                [
+                    'title'         => 'Lembur',
+                    'route'         => 'hr.lembur.index',
+                    'active_routes' => ['hr.lembur.*'],
+                    'icon'          => 'ti ti-clock-hour-4',
                 ],
                 [
                     'title'         => 'Indisipliner',

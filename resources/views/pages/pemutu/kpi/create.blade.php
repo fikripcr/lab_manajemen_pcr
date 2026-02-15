@@ -21,7 +21,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 mb-3">
-                        <x-tabler.form-input 
+                        <x-tabler.form-select 
                             name="parent_id" 
                             label="Indikator Standar (Induk)" 
                             type="select2" 

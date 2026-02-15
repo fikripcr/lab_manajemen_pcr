@@ -7,7 +7,7 @@
     @method('PUT')
     <div class="modal-body">
         <div class="mb-3">
-            <x-tabler.form-input 
+            <x-tabler.form-select 
                 name="parent_id" 
                 label="Parent Unit" 
                 type="select2" 
@@ -36,10 +36,9 @@
             />
         </div>
         <div class="mb-3">
-            <x-tabler.form-input 
+            <x-tabler.form-select 
                 name="type" 
                 label="Type" 
-                type="select" 
                 :options="[ 
                     'Fakultas' => 'Fakultas',
                     'Jurusan' => 'Jurusan',

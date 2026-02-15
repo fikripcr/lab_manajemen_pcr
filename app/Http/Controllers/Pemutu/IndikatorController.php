@@ -27,8 +27,9 @@ class IndikatorController extends Controller
         // Filters data
         $dokumens   = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id')->toArray();
         $labelTypes = LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
+        $types      = ['standar' => 'Standar', 'renop' => 'Renop', 'performa' => 'Performa'];
 
-        return view('pages.pemutu.indikators.index', compact('dokumens', 'labelTypes'));
+        return view('pages.pemutu.indikators.index', compact('dokumens', 'labelTypes', 'types'));
     }
 
     public function paginate(Request $request)
@@ -41,6 +42,21 @@ class IndikatorController extends Controller
                 return $row->dokSubs->map(function ($ds) {
                     return $ds->dokumen->judul ?? '-';
                 })->unique()->implode(', ') ?: '-';
+            })
+            ->addColumn('tipe', function ($row) {
+                $color = match ($row->type) {
+                    'standar'  => 'primary',
+                    'renop'    => 'purple',
+                    'performa' => 'success',
+                    default    => 'secondary'
+                };
+                $label = match ($row->type) {
+                    'standar'  => 'Standar',
+                    'renop'    => 'Renop',
+                    'performa' => 'Performa',
+                    default    => ucfirst($row->type ?? '-')
+                };
+                return '<span class="badge bg-' . $color . '-lt">' . $label . '</span>';
             })
             ->addColumn('doksub_judul', function ($row) {
                 return $row->dokSubs->pluck('judul')->implode(', ') ?: '-';
@@ -69,7 +85,7 @@ class IndikatorController extends Controller
                         </button>
                     </div>';
             })
-            ->rawColumns(['labels', 'action'])
+            ->rawColumns(['tipe', 'labels', 'action'])
             ->make(true);
     }
 

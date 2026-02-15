@@ -84,4 +84,19 @@ class Kegiatan extends Model
     {
         return encryptId($this->penyelenggara_id);
     }
+    /**
+     * Relationship: Latest approval record
+     */
+    public function latestApproval()
+    {
+        return $this->belongsTo(\App\Models\Lab\LabRiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
+    }
+
+    /**
+     * Relationship: All approval history
+     */
+    public function approvals()
+    {
+        return $this->morphMany(\App\Models\Lab\LabRiwayatApproval::class, 'approvalable', 'model', 'model_id')->orderBy('created_at', 'desc');
+    }
 }

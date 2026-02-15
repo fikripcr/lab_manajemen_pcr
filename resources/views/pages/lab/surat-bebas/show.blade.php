@@ -77,6 +77,49 @@
                         @endif
                     </div>
                 </div>
+
+                {{-- Approval History --}}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Riwayat Approval</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter card-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Pejabat</th>
+                                    <th>Status</th>
+                                    <th>Catatan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($surat->approvals as $approval)
+                                    <tr>
+                                        <td>{{ $approval->created_at->format('d M Y H:i') }}</td>
+                                        <td>{{ $approval->pejabat }}</td>
+                                        <td>
+                                            @php
+                                                $hBadges = [
+                                                    'pending' => 'warning',
+                                                    'approved' => 'success',
+                                                    'rejected' => 'danger',
+                                                ];
+                                                $hColor = $hBadges[$approval->status] ?? 'secondary';
+                                            @endphp
+                                            <span class="badge bg-{{ $hColor }}">{{ ucfirst($approval->status) }}</span>
+                                        </td>
+                                        <td>{{ $approval->keterangan ?? '-' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Belum ada riwayat approval.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <div class="col-md-4">

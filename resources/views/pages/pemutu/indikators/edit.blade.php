@@ -47,10 +47,9 @@
                     <div class="tab-pane active show" id="tabs-info">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <x-tabler.form-input 
+                                <x-tabler.form-select 
                                     name="type" 
                                     label="Tipe Indikator" 
-                                    type="select" 
                                     :options="[
                                         'renop' => 'Indikator Renop',
                                         'standar' => 'Indikator Standar',
@@ -70,20 +69,18 @@
                                 />
                             </div>
                             <div class="col-md-12 mb-3">
-                                <x-tabler.form-input 
+                                <x-tabler.form-textarea 
                                     name="indikator" 
                                     label="Nama Indikator" 
-                                    type="textarea" 
                                     value="{{ old('indikator', $indikator->indikator) }}"
                                     rows="3" 
                                     required="true" 
                                 />
                             </div>
                             <div class="col-md-12 mb-3">
-                                <x-tabler.form-input 
+                                <x-tabler.form-textarea 
                                     name="keterangan" 
                                     label="Definisi / Keterangan" 
-                                    type="textarea" 
                                     value="{{ old('keterangan', $indikator->keterangan) }}"
                                     rows="3" 
                                     class="rich-text-editor" 

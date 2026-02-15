@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\RapatRequest;
 use App\Models\Pemutu\Rapat;
+use App\Models\User;
 use App\Services\Pemutu\RapatService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -50,7 +51,8 @@ class RapatController extends Controller
     public function create()
     {
         $pageTitle = 'Tambah Rapat';
-        return view('pages.pemutu.rapat.create', compact('pageTitle'));
+        $users     = User::all();
+        return view('pages.pemutu.rapat.create', compact('pageTitle', 'users'));
     }
 
     public function store(RapatRequest $request)
@@ -80,7 +82,8 @@ class RapatController extends Controller
     public function edit(Rapat $rapat)
     {
         $pageTitle = 'Edit Rapat';
-        return view('pages.pemutu.rapat.edit', compact('rapat', 'pageTitle'));
+        $users     = User::all();
+        return view('pages.pemutu.rapat.edit', compact('rapat', 'pageTitle', 'users'));
     }
 
     public function update(RapatRequest $request, Rapat $rapat)

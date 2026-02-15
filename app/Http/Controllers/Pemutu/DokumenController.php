@@ -192,6 +192,9 @@ class DokumenController extends Controller
                         }
                         return $title;
                     })
+                    ->addColumn('jumlah_turunan', function ($row) {
+                        return '<span class="text-muted">-</span>';
+                    })
                     ->addColumn('action', function ($row) use ($dokumen) {
                         $editUrl    = route('pemutu.dok-subs.edit', $row);
                         $deleteUrl  = route('pemutu.dok-subs.destroy', $row);
@@ -211,7 +214,7 @@ class DokumenController extends Controller
                                 </button>
                             </div>';
                     })
-                    ->rawColumns(['judul', 'action'])
+                    ->rawColumns(['judul', 'jumlah_turunan', 'action'])
                     ->make(true);
             } else {
                 $query = $this->DokumenService->getChildrenQuery($dokumen->dok_id);

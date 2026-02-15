@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Lab;
 use App\Http\Controllers\Controller;
 use App\Models\Lab\SuratBebasLab;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class SuratBebasLabController extends Controller
@@ -63,18 +64,31 @@ class SuratBebasLabController extends Controller
         // Simple create, logic to check liabilities handles in Approval or Middleware?
         // Ideally we check here too but for now just submit.
 
-        SuratBebasLab::create([
-            'student_id' => auth()->id(),
-            'status'     => 'pending',
-            'remarks'    => $request->remarks, // Optional student note?
-        ]);
+        DB::transaction(function () use ($request) {
+            $surat = SuratBebasLab::create([
+                'student_id' => auth()->id(),
+                'status'     => 'pending',
+                'remarks'    => $request->remarks,
+            ]);
+
+            // Create Initial Approval (Pending)
+            $approval = \App\Models\Lab\LabRiwayatApproval::create([
+                'model'      => SuratBebasLab::class,
+                'model_id'   => $surat->surat_bebas_lab_id,
+                'status'     => 'pending',
+                'keterangan' => 'Pengajuan baru',
+                'created_by' => auth()->id(),
+            ]);
+
+            $surat->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+        });
 
         return jsonSuccess('Pengajuan berhasil dikirim.', route('lab.surat-bebas.index'));
     }
 
     public function show($id)
     {
-        $surat = SuratBebasLab::with(['student', 'approver'])->findOrFail(decryptId($id));
+        $surat = SuratBebasLab::with(['student', 'approver', 'approvals'])->findOrFail(decryptId($id));
         return view('pages.lab.surat-bebas.show', compact('surat'));
     }
 
@@ -87,21 +101,33 @@ class SuratBebasLabController extends Controller
 
         $surat = SuratBebasLab::findOrFail(decryptId($id));
 
-        $updateData = [
-            'status'      => $request->status,
-            'remarks'     => $request->remarks,
-            'approved_by' => auth()->id(),
-            'approved_at' => now(),
-        ];
+        DB::transaction(function () use ($surat, $request) {
+            $updateData = [
+                'status'      => $request->status,
+                'remarks'     => $request->remarks, // Legacy remarks column
+                'approved_by' => auth()->id(),
+                'approved_at' => now(),
+            ];
 
-        // If approved, generate PDF (Simulation)
-        if ($request->status == 'approved') {
-            // Logic to generate PDF would go here.
-            // For now just mockup path
-            // $updateData['file_path'] = 'surat-bebas/SB-'. $surat->id . '.pdf';
-        }
+            // If approved, generate PDF (Simulation)
+            if ($request->status == 'approved') {
+                // $updateData['file_path'] = 'surat-bebas/SB-'. $surat->id . '.pdf';
+            }
 
-        $surat->update($updateData);
+            // Create New Approval Record
+            $approval = \App\Models\Lab\LabRiwayatApproval::create([
+                'model'      => SuratBebasLab::class,
+                'model_id'   => $surat->surat_bebas_lab_id,
+                'status'     => $request->status,
+                'pejabat'    => auth()->user()->name,
+                'keterangan' => $request->remarks,
+                'created_by' => auth()->id(),
+            ]);
+
+            $updateData['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;
+
+            $surat->update($updateData);
+        });
 
         return jsonSuccess('Status berhasil diperbarui.');
     }

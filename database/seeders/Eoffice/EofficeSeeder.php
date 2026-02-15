@@ -161,52 +161,75 @@ class EofficeSeeder extends Seeder
         JenisLayananPic::create(['jenislayanan_id' => $jlSTM->jenislayanan_id, 'user_id' => $userFikri->id]);
         JenisLayananPic::create(['jenislayanan_id' => $jlSdm->jenislayanan_id, 'user_id' => $userAdmin->id]);
 
-        // 7. Sample Transaction
-        $layanan = Layanan::create([
-            'no_layanan'      => 'STM' . date('ymd') . '001',
-            'jenislayanan_id' => $jlSTM->jenislayanan_id,
-            'pengusul_nama'   => 'Fikri Muhaffizh Imani',
-            'pengusul_nim'    => '20210001',
-            'pengusul_email'  => 'fikri@pcr.ac.id',
-            'keterangan'      => 'Mohon bantuannya untuk pembuatan Surat Tugas Lomba.',
-            'created_by'      => $userFikri->id,
-            'pic_awal'        => $userFikri->id,
-            'created_at'      => now()->subDays(2),
-        ]);
+        // 7. Dynamic Transactions for ALL Service Types
+        $allServices = JenisLayanan::where('is_active', true)->get();
 
-        $layanan->isians()->create(['nama_isian' => 'Pelaksana Acara', 'isi' => 'Tim Robotika PCR']);
-        $layanan->isians()->create(['nama_isian' => 'Tanggal Mulai', 'isi' => date('Y-m-d')]);
+        foreach ($allServices as $service) {
+            $user = $userFikri; // Default applicant
 
-        // History
-        $s1 = LayananStatus::create([
-            'layanan_id'     => $layanan->layanan_id,
-            'status_layanan' => 'Diajukan',
-            'keterangan'     => 'Layanan Diajukan oleh Fikri Muhaffizh Imani',
-            'created_by'     => $userFikri->id,
-            'created_at'     => $layanan->created_at,
-            'done_at'        => $layanan->created_at->addMinutes(5),
-        ]);
+            // Create Transaction
+            $layanan = Layanan::create([
+                'no_layanan'      => 'T-' . $service->kategori . '-' . date('ymd') . rand(100, 999),
+                'jenislayanan_id' => $service->jenislayanan_id,
+                'pengusul_nama'   => $user->nama ?? $user->name,
+                'pengusul_nim'    => '20210001', // Dummy
+                'pengusul_email'  => $user->email,
+                'keterangan'      => 'Pengajuan testing otomatis seeder untuk ' . $service->nama_layanan,
+                'created_by'      => $user->id,
+                'pic_awal'        => $service->pics->first()->user_id ?? $userAdmin->id,
+                'created_at'      => now(),
+            ]);
 
-        $s2 = LayananStatus::create([
-            'layanan_id'     => $layanan->layanan_id,
-            'status_layanan' => 'Diproses',
-            'keterangan'     => 'Layanan sedang dipreview oleh PIC',
-            'created_by'     => $userFikri->id,
-            'created_at'     => $s1->done_at,
-        ]);
+            // Fill Fields (Isian)
+            foreach ($service->isians as $field_config) {
+                $dummyValue = '-';
+                $fieldInfo  = $field_config->kategoriIsian;
 
-        $layanan->update(['latest_layananstatus_id' => $s2->layananstatus_id]);
+                switch ($fieldInfo->type) {
+                    case 'number':
+                        $dummyValue = '1234567890';
+                        break;
+                    case 'date':
+                        $dummyValue = date('Y-m-d');
+                        break;
+                    case 'textarea':
+                        $dummyValue = "Ini adalah contoh isian paragraf untuk " . $fieldInfo->nama_isian;
+                        break;
+                    default:
+                        $dummyValue = "Contoh " . $fieldInfo->nama_isian;
+                }
 
-        // Discussion
-        LayananDiskusi::create([
-            'layanan_id'      => $layanan->layanan_id,
-            'user_id'         => $userFikri->id,
-            'pesan'           => 'Apakah berkas sertifikat perlu dilampirkan juga?',
-            'status_pengirim' => 'Pemohon',
-            'created_by'      => $userFikri->id,
-        ]);
+                $layanan->isians()->create([
+                    'nama_isian' => $fieldInfo->nama_isian,
+                    'isi'        => $dummyValue,
+                ]);
+            }
 
-        $this->command->info('E-Office Seeder: Completed successfully!');
+            // Create Initial History
+            $s1 = LayananStatus::create([
+                'layanan_id'     => $layanan->layanan_id,
+                'status_layanan' => 'Diajukan',
+                'keterangan'     => 'Layanan Diajukan Otomatis oleh Seeder',
+                'created_by'     => $user->id,
+                'created_at'     => $layanan->created_at,
+                'done_at'        => $layanan->created_at->addMinutes(1),
+            ]);
+
+            $layanan->update(['latest_layananstatus_id' => $s1->layananstatus_id]);
+
+            // If it has discussion, add dummy chat
+            if ($service->is_diskusi) {
+                LayananDiskusi::create([
+                    'layanan_id'      => $layanan->layanan_id,
+                    'user_id'         => $user->id,
+                    'pesan'           => 'Halo admin, apakah berkas ini sudah sesuai?',
+                    'status_pengirim' => 'Pemohon',
+                    'created_by'      => $user->id,
+                ]);
+            }
+        }
+
+        $this->command->info('E-Office Seeder: Completed successfully with transactions for all types!');
     }
 
     /**

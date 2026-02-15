@@ -152,16 +152,95 @@ class PersonilSeeder extends Seeder
         }
 
         $this->command->info('PersonilSeeder completed! Total: ' . Personil::count() . ' personnel created.');
+
+        // ==========================================
+        // GOLDEN PATH USER (user1@contoh-lab.ac.id)
+        // ==========================================
+        // Ensure user1 has a Personil record for testing assignments
+        $user1Email = 'user1@contoh-lab.ac.id';
+        $user1      = \App\Models\User::where('email', $user1Email)->first();
+
+        if ($user1) {
+            // Check if personil already exists for this email
+            $existingPersonil = Personil::where('email', $user1Email)->first();
+
+            if (! $existingPersonil) {
+                // Assign to a generic unit (e.g. first Prodi)
+                $prodi = OrgUnit::where('type', 'Prodi')->first();
+                if ($prodi) {
+                    Personil::create([
+                        'org_unit_id' => $prodi->orgunit_id,
+                        'nama'        => 'Dosen Sertifikasi (User 1)',
+                        'email'       => $user1Email,
+                        'jenis'       => 'Dosen',
+                        'user_id'     => $user1->id,
+                    ]);
+                    $this->command->info("Created Personil for Golden Path: $user1Email");
+                }
+            } else {
+                // Update existing to link user_id if missing
+                if (! $existingPersonil->user_id) {
+                    $existingPersonil->update(['user_id' => $user1->id]);
+                    $this->command->info("Linked Personil to User: $user1Email");
+                }
+            }
+        }
+
+        // ==========================================
+        // APPROVAL TESTING USERS (Linked to positions)
+        // ==========================================
+        $this->command->info('Linking Personils to Users for Approval Testing...');
+
+        $assignments = [
+            'Direktur' => ['user_email' => 'user2@contoh-lab.ac.id', 'org_type' => 'Institusi', 'position' => 'Pimpinan'], // Direktur
+            'Wadir 1'  => ['user_email' => 'user3@contoh-lab.ac.id', 'org_type' => 'Direktorat', 'seq' => 1],              // Wadir 1
+            'Wadir 2'  => ['user_email' => 'user4@contoh-lab.ac.id', 'org_type' => 'Direktorat', 'seq' => 2],              // Wadir 2
+            'Kaprodi'  => ['user_email' => 'user5@contoh-lab.ac.id', 'org_type' => 'Prodi', 'seq' => 1],                   // Kaprodi TI (usually seq 1)
+        ];
+
+        foreach ($assignments as $role => $data) {
+            $user = \App\Models\User::where('email', $data['user_email'])->first();
+            if (! $user) {
+                continue;
+            }
+
+            $personil = null;
+
+            if ($data['org_type'] === 'Institusi') {
+                $unit = OrgUnit::where('type', 'Institusi')->first();
+                if ($unit) {
+                    $personil = Personil::where('org_unit_id', $unit->orgunit_id)->where('jenis', 'Pimpinan')->first();
+                }
+            } elseif ($data['org_type'] === 'Direktorat') {
+                $units = OrgUnit::where('type', 'Direktorat')->orderBy('seq')->get();
+                $unit  = $units->get(($data['seq'] ?? 1) - 1);
+                if ($unit) {
+                    $personil = Personil::where('org_unit_id', $unit->orgunit_id)->where('jenis', 'Pimpinan')->first();
+                }
+            } elseif ($data['org_type'] === 'Prodi') {
+                $unit = OrgUnit::where('type', 'Prodi')->orderBy('seq')->skip(($data['seq'] ?? 1) - 1)->first();
+                if ($unit) {
+                    $personil = Personil::where('org_unit_id', $unit->orgunit_id)->where('jenis', 'Pimpinan')->first();
+                }
+            }
+
+            if ($personil) {
+                $personil->update(['user_id' => $user->id]);
+                $this->command->info("Mapped $role ({$personil->nama}) to {$data['user_email']}");
+            } else {
+                $this->command->warn("Could not find Personil for $role");
+            }
+        }
     }
 
-    private function createPersonil(OrgUnit $unit, string $nama, string $email, string $jenis, $faker): Personil
+    private function createPersonil($unit, $nama, $email, $jenis, $faker)
     {
         return Personil::create([
             'org_unit_id'     => $unit->orgunit_id,
             'nama'            => $nama,
             'email'           => $email,
             'jenis'           => $jenis,
-            'user_id'         => null, // Not linked to User
+            'user_id'         => null,
             'ttd_digital'     => null,
             'external_source' => null,
             'external_id'     => null,

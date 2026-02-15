@@ -56,10 +56,9 @@
                         <div class="tab-pane active show" id="tabs-info">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <x-tabler.form-input 
+                                    <x-tabler.form-select 
                                         name="type" 
                                         label="Tipe Indikator" 
-                                        type="select" 
                                         :options="[
                                             'renop' => 'Indikator Renop',
                                             'standar' => 'Indikator Standar',

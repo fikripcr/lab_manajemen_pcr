@@ -108,6 +108,62 @@ class IndikatorSeeder extends Seeder
             $seq++;
         }
 
+        $this->command->info('IndikatorSeeder random generation completed.');
+
+        // ==========================================
+        // GOLDEN PATH DATA (Linked to user1)
+        // ==========================================
+        $stdDok        = \App\Models\Pemutu\Dokumen::where('kode', 'STD-DIK-001')->first();
+        $user1Personil = \App\Models\Pemutu\Personil::where('email', 'user1@contoh-lab.ac.id')->first();
+
+        if ($stdDok && $user1Personil) {
+            $stdDokSub = $stdDok->dokSubs()->first();
+            if ($stdDokSub) {
+                // 1. Create INDIKATOR STANDAR
+                $indStandar = Indikator::create([
+                    'type'            => 'standar',
+                    'no_indikator'    => 'IND-STD-GOLD-01',
+                    'indikator'       => 'Minimal 80% Mata Kuliah memiliki RPS yang up-to-date',
+                    'target'          => '80%',
+                    'jenis_indikator' => 'Utama',
+                    'origin_from'     => 'Standar Pendidikan',
+                    'seq'             => 999,
+                ]);
+                $indStandar->dokSubs()->attach($stdDokSub->doksub_id, ['is_hasilkan_indikator' => false]);
+                $this->command->info('Created Golden Indikator Standar: IND-STD-GOLD-01');
+
+                // 2. Create INDIKATOR PERFORMA (KPI)
+                $indPerforma = Indikator::create([
+                    'type'            => 'performa',
+                    'parent_id'       => $indStandar->indikator_id,
+                    'no_indikator'    => 'KPI-GOLD-01',
+                    'indikator'       => 'Persentase MK dengan RPS Terbarukan',
+                    'target'          => '100%', // Individual target
+                    'jenis_indikator' => 'Utama',
+                    'seq'             => 1,
+                    'keterangan'      => 'Diukur dari jumlah MK yang diampu dosen yang RPS-nya telah divalidasi tahun ini.',
+                ]);
+                // Link also to DokSub (optional but good for filtering)
+                $indPerforma->dokSubs()->attach($stdDokSub->doksub_id, ['is_hasilkan_indikator' => false]);
+                $this->command->info('Created Golden KPI: KPI-GOLD-01');
+
+                // 3. ASSIGN KPI TO PERSONIL
+                \App\Models\Pemutu\IndikatorPersonil::create([
+                    'indikator_id' => $indPerforma->indikator_id,
+                    'personil_id'  => $user1Personil->personil_id,
+                    'year'         => date('Y'),
+                    'semester'     => 'Ganjil',
+                    'weight'       => 20.0,
+                    'target_value' => 100,
+                    'status'       => 'draft',
+                    'created_by'   => 1, // System/Admin
+                ]);
+                $this->command->info('Assigned Golden KPI to ' . $user1Personil->nama);
+            }
+        } else {
+            $this->command->warn('Skipping Golden Path: Standar Dokumen or User1 Personil not found.');
+        }
+
         $this->command->info('IndikatorSeeder completed! Total: ' . Indikator::count() . ' indicators created.');
     }
 }

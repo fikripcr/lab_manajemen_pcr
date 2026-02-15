@@ -104,6 +104,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::get('/{id}', 'show')->name('show');
         Route::get('/{id}/edit', 'edit')->name('edit');
         Route::put('/{id}', 'update')->name('update');
+        Route::post('/{id}/approve', 'approve')->name('approve');
     });
 
     // Pengumuman

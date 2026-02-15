@@ -27,7 +27,7 @@
             />
         </div>
         <div class="mb-3">
-            <x-tabler.form-input 
+            <x-tabler.form-select 
                 name="org_unit_id" 
                 label="Unit Organisasi" 
                 type="select2" 
@@ -37,10 +37,9 @@
             />
         </div>
         <div class="mb-3">
-            <x-tabler.form-input 
+            <x-tabler.form-select 
                 name="jenis" 
                 label="Jenis" 
-                type="select" 
                 :options="[ 
                     'Dosen' => 'Dosen',
                     'Staff' => 'Staff',

@@ -9,6 +9,7 @@ use App\Http\Controllers\Hr\JenisIndisiplinerController;
 use App\Http\Controllers\Hr\JenisIzinController;
 use App\Http\Controllers\Hr\JenisShiftController;
 use App\Http\Controllers\Hr\KeluargaController;
+use App\Http\Controllers\Hr\LemburController;
 use App\Http\Controllers\Hr\OrgUnitController;
 use App\Http\Controllers\Hr\PegawaiController;
 use App\Http\Controllers\Hr\PengembanganDiriController;
@@ -155,6 +156,11 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     // Perizinan
     Route::get('perizinan/data', [PerizinanController::class, 'data'])->name('perizinan.data');
     Route::resource('perizinan', PerizinanController::class);
+
+    // Lembur (Overtime)
+    Route::get('lembur/data', [LemburController::class, 'data'])->name('lembur.data');
+    Route::post('lembur/{lembur}/approve', [LemburController::class, 'approve'])->name('lembur.approve');
+    Route::resource('lembur', LemburController::class);
 
     // Jenis Izin
     Route::get('jenis-izin/data', [JenisIzinController::class, 'data'])->name('jenis-izin.data');

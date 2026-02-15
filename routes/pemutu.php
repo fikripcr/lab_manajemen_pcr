@@ -9,7 +9,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Rapat
     Route::get('rapat/data', [App\Http\Controllers\Pemutu\RapatController::class, 'paginate'])->name('rapat.data');
     Route::resource('rapat', App\Http\Controllers\Pemutu\RapatController::class);
-    
+
     // Rapat Peserta
     Route::get('rapat/peserta/data', [App\Http\Controllers\Pemutu\RapatPesertaController::class, 'data'])->name('rapat.peserta.data');
     Route::resource('rapat/peserta', App\Http\Controllers\Pemutu\RapatPesertaController::class);
@@ -60,7 +60,20 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Document Approvals
     Route::post('dokumens/{dokumen}/approve', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'store'])->name('dokumens.approve');
 
-    // SPMI Periods (PEPP Cycle)
+    // Period SPMI (PEPP Cycle)
     Route::get('api/periode-spmi', [App\Http\Controllers\Pemutu\PeriodeSpmiController::class, 'paginate'])->name('periode-spmis.data');
     Route::resource('periode-spmis', App\Http\Controllers\Pemutu\PeriodeSpmiController::class);
+
+    // Renop (Rencana Operasional)
+    Route::get('renop/create', [App\Http\Controllers\Pemutu\RenopController::class, 'create'])->name('renop.create');
+    Route::post('renop', [App\Http\Controllers\Pemutu\RenopController::class, 'store'])->name('renop.store');
+    Route::get('renop', [App\Http\Controllers\Pemutu\RenopController::class, 'index'])->name('renop.index');
+    // Assignment removed from Renop
+
+    // Standard & Performance Indicators
+
+    // My KPI
+    Route::get('mykpi', [App\Http\Controllers\Pemutu\MyKpiController::class, 'index'])->name('mykpi.index');
+    Route::get('mykpi/{id}/edit', [App\Http\Controllers\Pemutu\MyKpiController::class, 'edit'])->name('mykpi.edit');
+    Route::put('mykpi/{id}', [App\Http\Controllers\Pemutu\MyKpiController::class, 'update'])->name('mykpi.update');
 });

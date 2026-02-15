@@ -78,22 +78,32 @@ class SoftwareRequestController extends Controller
         return DataTables::of($softwareRequests)
             ->addIndexColumn()
             ->editColumn('status', function ($request) {
-                $badgeClass = '';
-                switch ($request->status) {
+                $status     = $request->status;
+                $badgeClass = 'bg-label-secondary';
+
+                // Handle both Indonesian (legacy) and English (new) statuses
+                switch ($status) {
                     case 'menunggu_approval':
+                    case 'pending':
                         $badgeClass = 'bg-label-warning';
+                        $statusText = 'Pending';
                         break;
                     case 'disetujui':
+                    case 'approved':
                         $badgeClass = 'bg-label-success';
+                        $statusText = 'Approved';
                         break;
                     case 'ditolak':
+                    case 'rejected':
                         $badgeClass = 'bg-label-danger';
+                        $statusText = 'Rejected';
                         break;
                     default:
-                        $badgeClass = 'bg-label-secondary';
+                        $statusText = ucfirst(str_replace('_', ' ', $status));
                 }
-                return '<span class="badge ' . $badgeClass . '">' . ucfirst(str_replace('_', ' ', $request->status)) . '</span>';
+                return '<span class="badge ' . $badgeClass . '">' . $statusText . '</span>';
             })
+        // ... (rest of editColumn/addColumn logic same as before, just confirming context) ...
             ->editColumn('mata_kuliah', function ($request) {
                 $mataKuliahNames = $request->mataKuliahs->map(function ($mk) {
                     return $mk->kode_mk . ' - ' . $mk->nama_mk;
@@ -111,11 +121,30 @@ class SoftwareRequestController extends Controller
                 return view('components.tabler.datatables-actions', [
                     'editUrl' => route('lab.software-requests.edit', $request->id),
                     'viewUrl' => route('lab.software-requests.show', $request->id),
-                    // deleteUrl omitted as SoftwareRequestController doesn't have destroy method in preview
                 ])->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
+    }
+
+    /**
+     * Approve Request
+     */
+    public function approve(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status'     => 'required|in:approved,rejected,pending',
+            'pejabat'    => 'required|string|max:191',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        try {
+            $this->SoftwareRequestService->approveRequest($id, $validated);
+
+            return jsonSuccess('Status permintaan software berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -128,6 +157,9 @@ class SoftwareRequestController extends Controller
         if (! $softwareRequest) {
             abort(404);
         }
+
+        // Eager load approval history
+        $softwareRequest->load(['latestApproval', 'approvals']);
 
         return view('pages.lab.software-requests.show', compact('softwareRequest'));
     }

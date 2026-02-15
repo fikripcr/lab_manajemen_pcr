@@ -89,7 +89,7 @@ class KegiatanController extends Controller
 
     public function show($id)
     {
-        $kegiatan = Kegiatan::with(['lab', 'penyelenggara'])->findOrFail(decryptId($id));
+        $kegiatan = Kegiatan::with(['lab', 'penyelenggara', 'approvals'])->findOrFail(decryptId($id));
         return view('pages.lab.kegiatan.show', compact('kegiatan'));
     }
 

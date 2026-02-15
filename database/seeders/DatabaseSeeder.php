@@ -41,8 +41,8 @@ class DatabaseSeeder extends Seeder
             // Pemutu Data
             PemutuSeeder::class,
             DokumenSeeder::class,
-            IndikatorSeeder::class,
             PersonilSeeder::class,
+            IndikatorSeeder::class,
             Eoffice\EofficeSeeder::class,
         ]);
     }

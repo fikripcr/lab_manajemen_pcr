@@ -23,7 +23,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 mb-3">
-                        <x-tabler.form-input 
+                        <x-tabler.form-select 
                             name="parent_id" 
                             label="Indikator Standar (Induk)" 
                             type="select2" 
@@ -48,10 +48,9 @@
                     </div>
                 
                     <div class="col-md-12 mb-3">
-                        <x-tabler.form-input 
+                        <x-tabler.form-textarea 
                             name="indikator" 
                             label="Nama Sasaran Kinerja" 
-                            type="textarea" 
                             value="{{ old('indikator', $indikator->indikator) }}"
                             rows="3" 
                             required="true" 
@@ -59,10 +58,9 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <x-tabler.form-input 
+                        <x-tabler.form-textarea 
                             name="keterangan" 
                             label="Definisi / Keterangan" 
-                            type="textarea" 
                             value="{{ old('keterangan', $indikator->keterangan) }}"
                             rows="3" 
                             class="rich-text-editor" 

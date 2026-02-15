@@ -23,9 +23,8 @@
         name="{{ $name }}" 
         rows="{{ $rows }}"
         placeholder="{{ $placeholder }}"
-        @if($required)required@endif
-        @if($readonly)readonly@endif
-        @if($disabled)disabled@endif
+        @if($required) required="true"@endif
+        @if($disabled) disabled="true"@endif
         {{ $attributes->except(['class', 'value', 'rows']) }}
     >{{ $value }}</textarea>
     

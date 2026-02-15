@@ -3,8 +3,8 @@
 @section('header')
     <x-tabler.page-header :title="'Detail Request: ' . $softwareRequest->nama_software" pretitle="Software Request">
         <x-slot:actions>
-            <x-tabler.button type="back" :href="route('software-requests.index')" />
-            <x-tabler.button type="edit" :href="route('software-requests.edit', $softwareRequest->id)" />
+            <x-tabler.button type="back" :href="route('lab.software-requests.index')" />
+            <x-tabler.button type="edit" :href="route('lab.software-requests.edit', $softwareRequest->id)" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection
@@ -33,21 +33,22 @@
                             <h6 class="text-muted">Status:</h6>
                             @php
                                 $badgeClass = '';
-                                switch ($softwareRequest->status) {
-                                    case 'menunggu_approval':
-                                        $badgeClass = 'bg-warning';
-                                        break;
-                                    case 'disetujui':
-                                        $badgeClass = 'bg-success';
-                                        break;
-                                    case 'ditolak':
-                                        $badgeClass = 'bg-danger';
-                                        break;
-                                    default:
-                                        $badgeClass = 'bg-secondary';
+                                $status = $softwareRequest->status;
+                                if (in_array($status, ['menunggu_approval', 'pending'])) {
+                                    $badgeClass = 'bg-warning';
+                                    $statusText = 'Pending';
+                                } elseif (in_array($status, ['disetujui', 'approved'])) {
+                                    $badgeClass = 'bg-success';
+                                    $statusText = 'Approved';
+                                } elseif (in_array($status, ['ditolak', 'rejected'])) {
+                                    $badgeClass = 'bg-danger';
+                                    $statusText = 'Rejected';
+                                } else {
+                                    $badgeClass = 'bg-secondary';
+                                    $statusText = ucfirst(str_replace('_', ' ', $status));
                                 }
                             @endphp
-                            <span class="badge {{ $badgeClass }}">{{ ucfirst(str_replace('_', ' ', $softwareRequest->status)) }}</span>
+                            <span class="badge {{ $badgeClass }}">{{ $statusText }}</span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <h6 class="text-muted">Tanggal Pengajuan:</h6>
@@ -93,15 +94,82 @@
                             {!! $softwareRequest->deskripsi !!}
                         </div>
                     </div>
-
-                    @if($softwareRequest->catatan)
-                        <div class="mb-3">
-                            <h6 class="text-muted">Catatan Admin:</h6>
-                            <p class="mb-0">{{ $softwareRequest->catatan }}</p>
-                        </div>
-                    @endif
                 </div>
             </div>
+
+            {{-- Approval History --}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Riwayat Approval</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Pejabat</th>
+                                <th>Status</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($softwareRequest->approvals as $approval)
+                                <tr>
+                                    <td>{{ $approval->created_at->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $approval->pejabat }}</td>
+                                    <td>
+                                        @php
+                                            $aStatus = $approval->status;
+                                            $aBadge = 'bg-secondary';
+                                            if(in_array($aStatus, ['approved', 'disetujui'])) $aBadge = 'bg-success';
+                                            elseif(in_array($aStatus, ['rejected', 'ditolak'])) $aBadge = 'bg-danger';
+                                            elseif(in_array($aStatus, ['pending', 'menunggu_approval'])) $aBadge = 'bg-warning';
+                                        @endphp
+                                        <span class="badge {{ $aBadge }}">{{ ucfirst($aStatus) }}</span>
+                                    </td>
+                                    <td>{{ $approval->keterangan ?? '-' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Belum ada riwayat approval.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Approval Form --}}
+            @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval']))
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Proses Approval</h4>
+                        <form class="ajax-form" action="{{ route('lab.software-requests.approve', $softwareRequest->id) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">Pejabat Penilai</label>
+                                <input type="text" class="form-control" name="pejabat" value="{{ Auth::check() ? Auth::user()->name : '' }}" required placeholder="Nama Pejabat">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Keterangan / Komentar</label>
+                                <textarea class="form-control" name="keterangan" rows="3" placeholder="Tambahkan catatan jika ada..."></textarea>
+                            </div>
+                            <div class="btn-list">
+                                <button type="submit" name="status" value="approved" class="btn btn-success">
+                                    <i class="ti ti-check me-2"></i> Setujui Permintaan
+                                </button>
+                                <button type="submit" name="status" value="pending" class="btn btn-warning">
+                                    <i class="ti ti-clock me-2"></i> Tangguhkan (Pending)
+                                </button>
+                                <button type="submit" name="status" value="rejected" class="btn btn-danger">
+                                    <i class="ti ti-x me-2"></i> Tolak Permintaan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endif
+
         </div>
     </div>
 @endsection

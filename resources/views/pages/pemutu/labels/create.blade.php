@@ -36,10 +36,9 @@
             />
         </div>
         <div class="mb-3">
-            <x-tabler.form-input 
+            <x-tabler.form-textarea 
                 name="description" 
                 label="Description" 
-                type="textarea" 
                 value="{{ old('description') }}"
                 rows="3" 
             />

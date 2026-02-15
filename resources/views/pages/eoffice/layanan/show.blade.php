@@ -66,9 +66,9 @@
             <div class="card-body scrollable py-2" id="chat-container" style="height: 400px; overflow-y: auto;">
                 <div class="chat-messages p-2">
                     @forelse($layanan->diskusi->sortBy('created_at') as $chat)
-                        <div class="mb-3 {{ $chat->created_by == Auth::id() ? 'text-end' : '' }}">
-                            <div class="d-inline-block p-2 rounded-3 {{ $chat->created_by == Auth::id() ? 'bg-primary text-white' : 'bg-light' }}" style="max-width: 80%;">
-                                @if($chat->created_by != Auth::id())
+                        <div class="mb-3 {{ $chat->created_by == auth()->id() ? 'text-end' : '' }}">
+                            <div class="d-inline-block p-2 rounded-3 {{ $chat->created_by == auth()->id() ? 'bg-primary text-white' : 'bg-light' }}" style="max-width: 80%;">
+                                @if($chat->created_by != auth()->id())
                                     <div class="small fw-bold border-bottom mb-1 pb-1">
                                         {{ $chat->user->name }} ({{ $chat->status_pengirim }})
                                     </div>
@@ -76,12 +76,12 @@
                                 <div class="chat-text" style="white-space: pre-wrap;">{{ $chat->pesan }}</div>
                                 @if($chat->file_lampiran)
                                     <div class="mt-2 pt-2 border-top small">
-                                        <a href="{{ Storage::url($chat->file_lampiran) }}" target="_blank" class="{{ $chat->created_by == Auth::id() ? 'text-white' : 'text-primary' }}">
+                                        <a href="{{ Storage::url($chat->file_lampiran) }}" target="_blank" class="{{ $chat->created_by == auth()->id() ? 'text-white' : 'text-primary' }}">
                                             <i class="ti ti-paperclip"></i> Lampiran
                                         </a>
                                     </div>
                                 @endif
-                                <div class="small mt-1 {{ $chat->created_by == Auth::id() ? 'text-white-50' : 'text-muted' }}">
+                                <div class="small mt-1 {{ $chat->created_by == auth()->id() ? 'text-white-50' : 'text-muted' }}">
                                     {{ $chat->created_at->format('H:i') }}
                                 </div>
                             </div>
@@ -105,7 +105,7 @@
                         </button>
                     </div>
                     <div class="mt-2">
-                        <x-tabler.form-input type="file" name="file_lampiran" class="form-control-sm" title="Lampiran (PDF/IMG)" />
+                        <x-tabler.form-input type="file" name="file_lampiran" class="form-control-sm" label="Lampiran (PDF/IMG)" />
                     </div>
                 </form>
             </div>

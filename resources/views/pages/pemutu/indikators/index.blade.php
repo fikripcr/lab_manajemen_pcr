@@ -26,6 +26,9 @@
                     <div>
                         <x-tabler.form-select name="dokumen_id" placeholder="Filter Dokumen" :options="$dokumens" type="select2" />
                     </div>
+                    <div>
+                        <x-tabler.form-select name="type" placeholder="Filter Tipe" :options="$types" />
+                    </div>
                 </x-tabler.datatable-filter>
             </div>
         </div>
@@ -36,6 +39,7 @@
             route="{{ route('pemutu.indikators.data') }}"
             :columns="[
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
+                ['data' => 'tipe', 'name' => 'type', 'title' => 'Tipe', 'width' => '10%'],
                 ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
                 ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
                 ['data' => 'dokumen_judul', 'name' => 'dokSub.dokumen.judul', 'title' => 'Dokumen Induk'],

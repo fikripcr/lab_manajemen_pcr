@@ -1,6 +1,6 @@
 @props([
     'name',
-    'label',
+    'label' => null,
     'type' => 'text',
     'required' => false,
     'value' => null,
