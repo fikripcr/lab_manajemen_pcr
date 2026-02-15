@@ -15,24 +15,23 @@ class Rapat extends Model
     protected $primaryKey = 'rapat_id';
 
     protected $fillable = [
-        'judul_rapat',
-        'tanggal_rapat',
+        'jenis_rapat',
+        'judul_kegiatan',
+        'tgl_rapat',
         'waktu_mulai',
         'waktu_selesai',
-        'tempat',
-        'jenis_rapat',
-        'deskripsi',
-        'status',
-        'notulen',
-        'file_notulen',
-        'pimpinan_rapat',
+        'tempat_rapat',
+        'ketua_user_id',
+        'notulen_user_id',
+        'author_user_id',
+        'keterangan',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
 
     protected $casts = [
-        'tanggal_rapat' => 'date',
+        'tgl_rapat'     => 'date',
         'waktu_mulai'   => 'datetime',
         'waktu_selesai' => 'datetime',
     ];
@@ -67,5 +66,20 @@ class Rapat extends Model
     public function creator()
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');
+    }
+
+    public function ketua_user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'ketua_user_id');
+    }
+
+    public function notulen_user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'notulen_user_id');
+    }
+
+    public function author_user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'author_user_id');
     }
 }

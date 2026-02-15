@@ -191,10 +191,30 @@
             'can' => 'admin',
             'children'      => [
                 [
-                    'title' => 'Struktur Organisasi',
-                    'route' => 'pemutu.org-units.index',
-                    'active_routes' => ['pemutu.org-units.*'],
-                    'icon' => 'ti ti-hierarchy-2',
+                    'title'         => 'Master Data',
+                    'id'            => 'navbar-pemutu-master',
+                    'icon'          => 'ti ti-database',
+                    'active_routes' => ['pemutu.org-units.*', 'pemutu.personils.*', 'pemutu.labels.*', 'pemutu.label-types.*'],
+                    'children'      => [
+                        [
+                            'title' => 'Struktur Organisasi',
+                            'route' => 'pemutu.org-units.index',
+                            'active_routes' => ['pemutu.org-units.*'],
+                            'icon' => 'ti ti-hierarchy-2',
+                        ],
+                        [
+                            'title' => 'Personel',
+                            'route' => 'pemutu.personils.index',
+                            'active_routes' => ['pemutu.personils.*'],
+                            'icon' => 'ti ti-users',
+                        ],
+                        [
+                            'title' => 'Label & Kategori',
+                            'route' => 'pemutu.labels.index',
+                            'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
+                            'icon' => 'ti ti-tags',
+                        ],
+                    ]
                 ],
                 [
                     'title' => 'Periode KPI',
@@ -214,18 +234,6 @@
                     'active_routes' => ['pemutu.dokumens.*'],
                     'icon' => 'ti ti-file-text',
                 ],
-                [
-                    'title' => 'Personel',
-                    'route' => 'pemutu.personils.index',
-                    'active_routes' => ['pemutu.personils.*'],
-                    'icon' => 'ti ti-users',
-                ],
-                [
-                    'title' => 'Label & Kategori',
-                    'route' => 'pemutu.labels.index',
-                    'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
-                    'icon' => 'ti ti-tags',
-                ],
                 // [
                 //     'title' => 'Indikator',
                 //     'route' => 'pemutu.indikators.index',
@@ -240,9 +248,15 @@
                 ],
                 [
                     'title' => 'Sasaran Kinerja (KPI)',
-                    'route' => 'pemutu.mykpi.index', // Changed from pemutu.kpi.index to mykpi.index as per new controller
-                    'active_routes' => ['pemutu.mykpi.*', 'pemutu.kpi.*'],
+                    'route' => 'pemutu.kpi.index',
+                    'active_routes' => ['pemutu.kpi.*'],
                     'icon' => 'ti ti-chart-arrows',
+                ],
+                [
+                    'title' => 'Sasaran Kinerja Saya',
+                    'route' => 'pemutu.mykpi.index',
+                    'active_routes' => ['pemutu.mykpi.*'],
+                    'icon' => 'ti ti-user-check',
                 ],
                 [
                     'title' => 'Meeting / Rapat',

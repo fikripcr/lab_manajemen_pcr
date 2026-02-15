@@ -14,7 +14,6 @@
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
                 <x-tabler.button type="back" href="{{ route('pemutu.rapat.index') }}" />
-                <x-tabler.button type="edit" href="{{ route('pemutu.rapat.edit', $rapat) }}" />
             </div>
         </div>
     </div>
@@ -39,119 +38,160 @@
         <div class="tab-content">
             {{-- TAB 1: INFO & ABSENSI --}}
             <div class="tab-pane active show" id="tabs-info">
-                <div class="row row-cards">
-                    <div class="col-md-5">
-                        <div class="card">
+                {{-- ROW 1: METADATA --}}
+                <div class="row row-cards mb-3">
+                    <div class="col-md-6">
+                        {{-- INFORMASI RAPAT --}}
+                        <div class="card h-100">
                             <div class="card-header">
-                                <h3 class="card-title">Informasi Dasar</h3>
+                                <h3 class="card-title">Informasi Meeting</h3>
+                                <div class="card-actions">
+                                    <a href="{{ route('pemutu.rapat.edit', $rapat) }}" class="btn btn-primary btn-sm">
+                                        <i class="ti ti-edit me-1"></i> Edit
+                                    </a>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="datagrid">
-                                    <div class="datagrid-item">
-                                        <div class="datagrid-title">Waktu</div>
-                                        <div class="datagrid-content">{{ $rapat->waktu_mulai->format('H:i') }} - {{ $rapat->waktu_selesai->format('H:i') }}</div>
-                                    </div>
-                                    <div class="datagrid-item">
-                                        <div class="datagrid-title">Tempat</div>
-                                        <div class="datagrid-content">{{ $rapat->tempat_rapat }}</div>
-                                    </div>
-                                    <div class="datagrid-item">
-                                        <div class="datagrid-title">Ketua Rapat</div>
-                                        <div class="datagrid-content">
-                                            @if($rapat->ketuaUser)
-                                                {{ $rapat->ketuaUser->name }}
-                                            @else
-                                                <span class="text-danger fst-italic">- Belum Diset -</span>
-                                            @endif
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <span class="bg-blue-lt avatar shadow-sm">
+                                                    <i class="ti ti-calendar-event"></i>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="font-weight-medium">Jadwal & Lokasi</div>
+                                                <div class="text-muted small">
+                                                    <div class="mb-1">
+                                                        <i class="ti ti-clock me-1"></i> {{ $rapat->waktu_mulai->format('H:i') }} - {{ $rapat->waktu_selesai->format('H:i') }}
+                                                    </div>
+                                                    <div>
+                                                        <i class="ti ti-map-pin me-1"></i> {{ $rapat->tempat_rapat }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="datagrid-item">
-                                        <div class="datagrid-title">Notulen</div>
-                                        <div class="datagrid-content">
-                                            @if($rapat->notulenUser)
-                                                {{ $rapat->notulenUser->name }}
-                                            @else
-                                                <span class="text-danger fst-italic">- Belum Diset -</span>
-                                            @endif
+                                    <div class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <span class="bg-cyan-lt avatar shadow-sm">
+                                                    <i class="ti ti-notes"></i>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="font-weight-medium">Keterangan</div>
+                                                <div class="text-muted small">{{ $rapat->keterangan ?? '-' }}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    @if(!$rapat->ketuaUser || !$rapat->notulenUser)
-                                    <div class="datagrid-item">
-                                        <div class="datagrid-title">Aksi</div>
-                                        <div class="datagrid-content">
-                                            <x-tabler.button type="button" class="btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal-set-officials" icon="ti ti-users" text="Set Pejabat Rapat" />
-                                        </div>
-                                    </div>
-                                    @endif
-                                    <div class="datagrid-item">
-                                        <div class="datagrid-title">Keterangan</div>
-                                        <div class="datagrid-content">{{ $rapat->keterangan ?? '-' }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                         <div class="card mt-3">
+                    <div class="col-md-6">
+                        {{-- PEJABAT RAPAT --}}
+                        <div class="card h-100">
                             <div class="card-header">
-                                <h3 class="card-title">Entitas Terkait</h3>
+                                <h3 class="card-title">Pejabat Rapat</h3>
+                                <div class="card-actions">
+                                    <x-tabler.button 
+                                        type="warning" 
+                                        class="btn-sm" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modal-set-officials" 
+                                        icon="ti ti-users" 
+                                        text="Set Pejabat" 
+                                    />
+                                </div>
                             </div>
-                             <div class="card-body">
-                                @if($rapat->entitas->count() > 0)
-                                    <ul class="list-group list-group-flush">
-                                        @foreach($rapat->entitas as $entitas)
-                                            <li class="list-group-item">
-                                                <strong>{{ $entitas->model }}</strong>: {{ $entitas->model_id }}
-                                                <br>
-                                                <small class="text-muted">{{ $entitas->keterangan }}</small>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    <div class="text-muted text-center">Tidak ada entitas terkait.</div>
-                                @endif
-                             </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <span class="avatar avatar shadow-sm rounded-circle">{{ strtoupper(substr($rapat->ketua_user->name ?? '?', 0, 2)) }}</span>
+                                            </div>
+                                            <div>
+                                                <div class="font-weight-medium">Ketua Rapat</div>
+                                                <div class="text-muted small">{{ $rapat->ketua_user->name ?? '- Belum Diset -' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <span class="avatar avatar shadow-sm rounded-circle">{{ strtoupper(substr($rapat->notulen_user->name ?? '?', 0, 2)) }}</span>
+                                            </div>
+                                            <div>
+                                                <div class="font-weight-medium">Notulen</div>
+                                                <div class="text-muted small">{{ $rapat->notulen_user->name ?? '- Belum Diset -' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-7">
+                </div>
+
+                {{-- ROW 2: ATTENDANCE & ENTITY --}}
+                <div class="row row-cards">
+                    <div class="col-md-8">
+                        {{-- DAFTAR HADIR --}}
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Daftar Hadir Peserta</h3>
                                 <div class="card-actions">
-                                    {{-- Optional: Button to invite more? --}}
+                                    <x-tabler.button 
+                                        type="primary" 
+                                        class="btn-sm" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modal-add-participants" 
+                                        icon="ti ti-user-plus" 
+                                        text="Tambah Peserta" 
+                                    />
+                                     <span class="badge bg-green-lt ms-2">{{ $rapat->pesertas->count() }} Orang</span>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <form action="{{ route('pemutu.rapat.update-attendance', $rapat) }}" method="POST">
+                            <div class="card-body p-0">
+                                <form action="{{ route('pemutu.rapat.update-attendance', $rapat) }}#tabs-info" method="POST">
                                     @csrf
                                     <div class="table-responsive">
-                                        <table class="table table-vcenter">
+                                        <table class="table table-vcenter card-table">
                                             <thead>
                                                 <tr>
                                                     <th>Nama & Jabatan</th>
-                                                    <th>Status Kehadiran</th>
-                                                    <th>Waktu Hadir</th>
+                                                    <th width="200">Status Kehadiran</th>
+                                                    <th width="150">Waktu Hadir</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach($rapat->pesertas as $peserta)
                                                 <tr>
                                                     <td>
-                                                        <div class="font-weight-medium">{{ $peserta->user->name ?? 'User N/A' }}</div>
-                                                        <div class="text-muted small">{{ $peserta->jabatan }}</div>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="avatar avatar-xs me-2 rounded-circle bg-light text-muted">{{ strtoupper(substr($peserta->user->name ?? '?', 0, 1)) }}</span>
+                                                            <div>
+                                                                <div class="font-weight-medium">{{ $peserta->user->name ?? 'User N/A' }}</div>
+                                                                <div class="text-muted small">{{ $peserta->jabatan }}</div>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>
-                                                        <x-tabler.form-select name="attendance[{{ $peserta->rapatpeserta_id }}][status]" class="form-select-sm mb-0">
+                                                        <select name="attendance[{{ $peserta->rapatpeserta_id }}][status]" class="form-select">
                                                             <option value="" {{ is_null($peserta->status) ? 'selected' : '' }}>- Belum Absen -</option>
                                                             <option value="hadir" {{ $peserta->status == 'hadir' ? 'selected' : '' }}>Hadir</option>
                                                             <option value="izin" {{ $peserta->status == 'izin' ? 'selected' : '' }}>Izin</option>
                                                             <option value="sakit" {{ $peserta->status == 'sakit' ? 'selected' : '' }}>Sakit</option>
                                                             <option value="alpa" {{ $peserta->status == 'alpa' ? 'selected' : '' }}>Alpa</option>
-                                                        </x-tabler.form-select>
+                                                        </select>
                                                     </td>
                                                     <td>
                                                         <input type="time" name="attendance[{{ $peserta->rapatpeserta_id }}][waktu_hadir]" 
-                                                            class="form-control form-control-sm"
+                                                            class="form-control"
                                                             value="{{ $peserta->waktu_hadir ? $peserta->waktu_hadir->format('H:i') : '' }}">
                                                     </td>
                                                 </tr>
@@ -159,10 +199,31 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="mt-3 text-end">
+                                    <div class="p-3 bg-light text-end">
                                         <x-tabler.button type="submit" class="btn-primary" icon="ti ti-check" text="Simpan Absensi" />
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        {{-- ENTITY --}}
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Entitas Terkait</h3>
+                            </div>
+                            <div class="card-body py-2">
+                                @if($rapat->entitas->count() > 0)
+                                    @foreach($rapat->entitas as $entitas)
+                                        <div class="mb-2">
+                                            <strong class="small">{{ $entitas->model }}</strong>: <span class="badge bg-light text-dark">{{ $entitas->model_id }}</span>
+                                            <div class="text-muted x-small">{{ Str::limit($entitas->keterangan, 50) }}</div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-muted text-center small py-2">Tidak ada entitas terkait.</div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -171,14 +232,24 @@
 
             {{-- TAB 2: AGENDA & PEMBAHASAN --}}
             <div class="tab-pane" id="tabs-agenda">
-                <form action="{{ route('pemutu.rapat.update-agenda', $rapat) }}" method="POST">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0">Agenda & Pembahasan</h3>
+                        <p class="text-muted small mb-0">Ketikan isi agenda akan tersimpan secara otomatis.</p>
+                    </div>
+                    <x-tabler.button type="button" class="btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-agenda" icon="ti ti-plus" text="Tambah Agenda" />
+                </div>
+
+                <form id="form-agenda" action="{{ route('pemutu.rapat.update-agenda', $rapat) }}" method="POST">
                     @csrf
                     <div class="accordion" id="accordion-agenda">
-                        @foreach($rapat->agendas as $index => $agenda)
+                        @forelse($rapat->agendas as $index => $agenda)
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading-{{ $agenda->rapatagenda_id }}">
                                     <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $agenda->rapatagenda_id }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}">
+                                        <i class="ti ti-checklist me-2 text-muted"></i>
                                         {{ $loop->iteration }}. {{ $agenda->judul_agenda }}
+                                        <span class="ms-2 badge bg-blue-lt save-status-{{ $agenda->rapatagenda_id }} d-none">Saving...</span>
                                     </button>
                                 </h2>
                                 <div id="collapse-{{ $agenda->rapatagenda_id }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" data-bs-parent="#accordion-agenda">
@@ -186,16 +257,21 @@
                                         <label class="form-label">Catatan Pembahasan / Hasil Agenda</label>
                                         <x-tabler.form-textarea 
                                             name="agendas[{{ $agenda->rapatagenda_id }}][isi]" 
-                                            class="editor" 
+                                            class="editor-agenda" 
+                                            data-agenda-id="{{ $agenda->rapatagenda_id }}"
                                             :value="$agenda->isi" 
                                             rows="5" />
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="text-center py-4 border rounded-2 bg-light">
+                                <p class="text-muted mb-0">Belum ada agenda rapat.</p>
+                            </div>
+                        @endforelse
                     </div>
-                    <div class="mt-3 text-end">
-                        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Pembahasan Agenda" />
+                    <div class="mt-3 text-end d-print-none">
+                        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Manual" />
                     </div>
                 </form>
             </div>
@@ -212,55 +288,185 @@
                     </div>
                 </div>
             </div>
+        </div> {{-- Closing tab-content --}}
+    </div> {{-- Closing card-body --}}
+</div> {{-- Closing main card --}}
+{{-- MODAL: Tambah Agenda --}}
+<div class="modal modal-blur fade" id="modal-add-agenda" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <x-tabler.form-modal 
+                title="Tambah Agenda Rapat" 
+                :route="route('pemutu.rapat.agenda.store', $rapat) . '#tabs-agenda'"
+            >
+                <x-tabler.form-input name="judul_agenda" label="Judul Agenda" placeholder="Contoh: Pembahasan KPI 2024" required="true" />
+            </x-tabler.form-modal>
         </div>
     </div>
-</div>
 </div>
 
 {{-- MODAL: Set Pejabat Rapat --}}
 <div class="modal modal-blur fade" id="modal-set-officials" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Set Pejabat Rapat</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('pemutu.rapat.update-officials', $rapat) }}" method="POST">
-                @csrf
-                <div class="modal-body">
-                        <x-tabler.form-select class="select2-modal" name="ketua_user_id" label="Ketua Rapat" required="true">
-                             <option value="" selected disabled>Pilih Ketua Rapat</option>
-                             @foreach(\App\Models\User::all() as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                             @endforeach
-                        </x-tabler.form-select>
-                        <x-tabler.form-select class="select2-modal" name="notulen_user_id" label="Notulen Rapat" required="true">
-                             <option value="" selected disabled>Pilih Notulen Rapat</option>
-                             @foreach(\App\Models\User::all() as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                             @endforeach
-                        </x-tabler.form-select>
+            <x-tabler.form-modal 
+                title="Set Pejabat Rapat" 
+                :route="route('pemutu.rapat.update-officials', $rapat) . '#tabs-info'"
+            >
+                <x-tabler.form-select name="ketua_user_id" label="Ketua Rapat" type="select2" required="true" class="select2-modal">
+                    <option value="" selected disabled>Pilih Ketua Rapat</option>
+                    @foreach($rapat->pesertas as $peserta)
+                        <option value="{{ $peserta->user_id }}" {{ $rapat->ketua_user_id == $peserta->user_id ? 'selected' : '' }}>{{ $peserta->user->name }}</option>
+                    @endforeach
+                </x-tabler.form-select>
+                <x-tabler.form-select name="notulen_user_id" label="Notulen Rapat" type="select2" required="true" class="select2-modal">
+                    <option value="" selected disabled>Pilih Notulen Rapat</option>
+                    @foreach($rapat->pesertas as $peserta)
+                        <option value="{{ $peserta->user_id }}" {{ $rapat->notulen_user_id == $peserta->user_id ? 'selected' : '' }}>{{ $peserta->user->name }}</option>
+                    @endforeach
+                </x-tabler.form-select>
+            </x-tabler.form-modal>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL: Tambah Peserta Rapat --}}
+<div class="modal modal-blur fade" id="modal-add-participants" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <x-tabler.form-modal 
+                title="Tambah Peserta Rapat" 
+                :route="route('pemutu.rapat.participants.store', $rapat) . '#tabs-info'"
+            >
+                <div class="mb-3">
+                    <label class="form-label">Pilih Peserta (Bisa pilih banyak)</label>
+                    <select name="user_ids[]" class="form-select select2-modal-participants" multiple="multiple" data-placeholder="Pilih Peserta..." required>
+                            @foreach(\App\Models\User::all() as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                    </select>
                 </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary" text="Simpan" />
-                </div>
-            </form>
+                <x-tabler.form-input name="jabatan" label="Jabatan/Peran (Opsional)" placeholder="Contoh: Peserta, Narasumber, dll" />
+            </x-tabler.form-modal>
         </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
-{{-- HugeRTE (already globally available or need init?) --}}
 <script>
-    // Initialize HugeRTE if not automatically done by class 'editor'
-    // Assuming 'editor' class is handled by global script or x-tabler component
-    // If not, we might need manual init here.
-    // Based on previous knowledge, HugeRTE setup might be needed.
-    
-    // Check if user has provided specific HUGE RTE instruction or if standard 'editor' class works.
-    // Default Tabler dashkit uses TinyMCE or similar.
-    // Let's assume standard editor initialization.
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tab persistence
+        const hash = window.location.hash;
+        if (hash) {
+            const tabTarget = document.querySelector('a[href="' + hash + '"]');
+            if (tabTarget) {
+                const tab = new bootstrap.Tab(tabTarget);
+                tab.show();
+            }
+        }
+
+        // Update hash when tab changes
+        const tabLinks = document.querySelectorAll('a[data-bs-toggle="tab"]');
+        tabLinks.forEach(link => {
+            link.addEventListener('shown.bs.tab', function (e) {
+                const href = e.target.getAttribute('href');
+                history.replaceState(null, null, href);
+            });
+        });
+
+        // Accordion persistence
+        const activeAccordionId = localStorage.getItem('rapat_active_accordion_{{ $rapat->rapat_id }}');
+        if (activeAccordionId) {
+            const accordionBtn = document.querySelector('button[data-bs-target="' + activeAccordionId + '"]');
+            if (accordionBtn) {
+                const collapseElement = document.querySelector(activeAccordionId);
+                if (collapseElement) {
+                    // Remove 'show' from default active one if it's different
+                    document.querySelectorAll('#accordion-agenda .accordion-collapse.show').forEach(el => {
+                        if('#' + el.id !== activeAccordionId) el.classList.remove('show');
+                    });
+                    document.querySelectorAll('#accordion-agenda .accordion-button').forEach(btn => {
+                        if(btn.getAttribute('data-bs-target') !== activeAccordionId) btn.classList.add('collapsed');
+                    });
+
+                    const bsCollapse = new bootstrap.Collapse(collapseElement, { toggle: false });
+                    bsCollapse.show();
+                    accordionBtn.classList.remove('collapsed');
+                }
+            }
+        }
+
+        // Save accordion state
+        const accordionItems = document.querySelectorAll('#accordion-agenda .accordion-collapse');
+        accordionItems.forEach(item => {
+            item.addEventListener('shown.bs.collapse', function () {
+                localStorage.setItem('rapat_active_accordion_{{ $rapat->rapat_id }}', '#' + item.id);
+            });
+        });
+
+        // Initialize Select2 in modals
+        if (window.loadSelect2) {
+            window.loadSelect2().then(() => {
+                $('.select2-modal').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#modal-set-officials')
+                });
+                $('.select2-modal-participants').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: 'Pilih Peserta...',
+                    dropdownParent: $('#modal-add-participants')
+                });
+            });
+        }
+
+        // Initialize HugeRTE for agenda items
+        if (window.loadHugeRTE) {
+            window.loadHugeRTE('.editor-agenda', {
+                height: 300,
+                menubar: false,
+                statusbar: false,
+                plugins: 'lists',
+                toolbar: 'bold italic | bullist numlist',
+                setup: function (editor) {
+                    let timeout;
+                    editor.on('input change keyup', function () {
+                        clearTimeout(timeout);
+                        const agendaId = editor.getElement().dataset.agendaId;
+                        const $status = $('.save-status-' + agendaId);
+                        
+                        $status.removeClass('d-none bg-green-lt bg-red-lt').addClass('bg-blue-lt').text('Typing...');
+
+                        timeout = setTimeout(() => {
+                            autoSaveAgenda(agendaId, editor.getContent());
+                        }, 1500); // 1.5 seconds debounce
+                    });
+                }
+            });
+        }
+
+        function autoSaveAgenda(agendaId, content) {
+            const $status = $('.save-status-' + agendaId);
+            $status.removeClass('d-none').text('Saving...').addClass('bg-blue-lt').removeClass('bg-green-lt bg-red-lt');
+
+            const payload = {
+                _token: '{{ csrf_token() }}',
+                agendas: {}
+            };
+            payload.agendas[agendaId] = { isi: content };
+
+            axios.post('{{ route('pemutu.rapat.update-agenda', $rapat) }}', payload)
+                .then(response => {
+                    $status.text('Saved').addClass('bg-green-lt').removeClass('bg-blue-lt');
+                    setTimeout(() => $status.addClass('d-none'), 2000);
+                })
+                .catch(error => {
+                    console.error('Auto-save error:', error);
+                    $status.text('Error!').addClass('bg-red-lt').removeClass('bg-blue-lt');
+                });
+        }
+    });
 </script>
 @endpush

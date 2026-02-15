@@ -5,6 +5,9 @@
 <x-tabler.page-header title="Detail Indikator" pretitle="SPMI">
     <x-slot:actions>
         <x-tabler.button type="a" href="javascript:history.back()" icon="ti ti-arrow-left" text="Kembali" class="btn-secondary" />
+        @if($indikator->type == 'performa')
+            <x-tabler.button type="a" href="{{ route('pemutu.kpi.assign', $indikator->indikator_id) }}" icon="ti ti-users" text="Assign Personnel" class="btn-purple" />
+        @endif
         <x-tabler.button type="a" href="{{ route('pemutu.indikators.edit', $indikator->indikator_id) }}" icon="ti ti-pencil" text="Edit Indikator" class="btn-primary" />
     </x-slot:actions>
 </x-tabler.page-header>

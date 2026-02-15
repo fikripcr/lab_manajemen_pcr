@@ -10,7 +10,7 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <x-tabler.button type="create" href="{{ route('pemutu.rapat.create') }}" text="Tambah Rapat" />
+                <x-tabler.button type="create" href="{{ route('pemutu.rapat.create') }}" text="Jadwalkan Meeting" />
             </div>
         </div>
     </div>
@@ -34,42 +34,24 @@
             <x-tabler.datatable
                 id="rapat-table" route="{{ route('pemutu.rapat.data') }}" :columns="[
                 [
-                    'title' => 'Jenis Rapat',
-                    'data' => 'jenis_rapat',
-                    'name' => 'jenis_rapat',
+                    'title' => 'Kegiatan & Tempat',
+                    'data'  => 'rapat_info',
+                    'name'  => 'judul_kegiatan',
                 ],
                 [
-                    'title' => 'Judul Kegiatan',
-                    'data' => 'judul_kegiatan',
-                    'name' => 'judul_kegiatan',
+                    'title' => 'Waktu & Durasi',
+                    'data'  => 'waktu_info',
+                    'name'  => 'tgl_rapat',
                 ],
                 [
-                    'title' => 'Tanggal Rapat',
-                    'data' => 'tgl_rapat',
-                    'name' => 'tgl_rapat',
-                ],
-                [
-                    'title' => 'Waktu',
-                    'data' => 'waktu',
-                    'name' => 'waktu',
-                    'render' => function($row) {
-                        return $row->waktu_mulai->format('H:i') . ' - ' . $row->waktu_selesai->format('H:i');
-                    }
-                ],
-                [
-                    'title' => 'Tempat',
-                    'data' => 'tempat_rapat',
-                    'name' => 'tempat_rapat',
-                ],
-                [
-                    'title' => 'Ketua Rapat',
-                    'data' => 'ketua_user.name',
-                    'name' => 'ketua_user.name',
+                    'title' => 'Pejabat Rapat',
+                    'data'  => 'pejabat_info',
+                    'name'  => 'ketua_user.name',
                 ],
                 [
                     'title' => 'Actions',
-                    'data' => 'action',
-                    'name' => 'action',
+                    'data'  => 'action',
+                    'name'  => 'action',
                     'orderable' => false,
                     'searchable' => false,
                 ],

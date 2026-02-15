@@ -33,4 +33,27 @@ class RapatRequest extends FormRequest
             'keterangan'      => 'nullable|string',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'waktu_selesai.after' => 'Waktu Selesai harus setelah Waktu Mulai.',
+            'date_format'         => 'Format :attribute tidak valid (HH:MM).',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'jenis_rapat'     => 'Jenis Rapat',
+            'judul_kegiatan'  => 'Judul Kegiatan',
+            'tgl_rapat'       => 'Tanggal Rapat',
+            'waktu_mulai'     => 'Waktu Mulai',
+            'waktu_selesai'   => 'Waktu Selesai',
+            'tempat_rapat'    => 'Tempat Rapat',
+            'ketua_user_id'   => 'Ketua Rapat',
+            'notulen_user_id' => 'Notulen Rapat',
+            'author_user_id'  => 'Author',
+        ];
+    }
 }

@@ -4,13 +4,12 @@ namespace App\Models\Pemutu;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
-use App\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RapatPeserta extends Model
 {
-    use HasFactory, Blameable, HashidBinding, UuidTrait;
+    use HasFactory, Blameable, HashidBinding;
 
     protected $table      = 'pemutu_rapat_peserta';
     protected $primaryKey = 'rapatpeserta_id';

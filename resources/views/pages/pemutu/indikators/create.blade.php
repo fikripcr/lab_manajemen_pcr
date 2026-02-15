@@ -42,9 +42,6 @@
                         <li class="nav-item" id="nav-target">
                             <a href="#tabs-target" class="nav-link" data-bs-toggle="tab"><i class="ti ti-target me-2"></i>Target & Unit Kerja</a>
                         </li>
-                        <li class="nav-item" id="nav-kpi" style="display: none;">
-                            <a href="#tabs-kpi" class="nav-link" data-bs-toggle="tab"><i class="ti ti-users me-2"></i>Sasaran Kinerja</a>
-                        </li>
                         <li class="nav-item">
                             <a href="#tabs-lainnya" class="nav-link" data-bs-toggle="tab"><i class="ti ti-tags me-2"></i>Label & Kategori</a>
                         </li>
@@ -191,53 +188,6 @@
                             </div>
                         </div>
 
-                        <!-- TAB: KPI PEGAWAI -->
-                        <div class="tab-pane" id="tabs-kpi">
-                            <div class="table-responsive border rounded" style="max-height: 500px; overflow-y: auto;">
-                                <table class="table table-vcenter card-table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th width="30%">Pegawai</th>
-                                            <th width="15%">Tahun</th>
-                                            <th width="15%">Semester</th>
-                                            <th width="15%">Bobot (%)</th>
-                                            <th width="25%">Target Nilai</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($personils as $index => $person)
-                                        <tr>
-                                            <td>
-                                                <x-tabler.form-checkbox 
-                                                    name="kpi_assign[{{ $index }}][selected]" 
-                                                    label="{{ $person->nama }}" 
-                                                    value="1" 
-                                                    input-class="kpi-checkbox" 
-                                                    class="mb-0" 
-                                                    data-index="{{ $index }}"
-                                                >
-                                                    <input type="hidden" name="kpi_assign[{{ $index }}][personil_id]" value="{{ $person->personil_id }}">
-                                                </x-tabler.form-checkbox>
-                                            </td>
-                                            <td>
-                                                <x-tabler.form-input type="number" name="kpi_assign[{{ $index }}][year]" value="{{ date('Y') }}" disabled="true" id="kpi-year-{{ $index }}" class="mb-0" input-class="form-control-sm" />
-                                            </td>
-                                            <td>
-                                                <x-tabler.form-select name="kpi_assign[{{ $index }}][semester]" :options="['Ganjil' => 'Ganjil', 'Genap' => 'Genap']" disabled="true" class="form-select-sm" id="kpi-sem-{{ $index }}" />
-                                            </td>
-                                            <td>
-                                                <x-tabler.form-input type="number" step="0.01" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" disabled="true" id="kpi-weight-{{ $index }}" class="mb-0" input-class="form-control-sm" />
-                                            </td>
-                                            <td>
-                                                <x-tabler.form-input type="number" step="0.01" name="kpi_assign[{{ $index }}][target_value]" placeholder="0.00" disabled="true" id="kpi-target-{{ $index }}" class="mb-0" input-class="form-control-sm" />
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="form-hint mt-2">Pilih pegawai yang akan dievaluasi menggunakan indikator performa ini.</div>
-                        </div>
 
                         <!-- TAB 3: LABEL & LAINNYA -->
                         <div class="tab-pane" id="tabs-lainnya">
@@ -273,19 +223,15 @@
         const typeSelector = document.getElementById('type-selector');
         const navHierarchy = document.getElementById('nav-hierarchy');
         const navTarget = document.getElementById('nav-target');
-        const navKpi = document.getElementById('nav-kpi');
         const parentIdSelector = document.getElementById('parent-id-selector');
 
         function toggleTabs() {
             const type = typeSelector.value;
-            if (type === 'performa') {
                 navHierarchy.style.display = 'block';
-                navKpi.style.display = 'block';
                 navTarget.style.display = 'none';
                 parentIdSelector.setAttribute('required', 'required');
             } else {
                 navHierarchy.style.display = 'none';
-                navKpi.style.display = 'none';
                 navTarget.style.display = 'block';
                 parentIdSelector.removeAttribute('required');
             }
@@ -313,30 +259,6 @@
             });
         });
 
-        // KPI Checkbox Logic
-        const kpiCheckboxes = document.querySelectorAll('.kpi-checkbox');
-        kpiCheckboxes.forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                const index = this.dataset.index;
-                const yearInput = document.getElementById('kpi-year-' + index);
-                const semInput = document.getElementById('kpi-sem-' + index);
-                const weightInput = document.getElementById('kpi-weight-' + index);
-                const targetInput = document.getElementById('kpi-target-' + index);
-                
-                if (this.checked) {
-                    yearInput.removeAttribute('disabled');
-                    semInput.removeAttribute('disabled');
-                    weightInput.removeAttribute('disabled');
-                    targetInput.removeAttribute('disabled');
-                    weightInput.focus();
-                } else {
-                    yearInput.setAttribute('disabled', 'disabled');
-                    semInput.setAttribute('disabled', 'disabled');
-                    weightInput.setAttribute('disabled', 'disabled');
-                    targetInput.setAttribute('disabled', 'disabled');
-                }
-            });
-        });
     });
 </script>
 @endpush

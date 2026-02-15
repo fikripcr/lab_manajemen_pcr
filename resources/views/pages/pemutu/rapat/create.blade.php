@@ -4,9 +4,9 @@
     <div class="row g-2 align-items-center">
         <div class="col">
             <h2 class="page-title">
-                Tambah Rapat
+                Jadwalkan Meeting
             </h2>
-            <div class="text-muted mt-1">Pemutu / Meeting / Tambah</div>
+            <div class="text-muted mt-1">Pemutu / Meeting / Jadwalkan</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
@@ -21,7 +21,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Form Tambah Rapat</h3>
+                    <h3 class="card-title">Form Jadwalkan Meeting</h3>
                 </div>
                 <div class="card-body">
                     <x-tabler.flash-message />
@@ -111,7 +111,7 @@
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <x-tabler.button type="cancel" href="{{ route('pemutu.rapat.index') }}" />
-                            <x-tabler.button type="submit" text="Simpan Rapat" />
+                            <x-tabler.button type="submit" text="Jadwalkan" />
                         </div>
                     </form>
                 </div>

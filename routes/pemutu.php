@@ -15,13 +15,12 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::resource('periode-kpis', App\Http\Controllers\Pemutu\PeriodeKpiController::class);
 
     // Rapat
-    Route::post('rapat/data', [App\Http\Controllers\Pemutu\RapatController::class, 'paginate'])->name('rapat.data');
+    Route::get('rapat/data', [App\Http\Controllers\Pemutu\RapatController::class, 'paginate'])->name('rapat.data');
     Route::post('rapat/{rapat}/attendance', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAttendance'])->name('rapat.update-attendance');
     Route::post('rapat/{rapat}/agenda', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAgenda'])->name('rapat.update-agenda');
-    Route::get('rapat/{rapat}/pdf', [App\Http\Controllers\Pemutu\RapatController::class, 'generatePdf'])->name('rapat.generate-pdf');
-    Route::resource('rapat', App\Http\Controllers\Pemutu\RapatController::class);
-    Route::post('rapat/{rapat}/attendance', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAttendance'])->name('rapat.update-attendance');
-    Route::post('rapat/{rapat}/agenda', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAgenda'])->name('rapat.update-agenda');
+    Route::post('rapat/{rapat}/agenda/store', [App\Http\Controllers\Pemutu\RapatController::class, 'storeAgenda'])->name('rapat.agenda.store');
+    Route::post('rapat/{rapat}/officials', [App\Http\Controllers\Pemutu\RapatController::class, 'updateOfficials'])->name('rapat.update-officials');
+    Route::post('rapat/{rapat}/participants', [App\Http\Controllers\Pemutu\RapatController::class, 'storeParticipants'])->name('rapat.participants.store');
     Route::get('rapat/{rapat}/pdf', [App\Http\Controllers\Pemutu\RapatController::class, 'generatePdf'])->name('rapat.generate-pdf');
     Route::resource('rapat', App\Http\Controllers\Pemutu\RapatController::class);
 
@@ -70,6 +69,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // KPI (Sasaran Kinerja)
     Route::get('api/kpi', [App\Http\Controllers\Pemutu\KpiController::class, 'paginate'])->name('kpi.data');
+    Route::get('kpi/{kpi}/assign', [App\Http\Controllers\Pemutu\KpiController::class, 'assign'])->name('kpi.assign');
+    Route::post('kpi/{kpi}/assign', [App\Http\Controllers\Pemutu\KpiController::class, 'storeAssignment'])->name('kpi.assign.store');
     Route::resource('kpi', App\Http\Controllers\Pemutu\KpiController::class);
 
     // Document Approvals

@@ -11,15 +11,16 @@ class Indikator extends Model
 {
     use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
-    protected $table = 'pemutu_indikator';
+    protected $table      = 'pemutu_indikator';
     protected $primaryKey = 'indikator_id';
-    protected $appends = ['encrypted_indikator_id'];
-    protected $fillable = [
+    protected $appends    = ['encrypted_indikator_id'];
+    protected $fillable   = [
         'type',
         'parent_id',
         'no_indikator',
         'indikator',
         'target',
+        'unit_ukuran',
         'jenis_indikator',
         'jenis_data',
         'periode_jenis',
@@ -33,8 +34,8 @@ class Indikator extends Model
         'peningkat_nonaktif_indik',
         'is_new_indik_after_peningkatan',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
     public $timestamps = false;
 

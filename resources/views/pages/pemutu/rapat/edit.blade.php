@@ -68,7 +68,7 @@
                                     name="waktu_mulai" 
                                     label="Waktu Mulai" 
                                     type="time" 
-                                    value="{{ old('waktu_mulai', $rapat->waktu_mulai) }}"
+                                    value="{{ old('waktu_mulai', $rapat->waktu_mulai?->format('H:i')) }}"
                                     required="true" 
                                 />
                             </div>
@@ -77,7 +77,7 @@
                                     name="waktu_selesai" 
                                     label="Waktu Selesai" 
                                     type="time" 
-                                    value="{{ old('waktu_selesai', $rapat->waktu_selesai) }}"
+                                    value="{{ old('waktu_selesai', $rapat->waktu_selesai?->format('H:i')) }}"
                                     required="true" 
                                 />
                             </div>
@@ -97,40 +97,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
-                                <x-tabler.form-select 
-                                    name="ketua_user_id" 
-                                    label="Ketua Rapat" 
-                                    type="select2" 
-                                    :options="$users->pluck('name', 'id')->toArray()"
-                                    :selected="old('ketua_user_id', $rapat->ketua_user_id)" 
-                                    placeholder="Pilih ketua rapat" 
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <x-tabler.form-select 
-                                    name="notulen_user_id" 
-                                    label="Notulen Rapat" 
-                                    type="select2" 
-                                    :options="$users->pluck('name', 'id')->toArray()"
-                                    :selected="old('notulen_user_id', $rapat->notulen_user_id)" 
-                                    placeholder="Pilih notulen rapat" 
-                                />
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-tabler.form-select 
-                                    name="author_user_id" 
-                                    label="Author" 
-                                    type="select2" 
-                                    :options="$users->pluck('name', 'id')->toArray()"
-                                    :selected="old('author_user_id', $rapat->author_user_id)" 
-                                    placeholder="Pilih author" 
-                                />
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <x-tabler.form-textarea 
                                     name="keterangan" 
                                     label="Keterangan" 

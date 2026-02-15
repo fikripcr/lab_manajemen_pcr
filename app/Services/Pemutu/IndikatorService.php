@@ -8,7 +8,7 @@ class IndikatorService
 {
     public function getFilteredQuery(array $filters)
     {
-        $query = Indikator::with(['dokSubs.dokumen', 'labels.type', 'parent']);
+        $query = Indikator::with(['dokSubs.dokumen', 'labels.type', 'parent', 'orgUnits']);
 
         if (! empty($filters['dokumen_id'])) {
             $query->whereHas('dokSubs.dokumen', function ($q) use ($filters) {
@@ -20,7 +20,11 @@ class IndikatorService
             $query->where('type', $filters['type']);
         }
 
-        return $query->orderBy('indikator_id', 'desc');
+        if (! empty($filters['parent_id'])) {
+            $query->where('parent_id', $filters['parent_id']);
+        }
+
+        return $query->orderBy('no_indikator', 'asc');
     }
 
     public function getIndikatorById($id)
