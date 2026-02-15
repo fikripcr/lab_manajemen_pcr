@@ -30,14 +30,11 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label required">Tanggal Mulai (Tgl Awal)</label>
-                            <input type="date" class="form-control @error('tgl_awal') is-invalid @enderror" name="tgl_awal" value="{{ old('tgl_awal') }}" required>
-                            @error('tgl_awal') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <x-tabler.form-input type="date" name="tgl_awal" label="Tanggal Mulai (Tgl Awal)" value="{{ old('tgl_awal') }}" required="true" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Tanggal Selesai (Opsional)</label>
-                            <input type="date" class="form-control @error('tgl_akhir') is-invalid @enderror" name="tgl_akhir" value="{{ old('tgl_akhir') }}">
+                            <x-tabler.form-input type="date" name="tgl_akhir" label="Tanggal Selesai (Opsional)" value="{{ old('tgl_akhir') }}" />
                         </div>
 
                         <div class="col-md-6 mb-3">

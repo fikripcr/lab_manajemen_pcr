@@ -33,10 +33,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="cover_image">Cover Image</label>
                             <div class="col-sm-10">
-                                <input type="file" class="filepond-input" 
-                                       id="cover_image" name="cover" accept="image/*"
-                                       data-max-files="1">
-                                <div class="form-hint text-muted">Upload a new cover image to replace the current one.</div>
+                                <x-tabler.form-input type="file" id="cover_image" name="cover" accept="image/*" help="Upload a new cover image to replace the current one." class="mb-0" />
                                 
                                 @if ($pengumuman->hasMedia('info_cover'))
                                     <div class="mt-2">
@@ -44,20 +41,13 @@
                                         <img src="{{ $pengumuman->getFirstMediaUrl('info_cover', 'medium') }}" alt="Current Cover" class="img-thumbnail" style="max-height: 150px;">
                                     </div>
                                 @endif
-
-                                @error('cover')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="attachments">Attachments</label>
                             <div class="col-sm-10">
-                                <input type="file" class="filepond-input" 
-                                       id="attachments" name="attachments[]" multiple 
-                                       data-allow-multiple="true">
-                                <div class="form-hint text-muted">Upload additional files (current ones will be kept).</div>
+                                <x-tabler.form-input type="file" id="attachments" name="attachments[]" multiple="true" help="Upload additional files (current ones will be kept)." class="mb-0" />
 
                                 @if ($pengumuman->hasMedia('info_attachment'))
                                     <div class="mt-2">
@@ -72,19 +62,12 @@
                                         </ul>
                                     </div>
                                 @endif
-
-                                @error('attachments')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-sm-10 offset-sm-2">
-                                <label class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="is_published" value="1" {{ old('is_published', $pengumuman->is_published) ? 'checked' : '' }}>
-                                    <span class="form-check-label">Publish {{ ucfirst($type) }}</span>
-                                </label>
+                                <x-tabler.form-checkbox name="is_published" value="1" label="Publish {{ ucfirst($type) }}" :checked="old('is_published', $pengumuman->is_published)" switch />
                             </div>
                         </div>
 
@@ -102,38 +85,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        if (typeof window.loadFilePond === 'function') {
-            const FilePond = await window.loadFilePond();
-            
-            // Initialize Cover Image (Single)
-            const coverInput = document.querySelector('#cover_image');
-            if(coverInput) {
-                FilePond.create(coverInput, {
-                    storeAsFile: true,
-                    labelIdle: 'Drag & Drop your new cover image (if replacing)',
-                    acceptedFileTypes: ['image/*'],
-                    imagePreviewHeight: 170,
-                    styleLoadIndicatorPosition: 'center bottom',
-                    styleProcessIndicatorPosition: 'right bottom',
-                    styleButtonRemoveItemPosition: 'left bottom',
-                    styleButtonProcessItemPosition: 'right bottom',
-                });
-            }
-
-            // Initialize Attachments (Multiple)
-            const attachmentInput = document.querySelector('#attachments');
-            if(attachmentInput) {
-                FilePond.create(attachmentInput, {
-                    storeAsFile: true,
-                    allowMultiple: true,
-                    labelIdle: 'Drag & Drop new files',
-                });
-            }
-        }
-    });
-</script>
-@endpush

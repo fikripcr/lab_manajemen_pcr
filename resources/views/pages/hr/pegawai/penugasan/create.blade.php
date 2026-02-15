@@ -23,13 +23,10 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tanggal Mulai</label>
-                <input type="date" class="form-control" name="tgl_mulai" value="{{ old('tgl_mulai', date('Y-m-d')) }}" required>
+                <x-tabler.form-input type="date" name="tgl_mulai" label="Tanggal Mulai" value="{{ old('tgl_mulai', date('Y-m-d')) }}" required="true" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label">Tanggal Selesai</label>
-                <input type="date" class="form-control" name="tgl_selesai" value="{{ old('tgl_selesai') }}">
-                <small class="text-muted">Kosongkan jika masih berlaku</small>
+                <x-tabler.form-input type="date" name="tgl_selesai" label="Tanggal Selesai" value="{{ old('tgl_selesai') }}" help="Kosongkan jika masih berlaku" />
             </div>
         </div>
 
@@ -38,15 +35,14 @@
                 <x-tabler.form-input name="no_sk" label="Nomor SK" value="{{ old('no_sk') }}" placeholder="SK/xxx/2026" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label">Tanggal SK</label>
-                <input type="date" class="form-control" name="tgl_sk" value="{{ old('tgl_sk') }}">
+                <x-tabler.form-input type="date" name="tgl_sk" label="Tanggal SK" value="{{ old('tgl_sk') }}" />
             </div>
         </div>
 
         <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" />
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary">Simpan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" text="Simpan" />
     </div>
 </form>

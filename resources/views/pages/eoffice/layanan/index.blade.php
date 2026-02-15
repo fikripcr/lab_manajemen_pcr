@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $pageTitle }}" pretitle="E-Office Transactions">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('eoffice.layanan.services') }}" icon="ti ti-plus" text="Tambah Pengajuan" />
+        <x-tabler.button type="create" :href="route('eoffice.layanan.services')" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

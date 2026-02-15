@@ -30,22 +30,19 @@
                 </div>
                 <div class="card-body">
                     <div class="row g-3 mb-3">
-                        <div class="mb-3">
-                            <x-tabler.form-input id="datePicker" placeholder="Select date" />
+                        <div class="col-md-6">
+                            <x-tabler.form-input type="date" name="datePicker" label="Basic Date Picker" placeholder="Select date" />
                         </div>
                         <div class="col-md-6">
-                            <label for="dateTimePicker" class="form-label">Date & Time</label>
-                            <x-tabler.form-input id="dateTimePicker" placeholder="Select date & time" />
+                            <x-tabler.form-input type="datetime" name="dateTimePicker" label="Date & Time" placeholder="Select date & time" />
                         </div>
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="rangePicker" class="form-label">Date Range</label>
-                            <x-tabler.form-input id="rangePicker" placeholder="Select range" />
+                            <x-tabler.form-input type="range" name="rangePicker" label="Date Range" placeholder="Select range" />
                         </div>
                         <div class="col-md-6">
-                            <label for="multiplePicker" class="form-label">Multiple Dates</label>
-                            <x-tabler.form-input id="multiplePicker" placeholder="Select multiple" />
+                            <x-tabler.form-input type="multiple" name="multiplePicker" label="Multiple Dates" placeholder="Select multiple" />
                         </div>
                     </div>
                 </div>

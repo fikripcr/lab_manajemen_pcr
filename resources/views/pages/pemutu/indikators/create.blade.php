@@ -190,23 +190,28 @@
                                         @foreach($personils as $index => $person)
                                         <tr>
                                             <td>
-                                                <label class="form-check mb-0">
-                                                    <input class="form-check-input kpi-checkbox" type="checkbox" name="kpi_assign[{{ $index }}][selected]" value="1" data-index="{{ $index }}">
-                                                    <span class="form-check-label">{{ $person->nama }}</span>
+                                                <x-tabler.form-checkbox 
+                                                    name="kpi_assign[{{ $index }}][selected]" 
+                                                    label="{{ $person->nama }}" 
+                                                    value="1" 
+                                                    input-class="kpi-checkbox" 
+                                                    class="mb-0" 
+                                                    data-index="{{ $index }}"
+                                                >
                                                     <input type="hidden" name="kpi_assign[{{ $index }}][personil_id]" value="{{ $person->personil_id }}">
-                                                </label>
+                                                </x-tabler.form-checkbox>
                                             </td>
                                             <td>
-                                                <input type="number" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][year]" value="{{ date('Y') }}" disabled id="kpi-year-{{ $index }}">
+                                                <x-tabler.form-input type="number" name="kpi_assign[{{ $index }}][year]" value="{{ date('Y') }}" disabled="true" id="kpi-year-{{ $index }}" class="mb-0" input-class="form-control-sm" />
                                             </td>
                                             <td>
                                                 <x-tabler.form-select name="kpi_assign[{{ $index }}][semester]" :options="['Ganjil' => 'Ganjil', 'Genap' => 'Genap']" disabled="true" class="form-select-sm" id="kpi-sem-{{ $index }}" />
                                             </td>
                                             <td>
-                                                <input type="number" step="0.01" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" disabled id="kpi-weight-{{ $index }}">
+                                                <x-tabler.form-input type="number" step="0.01" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" disabled="true" id="kpi-weight-{{ $index }}" class="mb-0" input-class="form-control-sm" />
                                             </td>
                                             <td>
-                                                <input type="number" step="0.01" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][target_value]" placeholder="0.00" disabled id="kpi-target-{{ $index }}">
+                                                <x-tabler.form-input type="number" step="0.01" name="kpi_assign[{{ $index }}][target_value]" placeholder="0.00" disabled="true" id="kpi-target-{{ $index }}" class="mb-0" input-class="form-control-sm" />
                                             </td>
                                         </tr>
                                         @endforeach

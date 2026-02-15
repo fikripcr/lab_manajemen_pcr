@@ -19,20 +19,16 @@
             <div class="card-body">
                 <form id="uploadPhotoForm" enctype="multipart/form-data">
                     @csrf
-                    <div class="mb-3">
-                        <label for="photo" class="form-label">Foto Pegawai</label>
-                        <input type="file" class="form-control" id="photo" name="photo" accept="image/*" required>
-                        <div class="form-text">Upload foto yang jelas wajahnya untuk face recognition yang akurat.</div>
-                    </div>
+                    <x-tabler.form-input type="file" id="photo" name="photo" label="Foto Pegawai" accept="image/*" required="true" help="Upload foto yang jelas wajahnya untuk face recognition yang akurat." />
                     
                     <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="extractFace" checked>
-                            <label class="form-check-label" for="extractFace">
-                                Extract face encoding otomatis
-                            </label>
-                        </div>
-                        <div class="form-text">Centang untuk otomatis extract face encoding dari foto.</div>
+                        <x-tabler.form-checkbox 
+                            id="extractFace" 
+                            name="extract_face" 
+                            label="Extract face encoding otomatis" 
+                            checked 
+                            description="Centang untuk otomatis extract face encoding dari foto." 
+                        />
                     </div>
                     
                     <div class="mb-3" id="webcamSection" style="display: none;">
@@ -115,23 +111,42 @@ $(document).ready(function() {
 });
 
 function setupFormHandlers() {
-    $('#photo').change(function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                $('#photoPreview').html(`
-                    <img src="${e.target.result}" class="img-fluid rounded" style="max-height: 200px;">
-                    <p class="text-muted mt-2">${file.name}</p>
-                `);
-                
-                if ($('#extractFace').is(':checked')) {
-                    extractFaceEncoding(e.target.result);
-                }
-            };
-            reader.readAsDataURL(file);
+    // Wait for FilePond to initialize
+    const checkFilePond = setInterval(() => {
+        if (window.FilePond) {
+            const pond = window.FilePond.find(document.querySelector('#photo'));
+            if (pond) {
+                clearInterval(checkFilePond);
+                pond.on('addfile', (error, file) => {
+                    if (error) return;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#photoPreview').html(`
+                            <img src="${e.target.result}" class="img-fluid rounded" style="max-height: 200px;">
+                            <p class="text-muted mt-2">${file.filename}</p>
+                        `);
+                        
+                        if ($('#extractFace').is(':checked')) {
+                            extractFaceEncoding(e.target.result);
+                        }
+                    };
+                    reader.readAsDataURL(file.file);
+                });
+
+                pond.on('removefile', () => {
+                   $('#photoPreview').html(`
+                        <div class="avatar avatar-xl rounded-circle" style="background-color: #f3f4f6;">
+                            <i class="ti ti-user fs-2 text-muted"></i>
+                        </div>
+                        <p class="text-muted mt-2">Belum ada foto</p>
+                    `);
+                   faceEncoding = null;
+                   $('#encodingInfo').hide();
+                   $('#faceStatus').hide();
+                });
+            }
         }
-    });
+    }, 100);
     
     $('#btnToggleWebcam').click(function() {
         $('#webcamSection').slideToggle();
@@ -257,7 +272,9 @@ function uploadPhoto() {
     const formData = new FormData();
     
     // Add photo file or webcam data
-    const photoFile = $('#photo')[0].files[0];
+    const pond = window.FilePond.find(document.querySelector('#photo'));
+    const photoFile = pond ? (pond.getFile() ? pond.getFile().file : null) : null;
+    
     if (photoFile) {
         formData.append('photo', photoFile);
     } else if ($('#photoPreview img').length > 0) {

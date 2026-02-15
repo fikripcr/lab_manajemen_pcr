@@ -17,9 +17,7 @@
             <div class="card-header">
                 <h3 class="card-title">Manajemen PIC (Petugas)</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-pic" icon="ti ti-plus">
-                        Tambah PIC
-                    </x-tabler.button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-pic" icon="ti ti-plus" text="Tambah PIC" />
                 </div>
             </div>
             <div class="table-responsive">
@@ -65,9 +63,7 @@
             <div class="card-header">
                 <h3 class="card-title">Form Isian (Fields)</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-isian" icon="ti ti-plus">
-                        Tambah Field
-                    </x-tabler.button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-isian" icon="ti ti-plus" text="Tambah Field" />
                 </div>
             </div>
             <div class="table-responsive">
@@ -137,9 +133,7 @@
             <div class="card-header">
                 <h3 class="card-title">Alur Disposisi</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-disposisi" icon="ti ti-plus">
-                        Tambah Disposisi
-                    </x-tabler.button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-disposisi" icon="ti ti-plus" text="Tambah Disposisi" />
                 </div>
             </div>
             <div class="table-responsive">
@@ -196,9 +190,7 @@
             <div class="card-header">
                 <h3 class="card-title">Periode Pengajuan</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-periode" icon="ti ti-plus">
-                        Tambah Periode
-                    </x-tabler.button>
+                    <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-periode" icon="ti ti-plus" text="Tambah Periode" />
                 </div>
             </div>
             <div class="table-responsive">
@@ -266,8 +258,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah PIC</x-tabler.button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah PIC" />
                 </div>
             </form>
         </div>
@@ -295,8 +287,7 @@
                             </x-tabler.form-select>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label required">No Urut</label>
-                            <input type="number" name="seq" class="form-control" value="{{ $layanan->isians->max('seq') + 1 }}" required>
+                            <x-tabler.form-input type="number" name="seq" label="No Urut" value="{{ $layanan->isians->max('seq') + 1 }}" required="true" />
                         </div>
                     </div>
                     <div class="mb-3">
@@ -307,8 +298,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah Field</x-tabler.button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah Field" />
                 </div>
             </form>
         </div>
@@ -340,8 +331,7 @@
                         <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" placeholder="Keterangan disposisi (opsional)" />
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Batas Pengerjaan (Hari)</label>
-                            <input type="number" name="batas_pengerjaan" class="form-control" value="0" min="0">
+                            <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Hari)" value="0" min="0" />
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-check form-switch mt-4">
@@ -352,8 +342,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah Disposisi</x-tabler.button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah Disposisi" />
                 </div>
             </form>
         </div>
@@ -373,12 +363,10 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label required">Tanggal Mulai</label>
-                            <input type="date" name="tgl_mulai" class="form-control" required>
+                            <x-tabler.form-input type="date" name="tgl_mulai" label="Tanggal Mulai" required="true" />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label required">Tanggal Selesai</label>
-                            <input type="date" name="tgl_selesai" class="form-control" required>
+                            <x-tabler.form-input type="date" name="tgl_selesai" label="Tanggal Selesai" required="true" />
                         </div>
                     </div>
                     <div class="row">
@@ -395,8 +383,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary ms-auto">Tambah Periode</x-tabler.button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah Periode" />
                 </div>
             </form>
         </div>
@@ -419,13 +407,12 @@
                     </div>
                         <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" placeholder="Muncul di bawah label input" />
                     <div class="mb-3">
-                        <label class="form-label">Batas Pengerjaan (Hari)</label>
-                        <input type="number" name="batas_pengerjaan" class="form-control" min="0">
+                        <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Hari)" min="0" />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan Perubahan</x-tabler.button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan Perubahan" />
                 </div>
             </form>
         </div>
@@ -449,8 +436,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan Rule</x-tabler.button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan Rule" />
                 </div>
             </form>
         </div>
@@ -471,8 +458,8 @@
                         <x-tabler.form-textarea name="info_tambahan" label="Keterangan / Instruksi" rows="4" placeholder="Muncul di bawah label input field..." />
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan Keterangan</x-tabler.button>
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan Keterangan" />
                 </div>
             </form>
         </div>

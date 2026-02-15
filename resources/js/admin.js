@@ -195,8 +195,72 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.initOfflineSelect2();
+    window.initFlatpickr = function () {
+        const elements = document.querySelectorAll('.flatpickr-input');
+        if (elements.length > 0) {
+            window.loadFlatpickr().then((fp) => {
+                elements.forEach(el => {
+                    if (el._flatpickr) return; // Skip if already initialized
 
+                    const config = {
+                        dateFormat: "Y-m-d",
+                        allowInput: true,
+                        altInput: true,
+                        altFormat: "j F Y", // e.g. 15 February 2026
+                        ... (el.dataset.flatpickrConfig ? JSON.parse(el.dataset.flatpickrConfig) : {})
+                    };
+
+                    // Handle specific types from data attributes
+                    if (el.dataset.flatpickrType === 'time') {
+                        config.enableTime = true;
+                        config.noCalendar = true;
+                        config.dateFormat = "H:i";
+                        config.time_24hr = true;
+                        config.altInput = true;
+                        config.altFormat = "H:i";
+                    } else if (el.dataset.flatpickrEnableTime === 'true') {
+                        config.enableTime = true;
+                        config.dateFormat = "Y-m-d H:i";
+                        config.altFormat = "j F Y H:i";
+                    }
+
+                    if (el.dataset.flatpickrMode) {
+                        config.mode = el.dataset.flatpickrMode;
+                    }
+
+                    fp(el, config);
+                });
+            });
+        }
+    };
+
+    window.initFilePond = function () {
+        const elements = document.querySelectorAll('.filepond-input');
+        if (elements.length > 0) {
+            window.loadFilePond().then((FilePond) => {
+                elements.forEach(el => {
+                    // Check if already initialized by looking for the filepond instance
+                    if (FilePond.find(el)) return;
+
+                    const config = {
+                        storeAsFile: true,
+                        allowMultiple: el.multiple || el.dataset.allowMultiple === 'true' || false,
+                        required: el.required || false,
+                        credits: false,
+                        labelIdle: el.dataset.labelIdle || 'Drag & Drop files or <span class="filepond--label-action">Browse</span>',
+                        acceptedFileTypes: el.dataset.acceptedFileTypes ? el.dataset.acceptedFileTypes.split(',') : (el.accept ? el.accept.split(',') : null),
+                        ... (el.dataset.filepondConfig ? JSON.parse(el.dataset.filepondConfig) : {})
+                    };
+
+                    FilePond.create(el, config);
+                });
+            });
+        }
+    };
+
+    window.initOfflineSelect2();
+    window.initFlatpickr();
+    window.initFilePond();
 
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {

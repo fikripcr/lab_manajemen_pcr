@@ -122,10 +122,11 @@ $('#table').DataTable({
 ### Form Libraries (Lazy Loaded)
 
 **Flatpickr** - Date picker
-```javascript
-await window.loadFormFeatures();
-flatpickr('#date', { dateFormat: 'Y-m-d' });
+Standardized via `x-tabler.form-input`.
+```blade
+<x-tabler.form-input type="date" name="tanggal" label="Pilih Tanggal" />
 ```
+Global initialization handles all `.flatpickr-input` elements automatically.
 
 **Choices.js** - Enhanced select
 ```javascript
@@ -139,18 +140,12 @@ await window.loadFormFeatures();
 FilePond.create(document.querySelector('#file'));
 ```
 
-### Lazy Loading Pattern
+### Automatic Initialization Pattern
 
-```javascript
-// In page script
-document.addEventListener('DOMContentLoaded', async function() {
-    // Load form features only when needed
-    await window.loadFormFeatures();
-    
-    // Now initialize
-    flatpickr('#date', { /* config */ });
-});
-```
+The project now uses a global initialization pattern in `admin.js`:
+1. `window.initFlatpickr()` runs on `DOMContentLoaded`.
+2. `FormHandlerAjax.js` automatically re-runs it when modals are shown.
+3. Simply use the `x-tabler.form-input` with `type="date"`, `type="datetime"`, etc.
 
 ## Blade Components
 
@@ -187,19 +182,26 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 ### AJAX Form Submission
 
+Use `class="ajax-form"` on your `<form>` tag for automatic handling via `FormHandlerAjax.js`.
+
+```blade
+<form action="{{ route('target') }}" method="POST" class="ajax-form">
+    @csrf
+    <x-tabler.form-input name="name" label="Name" required="true" />
+    <x-tabler.button type="submit" text="Save" />
+</form>
+```
+
+**Manual AJAX:**
 ```javascript
-$('#form').on('submit', function(e) {
-    e.preventDefault();
-    
-    axios.post($(this).attr('action'), new FormData(this))
-        .then(response => {
-            Swal.fire('Success!', response.data.message, 'success');
-            $('#table').DataTable().ajax.reload();
-        })
-        .catch(error => {
-            Swal.fire('Error!', error.response.data.message, 'error');
-        });
-});
+axios.post($(this).attr('action'), new FormData(this))
+    .then(response => {
+        Swal.fire('Success!', response.data.message, 'success');
+        $('#table').DataTable().ajax.reload();
+    })
+    .catch(error => {
+        Swal.fire('Error!', error.response.data.message, 'error');
+    });
 ```
 
 ### Delete Confirmation

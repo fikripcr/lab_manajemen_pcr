@@ -4,9 +4,7 @@
 @section('header')
 <x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.periode-kpis.create') }}" style="primary" icon="ti ti-plus">
-            Tambah Periode
-        </x-tabler.button>
+        <x-tabler.button href="{{ route('pemutu.periode-kpis.create') }}" style="primary" icon="ti ti-plus" text="Tambah Periode" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

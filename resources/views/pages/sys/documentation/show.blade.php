@@ -20,9 +20,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-primary"><i class="bx bx-list-ul me-2"></i>Table of Contents</h5>
                         <div>
-                            <a href="{{ route('sys.documentation.edit', $fileName) }}" class="btn btn-sm btn-outline-primary me-2" title="Edit Documentation">
-                                <i class="bx bx-edit"></i>
-                            </a>
+                            <x-tabler.button type="button" class="btn-sm btn-outline-primary me-2" icon="bx bx-edit" :href="route('sys.documentation.edit', $fileName)" text="Ubah" />
                         </div>
                     </div>
                     <div class="card-body p-0">

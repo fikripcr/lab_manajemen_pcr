@@ -5,9 +5,8 @@
         class="ajax-modal-btn" 
         data-url="{{ route('hr.pegawai.status-pegawai.create', $pegawai->encrypted_pegawai_id) }}" 
         data-modal-title="Ubah Status Pegawai"
-        icon="ti ti-edit">
-        Ubah Status
-    </x-tabler.button>
+        icon="ti ti-edit"
+        text="Ubah Status" />
 </div>
 <div class="card mb-3">
     <div class="table-responsive">
@@ -31,9 +30,7 @@
                     <td>{{ $item->no_sk ?? '-' }}</td>
                     <td>
                         @if($item->file_sk)
-                            <x-tabler.button href="{{ asset($item->file_sk) }}" style="ghost-info" class="btn-sm" icon="ti ti-download" target="_blank">
-                                Unduh
-                            </x-tabler.button>
+                            <x-tabler.button href="{{ asset($item->file_sk) }}" style="ghost-info" class="btn-sm" icon="ti ti-download" target="_blank" text="Unduh" />
                         @else
                             -
                         @endif

@@ -54,10 +54,7 @@
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nomor Loker</label>
-                                        <input type="number" name="nomor_loker" class="form-control" placeholder="Opsional">
-                                    </div>
+                                    <x-tabler.form-input type="number" name="nomor_loker" label="Nomor Loker" placeholder="Opsional" />
                                 </div>
                             </div>
 

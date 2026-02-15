@@ -13,10 +13,7 @@
                 <x-tabler.form-input name="nama_status" label="Nama Status" placeholder="Contoh: Aktif, Cuti, Tugas Belajar" required="true" />
             </div>
             <div class="col-md-12 mb-3">
-                <label class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="is_active" value="1" checked>
-                    <span class="form-check-label">Aktif</span>
-                </label>
+                <x-tabler.form-checkbox name="is_active" value="1" label="Aktif" checked switch />
             </div>
         </div>
     </div>

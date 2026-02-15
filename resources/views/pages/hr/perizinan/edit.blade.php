@@ -18,25 +18,21 @@
                 </option>
             @endforeach
         </x-tabler.form-select>
-        <div class="row mb-3">
+        <div class="row">
             <div class="col-md-6">
-                <label class="form-label required">Tanggal Awal</label>
-                <input type="date" class="form-control" name="tgl_awal" value="{{ $perizinan->tgl_awal?->format('Y-m-d') }}" required>
+                <x-tabler.form-input type="date" name="tgl_awal" label="Tanggal Awal" value="{{ $perizinan->tgl_awal?->format('Y-m-d') }}" required="true" />
             </div>
             <div class="col-md-6">
-                <label class="form-label required">Tanggal Akhir</label>
-                <input type="date" class="form-control" name="tgl_akhir" value="{{ $perizinan->tgl_akhir?->format('Y-m-d') }}" required>
+                <x-tabler.form-input type="date" name="tgl_akhir" label="Tanggal Akhir" value="{{ $perizinan->tgl_akhir?->format('Y-m-d') }}" required="true" />
             </div>
         </div>
         <div id="waktu-jam-edit" class="{{ in_array($perizinan->jenisIzin?->pemilihan_waktu, ['jam', 'tgl-jam']) ? '' : 'd-none' }}">
-            <div class="row mb-3">
+            <div class="row">
                 <div class="col-md-6">
-                    <label class="form-label">Jam Awal</label>
-                    <input type="time" class="form-control" name="jam_awal" value="{{ $perizinan->jam_awal }}">
+                    <x-tabler.form-input type="time" name="jam_awal" label="Jam Awal" value="{{ $perizinan->jam_awal }}" />
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Jam Akhir</label>
-                    <input type="time" class="form-control" name="jam_akhir" value="{{ $perizinan->jam_akhir }}">
+                    <x-tabler.form-input type="time" name="jam_akhir" label="Jam Akhir" value="{{ $perizinan->jam_akhir }}" />
                 </div>
             </div>
         </div>

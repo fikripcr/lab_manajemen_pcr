@@ -17,15 +17,14 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">TMT (Terhitung Mulai Tanggal)</label>
-                <input type="date" class="form-control" name="tmt" required>
+                <x-tabler.form-input type="date" name="tmt" label="TMT (Terhitung Mulai Tanggal)" required="true" />
             </div>
             
             <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" />
         </div>
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary">Ajukan Perubahan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" text="Ajukan Perubahan" />
     </div>
 </form>

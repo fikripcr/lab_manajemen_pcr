@@ -2,10 +2,10 @@
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HashidBinding;
 
 class RiwayatApproval extends Model
 {
@@ -29,7 +29,45 @@ class RiwayatApproval extends Model
 
     /**
      * Get the parent model (polymorphic).
-     * However, simpler to just have reverse relationships on the specific models
-     * or use a trait if needed.
      */
+    public function subject()
+    {
+        return $this->morphTo('subject', 'model', 'model_id');
+    }
+
+    /**
+     * Get the pegawai associated with the approval subject.
+     */
+    public function getPegawaiAttribute()
+    {
+        $subject = $this->subject;
+        if (! $subject) {
+            return null;
+        }
+
+        if ($subject instanceof \App\Models\Hr\Perizinan) {
+            return $subject->pengusulPegawai;
+        }
+
+        if ($subject instanceof \App\Models\Hr\Lembur) {
+            return $subject->pengusul;
+        }
+
+        // Default check if subject has 'pegawai' relationship or is Pegawai
+        if ($subject instanceof \App\Models\Hr\Pegawai) {
+            return $subject;
+        }
+
+        if (method_exists($subject, 'pegawai')) {
+            return $subject->pegawai;
+        }
+
+        // Check for pegawai_id
+        if (isset($subject->pegawai_id)) {
+            // Attempt to load if not relation
+            return \App\Models\Hr\Pegawai::find($subject->pegawai_id);
+        }
+
+        return null;
+    }
 }

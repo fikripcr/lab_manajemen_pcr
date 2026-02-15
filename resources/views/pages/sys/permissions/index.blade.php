@@ -4,9 +4,9 @@
 
 @section('header')
 {{-- Page Header Content --}}
-    <x-tabler.page-header title="Permissions" pretitle="Access Control">
+    <x-tabler.page-header title="Hak Akses" pretitle="Access Control">
         <x-slot:actions>
-            <x-tabler.button type="create" :modal-url="route('sys.permissions.create')" />
+            <x-tabler.button type="create" :modal-url="route('sys.permissions.create')" modal-title="Tambah Hak Akses" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

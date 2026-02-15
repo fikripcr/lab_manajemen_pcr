@@ -15,8 +15,7 @@
                 </x-tabler.form-select>
             </div>
             <div class="col-md-6">
-                <label class="form-label required">Tanggal</label>
-                <input type="date" class="form-control" name="tgl_indisipliner" required>
+                <x-tabler.form-input type="date" name="tgl_indisipliner" label="Tanggal" required="true" />
             </div>
         </div>
         <div class="mb-3">

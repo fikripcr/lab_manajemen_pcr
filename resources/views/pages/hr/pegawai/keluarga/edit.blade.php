@@ -25,20 +25,25 @@
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Jenis Kelamin</label>
                 <div>
-                    <label class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="jenis_kelamin" value="L" {{ $keluarga->jenis_kelamin == 'L' ? 'checked' : '' }}>
-                        <span class="form-check-label">Laki-laki</span>
-                    </label>
-                    <label class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="jenis_kelamin" value="P" {{ $keluarga->jenis_kelamin == 'P' ? 'checked' : '' }}>
-                        <span class="form-check-label">Perempuan</span>
-                    </label>
+                    <x-tabler.form-radio 
+                        name="jenis_kelamin" 
+                        label="Laki-laki" 
+                        value="L" 
+                        :checked="$keluarga->jenis_kelamin == 'L'" 
+                        class="form-check-inline" 
+                    />
+                    <x-tabler.form-radio 
+                        name="jenis_kelamin" 
+                        label="Perempuan" 
+                        value="P" 
+                        :checked="$keluarga->jenis_kelamin == 'P'" 
+                        class="form-check-inline" 
+                    />
                 </div>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Tanggal Lahir</label>
-                <input type="date" class="form-control" name="tgl_lahir" value="{{ $keluarga->tgl_lahir }}">
+                <x-tabler.form-input type="date" name="tgl_lahir" label="Tanggal Lahir" value="{{ $keluarga->tgl_lahir }}" />
             </div>
             
             <x-tabler.form-textarea name="alamat" label="Alamat" rows="2" :value="$keluarga->alamat" />
@@ -49,7 +54,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy">Simpan Perubahan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Perubahan" />
     </div>
 </form>

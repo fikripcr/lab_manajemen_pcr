@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $pageTitle }}" pretitle="Pengajuan Baru">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('eoffice.layanan.services') }}" class="btn-link link-secondary" icon="ti ti-arrow-left">
-            Kembali
-        </x-tabler.button>
+        <x-tabler.button type="back" :href="route('eoffice.layanan.services')" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -69,9 +67,7 @@
             </div>
             
             <div class="card-footer text-end">
-                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-send">
-                    Kirim Pengajuan
-                </x-tabler.button>
+                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-send" text="Ajukan" />
             </div>
         </form>
     </div>

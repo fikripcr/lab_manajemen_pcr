@@ -45,10 +45,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="seq" class="form-label">Urutan</label>
-                                <input type="number" class="form-control" id="seq" name="seq" value="{{ $dokSub->seq }}">
-                            </div>
+                            <x-tabler.form-input type="number" id="seq" name="seq" label="Urutan" value="{{ $dokSub->seq }}" />
                         </div>
                     </div>
 
@@ -59,10 +56,13 @@
 
                     @if($canProduceIndikator)
                     <div class="mb-3">
-                        <label class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_hasilkan_indikator" value="1" {{ $dokSub->is_hasilkan_indikator ? 'checked' : '' }}>
-                            <span class="form-check-label">Hasilkan Indikator {{ ucfirst($jenis === 'renop' ? 'renop' : 'standar') }}?</span>
-                        </label>
+                        <x-tabler.form-checkbox 
+                            name="is_hasilkan_indikator" 
+                            label="Hasilkan Indikator {{ ucfirst($jenis === 'renop' ? 'renop' : 'standar') }}?" 
+                            value="1" 
+                            :checked="$dokSub->is_hasilkan_indikator" 
+                            switch 
+                        />
                         <div class="text-muted small">Jika dicentang, poin ini akan memiliki tombol untuk input Indikator di halaman detail.</div>
                     </div>
                     @endif

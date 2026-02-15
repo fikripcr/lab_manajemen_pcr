@@ -17,18 +17,20 @@
           
           @if($canProduceIndikator)
           <div class="mb-3">
-              <label class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" name="is_hasilkan_indikator" value="1" {{ $jenis === 'renop' ? 'checked' : '' }}>
-                  <span class="form-check-label">Hasilkan Indikator {{ ucfirst($jenis === 'renop' ? 'renop' : 'standar') }}?</span>
-              </label>
+              <x-tabler.form-checkbox 
+                  name="is_hasilkan_indikator" 
+                  label="Hasilkan Indikator {{ ucfirst($jenis === 'renop' ? 'renop' : 'standar') }}?" 
+                  value="1" 
+                  :checked="$jenis === 'renop'" 
+                  switch 
+              />
               <div class="text-muted small">Jika dicentang, poin ini nantinya akan memiliki tombol untuk input Indikator di halaman detail.</div>
           </div>
           @endif
 
           @if(!$canProduceIndikator || $jenis === 'renop')
           <div class="mb-3">
-              <label for="seq" class="form-label">Urutan</label>
-              <input type="number" class="form-control" id="seq" name="seq" placeholder="Contoh: 1">
+              <x-tabler.form-input type="number" id="seq" name="seq" label="Urutan" placeholder="Contoh: 1" />
           </div>
           <x-tabler.form-textarea name="isi" id="isi" label="Isi Dokumen" rows="4" placeholder="Isi sub-dokumen..." />
           @endif

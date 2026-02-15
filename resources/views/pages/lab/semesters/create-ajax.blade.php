@@ -18,24 +18,21 @@
         </div>
 
         <div class="mb-3">
-            <label for="start_date" class="form-label required">Start Date</label>
-            <input type="date" class="form-control"
-                   id="start_date" name="start_date"
-                   value="{{ old('start_date') }}" required>
+            <x-tabler.form-input type="date" name="start_date" id="start_date" label="Start Date" :value="old('start_date')" required="true" />
         </div>
 
         <div class="mb-3">
-            <label for="end_date" class="form-label required">End Date</label>
-            <input type="date" class="form-control"
-                   id="end_date" name="end_date"
-                   value="{{ old('end_date') }}" required>
+            <x-tabler.form-input type="date" name="end_date" id="end_date" label="End Date" :value="old('end_date')" required="true" />
         </div>
 
         <div class="mb-3">
-            <label class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="is_active" value="1" {{ old('is_active') ? 'checked' : '' }}>
-                <span class="form-check-label">Set as Active Semester</span>
-            </label>
+            <x-tabler.form-checkbox 
+                name="is_active" 
+                label="Set as Active Semester" 
+                value="1" 
+                :checked="old('is_active')" 
+                switch 
+            />
         </div>
     </div>
     <div class="modal-footer">

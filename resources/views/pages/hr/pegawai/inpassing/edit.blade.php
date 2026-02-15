@@ -12,35 +12,28 @@
                 </x-tabler.form-select>
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Terhitung Mulai Tanggal (TMT)</label>
-                <input type="date" name="tmt" class="form-control" value="{{ $inpassing->tmt ? \Carbon\Carbon::parse($inpassing->tmt)->format('Y-m-d') : '' }}" required>
+                <x-tabler.form-input name="tmt" type="date" label="Terhitung Mulai Tanggal (TMT)" value="{{ $inpassing->tmt ? \Carbon\Carbon::parse($inpassing->tmt)->format('Y-m-d') : '' }}" required="true" />
             </div>
             <div class="col-md-6 mb-3">
                 <x-tabler.form-input name="no_sk" label="Nomor SK" value="{{ $inpassing->no_sk }}" required="true" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tanggal SK</label>
-                <input type="date" name="tgl_sk" class="form-control" value="{{ $inpassing->tgl_sk ? \Carbon\Carbon::parse($inpassing->tgl_sk)->format('Y-m-d') : '' }}" required>
+                <x-tabler.form-input name="tgl_sk" type="date" label="Tanggal SK" value="{{ $inpassing->tgl_sk ? \Carbon\Carbon::parse($inpassing->tgl_sk)->format('Y-m-d') : '' }}" required="true" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label">Gaji Pokok</label>
-                <input type="number" name="gaji_pokok" class="form-control" value="{{ $inpassing->gaji_pokok }}">
+                <x-tabler.form-input name="gaji_pokok" type="number" label="Gaji Pokok" value="{{ $inpassing->gaji_pokok }}" />
             </div>
              <div class="col-md-6 mb-3">
-                <label class="form-label">Masa Kerja (Tahun)</label>
-                <input type="number" name="masa_kerja_tahun" class="form-control" value="{{ $inpassing->masa_kerja_tahun }}">
+                <x-tabler.form-input name="masa_kerja_tahun" type="number" label="Masa Kerja (Tahun)" value="{{ $inpassing->masa_kerja_tahun }}" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label">Masa Kerja (Bulan)</label>
-                <input type="number" name="masa_kerja_bulan" class="form-control" value="{{ $inpassing->masa_kerja_bulan }}">
+                <x-tabler.form-input name="masa_kerja_bulan" type="number" label="Masa Kerja (Bulan)" value="{{ $inpassing->masa_kerja_bulan }}" />
             </div>
              <div class="col-md-6 mb-3">
-                <label class="form-label">Angka Kredit</label>
-                <input type="number" step="0.01" name="angka_kredit" class="form-control" value="{{ $inpassing->angka_kredit }}">
+                <x-tabler.form-input name="angka_kredit" type="number" step="0.01" label="Angka Kredit" value="{{ $inpassing->angka_kredit }}" />
             </div>
             <div class="col-md-12 mb-3">
-                <label class="form-label">File SK (PDF/Gambar max 2MB)</label>
-                <input type="file" name="file_sk" class="form-control">
+                <x-tabler.form-input type="file" name="file_sk" label="File SK (PDF/Gambar max 2MB)" />
                 @if($inpassing->file_sk)
                     <small class="text-muted">File saat ini: <a href="{{ Storage::url($inpassing->file_sk) }}" target="_blank">Lihat File</a></small>
                 @endif
@@ -49,7 +42,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan Perubahan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan Perubahan" />
     </div>
 </form>

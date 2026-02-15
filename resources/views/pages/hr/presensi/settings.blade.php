@@ -51,40 +51,38 @@
                                 </h5>
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">
-                                            <i class="ti ti-arrow-north me-1"></i>
-                                            Latitude
-                                        </label>
-                                        <div class="input-group input-group-flat">
-                                            <span class="input-group-text">
-                                                <i class="ti ti-map-pin"></i>
-                                            </span>
-                                            <input type="number" step="0.000001" name="office_latitude" id="office_latitude" 
-                                                   class="form-control" value="-6.208763" required
-                                                   placeholder="Contoh: -6.208763">
-                                            <button type="button" class="btn btn-primary" id="btn-get-lat" title="Dapatkan lokasi saat ini">
-                                                <i class="ti ti-crosshair"></i>
-                                            </button>
-                                        </div>
+                                        <x-tabler.form-input type="number" step="0.000001" name="office_latitude" id="office_latitude" 
+                                               label="Latitude" value="-6.208763" required="true"
+                                               placeholder="Contoh: -6.208763">
+                                            <x-slot:prepend>
+                                                <span class="input-group-text">
+                                                    <i class="ti ti-map-pin"></i>
+                                                </span>
+                                            </x-slot:prepend>
+                                            <x-slot:append>
+                                                <button type="button" class="btn btn-primary" id="btn-get-lat" title="Dapatkan lokasi saat ini">
+                                                    <i class="ti ti-crosshair"></i>
+                                                </button>
+                                            </x-slot:append>
+                                        </x-tabler.form-input>
                                         <div class="form-text">Koordinat latitude lokasi kantor (contoh: -6.208763)</div>
                                     </div>
                                     
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">
-                                            <i class="ti ti-arrow-east me-1"></i>
-                                            Longitude
-                                        </label>
-                                        <div class="input-group input-group-flat">
-                                            <span class="input-group-text">
-                                                <i class="ti ti-map-pin"></i>
-                                            </span>
-                                            <input type="number" step="0.000001" name="office_longitude" id="office_longitude" 
-                                                   class="form-control" value="106.845599" required
-                                                   placeholder="Contoh: 106.845599">
-                                            <button type="button" class="btn btn-primary" id="btn-get-lng" title="Dapatkan lokasi saat ini">
-                                                <i class="ti ti-crosshair"></i>
-                                            </button>
-                                        </div>
+                                        <x-tabler.form-input type="number" step="0.000001" name="office_longitude" id="office_longitude" 
+                                               label="Longitude" value="106.845599" required="true"
+                                               placeholder="Contoh: 106.845599">
+                                            <x-slot:prepend>
+                                                <span class="input-group-text">
+                                                    <i class="ti ti-map-pin"></i>
+                                                </span>
+                                            </x-slot:prepend>
+                                            <x-slot:append>
+                                                <button type="button" class="btn btn-primary" id="btn-get-lng" title="Dapatkan lokasi saat ini">
+                                                    <i class="ti ti-crosshair"></i>
+                                                </button>
+                                            </x-slot:append>
+                                        </x-tabler.form-input>
                                         <div class="form-text">Koordinat longitude lokasi kantor (contoh: 106.845599)</div>
                                     </div>
                                 </div>
@@ -103,20 +101,19 @@
                                 </h5>
                                 <div class="row g-3">
                                     <div class="col-md-8">
-                                        <label class="form-label fw-semibold">
-                                            <i class="ti me-1"></i>
-                                            Radius Presensi
-                                        </label>
-                                        <div class="input-group input-group-flat">
-                                            <span class="input-group-text">
-                                                <i class="ti ti-ruler-2"></i>
-                                            </span>
-                                            <input type="range" name="allowed_radius" id="allowed_radius" 
-                                                   class="form-range" min="10" max="1000" value="100" step="10">
-                                            <span class="input-group-text">
-                                                <span id="radius-value">100</span> m
-                                            </span>
-                                        </div>
+                                        <x-tabler.form-input type="range" name="allowed_radius" id="allowed_radius" 
+                                               label="Radius Presensi" min="10" max="1000" value="100" step="10">
+                                            <x-slot:prepend>
+                                                <span class="input-group-text">
+                                                    <i class="ti ti-ruler-2"></i>
+                                                </span>
+                                            </x-slot:prepend>
+                                            <x-slot:append>
+                                                <span class="input-group-text">
+                                                    <span id="radius-value">100</span> m
+                                                </span>
+                                            </x-slot:append>
+                                        </x-tabler.form-input>
                                         <div class="form-text">
                                             Radius maksimum untuk presensi (10-1000 meter)
                                         </div>
@@ -135,22 +132,21 @@
                             </div>
                         </div>
 
-                        <!-- Status Toggle -->
                         <div class="col-12">
                             <div class="form-label fw-semibold">
                                 <i class="ti me-2"></i>
                                 Status Presensi
                             </div>
-                            <div class="form-check form-switch form-check-lg">
-                                <input class="form-check-input" type="checkbox" name="is_active" id="is_active" checked>
-                                <label class="form-check-label" for="is_active">
-                                    <span class="form-switch-label">
-                                        <i class="ti ti-power me-2"></i>
-                                        Aktifkan Presensi Online
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="form-text">Aktifkan fitur presensi online untuk karyawan</div>
+                            <x-tabler.form-checkbox 
+                                id="is_active" 
+                                name="is_active" 
+                                value="1" 
+                                label="Aktifkan Presensi Online" 
+                                description="Aktifkan fitur presensi online untuk karyawan" 
+                                checked 
+                                switch 
+                                inputClass="form-check-lg" 
+                            />
                         </div>
 
                         <!-- Action Buttons -->

@@ -42,34 +42,22 @@
 
     <div class="row">
         <div class="col-md-6 mb-2">
-            <label class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="is_fitur_diskusi" value="1">
-                <span class="form-check-label">Aktifkan Diskusi</span>
-            </label>
+            <x-tabler.form-checkbox name="is_fitur_diskusi" value="1" label="Aktifkan Diskusi" switch />
         </div>
         <div class="col-md-6 mb-2">
-            <label class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="is_fitur_disposisi" value="1" checked>
-                <span class="form-check-label">Aktifkan Disposisi</span>
-            </label>
+            <x-tabler.form-checkbox name="is_fitur_disposisi" value="1" label="Aktifkan Disposisi" checked switch />
         </div>
         <div class="col-md-6 mb-2">
-            <label class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="is_fitur_feedback" value="1" checked>
-                <span class="form-check-label">Aktifkan Feedback</span>
-            </label>
+            <x-tabler.form-checkbox name="is_fitur_feedback" value="1" label="Aktifkan Feedback" checked switch />
         </div>
     </div>
 
     <div class="mb-3 mt-3">
-        <label class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" name="is_active" value="1" checked>
-            <span class="form-check-label">Layanan Aktif</span>
-        </label>
+        <x-tabler.form-checkbox name="is_active" value="1" label="Layanan Aktif" checked switch />
     </div>
 
     <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary">Simpan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" text="Simpan" />
     </div>
 </form>

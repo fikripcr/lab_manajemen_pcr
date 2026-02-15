@@ -26,16 +26,14 @@
             <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">Hapus</button>
         </div>
         <div id="additional-options"></div>
-        <x-tabler.button type="button" class="btn-outline-primary btn-sm mt-2" onclick="addOption()" icon="ti ti-plus">
-            Tambah Opsi
-        </x-tabler.button>
+        <x-tabler.button type="button" class="btn-outline-primary btn-sm mt-2" onclick="addOption()" icon="ti ti-plus" text="Tambah Opsi" />
     </div>
 
     <x-tabler.form-textarea name="keterangan_isian" label="Keterangan" rows="2" placeholder="Keterangan tambahan untuk pengusul" />
 
     <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary">Simpan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" text="Simpan" />
     </div>
 </form>
 

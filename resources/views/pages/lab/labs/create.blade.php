@@ -63,7 +63,7 @@
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
-                                <x-tabler.button type="submit" text="Tambah Lab" />
+                                <x-tabler.button type="submit" />
                                 <x-tabler.button type="cancel" :href="route('lab.labs.index')" />
                             </div>
                         </div>
@@ -73,35 +73,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        if (typeof window.loadFilePond === 'function') {
-            const FilePond = await window.loadFilePond();
-
-            // Lab Images
-            const imagesInput = document.querySelector('#lab_images');
-            if(imagesInput) {
-                FilePond.create(imagesInput, {
-                    storeAsFile: true,
-                    allowMultiple: true,
-                    labelIdle: 'Drag & Drop lab photos',
-                    acceptedFileTypes: ['image/*'],
-                    imagePreviewHeight: 150,
-                });
-            }
-
-            // Lab Attachments
-            const attachmentsInput = document.querySelector('#lab_attachments');
-            if(attachmentsInput) {
-                FilePond.create(attachmentsInput, {
-                    storeAsFile: true,
-                    allowMultiple: true,
-                    labelIdle: 'Drag & Drop documents',
-                });
-            }
-        }
-    });
-</script>
-@endpush

@@ -35,10 +35,13 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_active" value="1" {{ old('is_active', $period->is_active) ? 'checked' : '' }}>
-                            <span class="form-check-label">Set as Active Period</span>
-                        </label>
+                        <x-tabler.form-checkbox 
+                            name="is_active" 
+                            label="Set as Active Period" 
+                            value="1" 
+                            :checked="old('is_active', $period->is_active)" 
+                            switch 
+                        />
                     </div>
                 </div>
                 <div class="card-footer text-end">

@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h5 class="modal-title">Edit Dokumen</h5>
+    <h5 class="modal-title">Ubah Dokumen</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <form action="{{ route('pemutu.dokumens.update', $dokumen->dok_id) }}" method="POST" class="ajax-form">
@@ -56,8 +56,8 @@
         <input type="hidden" name="periode" value="{{ $dokumen->periode }}">
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" text="Batal" class="btn-link link-secondary" data-bs-dismiss="modal" />
-        <x-tabler.button type="submit" text="Simpan Perubahan" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" />
+        <x-tabler.button type="submit" />
     </div>
 </form>
 

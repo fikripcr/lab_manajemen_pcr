@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Tambah Pegawai" pretitle="Manajemen Kepegawaian">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('hr.pegawai.index') }}" style="secondary" icon="ti ti-arrow-left">
-            Kembali
-        </x-tabler.button>
+        <x-tabler.button href="{{ route('hr.pegawai.index') }}" style="secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -89,9 +87,7 @@
             </div>
         </div>
         <div class="card-footer text-end">
-            <x-tabler.button type="submit" style="primary" icon="ti ti-device-floppy">
-                Simpan Pegawai
-            </x-tabler.button>
+            <x-tabler.button type="submit" style="primary" icon="ti ti-device-floppy" text="Simpan Pegawai" />
         </div>
     </div>
 </form>

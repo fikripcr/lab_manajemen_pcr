@@ -89,10 +89,11 @@ routes/
 
 ## Next Steps
 
-1. **Development Patterns**: Read `DEVELOPMENT_GUIDE.md`
-2. **Frontend Guide**: Read `FRONTEND_GUIDE.md`
-3. **Features Reference**: Read `FEATURES.md`
-4. **Old Docs**: Check `docs/archive/` for detailed docs
+1. **Project Maturity**: Read `STANDARDIZATION.md` (Current levels & standards)
+2. **Development Patterns**: Read `DEVELOPMENT_GUIDE.md`
+3. **Frontend Guide**: Read `FRONTEND_GUIDE.md`
+4. **Features Reference**: Read `FEATURES.md`
+5. **Old Docs**: Check `docs/archive/` for detailed docs
 
 ## Common Commands
 

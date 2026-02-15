@@ -3,7 +3,7 @@
 @section('title', 'Edit Role')
 
 @section('header')
-    <x-tabler.page-header title="Edit Role" pretitle="Access Control">
+    <x-tabler.page-header title="Ubah Role" pretitle="Access Control">
         <x-slot:actions>
             <x-tabler.button type="back" :href="route('sys.roles.index')" />
         </x-slot:actions>
@@ -35,12 +35,8 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="form-label">Permissions</h5>
                         <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="selectAllBtn">
-                                <i class="bx bx-check-square"></i> Select All
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary ms-1" id="deselectAllBtn">
-                                <i class="bx bx-square"></i> Deselect All
-                            </button>
+                            <x-tabler.button type="button" class="btn-sm btn-outline-primary" id="selectAllBtn" icon="bx bx-check-square" text="Pilih Semua" />
+                            <x-tabler.button type="button" class="btn-sm btn-outline-secondary ms-1" id="deselectAllBtn" icon="bx bx-square" text="Hapus Semua" />
                         </div>
                     </div>
 
@@ -69,12 +65,16 @@
                                                 <div class="row">
                                                     @foreach ($perms as $permission)
                                                         <div class="col-md-12 mb-1">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input permission-checkbox @error('permissions') is-invalid @enderror" type="checkbox" value="{{ $permission->name }}" id="perm_{{ $permission->id }}" name="permissions[]" data-subcategory="{{ Str::slug($category . '_' . $subCategory) }}" {{ in_array($permission->name, $rolePermissions) ? 'checked' : '' }}>
-                                                                <label class="form-check-label small" for="perm_{{ $permission->id }}">
-                                                                    {{ Str::slug($permission->name, '_') }}
-                                                                </label>
-                                                            </div>
+                                                            <x-tabler.form-checkbox
+                                                                name="permissions[]"
+                                                                value="{{ $permission->name }}"
+                                                                id="perm_{{ $permission->id }}"
+                                                                input-class="permission-checkbox"
+                                                                data-subcategory="{{ Str::slug($category . '_' . $subCategory) }}"
+                                                                :checked="in_array($permission->name, $rolePermissions)"
+                                                            >
+                                                                <span class="small">{{ Str::slug($permission->name, '_') }}</span>
+                                                            </x-tabler.form-checkbox>
                                                         </div>
                                                     @endforeach
                                                 </div>

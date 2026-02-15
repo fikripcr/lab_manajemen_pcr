@@ -11,41 +11,34 @@
                 </x-tabler.form-select>
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Terhitung Mulai Tanggal (TMT)</label>
-                <input type="date" name="tmt" class="form-control" required>
+                <x-tabler.form-input name="tmt" type="date" label="Terhitung Mulai Tanggal (TMT)" required="true" />
             </div>
             <div class="col-md-6 mb-3">
                 <x-tabler.form-input name="no_sk" label="Nomor SK" placeholder="Nomor SK" required="true" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tanggal SK</label>
-                <input type="date" name="tgl_sk" class="form-control" required>
+                <x-tabler.form-input name="tgl_sk" type="date" label="Tanggal SK" required="true" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label">Gaji Pokok</label>
-                <input type="number" name="gaji_pokok" class="form-control" placeholder="Contoh: 3000000">
+                <x-tabler.form-input name="gaji_pokok" type="number" label="Gaji Pokok" placeholder="Contoh: 3000000" />
             </div>
              <div class="col-md-6 mb-3">
-                <label class="form-label">Masa Kerja (Tahun)</label>
-                <input type="number" name="masa_kerja_tahun" class="form-control" placeholder="Tahun">
+                <x-tabler.form-input name="masa_kerja_tahun" type="number" label="Masa Kerja (Tahun)" placeholder="Tahun" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label">Masa Kerja (Bulan)</label>
-                <input type="number" name="masa_kerja_bulan" class="form-control" placeholder="Bulan">
+                <x-tabler.form-input name="masa_kerja_bulan" type="number" label="Masa Kerja (Bulan)" placeholder="Bulan" />
             </div>
              <div class="col-md-6 mb-3">
-                <label class="form-label">Angka Kredit</label>
-                <input type="number" step="0.01" name="angka_kredit" class="form-control" placeholder="0.00">
+                <x-tabler.form-input name="angka_kredit" type="number" step="0.01" label="Angka Kredit" placeholder="0.00" />
             </div>
             <div class="col-md-12 mb-3">
-                <label class="form-label">File SK (PDF/Gambar max 2MB)</label>
-                <input type="file" name="file_sk" class="form-control">
+                <x-tabler.form-input type="file" name="file_sk" label="File SK (PDF/Gambar max 2MB)" />
             </div>
             <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" placeholder="Keterangan tambahan..." />
         </div>
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan" />
     </div>
 </form>

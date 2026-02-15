@@ -31,25 +31,22 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tanggal Mulai</label>
-                <input type="date" class="form-control" name="tgl_mulai" required>
+                <x-tabler.form-input name="tgl_mulai" label="Tanggal Mulai" type="date" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Tanggal Selesai</label>
-                <input type="date" class="form-control" name="tgl_selesai">
+                <x-tabler.form-input name="tgl_selesai" label="Tanggal Selesai" type="date" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tahun</label>
-                <input type="number" class="form-control" name="tahun" placeholder="YYYY" required>
+                <x-tabler.form-input name="tahun" label="Tahun" type="number" placeholder="YYYY" required="true" />
             </div>
 
             <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" />
         </div>
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy">Simpan Pengajuan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Pengajuan" />
     </div>
 </form>

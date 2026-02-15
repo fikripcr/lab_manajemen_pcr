@@ -5,9 +5,8 @@
         class="ajax-modal-btn" 
         data-url="{{ route('hr.pegawai.inpassing.create', $pegawai->encrypted_pegawai_id) }}" 
         data-modal-title="Tambah Inpassing"
-        icon="ti ti-plus">
-        Tambah
-    </x-tabler.button>
+        icon="ti ti-plus"
+        text="Tambah" />
 </div>
 <div class="card mb-3">
     <div class="table-responsive">
@@ -40,9 +39,7 @@
                     <td>Rp {{ number_format($item->gaji_pokok ?? 0, 0, ',', '.') }}</td>
                     <td>
                         @if($item->file_sk)
-                            <x-tabler.button href="{{ asset($item->file_sk) }}" style="ghost-info" class="btn-sm" icon="ti ti-download" target="_blank" title="Unduh SK">
-                                Unduh
-                            </x-tabler.button>
+                            <x-tabler.button href="{{ asset($item->file_sk) }}" style="ghost-info" class="btn-sm" icon="ti ti-download" target="_blank" title="Unduh SK" text="Unduh" />
                         @else
                             -
                         @endif

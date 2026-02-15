@@ -64,8 +64,7 @@
                         data-placeholder="Cari nama pegawai..." />
             </div>
             <div class="col-md-3">
-                <label class="form-label required">Tanggal Mulai</label>
-                <input type="date" class="form-control" name="tgl_mulai" value="{{ date('Y-m-d') }}" required>
+                <x-tabler.form-input type="date" name="tgl_mulai" label="Tanggal Mulai" value="{{ date('Y-m-d') }}" required="true" />
             </div>
             <div class="col-md-3">
                 <div class="mb-3">

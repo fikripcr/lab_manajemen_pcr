@@ -71,14 +71,19 @@
                                     <div class="mb-3">
                                         <label class="form-label required">Kondisi PC Saat Ini</label>
                                         <div>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="status_pc" value="Baik" checked>
-                                                <span class="form-check-label">Baik</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="status_pc" value="Rusak">
-                                                <span class="form-check-label">Rusak / Bermasalah</span>
-                                            </label>
+                                            <x-tabler.form-radio 
+                                                name="status_pc" 
+                                                label="Baik" 
+                                                value="Baik" 
+                                                checked 
+                                                class="form-check-inline" 
+                                            />
+                                            <x-tabler.form-radio 
+                                                name="status_pc" 
+                                                label="Rusak / Bermasalah" 
+                                                value="Rusak" 
+                                                class="form-check-inline" 
+                                            />
                                         </div>
                                     </div>
 

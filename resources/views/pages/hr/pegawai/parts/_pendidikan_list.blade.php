@@ -5,9 +5,8 @@
         class="ajax-modal-btn" 
         data-url="{{ route('hr.pegawai.pendidikan.create', $pegawai->encrypted_pegawai_id) }}" 
         data-modal-title="Tambah Pendidikan"
-        icon="ti ti-plus">
-        Tambah Pendidikan
-    </x-tabler.button>
+        icon="ti ti-plus"
+        text="Tambah Pendidikan" />
 </div>
 <div class="card">
     <div class="table-responsive">

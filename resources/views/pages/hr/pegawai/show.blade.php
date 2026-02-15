@@ -6,12 +6,8 @@
         <span class="avatar avatar-md rounded" style="background-image: url({{ $pegawai->latestDataDiri->file_foto ? asset($pegawai->latestDataDiri->file_foto) : asset('static/avatars/000m.jpg') }})"></span>
     </x-slot:avatar>
     <x-slot:actions>
-        <x-tabler.button href="{{ route('hr.pegawai.edit', encryptId($pegawai->pegawai_id)) }}" style="primary" icon="ti ti-edit">
-            Edit Profil
-        </x-tabler.button>
-        <x-tabler.button href="{{ route('hr.pegawai.index') }}" style="secondary" icon="ti ti-arrow-left">
-            Kembali
-        </x-tabler.button>
+        <x-tabler.button :href="route('hr.pegawai.edit', encryptId($pegawai->pegawai_id))" icon="ti ti-edit" text="Ubah" />
+        <x-tabler.button type="back" :href="route('hr.pegawai.index')" />
     </x-slot:actions>
     <div class="text-muted mt-1">
         NIP: {{ $pegawai->nip }} &bull; {{ $pegawai->email }}

@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Edit Data Pegawai" pretitle="Manajemen Kepegawaian">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) }}" style="secondary" icon="ti ti-arrow-left">
-            Kembali
-        </x-tabler.button>
+        <x-tabler.button href="{{ route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) }}" style="secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -92,9 +90,7 @@
 
         </div>
         <div class="card-footer text-end">
-            <x-tabler.button type="submit" style="primary" icon="ti ti-check">
-                Ajukan Perubahan
-            </x-tabler.button>
+            <x-tabler.button type="submit" style="primary" icon="ti ti-check" text="Ajukan Perubahan" />
         </div>
     </div>
 </form>

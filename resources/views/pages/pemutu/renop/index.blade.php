@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Indikator Rencana Operasional (Renop)" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.renop.create') }}" style="primary" icon="ti ti-plus">
-            Tambah Renop
-        </x-tabler.button>
+        <x-tabler.button href="{{ route('pemutu.renop.create') }}" style="primary" icon="ti ti-plus" text="Tambah Renop" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -27,9 +25,7 @@
                     <td>{{ $renop->indikator }}</td>
                     <td>{{ $renop->target }}</td>
                     <td>
-                        <x-tabler.button href="#" style="ghost-primary" size="sm">
-                            Assign
-                        </x-tabler.button>
+                        <x-tabler.button href="#" style="ghost-primary" size="sm" text="Assign" />
                     </td>
                 </tr>
                 @endforeach

@@ -3,6 +3,7 @@ namespace App\Providers;
 
 use App\Models\Notification;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -36,5 +37,18 @@ class AppServiceProvider extends ServiceProvider
 
         // Set locale for Carbon (Native Localization)
         Carbon::setLocale(env('APP_LOCALE', 'en'));
+
+        Relation::morphMap([
+            'Perizinan'                => \App\Models\Hr\Perizinan::class,
+            'Lembur'                   => \App\Models\Hr\Lembur::class,
+            'Pegawai'                  => \App\Models\Hr\Pegawai::class,
+            'RiwayatDatadiri'          => \App\Models\Hr\RiwayatDatadiri::class,
+            'RiwayatPendidikan'        => \App\Models\Hr\RiwayatPendidikan::class,
+            'RiwayatJabatanFungsional' => \App\Models\Hr\RiwayatJabfungsional::class,
+            'RiwayatJabatanStruktural' => \App\Models\Hr\RiwayatJabstruktural::class,
+            'RiwayatPangkat'           => \App\Models\Hr\RiwayatInpassing::class, // Assuming Pangkat is Inpassing based on schema
+            'RiwayatPenugasan'         => \App\Models\Hr\RiwayatPenugasan::class,
+            'PengembanganDiri'         => \App\Models\Hr\PengembanganDiri::class,
+        ]);
     }
 }

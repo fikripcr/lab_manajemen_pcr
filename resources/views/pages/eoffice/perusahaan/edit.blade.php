@@ -29,7 +29,7 @@
     </div>
     
     <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary">Simpan Perubahan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" text="Simpan Perubahan" />
     </div>
 </form>

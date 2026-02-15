@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Mata Kuliah" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-tabler.button type="create" :href="route('lab.mata-kuliah.create')" text="Tambah" />
+        <x-tabler.button type="create" :href="route('lab.mata-kuliah.create')" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

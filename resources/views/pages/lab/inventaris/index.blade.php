@@ -3,8 +3,8 @@
 @section('header')
 <x-tabler.page-header title="Inventory Management" pretitle="Inventory">
     <x-slot:actions>
-        <x-tabler.button type="export" id="exportBtn" text="Export Excel" />
-        <x-tabler.button type="create" :href="route('lab.inventaris.create')" text="Tambah" />
+        <x-tabler.button type="export" id="exportBtn" />
+        <x-tabler.button type="create" :href="route('lab.inventaris.create')" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

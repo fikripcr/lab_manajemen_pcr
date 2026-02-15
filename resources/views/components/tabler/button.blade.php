@@ -21,37 +21,42 @@
         case 'create':
             $colorClass = 'btn-primary';
             $defaultIcon = 'ti ti-plus';
-            $defaultText = 'Create';
+            $defaultText = 'Tambah';
             break;
         case 'back':
             $colorClass = 'btn-secondary';
             $defaultIcon = 'ti ti-arrow-left';
-            $defaultText = 'Back';
+            $defaultText = 'Kembali';
             break;
         case 'submit':
             $colorClass = 'btn-primary';
             $defaultIcon = 'ti ti-device-floppy'; // Save icon
-            $defaultText = 'Save';
+            $defaultText = 'Simpan';
             break;
         case 'cancel':
             $colorClass = 'btn-outline-secondary';
             $defaultIcon = 'ti ti-x';
-            $defaultText = 'Cancel';
+            $defaultText = 'Batal';
             break;
         case 'import':
             $colorClass = 'btn-success';
             $defaultIcon = 'ti ti-file-import';
-            $defaultText = 'Import';
+            $defaultText = 'Impor';
             break;
         case 'export':
             $colorClass = 'btn-success';
             $defaultIcon = 'ti ti-file-export';
-            $defaultText = 'Export';
+            $defaultText = 'Ekspor';
             break;
         case 'delete':
             $colorClass = 'btn-danger';
             $defaultIcon = 'ti ti-trash';
-            $defaultText = 'Delete';
+            $defaultText = 'Hapus';
+            break;
+        case 'edit':
+            $colorClass = 'btn-primary';
+            $defaultIcon = 'ti ti-edit';
+            $defaultText = 'Ubah';
             break;
         case 'reset':
             $colorClass = 'btn-secondary';
@@ -61,12 +66,12 @@
         case 'warning':
             $colorClass = 'btn-warning';
             $defaultIcon = 'ti ti-alert-triangle';
-            $defaultText = 'Warning';
+            $defaultText = 'Peringatan';
             break;
         case 'success':
             $colorClass = 'btn-success';
             $defaultIcon = 'ti ti-check';
-            $defaultText = 'Success';
+            $defaultText = 'Berhasil';
             break;
         default:
             $colorClass = 'btn-primary';
@@ -74,7 +79,10 @@
     }
 
     $finalIcon = $icon ?? $defaultIcon;
-    $finalText = $text ?? $defaultText;
+    
+    // Logic to suppress default text if specific text or slot content is provided
+    $hasSlot = $slot->isNotEmpty();
+    $finalText = $text ?? ($hasSlot ? '' : $defaultText);
     
     // Merge classes
     // Note: d-none d-sm-inline-block might hide it on mobile, be careful. 

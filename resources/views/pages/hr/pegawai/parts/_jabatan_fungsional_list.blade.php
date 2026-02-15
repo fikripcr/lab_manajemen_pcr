@@ -5,9 +5,8 @@
         class="ajax-modal-btn" 
         data-url="{{ route('hr.pegawai.jabatan-fungsional.create', $pegawai->encrypted_pegawai_id) }}" 
         data-modal-title="Ubah Jabatan Fungsional"
-        icon="ti ti-edit">
-        Ubah Jafung
-    </x-tabler.button>
+        icon="ti ti-edit"
+        text="Ubah Jafung" />
 </div>
 <div class="card mb-3">
     <div class="table-responsive">

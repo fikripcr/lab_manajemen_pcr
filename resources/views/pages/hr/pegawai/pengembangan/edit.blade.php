@@ -32,25 +32,22 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tanggal Mulai</label>
-                <input type="date" class="form-control" name="tgl_mulai" value="{{ $pengembangan->tgl_mulai ? \Carbon\Carbon::parse($pengembangan->tgl_mulai)->format('Y-m-d') : '' }}" required>
+                <x-tabler.form-input name="tgl_mulai" label="Tanggal Mulai" type="date" value="{{ $pengembangan->tgl_mulai ? \Carbon\Carbon::parse($pengembangan->tgl_mulai)->format('Y-m-d') : '' }}" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Tanggal Selesai</label>
-                <input type="date" class="form-control" name="tgl_selesai" value="{{ $pengembangan->tgl_selesai ? \Carbon\Carbon::parse($pengembangan->tgl_selesai)->format('Y-m-d') : '' }}">
+                <x-tabler.form-input name="tgl_selesai" label="Tanggal Selesai" type="date" value="{{ $pengembangan->tgl_selesai ? \Carbon\Carbon::parse($pengembangan->tgl_selesai)->format('Y-m-d') : '' }}" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tahun</label>
-                <input type="number" class="form-control" name="tahun" value="{{ $pengembangan->tahun }}" placeholder="YYYY" required>
+                <x-tabler.form-input name="tahun" label="Tahun" type="number" value="{{ $pengembangan->tahun }}" placeholder="YYYY" required="true" />
             </div>
 
             <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" :value="$pengembangan->keterangan" />
         </div>
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy">Simpan Perubahan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Perubahan" />
     </div>
 </form>

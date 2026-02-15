@@ -40,8 +40,8 @@
                     />
                 </div>
                 <div class="col-12 text-end">
-                     <x-tabler.button type="button" id="btn-reset-filter" style="ghost-danger">Reset Filter</x-tabler.button>
-                     <x-tabler.button type="button" id="btn-apply-filter" style="primary">Terapkan Filter</x-tabler.button>
+                     <x-tabler.button type="button" id="btn-reset-filter" style="ghost-danger" text="Reset Filter" />
+                     <x-tabler.button type="button" id="btn-apply-filter" style="primary" text="Terapkan Filter" />
                 </div>
             </div>
         </div>

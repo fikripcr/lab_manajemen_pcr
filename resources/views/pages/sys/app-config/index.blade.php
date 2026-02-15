@@ -24,22 +24,23 @@
                     <div class="form-text">This will appear in the header and page titles.</div>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label" for="app_url">Application URL</label>
-                    <input type="url" class="form-control @error('app_url') is-invalid @enderror" id="app_url" name="app_url" value="{{ old('app_url', $config['app_url']) }}">
-                    @error('app_url')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="col-md-6">
+                    <x-tabler.form-input type="url" name="app_url" label="Application URL" id="app_url" value="{{ old('app_url', $config['app_url']) }}" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label" for="app_debug">Debug Mode</label>
-                    <div class="form-check form-switch mb-2">
-                        <input class="form-check-input @error('app_debug') is-invalid @enderror" type="checkbox" id="app_debug" name="app_debug" value="1" {{ old('app_debug', $config['app_debug']) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="app_debug">Enable Debug Mode</label>
-                    </div>
+                    <x-tabler.form-checkbox 
+                        name="app_debug" 
+                        label="Enable Debug Mode" 
+                        id="app_debug" 
+                        value="1" 
+                        :checked="old('app_debug', $config['app_debug'])" 
+                        switch 
+                        class="mb-2"
+                    />
                     @error('app_debug')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
@@ -83,12 +84,8 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_port">Mail Port</label>
-                    <input type="number" class="form-control @error('mail_port') is-invalid @enderror" id="mail_port" name="mail_port" value="{{ old('mail_port', $config['mail_port']) }}">
-                    @error('mail_port')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="col-md-6">
+                    <x-tabler.form-input type="number" name="mail_port" label="Mail Port" id="mail_port" value="{{ old('mail_port', $config['mail_port']) }}" />
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -100,12 +97,8 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_password">Mail Password</label>
-                    <input type="password" class="form-control @error('mail_password') is-invalid @enderror" id="mail_password" name="mail_password" value="{{ old('mail_password', $config['mail_password']) }}">
-                    @error('mail_password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="col-md-6">
+                    <x-tabler.form-input type="password" name="mail_password" label="Mail Password" id="mail_password" value="{{ old('mail_password', $config['mail_password']) }}" />
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -118,12 +111,8 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_from_address">From Address</label>
-                    <input type="email" class="form-control @error('mail_from_address') is-invalid @enderror" id="mail_from_address" name="mail_from_address" value="{{ old('mail_from_address', $config['mail_from_address']) }}">
-                    @error('mail_from_address')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="col-md-6">
+                    <x-tabler.form-input type="email" name="mail_from_address" label="From Address" id="mail_from_address" value="{{ old('mail_from_address', $config['mail_from_address']) }}" />
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -156,24 +145,14 @@
                     @enderror
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label" for="google_client_secret">Google Client Secret</label>
-                    <input type="password" class="form-control @error('google_client_secret') is-invalid @enderror" id="google_client_secret" name="google_client_secret" value="{{ old('google_client_secret', $config['google_client_secret']) }}">
-                    @error('google_client_secret')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="col-md-6">
+                    <x-tabler.form-input type="password" name="google_client_secret" label="Google Client Secret" id="google_client_secret" value="{{ old('google_client_secret', $config['google_client_secret']) }}" />
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12 mb-3">
-                    <label class="form-label" for="google_redirect_uri">Google Redirect URI</label>
-                    <input type="url" class="form-control @error('google_redirect_uri') is-invalid @enderror" id="google_redirect_uri" name="google_redirect_uri" value="{{ old('google_redirect_uri', $config['google_redirect_uri']) }}">
-                    @error('google_redirect_uri')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="col-md-12">
+                    <x-tabler.form-input type="url" name="google_redirect_uri" label="Google Redirect URI" id="google_redirect_uri" value="{{ old('google_redirect_uri', $config['google_redirect_uri']) }}" />
                 </div>
-            </div>
 
             <div class="pt-4">
                 <x-tabler.button type="submit" class="me-sm-3 me-1" />
@@ -216,10 +195,15 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label" for="theme_customization_enabled">Theme Settings Panel</label>
-                    <div class="form-check form-switch mb-2">
-                        <input class="form-check-input @error('theme_customization_enabled') is-invalid @enderror" type="checkbox" id="theme_customization_enabled" name="theme_customization_enabled" value="1" {{ old('theme_customization_enabled', $config['theme_customization_enabled']) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="theme_customization_enabled">Enable Theme Customization</label>
-                    </div>
+                    <x-tabler.form-checkbox 
+                        name="theme_customization_enabled" 
+                        label="Enable Theme Customization" 
+                        id="theme_customization_enabled" 
+                        value="1" 
+                        :checked="old('theme_customization_enabled', $config['theme_customization_enabled'])" 
+                        switch 
+                        class="mb-2"
+                    />
                     @error('theme_customization_enabled')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
@@ -245,7 +229,7 @@
                 <p class="text-muted">Clear application cache to refresh configuration and other cached data.</p>
                 <form action="{{ route('app-config.clear-cache') }}" method="POST" class="d-inline">
                     @csrf
-                    <x-tabler.button type="submit" text="Clear Cache" class="btn-warning me-2" icon="ti ti-trash" />
+                    <x-tabler.button type="submit" text="Bersihkan Cache" class="btn-warning me-2" icon="ti ti-trash" />
                 </form>
             </div>
 
@@ -254,7 +238,7 @@
                 <p class="text-muted">Optimize application performance by caching configuration, routes, and views.</p>
                 <form action="{{ route('app-config.optimize') }}" method="POST" class="d-inline">
                     @csrf
-                    <x-tabler.button type="submit" text="Optimize Application" class="btn-success" icon="ti ti-rocket" />
+                    <x-tabler.button type="submit" text="Optimalkan Aplikasi" class="btn-success" icon="ti ti-rocket" />
                 </form>
             </div>
         </div>

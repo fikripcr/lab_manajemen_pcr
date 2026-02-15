@@ -18,10 +18,13 @@
                 </x-tabler.form-select>
             </div>
             <div class="col-md-12 mb-3">
-                <label class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="is_active" value="1" checked>
-                    <span class="form-check-label">Aktif</span>
-                </label>
+                <x-tabler.form-checkbox 
+                    name="is_active" 
+                    label="Aktif" 
+                    value="1" 
+                    checked 
+                    switch 
+                />
             </div>
         </div>
     </div>

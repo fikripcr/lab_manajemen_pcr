@@ -1,7 +1,7 @@
 @extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('header')
-    <x-tabler.page-header title="Edit Semester" pretitle="Perkuliahan">
+    <x-tabler.page-header title="Ubah Semester" pretitle="Perkuliahan">
         <x-slot:actions>
             <x-tabler.button type="back" :href="route('lab.semesters.index')" />
         </x-slot:actions>
@@ -38,37 +38,26 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="start_date" class="form-label fw-bold">Start Date <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control @error('start_date') is-invalid @enderror"
-                                       id="start_date" name="start_date"
-                                       value="{{ old('start_date', $semester->start_date) }}" >
-                                @error('start_date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="date" name="start_date" id="start_date" label="Start Date" value="{{ old('start_date', $semester->start_date) }}" required="true" />
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="end_date" class="form-label fw-bold">End Date <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control @error('end_date') is-invalid @enderror"
-                                       id="end_date" name="end_date"
-                                       value="{{ old('end_date', $semester->end_date) }}" >
-                                @error('end_date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-input type="date" name="end_date" id="end_date" label="End Date" value="{{ old('end_date', $semester->end_date) }}" required="true" />
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', $semester->is_active) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="is_active">
-                                    Set as Active Semester
-                                </label>
-                            </div>
+                            <x-tabler.form-checkbox 
+                                name="is_active" 
+                                label="Set as Active Semester" 
+                                value="1" 
+                                :checked="old('is_active', $semester->is_active)" 
+                                switch 
+                            />
                         </div>
 
                         <div class="mt-4">
-                            <x-tabler.button type="submit" text="Update" />
+                            <x-tabler.button type="submit" />
                             <x-tabler.button type="cancel" :href="route('lab.semesters.index')" />
                         </div>
                     </form>

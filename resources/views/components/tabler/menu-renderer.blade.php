@@ -344,6 +344,12 @@
                     'icon'          => 'ti ti-plus',
                 ],
                 [
+                    'title'         => 'Feedback',
+                    'route'         => 'eoffice.feedback.index',
+                    'active_routes' => ['eoffice.feedback.*'],
+                    'icon'          => 'ti ti-message',
+                ],
+                [
                     'title'         => 'Master Data',
                     'id'            => 'navbar-eoffice-master',
                     'icon'          => 'ti ti-database',

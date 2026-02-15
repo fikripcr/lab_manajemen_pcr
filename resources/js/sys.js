@@ -186,7 +186,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.initFilePond = function () {
+        const elements = document.querySelectorAll('.filepond-input');
+        if (elements.length > 0) {
+            window.loadFilePond().then((FilePond) => {
+                elements.forEach(el => {
+                    if (FilePond.find(el)) return; // Skip if already initialized
+
+                    const config = {
+                        storeAsFile: true,
+                        allowMultiple: el.multiple || el.dataset.allowMultiple === 'true' || false,
+                        required: el.required || false,
+                        credits: false,
+                        labelIdle: el.dataset.labelIdle || 'Drag & Drop files or <span class="filepond--label-action">Browse</span>',
+                        acceptedFileTypes: el.dataset.acceptedFileTypes ? el.dataset.acceptedFileTypes.split(',') : (el.accept ? el.accept.split(',') : null),
+                        ... (el.dataset.filepondConfig ? JSON.parse(el.dataset.filepondConfig) : {})
+                    };
+
+                    FilePond.create(el, config);
+                });
+            });
+        }
+    };
+
     window.initOfflineSelect2();
+    window.initFilePond();
 
 
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {

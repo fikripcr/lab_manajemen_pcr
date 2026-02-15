@@ -18,8 +18,7 @@
                 </x-tabler.form-select>
             </div>
             <div class="col-md-6">
-                <label class="form-label required">Tanggal</label>
-                <input type="date" class="form-control" name="tgl_indisipliner" value="{{ $indisipliner->tgl_indisipliner?->format('Y-m-d') }}" required>
+                <x-tabler.form-input type="date" name="tgl_indisipliner" label="Tanggal" :value="$indisipliner->tgl_indisipliner?->format('Y-m-d')" required="true" />
             </div>
         </div>
         <div class="mb-3">

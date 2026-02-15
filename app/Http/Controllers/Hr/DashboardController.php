@@ -182,7 +182,7 @@ class DashboardController extends Controller
 
     private function getPendingApprovals()
     {
-        return RiwayatApproval::with(['pegawai.latestDataDiri'])
+        return RiwayatApproval::with(['subject'])
             ->where('status', 'Pending')
             ->orderBy('created_at', 'desc')
             ->limit(10)

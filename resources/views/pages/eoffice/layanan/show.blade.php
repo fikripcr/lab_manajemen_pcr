@@ -4,9 +4,7 @@
 <x-tabler.page-header title="{{ $layanan->no_layanan }}" pretitle="{{ $layanan->jenisLayanan->nama_layanan }}">
     <x-slot:actions>
         <div class="btn-list">
-            <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-link link-secondary" icon="ti ti-arrow-left">
-                Kembali
-            </x-tabler.button>
+            <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-link link-secondary" icon="ti ti-arrow-left" text="Kembali" />
             <div class="dropdown">
                 <button type="button" class="btn btn-ghost-secondary dropdown-toggle" data-bs-toggle="dropdown">Action</button>
                 <div class="dropdown-menu dropdown-menu-end">
@@ -134,9 +132,7 @@
                                     <label class="form-label text-muted small uppercase fw-bold">{{ $field->nama_isian }}</label>
                                     <div class="form-control-plaintext">
                                         @if(str_contains($field->isi, 'eoffice/requests/'))
-                                            <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-outline-info" icon="ti ti-download">
-                                                Unduh Berkas
-                                            </x-tabler.button>
+                                            <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-outline-info" icon="ti ti-download" text="Unduh Berkas" />
                                         @else
                                             {!! nl2br(e($field->isi)) ?? '-' !!}
                                         @endif
@@ -159,9 +155,7 @@
                                         <div class="datagrid-title">{{ $field->nama_isian }}</div>
                                         <div class="datagrid-content">
                                             @if(str_contains($field->isi, 'eoffice/requests/'))
-                                                <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-pill btn-ghost-info" icon="ti ti-file">
-                                                    Berkas
-                                                </x-tabler.button>
+                                                <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-pill btn-ghost-info" icon="ti ti-file" text="Berkas" />
                                             @else
                                                 {{ $field->isi ?? '-' }}
                                             @endif
@@ -210,9 +204,7 @@
                     <div class="row g-2">
                         @if($layanan->latestStatus->status_layanan === 'Diajukan')
                             <div class="col-12">
-                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'proses']) }}" class="btn-primary w-100" icon="ti ti-player-play">
-                                    Terima & Proses
-                                </x-tabler.button>
+                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'proses']) }}" class="btn-primary w-100" icon="ti ti-player-play" text="Terima & Proses" />
                             </div>
                         @else
                             {{-- Unified form for status updates --}}
@@ -280,16 +272,14 @@
                                 <x-tabler.form-input type="file" name="file_lampiran" label="File Output / Lampiran" />
 
                                 <div class="text-end">
-                                    <x-tabler.button type="submit" class="btn-primary w-100">Kirim Perubahan Status</x-tabler.button>
+                                    <x-tabler.button type="submit" class="btn-primary w-100" text="Kirim Perubahan Status" />
                                 </div>
                             </form>
                         @endif
 
                         @if($layanan->latestStatus->status_layanan !== 'Diajukan')
                             <div class="col-12 mt-2">
-                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'batal']) }}" class="btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan." icon="ti ti-history">
-                                    Batal Proses
-                                </x-tabler.button>
+                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'batal']) }}" class="btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan." icon="ti ti-history" text="Batal Proses" />
                             </div>
                         @endif
                     </div>

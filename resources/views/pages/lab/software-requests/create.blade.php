@@ -69,7 +69,7 @@
                         </div>
                         <div class="card-footer text-end">
                             <x-tabler.button type="cancel" href="{{ route('lab.software-requests.index') }}" />
-                            <x-tabler.button type="submit" class="btn-primary" icon="bx bx-send" text="Kirim Pengajuan" :disabled="!$activePeriod" />
+                            <x-tabler.button type="submit" class="btn-primary" icon="bx bx-send" text="Ajukan" :disabled="!$activePeriod" />
                         </div>
                     </div>
                 </form>

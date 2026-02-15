@@ -6,7 +6,7 @@
     <x-tabler.page-header :title="'Team Lab: ' . $lab->name" pretitle="Laboratorium">
         <x-slot:actions>
             <x-tabler.button type="back" :href="route('lab.labs.index')" />
-            <x-tabler.button type="create" :href="route('lab.labs.teams.create', $lab->encrypted_lab_id)" text="Tambah" />
+            <x-tabler.button type="create" :href="route('lab.labs.teams.create', $lab->encrypted_lab_id)" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

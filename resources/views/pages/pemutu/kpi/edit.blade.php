@@ -2,9 +2,9 @@
 @section('title', 'Edit Sasaran Kinerja')
 
 @section('header')
-<x-tabler.page-header title="Edit Sasaran Kinerja" pretitle="KPI">
+<x-tabler.page-header title="Ubah Sasaran Kinerja" pretitle="KPI">
     <x-slot:actions>
-        <x-tabler.button type="a" href="{{ route('pemutu.kpi.index') }}" icon="ti ti-arrow-left" text="Kembali" class="btn-secondary" />
+        <x-tabler.button type="back" :href="route('pemutu.kpi.index')" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -93,14 +93,20 @@
                                 @endphp
                             <tr>
                                 <td>
-                                    <label class="form-check mb-0">
-                                        <input class="form-check-input kpi-checkbox" type="checkbox" name="kpi_assign[{{ $index }}][selected]" value="1" data-index="{{ $index }}" {{ $isChecked ? 'checked' : '' }}>
-                                        <span class="form-check-label">{{ $person->nama }}</span>
+                                    <x-tabler.form-checkbox 
+                                        name="kpi_assign[{{ $index }}][selected]" 
+                                        label="{{ $person->nama }}" 
+                                        value="1" 
+                                        input-class="kpi-checkbox" 
+                                        :checked="$isChecked" 
+                                        class="mb-0" 
+                                        data-index="{{ $index }}"
+                                    >
                                         <input type="hidden" name="kpi_assign[{{ $index }}][personil_id]" value="{{ $person->personil_id }}">
-                                    </label>
+                                    </x-tabler.form-checkbox>
                                 </td>
                                 <td>
-                                    <input type="number" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][year]" value="{{ $assigned ? $assigned->year : date('Y') }}" {{ !$isChecked ? 'disabled' : '' }} id="kpi-year-{{ $index }}">
+                                    <x-tabler.form-input type="number" name="kpi_assign[{{ $index }}][year]" value="{{ $assigned ? $assigned->year : date('Y') }}" disabled="{{ !$isChecked }}" id="kpi-year-{{ $index }}" class="mb-0" input-class="form-control-sm" />
                                 </td>
                                 <td>
                                     <x-tabler.form-select name="kpi_assign[{{ $index }}][semester]" 
@@ -111,10 +117,10 @@
                                         id="kpi-sem-{{ $index }}" />
                                 </td>
                                 <td>
-                                    <input type="number" step="0.01" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" value="{{ $assigned ? $assigned->weight : '' }}" {{ !$isChecked ? 'disabled' : '' }} id="kpi-weight-{{ $index }}">
+                                    <x-tabler.form-input type="number" step="0.01" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" value="{{ $assigned ? $assigned->weight : '' }}" disabled="{{ !$isChecked }}" id="kpi-weight-{{ $index }}" class="mb-0" input-class="form-control-sm" />
                                 </td>
                                 <td>
-                                    <input type="number" step="0.01" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][target_value]" placeholder="0.00" value="{{ $assigned ? $assigned->target_value : '' }}" {{ !$isChecked ? 'disabled' : '' }} id="kpi-target-{{ $index }}">
+                                    <x-tabler.form-input type="number" step="0.01" name="kpi_assign[{{ $index }}][target_value]" placeholder="0.00" value="{{ $assigned ? $assigned->target_value : '' }}" disabled="{{ !$isChecked }}" id="kpi-target-{{ $index }}" class="mb-0" input-class="form-control-sm" />
                                 </td>
                             </tr>
                             @endforeach
@@ -124,7 +130,7 @@
             </div>
 
             <div class="card-footer text-end">
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <x-tabler.button type="submit" />
             </div>
         </form>
     </div>

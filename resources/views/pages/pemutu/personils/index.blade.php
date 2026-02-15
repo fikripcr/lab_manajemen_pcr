@@ -5,8 +5,8 @@
 <x-tabler.page-header title="Personil" pretitle="Master Data">
     <x-slot:actions>
         <div class="btn-list">
-            <x-tabler.button type="button" icon="ti ti-upload" text="Import" class="btn-ghost-primary ajax-modal-btn" data-url="{{ route('pemutu.personils.import') }}" data-modal-title="Import Personil" />
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah" class="ajax-modal-btn" data-url="{{ route('pemutu.personils.create') }}" data-modal-title="Tambah Personil" />
+            <x-tabler.button type="import" class="btn-ghost-primary ajax-modal-btn" data-url="{{ route('pemutu.personils.import') }}" modal-title="Impor Personil" />
+            <x-tabler.button type="create" class="ajax-modal-btn" data-url="{{ route('pemutu.personils.create') }}" modal-title="Tambah Personil" />
         </div>
     </x-slot:actions>
 </x-tabler.page-header>

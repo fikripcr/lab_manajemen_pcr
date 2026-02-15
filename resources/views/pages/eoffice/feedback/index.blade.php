@@ -1,8 +1,7 @@
 @extends('layouts.admin.app')
 
 @section('header')
-<x-tabler.page-header title="{{ $pageTitle }}" pretitle="E-Office">
-</x-tabler.page-header>
+<x-tabler.page-header title="{{ $pageTitle }}" pretitle="E-Office"/>
 @endsection
 
 @section('content')
@@ -27,9 +26,7 @@
                 <x-tabler.form-input type="date" name="f_tgl_end" label="Tanggal Akhir" />
             </div>
             <div class="col-md-3">
-                <x-tabler.button type="button" class="btn-primary w-100" id="btn-filter" icon="ti ti-filter">
-                    Filter
-                </x-tabler.button>
+                <x-tabler.button type="button" class="btn-primary w-100" id="btn-filter" icon="ti ti-filter" text="Filter" />
             </div>
         </div>
     </div>

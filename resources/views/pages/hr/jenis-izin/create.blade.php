@@ -18,8 +18,7 @@
                 </x-tabler.form-select>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Max Hari</label>
-                <input type="number" class="form-control" name="max_hari" placeholder="Kosongkan jika tidak ada limit">
+                <x-tabler.form-input type="number" name="max_hari" label="Max Hari" placeholder="Kosongkan jika tidak ada limit" />
             </div>
         </div>
         <div class="mb-3">

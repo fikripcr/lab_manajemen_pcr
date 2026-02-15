@@ -4,9 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Data Indikator" pretitle="SPMI / Monitoring">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.indikators.create') }}" style="primary" icon="ti ti-plus">
-            Tambah Indikator
-        </x-tabler.button>
+        <x-tabler.button href="{{ route('pemutu.indikators.create') }}" style="primary" icon="ti ti-plus" text="Tambah Indikator" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

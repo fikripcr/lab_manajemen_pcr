@@ -168,6 +168,8 @@ return new class extends Migration
             $table->timestamps();
             $table->index(['causer_type', 'causer_id']);
             $table->index(['created_at']);
+            $table->softDeletes();
+
         });
 
         Schema::create('sys_notifications', function (Blueprint $table) {

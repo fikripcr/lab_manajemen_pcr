@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Indikator Standar & Performa" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.standar.create') }}" style="primary" icon="ti ti-plus">
-            Tambah Indikator
-        </x-tabler.button>
+        <x-tabler.button href="{{ route('pemutu.standar.create') }}" style="primary" icon="ti ti-plus" text="Tambah Indikator" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -48,9 +46,7 @@
                     </td>
                     <td>{{ $ind->target }}</td>
                     <td>
-                        <x-tabler.button href="{{ route('pemutu.standar.assign', $ind->indikator_id) }}" style="ghost-primary" size="sm">
-                            Assign
-                        </x-tabler.button>
+                        <x-tabler.button href="{{ route('pemutu.standar.assign', $ind->indikator_id) }}" style="ghost-primary" size="sm" text="Assign" />
                     </td>
                 </tr>
                 @endforeach

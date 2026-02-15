@@ -275,12 +275,11 @@
                             <x-tabler.form-input name="jabatan" label="Jabatan" placeholder="Misal: Teknisi" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Tanggal Mulai</label>
-                            <input type="date" class="form-control" name="tanggal_mulai" value="{{ date('Y-m-d') }}">
+                            <x-tabler.form-input type="date" name="tanggal_mulai" label="Tanggal Mulai" value="{{ date('Y-m-d') }}" />
                         </div>
                         <div class="modal-footer">
-                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                            <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan</x-tabler.button>
+                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                            <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan" />
                         </div>
                     </form>
                 </div>
@@ -304,8 +303,7 @@
                             <x-tabler.form-input name="no_series" label="Nomor Seri" required="true" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label required">Tanggal Penempatan</label>
-                            <input type="date" class="form-control" name="tanggal_penempatan" value="{{ date('Y-m-d') }}" required>
+                            <x-tabler.form-input type="date" name="tanggal_penempatan" label="Tanggal Penempatan" value="{{ date('Y-m-d') }}" required="true" />
                         </div>
                         <x-tabler.form-select name="status" label="Status" value="active">
                             <option value="active" selected>Active</option>
@@ -314,8 +312,8 @@
                         </x-tabler.form-select>
                         <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" />
                         <div class="modal-footer">
-                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                            <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan</x-tabler.button>
+                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                            <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan" />
                         </div>
                     </form>
                 </div>

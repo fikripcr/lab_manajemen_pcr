@@ -6,9 +6,7 @@
     @csrf
     <div class="modal-body">
         <div class="mb-3">
-            <label class="form-label required">Upload CSV/Excel</label>
-            <input type="file" class="form-control" name="file" required accept=".csv, .xls, .xlsx">
-            <small class="form-hint">Format: nama, email, unit_code (or unit_name), jenis, nip.</small>
+            <x-tabler.form-input type="file" name="file" label="Upload CSV/Excel" required="true" accept=".csv, .xls, .xlsx" help="Format: nama, email, unit_code (or unit_name), jenis, nip." />
         </div>
         <div class="alert alert-info">
             <h4 class="alert-title">Import Instructions</h4>

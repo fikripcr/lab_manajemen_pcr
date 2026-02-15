@@ -36,9 +36,7 @@
                         </p>
                     </div>
                     <div class="card-footer text-end">
-                        <x-tabler.button href="{{ route('eoffice.layanan.create', $item->hashid) }}" class="btn-primary" icon="ti ti-arrow-right">
-                            Ajukan Sekarang
-                        </x-tabler.button>
+                        <x-tabler.button href="{{ route('eoffice.layanan.create', $item->hashid) }}" class="btn-primary" icon="ti ti-arrow-right" text="Ajukan Sekarang" />
                     </div>
                 </div>
             </div>

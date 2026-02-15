@@ -28,8 +28,7 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Tanggal Ijazah (Lulus)</label>
-                <input type="date" class="form-control" name="tgl_ijazah" required>
+                <x-tabler.form-input type="date" name="tgl_ijazah" label="Tanggal Ijazah (Lulus)" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
@@ -44,7 +43,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy">Simpan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan" />
     </div>
 </form>

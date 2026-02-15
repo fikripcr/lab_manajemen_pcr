@@ -11,35 +11,32 @@
             </div>
             
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Batas Awal Masuk</label>
-                <input type="time" class="form-control" name="jam_masuk_awal" placeholder="HH:MM" required>
+                <x-tabler.form-input type="time" name="jam_masuk_awal" label="Batas Awal Masuk" placeholder="HH:MM" required="true" />
             </div>
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Waktu Masuk</label>
-                <input type="time" class="form-control" name="jam_masuk" placeholder="HH:MM" required>
+                <x-tabler.form-input type="time" name="jam_masuk" label="Waktu Masuk" placeholder="HH:MM" required="true" />
             </div>
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Batas Akhir Masuk</label>
-                <input type="time" class="form-control" name="jam_masuk_akhir" placeholder="HH:MM" required>
+                <x-tabler.form-input type="time" name="jam_masuk_akhir" label="Batas Akhir Masuk" placeholder="HH:MM" required="true" />
             </div>
 
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Batas Awal Pulang</label>
-                <input type="time" class="form-control" name="jam_pulang_awal" placeholder="HH:MM" required>
+                <x-tabler.form-input type="time" name="jam_pulang_awal" label="Batas Awal Pulang" placeholder="HH:MM" required="true" />
             </div>
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Waktu Pulang</label>
-                <input type="time" class="form-control" name="jam_pulang" placeholder="HH:MM" required>
+                <x-tabler.form-input type="time" name="jam_pulang" label="Waktu Pulang" placeholder="HH:MM" required="true" />
             </div>
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Batas Akhir Pulang</label>
-                <input type="time" class="form-control" name="jam_pulang_akhir" placeholder="HH:MM" required>
+                <x-tabler.form-input type="time" name="jam_pulang_akhir" label="Batas Akhir Pulang" placeholder="HH:MM" required="true" />
             </div>
             <div class="col-md-12 mb-3">
-                <label class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="is_active" value="1" checked>
-                    <span class="form-check-label">Aktif</span>
-                </label>
+                <x-tabler.form-checkbox 
+                    name="is_active" 
+                    label="Aktif" 
+                    value="1" 
+                    checked 
+                    switch 
+                />
             </div>
         </div>
     </div>

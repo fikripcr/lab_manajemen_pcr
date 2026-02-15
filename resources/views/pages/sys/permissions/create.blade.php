@@ -2,7 +2,7 @@
 <form class="ajax-form" action="{{ route('sys.permissions.store') }}" method="POST">
     @csrf
     <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Create New Permission</h5>
+        <h5 class="modal-title" id="modalTitle">Tambah Hak Akses</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">

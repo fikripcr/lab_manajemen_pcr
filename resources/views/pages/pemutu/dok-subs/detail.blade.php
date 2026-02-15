@@ -18,9 +18,7 @@
                 </h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <x-tabler.button href="javascript:history.back()" style="secondary" icon="ti ti-arrow-left">
-                    Kembali
-                </x-tabler.button>
+                <x-tabler.button href="javascript:history.back()" style="secondary" icon="ti ti-arrow-left" text="Kembali" />
             </div>
         </div>
     </div>
@@ -97,9 +95,7 @@
                                 <h4 class="card-title mb-0">Daftar {{ $tab2Label }}</h4>
                                 <div class="card-actions bg-transparent border-0">
                                     <x-tabler.button href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $parent->hashid, 'doksub_ids[]' => $dokSub->hashid, 'type' => ($parentJenis === 'standar' ? 'standar' : 'renop')]) }}" 
-                                       style="success" size="sm" icon="ti ti-plus">
-                                        Tambah Indikator
-                                    </x-tabler.button>
+                                       style="success" size="sm" icon="ti ti-plus" text="Tambah Indikator" />
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -124,9 +120,7 @@
                                 <div class="card-actions bg-transparent border-0">
                                     <x-tabler.button href="#" style="primary" size="sm" icon="ti ti-plus" class="ajax-modal-btn" 
                                        data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $parent->hashid, 'parent_doksub_id' => $dokSub->hashid]) }}" 
-                                       data-modal-title="Tambah {{ $childType }}">
-                                        Tambah {{ $childType }}
-                                    </x-tabler.button>
+                                       data-modal-title="Tambah {{ $childType }}" text="Tambah {{ $childType }}" />
                                 </div>
                             </div>
                             <div class="table-responsive">

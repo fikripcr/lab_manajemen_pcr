@@ -31,10 +31,12 @@
             </x-tabler.form-select>
         </div>
         <div class="mb-3">
-            <label class="form-check">
-                <input type="checkbox" class="form-check-input" name="is_active" value="1" {{ $orgUnit->is_active ? 'checked' : '' }}>
-                <span class="form-check-label">Aktif</span>
-            </label>
+            <x-tabler.form-checkbox 
+                name="is_active" 
+                label="Aktif" 
+                value="1" 
+                :checked="$orgUnit->is_active" 
+            />
         </div>
     </div>
     <div class="modal-footer">

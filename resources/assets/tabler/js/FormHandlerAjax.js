@@ -223,6 +223,12 @@ function initAjaxFormHandler() {
                 if (typeof window.initOfflineSelect2 === 'function') {
                     window.initOfflineSelect2();
                 }
+                if (typeof window.initFlatpickr === 'function') {
+                    window.initFlatpickr();
+                }
+                if (typeof window.initFilePond === 'function') {
+                    window.initFilePond();
+                }
             })
             .catch(function (error) {
                 console.error(error);

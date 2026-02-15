@@ -57,15 +57,12 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input @error('overwrite_existing') is-invalid @enderror"
-                                   id="overwrite_existing" name="overwrite_existing" value="1">
-                            <label class="form-check-label" for="overwrite_existing">
-                                Timpa data pengguna yang sudah ada (berdasarkan email)
-                            </label>
-                            @error('overwrite_existing')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        <div class="mb-3">
+                            <x-tabler.form-checkbox 
+                                name="overwrite_existing" 
+                                label="Timpa data pengguna yang sudah ada (berdasarkan email)" 
+                                value="1" 
+                            />
                         </div>
 
                         <div class="mb-3">
@@ -79,22 +76,4 @@
     </div>
 @endsection
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        if (typeof window.loadFilePond === 'function') {
-            const FilePond = await window.loadFilePond();
-            const input = document.querySelector('#file');
-            if (input) {
-                FilePond.create(input, {
-                    storeAsFile: true,
-                    allowMultiple: false,
-                    maxFiles: 1,
-                    labelIdle: 'Drag & Drop Excel/CSV or <span class="filepond--label-action">Browse</span>',
-                });
-            }
-        }
-    });
-</script>
-@endpush
 

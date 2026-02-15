@@ -72,7 +72,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-muted mb-3" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /></svg>
             <h5 class="text-muted">No roles found</h5>
             <p class="text-muted">Get started by creating a new role</p>
-            <a href="#" class="btn btn-primary ajax-modal-btn" data-url="{{ route('sys.roles.create') }}" data-modal-title="Create New Role">Create Role</a>
+            <x-tabler.button type="create" :modal-url="route('sys.roles.create')" modal-title="Tambah Role" />
         </div>
     </div>
     @endforelse

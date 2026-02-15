@@ -40,34 +40,22 @@
 
     <div class="row">
         <div class="col-md-6 mb-2">
-            <label class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="is_fitur_diskusi" value="1" {{ $layanan->is_fitur_diskusi ? 'checked' : '' }}>
-                <span class="form-check-label">Aktifkan Diskusi</span>
-            </label>
+            <x-tabler.form-checkbox name="is_fitur_diskusi" value="1" label="Aktifkan Diskusi" :checked="$layanan->is_fitur_diskusi" switch />
         </div>
         <div class="col-md-6 mb-2">
-            <label class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="is_fitur_disposisi" value="1" {{ $layanan->is_fitur_disposisi ? 'checked' : '' }}>
-                <span class="form-check-label">Aktifkan Disposisi</span>
-            </label>
+            <x-tabler.form-checkbox name="is_fitur_disposisi" value="1" label="Aktifkan Disposisi" :checked="$layanan->is_fitur_disposisi" switch />
         </div>
         <div class="col-md-6 mb-2">
-            <label class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="is_fitur_feedback" value="1" {{ $layanan->is_fitur_feedback ? 'checked' : '' }}>
-                <span class="form-check-label">Aktifkan Feedback</span>
-            </label>
+            <x-tabler.form-checkbox name="is_fitur_feedback" value="1" label="Aktifkan Feedback" :checked="$layanan->is_fitur_feedback" switch />
         </div>
     </div>
 
     <div class="mb-3 mt-3">
-        <label class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" name="is_active" value="1" {{ $layanan->is_active ? 'checked' : '' }}>
-            <span class="form-check-label">Layanan Aktif</span>
-        </label>
+        <x-tabler.form-checkbox name="is_active" value="1" label="Layanan Aktif" :checked="$layanan->is_active" switch />
     </div>
 
     <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary">Simpan Perubahan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" text="Simpan Perubahan" />
     </div>
 </form>

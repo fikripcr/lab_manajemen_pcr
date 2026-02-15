@@ -103,8 +103,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" style="ghost-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" style="primary">Simpan</x-tabler.button>
+                    <x-tabler.button type="button" style="ghost-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" style="primary" text="Simpan" />
                 </div>
             </form>
         </div>

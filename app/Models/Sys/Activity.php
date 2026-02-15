@@ -3,12 +3,11 @@ namespace App\Models\Sys;
 
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Activity as SpatieActivity;
 
 class Activity extends SpatieActivity
 {
-    use HasFactory, SoftDeletes, HashidBinding;
+    use HasFactory, HashidBinding;
 
     protected $fillable = [
         'log_name',

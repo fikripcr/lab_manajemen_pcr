@@ -2,9 +2,7 @@
     <div class="card-header">
         <h3 class="card-title">Daftar File Pegawai</h3>
         <div class="card-actions">
-            <x-tabler.button style="primary" icon="ti ti-upload" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
-                Unggah File
-            </x-tabler.button>
+            <x-tabler.button style="primary" icon="ti ti-upload" data-bs-toggle="modal" data-bs-target="#modal-upload-file" text="Unggah File" />
         </div>
     </div>
     <div class="card-body p-0">
@@ -54,9 +52,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>
-                    <x-tabler.button type="submit" style="primary" icon="ti ti-upload">
-                        Unggah Sekarang
-                    </x-tabler.button>
+                    <x-tabler.button type="submit" style="primary" icon="ti ti-upload" text="Unggah Sekarang" />
                 </div>
             </form>
         </div>

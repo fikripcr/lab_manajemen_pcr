@@ -31,26 +31,24 @@
             @foreach($typeValue as $val)
             <div class="input-group mb-2">
                         <x-tabler.form-input name="type_value[]" label="Value" value="{{ $val }}" required="true" />
-                <x-tabler.button type="button" class="btn-outline-danger" onclick="removeOptionEdit(this)">Hapus</x-tabler.button>
+                <x-tabler.button type="button" class="btn-outline-danger" onclick="removeOptionEdit(this)" text="Hapus" />
             </div>
             @endforeach
         @else
             <div class="input-group mb-2">
                 <input type="text" name="type_value[]" class="form-control" placeholder="Masukkan opsi">
-                <x-tabler.button type="button" class="btn-outline-danger" onclick="removeOptionEdit(this)">Hapus</x-tabler.button>
+                <x-tabler.button type="button" class="btn-outline-danger" onclick="removeOptionEdit(this)" text="Hapus" />
             </div>
         @endif
         <div id="additional-options-edit"></div>
-        <x-tabler.button type="button" class="btn-outline-primary btn-sm mt-2" onclick="addOptionEdit()" icon="ti ti-plus">
-            Tambah Opsi
-        </x-tabler.button>
+        <x-tabler.button type="button" class="btn-outline-primary btn-sm mt-2" onclick="addOptionEdit()" icon="ti ti-plus" text="Tambah Opsi" />
     </div>
 
     <x-tabler.form-textarea name="keterangan_isian" label="Keterangan" rows="2" value="{{ $kategori->keterangan_isian }}" />
 
     <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
-        <x-tabler.button type="submit" class="btn-primary">Simpan Perubahan</x-tabler.button>
+        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" text="Simpan Perubahan" />
     </div>
 </form>
 

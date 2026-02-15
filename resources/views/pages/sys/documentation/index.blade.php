@@ -71,6 +71,21 @@
             </div>
         </a>
     </div>
+
+    <!-- Standardization Page Card -->
+    <div class="col-sm-6 col-lg-3 mt-3 mt-lg-0">
+        <a href="{{ route('sys.documentation.show', 'STANDARDIZATION') }}" class="card card-link card-link-pop h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                </div>
+                <h3 class="card-title mb-1">Project Maturity</h3>
+                <div class="text-muted">
+                    Standardization summary, maturity levels, and guides for future agents.
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
 
 <!-- Archive Section -->

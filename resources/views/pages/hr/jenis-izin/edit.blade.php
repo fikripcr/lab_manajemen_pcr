@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h5 class="modal-title">Edit Jenis Izin</h5>
+    <h5 class="modal-title">Ubah Jenis Izin</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <form class="ajax-form" action="{{ route('hr.jenis-izin.update', $jenis_izin->hashid) }}" method="POST">
@@ -19,8 +19,7 @@
                 </x-tabler.form-select>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Max Hari</label>
-                <input type="number" class="form-control" name="max_hari" value="{{ $jenis_izin->max_hari }}">
+                <x-tabler.form-input type="number" name="max_hari" label="Max Hari" :value="$jenis_izin->max_hari" />
             </div>
         </div>
         <div class="mb-3">
@@ -38,7 +37,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" />
+        <x-tabler.button type="submit" />
     </div>
 </form>

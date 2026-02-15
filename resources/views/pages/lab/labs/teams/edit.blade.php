@@ -51,10 +51,13 @@
 
                         <div class="row mb-3">
                             <div class="col-sm-10 offset-sm-2">
-                                <label class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="is_active" value="1" {{ old('is_active', $teamMember->is_active) ? 'checked' : '' }}>
-                                    <span class="form-check-label">Aktif</span>
-                                </label>
+                                <x-tabler.form-checkbox 
+                                    name="is_active" 
+                                    label="Aktif" 
+                                    value="1" 
+                                    :checked="old('is_active', $teamMember->is_active)" 
+                                    switch 
+                                />
                                 @error('is_active')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
