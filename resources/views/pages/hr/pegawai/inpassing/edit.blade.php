@@ -4,21 +4,19 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Golongan Inpassing</label>
-                <select name="gol_inpassing_id" class="form-select form-control" required>
+                <x-tabler.form-select name="gol_inpassing_id" label="Golongan Inpassing" required="true">
                     <option value="">Pilih Golongan</option>
                     @foreach($golongan as $g)
                         <option value="{{ $g->gol_inpassing_id }}" {{ $inpassing->gol_inpassing_id == $g->gol_inpassing_id ? 'selected' : '' }}>{{ $g->golongan }} - {{ $g->nama_pangkat }}</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Terhitung Mulai Tanggal (TMT)</label>
                 <input type="date" name="tmt" class="form-control" value="{{ $inpassing->tmt ? \Carbon\Carbon::parse($inpassing->tmt)->format('Y-m-d') : '' }}" required>
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Nomor SK</label>
-                <input type="text" name="no_sk" class="form-control" value="{{ $inpassing->no_sk }}" required>
+                <x-tabler.form-input name="no_sk" label="Nomor SK" value="{{ $inpassing->no_sk }}" required="true" />
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Tanggal SK</label>
@@ -47,10 +45,7 @@
                     <small class="text-muted">File saat ini: <a href="{{ Storage::url($inpassing->file_sk) }}" target="_blank">Lihat File</a></small>
                 @endif
             </div>
-            <div class="col-md-12 mb-3">
-                <label class="form-label">Keterangan</label>
-                <textarea name="keterangan" class="form-control" rows="3">{{ $inpassing->keterangan }}</textarea>
-            </div>
+            <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" :value="$inpassing->keterangan" />
         </div>
     </div>
     <div class="modal-footer">

@@ -45,7 +45,7 @@
                                     <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
                                 @endforeach
                             </x-tabler.form-select>
-                            <input type="text" class="form-control form-control-sm" id="tree-search" placeholder="Cari dokumen...">
+                            <x-tabler.form-input type="text" id="tree-search" placeholder="Cari dokumen..." class="form-control-sm mb-0" />
                         </div>
 
                         <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">
@@ -101,7 +101,7 @@
                                     <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
                                 @endforeach
                             </x-tabler.form-select>
-                            <input type="text" class="form-control form-control-sm" id="tree-search" placeholder="Cari dokumen...">
+                            <x-tabler.form-input id="tree-search" placeholder="Cari dokumen..." />
                          </div>
                          <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">
                             <li class="nav-item"><a href="#std-standar" class="nav-link py-1 {{ (!request('jenis') && $activeTab === 'standar') || request('jenis') == 'standar' ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="standar">Standar</a></li>

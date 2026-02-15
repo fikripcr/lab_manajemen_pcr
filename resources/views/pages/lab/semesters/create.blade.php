@@ -1,12 +1,12 @@
 @extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
-@section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-        <h4 class="fw-bold py-3 mb-0">Create New Semester</h4>
-        <a href="{{ route('semesters.index') }}" class="btn btn-secondary">
-            <i class="bx bx-arrow-back me-1"></i> Back to List
-        </a>
-    </div>
+@section('header')
+    <x-tabler.page-header title="Tambah Semester" pretitle="Perkuliahan">
+        <x-slot:actions>
+            <x-tabler.button type="back" :href="route('lab.semesters.index')" />
+        </x-slot:actions>
+    </x-tabler.page-header>
+@endsection
 
     <div class="row">
         <div class="col-12">
@@ -14,32 +14,23 @@
                 <div class="card-body">
                     <x-tabler.flash-message />
 
-                    <form method="POST" action="{{ route('semesters.store') }}">
+                    <form method="POST" action="{{ route('lab.semesters.store') }}" class="ajax-form">
                         @csrf
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="tahun_ajaran" class="form-label fw-bold">Tahun Ajaran <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('tahun_ajaran') is-invalid @enderror"
-                                       id="tahun_ajaran" name="tahun_ajaran"
-                                       value="{{ old('tahun_ajaran') }}"
-                                       placeholder="e.g. 2023/2024" >
+                                <x-tabler.form-input name="tahun_ajaran" label="Tahun Ajaran" value="{{ old('tahun_ajaran') }}" placeholder="e.g. 2023/2024" required="true" />
                                 @error('tahun_ajaran')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="semester" class="form-label fw-bold">Semester <span class="text-danger">*</span></label>
-                                <select class="form-select @error('semester') is-invalid @enderror"
-                                        id="semester" name="semester" >
+                                <x-tabler.form-select id="semester" name="semester" label="Semester" required="true">
                                     <option value="">Pilih Semester</option>
                                     <option value="1" {{ old('semester') == 1 ? 'selected' : '' }}>Ganjil</option>
                                     <option value="2" {{ old('semester') == 2 ? 'selected' : '' }}>Genap</option>
-                                </select>
-                                @error('semester')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                </x-tabler.form-select>
                             </div>
                         </div>
 
@@ -75,12 +66,8 @@
                         </div>
 
                         <div class="mt-4">
-                            <button type="submit" class="btn btn-primary me-2">
-                                <i class="bx bx-save me-1"></i> Save
-                            </button>
-                            <a href="{{ route('semesters.index') }}" class="btn btn-secondary">
-                                Cancel
-                            </a>
+                            <x-tabler.button type="submit" text="Simpan Semester" />
+                            <x-tabler.button type="cancel" :href="route('lab.semesters.index')" />
                         </div>
                     </form>
                 </div>

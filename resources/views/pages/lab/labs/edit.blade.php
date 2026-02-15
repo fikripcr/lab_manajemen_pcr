@@ -43,10 +43,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="description">Description</label>
                             <div class="col-sm-10">
-                                <x-tabler.editor id="description" name="description" :value="old('description', $lab->description)" height="300" />
-                                @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-textarea type="editor" id="description" name="description" :value="old('description', $lab->description)" height="300" class="mb-0" />
                             </div>
                         </div>
 
@@ -62,11 +59,9 @@
                                                     <img src="{{ $media->getUrl() }}" class="card-img-top" alt="{{ $media->name }}" style="height: 150px; object-fit: cover;">
                                                     <div class="card-footer bg-transparent p-2 d-flex justify-content-between align-items-center">
                                                         <small class="text-muted">{{ round($media->size / 1024, 2) }} KB</small>
-                                                        <div class="btn-group">
-                                                            <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-icon btn-sm btn-ghost-primary" title="View">
-                                                                <i class="ti ti-eye"></i>
-                                                            </a>
-                                                        </div>
+                                                         <div class="btn-group">
+                                                            <x-tabler.button type="button" class="btn-icon btn-sm btn-ghost-primary" href="{{ $media->getUrl() }}" target="_blank" title="View" icon="ti ti-eye" />
+                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -86,8 +81,7 @@
                                     <ul class="list-group">
                                         @foreach ($lab->getMedia('lab_attachments') as $media)
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <span>{{ $media->file_name }}</span>
-                                                <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-sm btn-ghost-secondary">Download</a>
+                                                <x-tabler.button type="button" class="btn-sm btn-ghost-secondary" href="{{ $media->getUrl() }}" target="_blank" text="Download" />
                                             </li>
                                         @endforeach
                                     </ul>

@@ -30,23 +30,22 @@
                 </div>
                 <div class="card-body">
                     <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="datePicker" class="form-label">Date Picker</label>
-                            <input type="text" id="datePicker" class="form-control" placeholder="Select date">
+                        <div class="mb-3">
+                            <x-tabler.form-input id="datePicker" placeholder="Select date" />
                         </div>
                         <div class="col-md-6">
                             <label for="dateTimePicker" class="form-label">Date & Time</label>
-                            <input type="text" id="dateTimePicker" class="form-control" placeholder="Select date & time">
+                            <x-tabler.form-input id="dateTimePicker" placeholder="Select date & time" />
                         </div>
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="rangePicker" class="form-label">Date Range</label>
-                            <input type="text" id="rangePicker" class="form-control" placeholder="Select range">
+                            <x-tabler.form-input id="rangePicker" placeholder="Select range" />
                         </div>
                         <div class="col-md-6">
                             <label for="multiplePicker" class="form-label">Multiple Dates</label>
-                            <input type="text" id="multiplePicker" class="form-control" placeholder="Select multiple">
+                            <x-tabler.form-input id="multiplePicker" placeholder="Select multiple" />
                         </div>
                     </div>
                 </div>
@@ -87,11 +86,11 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="searchSelect" class="form-label">API Search (Single)</label>
-                            <select id="searchSelect" class="form-select"></select>
+                            <x-tabler.form-select id="searchSelect" class="form-select" label="Search Select" />
                         </div>
                         <div class="col-md-6">
                             <label for="searchSelectMulti" class="form-label">API Search (Multiple)</label>
-                            <select id="searchSelectMulti" class="form-select" multiple></select>
+                            <x-tabler.form-select id="searchSelectMulti" class="form-select" label="Search Select Multi" multiple="true" />
                         </div>
                     </div>
 
@@ -138,7 +137,7 @@
                 <div class="card-body">
                     <form id="tinymceTestForm">
                         <div class="mb-3">
-                            <x-tabler.editor id="editorContent" name="isi" :value="old('isi')" height="250" required />
+                            <x-tabler.form-textarea type="editor" id="editorContent" name="isi" label="Content" :value="old('isi')" height="250" required="true" />
                         </div>
                         <div class="btn-list">
                             <button type="submit" class="btn btn-primary">

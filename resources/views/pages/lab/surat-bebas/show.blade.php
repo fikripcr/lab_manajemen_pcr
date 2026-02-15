@@ -4,20 +4,11 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Detail Pengajuan #{{ $surat->surat_bebas_lab_id }}
-                </h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.surat-bebas.index') }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-2"></i> Kembali
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Detail Pengajuan" :pretitle="'#' . $surat->surat_bebas_lab_id">
+        <x-slot:actions>
+            <x-tabler.button type="back" href="{{ route('lab.surat-bebas.index') }}" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 
     <div class="page-body">
         <div class="row row-cards">
@@ -131,17 +122,10 @@
                         @if($surat->status == 'pending')
                             <form action="{{ route('lab.surat-bebas.status', encryptId($surat->surat_bebas_lab_id)) }}" method="POST" class="ajax-form">
                                 @csrf
-                                <div class="mb-3">
-                                    <label class="form-label">Catatan (Optional)</label>
-                                    <textarea name="remarks" class="form-control" rows="3" placeholder="Alasan..."></textarea>
-                                </div>
+                                <x-tabler.form-textarea name="remarks" label="Catatan (Optional)" rows="3" placeholder="Alasan..." />
                                 <div class="d-flex gap-2">
-                                    <button type="submit" name="status" value="approved" class="btn btn-success w-100">
-                                        <i class="bx bx-check me-2"></i> Approve
-                                    </button>
-                                    <button type="submit" name="status" value="rejected" class="btn btn-danger w-100">
-                                        <i class="bx bx-x me-2"></i> Reject
-                                    </button>
+                                    <x-tabler.button type="submit" name="status" value="approved" class="btn-success w-100" icon="bx bx-check" text="Approve" />
+                                    <x-tabler.button type="submit" name="status" value="rejected" class="btn-danger w-100" icon="bx bx-x" text="Reject" />
                                 </div>
                             </form>
                         @else

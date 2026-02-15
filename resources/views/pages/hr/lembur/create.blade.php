@@ -20,25 +20,19 @@
             <x-tabler.form-input type="time" name="jam_selesai" label="Jam Selesai" required />
         </div>
         <div class="col-md-12">
-            <div class="mb-3">
-                <label class="form-label">Pegawai yang Lembur <span class="text-danger">*</span></label>
-                <select name="pegawai_ids[]" class="form-select" multiple required>
-                    @foreach($pegawais as $pegawai)
-                        <option value="{{ $pegawai->pegawai_id }}">
-                            {{ $pegawai->latestDataDiri?->inisial }} - {{ $pegawai->latestDataDiri?->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-tabler.form-select name="pegawai_ids[]" label="Pegawai yang Lembur" multiple="true" required="true">
+                @foreach($pegawais as $pegawai)
+                    <option value="{{ $pegawai->pegawai_id }}">
+                        {{ $pegawai->latestDataDiri?->inisial }} - {{ $pegawai->latestDataDiri?->nama }}
+                    </option>
+                @endforeach
+            </x-tabler.form-select>
         </div>
         <div class="col-md-4">
-            <div class="mb-3">
-                <label class="form-label">Dibayar?</label>
-                <select name="is_dibayar" class="form-select">
-                    <option value="1">Ya</option>
-                    <option value="0">Tidak</option>
-                </select>
-            </div>
+            <x-tabler.form-select name="is_dibayar" label="Dibayar?">
+                <option value="1">Ya</option>
+                <option value="0">Tidak</option>
+            </x-tabler.form-select>
         </div>
         <div class="col-md-4">
             <x-tabler.form-select name="metode_bayar" label="Metode Bayar" :options="[

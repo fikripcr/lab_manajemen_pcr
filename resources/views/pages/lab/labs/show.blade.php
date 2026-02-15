@@ -178,10 +178,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Tim Aktif</h3>
                     <div class="card-actions btn-group">
-                        <a href="{{ route('lab.labs.teams.index', $lab->encrypted_lab_id) }}" class="btn btn-xs btn-outline-primary">Manage</a>
-                        <button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#modalTeamAdd">
-                            <i class="ti ti-plus"></i>
-                        </button>
+                        <x-tabler.button type="button" class="btn-outline-primary btn-sm" href="{{ route('lab.labs.teams.index', $lab->encrypted_lab_id) }}" text="Manage" />
+                        <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTeamAdd" icon="ti ti-plus" />
                     </div>
                 </div>
                 <div class="list-group list-group-flush">
@@ -215,10 +213,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Inventaris Terbaru</h3>
                     <div class="card-actions btn-group">
-                        <a href="{{ route('lab.labs.inventaris.index', $lab->encrypted_lab_id) }}" class="btn btn-xs btn-outline-primary">Manage</a>
-                        <button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#modalInventarisAdd">
-                            <i class="ti ti-plus"></i>
-                        </button>
+                        <x-tabler.button type="button" class="btn-outline-primary btn-sm" href="{{ route('lab.labs.inventaris.index', $lab->encrypted_lab_id) }}" text="Manage" />
+                        <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalInventarisAdd" icon="ti ti-plus" />
                     </div>
                 </div>
                 <div class="list-group list-group-flush">
@@ -274,21 +270,17 @@
                 <div class="modal-body">
                     <form action="{{ route('lab.labs.teams.store', $lab->encrypted_lab_id) }}" method="POST" class="lab-assignment-form" id="formTeamAdd">
                         @csrf
+                        <x-tabler.form-select class="select2-user" name="user_id" label="Pilih User" required="true" style="width: 100%;" />
                         <div class="mb-3">
-                            <label class="form-label required">Pilih User</label>
-                            <select class="form-select select2-user" name="user_id" required style="width: 100%;"></select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Jabatan</label>
-                            <input type="text" class="form-control" name="jabatan" placeholder="Misal: Teknisi">
+                            <x-tabler.form-input name="jabatan" label="Jabatan" placeholder="Misal: Teknisi" />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tanggal Mulai</label>
                             <input type="date" class="form-control" name="tanggal_mulai" value="{{ date('Y-m-d') }}">
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                            <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan</x-tabler.button>
                         </div>
                     </form>
                 </div>
@@ -307,33 +299,23 @@
                 <div class="modal-body">
                     <form action="{{ route('lab.labs.inventaris.store', $lab->encrypted_lab_id) }}" method="POST" class="lab-assignment-form" id="formInventarisAdd">
                         @csrf
+                        <x-tabler.form-select class="select2-inventaris" name="inventaris_id" label="Nama Alat" required="true" style="width: 100%;" />
                         <div class="mb-3">
-                            <label class="form-label required">Nama Alat</label>
-                            <select class="form-select select2-inventaris" name="inventaris_id" required style="width: 100%;"></select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label required">No Series</label>
-                            <input type="text" class="form-control" name="no_series" required>
+                            <x-tabler.form-input name="no_series" label="Nomor Seri" required="true" />
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Tanggal Penempatan</label>
                             <input type="date" class="form-control" name="tanggal_penempatan" value="{{ date('Y-m-d') }}" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
-                                <option value="active" selected>Active</option>
-                                <option value="moved">Moved</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Keterangan</label>
-                            <textarea class="form-control" name="keterangan" rows="3"></textarea>
-                        </div>
+                        <x-tabler.form-select name="status" label="Status" value="active">
+                            <option value="active" selected>Active</option>
+                            <option value="moved">Moved</option>
+                            <option value="inactive">Inactive</option>
+                        </x-tabler.form-select>
+                        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" />
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                            <x-tabler.button type="submit" class="btn-primary ms-auto">Simpan</x-tabler.button>
                         </div>
                     </form>
                 </div>

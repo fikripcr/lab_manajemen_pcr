@@ -63,8 +63,7 @@
                     <h5 class="card-header">QR Code Generator</h5>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="qrTextInput" class="form-label">Text/URL to encode</label>
-                            <input type="text" class="form-control" id="qrTextInput" placeholder="Enter text or URL to encode">
+                            <x-tabler.form-input id="qrTextInput" placeholder="Enter text or URL to encode" />
                         </div>
 
                         <div class="mb-3">

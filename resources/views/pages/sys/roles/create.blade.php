@@ -7,8 +7,7 @@
     
     <div class="modal-body">
         <div class="mb-3">
-            <label for="name" class="form-label">Role Name</label>
-            <input type="text" class="form-control" id="name" name="name" required placeholder="e.g. Admin, Editor">
+            <x-tabler.form-input name="name" label="Role Name" id="name" required="true" placeholder="e.g. Admin, Editor" />
             <div class="form-text">Permissions can be assigned after creating the role.</div>
         </div>
     </div>

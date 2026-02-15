@@ -7,32 +7,28 @@
     @method('PUT')
     <div class="modal-body">
         <div class="mb-3">
-            <label for="parent_id" class="form-label">Parent Unit</label>
-            <select class="form-select select2-offline" id="parent_id" name="parent_id" data-dropdown-parent="#modalAction">
+            <x-tabler.form-select id="parent_id" name="parent_id" label="Parent Unit" class="select2-offline" data-dropdown-parent="#modalAction">
                 <option value="">No Parent (Root)</option>
                 @foreach($units as $u)
                     <option value="{{ $u->org_unit_id }}" {{ $orgUnit->parent_id == $u->org_unit_id ? 'selected' : '' }}>
                         {{ $u->name_display ?? $u->name }}
                     </option>
                 @endforeach
-            </select>
+            </x-tabler.form-select>
         </div>
         <div class="mb-3">
-            <label for="name" class="form-label required">Nama Unit</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $orgUnit->name }}" required>
+            <x-tabler.form-input name="name" label="Nama Unit" id="name" value="{{ $orgUnit->name }}" required="true" />
         </div>
         <div class="mb-3">
-            <label for="code" class="form-label">Kode</label>
-            <input type="text" class="form-control" id="code" name="code" value="{{ $orgUnit->code }}">
+            <x-tabler.form-input name="code" label="Kode Unit" id="code" value="{{ $orgUnit->code }}" />
         </div>
         <div class="mb-3">
-            <label for="type" class="form-label required">Tipe</label>
-            <select class="form-select" id="type" name="type" required>
+            <x-tabler.form-select id="type" name="type" label="Tipe" required="true">
                 <option value="" disabled>Pilih Tipe</option>
                 @foreach($types as $key => $label)
                     <option value="{{ $key }}" {{ $orgUnit->type == $key ? 'selected' : '' }}>{{ $label }}</option>
                 @endforeach
-            </select>
+            </x-tabler.form-select>
         </div>
         <div class="mb-3">
             <label class="form-check">

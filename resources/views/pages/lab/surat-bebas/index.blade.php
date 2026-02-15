@@ -4,23 +4,11 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Surat Bebas Lab
-                </h2>
-                <div class="text-muted mt-1">
-                    Pengajuan surat bebas lab untuk yudisium/wisuda
-                </div>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.surat-bebas.create') }}" class="btn btn-primary">
-                    <i class="bx bx-plus me-2"></i> Ajukan Surat
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Surat Bebas Lab" pretitle="Layanan">
+        <x-slot:actions>
+            <x-tabler.button type="create" href="{{ route('lab.surat-bebas.create') }}" text="Ajukan Surat" icon="bx bx-plus" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 
     <div class="page-body">
         <div class="card">

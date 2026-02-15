@@ -92,16 +92,7 @@
                         </div>
 
                         <!-- Address -->
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">
-                                <i class="ti ti-home me-2"></i>
-                                Alamat Kantor
-                            </label>
-                            <textarea name="office_address" id="office_address" rows="3" 
-                                      class="form-control" required
-                                      placeholder="Masukkan alamat lengkap kantor...">Jakarta, Indonesia</textarea>
-                            <div class="form-text">Alamat lengkap kantor yang akan ditampilkan di presensi</div>
-                        </div>
+                        <x-tabler.form-textarea name="office_address" id="office_address" label="Alamat Kantor" rows="3" required="true" placeholder="Masukkan alamat lengkap kantor..." value="Jakarta, Indonesia" help="Alamat lengkap kantor yang akan ditampilkan di presensi" />
 
                         <!-- Radius Settings -->
                         <div class="col-12">

@@ -1,36 +1,33 @@
 @extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col-auto">
-        <span class="avatar avatar-lg rounded" style="background-image: url({{ $pegawai->latestDataDiri->file_foto ? asset($pegawai->latestDataDiri->file_foto) : asset('static/avatars/000m.jpg') }})"></span>
-    </div>
-    <div class="col">
-        <div class="page-pretitle">Detail Pegawai</div>
-        <h2 class="page-title">
-            {{ $pegawai->nama }}
-        </h2>
-        <div class="text-muted">NIP: {{ $pegawai->nip }} &bull; {{ $pegawai->email }}</div>
-    </div>
-    <div class="col-auto ms-auto d-print-none">
-        <x-tabler.button href="{{ route('hr.pegawai.edit', encryptId($pegawai->pegawai_id)) }}" class="btn-primary" icon="ti ti-edit">
-            Edit Profile
+<x-tabler.page-header :title="$pegawai->nama" pretitle="Detail Pegawai">
+    <x-slot:avatar>
+        <span class="avatar avatar-md rounded" style="background-image: url({{ $pegawai->latestDataDiri->file_foto ? asset($pegawai->latestDataDiri->file_foto) : asset('static/avatars/000m.jpg') }})"></span>
+    </x-slot:avatar>
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('hr.pegawai.edit', encryptId($pegawai->pegawai_id)) }}" style="primary" icon="ti ti-edit">
+            Edit Profil
         </x-tabler.button>
+        <x-tabler.button href="{{ route('hr.pegawai.index') }}" style="secondary" icon="ti ti-arrow-left">
+            Kembali
+        </x-tabler.button>
+    </x-slot:actions>
+    <div class="text-muted mt-1">
+        NIP: {{ $pegawai->nip }} &bull; {{ $pegawai->email }}
     </div>
-</div>
+</x-tabler.page-header>
 @endsection
 
 @section('content')
 
 @if($pendingChange)
-<div class="alert alert-info mb-3">
+<div class="alert alert-info mb-3 py-2">
     <div class="d-flex">
+        <i class="ti ti-info-circle fs-2 me-2"></i>
         <div>
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
-        </div>
-        <div>
-            <h4 class="alert-title">Menunggu Persetujuan Admin</h4>
-            <div class="text-secondary">Anda memiliki permohonan perubahan data yang sedang diproses. Harap menunggu persetujuan dari admin sebelum mengajukan perubahan lainnya.</div>
+            <h4 class="alert-title mb-1">Menunggu Persetujuan Admin</h4>
+            <div class="text-secondary small">Anda memiliki permohonan perubahan data yang sedang diproses. Harap menunggu persetujuan dari admin sebelum mengajukan perubahan lainnya.</div>
         </div>
     </div>
 </div>
@@ -41,38 +38,32 @@
         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
             <li class="nav-item">
                 <a href="#tab-datadiri" class="nav-link active" data-bs-toggle="tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
-                    Data Diri
+                    <i class="ti ti-user me-2"></i> Data Diri
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#tab-kepegawaian" class="nav-link" data-bs-toggle="tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" /><path d="M12 12l0 .01" /><path d="M3 13a20 20 0 0 0 18 0" /></svg>
-                    Kepegawaian
+                    <i class="ti ti-briefcase me-2"></i> Kepegawaian
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#tab-pendidikan" class="nav-link" data-bs-toggle="tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" /><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" /></svg>
-                    Pendidikan
+                    <i class="ti ti-school me-2"></i> Pendidikan
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#tab-keluarga" class="nav-link" data-bs-toggle="tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7m0 4a4 4 0 0 1 4 -4h2a4 4 0 0 1 4 4v2" /><path d="M16 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M9 7a4 4 0 0 1 4 4v2" /><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
-                    Keluarga
+                    <i class="ti ti-users me-2"></i> Keluarga
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#tab-pengembangan" class="nav-link" data-bs-toggle="tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 15l8.385 -5.315c.915 -.58 .96 -2.001 .009 -2.592l-8.394 -5.093l-8.394 5.093c-.96 .603 -.915 2.024 .01 2.592l8.384 5.315" /><path d="M5 12l-1.6 1.013c-.95 .603 -.905 2.025 .02 2.593l8.58 5.394l8.58 -5.394c.925 -.56 .97 -1.98 .02 -2.593l-1.6 -1.013" /></svg>
-                    Pengembangan Diri
+                    <i class="ti ti-certificate me-2"></i> Sertifikat/Pelatihan
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#tab-files" class="nav-link" data-bs-toggle="tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M12 11v6" /><path d="M9 14l3 3l3 -3" /></svg>
-                    File Pegawai
+                    <i class="ti ti-file-text me-2"></i> File
                 </a>
             </li>
         </ul>
@@ -115,7 +106,7 @@
 
                 <div class="row row-cards">
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card card-sm">
                             <div class="card-header">
                                 <h3 class="card-title">Informasi Pribadi</h3>
                             </div>
@@ -158,7 +149,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card card-sm">
                             <div class="card-header">
                                 <h3 class="card-title">Kontak & Identitas</h3>
                             </div>
@@ -199,7 +190,7 @@
              <div class="tab-pane" id="tab-kepegawaian">
                 @include('pages.hr.pegawai.parts._status_pegawai_list')
                 @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
-                @include('pages.hr.data-diri.penugasan') {{-- Using the Penugasan list view directly --}}
+                @include('pages.hr.data-diri.penugasan')
                 @include('pages.hr.pegawai.parts._status_aktifitas_list')
                 @include('pages.hr.pegawai.parts._inpassing_list')
             </div>
@@ -212,11 +203,6 @@
             <!-- Tab Keluarga -->
             <div class="tab-pane" id="tab-keluarga">
                 @include('pages.hr.pegawai.parts._keluarga_list')
-            </div>
-
-            <!-- Tab Inpassing -->
-            <div class="tab-pane" id="tab-inpassing">
-                @include('pages.hr.pegawai.parts._inpassing_list')
             </div>
 
             <!-- Tab Pengembangan Diri -->

@@ -1,22 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-    <div class="row g-2 align-items-center">
-        <div class="col">
-            <h2 class="page-title">
-                Periode Request Software
-            </h2>
-            <div class="text-muted mt-1">Software Requests / Periode Pengajuan</div>
-        </div>
-        <div class="col-auto ms-auto d-print-none">
-            <div class="btn-list">
-                <a href="{{ route('lab.periode-request.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                    <i class="ti ti-plus me-1"></i>
-                    Tambah Periode
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Periode Request Software" pretitle="Software Request">
+        <x-slot:actions>
+            <x-tabler.button type="create" href="{{ route('lab.periode-request.create') }}" text="Tambah Periode" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')

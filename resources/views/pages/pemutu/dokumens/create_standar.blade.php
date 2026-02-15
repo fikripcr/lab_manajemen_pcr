@@ -16,17 +16,12 @@
             </x-tabler.form-select>
         </div>
         <div class="mb-3">
-            <label for="judul" class="form-label required">Judul Dokumen</label>
-            <input type="text" class="form-control" id="judul" name="judul" required placeholder="Contoh: Standar Operasional Prosedur Pelayanan...">
+            <x-tabler.form-input name="judul" label="Judul Dokumen" id="judul" required="true" placeholder="Contoh: Standar Operasional Prosedur Pelayanan..." />
         </div>
         <div class="mb-3">
-            <label for="kode" class="form-label">Kode Dokumen</label>
-            <input type="text" class="form-control" id="kode" name="kode" placeholder="Contoh: SOP-HUMAS-01">
+            <x-tabler.form-input name="kode" label="Kode Dokumen" id="kode" placeholder="Contoh: SOP-HUMAS-01" />
         </div>
-        <div class="mb-3">
-            <label for="isi" class="form-label">Isi / Keterangan</label>
-            <textarea class="form-control" id="isi" name="isi" rows="4" placeholder="Keterangan singkat dokumen..."></textarea>
-        </div>
+        <x-tabler.form-textarea name="isi" id="isi" label="Isi / Keterangan" rows="4" placeholder="Keterangan singkat dokumen..." />
         
         {{-- Hidden Default Fields --}}
         <input type="hidden" name="periode" value="{{ date('Y') }}">

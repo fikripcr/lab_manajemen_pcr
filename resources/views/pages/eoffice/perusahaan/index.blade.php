@@ -16,14 +16,13 @@
             <div class="card-body border-bottom py-3">
                 <div class="d-flex">
                     <div class="text-secondary">
-                        Filter Kategori:
                         <div class="ms-2 d-inline-block">
-                            <select id="filter-kategori" class="form-select form-select-sm">
+                            <x-tabler.form-select id="filter-kategori" class="form-select-sm" label="Filter Kategori" class="mb-0">
                                 <option value="">Semua Kategori</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->kategoriperusahaan_id }}">{{ $cat->nama_kategori }}</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                     </div>
                 </div>

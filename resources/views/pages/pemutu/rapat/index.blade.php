@@ -10,9 +10,7 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <x-tabler.button href="{{ route('pemutu.rapat.create') }}" style="primary" icon="ti ti-plus" class="d-none d-sm-inline-block">
-                    Tambah Rapat
-                </x-tabler.button>
+                <x-tabler.button type="create" href="{{ route('pemutu.rapat.create') }}" text="Tambah Rapat" />
             </div>
         </div>
     </div>

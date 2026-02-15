@@ -7,12 +7,10 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Kode</label>
-                <input type="text" class="form-control" name="kode_status" placeholder="Contoh: A, B1" maxlength="5" required>
+                <x-tabler.form-input name="kode_status" label="Kode Status" placeholder="Contoh: A, B1" maxlength="5" required="true" />
             </div>
             <div class="col-md-8 mb-3">
-                <label class="form-label required">Nama Status Aktifitas</label>
-                <input type="text" class="form-control" name="nama_status" placeholder="Contoh: Aktif, Cuti, Tugas Belajar" required>
+                <x-tabler.form-input name="nama_status" label="Nama Status" placeholder="Contoh: Aktif, Cuti, Tugas Belajar" required="true" />
             </div>
             <div class="col-md-12 mb-3">
                 <label class="form-check form-switch">

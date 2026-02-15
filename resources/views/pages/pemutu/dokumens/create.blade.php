@@ -21,15 +21,14 @@
                 </div>
                 <input type="hidden" name="parent_id" value="{{ $parent->dok_id }}">
             @else
-                {{-- If Root, usually Visi --}}
                 <div class="form-control-plaintext text-muted">
                     <em>Root Level (Dokumen Tertinggi)</em>
                 </div>
                 {{-- 
-                <select class="form-select select2-offline" id="parent_id" name="parent_id" data-dropdown-parent="#modalAction">
+                <x-tabler.form-select id="parent_id" name="parent_id" label="Induk Dokumen" class="select2-offline" data-dropdown-parent="#modalAction">
                     <option value="">Tanpa Induk (Root)</option>
                      ...
-                </select>
+                </x-tabler.form-select>
                 --}}
             @endif
         </div>
@@ -47,16 +46,13 @@
             />
         </div>
         <div class="mb-3" id="judul-container">
-            <label for="judul" class="form-label required">Judul Dokumen</label>
-            <input type="text" class="form-control" id="judul" name="judul" required placeholder="Contoh: Manual Mutu">
+            <x-tabler.form-input name="judul" id="judul" label="Judul Dokumen" placeholder="Contoh: Manual Mutu" required="true" />
         </div>
         <div class="mb-3">
-            <label for="kode" class="form-label">Kode Dokumen</label>
-            <input type="text" class="form-control" id="kode" name="kode" placeholder="Contoh: MM-01">
+            <x-tabler.form-input name="kode" id="kode" label="Kode Dokumen" placeholder="Contoh: MM-01" />
         </div>
         <div class="mb-3">
-            <label for="isi" class="form-label">Isi / Konten Dokumen</label>
-            <textarea class="form-control rich-text-editor" id="isi" name="isi" rows="10"></textarea>
+            <x-tabler.form-textarea name="isi" id="isi" label="Isi / Konten Dokumen" class="rich-text-editor" rows="10" />
         </div>
         {{-- Hidden fields for defaults --}}
         <input type="hidden" name="periode" value="{{ date('Y') }}">

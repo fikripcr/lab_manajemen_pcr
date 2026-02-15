@@ -12,8 +12,7 @@
     <input type="hidden" name="dok_id" value="{{ $dokumen->dok_id }}">
     <div class="modal-body">
          <div class="mb-3">
-              <label for="judul" class="form-label required">Judul / Poin</label>
-               <input type="text" class="form-control" id="judul" name="judul" required placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan / Kegiatan Operasional 1' : 'Contoh: Misi 1' }}">
+               <x-tabler.form-input name="judul" label="Judul" id="judul" required="true" placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan / Kegiatan Operasional 1' : 'Contoh: Misi 1' }}" />
           </div>
           
           @if($canProduceIndikator)
@@ -31,10 +30,7 @@
               <label for="seq" class="form-label">Urutan</label>
               <input type="number" class="form-control" id="seq" name="seq" placeholder="Contoh: 1">
           </div>
-          <div class="mb-3">
-              <label for="isi" class="form-label">Isi Dokumen</label>
-              <textarea class="form-control" id="isi" name="isi" rows="5" placeholder="Isi sub-dokumen..."></textarea>
-          </div>
+          <x-tabler.form-textarea name="isi" id="isi" label="Isi Dokumen" rows="4" placeholder="Isi sub-dokumen..." />
           @endif
     </div>
     <div class="modal-footer">

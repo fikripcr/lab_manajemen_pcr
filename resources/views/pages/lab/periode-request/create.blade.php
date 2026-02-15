@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-end">
-                    <button type="submit" class="btn btn-primary">Simpan Periode</button>
+                        <x-tabler.button type="submit" text="Simpan Periode" />
                     <x-tabler.button type="cancel" :href="route('lab.periode-request.index')" />
                 </div>
             </form>

@@ -33,34 +33,40 @@
                 <x-tabler.datatable-search :dataTableId="'presensi-history-table'" />
             </div>
             <div class="ms-auto">
-                <div class="btn-list">
-                    <select class="form-select" id="filter-month" style="width: 150px;">
-                        <option value="">Semua Bulan</option>
-                        <option value="01">Januari</option>
-                        <option value="02">Februari</option>
-                        <option value="03">Maret</option>
-                        <option value="04">April</option>
-                        <option value="05">Mei</option>
-                        <option value="06">Juni</option>
-                        <option value="07">Juli</option>
-                        <option value="08">Agustus</option>
-                        <option value="09">September</option>
-                        <option value="10">Oktober</option>
-                        <option value="11">November</option>
-                        <option value="12">Desember</option>
-                    </select>
-                    <select class="form-select" id="filter-year" style="width: 120px;">
-                        <option value="">Semua Tahun</option>
-                        <option value="2026">2026</option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                    </select>
-                    <select class="form-select" id="filter-status" style="width: 150px;">
-                        <option value="">Semua Status</option>
-                        <option value="on_time">Tepat Waktu</option>
-                        <option value="late">Terlambat</option>
-                        <option value="absent">Tidak Hadir</option>
-                    </select>
+                <div class="row g-2">
+                    <div class="col-auto">
+                        <x-tabler.form-select id="filter-month" label="Bulan" class="mb-0" style="width: 150px;">
+                            <option value="">Semua Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </x-tabler.form-select>
+                    </div>
+                    <div class="col-auto">
+                        <x-tabler.form-select id="filter-year" label="Tahun" class="mb-0" style="width: 120px;">
+                            <option value="">Semua Tahun</option>
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </x-tabler.form-select>
+                    </div>
+                    <div class="col-auto">
+                        <x-tabler.form-select id="filter-status" label="Status" class="mb-0" style="width: 150px;">
+                            <option value="">Semua Status</option>
+                            <option value="on_time">Tepat Waktu</option>
+                            <option value="late">Terlambat</option>
+                            <option value="absent">Tidak Hadir</option>
+                        </x-tabler.form-select>
+                    </div>
                 </div>
             </div>
         </div>

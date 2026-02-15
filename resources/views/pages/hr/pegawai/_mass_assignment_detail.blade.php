@@ -59,19 +59,18 @@
         
         <div class="row g-3">
             <div class="col-md-6">
-                <label class="form-label required">Pilih Pegawai</label>
-                <select class="form-select select2-ajax" name="pegawai_id" required
+                <x-tabler.form-select class="select2-ajax" name="pegawai_id" label="Pilih Pegawai" required="true"
                         data-ajax-url="{{ route('hr.pegawai.select2-search') }}"
-                        data-placeholder="Cari nama pegawai...">
-                </select>
+                        data-placeholder="Cari nama pegawai..." />
             </div>
             <div class="col-md-3">
                 <label class="form-label required">Tanggal Mulai</label>
                 <input type="date" class="form-control" name="tgl_mulai" value="{{ date('Y-m-d') }}" required>
             </div>
             <div class="col-md-3">
-                <label class="form-label">No SK</label>
-                <input type="text" class="form-control" name="no_sk" placeholder="SK/...">
+                <div class="mb-3">
+                    <x-tabler.form-input name="no_sk" label="Nomor SK" placeholder="SK/..." />
+                </div>
             </div>
         </div>
         <div class="mt-3">

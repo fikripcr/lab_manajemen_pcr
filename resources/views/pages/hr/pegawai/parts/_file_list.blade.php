@@ -2,12 +2,12 @@
     <div class="card-header">
         <h3 class="card-title">Daftar File Pegawai</h3>
         <div class="card-actions">
-        <x-tabler.button class="btn-primary" icon="ti ti-upload" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
-            Unggah File
-        </x-tabler.button>
+            <x-tabler.button style="primary" icon="ti ti-upload" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
+                Unggah File
+            </x-tabler.button>
         </div>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-vcenter card-table" id="table-files" style="width:100%">
                 <thead>
@@ -17,7 +17,7 @@
                         <th>Nama File</th>
                         <th>Ukuran</th>
                         <th>Keterangan</th>
-                        <th width="100">Aksi</th>
+                        <th width="100" class="text-end">Aksi</th>
                     </tr>
                 </thead>
             </table>
@@ -38,27 +38,25 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label required">Kategori File</label>
-                        <select name="jenisfile_id" class="form-select" required>
+                        <x-tabler.form-select name="jenisfile_id" label="Kategori File" required="true">
                             <option value="">Pilih Kategori...</option>
                             @foreach(\App\Models\Hr\JenisFile::where('is_active', 1)->get() as $jenis)
                                 <option value="{{ $jenis->jenisfile_id }}">{{ $jenis->jenisfile }}</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label required">Pilih File</label>
-                        <input type="file" name="file" class="form-control" required>
-                        <small class="text-muted">Maksimal 10MB (PDF, JPG, PNG, DOCX, dll)</small>
+                        <x-tabler.form-input type="file" name="file" label="Pilih File" required="true" help="Maksimal 10MB (PDF, JPG, PNG, DOCX, dll)" />
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan" class="form-control" rows="3" placeholder="Tambahkan catatan jika perlu..."></textarea>
+                        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" placeholder="Tambahkan catatan jika perlu..." />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
-                    <x-tabler.button type="submit" class="btn-primary">Unggah Sekarang</x-tabler.button>
+                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>
+                    <x-tabler.button type="submit" style="primary" icon="ti ti-upload">
+                        Unggah Sekarang
+                    </x-tabler.button>
                 </div>
             </form>
         </div>
@@ -78,7 +76,7 @@
                 { data: 'filename', name: 'media.file_name' },
                 { data: 'size', name: 'media.size', searchable: false },
                 { data: 'keterangan', name: 'keterangan' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-end' }
             ],
             language: {
                 url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json"

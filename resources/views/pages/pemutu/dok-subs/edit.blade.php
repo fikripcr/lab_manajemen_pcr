@@ -41,8 +41,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="mb-3">
-                                <label for="judul" class="form-label required">Judul / Poin</label>
-                                <input type="text" class="form-control" id="judul" name="judul" value="{{ $dokSub->judul }}" required>
+                                <x-tabler.form-input name="judul" label="Judul" id="judul" value="{{ $dokSub->judul }}" required="true" />
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -68,10 +67,7 @@
                     </div>
                     @endif
 
-                    <div class="mb-3">
-                        <label for="isi" class="form-label">Konten / Isi Lengkap</label>
-                        <textarea class="form-control rich-text-editor" id="isi" name="isi" rows="15">{{ $dokSub->isi }}</textarea>
-                    </div>
+                    <x-tabler.form-textarea type="editor" name="isi" id="isi" label="Konten / Isi Lengkap" :value="$dokSub->isi" height="400" />
                 </div>
 
                 <div class="{{ (request()->ajax() || request()->has('ajax')) ? 'modal-footer' : 'card-footer text-end' }}">

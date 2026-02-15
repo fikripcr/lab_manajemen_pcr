@@ -44,16 +44,13 @@
             </x-tabler.form-select>
         </div>
         <div class="mb-3">
-            <label for="judul" class="form-label required">Judul Dokumen</label>
-            <input type="text" class="form-control" id="judul" name="judul" value="{{ $dokumen->judul }}" required>
+            <x-tabler.form-input name="judul" id="judul" label="Judul Dokumen" :value="$dokumen->judul" required="true" />
         </div>
         <div class="mb-3">
-            <label for="kode" class="form-label">Kode Dokumen</label>
-            <input type="text" class="form-control" id="kode" name="kode" value="{{ $dokumen->kode }}">
+            <x-tabler.form-input name="kode" id="kode" label="Kode Dokumen" :value="$dokumen->kode" />
         </div>
         <div class="mb-3">
-            <label for="isi" class="form-label">Isi / Konten Dokumen</label>
-            <textarea class="form-control rich-text-editor" id="isi" name="isi" rows="10">{{ $dokumen->isi }}</textarea>
+            <x-tabler.form-textarea name="isi" id="isi" label="Isi / Konten Dokumen" class="rich-text-editor" rows="10" :value="$dokumen->isi" />
         </div>
         {{-- Hidden fields to preserve or set defaults if needed --}}
         <input type="hidden" name="periode" value="{{ $dokumen->periode }}">

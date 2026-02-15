@@ -4,20 +4,11 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Detail Laporan #{{ $laporan->laporan_kerusakan_id }}
-                </h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.laporan-kerusakan.index') }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-2"></i> Kembali
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Detail Laporan #{{ $laporan->laporan_kerusakan_id }}" pretitle="Berkas">
+        <x-slot:actions>
+            <x-tabler.button type="back" href="{{ route('lab.laporan-kerusakan.index') }}" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 
     <div class="page-body">
         <div class="row row-cards">

@@ -9,30 +9,26 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Jenis Kegiatan</label>
-                <select class="form-select" name="jenis_kegiatan" required>
+                <x-tabler.form-select name="jenis_kegiatan" label="Jenis Kegiatan" required="true">
                     <option value="">Pilih Jenis Kegiatan</option>
                     <option value="Pelatihan" {{ $pengembangan->jenis_kegiatan == 'Pelatihan' ? 'selected' : '' }}>Pelatihan</option>
                     <option value="Seminar" {{ $pengembangan->jenis_kegiatan == 'Seminar' ? 'selected' : '' }}>Seminar</option>
                     <option value="Workshop" {{ $pengembangan->jenis_kegiatan == 'Workshop' ? 'selected' : '' }}>Workshop</option>
                     <option value="Sertifikasi" {{ $pengembangan->jenis_kegiatan == 'Sertifikasi' ? 'selected' : '' }}>Sertifikasi</option>
                     <option value="Lainnya" {{ $pengembangan->jenis_kegiatan == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Nama Kegiatan</label>
-                <input type="text" class="form-control" name="nama_kegiatan" value="{{ $pengembangan->nama_kegiatan }}" required>
+                <x-tabler.form-input name="nama_kegiatan" label="Nama Kegiatan" value="{{ $pengembangan->nama_kegiatan }}" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Penyelenggara</label>
-                <input type="text" class="form-control" name="nama_penyelenggara" value="{{ $pengembangan->nama_penyelenggara }}">
+                <x-tabler.form-input name="nama_penyelenggara" label="Penyelenggara" value="{{ $pengembangan->nama_penyelenggara }}" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Peran</label>
-                <input type="text" class="form-control" name="peran" value="{{ $pengembangan->peran }}" placeholder="Contoh: Peserta, Narasumber">
+                <x-tabler.form-input name="peran" label="Peran" value="{{ $pengembangan->peran }}" placeholder="Contoh: Peserta, Narasumber" />
             </div>
 
             <div class="col-md-6 mb-3">
@@ -50,10 +46,7 @@
                 <input type="number" class="form-control" name="tahun" value="{{ $pengembangan->tahun }}" placeholder="YYYY" required>
             </div>
 
-            <div class="col-md-12 mb-3">
-                <label class="form-label">Keterangan</label>
-                <textarea class="form-control" name="keterangan" rows="3">{{ $pengembangan->keterangan }}</textarea>
-            </div>
+            <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" :value="$pengembangan->keterangan" />
         </div>
     </div>
     <div class="modal-footer">

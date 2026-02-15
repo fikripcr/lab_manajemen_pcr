@@ -25,15 +25,9 @@
                             </div>
                         </div>
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="isi">Content</label>
                             <div class="col-sm-10">
-                                <x-tabler.editor id="isi" name="isi" :value="old('isi')" height="400" />
-                                @error('isi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-textarea type="editor" id="isi" name="isi" label="Content" :value="old('isi')" height="400" required="true" class="mb-0" />
                             </div>
-                        </div>
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="cover_image">Cover Image</label>

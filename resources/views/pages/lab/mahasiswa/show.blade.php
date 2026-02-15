@@ -10,14 +10,8 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <a href="{{ route('lab.mahasiswa.edit', encryptId($mahasiswa->mahasiswa_id)) }}" class="btn btn-primary d-none d-sm-inline-block">
-                    <i class="ti ti-edit me-1"></i>
-                    Edit
-                </a>
-                <a href="{{ route('lab.mahasiswa.index') }}" class="btn btn-secondary d-none d-sm-inline-block">
-                    <i class="ti ti-arrow-left me-1"></i>
-                    Kembali
-                </a>
+                <x-tabler.button type="edit" href="{{ route('lab.mahasiswa.edit', encryptId($mahasiswa->mahasiswa_id)) }}" />
+                <x-tabler.button type="back" href="{{ route('lab.mahasiswa.index') }}" />
             </div>
         </div>
     </div>

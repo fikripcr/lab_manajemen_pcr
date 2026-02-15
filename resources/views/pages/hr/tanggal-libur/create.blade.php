@@ -21,28 +21,23 @@
                 </div>
                 <div class="card-body">
                     
-                    <div class="mb-3 row">
-                        <label class="col-3 col-form-label required">Tahun</label>
-                        <div class="col">
-                            <select name="tahun" class="form-select" required>
+                        <div class="col-12">
+                            <x-tabler.form-select name="tahun" label="Tahun" required="true">
                                 @for($i = date('Y') - 1; $i <= date('Y') + 2; $i++)
                                     <option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>{{ $i }}</option>
                                 @endfor
-                            </select>
-                            <small class="form-hint">Year for all entries below.</small>
+                            </x-tabler.form-select>
+                            <small class="form-hint" style="margin-top: -1rem; display: block;">Year for all entries below.</small>
                         </div>
-                    </div>
 
                     <div id="entries-container">
                         <!-- Initial Row -->
                         <div class="row entry-row mb-3" data-index="0">
                             <div class="col-md-5">
-                                <label class="form-label required">Dates</label>
-                                <input type="text" name="entries[0][dates]" class="form-control date-picker-multi" placeholder="Select dates..." required>
+                                <x-tabler.form-input name="entries[0][dates]" class="date-picker-multi" placeholder="Select dates..." required="true" />
                             </div>
                             <div class="col-md-5">
-                                <label class="form-label required">Keterangan</label>
-                                <input type="text" name="entries[0][keterangan]" class="form-control" placeholder="e.g. Libur Nasional" required>
+                                <x-tabler.form-input name="entries[0][keterangan]" placeholder="e.g. Libur Nasional" required="true" />
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="button" class="btn btn-danger btn-icon remove-row" disabled>

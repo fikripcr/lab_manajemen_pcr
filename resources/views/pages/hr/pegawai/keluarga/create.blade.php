@@ -8,19 +8,17 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Nama Lengkap</label>
-                <input type="text" class="form-control" name="nama" required>
+                <x-tabler.form-input name="nama" label="Nama Lengkap" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Hubungan</label>
-                <select class="form-select" name="hubungan" required>
+                <x-tabler.form-select name="hubungan" label="Hubungan" required="true">
                     <option value="">Pilih Hubungan</option>
                     <option value="Suami">Suami</option>
                     <option value="Istri">Istri</option>
                     <option value="Anak">Anak</option>
                     <option value="Orang Tua">Orang Tua</option>
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -42,14 +40,10 @@
                 <input type="date" class="form-control" name="tgl_lahir">
             </div>
             
-            <div class="col-md-12 mb-3">
-                <label class="form-label">Alamat</label>
-                <textarea class="form-control" name="alamat" rows="2"></textarea>
-            </div>
+            <x-tabler.form-textarea name="alamat" label="Alamat" rows="2" />
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">No. Telepon</label>
-                <input type="text" class="form-control" name="telp" placeholder="Opsional">
+                <x-tabler.form-input name="telp" label="Nomor Telepon" placeholder="Opsional" />
             </div>
         </div>
     </div>

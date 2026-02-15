@@ -4,63 +4,41 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Laporan Kerusakan
-                </h2>
-                <div class="text-muted mt-1">
-                    Daftar laporan kerusakan inventaris lab
-                </div>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.laporan-kerusakan.create') }}" class="btn btn-primary">
-                    <i class="bx bx-plus me-2"></i> Buat Laporan
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Laporan Kerusakan" pretitle="Berkas">
+        <x-slot:actions>
+            <x-tabler.button type="create" href="{{ route('lab.laporan-kerusakan.create') }}" text="Buat Laporan" icon="bx bx-plus" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 
     <div class="page-body">
         <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-vcenter card-table" id="table-laporan">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Alat / Inventaris</th>
-                                <th>Pelapor</th>
-                                <th>Status</th>
-                                <th>Tanggal</th>
-                                <th class="w-1">Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+            <div class="card-header">
+                <div class="d-flex flex-wrap gap-2">
+                    <div>
+                        <x-tabler.datatable-page-length dataTableId="table-laporan" />
+                    </div>
+                    <div>
+                        <x-tabler.datatable-search dataTableId="table-laporan" />
+                    </div>
                 </div>
+            </div>
+            <div class="card-body p-0">
+                <x-tabler.datatable
+                    id="table-laporan"
+                    route="{{ route('lab.laporan-kerusakan.data') }}"
+                    :columns="[
+                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
+                        ['data' => 'alat_info', 'name' => 'inventaris.nama_alat', 'title' => 'Alat / Inventaris'],
+                        ['data' => 'pelapor', 'name' => 'createdBy.name', 'title' => 'Pelapor'],
+                        ['data' => 'status', 'name' => 'status', 'title' => 'Status', 'class' => 'text-center'],
+                        ['data' => 'tanggal', 'name' => 'created_at', 'title' => 'Tanggal', 'class' => 'text-center'],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '10%']
+                    ]"
+                />
             </div>
         </div>
     </div>
 </div>
 @endsection
 
-@push('js')
-<script>
-    $(document).ready(function() {
-        $('#table-laporan').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('lab.laporan-kerusakan.data') }}",
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'alat_info', name: 'inventaris.nama_alat' },
-                { data: 'pelapor_id', name: 'created_by' },
-                { data: 'status', name: 'status' },
-                { data: 'created_at', name: 'created_at' },
-                { data: 'action', name: 'action', orderable: false, searchable: false },
-            ]
-        });
-    });
-</script>
-@endpush
+

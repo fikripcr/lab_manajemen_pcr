@@ -46,9 +46,9 @@ class KegiatanController extends Controller
                 return "<span class='badge bg-{$color}'>" . ucfirst($row->status) . "</span>";
             })
             ->addColumn('action', function ($row) {
-                // Encrypt ID manually or via helper
-                $id = encryptId($row->kegiatan_id);
-                return '<a href="' . route('lab.kegiatan.show', $id) . '" class="btn btn-sm btn-icon btn-outline-primary"><i class="bx bx-show"></i></a>';
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl' => route('lab.kegiatan.show', encryptId($row->kegiatan_id)),
+                ])->render();
             })
             ->rawColumns(['status', 'waktu', 'action'])
             ->make(true);

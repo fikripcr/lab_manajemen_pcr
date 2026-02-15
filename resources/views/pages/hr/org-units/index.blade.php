@@ -82,17 +82,17 @@
             <div class="tab-pane" id="tabs-manage">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex gap-2">
-                        <select class="form-select form-select-sm" id="filter-type" style="width: 180px;">
+                        <x-tabler.form-select id="filter-type" label="Filter Tipe" class="form-select-sm mb-0" style="width: 180px;">
                             <option value="">Semua Tipe</option>
                             @foreach($types as $key => $label)
                                 <option value="{{ $key }}">{{ $label }}</option>
                             @endforeach
-                        </select>
-                        <select class="form-select form-select-sm" id="filter-status" style="width: 150px;">
+                        </x-tabler.form-select>
+                        <x-tabler.form-select id="filter-status" label="Filter Status" class="form-select-sm mb-0" style="width: 150px;">
                             <option value="">Semua Status</option>
                             <option value="active">Aktif</option>
                             <option value="inactive">Nonaktif</option>
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                 </div>
                 <x-tabler.datatable

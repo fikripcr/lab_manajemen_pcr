@@ -42,10 +42,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="description">Description</label>
                             <div class="col-sm-10">
-                                <x-tabler.editor id="description" name="description" :value="old('description')" height="300" />
-                                @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <x-tabler.form-textarea type="editor" id="description" name="description" :value="old('description')" height="300" class="mb-0" />
                             </div>
                         </div>
 

@@ -6,21 +6,15 @@
     @csrf
     <div class="modal-body">
         <div class="mb-3">
-            <label for="tahun_ajaran" class="form-label required">Tahun Ajaran</label>
-            <input type="text" class="form-control"
-                   id="tahun_ajaran" name="tahun_ajaran"
-                   value="{{ old('tahun_ajaran') }}"
-                   placeholder="e.g. 2023/2024" required>
+            <x-tabler.form-input name="tahun_ajaran" label="Tahun Ajaran" placeholder="Misal: 2023/2024" required="true" value="{{ old('tahun_ajaran') }}" />
         </div>
 
         <div class="mb-3">
-            <label for="semester" class="form-label required">Semester</label>
-            <select class="form-select"
-                    id="semester" name="semester" required>
+            <x-tabler.form-select name="semester" label="Semester" required="true">
                 <option value="">Pilih Semester</option>
                 <option value="1" {{ old('semester') == 1 ? 'selected' : '' }}>Ganjil</option>
                 <option value="2" {{ old('semester') == 2 ? 'selected' : '' }}>Genap</option>
-            </select>
+            </x-tabler.form-select>
         </div>
 
         <div class="mb-3">

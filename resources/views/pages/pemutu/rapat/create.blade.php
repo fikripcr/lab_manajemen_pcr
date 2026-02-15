@@ -10,10 +10,7 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <a href="{{ route('pemutu.rapat.index') }}" class="btn btn-secondary d-none d-sm-inline-block">
-                    <i class="ti ti-arrow-left me-1"></i>
-                    Kembali
-                </a>
+                <x-tabler.button type="back" href="{{ route('pemutu.rapat.index') }}" />
             </div>
         </div>
     </div>
@@ -113,10 +110,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a href="{{ route('pemutu.rapat.index') }}" class="btn btn-secondary">
-                                <i class="ti ti-arrow-left me-1"></i>
-                                Batal
-                            </a>
+                            <x-tabler.button type="cancel" href="{{ route('pemutu.rapat.index') }}" />
                             <x-tabler.button type="submit" text="Simpan Rapat" />
                         </div>
                     </form>

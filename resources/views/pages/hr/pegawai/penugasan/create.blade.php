@@ -12,17 +12,14 @@
         </div>
         @endif
 
-        <div class="mb-3">
-            <label class="form-label required">Unit / Jabatan</label>
-            <select class="form-select select2-offline" name="org_unit_id" required data-dropdown-parent="#modalAction">
-                <option value="">Pilih Unit / Jabatan</option>
-                @foreach($units as $unit)
-                    <option value="{{ $unit->org_unit_id }}">
-                        {{ $unit->name }} ({{ ucfirst(str_replace('_', ' ', $unit->type)) }})
-                    </option>
-                @endforeach
-            </select>
-        </div>
+        <x-tabler.form-select class="select2-offline" name="org_unit_id" label="Unit / Jabatan" required="true" data-dropdown-parent="#modalAction">
+            <option value="">Pilih Unit / Jabatan</option>
+            @foreach($units as $unit)
+                <option value="{{ $unit->org_unit_id }}">
+                    {{ $unit->name }} ({{ ucfirst(str_replace('_', ' ', $unit->type)) }})
+                </option>
+            @endforeach
+        </x-tabler.form-select>
 
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -38,8 +35,7 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label">No. SK</label>
-                <input type="text" class="form-control" name="no_sk" value="{{ old('no_sk') }}" placeholder="SK/xxx/2026">
+                <x-tabler.form-input name="no_sk" label="Nomor SK" value="{{ old('no_sk') }}" placeholder="SK/xxx/2026" />
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Tanggal SK</label>
@@ -47,10 +43,7 @@
             </div>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Keterangan</label>
-            <textarea class="form-control" name="keterangan" rows="2">{{ old('keterangan') }}</textarea>
-        </div>
+        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" />
     </div>
     <div class="modal-footer">
         <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>

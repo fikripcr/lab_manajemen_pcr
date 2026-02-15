@@ -13,14 +13,8 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <a href="{{ route('pemutu.rapat.index') }}" class="btn btn-secondary d-none d-sm-inline-block">
-                    <i class="ti ti-arrow-left me-1"></i>
-                    Kembali
-                </a>
-                <a href="{{ route('pemutu.rapat.edit', $rapat) }}" class="btn btn-primary d-none d-sm-inline-block">
-                    <i class="ti ti-edit me-1"></i>
-                    Edit
-                </a>
+                <x-tabler.button type="back" href="{{ route('pemutu.rapat.index') }}" />
+                <x-tabler.button type="edit" href="{{ route('pemutu.rapat.edit', $rapat) }}" />
             </div>
         </div>
     </div>
@@ -86,9 +80,7 @@
                                     <div class="datagrid-item">
                                         <div class="datagrid-title">Aksi</div>
                                         <div class="datagrid-content">
-                                            <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modal-set-officials">
-                                                <i class="ti ti-users me-1"></i> Set Pejabat Rapat
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal-set-officials" icon="ti ti-users" text="Set Pejabat Rapat" />
                                         </div>
                                     </div>
                                     @endif
@@ -149,13 +141,13 @@
                                                         <div class="text-muted small">{{ $peserta->jabatan }}</div>
                                                     </td>
                                                     <td>
-                                                        <select name="attendance[{{ $peserta->rapatpeserta_id }}][status]" class="form-select form-select-sm">
+                                                        <x-tabler.form-select name="attendance[{{ $peserta->rapatpeserta_id }}][status]" class="form-select-sm mb-0">
                                                             <option value="" {{ is_null($peserta->status) ? 'selected' : '' }}>- Belum Absen -</option>
                                                             <option value="hadir" {{ $peserta->status == 'hadir' ? 'selected' : '' }}>Hadir</option>
                                                             <option value="izin" {{ $peserta->status == 'izin' ? 'selected' : '' }}>Izin</option>
                                                             <option value="sakit" {{ $peserta->status == 'sakit' ? 'selected' : '' }}>Sakit</option>
                                                             <option value="alpa" {{ $peserta->status == 'alpa' ? 'selected' : '' }}>Alpa</option>
-                                                        </select>
+                                                        </x-tabler.form-select>
                                                     </td>
                                                     <td>
                                                         <input type="time" name="attendance[{{ $peserta->rapatpeserta_id }}][waktu_hadir]" 
@@ -168,9 +160,7 @@
                                         </table>
                                     </div>
                                     <div class="mt-3 text-end">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="ti ti-check me-1"></i> Simpan Absensi
-                                        </button>
+                                        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-check" text="Simpan Absensi" />
                                     </div>
                                 </form>
                             </div>
@@ -205,9 +195,7 @@
                         @endforeach
                     </div>
                     <div class="mt-3 text-end">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="ti ti-device-floppy me-1"></i> Simpan Pembahasan Agenda
-                        </button>
+                        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Pembahasan Agenda" />
                     </div>
                 </form>
             </div>
@@ -220,9 +208,7 @@
                         Unduh laporan hasil rapat lengkap dalam format PDF, mencakup informasi rapat, daftar hadir, dan hasil pembahasan agenda.
                     </p>
                     <div>
-                        <a href="{{ route('pemutu.rapat.generate-pdf', $rapat) }}" class="btn btn-red btn-lg">
-                            <i class="ti ti-file-type-pdf me-2"></i> Download PDF Hasil Rapat
-                        </a>
+                        <x-tabler.button type="button" class="btn-red btn-lg" href="{{ route('pemutu.rapat.generate-pdf', $rapat) }}" icon="ti ti-file-type-pdf" text="Download PDF Hasil Rapat" />
                     </div>
                 </div>
             </div>
@@ -242,28 +228,22 @@
             <form action="{{ route('pemutu.rapat.update-officials', $rapat) }}" method="POST">
                 @csrf
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label required">Ketua Rapat</label>
-                        <select class="form-select select2-modal" name="ketua_user_id" required>
+                        <x-tabler.form-select class="select2-modal" name="ketua_user_id" label="Ketua Rapat" required="true">
                              <option value="" selected disabled>Pilih Ketua Rapat</option>
                              @foreach(\App\Models\User::all() as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                              @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label required">Notulen Rapat</label>
-                        <select class="form-select select2-modal" name="notulen_user_id" required>
+                        </x-tabler.form-select>
+                        <x-tabler.form-select class="select2-modal" name="notulen_user_id" label="Notulen Rapat" required="true">
                              <option value="" selected disabled>Pilih Notulen Rapat</option>
                              @foreach(\App\Models\User::all() as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                              @endforeach
-                        </select>
-                    </div>
+                        </x-tabler.form-select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Simpan</button>
+                    <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" class="btn-primary">Simpan</x-tabler.button>
                 </div>
             </form>
         </div>

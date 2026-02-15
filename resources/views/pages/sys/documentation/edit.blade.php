@@ -2,10 +2,7 @@
 
 @section('title', 'Edit Documentation: ' . $page)
 
-@push('css')
-    <!-- Toast UI Editor CSS -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-@endpush
+
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -35,10 +32,7 @@
                 @csrf
                 @method('PUT')
 
-                <div class="mb-3">
-                    <div id="editor"></div>
-                    <textarea id="content" name="content" class="d-none">{{ old('content', $content) }}</textarea>
-                </div>
+                <x-tabler.form-textarea type="editor" id="content" name="content" label="Content" :value="old('content', $content)" height="500" />
 
                 <div class="d-flex justify-content-end gap-2">
                     <x-tabler.button type="back" :href="route('sys.documentation.show', $page)" />
@@ -49,36 +43,5 @@
     </div>
 </div>
 
-@push('scripts')
-    <!-- Toast UI Editor JS -->
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const editorContainer = document.getElementById('editor');
-            const contentTextarea = document.getElementById('content');
 
-            // Initialize Toast UI Editor
-            const editor = new toastui.Editor({
-                el: editorContainer,
-                previewStyle: 'vertical',
-                height: '50vh',
-                initialValue: contentTextarea.value,
-                toolbarItems: [
-                    ['heading', 'bold', 'italic', 'strike'],
-                    ['hr', 'quote'],
-                    ['ul', 'ol', 'task', 'indent', 'outdent'],
-                    ['table', 'image', 'link'],
-                    ['code', 'codeblock'],
-                    ['scrollSync']
-                ],
-                usageStatistics: false
-            });
-
-            // Sync content back to textarea when form is submitted
-            editor.on('change', function() {
-                contentTextarea.value = editor.getMarkdown();
-            });
-        });
-    </script>
-@endpush
 @endsection

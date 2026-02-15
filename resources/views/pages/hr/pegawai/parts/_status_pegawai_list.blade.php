@@ -1,10 +1,11 @@
 <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
-    <h3>Riwayat Status Pegawai</h3>
+    <h3 class="mb-0">Riwayat Status Pegawai</h3>
     <x-tabler.button 
-        class="btn-sm" 
-        icon="ti ti-edit" 
-        modal-url="{{ route('hr.pegawai.status-pegawai.create', $pegawai->encrypted_pegawai_id) }}" 
-        modal-title="Ubah Status Pegawai">
+        style="primary" 
+        class="ajax-modal-btn" 
+        data-url="{{ route('hr.pegawai.status-pegawai.create', $pegawai->encrypted_pegawai_id) }}" 
+        data-modal-title="Ubah Status Pegawai"
+        icon="ti ti-edit">
         Ubah Status
     </x-tabler.button>
 </div>
@@ -17,27 +18,30 @@
                     <th>TMT</th>
                     <th>No. SK</th>
                     <th>File SK</th>
-                    <th>Status Approval</th>
+                    <th>Status Aktif</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($pegawai->historyStatPegawai as $item)
                 <tr>
-                    <td><span class="badge bg-blue text-blue-fg">{{ $item->statusPegawai->nama_status ?? '-' }}</span></td>
+                    <td>
+                        <span class="badge bg-blue-lt">{{ $item->statusPegawai->nama_status ?? ($item->statusPegawai->statpegawai ?? '-') }}</span>
+                    </td>
                     <td>{{ $item->tmt ? $item->tmt->format('d F Y') : '-' }}</td>
                     <td>{{ $item->no_sk ?? '-' }}</td>
                     <td>
                         @if($item->file_sk)
-                            <a href="#" target="_blank">Lihat</a>
+                            <x-tabler.button href="{{ asset($item->file_sk) }}" style="ghost-info" class="btn-sm" icon="ti ti-download" target="_blank">
+                                Unduh
+                            </x-tabler.button>
                         @else
                             -
                         @endif
                     </td>
-                    <td>
                         @if($pegawai->latest_riwayatstatpegawai_id == $item->riwayatstatpegawai_id)
-                            <span class="badge bg-success">Aktif Saat Ini</span>
+                            <span class="badge bg-success text-success-fg">Aktif Saat Ini</span>
                         @else
-                            <span class="badge bg-secondary">Riwayat</span>
+                            <span class="badge bg-secondary text-secondary-fg">Riwayat</span>
                         @endif
                     </td>
                 </tr>

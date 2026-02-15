@@ -4,20 +4,11 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Isi Log Penggunaan Lab (Tamu / Peserta)
-                </h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.log-lab.index') }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-2"></i> Kembali
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Isi Log Penggunaan Lab" pretitle="Buku Tamu">
+        <x-slot:actions>
+            <x-tabler.button type="back" href="{{ route('lab.log-lab.index') }}" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 
     <div class="page-body">
         <div class="row justify-content-center">
@@ -58,7 +49,7 @@
 
                         </div>
                         <div class="card-footer text-end">
-                            <button type="submit" class="btn btn-primary">Simpan Log</button>
+                            <x-tabler.button type="submit" text="Simpan Log" />
                         </div>
                     </div>
                 </form>

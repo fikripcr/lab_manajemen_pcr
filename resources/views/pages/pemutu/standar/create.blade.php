@@ -1,68 +1,63 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Tambah Indikator Standar" pretitle="Penjaminan Mutu">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('pemutu.standar.index') }}" style="secondary" icon="ti ti-arrow-left">
+            Kembali
+        </x-tabler.button>
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Create Standard Indicator
-                </h2>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="page-body">
-    <div class="container-xl">
-        <div class="card">
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        <form method="POST" action="{{ route('pemutu.standar.store') }}" class="card ajax-form">
+            @csrf
             <div class="card-body">
-                <form method="POST" action="{{ route('pemutu.standar.store') }}">
-                    @csrf
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Type</label>
-                        <select name="type" class="form-select" required>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <x-tabler.form-select name="type" label="Tipe Indikator" required="true">
                             <option value="standar">Standard (Indikator Standar)</option>
                             <option value="performa">Performance (Indikator Performa)</option>
-                        </select>
-                        <small class="form-hint">Performance indicators are usually derived from Standard indicators, but can be standalone.</small>
+                        </x-tabler.form-select>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Standard Document</label>
-                        <select id="dokumen_id" class="form-select" required>
-                            <option value="">Select Document...</option>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <x-tabler.form-select id="dokumen_id" name="dokumen_id_context" label="Dokumen Standar" required="true">
+                            <option value="">Pilih Dokumen...</option>
                             @foreach($dokumens as $dok)
                                 <option value="{{ $dok->dokumen_id }}">{{ $dok->kode }} - {{ $dok->judul }}</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <x-tabler.form-select name="doksub_id" id="doksub_id" label="Pernyataan Standar (DokSub)" required="true" disabled="true">
+                            <option value="">Pilih Dokumen Terlebih Dahulu...</option>
+                        </x-tabler.form-select>
+                    </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Sub-Document (DokSub) / Statement</label>
-                        <select name="doksub_id" id="doksub_id" class="form-select" required disabled>
-                            <option value="">Select Document First...</option>
-                        </select>
-                    </div>
+                <div class="mb-3">
+                    <x-tabler.form-textarea name="indikator" label="Isi Indikator" rows="3" required="true" />
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Indicator Text</label>
-                        <textarea name="indikator" class="form-control" rows="3" required></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Target</label>
-                        <input type="text" name="target" class="form-control" required placeholder="e.g., 100%, 5 Documents, etc.">
-                    </div>
-                    
-                    <input type="hidden" name="parent_id" value="">
-
-                    <div class="form-footer">
-                        <button type="submit" class="btn btn-primary">Create Indicator</button>
-                    </div>
-                </form>
+                <div class="mb-3">
+                    <x-tabler.form-input name="target" label="Target" required="true" placeholder="cth: 100%, 5 Dokumen, dsb." />
+                </div>
+                
+                <input type="hidden" name="parent_id" value="">
             </div>
-        </div>
+
+            <div class="card-footer text-end">
+                <x-tabler.button type="submit" style="primary">
+                    Simpan Indikator
+                </x-tabler.button>
+            </div>
+        </form>
     </div>
 </div>
 

@@ -91,12 +91,12 @@
                                     <div class="text-muted small">{{ jenisIsian($isian->type) }}</div>
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-sm isian-toggle" data-field="fill_by">
+                                    <x-tabler.form-select class="form-select-sm isian-toggle" name="fill_by" data-field="fill_by" class="mb-0">
                                         <option value="Pemohon" {{ $isian->fill_by == 'Pemohon' ? 'selected' : '' }}>Pemohon</option>
                                         <option value="Disposisi 1" {{ $isian->fill_by == 'Disposisi 1' ? 'selected' : '' }}>Disp 1</option>
                                         <option value="Disposisi 2" {{ $isian->fill_by == 'Disposisi 2' ? 'selected' : '' }}>Disp 2</option>
                                         <option value="Sistem" {{ $isian->fill_by == 'Sistem' ? 'selected' : '' }}>Sistem</option>
-                                    </select>
+                                    </x-tabler.form-select>
                                 </td>
                                 <td class="text-center">
                                     <label class="form-check form-check-single form-switch">
@@ -257,13 +257,12 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label required">Pilih Pegawai</label>
-                        <select name="user_id" class="form-select select2" required>
+                        <x-tabler.form-select name="user_id" label="Pilih Pegawai" class="select2" required="true">
                             <option value="">Pilih Pegawai</option>
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -288,13 +287,12 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-9 mb-3">
-                            <label class="form-label required">Pilih Isian Master</label>
-                            <select name="kategoriisian_id" class="form-select select2" required>
+                            <x-tabler.form-select name="kategoriisian_id" label="Pilih Isian Master" class="select2" required="true">
                                 <option value="">Pilih Isian</option>
                                 @foreach($kategoriIsians as $ki)
                                     <option value="{{ $ki->kategoriisian_id }}">{{ $ki->nama_isian }} ({{ $ki->type }})</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label required">No Urut</label>
@@ -329,22 +327,17 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label required">Model</label>
-                        <select name="model" class="form-select" required>
+                        <x-tabler.form-select name="model" label="Model" required="true">
                             <option value="">Pilih Model</option>
                             <option value="Posisi">Posisi</option>
                             <option value="JabatanStruktural">Jabatan Struktural</option>
                             <option value="Lainnya">Lainnya (Manual)</option>
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label required">Value / Nama Tujuan</label>
-                        <input type="text" name="value" class="form-control" placeholder="Contoh: Kaprodi, Wadek, atau nama khusus" required>
+                        <x-tabler.form-input name="value" label="Value / Nama Tujuan" placeholder="Contoh: Kaprodi, Wadek, atau nama khusus" required="true" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan" class="form-control" rows="2" placeholder="Keterangan disposisi (opsional)"></textarea>
-                    </div>
+                        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" placeholder="Keterangan disposisi (opsional)" />
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Batas Pengerjaan (Hari)</label>
@@ -390,16 +383,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Tahun Ajaran</label>
-                            <input type="text" name="tahun_ajaran" class="form-control" placeholder="Contoh: 2025/2026">
+                            <x-tabler.form-input name="tahun_ajaran" label="Tahun Ajaran" placeholder="Contoh: 2025/2026" />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Semester</label>
-                            <select name="semester" class="form-select">
+                            <x-tabler.form-select name="semester" label="Semester">
                                 <option value="">Pilih Semester</option>
                                 <option value="Ganjil">Ganjil</option>
                                 <option value="Genap">Genap</option>
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                     </div>
                 </div>
@@ -424,13 +415,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label required">Teks Display / Alias</label>
-                        <input type="text" name="text" class="form-control" placeholder="Contoh: Pilih Kaprodi" required>
+                        <x-tabler.form-input name="text" label="Teks Display / Alias" placeholder="Contoh: Pilih Kaprodi" required="true" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Keterangan Tambahan</label>
-                        <textarea name="keterangan" class="form-control" rows="2" placeholder="Muncul di bawah label input"></textarea>
-                    </div>
+                        <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" placeholder="Muncul di bawah label input" />
                     <div class="mb-3">
                         <label class="form-label">Batas Pengerjaan (Hari)</label>
                         <input type="number" name="batas_pengerjaan" class="form-control" min="0">
@@ -457,8 +444,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Validation Rules</label>
-                        <input type="text" name="rule" class="form-control" placeholder="mimes:pdf|max:2048">
+                        <x-tabler.form-input name="rule" label="Validation Rules" placeholder="mimes:pdf|max:2048" />
                         <div class="form-text">Contoh: <code>mimes:pdf,doc,docx|max:5120</code> atau <code>numeric|min:1</code></div>
                     </div>
                 </div>
@@ -482,10 +468,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Keterangan / Instruksi</label>
-                        <textarea name="info_tambahan" class="form-control" rows="4" placeholder="Muncul di bawah label input field..."></textarea>
-                    </div>
+                        <x-tabler.form-textarea name="info_tambahan" label="Keterangan / Instruksi" rows="4" placeholder="Muncul di bawah label input field..." />
                 </div>
                 <div class="modal-footer">
                     <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>

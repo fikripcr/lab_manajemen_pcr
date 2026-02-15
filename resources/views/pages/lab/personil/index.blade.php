@@ -10,10 +10,7 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <a href="{{ route('lab.personil.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                    <i class="ti ti-plus me-1"></i>
-                    Tambah Personil
-                </a>
+                <x-tabler.button type="create" href="{{ route('lab.personil.create') }}" text="Tambah Personil" />
             </div>
         </div>
     </div>

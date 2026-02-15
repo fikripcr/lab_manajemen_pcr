@@ -20,15 +20,10 @@ class PeriodeSpmiController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                return '
-                    <div class="btn-group btn-group-sm">
-                        <a href="' . route('pemutu.periode-spmis.edit', $row) . '" class="btn btn-icon btn-ghost-primary" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . route('pemutu.periode-spmis.destroy', $row) . '" data-title="Hapus?">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('pemutu.periode-spmis.edit', $row),
+                    'deleteUrl' => route('pemutu.periode-spmis.destroy', $row),
+                ])->render();
             })
             ->make(true);
     }
@@ -58,7 +53,7 @@ class PeriodeSpmiController extends Controller
 
         PeriodeSpmi::create($data);
 
-        return redirect()->route('pemutu.periode-spmis.index')->with('success', 'Periode SPMI berhasil ditambahkan');
+        return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmis.index'));
     }
 
     public function edit(PeriodeSpmi $periodeSpmi)
@@ -86,7 +81,7 @@ class PeriodeSpmiController extends Controller
 
         $periodeSpmi->update($data);
 
-        return redirect()->route('pemutu.periode-spmis.index')->with('success', 'Periode SPMI berhasil diperbarui');
+        return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmis.index'));
     }
 
     public function destroy(PeriodeSpmi $periodeSpmi)

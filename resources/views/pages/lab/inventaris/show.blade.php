@@ -3,8 +3,8 @@
 @section('header')
     <x-tabler.page-header :title="$inventory->nama_alat" pretitle="Inventory Details">
         <x-slot:actions>
-            <x-tabler.button type="a" :href="route('lab.inventaris.edit', $inventory)" icon="ti ti-pencil" class="btn-warning" text="Edit" />
-            <x-tabler.button type="a" :href="route('lab.inventaris.index')" icon="ti ti-arrow-left" class="btn-secondary" text="Kembali" />
+            <x-tabler.button type="edit" :href="route('lab.inventaris.edit', $inventory)" />
+            <x-tabler.button type="back" :href="route('lab.inventaris.index')" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

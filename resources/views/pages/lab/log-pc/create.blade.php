@@ -4,15 +4,7 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Isi Log Penggunaan PC
-                </h2>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Isi Log Penggunaan PC" pretitle="Monitoring" />
 
     <div class="page-body">
         <div class="row justify-content-center">
@@ -93,7 +85,7 @@
                                     <x-tabler.form-textarea name="catatan_umum" label="Catatan (Opsional)" rows="3" placeholder="Contoh: Mouse agak macet, Keyboard tombol A keras..." />
 
                                     <div class="form-footer">
-                                        <button type="submit" class="btn btn-primary w-100">Simpan Log</button>
+                                        <x-tabler.button type="submit" text="Simpan Log" class="w-100" />
                                     </div>
                                 @endif
                             </div>

@@ -1,9 +1,11 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Data Keluarga</h3>
+    <h3 class="mb-0">Data Keluarga</h3>
     <x-tabler.button 
-        icon="ti ti-plus" 
-        modal-url="{{ route('hr.pegawai.keluarga.create', $pegawai->encrypted_pegawai_id) }}" 
-        modal-title="Tambah Anggota Keluarga">
+        style="primary" 
+        class="ajax-modal-btn" 
+        data-url="{{ route('hr.pegawai.keluarga.create', $pegawai->encrypted_pegawai_id) }}" 
+        data-modal-title="Tambah Anggota Keluarga"
+        icon="ti ti-plus">
         Tambah Anggota Keluarga
     </x-tabler.button>
 </div>
@@ -23,30 +25,34 @@
             <tbody>
                 @forelse($pegawai->keluarga as $kel)
                 <tr>
-                    <td>{{ $kel->nama }}</td>
+                    <td class="fw-bold">{{ $kel->nama }}</td>
                     <td>{{ $kel->hubungan }}</td>
                     <td>{{ $kel->jenis_kelamin }}</td>
-                    <td>{{ $kel->tgl_lahir ? \Carbon\Carbon::parse($kel->tgl_lahir)->format('d-m-Y') : '-' }}</td>
+                    <td>{{ $kel->tgl_lahir ? \Carbon\Carbon::parse($kel->tgl_lahir)->format('d F Y') : '-' }}</td>
                     <td>
                         @if($kel->approval && $kel->approval->status == 'Pending')
-                            <span class="badge bg-warning">Menunggu Approval</span>
+                            <span class="badge bg-warning text-warning-fg">Menunggu Approval</span>
                         @else
-                            <span class="badge bg-success">Active</span>
+                            <span class="badge bg-success text-success-fg">Active</span>
                         @endif
                     </td>
                     <td class="text-end">
-                        <x-tabler.button 
-                            class="btn-sm btn-ghost-primary" 
-                            icon="ti ti-edit" 
-                            modal-url="{{ route('hr.pegawai.keluarga.edit', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}" 
-                            modal-title="Edit Data Keluarga"
-                        />
-                        <x-tabler.button 
-                            type="button" 
-                            class="btn-sm btn-ghost-danger ajax-delete" 
-                            icon="ti ti-trash" 
-                            data-url="{{ route('hr.pegawai.keluarga.destroy', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}"
-                        />
+                        <div class="btn-list justify-content-end">
+                            <x-tabler.button 
+                                style="ghost-primary" 
+                                class="btn-icon ajax-modal-btn" 
+                                data-url="{{ route('hr.pegawai.keluarga.edit', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}" 
+                                data-modal-title="Edit Data Keluarga"
+                                icon="ti ti-edit"
+                                title="Edit" />
+                            
+                            <x-tabler.button 
+                                style="ghost-danger" 
+                                class="btn-icon ajax-delete" 
+                                data-url="{{ route('hr.pegawai.keluarga.destroy', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}"
+                                icon="ti ti-trash"
+                                title="Hapus" />
+                        </div>
                     </td>
                 </tr>
                 @empty

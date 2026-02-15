@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header title="Edit Mata Kuliah" pretitle="Mata Kuliah">
         <x-slot:actions>
-            <x-tabler.button type="back" :href="route('mata-kuliah.index')" />
+            <x-tabler.button type="back" :href="route('lab.mata-kuliah.index')" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection
@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <x-tabler.flash-message />
 
-                    <form method="POST" action="{{ route('mata-kuliah.update', $mataKuliah->encrypted_mata_kuliah_id) }}" class="ajax-form">
+                    <form method="POST" action="{{ route('lab.mata-kuliah.update', $mataKuliah->encrypted_mata_kuliah_id) }}" class="ajax-form">
                         @csrf
                         @method('PUT')
 
@@ -43,7 +43,7 @@
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">
                                 <x-tabler.button type="submit" text="Update" />
-                                <x-tabler.button type="cancel" :href="route('mata-kuliah.index')" />
+                                <x-tabler.button type="cancel" :href="route('lab.mata-kuliah.index')" />
                             </div>
                         </div>
                     </form>

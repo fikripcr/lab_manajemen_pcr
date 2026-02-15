@@ -9,25 +9,23 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Jenjang Pendidikan</label>
-                <select class="form-select" name="jenjang_pendidikan" required>
+                <x-tabler.form-select name="jenjang_pendidikan" label="Jenjang Pendidikan" required="true">
                     <option value="">Pilih Jenjang</option>
                     <option value="D3" {{ $pendidikan->jenjang_pendidikan == 'D3' ? 'selected' : '' }}>D3</option>
                     <option value="D4" {{ $pendidikan->jenjang_pendidikan == 'D4' ? 'selected' : '' }}>D4</option>
                     <option value="S1" {{ $pendidikan->jenjang_pendidikan == 'S1' ? 'selected' : '' }}>S1</option>
                     <option value="S2" {{ $pendidikan->jenjang_pendidikan == 'S2' ? 'selected' : '' }}>S2</option>
                     <option value="S3" {{ $pendidikan->jenjang_pendidikan == 'S3' ? 'selected' : '' }}>S3</option>
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Nama Perguruan Tinggi</label>
-                <input type="text" class="form-control" name="nama_pt" value="{{ $pendidikan->nama_pt }}" required>
+                <x-tabler.form-input name="nama_pt" label="Nama Perguruan Tinggi" value="{{ $pendidikan->nama_pt }}" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Bidang Ilmu / Jurusan</label>
-                <input type="text" class="form-control" name="bidang_ilmu" value="{{ $pendidikan->bidang_ilmu }}">
+                <x-tabler.form-input name="bidang_ilmu" label="Bidang Ilmu" value="{{ $pendidikan->bidang_ilmu }}" />
             </div>
 
             <div class="col-md-6 mb-3">
@@ -37,12 +35,12 @@
 
             <div class="col-md-6 mb-3">
                 <label class="form-label">Kota Asal PT</label>
-                <input type="text" class="form-control" name="kotaasal_pt" value="{{ $pendidikan->kotaasal_pt }}">
+                <x-tabler.form-input name="kotaasal_pt" label="Kota PT" value="{{ $pendidikan->kotaasal_pt }}" />
             </div>
             
             <div class="col-md-6 mb-3">
                 <label class="form-label">Negara Asal PT</label>
-                <input type="text" class="form-control" name="kodenegara_pt" value="{{ $pendidikan->kodenegara_pt }}" placeholder="Indonesia">
+                <x-tabler.form-input name="kodenegara_pt" label="Negara PT" value="{{ $pendidikan->kodenegara_pt }}" placeholder="Indonesia" />
             </div>
         </div>
     </div>

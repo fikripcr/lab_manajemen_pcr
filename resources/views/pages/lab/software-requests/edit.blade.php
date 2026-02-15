@@ -71,13 +71,7 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="catatan" class="form-label fw-bold">Catatan Admin</label>
-                            <x-tabler.editor name="catatan" id="catatan-editor" :value="old('catatan', $softwareRequest->catatan)" height="200" />
-                            @error('catatan')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <x-tabler.form-textarea type="editor" name="catatan" id="catatan-editor" label="Catatan Admin" :value="old('catatan', $softwareRequest->catatan)" height="200" />
                 </div>
                 <div class="card-footer text-end">
                     <x-tabler.button type="submit" text="Update Status" />

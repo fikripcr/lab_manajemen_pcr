@@ -1,62 +1,75 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Update Realisasi KPI" pretitle="My KPI">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('pemutu.mykpi.index') }}" style="secondary" icon="ti ti-arrow-left">
+            Kembali
+        </x-tabler.button>
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Update KPI Realization
-                </h2>
-                <div class="text-muted mt-1">{{ $kpi->indikator->indikator }}</div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="page-body">
-    <div class="container-xl">
-        <div class="card">
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        <form method="POST" action="{{ route('pemutu.mykpi.update', $kpi->id) }}" enctype="multipart/form-data" class="card ajax-form">
+            @csrf
+            @method('PUT')
+            
             <div class="card-body">
-                <form method="POST" action="{{ route('pemutu.mykpi.update', $kpi->id) }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Indicator</label>
-                        <div class="form-control-plaintext">{{ $kpi->indikator->indikator }}</div>
-                    </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted">Indikator</label>
+                    <div class="h3">{{ $kpi->indikator->indikator }}</div>
+                    <div class="text-muted small">Target: {{ $kpi->target_value ?? $kpi->indikator->target }}</div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Target</label>
-                        <div class="form-control-plaintext">{{ $kpi->target_value ?? $kpi->indikator->target }}</div>
-                    </div>
+                <div class="mb-3">
+                    <x-tabler.form-textarea 
+                        name="realization" 
+                        label="Realisasi / Capaian" 
+                        rows="4" 
+                        placeholder="Deskripsikan pencapaian Anda..." 
+                        value="{{ old('realization', $kpi->realization) }}"
+                        required="true"
+                    />
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Realization / Capaian</label>
-                        <textarea name="realization" class="form-control" rows="3" placeholder="Describe your achievement...">{{ old('realization', $kpi->realization) }}</textarea>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <x-tabler.form-input 
+                            name="score" 
+                            label="Skor (0-100)" 
+                            type="number" 
+                            min="0" 
+                            max="100" 
+                            step="0.01" 
+                            value="{{ old('score', $kpi->score) }}" 
+                        />
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Score (0-100)</label>
-                        <input type="number" name="score" class="form-control" min="0" max="100" step="0.01" value="{{ old('score', $kpi->score) }}">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Evidence / Bukti Dukung (Optional)</label>
-                        <input type="file" name="attachment" class="form-control">
+                    <div class="col-md-6 mb-3">
+                        <x-tabler.form-input 
+                            name="attachment" 
+                            label="Bukti Dukung (Opsional)" 
+                            type="file" 
+                        />
                         @if($kpi->attachment)
                             <div class="mt-2">
-                                <a href="{{ asset('storage/' . $kpi->attachment) }}" target="_blank">View Current Attachment</a>
+                                <a href="{{ asset('storage/' . $kpi->attachment) }}" target="_blank" class="btn btn-sm btn-ghost-info">
+                                    <i class="ti ti-download me-1"></i> Lihat Lampiran Saat Ini
+                                </a>
                             </div>
                         @endif
                     </div>
-
-                    <div class="form-footer">
-                        <button type="submit" class="btn btn-primary">Save & Submit</button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
+
+            <div class="card-footer text-end">
+                <x-tabler.button type="submit" style="primary">
+                    Simpan & Ajukan
+                </x-tabler.button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

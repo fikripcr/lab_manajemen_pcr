@@ -52,7 +52,9 @@ class LaporanKerusakanController extends Controller
                 return "<span class='badge bg-{$color}'>{$row->status}</span>";
             })
             ->addColumn('action', function ($row) {
-                return '<a href="' . route('lab.laporan-kerusakan.show', encryptId($row->laporan_kerusakan_id)) . '" class="btn btn-sm btn-icon btn-outline-primary"><i class="bx bx-show"></i></a>';
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl' => route('lab.laporan-kerusakan.show', encryptId($row->laporan_kerusakan_id)),
+                ])->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);

@@ -6,24 +6,18 @@
     @csrf
     @method('PUT')
     <div class="modal-body">
-        <div class="mb-3">
-            <label class="form-label required">Pegawai (Pengusul)</label>
-            <select class="form-select select2-pegawai-edit" name="pengusul" required data-placeholder="Cari pegawai...">
-                <option value="{{ $perizinan->pengusul }}" selected>
-                    {{ $perizinan->pengusulPegawai?->latestDataDiri->inisial }} - {{ $perizinan->pengusulPegawai?->latestDataDiri->nama }}
+        <x-tabler.form-select class="select2-pegawai-edit" name="pengusul" label="Pegawai (Pengusul)" required="true" data-placeholder="Cari pegawai...">
+            <option value="{{ $perizinan->pengusul }}" selected>
+                {{ $perizinan->pengusulPegawai?->latestDataDiri->inisial }} - {{ $perizinan->pengusulPegawai?->latestDataDiri->nama }}
+            </option>
+        </x-tabler.form-select>
+        <x-tabler.form-select name="jenisizin_id" id="jenisizin_id_edit" label="Jenis Izin" required="true">
+            @foreach ($jenisIzin as $jenis)
+                <option value="{{ $jenis->jenisizin_id }}" data-waktu="{{ $jenis->pemilihan_waktu }}" {{ $perizinan->jenisizin_id == $jenis->jenisizin_id ? 'selected' : '' }}>
+                    {{ $jenis->nama }} {{ $jenis->max_hari ? "(Maks $jenis->max_hari hari)" : "" }}
                 </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label required">Jenis Izin</label>
-            <select class="form-select" name="jenisizin_id" id="jenisizin_id_edit" required>
-                @foreach ($jenisIzin as $jenis)
-                    <option value="{{ $jenis->jenisizin_id }}" data-waktu="{{ $jenis->pemilihan_waktu }}" {{ $perizinan->jenisizin_id == $jenis->jenisizin_id ? 'selected' : '' }}>
-                        {{ $jenis->nama }} {{ $jenis->max_hari ? "(Maks $jenis->max_hari hari)" : "" }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+            @endforeach
+        </x-tabler.form-select>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label required">Tanggal Awal</label>
@@ -46,18 +40,9 @@
                 </div>
             </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Pekerjaan yang ditinggalkan</label>
-            <textarea class="form-control" name="pekerjaan_ditinggalkan" rows="2">{{ $perizinan->pekerjaan_ditinggalkan }}</textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Alamat selama izin</label>
-            <textarea class="form-control" name="alamat_izin" rows="2">{{ $perizinan->alamat_izin }}</textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Keterangan Tambahan</label>
-            <textarea class="form-control" name="keterangan" rows="2">{{ $perizinan->keterangan }}</textarea>
-        </div>
+        <x-tabler.form-textarea name="pekerjaan_ditinggalkan" label="Pekerjaan yang ditinggalkan" rows="2" :value="$perizinan->pekerjaan_ditinggalkan" />
+        <x-tabler.form-textarea name="alamat_izin" label="Alamat selama izin" rows="2" :value="$perizinan->alamat_izin" />
+        <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" :value="$perizinan->keterangan" />
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

@@ -3,21 +3,19 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Golongan Inpassing</label>
-                <select name="gol_inpassing_id" class="form-select form-control" required>
+                <x-tabler.form-select name="gol_inpassing_id" label="Golongan Inpassing" required="true">
                     <option value="">Pilih Golongan</option>
                     @foreach($golongan as $g)
                         <option value="{{ $g->gol_inpassing_id }}">{{ $g->golongan }} - {{ $g->nama_pangkat }}</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Terhitung Mulai Tanggal (TMT)</label>
                 <input type="date" name="tmt" class="form-control" required>
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Nomor SK</label>
-                <input type="text" name="no_sk" class="form-control" placeholder="Nomor SK" required>
+                <x-tabler.form-input name="no_sk" label="Nomor SK" placeholder="Nomor SK" required="true" />
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Tanggal SK</label>
@@ -43,10 +41,7 @@
                 <label class="form-label">File SK (PDF/Gambar max 2MB)</label>
                 <input type="file" name="file_sk" class="form-control">
             </div>
-            <div class="col-md-12 mb-3">
-                <label class="form-label">Keterangan</label>
-                <textarea name="keterangan" class="form-control" rows="3" placeholder="Keterangan tambahan..."></textarea>
-            </div>
+            <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" placeholder="Keterangan tambahan..." />
         </div>
     </div>
     <div class="modal-footer">

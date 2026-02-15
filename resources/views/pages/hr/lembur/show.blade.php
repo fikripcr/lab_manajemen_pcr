@@ -108,13 +108,9 @@
                 <form class="ajax-form" action="{{ route('hr.lembur.approve', $lembur->hashid) }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label">Pejabat Penilai</label>
-                        <input type="text" class="form-control" name="pejabat" value="{{ Auth::check() ? Auth::user()->name : '' }}" required placeholder="Nama Pejabat">
+                        <x-tabler.form-input name="pejabat" label="Nama Pejabat" value="{{ Auth::check() ? Auth::user()->name : '' }}" required="true" placeholder="Nama Pejabat" />
                     </div>
-                    <div class="mb-3">
-                         <label class="form-label">Keterangan / Komentar</label>
-                         <textarea class="form-control" name="keterangan" rows="3" placeholder="Tambahkan catatan jika ada..."></textarea>
-                    </div>
+                    <x-tabler.form-textarea name="keterangan" label="Keterangan / Komentar" rows="3" placeholder="Tambahkan catatan jika ada..." />
                     <div class="btn-list">
                         <button type="submit" name="status" value="approved" class="btn btn-success" onclick="this.form.status.value='approved'">
                             <i class="ti ti-check me-2"></i> Terima Pengajuan

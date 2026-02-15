@@ -45,15 +45,9 @@
                         />
                     </div>
                 
-                    <div class="col-md-12 mb-3">
-                        <label class="form-label required">Nama Sasaran Kinerja</label>
-                        <textarea name="indikator" class="form-control" rows="3" placeholder="Deskripsikan sasaran kinerja..." required>{{ old('indikator') }}</textarea>
-                    </div>
+                    <x-tabler.form-textarea name="indikator" label="Nama Sasaran Kinerja" rows="3" placeholder="Deskripsikan sasaran kinerja..." required="true" :value="old('indikator')" />
 
-                    <div class="col-md-12 mb-3">
-                        <label class="form-label">Definisi / Keterangan</label>
-                        <textarea name="keterangan" class="form-control rich-text-editor">{{ old('keterangan') }}</textarea>
-                    </div>
+                    <x-tabler.form-textarea type="editor" name="keterangan" label="Definisi / Keterangan" :value="old('keterangan')" height="200" />
                 </div>
 
                 <div class="hr-text">Penugasan Personel</div>

@@ -7,8 +7,7 @@
     @method('PUT')
     <div class="modal-body">
         <div class="mb-3">
-            <label class="form-label required">Nama Jenis Indisipliner</label>
-            <input type="text" class="form-control" name="jenis_indisipliner" value="{{ $jenisIndisipliner->jenis_indisipliner }}" required>
+            <x-tabler.form-input name="jenis_indisipliner" label="Jenis Indisipliner" value="{{ $jenisIndisipliner->jenis_indisipliner }}" required="true" />
         </div>
     </div>
     <div class="modal-footer">

@@ -5,22 +5,15 @@
 <form class="ajax-form" action="{{ route('hr.perizinan.store') }}" method="POST">
     @csrf
     <div class="modal-body">
-        <div class="mb-3">
-            <label class="form-label required">Pegawai (Pengusul)</label>
-            <select class="form-select select2-pegawai" name="pengusul" required data-placeholder="Cari pegawai...">
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label required">Jenis Izin</label>
-            <select class="form-select" name="jenisizin_id" id="jenisizin_id" required>
-                <option value="">Pilih Jenis...</option>
-                @foreach ($jenisIzin as $jenis)
-                    <option value="{{ $jenis->jenisizin_id }}" data-waktu="{{ $jenis->pemilihan_waktu }}">
-                        {{ $jenis->nama }} {{ $jenis->max_hari ? "(Maks $jenis->max_hari hari)" : "" }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+        <x-tabler.form-select class="select2-pegawai" name="pengusul" label="Pegawai (Pengusul)" required="true" data-placeholder="Cari pegawai..." />
+        <x-tabler.form-select name="jenisizin_id" id="jenisizin_id" label="Jenis Izin" required="true">
+            <option value="">Pilih Jenis...</option>
+            @foreach ($jenisIzin as $jenis)
+                <option value="{{ $jenis->jenisizin_id }}" data-waktu="{{ $jenis->pemilihan_waktu }}">
+                    {{ $jenis->nama }} {{ $jenis->max_hari ? "(Maks $jenis->max_hari hari)" : "" }}
+                </option>
+            @endforeach
+        </x-tabler.form-select>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label required">Tanggal Awal</label>
@@ -43,18 +36,9 @@
                 </div>
             </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Pekerjaan yang ditinggalkan</label>
-            <textarea class="form-control" name="pekerjaan_ditinggalkan" rows="2" placeholder="Sebutkan tugas/pekerjaan yang didelegasikan..."></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Alamat selama izin</label>
-            <textarea class="form-control" name="alamat_izin" rows="2" placeholder="Alamat atau nomor telepon yang bisa dihubungi..."></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Keterangan Tambahan</label>
-            <textarea class="form-control" name="keterangan" rows="2" placeholder="Alasan detail pengajuan..."></textarea>
-        </div>
+        <x-tabler.form-textarea name="pekerjaan_ditinggalkan" label="Pekerjaan yang ditinggalkan" rows="2" placeholder="Sebutkan tugas/pekerjaan yang didelegasikan..." />
+        <x-tabler.form-textarea name="alamat_izin" label="Alamat selama izin" rows="2" placeholder="Alamat atau nomor telepon yang bisa dihubungi..." />
+        <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" placeholder="Alasan detail pengajuan..." />
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

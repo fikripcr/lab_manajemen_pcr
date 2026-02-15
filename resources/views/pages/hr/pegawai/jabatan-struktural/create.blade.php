@@ -18,15 +18,14 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label required">Jabatan Struktural Baru</label>
-                            <select class="form-select select2-offline @error('org_unit_id') is-invalid @enderror" name="org_unit_id" required>
+                            <x-tabler.form-select class="select2-offline @error('org_unit_id') is-invalid @enderror" name="org_unit_id" label="Jabatan Struktural Baru" required="true">
                                 <option value="">Pilih Jabatan</option>
                                 @foreach($jabatan as $item)
                                     <option value="{{ $item->org_unit_id }}" {{ old('org_unit_id') == $item->org_unit_id ? 'selected' : '' }}>
                                         {{ $item->name }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                             @error('org_unit_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
@@ -42,14 +41,10 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">No SK</label>
-                            <input type="text" class="form-control" name="no_sk" value="{{ old('no_sk') }}">
+                            <x-tabler.form-input name="no_sk" label="Nomor SK" value="{{ old('no_sk') }}" />
                         </div>
 
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Keterangan</label>
-                            <textarea class="form-control" name="keterangan" rows="2">{{ old('keterangan') }}</textarea>
-                        </div>
+                        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" />
                     </div>
                 </div>
                 <div class="card-footer text-end">

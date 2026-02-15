@@ -27,11 +27,10 @@
     @endphp
 
     <div id="select-options-container-edit" class="mb-3" style="{{ $kategori->type == 'select' ? '' : 'display: none;' }}">
-        <label class="form-label required">Opsi Pilihan (Select)</label>
         @if(!empty($typeValue))
             @foreach($typeValue as $val)
             <div class="input-group mb-2">
-                <input type="text" name="type_value[]" class="form-control" value="{{ $val }}">
+                        <x-tabler.form-input name="type_value[]" label="Value" value="{{ $val }}" required="true" />
                 <x-tabler.button type="button" class="btn-outline-danger" onclick="removeOptionEdit(this)">Hapus</x-tabler.button>
             </div>
             @endforeach

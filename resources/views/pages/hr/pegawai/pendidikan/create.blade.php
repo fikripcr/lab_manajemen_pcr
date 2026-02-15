@@ -8,25 +8,23 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Jenjang Pendidikan</label>
-                <select class="form-select" name="jenjang_pendidikan" required>
+                <x-tabler.form-select name="jenjang_pendidikan" label="Jenjang Pendidikan" required="true">
                     <option value="">Pilih Jenjang</option>
                     <option value="D3">D3</option>
                     <option value="D4">D4</option>
                     <option value="S1">S1</option>
                     <option value="S2">S2</option>
                     <option value="S3">S3</option>
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Nama Perguruan Tinggi</label>
-                <input type="text" class="form-control" name="nama_pt" required>
+                <x-tabler.form-input name="nama_pt" label="Nama Perguruan Tinggi" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Bidang Ilmu / Jurusan</label>
-                <input type="text" class="form-control" name="bidang_ilmu">
+                <x-tabler.form-input name="bidang_ilmu" label="Bidang Ilmu" />
             </div>
 
             <div class="col-md-6 mb-3">
@@ -36,12 +34,12 @@
 
             <div class="col-md-6 mb-3">
                 <label class="form-label">Kota Asal PT</label>
-                <input type="text" class="form-control" name="kotaasal_pt">
+                <x-tabler.form-input name="kotaasal_pt" label="Kota PT" />
             </div>
             
             <div class="col-md-6 mb-3">
                 <label class="form-label">Negara Asal PT</label>
-                <input type="text" class="form-control" name="kodenegara_pt" placeholder="Indonesia">
+                <x-tabler.form-input name="kodenegara_pt" label="Negara PT" placeholder="Indonesia" />
             </div>
         </div>
     </div>

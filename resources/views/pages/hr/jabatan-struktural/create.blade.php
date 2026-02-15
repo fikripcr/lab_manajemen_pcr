@@ -7,17 +7,15 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Nama Jabatan</label>
-                <input type="text" class="form-control" name="nama" required>
+                <x-tabler.form-input name="nama" label="Nama Jabatan" required="true" />
             </div>
             <div class="col-md-12 mb-3">
-                <label class="form-label">Parent (Atasan)</label>
-                <select class="form-select" name="parent_id">
+                <x-tabler.form-select name="parent_id" label="Parent (Atasan)">
                     <option value="">- Pilih Parent -</option>
                     @foreach($parents as $id => $nama)
                         <option value="{{ $id }}">{{ $nama }}</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-12 mb-3">
                 <label class="form-check form-switch">

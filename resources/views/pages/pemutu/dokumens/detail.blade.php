@@ -48,9 +48,7 @@
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
                     @if($dokumen->jenis === 'renop')
-                        <a href="{{ route('pemutu.dokumens.show-renop-with-indicators', $dokumen) }}" class="btn btn-primary d-none d-sm-inline-block">
-                            <i class="ti ti-chart-bar me-2"></i> Akumulasi Indikator
-                        </a>
+                        <x-tabler.button type="button" class="btn-primary d-none d-sm-inline-block" href="{{ route('pemutu.dokumens.show-renop-with-indicators', $dokumen) }}" icon="ti ti-chart-bar" text="Akumulasi Indikator" />
                     @endif
                     
                     <div class="btn-group shadow-sm" role="group">
@@ -181,14 +179,9 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Komentar / Catatan</label>
-                                        <textarea name="komentar" class="form-control" rows="3" placeholder="Masukkan komentar jika ada..."></textarea>
-                                    </div>
+                                    <x-tabler.form-textarea name="komentar" label="Komentar / Catatan" rows="3" placeholder="Masukkan komentar jika ada..." />
                                     <div class="form-footer">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="ti ti-device-floppy me-2"></i> Simpan Approval
-                                        </button>
+                                        <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-device-floppy" text="Simpan Approval" />
                                     </div>
                                 </form>
                             </div>
@@ -223,13 +216,12 @@
                                                     </div>
                                                     @if($approval->approver && $approval->approver->user_id === auth()->id())
                                                         <div class="col-auto">
-                                                            <button type="button" class="btn btn-icon btn-sm btn-ghost-danger ajax-delete" 
+                                                            <x-tabler.button type="button" class="btn-icon btn-sm btn-ghost-danger ajax-delete" 
                                                                 data-url="{{ route('pemutu.dokumens.approval.destroy', $approval->encrypted_dokapproval_id) }}" 
                                                                 data-title="Hapus Approval?" 
                                                                 data-text="Data approval ini akan dihapus permanen."
-                                                                data-success-callback="location.reload()">
-                                                                <i class="ti ti-trash"></i>
-                                                            </button>
+                                                                data-success-callback="location.reload()"
+                                                                icon="ti ti-trash" />
                                                         </div>
                                                     @endif
                                                 </div>

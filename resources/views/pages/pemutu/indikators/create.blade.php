@@ -98,14 +98,8 @@
                                     @endif
                                     <div class="form-hint">Pilih dokumen Renop, Standar, atau lainnya yang terkait dengan indikator ini.</div>
                                 </div>
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label required">Nama Indikator</label>
-                                    <textarea name="indikator" class="form-control" rows="3" placeholder="Masukkan nama indikator..." required></textarea>
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label">Definisi / Keterangan</label>
-                                    <textarea name="keterangan" class="form-control rich-text-editor"></textarea>
-                                </div>
+                                <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="3" placeholder="Masukkan nama indikator..." required="true" />
+                                <x-tabler.form-textarea type="editor" name="keterangan" label="Definisi / Keterangan" height="300" />
                             </div>
                         </div>
 

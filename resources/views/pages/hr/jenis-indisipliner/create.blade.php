@@ -6,8 +6,7 @@
     @csrf
     <div class="modal-body">
         <div class="mb-3">
-            <label class="form-label required">Nama Jenis Indisipliner</label>
-            <input type="text" class="form-control" name="jenis_indisipliner" required placeholder="Contoh: Teguran Lisan, Surat Peringatan, dll">
+            <x-tabler.form-input name="jenis_indisipliner" label="Jenis Indisipliner" required="true" placeholder="Contoh: Teguran Lisan, Surat Peringatan, dll" />
         </div>
     </div>
     <div class="modal-footer">

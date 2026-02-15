@@ -8,13 +8,12 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Jabatan Fungsional Baru</label>
-                <select class="form-select" name="jabfungsional_id" required>
+                <x-tabler.form-select name="jabfungsional_id" label="Jabatan Fungsional Baru" required="true">
                     <option value="">Pilih Jabatan</option>
                     @foreach($jabatan as $item)
                         <option value="{{ $item->jabfungsional_id }}">{{ $item->jabfungsional }} ({{ $item->kode }})</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -23,8 +22,7 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">No SK (Internal)</label>
-                <input type="text" class="form-control" name="no_sk_internal">
+                <x-tabler.form-input name="no_sk_internal" label="Nomor SK Internal" />
             </div>
         </div>
     </div>

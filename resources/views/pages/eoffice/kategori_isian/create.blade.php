@@ -21,9 +21,8 @@
     </div>
 
     <div id="select-options-container" class="mb-3" style="display: none;">
-        <label class="form-label required">Opsi Pilihan (Select)</label>
         <div class="input-group mb-2">
-            <input type="text" name="type_value[]" class="form-control" placeholder="Masukkan opsi">
+            <x-tabler.form-input name="type_value[]" placeholder="Masukkan opsi" />
             <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">Hapus</button>
         </div>
         <div id="additional-options"></div>

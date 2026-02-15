@@ -55,7 +55,7 @@ class IndikatorStandarController extends Controller
             $indikator->dokSubs()->attach($validated['doksub_id']);
         });
 
-        return redirect()->route('pemutu.standar.index')->with('success', 'Standard Indicator created successfully');
+        return jsonSuccess('Indikator Standar berhasil dibuat', route('pemutu.standar.index'));
     }
 
     public function assign(Indikator $indikator)
@@ -91,7 +91,7 @@ class IndikatorStandarController extends Controller
             ]
         );
 
-        return redirect()->back()->with('success', 'Indicator assigned to Personnel successfully');
+        return jsonSuccess('Penugasan Personel berhasil disimpan', route('pemutu.standar.assign', $indikator->indikator_id));
     }
 
     public function destroyAssignment($id)
@@ -99,6 +99,6 @@ class IndikatorStandarController extends Controller
         $assignment = IndikatorPersonil::findOrFail($id);
         $assignment->delete();
 
-        return redirect()->back()->with('success', 'Assignment removed');
+        return jsonSuccess('Penugasan berhasil dihapus', route('pemutu.standar.assign', $assignment->indikator_id));
     }
 }

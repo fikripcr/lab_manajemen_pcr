@@ -36,9 +36,9 @@ class SuratBebasLabController extends Controller
                 return $row->created_at->format('d M Y');
             })
             ->addColumn('action', function ($row) {
-                $id  = $row->encrypted_id;
-                $btn = '<a href="' . route('lab.surat-bebas.show', $id) . '" class="btn btn-sm btn-icon btn-outline-primary"><i class="bx bx-show"></i></a>';
-                return $btn;
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl' => route('lab.surat-bebas.show', $row->encrypted_id),
+                ])->render();
             })
             ->rawColumns(['mahasiswa', 'status', 'action'])
             ->make(true);

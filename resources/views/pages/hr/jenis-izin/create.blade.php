@@ -6,18 +6,16 @@
     @csrf
     <div class="modal-body">
         <div class="mb-3">
-            <label class="form-label required">Nama Jenis Izin</label>
-            <input type="text" class="form-control" name="nama" required placeholder="Contoh: Cuti Tahunan">
+            <x-tabler.form-input name="nama" label="Nama Izin" required="true" placeholder="Contoh: Cuti Tahunan" />
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label">Kategori</label>
-                <select class="form-select" name="kategori">
+                <x-tabler.form-select name="kategori" label="Kategori">
                     <option value="">Pilih Kategori...</option>
                     <option value="Cuti">Cuti</option>
                     <option value="Sakit">Sakit</option>
                     <option value="Izin">Izin</option>
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Max Hari</label>
@@ -25,12 +23,11 @@
             </div>
         </div>
         <div class="mb-3">
-            <label class="form-label">Pemilihan Waktu</label>
-            <select class="form-select" name="pemilihan_waktu">
+            <x-tabler.form-select name="pemilihan_waktu" label="Pemilihan Waktu">
                 <option value="tgl">Tanggal Saja</option>
                 <option value="jam">Jam Saja</option>
                 <option value="tgl-jam">Tanggal & Jam</option>
-            </select>
+            </x-tabler.form-select>
         </div>
     </div>
     <div class="modal-footer">

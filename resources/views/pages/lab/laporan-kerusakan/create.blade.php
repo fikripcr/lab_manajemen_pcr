@@ -4,20 +4,11 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Form Lapor Kerusakan
-                </h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.laporan-kerusakan.index') }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-2"></i> Kembali
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Form Lapor Kerusakan" pretitle="Berkas">
+        <x-slot:actions>
+            <x-tabler.button type="back" href="{{ route('lab.laporan-kerusakan.index') }}" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 
     <div class="page-body">
         <div class="row justify-content-center">
@@ -41,7 +32,8 @@
 
                         </div>
                         <div class="card-footer text-end">
-                            <button type="submit" class="btn btn-danger">Kirim Laporan</button>
+                            <x-tabler.button type="cancel" href="{{ route('lab.laporan-kerusakan.index') }}" />
+                            <x-tabler.button type="submit" class="btn-primary" icon="bx bx-send" text="Kirim Laporan" />
                         </div>
                     </div>
                 </form>

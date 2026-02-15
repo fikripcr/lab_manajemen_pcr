@@ -10,7 +10,7 @@
                 <span class="input-icon-addon">
                     <i class="ti ti-search text-muted"></i>
                 </span>
-                <input type="text" class="form-control" placeholder="Search..." aria-label="Search" onclick="openGlobalSearchModal('{{ route('sys-search') }}')">
+                <x-tabler.form-input name="search" placeholder="Search..." aria-label="Search" onclick="openGlobalSearchModal('{{ route('sys-search') }}')" />
             </div>
             <button class="btn btn-primary" onclick="window.location.reload();">
                 <i class="ti ti-refresh me-2"></i>

@@ -6,11 +6,11 @@
 <x-tabler.page-header title="Data Perizinan" pretitle="HR & Kepegawaian">
     <x-slot:actions>
         <div class="d-flex gap-2">
-            <select class="form-select form-select-sm" id="filter-year" style="width: 100px;">
+            <x-tabler.form-select id="filter-year" label="Tahun" class="form-select-sm mb-0" style="width: 100px;">
                 @foreach ($years as $year)
                     <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
                 @endforeach
-            </select>
+            </x-tabler.form-select>
             <x-tabler.button type="button" icon="ti ti-plus" text="Ajukan Izin" class="ajax-modal-btn" data-url="{{ route('hr.perizinan.create') }}" data-modal-title="Form Pengajuan Izin" />
         </div>
     </x-slot:actions>

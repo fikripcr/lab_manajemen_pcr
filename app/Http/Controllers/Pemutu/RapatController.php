@@ -33,18 +33,12 @@ class RapatController extends Controller
                 return $row->tgl_rapat; // Format if needed
             })
             ->addColumn('action', function ($row) {
-                return '
-                    <div class="btn-group btn-group-sm">
-                        <a href="' . route('pemutu.rapat.show', $row->hashid) . '" class="btn btn-icon btn-ghost-primary" title="Detail">
-                            <i class="ti ti-eye"></i>
-                        </a>
-                        <a href="' . route('pemutu.rapat.edit', $row->hashid) . '" class="btn btn-icon btn-ghost-warning" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . route('pemutu.rapat.destroy', $row->hashid) . '" data-title="Hapus?">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('pemutu.rapat.edit', $row->hashid),
+                    'editModal' => false,
+                    'viewUrl'   => route('pemutu.rapat.show', $row->hashid),
+                    'deleteUrl' => route('pemutu.rapat.destroy', $row->hashid),
+                ])->render();
             })
             ->rawColumns(['action'])
             ->make(true);

@@ -1,50 +1,44 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Tambah Indikator Renop" pretitle="Renop">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('pemutu.renop.index') }}" style="secondary" icon="ti ti-arrow-left">
+            Kembali
+        </x-tabler.button>
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Create Renop Indicator
-                </h2>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="page-body">
-    <div class="container-xl">
-        <div class="card">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form method="POST" action="{{ route('pemutu.renop.store') }}" class="card ajax-form">
+            @csrf
             <div class="card-body">
-                <form method="POST" action="{{ route('pemutu.renop.store') }}">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label">Indicator</label>
-                        <input type="text" name="indikator" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Target</label>
-                        <input type="text" name="target" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Parent Indicator (Optional)</label>
-                        <x-tabler.form-select name="parent_id" label="Parent Indicator (Optional)">
-                            <option value="">-- No Parent --</option>
-                            @foreach($parents as $id => $title)
-                                <option value="{{ $id }}">{{ $title }}</option>
-                            @endforeach
-                        </x-tabler.form-select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Sequence</label>
-                        <input type="number" name="seq" class="form-control" value="1">
-                    </div>
-                    <div class="form-footer">
-                        <button type="submit" class="btn btn-primary">Create</button>
-                    </div>
-                </form>
+                <div class="mb-3">
+                    <x-tabler.form-input name="indikator" label="Indikator" required="true" />
+                </div>
+                <div class="mb-3">
+                    <x-tabler.form-input name="target" label="Target" required="true" />
+                </div>
+                <div class="mb-3">
+                    <x-tabler.form-select 
+                        name="parent_id" 
+                        label="Indikator Induk (Opsional)" 
+                        :options="['' => '-- Tanpa Induk --'] + $parents->toArray()" 
+                    />
+                </div>
+                <div class="mb-3">
+                    <x-tabler.form-input name="seq" label="Urutan" type="number" value="1" />
+                </div>
             </div>
-        </div>
+            <div class="card-footer text-end">
+                <x-tabler.button type="submit" style="primary">
+                    Simpan Renop
+                </x-tabler.button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

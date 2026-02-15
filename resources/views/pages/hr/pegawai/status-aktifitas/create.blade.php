@@ -8,13 +8,12 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Status Aktifitas Baru</label>
-                <select class="form-select" name="statusaktifitas_id" required>
+                <x-tabler.form-select name="statusaktifitas_id" label="Status Aktifitas Baru" required="true">
                     <option value="">Pilih Status</option>
                     @foreach($statusAktifitas as $status)
                         <option value="{{ $status->statusaktifitas_id }}">{{ $status->nama_status }} ({{ $status->kode_status }})</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -22,10 +21,7 @@
                 <input type="date" class="form-control" name="tmt" required>
             </div>
             
-            <div class="col-md-12 mb-3">
-                <label class="form-label">Keterangan</label>
-                <textarea class="form-control" name="keterangan" rows="2"></textarea>
-            </div>
+            <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" />
         </div>
     </div>
     <div class="modal-footer">

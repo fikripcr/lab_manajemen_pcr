@@ -17,8 +17,7 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="app_name">Application Name</label>
-                    <input type="text" class="form-control @error('app_name') is-invalid @enderror" id="app_name" name="app_name" value="{{ old('app_name', $config['app_name']) }}">
+                    <x-tabler.form-input name="app_name" label="Application Name" id="app_name" value="{{ old('app_name', $config['app_name']) }}" />
                     @error('app_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -68,8 +67,7 @@
             <h5>Mail Configuration</h5>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_mailer">Mailer</label>
-                    <input type="text" class="form-control @error('mail_mailer') is-invalid @enderror" id="mail_mailer" name="mail_mailer" value="{{ old('mail_mailer', $config['mail_mailer']) }}">
+                    <x-tabler.form-input name="mail_mailer" label="Mail Mailer" id="mail_mailer" value="{{ old('mail_mailer', $config['mail_mailer']) }}" />
                     @error('mail_mailer')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -77,8 +75,7 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_host">Mail Host</label>
-                    <input type="text" class="form-control @error('mail_host') is-invalid @enderror" id="mail_host" name="mail_host" value="{{ old('mail_host', $config['mail_host']) }}">
+                    <x-tabler.form-input name="mail_host" label="Mail Host" id="mail_host" value="{{ old('mail_host', $config['mail_host']) }}" />
                     @error('mail_host')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -95,8 +92,7 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_username">Mail Username</label>
-                    <input type="text" class="form-control @error('mail_username') is-invalid @enderror" id="mail_username" name="mail_username" value="{{ old('mail_username', $config['mail_username']) }}">
+                    <x-tabler.form-input name="mail_username" label="Mail Username" id="mail_username" value="{{ old('mail_username', $config['mail_username']) }}" />
                     @error('mail_username')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -113,8 +109,7 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_encryption">Mail Encryption</label>
-                    <input type="text" class="form-control @error('mail_encryption') is-invalid @enderror" id="mail_encryption" name="mail_encryption" value="{{ old('mail_encryption', $config['mail_encryption']) }}">
+                    <x-tabler.form-input name="mail_encryption" label="Mail Encryption" id="mail_encryption" value="{{ old('mail_encryption', $config['mail_encryption']) }}" />
                     @error('mail_encryption')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -132,8 +127,7 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="mail_from_name">From Name</label>
-                    <input type="text" class="form-control @error('mail_from_name') is-invalid @enderror" id="mail_from_name" name="mail_from_name" value="{{ old('mail_from_name', $config['mail_from_name']) }}">
+                    <x-tabler.form-input name="mail_from_name" label="Mail From Name" id="mail_from_name" value="{{ old('mail_from_name', $config['mail_from_name']) }}" />
                     @error('mail_from_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -156,8 +150,7 @@
             <h5>Google OAuth Configuration</h5>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="google_client_id">Google Client ID</label>
-                    <input type="text" class="form-control @error('google_client_id') is-invalid @enderror" id="google_client_id" name="google_client_id" value="{{ old('google_client_id', $config['google_client_id']) }}">
+                    <x-tabler.form-input name="google_client_id" label="Google Client ID" id="google_client_id" value="{{ old('google_client_id', $config['google_client_id']) }}" />
                     @error('google_client_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -198,8 +191,7 @@
             <h5>Database Backup Configuration</h5>
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <label class="form-label" for="mysqldump_path">Mysqldump Path</label>
-                    <input type="text" class="form-control @error('mysqldump_path') is-invalid @enderror" id="mysqldump_path" name="mysqldump_path" value="{{ old('mysqldump_path', $config['mysqldump_path']) }}">
+                    <x-tabler.form-input name="mysqldump_path" label="Mysqldump Path" id="mysqldump_path" value="{{ old('mysqldump_path', $config['mysqldump_path']) }}" />
                     @error('mysqldump_path')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

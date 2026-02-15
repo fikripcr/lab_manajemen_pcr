@@ -21,12 +21,12 @@
                 <x-tabler.datatable-search :dataTableId="'indisipliner-table'" />
             </div>
             <div class="ms-auto">
-                <select class="form-select form-select-sm" id="filter-tahun" style="min-width: 100px;">
+                <x-tabler.form-select id="filter-tahun" label="Filter Tahun" class="form-select-sm mb-0" style="min-width: 100px;">
                     <option value="">Semua Tahun</option>
                     @for ($i = date('Y'); $i >= 2019; $i--)
                         <option value="{{ $i }}">{{ $i }}</option>
                     @endfor
-                </select>
+                </x-tabler.form-select>
             </div>
         </div>
     </div>

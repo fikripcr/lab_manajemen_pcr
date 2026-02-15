@@ -7,8 +7,7 @@
     </div>
     <div class="modal-body">
         <div class="mb-3">
-            <label for="editName" class="form-label">Permission Name</label>
-            <input type="text" class="form-control" id="editName" name="name" value="{{ $permission->name }}" required>
+            <x-tabler.form-input name="name" label="Permission Name" id="editName" value="{{ $permission->name }}" required="true" />
             <div class="form-text">Use lowercase letters and underscores only (e.g., manage users, view dashboard)</div>
         </div>
     </div>

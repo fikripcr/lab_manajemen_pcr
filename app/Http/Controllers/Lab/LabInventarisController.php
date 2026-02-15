@@ -84,15 +84,11 @@ class LabInventarisController extends Controller
                 $encryptedId    = encryptId($item->id);
                 $encryptedLabId = encryptId($item->lab_id);
 
-                return '
-                    <div class="d-flex align-items-center">
-                        <a href="' . route('lab.labs.inventaris.edit', [$encryptedLabId, $encryptedId]) . '" class="btn btn-sm btn-icon btn-outline-primary me-1" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
-                        <a href="javascript:void(0)" class="btn btn-sm btn-icon btn-outline-danger" title="Delete" onclick="confirmDelete(\'' . route('lab.labs.inventaris.destroy', [$encryptedLabId, $encryptedId]) . '\')">
-                            <i class="bx bx-trash"></i>
-                        </a>
-                    </div>';
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('lab.labs.inventaris.edit', [$encryptedLabId, $encryptedId]),
+                    'editModal' => false,
+                    'deleteUrl' => route('lab.labs.inventaris.destroy', [$encryptedLabId, $encryptedId]),
+                ])->render();
             })
             ->rawColumns(['kode_inventaris', 'status', 'action'])
             ->make(true);

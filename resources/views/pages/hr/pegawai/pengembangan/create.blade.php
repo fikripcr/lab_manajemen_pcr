@@ -8,30 +8,26 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Jenis Kegiatan</label>
-                <select class="form-select" name="jenis_kegiatan" required>
+                <x-tabler.form-select name="jenis_kegiatan" label="Jenis Kegiatan" required="true">
                     <option value="">Pilih Jenis Kegiatan</option>
                     <option value="Pelatihan">Pelatihan</option>
                     <option value="Seminar">Seminar</option>
                     <option value="Workshop">Workshop</option>
                     <option value="Sertifikasi">Sertifikasi</option>
                     <option value="Lainnya">Lainnya</option>
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Nama Kegiatan</label>
-                <input type="text" class="form-control" name="nama_kegiatan" required>
+                <x-tabler.form-input name="nama_kegiatan" label="Nama Kegiatan" required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Penyelenggara</label>
-                <input type="text" class="form-control" name="nama_penyelenggara">
+                <x-tabler.form-input name="nama_penyelenggara" label="Penyelenggara" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Peran</label>
-                <input type="text" class="form-control" name="peran" placeholder="Contoh: Peserta, Narasumber">
+                <x-tabler.form-input name="peran" label="Peran" placeholder="Contoh: Peserta, Narasumber" />
             </div>
 
             <div class="col-md-6 mb-3">
@@ -49,10 +45,7 @@
                 <input type="number" class="form-control" name="tahun" placeholder="YYYY" required>
             </div>
 
-            <div class="col-md-12 mb-3">
-                <label class="form-label">Keterangan</label>
-                <textarea class="form-control" name="keterangan" rows="3"></textarea>
-            </div>
+            <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" />
         </div>
     </div>
     <div class="modal-footer">

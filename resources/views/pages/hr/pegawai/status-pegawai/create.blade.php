@@ -8,13 +8,12 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label required">Status Baru</label>
-                <select class="form-select" name="statuspegawai_id" required>
+                <x-tabler.form-select name="statuspegawai_id" label="Status Baru" required="true">
                     <option value="">Pilih Status</option>
                     @foreach($statusPegawai as $status)
                         <option value="{{ $status->statuspegawai_id }}">{{ $status->nama_status }} ({{ $status->kode_status }})</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -23,8 +22,7 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">No SK</label>
-                <input type="text" class="form-control" name="no_sk">
+                <x-tabler.form-input name="no_sk" label="Nomor SK" />
             </div>
         </div>
     </div>

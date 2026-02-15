@@ -22,8 +22,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Role Name</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $role->name) }}">
+                            <x-tabler.form-input name="name" label="Role Name" id="name" value="{{ old('name', $role->name) }}" required="true" />
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

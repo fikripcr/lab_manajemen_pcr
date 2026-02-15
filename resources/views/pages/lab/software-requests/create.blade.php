@@ -4,23 +4,11 @@
 
 @section('content')
 <div class="container-xl">
-    <div class="page-header d-print-none">
-        <div class="row align-items-center">
-            <div class="col">
-                <h2 class="page-title">
-                    Buat Request Software
-                </h2>
-                <div class="text-muted mt-1">
-                    Ajukan kebutuhan software untuk mata kuliah
-                </div>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.software-requests.index') }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-2"></i> Kembali
-                </a>
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Buat Request Software" pretitle="Berkas">
+        <x-slot:actions>
+            <x-tabler.button type="back" href="{{ route('lab.software-requests.index') }}" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 
     <div class="page-body">
         <div class="row justify-content-center">
@@ -76,14 +64,12 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label required">Keterangan / Deskripsi</label>
-                                <x-tabler.editor name="deskripsi" id="deskripsi-editor" height="300" />
-                            </div>
+                            <x-tabler.form-textarea type="editor" name="deskripsi" id="deskripsi-editor" label="Keterangan / Deskripsi" required="true" height="300" />
 
                         </div>
                         <div class="card-footer text-end">
-                            <button type="submit" class="btn btn-primary" {{ !$activePeriod ? 'disabled' : '' }}>Kirim Pengajuan</button>
+                            <x-tabler.button type="cancel" href="{{ route('lab.software-requests.index') }}" />
+                            <x-tabler.button type="submit" class="btn-primary" icon="bx bx-send" text="Kirim Pengajuan" :disabled="!$activePeriod" />
                         </div>
                     </div>
                 </form>

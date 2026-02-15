@@ -8,12 +8,10 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label class="form-label required">Kode Jabatan</label>
-                <input type="text" class="form-control" name="kode_jabatan" value="{{ $jabatanFungsional->kode_jabatan }}" required>
+                <x-tabler.form-input name="kode_jabatan" label="Kode Jabatan" value="{{ $jabatanFungsional->kode_jabatan }}" required="true" />
             </div>
             <div class="col-md-8 mb-3">
-                <label class="form-label required">Nama Jabatan (Jabfungsional)</label>
-                <input type="text" class="form-control" name="jabfungsional" value="{{ $jabatanFungsional->jabfungsional }}" required>
+                <x-tabler.form-input name="jabfungsional" label="Jabatan Fungsional" value="{{ $jabatanFungsional->jabfungsional }}" required="true" />
             </div>
             <div class="col-md-12 mb-3">
                 <label class="form-label">Tunjangan</label>

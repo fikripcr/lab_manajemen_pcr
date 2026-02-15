@@ -7,8 +7,7 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Nama Shift</label>
-                <input type="text" class="form-control" name="jenis_shift" required>
+                <x-tabler.form-input name="jenis_shift" label="Nama Shift" required="true" />
             </div>
             
             <div class="col-md-4 mb-3">

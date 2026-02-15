@@ -1,9 +1,11 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Pengembangan Diri</h3>
+    <h3 class="mb-0">Pengembangan Diri</h3>
     <x-tabler.button 
-        icon="ti ti-plus" 
-        modal-url="{{ route('hr.pegawai.pengembangan.create', $pegawai->encrypted_pegawai_id) }}" 
-        modal-title="Tambah Pengembangan Diri">
+        style="primary" 
+        class="ajax-modal-btn" 
+        data-url="{{ route('hr.pegawai.pengembangan.create', $pegawai->encrypted_pegawai_id) }}" 
+        data-modal-title="Tambah Pengembangan Diri"
+        icon="ti ti-plus">
         Tambah Kegiatan
     </x-tabler.button>
 </div>
@@ -23,30 +25,34 @@
             <tbody>
                 @forelse($pegawai->pengembanganDiri as $dev)
                 <tr>
-                    <td>{{ $dev->jenis_kegiatan }}</td>
-                    <td>{{ $dev->nama_kegiatan }}</td>
+                    <td><span class="badge bg-green-lt">{{ $dev->jenis_kegiatan }}</span></td>
+                    <td class="fw-bold">{{ $dev->nama_kegiatan }}</td>
                     <td>{{ $dev->penyelenggara }}</td>
                     <td>{{ $dev->tahun }}</td>
                     <td>
                         @if($dev->approval && $dev->approval->status == 'Pending')
-                            <span class="badge bg-warning">Menunggu Approval</span>
+                            <span class="badge bg-warning text-warning-fg">Menunggu Approval</span>
                         @else
-                            <span class="badge bg-success">Disetujui</span>
+                            <span class="badge bg-success text-success-fg">Disetujui</span>
                         @endif
                     </td>
                     <td class="text-end">
-                        <x-tabler.button 
-                            class="btn-sm btn-ghost-primary" 
-                            icon="ti ti-edit" 
-                            modal-url="{{ route('hr.pegawai.pengembangan.edit', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}" 
-                            modal-title="Edit Pengembangan Diri"
-                        />
-                        <x-tabler.button 
-                            type="button" 
-                            class="btn-sm btn-ghost-danger ajax-delete" 
-                            icon="ti ti-trash" 
-                            data-url="{{ route('hr.pegawai.pengembangan.destroy', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}"
-                        />
+                        <div class="btn-list justify-content-end">
+                            <x-tabler.button 
+                                style="ghost-primary" 
+                                class="btn-icon ajax-modal-btn" 
+                                data-url="{{ route('hr.pegawai.pengembangan.edit', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}" 
+                                data-modal-title="Edit Pengembangan Diri"
+                                icon="ti ti-edit"
+                                title="Edit" />
+                            
+                            <x-tabler.button 
+                                style="ghost-danger" 
+                                class="btn-icon ajax-delete" 
+                                data-url="{{ route('hr.pegawai.pengembangan.destroy', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}"
+                                icon="ti ti-trash"
+                                title="Hapus" />
+                        </div>
                     </td>
                 </tr>
                 @empty

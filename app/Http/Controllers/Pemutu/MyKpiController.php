@@ -75,6 +75,6 @@ class MyKpiController extends Controller
 
         $kpi->update($validated);
 
-        return redirect()->route('pemutu.mykpi.index')->with('success', 'KPI Updated Successfully');
+        return jsonSuccess('KPI berhasil diperbarui', route('pemutu.mykpi.index'));
     }
 }

@@ -35,29 +35,23 @@
                             <h3 class="card-title">Form Assignment</h3>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label required">Mahasiswa</label>
-                                <select name="user_id" class="form-select select2" required>
-                                    <option value="">Pilih Mahasiswa</option>
-                                    @foreach($mahasiswas as $mhs)
-                                        <option value="{{ $mhs->id }}">{{ $mhs->name }} ({{ $mhs->username }})</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <x-tabler.form-select name="user_id" label="Mahasiswa" required="true" class="select2">
+                                <option value="">Pilih Mahasiswa</option>
+                                @foreach($mahasiswas as $mhs)
+                                    <option value="{{ $mhs->id }}">{{ $mhs->name }} ({{ $mhs->username }})</option>
+                                @endforeach
+                            </x-tabler.form-select>
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label required">Nomor PC</label>
-                                        <select name="nomor_pc" class="form-select select2" required>
-                                            <option value="">Pilih PC</option>
-                                            @for($i = 1; $i <= $totalPc; $i++)
-                                                <option value="{{ $i }}" {{ in_array($i, $assignedPcs) ? 'disabled' : '' }}>
-                                                    PC {{ str_pad($i, 2, '0', STR_PAD_LEFT) }} {{ in_array($i, $assignedPcs) ? '(Terpakai)' : '' }}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                    </div>
+                                    <x-tabler.form-select name="nomor_pc" label="Nomor PC" required="true" class="select2">
+                                        <option value="">Pilih PC</option>
+                                        @for($i = 1; $i <= $totalPc; $i++)
+                                            <option value="{{ $i }}" {{ in_array($i, $assignedPcs) ? 'disabled' : '' }}>
+                                                PC {{ str_pad($i, 2, '0', STR_PAD_LEFT) }} {{ in_array($i, $assignedPcs) ? '(Terpakai)' : '' }}
+                                            </option>
+                                        @endfor
+                                    </x-tabler.form-select>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">

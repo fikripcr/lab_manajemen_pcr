@@ -7,16 +7,13 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Nama Mesin</label>
-                <input type="text" class="form-control" name="name" required>
+                <x-tabler.form-input name="name" label="Nama Device" required="true" />
             </div>
             <div class="col-md-12 mb-3">
-                <label class="form-label required">Serial Number (SN)</label>
-                <input type="text" class="form-control" name="sn" required>
+                <x-tabler.form-input name="sn" label="Serial Number" required="true" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label required">IP Address</label>
-                <input type="text" class="form-control" name="ip" placeholder="192.168.1.201" required>
+                <x-tabler.form-input name="ip" label="IP Address" placeholder="192.168.1.201" required="true" />
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label required">Port</label>

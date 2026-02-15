@@ -7,13 +7,12 @@
     <div class="modal-body">
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label required">Jenis Pelanggaran</label>
-                <select class="form-select" name="jenisindisipliner_id" required>
+                <x-tabler.form-select name="jenisindisipliner_id" label="Jenis Pelanggaran" required="true">
                     <option value="">Pilih Jenis...</option>
                     @foreach ($jenisIndisipliner as $jenis)
                         <option value="{{ $jenis->jenisindisipliner_id }}">{{ $jenis->jenis_indisipliner }}</option>
                     @endforeach
-                </select>
+                </x-tabler.form-select>
             </div>
             <div class="col-md-6">
                 <label class="form-label required">Tanggal</label>
@@ -21,15 +20,10 @@
             </div>
         </div>
         <div class="mb-3">
-            <label class="form-label required">Pegawai</label>
-            <select class="form-select select2-pegawai" name="pegawai_id[]" multiple required data-placeholder="Cari pegawai...">
-            </select>
+            <x-tabler.form-select class="select2-pegawai" name="pegawai_id[]" label="Pegawai" multiple="true" required="true" data-placeholder="Cari pegawai..." />
             <small class="text-muted">Pilih satu atau lebih pegawai</small>
         </div>
-        <div class="mb-3">
-            <label class="form-label required">Keterangan</label>
-            <textarea class="form-control" name="keterangan" rows="3" required placeholder="Jelaskan detail pelanggaran..."></textarea>
-        </div>
+        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" required="true" placeholder="Jelaskan detail pelanggaran..." />
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
