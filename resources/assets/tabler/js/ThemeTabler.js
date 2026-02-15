@@ -382,6 +382,8 @@ class ThemeTabler {
             // Special handling for Theme Mode toggle (Dark -> Light reset)
             if (name === 'theme') {
                 document.documentElement.setAttribute('data-bs-theme', value);
+                localStorage.setItem('tabler-theme', value);
+
                 if (value === 'dark') {
                     // Optionally clear inputs or just let refresh() handle visibility
                     // Current refresh() hides presets, which is enough.
@@ -425,6 +427,11 @@ class ThemeTabler {
             const response = await axios.post('/theme/save', data);
 
             if (response.data.success) {
+                // Ensure theme is saved to localStorage for client-side scripts
+                if (data.theme) {
+                    localStorage.setItem('tabler-theme', data.theme);
+                }
+
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',

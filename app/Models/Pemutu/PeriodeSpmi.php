@@ -13,6 +13,12 @@ class PeriodeSpmi extends Model
 
     protected $table      = 'pemutu_periode_spmi';
     protected $primaryKey = 'periodespmi_id';
+    protected $appends    = ['encrypted_periodespmi_id'];
+
+    public function getEncryptedPeriodespmiIdAttribute()
+    {
+        return encryptId($this->periodespmi_id);
+    }
 
     protected $fillable = [
         'periode',

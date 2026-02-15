@@ -115,6 +115,9 @@ class IndikatorController extends Controller
 
         $personils = Personil::orderBy('nama')->get();
 
+        // Initialize selected doksubs as empty array
+        $selectedDokSubs = [];
+
         // Handle Contextual Pre-selection
         $parentDok = null;
         if ($request->has('parent_dok_id')) {
@@ -127,14 +130,17 @@ class IndikatorController extends Controller
                     default   => 'renop'
                 };
 
+                // Pre-select doksubs from parent document
+                $selectedDokSubs = $parentDok->dokSubs->pluck('doksub_id')->toArray();
+
                 $request->merge([
                     'type'       => $request->get('type', $suggestedType),
-                    'doksub_ids' => $request->get('doksub_ids', $parentDok->dokSubs->pluck('doksub_id')->toArray()),
+                    'doksub_ids' => $request->get('doksub_ids', $selectedDokSubs),
                 ]);
             }
         }
 
-        return view('pages.pemutu.indikators.create', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils', 'parentDok'));
+        return view('pages.pemutu.indikators.create', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils', 'parentDok', 'selectedDokSubs'));
     }
 
     public function store(IndikatorRequest $request)

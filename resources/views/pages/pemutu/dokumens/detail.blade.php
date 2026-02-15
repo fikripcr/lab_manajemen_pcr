@@ -94,7 +94,7 @@
                 <div class="tab-pane {{ $activeSubTab === 'overview' ? 'active show' : '' }}" id="tab-overview">
                     <div class="card-body">
                         @if($dokumen->isi)
-                            <div class="markdown p-3 border rounded bg-white shadow-sm" style="min-height: 100px; color: var(--tblr-body-color);">
+                            <div class="markdown p-4 border rounded shadow-sm mb-3" style="min-height: 150px;">
                                 {!! $dokumen->isi !!}
                             </div>
                         @else
@@ -131,7 +131,6 @@
                                 <form action="{{ route('pemutu.dokumens.approve', $dokumen) }}" method="POST" class="ajax-form" data-success-callback="location.reload()">
                                     @csrf
                                     <div class="mb-3">
-                                        <label class="form-label required">Approver (Personil)</label>
                                         <x-tabler.form-select name="approver_id" label="Approver (Personil)" required="true" class="select2">
                                             <option value="">Pilih Personil...</option>
                                             @foreach($personils as $p)
@@ -241,14 +240,40 @@
 
         <script>
             (function() {
+                const dokId = "{{ $dokumen->hashid ?? $dokumen->dok_id }}";
+                const storageKey = `pemutu_doc_detail_subtab_${dokId}`;
                 const tabs = document.querySelectorAll('#doc-detail-tabs .nav-link');
+                
+                // 1. Restore Tab from LocalStorage
+                const savedTabId = localStorage.getItem(storageKey);
+                if (savedTabId) {
+                    const targetTab = document.querySelector(`#doc-detail-tabs .nav-link[data-tab-id="${savedTabId}"]`);
+                    if (targetTab) {
+                        const tabInstance = new bootstrap.Tab(targetTab);
+                        tabInstance.show();
+                    }
+                }
+
+                // 2. Save Tab on Change
                 tabs.forEach(tab => {
                     tab.addEventListener('shown.bs.tab', function (e) {
                         const tabId = e.target.dataset.tabId;
+                        localStorage.setItem(storageKey, tabId);
+                        
+                        // Update URL for shareability
                         const url = new URL(window.location);
                         url.searchParams.set('subtab', tabId);
                         window.history.replaceState({}, '', url);
                     });
+                });
+
+                // 3. Force Immediate Reload on Form/Delete Success
+                $(document).off('ajax-form:success.instantReload').on('ajax-form:success.instantReload', '.ajax-form', function(e, response) {
+                   window.location.reload(); 
+                });
+                
+                $(document).off('ajax-delete:success.instantReload').on('ajax-delete:success.instantReload', '.ajax-delete', function() {
+                    window.location.reload();
                 });
             })();
         </script>

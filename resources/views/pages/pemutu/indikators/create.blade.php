@@ -57,6 +57,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <x-tabler.form-select 
+                                        id="type-selector"
                                         name="type" 
                                         label="Tipe Indikator" 
                                         :options="[
@@ -67,7 +68,6 @@
                                         :selected="old('type')" 
                                         required="true" 
                                         :readonly="isset($parentDok)"
-                                        class="@if(isset($parentDok)) bg-light @endif"
                                     />
                                     @if(isset($parentDok))
                                         <input type="hidden" name="type" value="{{ request('type') }}">
@@ -83,23 +83,40 @@
                                         placeholder="cth: IND.01" 
                                     />
                                 </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <x-tabler.form-select name="doksub_ids[]" label="Dokumen Penjaminan Mutu Terkait" required="true" class="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
                                         @foreach($dokumens as $doc)
-                                            <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
-                                                @foreach($doc->dokSubs as $ds)
-                                                    <option value="{{ $ds->doksub_id }}" {{ in_array($ds->doksub_id, $selectedDokSubs) ? 'selected' : '' }}>{{ $ds->judul }}</option>
-                                                @endforeach
-                                            </optgroup>
+                                            @if($doc->dokSubs->count() > 0)
+                                                <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
+                                                    @foreach($doc->dokSubs as $ds)
+                                                        <option value="{{ $ds->doksub_id }}" {{ in_array($ds->doksub_id, $selectedDokSubs) ? 'selected' : '' }}>{{ $ds->judul }}</option>
+                                                    @endforeach
+                                                </optgroup>
+                                            @endif
                                         @endforeach
                                     </x-tabler.form-select>
+                                    
                                     @if(isset($parentDok))
                                         <div class="form-hint text-success small">Dokumen terkait otomatis dipilih berdasarkan asal navigasi.</div>
+                                    @else
+                                        <div class="form-hint">Pilih dokumen Renop, Standar, atau lainnya yang terkait dengan indikator ini.</div>
                                     @endif
-                                    <div class="form-hint">Pilih dokumen Renop, Standar, atau lainnya yang terkait dengan indikator ini.</div>
                                 </div>
-                                <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="3" placeholder="Masukkan nama indikator..." required="true" />
-                                <x-tabler.form-textarea type="editor" name="keterangan" label="Definisi / Keterangan" height="300" />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="3" placeholder="Masukkan nama indikator..." required="true" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <x-tabler.form-textarea type="editor" name="keterangan" label="Definisi / Keterangan" height="300" />
+                                </div>
                             </div>
                         </div>
 
@@ -137,7 +154,8 @@
                                                         function renderUnitRow($unit, $level = 0) {
                                                             $padding = $level * 20;
                                                             $isBold = $level < 2 ? 'fw-bold' : '';
-                                                            $bg = $level == 0 ? 'bg-light' : '';
+                                                            // Removed bg-light to fix dark mode issue
+                                                            $bg = ''; 
                                                             
                                                             echo '<tr class="'.$bg.'">';
                                                             echo '<td>';

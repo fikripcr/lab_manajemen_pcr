@@ -67,15 +67,18 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="card-actions bg-transparent border-0">
-                                   data-url="{{ route('pemutu.dok-subs.edit', $dokSub) }}" 
-                                   data-modal-title="Edit Isi Dokumen"
-                                   title="Edit Isi">
-                                    <i class="ti ti-pencil me-1"></i> Edit Konten
-                                </a>
+                                <x-tabler.button 
+                                    href="#" 
+                                    class="btn-primary ajax-modal-btn"
+                                    data-url="{{ route('pemutu.dok-subs.edit', $dokSub) }}" 
+                                    data-modal-title="Edit Isi Dokumen"
+                                    icon="ti ti-pencil"
+                                    text="Edit Konten" 
+                                />
                             </div>
                         </div>
                         @if($dokSub->isi)
-                            <div class="markdown p-3 border rounded bg-white shadow-sm" style="min-height: 100px; color: var(--tblr-body-color);">
+                            <div class="markdown p-4 border rounded shadow-sm mb-3" style="min-height: 150px;">
                                 {!! $dokSub->isi !!}
                             </div>
                         @else
@@ -175,21 +178,43 @@
             @endif
         </div>
 
-        @if($tab2Label)
         <script>
             (function() {
+                const dokId = "{{ $dokSub->hashid ?? $dokSub->doksub_id }}";
+                const storageKey = `pemutu_docsub_detail_tab_${dokId}`;
                 const tabs = document.querySelectorAll('#sub-doc-tabs .nav-link');
+                
+                // 1. Restore Tab from LocalStorage
+                const savedTabId = localStorage.getItem(storageKey);
+                if (savedTabId) {
+                    const targetTab = document.querySelector(`#sub-doc-tabs .nav-link[data-tab-id="${savedTabId}"]`);
+                    if (targetTab) {
+                        const tabInstance = new bootstrap.Tab(targetTab);
+                        tabInstance.show();
+                    }
+                }
+
                 tabs.forEach(tab => {
                     tab.addEventListener('shown.bs.tab', function (e) {
                         const tabId = e.target.dataset.tabId;
+                        localStorage.setItem(storageKey, tabId);
+                        
                         const url = new URL(window.location);
                         url.searchParams.set('subtab', tabId);
                         window.history.replaceState({}, '', url);
                     });
                 });
+
+                // Force Immediate Reload on Form/Delete Success
+                $(document).off('ajax-form:success.instantReload').on('ajax-form:success.instantReload', '.ajax-form', function(e, response) {
+                   window.location.reload(); 
+                });
+                
+                $(document).off('ajax-delete:success.instantReload').on('ajax-delete:success.instantReload', '.ajax-delete', function() {
+                    window.location.reload();
+                });
             })();
         </script>
-        @endif
     </div>
 </div>
 @endsection

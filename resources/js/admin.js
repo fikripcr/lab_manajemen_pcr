@@ -43,13 +43,32 @@ window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
         const hugerte = module.default;
 
-        // Check if dark mode is enabled
-        const isDarkMode = localStorage.getItem("tabler-theme") === 'dark';
+        // Dynamic dark mode detection function
+        const isDarkMode = () => {
+            // Prioritize HTML element attribute (SSR source of truth)
+            const htmlTheme = document.documentElement.getAttribute('data-bs-theme');
+            if (htmlTheme === 'dark') return true;
+            if (htmlTheme === 'light') return false;
 
-        // Import appropriate skin based on theme
-        const skinImport = isDarkMode
+            // Fallback to LocalStorage
+            const theme = localStorage.getItem("tabler-theme");
+            if (theme === 'dark') return true;
+            if (theme === 'light') return false;
+            // Auto mode - check system preference
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        };
+
+        const currentDarkMode = isDarkMode();
+
+        // Import appropriate skin based on current theme
+        const skinImport = currentDarkMode
             ? import('hugerte/skins/ui/oxide-dark/skin.min.css')
             : import('hugerte/skins/ui/oxide/skin.min.css');
+
+        // Import appropriate content CSS
+        const contentCssImport = currentDarkMode
+            ? import('hugerte/skins/content/dark/content.min.css?inline')
+            : import('hugerte/skins/content/default/content.min.css?inline');
 
         return Promise.all([
             import('hugerte/themes/silver/theme'),
@@ -67,25 +86,43 @@ window.loadHugeRTE = function (selector, config = {}) {
             import('hugerte/plugins/table/plugin'),
             import('hugerte/plugins/wordcount/plugin'),
             skinImport,
-            import('hugerte/skins/content/default/content.min.css?inline')
+            contentCssImport
         ]).then(([, , , , , , , , , , , , , , skinModule, contentCssModule]) => {
             window.hugerte = hugerte;
             window.hugerteContentCss = contentCssModule.default;
 
-            // Apply dark content CSS if enabled
-            if (isDarkMode) {
-                config.content_css = 'dark';
-            }
+            // Build config with dark mode support
+            const editorConfig = {
+                selector: selector,
+                skin: false,
+                content_css: false,
+                content_style: window.hugerteContentCss + (config.content_style || ''),
+                ...config
+            };
 
             if (selector) {
-                hugerte.init({
-                    selector: selector,
-                    skin: false,
-                    content_css: false,
-                    content_style: window.hugerteContentCss + (config.content_style || ''),
-                    ...config
-                });
+                hugerte.init(editorConfig);
             }
+
+            // Listen for theme changes and reinitialize if needed
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'tabler-theme') {
+                    const newDarkMode = isDarkMode();
+                    if (newDarkMode !== currentDarkMode) {
+                        // Theme changed, reinitialize HugeRTE
+                        if (hugerte.get(selector)) {
+                            const currentContent = hugerte.get(selector).getContent();
+                            hugerte.remove(selector);
+                            window.loadHugeRTE(selector, config).then((editor) => {
+                                if (editor && editor.get(selector)) {
+                                    editor.get(selector).setContent(currentContent);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
             return hugerte;
         });
     });

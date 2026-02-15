@@ -21,14 +21,14 @@
             <div class="card-header border-bottom-0">
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item">
-                        <a href="{{ route('pemutu.dokumens.index', ['tabs' => 'kebijakan']) }}" class="nav-link {{ $activeTab === 'kebijakan' ? 'active' : '' }}"><i class="ti ti-gavel me-2"></i>Kebijakan</a>
+                        <a href="{{ route('pemutu.dokumens.index', ['tabs' => 'kebijakan', 'periode' => request('periode')]) }}" class="nav-link {{ $activeTab === 'kebijakan' ? 'active' : '' }}"><i class="ti ti-gavel me-2"></i>Kebijakan</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('pemutu.dokumens.index', ['tabs' => 'standar']) }}" class="nav-link {{ $activeTab === 'standar' ? 'active' : '' }}"><i class="ti ti-certificate me-2"></i>Standar</a>
+                        <a href="{{ route('pemutu.dokumens.index', ['tabs' => 'standar', 'periode' => request('periode')]) }}" class="nav-link {{ $activeTab === 'standar' ? 'active' : '' }}"><i class="ti ti-certificate me-2"></i>Standar</a>
                     </li>
                 </ul>
                 <div class="card-actions">
-                     <x-tabler.button href="{{ route('pemutu.dokumens.index', ['tabs' => $activeTab]) }}" style="ghost-secondary" size="sm" icon="ti ti-refresh" title="Reset Filters" />
+                     <x-tabler.button href="{{ route('pemutu.dokumens.index', ['tabs' => $activeTab]) }}" style="ghost-secondary" size="xs" icon="ti ti-refresh" title="Reset Filters" icon-only />
                 </div>
             </div>
 
@@ -234,7 +234,7 @@
                     $('#document-detail-panel').html(response.data);
                     
                     if (pushState) {
-                        const idMatch = url.match(/\/(\d+)$/);
+                        const idMatch = url.match(/\/([a-zA-Z0-9]+)$/);
                         if (idMatch) {
                             const params = new URLSearchParams(window.location.search);
                             params.set('id', idMatch[1]);

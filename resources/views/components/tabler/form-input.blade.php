@@ -1,5 +1,5 @@
 @props([
-    'name',
+    'name' => '',
     'label' => null,
     'type' => 'text', // text, date, datetime, range, multiple, number, password, file, etc.
     'required' => false,

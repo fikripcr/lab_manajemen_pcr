@@ -86,6 +86,14 @@ class ThemeTablerController extends Controller
     }
 
     /**
+     * Alias for store method to support existing routes
+     */
+    public function save(ThemeTablerRequest $request)
+    {
+        return $this->store($request);
+    }
+
+    /**
      * Generate inline CSS style block for theme customization
      */
     public function getStyleBlock(string $mode = 'sys'): string

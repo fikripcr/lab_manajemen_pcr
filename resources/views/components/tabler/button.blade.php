@@ -8,6 +8,8 @@
     'class' => '',
     'modalTitle' => null,
     'modalUrl' => null,
+    'iconOnly' => false,
+    'size' => 'md',
 ])
 
 @php
@@ -83,11 +85,22 @@
     // Logic to suppress default text if specific text or slot content is provided
     $hasSlot = $slot->isNotEmpty();
     $finalText = $text ?? ($hasSlot ? '' : $defaultText);
-    
+
     // Merge classes
     // Note: d-none d-sm-inline-block might hide it on mobile, be careful. 
     // Tabler usually handles responsiveness well. I will remove d-none for now to be safe on mobile unless requested.
-    $classes = "$baseClass $colorClass $class";
+    $sizeClass = ($size === 'md') ? '' : "btn-$size";
+    $classes = "$baseClass $colorClass $sizeClass $class";
+
+    // Icon Only Mode
+    if ($iconOnly) {
+        $finalText = '';
+        $classes .= ' btn-icon';
+        // Add aria-label for accessibility if not present
+        if (!$attributes->has('aria-label') && ($text || $defaultText)) {
+            $attributes = $attributes->merge(['aria-label' => $text ?? $defaultText]);
+        }
+    }
     
     // Handle AJAX Modal special attributes (if this is a 'create' button intended for modals)
     if ($modalUrl) {
@@ -112,7 +125,7 @@
     }
 
     // Props for tag
-    $attributes = $attributes->merge(['class' => $classes]);
+    $attributes = $attributes->merge(['class' => trim($classes)]);
     @endphp
 
 @if($tag === 'button')
