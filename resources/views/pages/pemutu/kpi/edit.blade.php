@@ -103,10 +103,12 @@
                                     <input type="number" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][year]" value="{{ $assigned ? $assigned->year : date('Y') }}" {{ !$isChecked ? 'disabled' : '' }} id="kpi-year-{{ $index }}">
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-sm" name="kpi_assign[{{ $index }}][semester]" {{ !$isChecked ? 'disabled' : '' }} id="kpi-sem-{{ $index }}">
-                                        <option value="Ganjil" {{ ($assigned && $assigned->semester == 'Ganjil') ? 'selected' : '' }}>Ganjil</option>
-                                        <option value="Genap" {{ ($assigned && $assigned->semester == 'Genap') ? 'selected' : '' }}>Genap</option>
-                                    </select>
+                                    <x-tabler.form-select name="kpi_assign[{{ $index }}][semester]" 
+                                        :options="['Ganjil' => 'Ganjil', 'Genap' => 'Genap']" 
+                                        :selected="($assigned && $assigned->semester == 'Ganjil') ? 'Ganjil' : (($assigned && $assigned->semester == 'Genap') ? 'Genap' : '')"
+                                        class="form-select-sm" 
+                                        :disabled="!$isChecked"
+                                        id="kpi-sem-{{ $index }}" />
                                 </td>
                                 <td>
                                     <input type="number" step="0.01" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" value="{{ $assigned ? $assigned->weight : '' }}" {{ !$isChecked ? 'disabled' : '' }} id="kpi-weight-{{ $index }}">

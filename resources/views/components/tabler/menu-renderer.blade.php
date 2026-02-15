@@ -9,9 +9,27 @@
         ],
         [
             'type'  => 'item',
-            'title' => 'Dashboard',
+            'title' => 'Dashboard Lab',
             'route' => 'lab.dashboard',
             'icon'  => 'ti ti-layout-dashboard',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Dashboard Pemutu',
+            'route' => 'pemutu.dashboard',
+            'icon'  => 'ti ti-chart-pie',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Dashboard E-Office',
+            'route' => 'eoffice.dashboard',
+            'icon'  => 'ti ti-mail-opened',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Dashboard HR',
+            'route' => 'hr.dashboard',
+            'icon'  => 'ti ti-briefcase',
         ],
         [
             'type'  => 'header',
@@ -179,6 +197,18 @@
                     'icon' => 'ti ti-hierarchy-2',
                 ],
                 [
+                    'title' => 'Periode KPI',
+                    'route' => 'pemutu.periode-kpis.index',
+                    'active_routes' => ['pemutu.periode-kpis.*'],
+                    'icon' => 'ti ti-calendar-event',
+                ],
+                [
+                    'title' => 'Periode SPMI',
+                    'route' => 'pemutu.periode-spmis.index',
+                    'active_routes' => ['pemutu.periode-spmis.*'],
+                    'icon' => 'ti ti-refresh',
+                ],
+                [
                     'title' => 'Dokumen',
                     'route' => 'pemutu.dokumens.index',
                     'active_routes' => ['pemutu.dokumens.*'],
@@ -229,6 +259,12 @@
             'icon'          => 'ti ti-briefcase',
             'active_routes' => ['hr.*'],
             'children'      => [
+                [
+                    'title'         => 'Dashboard',
+                    'route'         => 'hr.dashboard',
+                    'active_routes' => ['hr.dashboard'],
+                    'icon'          => 'ti ti-layout-dashboard',
+                ],
                 [
                     'title'         => 'Data Pegawai',
                     'route'         => 'hr.pegawai.index',
@@ -302,6 +338,12 @@
             'icon'          => 'ti ti-mail-opened',
             'active_routes' => ['eoffice.*'],
             'children'      => [
+                [
+                    'title'         => 'Dashboard',
+                    'route'         => 'eoffice.dashboard',
+                    'active_routes' => ['eoffice.dashboard'],
+                    'icon'          => 'ti ti-layout-dashboard',
+                ],
                 [
                     'title'         => 'Layanan Saya',
                     'route'         => 'eoffice.layanan.index',

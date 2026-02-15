@@ -59,11 +59,11 @@
             <div class="tab-pane" id="tabs-tree">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex gap-2">
-                        <select class="form-select form-select-sm" id="filter-status" style="width: 150px;">
+                        <x-tabler.form-select id="filter-status" name="filter_status" class="form-select-sm" style="width: 150px;">
                             <option value="">Semua Status</option>
                             <option value="active">Aktif</option>
                             <option value="inactive">Nonaktif</option>
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                 </div>
                 <x-tabler.datatable
@@ -97,15 +97,14 @@
                     <input type="hidden" id="auditee-org-unit-id" name="org_unit_id">
                     <p class="text-muted mb-3">Set auditee untuk: <strong id="auditee-unit-name"></strong></p>
                     <div class="mb-3">
-                        <label class="form-label">Pilih User</label>
-                        <select id="auditee-user-select" name="auditee_user_id" class="form-select">
+                        <x-tabler.form-select id="auditee-user-select" name="auditee_user_id" label="Pilih User">
                             <option value="">-- Pilih User --</option>
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <x-tabler.button type="button" style="ghost-secondary" data-bs-dismiss="modal">Batal</x-tabler.button>
+                    <x-tabler.button type="submit" style="primary">Simpan</x-tabler.button>
                 </div>
             </form>
         </div>

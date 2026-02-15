@@ -87,10 +87,7 @@
                                     <input type="number" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][year]" value="{{ date('Y') }}" disabled id="kpi-year-{{ $index }}">
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-sm" name="kpi_assign[{{ $index }}][semester]" disabled id="kpi-sem-{{ $index }}">
-                                        <option value="Ganjil">Ganjil</option>
-                                        <option value="Genap">Genap</option>
-                                    </select>
+                                    <x-tabler.form-select name="kpi_assign[{{ $index }}][semester]" :options="['Ganjil' => 'Ganjil', 'Genap' => 'Genap']" class="form-select-sm" disabled id="kpi-sem-{{ $index }}" />
                                 </td>
                                 <td>
                                     <input type="number" step="0.01" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" disabled id="kpi-weight-{{ $index }}">

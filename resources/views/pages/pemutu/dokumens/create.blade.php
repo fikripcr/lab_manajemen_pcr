@@ -34,27 +34,17 @@
             @endif
         </div>
         <div class="mb-3">
-            <label for="jenis" class="form-label required">Jenis Dokumen</label>
-            <select class="form-select select2-offline" id="jenis" name="jenis" required data-dropdown-parent="#modalAction">
-                @if(count($allowedTypes) > 1)
-                    <option value="">Pilih Jenis...</option>
-                @endif
-                @foreach($allowedTypes as $type)
-                    <option value="{{ $type }}">
-                        {{ match($type) {
-                            'visi' => 'Visi',
-                            'misi' => 'Misi',
-                            'rjp' => 'RJP (Rencana Jangka Panjang)',
-                            'renstra' => 'Renstra (Rencana Strategis)',
-                            'renop' => 'Renop (Rencana Operasional)',
-                            'standar' => 'Standar',
-                            'formulir' => 'Formulir',
-                            'manual_prosedur' => 'Manual Prosedur',
-                            default => ucfirst($type)
-                        } }}
-                    </option>
-                @endforeach
-            </select>
+            <x-tabler.form-select 
+                id="jenis" 
+                name="jenis" 
+                label="Jenis Dokumen"
+                required="true" 
+                class="select2-offline" 
+                data-dropdown-parent="#modalAction"
+                :options="$allowedTypes"
+                :selected="null"
+                placeholder="Pilih Jenis..."
+            />
         </div>
         <div class="mb-3" id="judul-container">
             <label for="judul" class="form-label required">Judul Dokumen</label>

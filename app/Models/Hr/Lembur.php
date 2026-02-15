@@ -108,6 +108,11 @@ class Lembur extends Model
             ->orderBy('created_at', 'desc');
     }
 
+    public function riwayatApproval()
+    {
+        return $this->approvals();
+    }
+
     /**
      * Accessor untuk status approval
      */

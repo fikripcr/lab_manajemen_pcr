@@ -18,9 +18,9 @@
                 </h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="javascript:history.back()" class="btn btn-secondary">
-                    <i class="ti ti-arrow-left me-2"></i> Kembali
-                </a>
+                <x-tabler.button href="javascript:history.back()" style="secondary" icon="ti ti-arrow-left">
+                    Kembali
+                </x-tabler.button>
             </div>
         </div>
     </div>
@@ -96,10 +96,10 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h4 class="card-title mb-0">Daftar {{ $tab2Label }}</h4>
                                 <div class="card-actions bg-transparent border-0">
-                                    <a href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $parent->hashid, 'doksub_ids[]' => $dokSub->hashid, 'type' => ($parentJenis === 'standar' ? 'standar' : 'renop')]) }}" 
-                                       class="btn btn-sm btn-success">
-                                        <i class="ti ti-plus me-1"></i> Tambah Indikator
-                                    </a>
+                                    <x-tabler.button href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $parent->hashid, 'doksub_ids[]' => $dokSub->hashid, 'type' => ($parentJenis === 'standar' ? 'standar' : 'renop')]) }}" 
+                                       style="success" size="sm" icon="ti ti-plus">
+                                        Tambah Indikator
+                                    </x-tabler.button>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -122,11 +122,11 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h4 class="card-title mb-0">Daftar {{ $childType }}</h4>
                                 <div class="card-actions bg-transparent border-0">
-                                    <a href="#" class="btn btn-sm btn-primary ajax-modal-btn" 
+                                    <x-tabler.button href="#" style="primary" size="sm" icon="ti ti-plus" class="ajax-modal-btn" 
                                        data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $parent->hashid, 'parent_doksub_id' => $dokSub->hashid]) }}" 
                                        data-modal-title="Tambah {{ $childType }}">
-                                        <i class="ti ti-plus me-1"></i> Tambah {{ $childType }}
-                                    </a>
+                                        Tambah {{ $childType }}
+                                    </x-tabler.button>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -151,12 +151,8 @@
                                                 <td>{{ $child->kode ?? '-' }}</td>
                                                 <td class="text-end">
                                                     <div class="btn-list flex-nowrap justify-content-end">
-                                                        <a href="#" class="btn btn-icon btn-sm btn-outline-secondary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $child) }}" data-modal-title="Edit {{ $childType }}">
-                                                            <i class="ti ti-pencil"></i>
-                                                        </a>
-                                                        <a href="#" class="btn btn-icon btn-sm btn-danger ajax-delete" data-url="{{ route('pemutu.dokumens.destroy', $child) }}" data-title="Hapus?">
-                                                            <i class="ti ti-trash"></i>
-                                                        </a>
+                                                        <x-tabler.button href="#" style="outline-secondary" size="sm" icon="ti ti-pencil" class="ajax-modal-btn btn-icon" data-url="{{ route('pemutu.dokumens.edit', $child) }}" data-modal-title="Edit {{ $childType }}" />
+                                                        <x-tabler.button href="#" style="danger" size="sm" icon="ti ti-trash" class="ajax-delete btn-icon" data-url="{{ route('pemutu.dokumens.destroy', $child) }}" data-title="Hapus?" />
                                                     </div>
                                                 </td>
                                             </tr>

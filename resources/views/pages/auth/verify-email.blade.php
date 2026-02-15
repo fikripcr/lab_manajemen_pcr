@@ -24,13 +24,13 @@
 
                 <form method="POST" action="{{ route('verification.send') }}" class="mb-3">
                     @csrf
-                    <button class="btn btn-primary d-grid w-100">Resend Verification Email</button>
+                    <x-tabler.button type="submit" class="w-100" text="Resend Verification Email" />
                 </form>
 
                 <div class="d-flex justify-content-between">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="btn btn-link text-muted">Log Out</button>
+                        <x-tabler.button type="submit" style="link" class="text-muted" text="Log Out" />
                     </form>
                 </div>
             </div>

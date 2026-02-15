@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $pageTitle }}" pretitle="E-Office Transactions">
     <x-slot:actions>
-        <a href="{{ route('eoffice.layanan.services') }}" class="btn btn-primary">
-            <i class="ti ti-plus"></i> Tambah Pengajuan
-        </a>
+        <x-tabler.button href="{{ route('eoffice.layanan.services') }}" icon="ti ti-plus" text="Tambah Pengajuan" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -40,9 +38,7 @@
                 <x-tabler.form-input name="date_range" label="Rentang Tanggal" placeholder="Pilih Tanggal..." />
             </div>
             <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="ti ti-filter"></i> Filter
-                </button>
+                <x-tabler.button type="submit" icon="ti ti-filter" text="Filter" class="w-100" />
             </div>
         </form>
     </div>

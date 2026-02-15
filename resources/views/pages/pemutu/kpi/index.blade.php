@@ -22,26 +22,26 @@
         <div class="card-body border-bottom">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Dokumen Standar</label>
-                    <select class="form-select select2-filter" id="filter-dokumen">
-                        <option value="">Semua Dokumen</option>
-                        @foreach($dokumens as $id => $judul)
-                            <option value="{{ $id }}">{{ $judul }}</option>
-                        @endforeach
-                    </select>
+                    <x-tabler.form-select 
+                        id="filter-dokumen" 
+                        name="dokumen_id"
+                        label="Dokumen Standar"
+                        class="select2-filter" 
+                        :options="['' => 'Semua Dokumen'] + $dokumens" 
+                    />
                 </div>
                 <div class="col-md-8 mb-3">
-                    <label class="form-label">Indikator Standar (Induk)</label>
-                    <select class="form-select select2-filter" id="filter-parent">
-                        <option value="">Semua Indikator Standar</option>
-                        @foreach($parents as $id => $judul)
-                            <option value="{{ $id }}">{{ $judul }}</option>
-                        @endforeach
-                    </select>
+                    <x-tabler.form-select 
+                        id="filter-parent" 
+                        name="parent_id"
+                        label="Indikator Standar (Induk)"
+                        class="select2-filter" 
+                        :options="['' => 'Semua Indikator Standar'] + $parents" 
+                    />
                 </div>
                 <div class="col-12 text-end">
-                     <button type="button" id="btn-reset-filter" class="btn btn-ghost-danger">Reset Filter</button>
-                    <button type="button" id="btn-apply-filter" class="btn btn-primary">Terapkan Filter</button>
+                     <x-tabler.button type="button" id="btn-reset-filter" style="ghost-danger">Reset Filter</x-tabler.button>
+                     <x-tabler.button type="button" id="btn-apply-filter" style="primary">Terapkan Filter</x-tabler.button>
                 </div>
             </div>
         </div>

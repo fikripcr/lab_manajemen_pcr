@@ -7,13 +7,12 @@
     @method('PUT')
     <div class="modal-body">
         <div class="mb-3">
-            <label for="type_id" class="form-label required">Type</label>
-            <select class="form-select" id="type_id" name="type_id" required>
+            <x-tabler.form-select id="type_id" name="type_id" label="Type" required="true">
                 <option value="">Select Type</option>
                 @foreach($types as $type)
                     <option value="{{ $type->labeltype_id }}" {{ $label->type_id == $type->labeltype_id ? 'selected' : '' }}>{{ $type->name }}</option>
                 @endforeach
-            </select>
+            </x-tabler.form-select>
         </div>
         <div class="mb-3">
             <x-tabler.form-input 

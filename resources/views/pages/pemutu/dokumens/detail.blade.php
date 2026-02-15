@@ -54,21 +54,21 @@
                     @endif
                     
                     <div class="btn-group shadow-sm" role="group">
-                        <a href="#" class="btn btn-white ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $dokumen) }}" data-modal-title="Edit Dokumen">
-                            <i class="ti ti-pencil me-1"></i> Edit
-                        </a>
+                        <x-tabler.button href="#" class="btn-white ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $dokumen) }}" data-modal-title="Edit Dokumen" icon="ti ti-pencil">
+                            Edit
+                        </x-tabler.button>
                         @if($isDokSubBased)
-                            <a href="#" class="btn btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dok-subs.create', ['dok_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}">
-                                <i class="ti ti-plus me-1"></i> {{ $childLabel }}
-                            </a>
+                            <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dok-subs.create', ['dok_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus">
+                                {{ $childLabel }}
+                            </x-tabler.button>
                         @else
-                            <a href="#" class="btn btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}">
-                                <i class="ti ti-plus me-1"></i> {{ $childLabel }}
-                            </a>
+                            <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus">
+                                {{ $childLabel }}
+                            </x-tabler.button>
                         @endif
-                        <a href="#" class="btn btn-outline-danger ajax-delete" data-url="{{ route('pemutu.dokumens.destroy', $dokumen) }}" data-title="Hapus Dokumen?" data-text="Dokumen ini beserta sub-dokumennya akan dihapus permanen.">
-                            <i class="ti ti-trash me-1"></i> Hapus
-                        </a>
+                        <x-tabler.button href="#" class="btn-outline-danger ajax-delete" data-url="{{ route('pemutu.dokumens.destroy', $dokumen) }}" data-title="Hapus Dokumen?" data-text="Dokumen ini beserta sub-dokumennya akan dihapus permanen." icon="ti ti-trash">
+                            Hapus
+                        </x-tabler.button>
                     </div>
                 </div>
             </div>
@@ -142,49 +142,40 @@
                                     @csrf
                                     <div class="mb-3">
                                         <label class="form-label required">Approver (Personil)</label>
-                                        <select name="approver_id" class="form-select select2" required>
+                                        <x-tabler.form-select name="approver_id" label="Approver (Personil)" required="true" class="select2">
                                             <option value="">Pilih Personil...</option>
                                             @foreach($personils as $p)
                                                 <option value="{{ $p->personil_id }}">{{ $p->nama }} ({{ $p->jenis ?? '-' }})</option>
                                             @endforeach
-                                        </select>
+                                        </x-tabler.form-select>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label required">Status Approval</label>
-                                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+                                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-row gap-2">
                                             <label class="form-selectgroup-item flex-fill">
                                                 <input type="radio" name="status" value="terima" class="form-selectgroup-input" checked>
-                                                <div class="form-selectgroup-label d-flex align-items-center p-3">
-                                                    <div class="me-3">
-                                                        <span class="form-selectgroup-check"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="d-block text-success font-weight-bold">Terima</span>
-                                                        <small class="d-block text-muted">Dokumen disetujui / dilegalkan</small>
+                                                <div class="form-selectgroup-label d-flex align-items-center justify-content-center p-2 h-100">
+                                                    <div class="text-center">
+                                                        <span class="d-block text-success font-weight-bold mb-1"><i class="ti ti-check me-1"></i> Terima</span>
+                                                        <small class="d-block text-muted lh-1" style="font-size: 0.65rem;">Disetujui / Dilegalkan</small>
                                                     </div>
                                                 </div>
                                             </label>
-                                            <label class="form-selectgroup-item flex-fill mt-2">
+                                            <label class="form-selectgroup-item flex-fill">
                                                 <input type="radio" name="status" value="tolak" class="form-selectgroup-input">
-                                                <div class="form-selectgroup-label d-flex align-items-center p-3">
-                                                    <div class="me-3">
-                                                        <span class="form-selectgroup-check"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="d-block text-danger font-weight-bold">Tolak</span>
-                                                        <small class="d-block text-muted">Dokumen ditolak dengan alasan tertentu</small>
+                                                <div class="form-selectgroup-label d-flex align-items-center justify-content-center p-2 h-100">
+                                                    <div class="text-center">
+                                                        <span class="d-block text-danger font-weight-bold mb-1"><i class="ti ti-x me-1"></i> Tolak</span>
+                                                        <small class="d-block text-muted lh-1" style="font-size: 0.65rem;">Ditolak dengan alasan</small>
                                                     </div>
                                                 </div>
                                             </label>
-                                            <label class="form-selectgroup-item flex-fill mt-2">
+                                            <label class="form-selectgroup-item flex-fill">
                                                 <input type="radio" name="status" value="tangguhkan" class="form-selectgroup-input">
-                                                <div class="form-selectgroup-label d-flex align-items-center p-3">
-                                                    <div class="me-3">
-                                                        <span class="form-selectgroup-check"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="d-block text-warning font-weight-bold">Tangguhkan</span>
-                                                        <small class="d-block text-muted">Butuh perbaikan sebelum disetujui</small>
+                                                <div class="form-selectgroup-label d-flex align-items-center justify-content-center p-2 h-100">
+                                                    <div class="text-center">
+                                                        <span class="d-block text-warning font-weight-bold mb-1"><i class="ti ti-clock me-1"></i> Tangguh</span>
+                                                        <small class="d-block text-muted lh-1" style="font-size: 0.65rem;">Butuh perbaikan</small>
                                                     </div>
                                                 </div>
                                             </label>
@@ -230,6 +221,17 @@
                                                         @endphp
                                                         <span class="badge bg-{{ $statusBadge }}-lt">{{ strtoupper($lastStatus->status_approval ?? 'PENDING') }}</span>
                                                     </div>
+                                                    @if($approval->approver && $approval->approver->user_id === auth()->id())
+                                                        <div class="col-auto">
+                                                            <button type="button" class="btn btn-icon btn-sm btn-ghost-danger ajax-delete" 
+                                                                data-url="{{ route('pemutu.dokumens.approval.destroy', $approval->encrypted_dokapproval_id) }}" 
+                                                                data-title="Hapus Approval?" 
+                                                                data-text="Data approval ini akan dihapus permanen."
+                                                                data-success-callback="location.reload()">
+                                                                <i class="ti ti-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 @if($lastStatus && $lastStatus->komentar)
                                                     <div class="mt-2 p-2 bg-light-lt rounded small border">

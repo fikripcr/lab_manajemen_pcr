@@ -39,12 +39,17 @@
                                 <input type="number" name="periode" class="form-control" value="{{ old('periode', $periodeSpmi->periode ?? date('Y')) }}" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label required">Jenis Periode</label>
-                                <select name="jenis_periode" class="form-select" required>
-                                    <option value="Tahunan" {{ old('jenis_periode', $periodeSpmi->jenis_periode ?? '') == 'Tahunan' ? 'selected' : '' }}>Tahunan</option>
-                                    <option value="Semester Ganjil" {{ old('jenis_periode', $periodeSpmi->jenis_periode ?? '') == 'Semester Ganjil' ? 'selected' : '' }}>Semester Ganjil</option>
-                                    <option value="Semester Genap" {{ old('jenis_periode', $periodeSpmi->jenis_periode ?? '') == 'Semester Genap' ? 'selected' : '' }}>Semester Genap</option>
-                                </select>
+                                <x-tabler.form-select 
+                                    name="jenis_periode" 
+                                    label="Jenis Periode" 
+                                    required="true"
+                                    :options="[
+                                        'Tahunan' => 'Tahunan',
+                                        'Semester Ganjil' => 'Semester Ganjil',
+                                        'Semester Genap' => 'Semester Genap'
+                                    ]"
+                                    :selected="old('jenis_periode', $periodeSpmi->jenis_periode ?? '')"
+                                />
                             </div>
                         </div>
                     </div>

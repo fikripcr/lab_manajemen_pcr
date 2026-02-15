@@ -14,9 +14,9 @@
             <!-- Page title actions -->
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ route('pemutu.periode-spmis.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                        <i class="ti ti-plus me-2"></i> Tambah Periode
-                    </a>
+                    <x-tabler.button href="{{ route('pemutu.periode-spmis.create') }}" style="primary" icon="ti ti-plus" class="d-none d-sm-inline-block">
+                        Tambah Periode
+                    </x-tabler.button>
                 </div>
             </div>
         </div>

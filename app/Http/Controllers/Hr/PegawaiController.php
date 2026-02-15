@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PegawaiRequest;
 use App\Models\Hr\Pegawai;
+use App\Models\Hr\StatusAktifitas;
 use App\Models\Hr\StatusPegawai;
 use App\Services\Hr\PegawaiService;
 use Exception;

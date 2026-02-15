@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Eoffice\DashboardController;
 use App\Http\Controllers\Eoffice\FeedbackController;
 use App\Http\Controllers\Eoffice\JenisLayananController;
 use App\Http\Controllers\Eoffice\JenisLayananDisposisiController;
@@ -14,6 +15,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'check.expired'])->group(function () {
     Route::prefix('eoffice')->name('eoffice.')->group(function () {
+
+        // 🔹 Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/refresh', [DashboardController::class, 'refresh'])->name('dashboard.refresh');
+
+        // Redirect root /eoffice to /eoffice/dashboard
+        Route::get('/', function () {
+            return redirect()->route('eoffice.dashboard');
+        });
 
         // 🔹 Jenis Layanan Master
         Route::prefix('jenis-layanan')->name('jenis-layanan.')->group(function () {

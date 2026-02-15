@@ -6,8 +6,23 @@ use Illuminate\Support\Facades\Route;
 // 🔹 SPMI (PEMTU) Routes
 // ==========================
 Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Pemutu\DashboardController::class, 'index'])->name('dashboard');
+
+    // Periode KPI
+    Route::get('periode-kpis/data', [App\Http\Controllers\Pemutu\PeriodeKpiController::class, 'data'])->name('periode-kpis.data');
+    Route::post('periode-kpis/{periodeKpi}/activate', [App\Http\Controllers\Pemutu\PeriodeKpiController::class, 'activate'])->name('periode-kpis.activate');
+    Route::resource('periode-kpis', App\Http\Controllers\Pemutu\PeriodeKpiController::class);
+
     // Rapat
-    Route::get('rapat/data', [App\Http\Controllers\Pemutu\RapatController::class, 'paginate'])->name('rapat.data');
+    Route::post('rapat/data', [App\Http\Controllers\Pemutu\RapatController::class, 'paginate'])->name('rapat.data');
+    Route::post('rapat/{rapat}/attendance', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAttendance'])->name('rapat.update-attendance');
+    Route::post('rapat/{rapat}/agenda', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAgenda'])->name('rapat.update-agenda');
+    Route::get('rapat/{rapat}/pdf', [App\Http\Controllers\Pemutu\RapatController::class, 'generatePdf'])->name('rapat.generate-pdf');
+    Route::resource('rapat', App\Http\Controllers\Pemutu\RapatController::class);
+    Route::post('rapat/{rapat}/attendance', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAttendance'])->name('rapat.update-attendance');
+    Route::post('rapat/{rapat}/agenda', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAgenda'])->name('rapat.update-agenda');
+    Route::get('rapat/{rapat}/pdf', [App\Http\Controllers\Pemutu\RapatController::class, 'generatePdf'])->name('rapat.generate-pdf');
     Route::resource('rapat', App\Http\Controllers\Pemutu\RapatController::class);
 
     // Rapat Peserta
@@ -59,6 +74,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Document Approvals
     Route::post('dokumens/{dokumen}/approve', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'store'])->name('dokumens.approve');
+    Route::delete('dokumens/approval/{approval}', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'destroy'])->name('dokumens.approval.destroy');
 
     // Period SPMI (PEPP Cycle)
     Route::get('api/periode-spmi', [App\Http\Controllers\Pemutu\PeriodeSpmiController::class, 'paginate'])->name('periode-spmis.data');

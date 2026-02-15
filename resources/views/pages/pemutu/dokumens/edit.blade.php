@@ -8,18 +8,18 @@
     <div class="modal-body">
         <div class="mb-3">
             <label for="parent_id" class="form-label">Induk Dokumen (Parent)</label>
-            <select class="form-select select2-offline" id="parent_id" name="parent_id" data-dropdown-parent="#modalAction">
+            <x-tabler.form-select id="parent_id" name="parent_id" label="Induk Dokumen (Parent)" class="select2-offline" data-dropdown-parent="#modalAction">
                 <option value="">Tanpa Induk (Root)</option>
                 @foreach($dokumens as $d)
                     <option value="{{ $d->dok_id }}" {{ $dokumen->parent_id == $d->dok_id ? 'selected' : '' }}>
                         {{ $d->judul }}
                     </option>
                 @endforeach
-            </select>
+            </x-tabler.form-select>
         </div>
         <div class="mb-3">
             <label for="jenis" class="form-label required">Jenis Dokumen</label>
-            <select class="form-select select2-offline" id="jenis" name="jenis" required data-dropdown-parent="#modalAction">
+            <x-tabler.form-select id="jenis" name="jenis" label="Jenis Dokumen" required="true" class="select2-offline" data-dropdown-parent="#modalAction">
                 <option value="">Pilih Jenis...</option>
                 @if(isset($allowedTypes))
                     @foreach($allowedTypes as $type)
@@ -41,7 +41,7 @@
                     {{-- Fallback --}}
                     <option value="{{ $dokumen->jenis }}" selected>{{ ucfirst($dokumen->jenis) }}</option>
                 @endif
-            </select>
+            </x-tabler.form-select>
         </div>
         <div class="mb-3">
             <label for="judul" class="form-label required">Judul Dokumen</label>

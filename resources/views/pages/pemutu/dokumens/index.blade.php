@@ -28,9 +28,7 @@
                     </li>
                 </ul>
                 <div class="card-actions">
-                     <a href="{{ route('pemutu.dokumens.index', ['tabs' => $activeTab]) }}" class="btn btn-sm btn-ghost-secondary" title="Reset Filters">
-                        <i class="ti ti-refresh"></i>
-                    </a>
+                     <x-tabler.button href="{{ route('pemutu.dokumens.index', ['tabs' => $activeTab]) }}" style="ghost-secondary" size="sm" icon="ti ti-refresh" title="Reset Filters" />
                 </div>
             </div>
 
@@ -41,12 +39,12 @@
                     <!-- Filters & Sub-Tabs -->
                     <div class="card-body border-bottom bg-light-lt py-3">
                          <div class="d-flex gap-2 mb-3">
-                             <select class="form-select form-select-sm filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index') }}">
+                             <x-tabler.form-select name="periode" class="form-select-sm filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index') }}">
                                 <option value="">Semua Periode</option>
                                 @foreach($periods as $p)
                                     <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                             <input type="text" class="form-control form-control-sm" id="tree-search" placeholder="Cari dokumen...">
                         </div>
 
@@ -97,12 +95,12 @@
                 <div class="tab-pane active show" id="main-standar">
                      <div class="card-body border-bottom bg-light-lt py-3">
                          <div class="d-flex gap-2 mb-3">
-                             <select class="form-select form-select-sm filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index') }}">
+                             <x-tabler.form-select name="periode" class="form-select-sm filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index') }}">
                                 <option value="">Semua Periode</option>
                                 @foreach($periods as $p)
                                     <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                             <input type="text" class="form-control form-control-sm" id="tree-search" placeholder="Cari dokumen...">
                          </div>
                          <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">

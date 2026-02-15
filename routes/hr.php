@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Hr\ApprovalController;
 use App\Http\Controllers\Hr\AttDeviceController;
+use App\Http\Controllers\Hr\DashboardController;
 use App\Http\Controllers\Hr\FilePegawaiController;
 use App\Http\Controllers\Hr\IndisiplinerController;
 use App\Http\Controllers\Hr\JabatanFungsionalController;
@@ -24,9 +25,19 @@ use App\Http\Controllers\Hr\RiwayatStatAktifitasController; // Check if this is 
 use App\Http\Controllers\Hr\RiwayatStatPegawaiController;
 use App\Http\Controllers\Hr\StatusAktifitasController;
 use App\Http\Controllers\Hr\StatusPegawaiController;
+use App\Http\Controllers\Hr\TanggalLiburController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(function () {
+
+    // 🔹 Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/refresh', [DashboardController::class, 'refresh'])->name('dashboard.refresh');
+
+    // Redirect root /hr to /hr/dashboard
+    Route::get('/', function () {
+        return redirect()->route('hr.dashboard');
+    });
 
                                                                                           // Pegawai Routes
     Route::get('pegawai/data', [PegawaiController::class, 'data'])->name('pegawai.data'); // Ensure this exists if used, but PegawaiController uses index() for json.
@@ -120,10 +131,10 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     // Tanggal Libur (Holidays)
     Route::resource('tanggal-libur', TanggalLiburController::class);
 
-    // Fallback or Dashboard for HR?
-    Route::get('/', function () {
-        return redirect()->route('hr.pegawai.index');
-    })->name('index');
+    // Fallback or Dashboard for HR? (Removed conflicting redirect, handled at top)
+    // Route::get('/', function () {
+    //     return redirect()->route('hr.pegawai.index');
+    // })->name('index');
 
     // Jabatan Fungsional
     Route::get('jabatan-fungsional/data', [JabatanFungsionalController::class, 'data'])->name('jabatan-fungsional.data');

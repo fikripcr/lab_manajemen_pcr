@@ -28,12 +28,12 @@
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Personnel</label>
-                                <select name="personil_id" class="form-select @error('personil_id') is-invalid @enderror" required>
+                                <x-tabler.form-select name="personil_id" label="Personnel" required="true">
                                     <option value="">Select Personnel...</option>
                                     @foreach($personils as $personil)
                                         <option value="{{ $personil->personil_id }}">{{ $personil->nama }} ({{ $personil->jenis }})</option>
                                     @endforeach
-                                </select>
+                                </x-tabler.form-select>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -42,10 +42,10 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Semester</label>
-                                    <select name="semester" class="form-select" required>
+                                    <x-tabler.form-select name="semester" label="Semester" required="true">
                                         <option value="1">Ganjil</option>
                                         <option value="2">Genap</option>
-                                    </select>
+                                    </x-tabler.form-select>
                                 </div>
                             </div>
                             <div class="mb-3">

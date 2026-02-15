@@ -15,6 +15,7 @@ class IndikatorPersonil extends Model
     protected $fillable = [
         'personil_id',
         'indikator_id',
+        'periode_kpi_id',
         'year',
         'semester',
         'weight',
@@ -28,6 +29,11 @@ class IndikatorPersonil extends Model
         'updated_by',
         'deleted_by',
     ];
+
+    public function periodeKpi()
+    {
+        return $this->belongsTo(PeriodeKpi::class, 'periode_kpi_id', 'periode_kpi_id');
+    }
 
     public function personil()
     {

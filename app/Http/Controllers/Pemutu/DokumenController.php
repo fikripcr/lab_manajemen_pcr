@@ -242,7 +242,29 @@ class DokumenController extends Controller
                             default   => 'Turunan'
                         };
 
-                        return '<div class="badge bg-blue-lt">' . $row->children_count . ' ' . $childLabel . '</div>';
+                        $html = '<div class="badge bg-blue-lt">' . $row->children_count . ' ' . $childLabel . '</div>';
+
+                        // Check for related Renop Indicators
+                        $relatedIndicators = collect();
+                        foreach ($row->dokSubs as $ds) {
+                            foreach ($ds->indikators as $ind) {
+                                if ($ind->type === 'renop') {
+                                    $relatedIndicators->push($ind->kode ?? 'Renop');
+                                }
+                            }
+                        }
+
+                        if ($relatedIndicators->isNotEmpty()) {
+                            $uniques = $relatedIndicators->unique()->take(3); // Limit to 3
+                            foreach ($uniques as $kode) {
+                                $html .= '<div class="mt-1"><span class="badge bg-purple-lt" title="Terkait Indikator Renop">Renop: ' . e($kode) . '</span></div>';
+                            }
+                            if ($relatedIndicators->count() > 3) {
+                                $html .= '<div class="mt-1"><small class="text-muted">+' . ($relatedIndicators->count() - 3) . ' lainnya</small></div>';
+                            }
+                        }
+
+                        return $html;
                     })
                     ->addColumn('action', function ($row) {
                         $editUrl   = route('pemutu.dokumens.edit', $row);

@@ -98,28 +98,7 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-tabler.form-select 
-                                    name="ketua_user_id" 
-                                    label="Ketua Rapat" 
-                                    type="select2" 
-                                    :options="$users->pluck('name', 'id')->toArray()"
-                                    :selected="old('ketua_user_id')" 
-                                    placeholder="Pilih ketua rapat" 
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <x-tabler.form-select 
-                                    name="notulen_user_id" 
-                                    label="Notulen Rapat" 
-                                    type="select2" 
-                                    :options="$users->pluck('name', 'id')->toArray()"
-                                    :selected="old('notulen_user_id')" 
-                                    placeholder="Pilih notulen rapat" 
-                                />
-                            </div>
-                        </div>
+                        {{-- Ketua and Notulen moved to Rapat execution phase --}}
 
                         <div class="row">
                             <div class="col-12">

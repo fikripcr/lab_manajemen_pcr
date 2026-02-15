@@ -30,10 +30,8 @@ class Perizinan extends Model
         'latest_riwayatapproval_id',
         'uang_cuti_bayar',
         'keluarga_id',
-        'periode',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'periode', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
@@ -73,6 +71,11 @@ class Perizinan extends Model
         return $this->hasMany(RiwayatApproval::class, 'model_id', 'perizinan_id')
             ->where('model', 'Perizinan')
             ->orderBy('created_at', 'desc');
+    }
+
+    public function riwayatApproval()
+    {
+        return $this->approvalHistory();
     }
 
     /**

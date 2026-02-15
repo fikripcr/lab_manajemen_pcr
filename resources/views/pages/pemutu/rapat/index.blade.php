@@ -10,10 +10,9 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <a href="{{ route('pemutu.rapat.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                    <i class="ti ti-plus me-1"></i>
+                <x-tabler.button href="{{ route('pemutu.rapat.create') }}" style="primary" icon="ti ti-plus" class="d-none d-sm-inline-block">
                     Tambah Rapat
-                </a>
+                </x-tabler.button>
             </div>
         </div>
     </div>

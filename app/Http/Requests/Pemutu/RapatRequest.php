@@ -27,8 +27,8 @@ class RapatRequest extends FormRequest
             'waktu_mulai'     => 'required|date_format:H:i',
             'waktu_selesai'   => 'required|date_format:H:i|after:waktu_mulai',
             'tempat_rapat'    => 'required|string|max:200',
-            'ketua_user_id'   => 'required|exists:users,id',
-            'notulen_user_id' => 'required|exists:users,id',
+            'ketua_user_id'   => 'nullable|exists:users,id',
+            'notulen_user_id' => 'nullable|exists:users,id',
             'author_user_id'  => 'nullable|exists:users,id',
             'keterangan'      => 'nullable|string',
         ];

@@ -52,4 +52,29 @@ class DokumenApprovalController extends Controller
             ], 500);
         }
     }
+
+    public function destroy(DokumenApproval $approval)
+    {
+        try {
+            // Check if user is authorized (must be the approver)
+            if ($approval->approver && $approval->approver->user_id !== auth()->id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki hak akses untuk menghapus approval ini.',
+                ], 403);
+            }
+
+            $approval->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Approval berhasil dihapus',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus approval: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

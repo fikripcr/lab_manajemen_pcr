@@ -84,11 +84,7 @@
                                     />
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label required">Dokumen Penjaminan Mutu Terkait</label>
-                                    @php
-                                        $selectedDokSubs = (array) request('doksub_ids', []);
-                                    @endphp
-                                    <select class="form-select select2" name="doksub_ids[]" multiple required data-placeholder="Pilih satu atau lebih dokumen...">
+                                    <x-tabler.form-select name="doksub_ids[]" label="Dokumen Penjaminan Mutu Terkait" required="true" class="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
                                         @foreach($dokumens as $doc)
                                             <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
                                                 @foreach($doc->dokSubs as $ds)
@@ -96,7 +92,7 @@
                                                 @endforeach
                                             </optgroup>
                                         @endforeach
-                                    </select>
+                                    </x-tabler.form-select>
                                     @if(isset($parentDok))
                                         <div class="form-hint text-success small">Dokumen terkait otomatis dipilih berdasarkan asal navigasi.</div>
                                     @endif
@@ -117,13 +113,12 @@
                         <div class="tab-pane" id="tabs-hierarchy">
                             <div class="row">
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label required">Indikator Induk</label>
-                                    <select class="form-select select2" name="parent_id" id="parent-id-selector">
+                                    <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" required="true" class="select2">
                                         <option value="">-- Pilih Indikator Standar --</option>
                                         @foreach($parents as $p)
                                             <option value="{{ $p->indikator_id }}">[{{ $p->no_indikator }}] {{ \Str::limit($p->indikator, 150) }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-tabler.form-select>
                                     <div class="form-hint">Indikator Performa HARUS merujuk pada satu Indikator Standar.</div>
                                 </div>
                             </div>
@@ -211,10 +206,7 @@
                                                 <input type="number" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][year]" value="{{ date('Y') }}" disabled id="kpi-year-{{ $index }}">
                                             </td>
                                             <td>
-                                                <select class="form-select form-select-sm" name="kpi_assign[{{ $index }}][semester]" disabled id="kpi-sem-{{ $index }}">
-                                                    <option value="Ganjil">Ganjil</option>
-                                                    <option value="Genap">Genap</option>
-                                                </select>
+                                                <x-tabler.form-select name="kpi_assign[{{ $index }}][semester]" :options="['Ganjil' => 'Ganjil', 'Genap' => 'Genap']" disabled="true" class="form-select-sm" id="kpi-sem-{{ $index }}" />
                                             </td>
                                             <td>
                                                 <input type="number" step="0.01" class="form-control form-control-sm" name="kpi_assign[{{ $index }}][weight]" placeholder="0.00" disabled id="kpi-weight-{{ $index }}">
@@ -237,11 +229,11 @@
                                 @foreach($labelTypes as $type)
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ $type->name }}</label>
-                                    <select class="form-select select2" name="labels[]" multiple data-placeholder="Pilih {{ $type->name }}...">
+                                    <x-tabler.form-select name="labels[]" class="select2" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
                                         @foreach($type->labels as $label)
                                             <option value="{{ $label->label_id }}">{{ $label->name }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-tabler.form-select>
                                 </div>
                                 @endforeach
                             </div>

@@ -41,7 +41,7 @@ class DokSubController extends Controller
 
     public function create(Request $request)
     {
-        $dokId   = $request->query('dok_id');
+        $dokId   = (int) $request->query('dok_id');
         $dokumen = $this->DokumenService->getDokumenById($dokId);
         if (! $dokumen) {
             abort(404);

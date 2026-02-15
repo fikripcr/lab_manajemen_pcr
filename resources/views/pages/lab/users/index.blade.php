@@ -10,18 +10,9 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <a href="{{ route('lab.users.import.show') }}" class="btn btn-secondary d-none d-sm-inline-block">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-                    Import
-                </a>
-                <a href="{{ route('lab.users.export') }}" class="btn btn-secondary d-none d-sm-inline-block">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 -5l5 5" /><path d="M12 4l0 12" /></svg>
-                    Export
-                </a>
-                <a href="{{ route('lab.users.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                    Create
-                </a>
+                <x-tabler.button href="{{ route('lab.users.import.show') }}" icon="ti ti-file-import" text="Import" class="btn-secondary d-none d-sm-inline-block" />
+                <x-tabler.button href="{{ route('lab.users.export') }}" icon="ti ti-file-export" text="Export" class="btn-secondary d-none d-sm-inline-block" />
+                <x-tabler.button href="{{ route('lab.users.create') }}" icon="ti ti-plus" text="Create" class="btn-primary d-none d-sm-inline-block" />
             </div>
         </div>
     </div>
@@ -44,12 +35,8 @@
 
                     <!-- Action buttons for selected users -->
                     <div id="bulk-actions-users-table" class="d-none">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="bulkAction('send-notification')">
-                            <i class="bx bx-envelope"></i> Send Notification
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger" onclick="bulkAction('delete')">
-                            <i class="bx bx-trash"></i> Delete
-                        </button>
+                        <x-tabler.button type="button" class="btn-sm btn-primary" onclick="bulkAction('send-notification')" icon="bx bx-envelope" text="Send Notification" />
+                        <x-tabler.button type="button" class="btn-sm btn-danger" onclick="bulkAction('delete')" icon="bx bx-trash" text="Delete" />
                     </div>
                 </div>
             </div>

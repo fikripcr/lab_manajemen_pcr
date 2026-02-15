@@ -7,13 +7,13 @@
     <div class="modal-body">
         <div class="mb-3">
             <label for="jenis" class="form-label required">Jenis Dokumen</label>
-            <select class="form-select select2-offline" id="jenis" name="jenis" required data-dropdown-parent="#modalAction">
+            <x-tabler.form-select id="jenis" name="jenis" label="Jenis Dokumen" required="true" class="select2-offline" data-dropdown-parent="#modalAction">
                 <option value="">Pilih Jenis...</option>
                 <option value="standar">Standar</option>
                 <option value="formulir">Formulir</option>
                 <option value="sop">SOP</option>
                 <option value="manual_prosedur">Manual Prosedur</option>
-            </select>
+            </x-tabler.form-select>
         </div>
         <div class="mb-3">
             <label for="judul" class="form-label required">Judul Dokumen</label>

@@ -47,9 +47,9 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('pemutu.mykpi.edit', $kpi->id) }}" class="btn btn-sm btn-primary">
+                                <x-tabler.button href="{{ route('pemutu.mykpi.edit', $kpi->id) }}" style="primary" size="sm">
                                     Update
-                                </a>
+                                </x-tabler.button>
                             </td>
                         </tr>
                         @empty

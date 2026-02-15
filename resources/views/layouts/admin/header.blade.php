@@ -110,7 +110,7 @@
                                 </div>
                             </div>
                             <div class="card-footer text-center">
-                                <a href="{{ route('notifications.index') }}" class="btn btn-link btn-sm">View All</a>
+                                <x-tabler.button href="{{ route('notifications.index') }}" style="link" size="sm">View All</x-tabler.button>
                             </div>
                         </div>
                     </div>

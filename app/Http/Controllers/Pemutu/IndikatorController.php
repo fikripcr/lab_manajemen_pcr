@@ -56,7 +56,15 @@ class IndikatorController extends Controller
                     'performa' => 'Performa',
                     default    => ucfirst($row->type ?? '-')
                 };
-                return '<span class="badge bg-' . $color . '-lt">' . $label . '</span>';
+
+                $html = '<span class="badge bg-' . $color . '-lt">' . $label . '</span>';
+
+                // If Performa, show Parent Code
+                if ($row->type === 'performa' && $row->parent) {
+                    $html .= '<div class="mt-1"><span class="badge bg-primary-lt" title="Indikator Induk">Ref: ' . e($row->parent->kode ?? '-') . '</span></div>';
+                }
+
+                return $html;
             })
             ->addColumn('doksub_judul', function ($row) {
                 return $row->dokSubs->pluck('judul')->implode(', ') ?: '-';

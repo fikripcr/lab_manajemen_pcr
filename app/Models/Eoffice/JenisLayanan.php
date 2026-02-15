@@ -13,9 +13,9 @@ class JenisLayanan extends Model
 
     protected $table      = 'eoffice_jenis_layanan';
     protected $primaryKey = 'jenislayanan_id';
-    
-    protected $appends = ['encrypted_jenislayanan_id'];
-    protected $fillable   = [
+
+    protected $appends  = ['encrypted_jenislayanan_id'];
+    protected $fillable = [
         'nama_layanan',
         'kategori',
         'bidang_terkait',
@@ -65,5 +65,10 @@ class JenisLayanan extends Model
     public function periodes()
     {
         return $this->hasMany(JenisLayananPeriode::class, 'jenislayanan_id', 'jenislayanan_id');
+    }
+
+    public function layanans()
+    {
+        return $this->hasMany(Layanan::class, 'jenislayanan_id', 'jenislayanan_id');
     }
 }

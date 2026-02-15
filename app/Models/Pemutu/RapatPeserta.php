@@ -19,6 +19,13 @@ class RapatPeserta extends Model
         'rapat_id',
         'user_id',
         'jabatan',
+        'status',
+        'waktu_hadir',
+        'notes',
+    ];
+
+    protected $casts = [
+        'waktu_hadir' => 'datetime',
     ];
 
     /**

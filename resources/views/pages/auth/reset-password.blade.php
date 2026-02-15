@@ -57,7 +57,7 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary d-grid w-100" type="submit">Reset Password</button>
+                    <x-tabler.button type="submit" class="w-100" text="Reset Password" />
                 </form>
             </div>
         </div>

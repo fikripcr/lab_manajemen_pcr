@@ -15,11 +15,15 @@ class DokumenService
         return $this->applyFilters(Dokumen::query(), $filters);
     }
 
-    public function getChildrenQuery(int $parentId)
+    public function getChildrenQuery(int $dokumenId)
     {
-        return Dokumen::query()
-            ->where('parent_id', $parentId)
+        // Eager load related Indikators for badges (especially for Renop indicators)
+        return Dokumen::where('parent_id', $dokumenId)
             ->withCount('children')
+            ->with(['dokSubs.indikators' => function ($q) {
+                // We mainly care about Renop indicators linked to the DokSub
+                $q->where('type', 'renop');
+            }])
             ->orderBy('seq');
     }
 

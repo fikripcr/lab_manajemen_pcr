@@ -8,7 +8,7 @@ class IndikatorService
 {
     public function getFilteredQuery(array $filters)
     {
-        $query = Indikator::with(['dokSubs.dokumen', 'labels.type']);
+        $query = Indikator::with(['dokSubs.dokumen', 'labels.type', 'parent']);
 
         if (! empty($filters['dokumen_id'])) {
             $query->whereHas('dokSubs.dokumen', function ($q) use ($filters) {

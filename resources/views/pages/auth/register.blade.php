@@ -64,7 +64,7 @@
             </div>
             
             <div class="form-footer">
-                <button type="submit" class="btn btn-primary w-100">Create new account</button>
+                <x-tabler.button type="submit" class="w-100" text="Create new account" />
             </div>
         </form>
     </div>

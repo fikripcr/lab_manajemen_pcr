@@ -28,12 +28,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Parent Indicator (Optional)</label>
-                        <select name="parent_id" class="form-select">
+                        <x-tabler.form-select name="parent_id" label="Parent Indicator (Optional)">
                             <option value="">-- No Parent --</option>
                             @foreach($parents as $id => $title)
                                 <option value="{{ $id }}">{{ $title }}</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Sequence</label>

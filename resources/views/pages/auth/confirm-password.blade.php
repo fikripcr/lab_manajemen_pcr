@@ -34,7 +34,7 @@
                         @enderror
                     </div>
 
-                    <button class="btn btn-primary d-grid w-100" type="submit">Confirm Password</button>
+                    <x-tabler.button type="submit" class="w-100" text="Confirm Password" />
                 </form>
             </div>
         </div>
