@@ -25,6 +25,14 @@ class User extends Authenticatable implements HasMedia, Searchable
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity, HasApiTokens, Blameable, HashidBinding;
 
     /**
+     * Relationship to PMB Profile
+     */
+    public function profilPmb()
+    {
+        return $this->hasOne(\App\Models\Pmb\ProfilMahasiswa::class, 'user_id');
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -38,8 +46,8 @@ class User extends Authenticatable implements HasMedia, Searchable
         'email_verified_at',
         'expired_at',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $appends = ['encrypted_id'];

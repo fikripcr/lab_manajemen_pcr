@@ -2,15 +2,15 @@
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HashidBinding;
 
 class RiwayatStatAktifitas extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
-    
+
     protected $table      = 'hr_riwayat_stataktifitas';
     protected $primaryKey = 'riwayatstataktifitas_id';
     protected $guarded    = ['riwayatstataktifitas_id'];
@@ -24,8 +24,8 @@ class RiwayatStatAktifitas extends Model
         'no_sk',
         'keterangan',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
@@ -41,6 +41,11 @@ class RiwayatStatAktifitas extends Model
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
+    }
+
+    public function approval()
+    {
+        return $this->morphOne(RiwayatApproval::class, 'subject', 'model', 'model_id');
     }
 
     public function before()

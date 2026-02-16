@@ -25,8 +25,8 @@ class RiwayatJabStruktural extends Model
         'tgl_pengesahan',
         'keterangan',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
@@ -44,6 +44,11 @@ class RiwayatJabStruktural extends Model
     public function orgUnit()
     {
         return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'org_unit_id');
+    }
+
+    public function approval()
+    {
+        return $this->morphOne(RiwayatApproval::class, 'subject', 'model', 'model_id');
     }
 
     public function before()

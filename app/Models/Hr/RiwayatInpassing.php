@@ -2,15 +2,15 @@
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HashidBinding;
 
 class RiwayatInpassing extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
-    
+
     protected $table      = 'hr_riwayat_inpassing';
     protected $primaryKey = 'riwayatinpassing_id';
     protected $guarded    = ['riwayatinpassing_id'];
@@ -32,13 +32,18 @@ class RiwayatInpassing extends Model
         'gaji_pokok',
         'file_sk',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
+    }
+
+    public function approval()
+    {
+        return $this->morphOne(RiwayatApproval::class, 'subject', 'model', 'model_id');
     }
 
     public function golonganInpassing()

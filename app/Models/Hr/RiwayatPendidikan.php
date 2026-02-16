@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RiwayatPendidikan extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
-    
+
     protected $table      = 'hr_riwayat_pendidikan';
     protected $primaryKey = 'riwayatpendidikan_id';
     protected $guarded    = ['riwayatpendidikan_id'];
@@ -27,8 +27,8 @@ class RiwayatPendidikan extends Model
         'ipk',
         'keterangan',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
@@ -37,7 +37,7 @@ class RiwayatPendidikan extends Model
 
     public function approval()
     {
-        return $this->belongsTo(RiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
+        return $this->morphOne(RiwayatApproval::class, 'subject', 'model', 'model_id');
     }
 
     public function pegawai()
