@@ -1,0 +1,48 @@
+<?php
+namespace App\Models\Survei;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Pertanyaan extends Model
+{
+    use HasFactory;
+
+    protected $table = 'survei_pertanyaan';
+
+    protected $fillable = [
+        'survei_id',
+        'halaman_id',
+        'teks_pertanyaan',
+        'bantuan_teks',
+        'tipe',
+        'config_json',
+        'wajib_diisi',
+        'urutan',
+    ];
+
+    protected $casts = [
+        'config_json' => 'array',
+        'wajib_diisi' => 'boolean',
+    ];
+
+    public function survei()
+    {
+        return $this->belongsTo(Survei::class, 'survei_id');
+    }
+
+    public function halaman()
+    {
+        return $this->belongsTo(Halaman::class, 'halaman_id');
+    }
+
+    public function opsi()
+    {
+        return $this->hasMany(Opsi::class, 'pertanyaan_id')->orderBy('urutan');
+    }
+
+    public function logika()
+    {
+        return $this->hasOne(Logika::class, 'pertanyaan_pemicu_id');
+    }
+}

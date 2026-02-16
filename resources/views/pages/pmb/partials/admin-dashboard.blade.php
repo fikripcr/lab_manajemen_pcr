@@ -10,13 +10,12 @@
         'tidak_lulus' => App\Models\Pmb\Pendaftaran::where('status_terkini', 'Tidak_Lulus')->count(),
     ];
 
-    $periodeAktif = App\Services\Pmb\PeriodeService::getActivePeriode();
     $recentPendaftar = App\Models\Pmb\Pendaftaran::with(['user', 'periode', 'jalur'])
         ->latest('waktu_daftar')
         ->limit(10)
         ->get();
 
-    $statsByJalur = App\Models\Pmb\Pendaftaran::join('pmb_jalur', 'pmb_pendaftaran.jalur_id', '=', 'pmb_jalur.jalur_id')
+    $statsByJalur = App\Models\Pmb\Pendaftaran::join('pmb_jalur', 'pmb_pendaftaran.jalur_id', '=', 'pmb_jalur.id')
         ->selectRaw('pmb_jalur.nama_jalur, COUNT(*) as total')
         ->groupBy('pmb_jalur.nama_jalur')
         ->get();

@@ -2,7 +2,11 @@
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pmb\ConfirmPaymentRequest;
+use App\Http\Requests\Pmb\FileUploadRequest;
+use App\Http\Requests\Pmb\StoreRegistrationRequest;
 use App\Models\Pmb\Pendaftaran;
+use App\Services\Pmb\PeriodeService;
 use App\Services\Pmb\PendaftaranService;
 use Exception;
 use Illuminate\Http\Request;
@@ -10,10 +14,12 @@ use Illuminate\Http\Request;
 class PendaftaranController extends Controller
 {
     protected $PendaftaranService;
+    protected $PeriodeService;
 
-    public function __construct(PendaftaranService $PendaftaranService)
+    public function __construct(PendaftaranService $PendaftaranService, PeriodeService $PeriodeService)
     {
         $this->PendaftaranService = $PendaftaranService;
+        $this->PeriodeService = $PeriodeService;
     }
 
     /**
@@ -21,7 +27,8 @@ class PendaftaranController extends Controller
      */
     public function dashboard()
     {
-        return view('pages.pmb.dashboard.index');
+        $periodeAktif = $this->PeriodeService->getActivePeriode();
+        return view('pages.pmb.dashboard.index', compact('periodeAktif'));
     }
 
     /**

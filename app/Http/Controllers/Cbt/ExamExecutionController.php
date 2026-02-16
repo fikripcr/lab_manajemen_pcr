@@ -60,7 +60,7 @@ class ExamExecutionController extends Controller
             
             return response()->json([
                 'success' => true, 
-                'redirect' => route('cbt.exam.complete', $riwayat->hashid)
+                'redirect' => route('pmb.camaba.dashboard')
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

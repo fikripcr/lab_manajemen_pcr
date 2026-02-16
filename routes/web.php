@@ -22,6 +22,7 @@ require __DIR__ . '/auth.php';
 require __DIR__ . '/hr.php';
 require __DIR__ . '/pmb.php';
 require __DIR__ . '/cbt.php';
+require __DIR__ . '/survei.php';
 
 // Global Search
 Route::get('/global-search', [GlobalSearchController::class, 'search'])->name('global-search');

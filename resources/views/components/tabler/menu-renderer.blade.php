@@ -520,6 +520,13 @@
                     'icon'          => 'ti ti-calendar-event',
                 ],
             ],
+            
+        ],
+        [
+            'title' => 'Umpan Balik',
+            'route' => 'survei.index',
+            'icon'  => 'ti ti-forms',
+            'active_routes' => ['survei.*'],
         ],
         [
             'type'  => 'header',

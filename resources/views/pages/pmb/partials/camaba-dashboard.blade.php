@@ -5,8 +5,6 @@
         ->where('user_id', $user->id)
         ->latest()
         ->first();
-
-    $periodeAktif = App\Services\Pmb\PeriodeService::getActivePeriode();
 @endphp
 
 @if(!$pendaftaran)

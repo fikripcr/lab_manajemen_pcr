@@ -77,4 +77,12 @@ class LaporanKerusakan extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    /**
+     * Relationship: Reporter (Alias for createdBy)
+     */
+    public function pelapor()
+    {
+        return $this->createdBy();
+    }
 }

@@ -31,7 +31,6 @@ class ExamExecutionService
                 'opsi_dipilih_id' => $data['opsi_id'] ?? null,
                 'jawaban_esai'    => $data['jawaban_esai'] ?? null,
                 'is_ragu'         => $data['is_ragu'] ?? false,
-                'waktu_simpan'    => now(),
             ]
         );
     }
