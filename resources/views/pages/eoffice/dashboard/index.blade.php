@@ -166,8 +166,8 @@
 
 <div class="row">
     <!-- Recent Activities -->
-    <div class="col-lg-6">
-        <div class="card">
+    <div class="col-lg-6 d-flex">
+        <div class="card h-100">
             <div class="card-header">
                 <h3 class="card-title">Aktivitas Terbaru</h3>
                 <div class="card-actions">
@@ -183,7 +183,7 @@
                             <div class="timeline-content">
                                 <div class="timeline-time">{{ $activity->created_at->diffForHumans() }}</div>
                                 <div class="timeline-title">{{ $activity->jenisLayanan->name ?? 'Unknown' }}</div>
-                                <div class="timeline-body text-muted">
+                                <div class="timeline-body text-muted small">
                                     {{ $activity->pengusul_nama }} - {{ $activity->no_layanan }}
                                 </div>
                                 <div class="timeline-actions">
@@ -207,8 +207,8 @@
     </div>
 
     <!-- Top Performers -->
-    <div class="col-lg-6">
-        <div class="card">
+    <div class="col-lg-6 d-flex">
+        <div class="card h-100">
             <div class="card-header">
                 <h3 class="card-title">Top PIC Layanan</h3>
                 <div class="card-actions">

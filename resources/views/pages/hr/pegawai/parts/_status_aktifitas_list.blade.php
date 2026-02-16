@@ -17,6 +17,7 @@
                     <th>TMT</th>
                     <th>Tgl Akhir</th>
                     <th>Status Aktif</th>
+                    <th>Status Approval</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +32,13 @@
                             <span class="badge bg-success text-success-fg">Aktif Saat Ini</span>
                         @else
                             <span class="badge bg-secondary text-secondary-fg">Riwayat</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($item->approval)
+                            {!! getApprovalBadge($item->approval->status) !!}
+                        @else
+                             -
                         @endif
                     </td>
                 </tr>

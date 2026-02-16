@@ -1,3 +1,4 @@
+@use('Illuminate\Support\Facades\Storage')
 @extends('layouts.admin.app')
 
 @section('header')
@@ -24,7 +25,7 @@
 
 @section('content')
 <div class="row row-cards">
-    {{-- Left Column: Main Info & Discussion --}}
+    {{-- Left Column: Main Info & Data --}}
     <div class="col-lg-8">
         
         {{-- 1. Status Summary Card --}}
@@ -53,62 +54,40 @@
             </div>
         </div>
 
-        {{-- 2. Discussion Forum (Chat UI) --}}
-        <div class="card mb-3" style="max-height: 600px;">
-            <div class="card-header">
-                <h3 class="card-title">Diskusi & Komentar</h3>
-                <div class="card-actions">
-                    <span class="badge bg-purple-lt">{{ $layanan->diskusi->count() }} Pesan</span>
-                </div>
-            </div>
-            <div class="card-body scrollable py-2" id="chat-container" style="height: 400px; overflow-y: auto;">
-                <div class="chat-messages p-2">
-                    @forelse($layanan->diskusi->sortBy('created_at') as $chat)
-                        <div class="mb-3 {{ $chat->created_by == auth()->id() ? 'text-end' : '' }}">
-                            <div class="d-inline-block p-2 rounded-3 {{ $chat->created_by == auth()->id() ? 'bg-primary text-white' : 'bg-light' }}" style="max-width: 80%;">
-                                @if($chat->created_by != auth()->id())
-                                    <div class="small fw-bold border-bottom mb-1 pb-1">
-                                        {{ $chat->user->name }} ({{ $chat->status_pengirim }})
-                                    </div>
-                                @endif
-                                <div class="chat-text" style="white-space: pre-wrap;">{{ $chat->pesan }}</div>
-                                @if($chat->file_lampiran)
-                                    <div class="mt-2 pt-2 border-top small">
-                                        <a href="{{ Storage::url($chat->file_lampiran) }}" target="_blank" class="{{ $chat->created_by == auth()->id() ? 'text-white' : 'text-primary' }}">
-                                            <i class="ti ti-paperclip"></i> Lampiran
-                                        </a>
-                                    </div>
-                                @endif
-                                <div class="small mt-1 {{ $chat->created_by == auth()->id() ? 'text-white-50' : 'text-muted' }}">
-                                    {{ $chat->created_at->format('H:i') }}
-                                </div>
+        {{-- Feedback Section --}}
+        @if($layanan->jenisLayanan->is_feedback && in_array($layanan->latestStatus->status_layanan, ['Selesai', 'Selesai (Otomatis)']))
+            <div class="card mb-3 {{ $layanan->feedback ? 'bg-success-lt' : 'bg-warning-lt' }}">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="subheader">Feedback Layanan</div>
+                        @if($layanan->feedback)
+                            <div class="ms-auto">
+                                @for($i=1; $i<=5; $i++)
+                                    <i class="ti ti-star-filled {{ $i <= $layanan->feedback->rating ? 'text-yellow' : 'text-muted' }}"></i>
+                                @endfor
                             </div>
+                        @endif
+                    </div>
+                    
+                    @if($layanan->feedback)
+                        <div class="h3 mb-2">Terima kasih atas masukan Anda!</div>
+                        <div class="text-muted">
+                            "{{ $layanan->feedback->catatan ?? 'Tidak ada catatan tambahan.' }}"
                         </div>
-                    @empty
-                        <div class="text-center text-muted py-5">
-                            <i class="ti ti-messages fs-1"></i>
-                            <p class="mt-2">Belum ada diskusi. Mulai percakapan jika ada hal yang perlu ditanyakan.</p>
+                        <div class="small text-muted mt-2">
+                            Dikirim pada: {{ $layanan->feedback->created_at->format('d M Y H:i') }}
                         </div>
-                    @endforelse
+                    @else
+                        <div class="h3 mb-2">Bagaimana pengalaman Anda?</div>
+                        <p class="text-muted mb-3">Silakan berikan penilaian dan masukan untuk meningkatkan kualitas layanan kami.</p>
+                        <x-tabler.button type="button" class="btn-warning w-100" data-bs-toggle="modal" data-bs-target="#modal-feedback" icon="ti ti-star" text="Beri Nilai Layanan" />
+                    @endif
                 </div>
             </div>
-            <div class="card-footer border-top">
-                <form action="{{ route('eoffice.layanan.diskusi.store') }}" method="POST" class="ajax-form" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
-                    <div class="input-group">
-                        <textarea name="pesan" class="form-control" rows="1" placeholder="Ketik pesan..." required></textarea>
-                        <x-tabler.button type="submit" class="btn-primary btn-icon" title="Kirim" icon="ti ti-send" />
-                    </div>
-                    <div class="mt-2">
-                        <x-tabler.form-input type="file" name="file_lampiran" class="form-control-sm" label="Lampiran (PDF/IMG)" />
-                    </div>
-                </form>
-            </div>
-        </div>
+        @endif
 
-        {{-- 3. Data Isian Display --}}
-        <div class="card">
+        {{-- 2. Data Isian Display --}}
+        <div class="card mb-3">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
@@ -127,18 +106,22 @@
                     {{-- Tab Pemohon --}}
                     <div class="tab-pane active show" id="tab-pemohon">
                         <div class="row">
-                            @foreach($dataIsian['Pemohon'] as $field)
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-muted small uppercase fw-bold">{{ $field->nama_isian }}</label>
-                                    <div class="form-control-plaintext">
-                                        @if(str_contains($field->isi, 'eoffice/requests/'))
-                                            <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-outline-info" icon="ti ti-download" text="Unduh Berkas" />
-                                        @else
-                                            {!! nl2br(e($field->isi)) ?? '-' !!}
-                                        @endif
+                            @if($dataIsian['Pemohon']->isEmpty())
+                                <div class="col-12 text-center text-muted py-3">Tidak ada data isian pemohon.</div>
+                            @else
+                                @foreach($dataIsian['Pemohon'] as $field)
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small uppercase fw-bold">{{ $field->nama_isian }}</label>
+                                        <div class="form-control-plaintext">
+                                            @if($field->type === 'file' && str_contains($field->isi, 'eoffice/requests/'))
+                                                <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-outline-info" icon="ti ti-download" text="Unduh Berkas" />
+                                            @else
+                                                {!! nl2br(e($field->isi)) ?? '-' !!}
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            @endif
                             <div class="col-12 mb-3">
                                 <label class="form-label text-muted small uppercase fw-bold">Keterangan Tambahan</label>
                                 <div class="form-control-plaintext italic">"{{ $layanan->keterangan ?? '-' }}"</div>
@@ -154,7 +137,7 @@
                                     <div class="datagrid-item">
                                         <div class="datagrid-title">{{ $field->nama_isian }}</div>
                                         <div class="datagrid-content">
-                                            @if(str_contains($field->isi, 'eoffice/requests/'))
+                                            @if($field->type === 'file' && str_contains($field->isi, 'eoffice/requests/'))
                                                 <x-tabler.button href="{{ Storage::url($field->isi) }}" target="_blank" class="btn-sm btn-pill btn-ghost-info" icon="ti ti-file" text="Berkas" />
                                             @else
                                                 {{ $field->isi ?? '-' }}
@@ -181,6 +164,11 @@
                                     <div class="text-muted">
                                         {{ $st->keterangan ?? '-' }}
                                         <div class="small mt-1 mt-1 text-primary">Oleh: {{ $st->user->name ?? 'System' }}</div>
+                                        @if($st->file_lampiran)
+                                            <div class="mt-1">
+                                                <a href="{{ Storage::url($st->file_lampiran) }}" target="_blank" class="text-info"><i class="ti ti-paperclip"></i> Lampiran</a>
+                                            </div>
+                                        @endif
                                     </div>
                                 </li>
                             @endforeach
@@ -191,10 +179,10 @@
         </div>
     </div>
 
-    {{-- Right Column: Actions & Entities --}}
+    {{-- Right Column: Actions, Entities & Discussion --}}
     <div class="col-lg-4">
         
-        {{-- 4. Action Section (Workflow) --}}
+        {{-- 3. Action Section (Workflow) --}}
         @if($canAction)
             <div class="card mb-3 bg-primary-lt border-primary shadow-sm hover-shadow">
                 <div class="card-header">
@@ -287,7 +275,7 @@
             </div>
         @endif
 
-        {{-- 5. Entities (Applicant & PIC) --}}
+        {{-- 4. Entities (Applicant & PIC) --}}
         <div class="card mb-3">
             <div class="card-header border-0 pb-0">
                 <h3 class="card-title">Pihak Terlibat</h3>
@@ -330,9 +318,101 @@
                 </div>
             </div>
         </div>
+
+        {{-- 5. Discussion Forum (Moved to Right Column) --}}
+        @if($layanan->jenisLayanan->is_diskusi)
+        <div class="card mb-3" style="max-height: 600px;">
+            <div class="card-header">
+                <h3 class="card-title">Diskusi & Komentar</h3>
+                <div class="card-actions">
+                    <span class="badge bg-purple-lt">{{ $layanan->diskusi->count() }} Pesan</span>
+                </div>
+            </div>
+            <div class="card-body scrollable py-2" id="chat-container" style="height: 400px; overflow-y: auto;">
+                <div class="chat-messages p-2">
+                    @forelse($layanan->diskusi->sortBy('created_at') as $chat)
+                        <div class="mb-3 {{ $chat->created_by == auth()->id() ? 'text-end' : '' }}">
+                            <div class="d-inline-block p-2 rounded-3 {{ $chat->created_by == auth()->id() ? 'bg-primary text-white' : 'bg-light' }}" style="max-width: 90%;">
+                                @if($chat->created_by != auth()->id())
+                                    <div class="small fw-bold border-bottom mb-1 pb-1">
+                                        {{ $chat->user->name }} ({{ $chat->status_pengirim }})
+                                    </div>
+                                @endif
+                                <div class="chat-text small" style="white-space: pre-wrap;">{{ $chat->pesan }}</div>
+                                @if($chat->file_lampiran)
+                                    <div class="mt-2 pt-2 border-top small">
+                                        <a href="{{ Storage::url($chat->file_lampiran) }}" target="_blank" class="{{ $chat->created_by == auth()->id() ? 'text-white' : 'text-primary' }}">
+                                            <i class="ti ti-paperclip"></i> Lampiran
+                                        </a>
+                                    </div>
+                                @endif
+                                <div class="small mt-1 {{ $chat->created_by == auth()->id() ? 'text-white-50' : 'text-muted' }}" style="font-size: 0.7rem;">
+                                    {{ $chat->created_at->format('H:i') }}
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center text-muted py-5">
+                            <i class="ti ti-messages fs-1"></i>
+                            <p class="mt-2 small">Mulai diskusi jika ada pertanyaan.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+            <div class="card-footer border-top p-2">
+                <form action="{{ route('eoffice.layanan.diskusi.store') }}" method="POST" class="ajax-form" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
+                    <div class="input-group input-group-sm">
+                        <textarea name="pesan" class="form-control" rows="1" placeholder="Pesan..." required></textarea>
+                        <x-tabler.button type="submit" class="btn-primary btn-icon" title="Kirim" icon="ti ti-send" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 @endsection
+
+@if($layanan->jenisLayanan->is_feedback && !$layanan->feedback)
+<!-- Modal Feedback -->
+<div class="modal modal-blur fade" id="modal-feedback" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="{{ route('eoffice.feedback.store') }}" method="POST" class="ajax-form">
+                @csrf
+                <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Beri Penilaian Layanan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <div class="text-muted mb-2">Ketuk bintang untuk memberi nilai</div>
+                        <div class="rating-stars">
+                            @for($i=1; $i<=5; $i++)
+                                <input type="radio" name="rating" id="rating-{{ $i }}" value="{{ $i }}" class="d-none">
+                                <label for="rating-{{ $i }}" class="cursor-pointer">
+                                    <i class="ti ti-star fs-1 text-muted star-icon" data-value="{{ $i }}"></i>
+                                </label>
+                            @endfor
+                        </div>
+                        <div class="mt-2 fw-bold text-warning" id="rating-text">Pilih rating...</div>
+                    </div>
+                    <div class="mb-3 text-start">
+                        <x-tabler.form-textarea name="catatan" label="Catatan / Masukan (Opsional)" rows="3" placeholder="Ceritakan pengalaman Anda..." />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-warning ms-auto" text="Kirim Feedback" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 
 @push('scripts')
 <script>
@@ -368,6 +448,60 @@
         document.addEventListener('form-success', function() {
             window.location.reload();
         });
+
+        // Star Rating Logic
+        const stars = document.querySelectorAll('.star-icon');
+        const ratingText = document.getElementById('rating-text');
+        const ratingLabels = ['Sangat Buruk', 'Buruk', 'Cukup', 'Baik', 'Sangat Baik'];
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                let val = this.dataset.value;
+                highlightStars(val);
+            });
+
+            star.addEventListener('mouseout', function() {
+                let checked = document.querySelector('input[name="rating"]:checked');
+                if (checked) {
+                    highlightStars(checked.value);
+                } else {
+                    resetStars();
+                }
+            });
+
+            star.addEventListener('click', function() {
+                let val = this.dataset.value;
+                document.getElementById('rating-' + val).checked = true;
+                highlightStars(val);
+                ratingText.textContent = ratingLabels[val - 1];
+            });
+        });
+
+        function highlightStars(count) {
+            stars.forEach(s => {
+                if (s.dataset.value <= count) {
+                    s.classList.remove('text-muted');
+                    s.classList.add('text-yellow');
+                    s.classList.remove('ti-star');
+                    s.classList.add('ti-star-filled');
+                } else {
+                    s.classList.add('text-muted');
+                    s.classList.remove('text-yellow');
+                    s.classList.add('ti-star');
+                    s.classList.remove('ti-star-filled');
+                }
+            });
+        }
+
+        function resetStars() {
+            stars.forEach(s => {
+                s.classList.add('text-muted');
+                s.classList.remove('text-yellow');
+                s.classList.add('ti-star');
+                s.classList.remove('ti-star-filled');
+            });
+            ratingText.textContent = 'Pilih rating...';
+        }
     });
 </script>
 @endpush

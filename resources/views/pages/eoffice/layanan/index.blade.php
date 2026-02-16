@@ -38,7 +38,10 @@
                 <x-tabler.form-input name="date_range" label="Rentang Tanggal" placeholder="Pilih Tanggal..." />
             </div>
             <div class="col-md-2 d-flex align-items-end">
-                <x-tabler.button type="submit" icon="ti ti-filter" text="Filter" class="w-100" />
+                <div class="w-100">
+                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                    <x-tabler.button type="submit" icon="ti ti-filter" text="Filter" class="w-100" />
+                </div>
             </div>
         </form>
     </div>
@@ -57,7 +60,7 @@
                 ['data' => 'no_layanan', 'name' => 'no_layanan', 'title' => 'No. Pengajuan', 'class' => 'fw-bold'],
                 ['data' => 'jenis_layanan.nama_layanan', 'name' => 'jenisLayanan.nama_layanan', 'title' => 'Jenis Layanan'],
                 ['data' => 'pengusul_nama', 'name' => 'pengusul_nama', 'title' => 'Pemohon'],
-                ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Tgl Diajukan', 'render' => 'function(data){ return moment(data).format(\'DD/MM/YYYY HH:mm\'); }'],
+                ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Tgl Diajukan'],
                 ['data' => 'status_label', 'name' => 'latestStatus.status_layanan', 'title' => 'Status', 'class' => 'text-center'],
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
             ]"

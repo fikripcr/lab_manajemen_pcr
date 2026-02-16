@@ -40,7 +40,7 @@ class DashboardController extends Controller
     {
         // Total pegawai aktif
         $totalPegawai = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
-            $query->where('nama_status', 'Aktif');
+            $query->where('is_active', true);
         })->count();
 
         // Pegawai hadir hari ini
@@ -63,7 +63,7 @@ class DashboardController extends Controller
         // Previous period for comparison
         $previousPeriod = $this->getPreviousPeriod($startDate, $endDate);
         $previousTotal  = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
-            $query->where('nama_status', 'Aktif');
+            $query->where('is_active', true);
         })->whereBetween('created_at', [$previousPeriod['start'], $previousPeriod['end']])->count();
 
         $changePercentage = $previousTotal > 0 ? (($totalPegawai - $previousTotal) / $previousTotal) * 100 : 0;
@@ -94,7 +94,7 @@ class DashboardController extends Controller
         // This would integrate with your attendance system
         // For now, returning a simulated count
         $totalPegawai = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
-            $query->where('nama_status', 'Aktif');
+            $query->where('is_active', true);
         })->count();
 
         // Simulate 85-95% attendance rate
@@ -201,7 +201,7 @@ class DashboardController extends Controller
 
             // Simulate attendance data
             $totalPegawai = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
-                $query->where('nama_status', 'Aktif');
+                $query->where('is_active', true);
             })->count();
 
             $hadir = round($totalPegawai * (rand(80, 95) / 100));

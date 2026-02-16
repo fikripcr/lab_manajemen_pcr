@@ -36,6 +36,9 @@ class LayananController extends Controller
     /**
      * DataTables for Layanan
      */
+    /**
+     * DataTables for Layanan
+     */
     public function data(Request $request)
     {
         // Scope logic: if admin/pic show all or assigned, if user show mine
@@ -45,6 +48,9 @@ class LayananController extends Controller
 
         return DataTables::of($query)
             ->addIndexColumn()
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at ? $row->created_at->format('d/m/Y H:i') : '-';
+            })
             ->addColumn('status_label', function ($row) {
                 $status = $row->latestStatus->status_layanan ?? 'Menunggu';
                 $class  = match ($status) {
@@ -147,12 +153,35 @@ class LayananController extends Controller
         $pageTitle = 'Detail Pengajuan: ' . $layanan->no_layanan;
 
         // Group isian by fill_by logic
+        // FIX: Map definitions to answers because LayananIsian table doesn't have 'fill_by'
+        $definitions = $layanan->jenisLayanan->isians->sortBy('seq');
+        $answers     = $layanan->isians->keyBy('nama_isian');
+
         $dataIsian = [
-            'Pemohon'     => $layanan->isians->where('fill_by', 'Pemohon'),
-            'Disposisi 1' => $layanan->isians->where('fill_by', 'Disposisi 1'),
-            'Disposisi 2' => $layanan->isians->where('fill_by', 'Disposisi 2'),
-            'Sistem'      => $layanan->isians->where('fill_by', 'Sistem'),
+            'Pemohon'     => collect(),
+            'Disposisi 1' => collect(),
+            'Disposisi 2' => collect(),
+            'Sistem'      => collect(),
         ];
+
+        foreach ($definitions as $def) {
+            $fillBy = $def->fill_by;
+            if (! isset($dataIsian[$fillBy])) {
+                $fillBy = 'Pemohon';
+            }
+            // Default fallback
+
+            $ans = $answers->get($def->kategoriIsian->nama_isian);
+
+            // Construct object for view
+            $obj = (object) [
+                'nama_isian' => $def->kategoriIsian->nama_isian,
+                'isi'        => $ans ? $ans->isi : '-',
+                'type'       => $def->kategoriIsian->type,
+            ];
+
+            $dataIsian[$fillBy]->push($obj);
+        }
 
         // Determine if current user can take action
         $user      = Auth::user();

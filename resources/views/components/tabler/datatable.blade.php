@@ -1,5 +1,9 @@
 <!-- resources/views/components/custom-datatable.blade.php -->
-@props(['id', 'route', 'columns', 'search' => true, 'pageLength' => true, 'checkbox' => false, 'checkboxKey' => 'id'])
+@props(['id', 'route' => null, 'url' => null, 'columns', 'search' => true, 'pageLength' => true, 'checkbox' => false, 'checkboxKey' => 'id'])
+
+@php
+    $finalRoute = $route ?? $url;
+@endphp
 
 
 <div class="table-responsive">
@@ -23,7 +27,7 @@
         (function() {
             const initTable = function() {
                 const options = {
-                    route: '{{ $route }}',
+                    route: '{{ $finalRoute }}',
                     checkbox: {{ $checkbox ? 'true' : 'false' }},
                     checkboxKey: '{{ $checkboxKey }}',
                     search: {{ $search ? 'true' : 'false' }},
@@ -53,7 +57,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const options = {
-                    route: '{{ $route }}',
+                    route: '{{ $finalRoute }}',
                     checkbox: {{ $checkbox ? 'true' : 'false' }},
                     checkboxKey: '{{ $checkboxKey }}',
                     search: {{ $search ? 'true' : 'false' }},

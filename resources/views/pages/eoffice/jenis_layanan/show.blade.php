@@ -83,8 +83,8 @@
                             <tr data-id="{{ $isian->hashid }}">
                                 <td class="handle cursor-move"><i class="ti ti-drag-drop text-muted"></i></td>
                                 <td>
-                                    <div class="fw-bold">{{ $isian->nama_isian }}</div>
-                                    <div class="text-muted small">{{ jenisIsian($isian->type) }}</div>
+                                    <div class="fw-bold text-wrap">{{ $isian->nama_isian }}</div>
+                                    <div class="text-muted small">{{ function_exists('jenisIsian') ? jenisIsian($isian->type) : $isian->type }}</div>
                                 </td>
                                 <td>
                                     <x-tabler.form-select class="form-select-sm isian-toggle" name="fill_by" data-field="fill_by" class="mb-0">
@@ -236,6 +236,9 @@
         </div>
     </div>
 </div>
+@endsection
+
+@push('modals')
 
 <!-- Modal Add PIC -->
 <div class="modal modal-blur fade" id="modal-add-pic" tabindex="-1" role="dialog" aria-hidden="true">
@@ -466,7 +469,7 @@
     </div>
 </div>
 
-@endsection
+@endpush
 
 @push('scripts')
 <script>

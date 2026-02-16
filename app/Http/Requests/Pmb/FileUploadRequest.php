@@ -1,0 +1,29 @@
+<?php
+namespace App\Http\Requests\Pmb;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class FileUploadRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'pendaftaran_id'   => decryptId($this->pendaftaran_id),
+            'jenis_dokumen_id' => decryptId($this->jenis_dokumen_id),
+        ]);
+    }
+
+    public function rules()
+    {
+        return [
+            'pendaftaran_id'   => 'required|exists:pmb_pendaftaran,id',
+            'jenis_dokumen_id' => 'required|exists:pmb_jenis_dokumen,id',
+            'file'             => 'required|file|max:5120',
+        ];
+    }
+}

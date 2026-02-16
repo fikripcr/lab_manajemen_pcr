@@ -398,6 +398,114 @@
             ],
         ],
         [
+            'type'          => 'dropdown',
+            'title'         => 'Penerimaan (PMB)',
+            'id'            => 'navbar-pmb',
+            'icon'          => 'ti ti-school',
+            'active_routes' => ['pmb.*'],
+            'children'      => [
+                [
+                    'title'         => 'Verifikasi',
+                    'id'            => 'navbar-pmb-verify',
+                    'icon'          => 'ti ti-user-check',
+                    'active_routes' => ['pmb.verification.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Pembayaran',
+                            'route'         => 'pmb.verification.payments',
+                            'active_routes' => ['pmb.verification.payments*'],
+                            'icon'          => 'ti ti-cash',
+                        ],
+                        [
+                            'title'         => 'Berkas',
+                            'route'         => 'pmb.verification.documents',
+                            'active_routes' => ['pmb.verification.documents*'],
+                            'icon'          => 'ti ti-file-check',
+                        ],
+                    ],
+                ],
+                [
+                    'title'         => 'Sesi Ujian',
+                    'route'         => 'pmb.sesi-ujian.index',
+                    'active_routes' => ['pmb.sesi-ujian.*'],
+                    'icon'          => 'ti ti-clock',
+                ],
+                [
+                    'title'         => 'Master Data',
+                    'id'            => 'navbar-pmb-master',
+                    'icon'          => 'ti ti-database',
+                    'active_routes' => ['pmb.periode.*', 'pmb.jalur.*', 'pmb.prodi.*', 'pmb.jenis-dokumen.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Periode',
+                            'route'         => 'pmb.periode.index',
+                            'active_routes' => ['pmb.periode.*'],
+                            'icon'          => 'ti ti-calendar',
+                        ],
+                        [
+                            'title'         => 'Jalur Pendaftaran',
+                            'route'         => 'pmb.jalur.index',
+                            'active_routes' => ['pmb.jalur.*'],
+                            'icon'          => 'ti ti-map-2',
+                        ],
+                        [
+                            'title'         => 'Program Studi',
+                            'route'         => 'pmb.prodi.index',
+                            'active_routes' => ['pmb.prodi.*'],
+                            'icon'          => 'ti ti-books',
+                        ],
+                        [
+                            'title'         => 'Jenis Dokumen',
+                            'route'         => 'pmb.jenis-dokumen.index',
+                            'active_routes' => ['pmb.jenis-dokumen.*'],
+                            'icon'          => 'ti ti-file-text',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        [
+            'type'          => 'dropdown',
+            'title'         => 'CBT Engine',
+            'id'            => 'navbar-cbt',
+            'icon'          => 'ti ti-device-laptop',
+            'active_routes' => ['cbt.*'],
+            'children'      => [
+                [
+                    'title'         => 'Bank Soal',
+                    'id'            => 'navbar-cbt-bank',
+                    'icon'          => 'ti ti-database',
+                    'active_routes' => ['cbt.mata-uji.*', 'cbt.soal.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Mata Uji',
+                            'route'         => 'cbt.mata-uji.index',
+                            'active_routes' => ['cbt.mata-uji.*'],
+                            'icon'          => 'ti ti-book',
+                        ],
+                        [
+                            'title'         => 'Daftar Soal',
+                            'route'         => 'cbt.soal.index',
+                            'active_routes' => ['cbt.soal.*'],
+                            'icon'          => 'ti ti-list-check',
+                        ],
+                    ],
+                ],
+                [
+                    'title'         => 'Paket Ujian',
+                    'route'         => 'cbt.paket.index',
+                    'active_routes' => ['cbt.paket.*', 'cbt.komposisi.*'],
+                    'icon'          => 'ti ti-box',
+                ],
+                [
+                    'title'         => 'Jadwal Ujian',
+                    'route'         => 'cbt.jadwal.index',
+                    'active_routes' => ['cbt.jadwal.*'],
+                    'icon'          => 'ti ti-calendar-event',
+                ],
+            ],
+        ],
+        [
             'type'  => 'header',
             'title' => 'Lainnya',
         ],
