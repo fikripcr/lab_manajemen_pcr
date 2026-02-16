@@ -1,4 +1,4 @@
-<div class="card mb-3 card-pertanyaan border shadow-sm" data-id="{{ $pertanyaan->id }}">
+<div class="card m-3 card-pertanyaan bg-light border shadow-sm" data-id="{{ $pertanyaan->id }}">
     <div class="card-body py-3">
         <div class="row">
             <div class="col-auto drag-handle cursor-move text-muted" title="Drag untuk mengatur urutan">

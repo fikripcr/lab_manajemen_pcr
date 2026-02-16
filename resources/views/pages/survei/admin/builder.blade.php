@@ -28,7 +28,7 @@
                     <div class="list-group list-group-flush" id="list-halaman">
                         @foreach($survei->halaman as $halaman)
                         <div class="list-group-item list-group-item-action d-flex align-items-center {{ $loop->first ? 'active' : '' }}" 
-                             data-id="{{ $halaman->id }}">
+                             data-id="{{ $halaman->id }}" data-deskripsi="{{ e($halaman->deskripsi_halaman) }}">
                             <i class="ti ti-grip-vertical text-muted me-2" style="cursor: grab;"></i>
                             <span class="halaman-title text-truncate flex-fill" style="cursor: pointer;" onclick="window.selectHalaman && window.selectHalaman({{ $halaman->id }})">{{ $halaman->judul_halaman }}</span>
                             <div class="d-flex align-items-center ms-2">
@@ -36,8 +36,8 @@
                                 <div class="dropdown">
                                     <i class="ti ti-dots-vertical cursor-pointer" data-bs-toggle="dropdown"></i>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); window.editHalaman && window.editHalaman({{ $halaman->id }}, '{{ addslashes($halaman->judul_halaman) }}')">
-                                            <i class="ti ti-pencil me-2"></i>Rename
+                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); window.editHalaman && window.editHalaman({{ $halaman->id }})">
+                                            <i class="ti ti-pencil me-2"></i>Edit Halaman
                                         </a>
                                         <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); window.deleteHalaman && window.deleteHalaman({{ $halaman->id }})">
                                             <i class="ti ti-trash me-2"></i>Hapus
@@ -58,7 +58,14 @@
                     <div class="halaman-pane {{ $loop->first ? '' : 'd-none' }}" id="halaman-{{ $halaman->id }}">
                         <div class="card mb-3">
                             <div class="card-header">
-                                <h3 class="card-title">Pertanyaan di <span class="fw-bold halaman-title-display">{{ $halaman->judul_halaman }}</span></h3>
+                                <div>
+                                    <h3 class="card-title mb-0">Pertanyaan di <span class="fw-bold halaman-title-display">{{ $halaman->judul_halaman }}</span></h3>
+                                    @if($halaman->deskripsi_halaman)
+                                    <div class="text-muted small mt-1 halaman-deskripsi-display">{!! $halaman->deskripsi_halaman !!}</div>
+                                    @else
+                                    <div class="text-muted small mt-1 halaman-deskripsi-display"></div>
+                                    @endif
+                                </div>
                                 <div class="card-actions">
                                     <div class="dropdown me-2">
                                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
@@ -97,10 +104,10 @@
 
 <!-- Modal Edit Halaman -->
 <div class="modal modal-blur fade" id="modalEditHalaman" tabindex="-1">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Rename Halaman</h5>
+                <h5 class="modal-title">Edit Halaman</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -108,6 +115,10 @@
                 <div class="mb-3">
                     <label class="form-label">Judul Halaman</label>
                     <input type="text" class="form-control" id="edit-halaman-judul" placeholder="Judul Halaman">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Keterangan</label>
+                    <textarea class="form-control" id="edit-halaman-deskripsi" rows="3" placeholder="Instruksi singkat untuk responden di halaman ini..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -211,24 +222,37 @@
             $('#halaman-' + id).removeClass('d-none');
         };
 
-        window.editHalaman = function(id, currentTitle) {
+        window.editHalaman = function(id) {
+            const $item = $(`#list-halaman .list-group-item[data-id="${id}"]`);
+            const currentTitle = $item.find('.halaman-title').text().trim();
+            const currentDesc = $item.data('deskripsi') || '';
+
             $('#edit-halaman-id').val(id);
             $('#edit-halaman-judul').val(currentTitle);
-            new bootstrap.Modal('#modalEditHalaman').show();
+            $('#edit-halaman-deskripsi').val(currentDesc);
+
+            let modal = bootstrap.Modal.getInstance('#modalEditHalaman');
+            if (!modal) modal = new bootstrap.Modal('#modalEditHalaman');
+            modal.show();
         };
 
         window.saveHalaman = function() {
             let id = $('#edit-halaman-id').val();
             let judul = $('#edit-halaman-judul').val();
+            let deskripsi = $('#edit-halaman-deskripsi').val().trim();
+
             $.ajax({
                 url: routeFor('halamanUpdate', id),
                 type: 'PUT',
-                data: { _token: csrfToken, judul_halaman: judul },
+                data: { _token: csrfToken, judul_halaman: judul, deskripsi_halaman: deskripsi },
                 success: function(res) {
                     if (res.success) {
                         $(`#list-halaman .list-group-item[data-id="${id}"] .halaman-title`).text(judul);
+                        $(`#list-halaman .list-group-item[data-id="${id}"]`).data('deskripsi', deskripsi);
                         $(`#halaman-${id} .halaman-title-display`).text(judul);
+                        $(`#halaman-${id} .halaman-deskripsi-display`).html(deskripsi);
                         bootstrap.Modal.getInstance('#modalEditHalaman').hide();
+                        showSuccessMessage('Halaman berhasil diperbarui.');
                     }
                 }
             });

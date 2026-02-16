@@ -13,10 +13,10 @@
             </p>
             <div class="empty-action">
                 @auth
-                <a href="{{ route('dashboard') }}" class="btn btn-primary">
+                {{-- <a href="{{ route('dashboard') }}" class="btn btn-primary">
                     <i class="ti ti-arrow-left me-1"></i>
                     Kembali ke Dashboard
-                </a>
+                </a> --}}
                 @else
                 <a href="{{ url('/') }}" class="btn btn-primary">
                     <i class="ti ti-home me-1"></i>
