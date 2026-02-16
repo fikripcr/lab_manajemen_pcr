@@ -1,12 +1,11 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
-class TestPermissionSeeder extends Seeder
+class MockSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,13 +16,13 @@ class TestPermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [];
-        $batchSize = 1000; // Insert in batches to prevent memory issues
-        
+        $batchSize   = 1000; // Insert in batches to prevent memory issues
+
         echo "Starting to create 500,000 random permissions...\n";
 
         for ($i = 0; $i < 500000; $i++) {
             $permissions[] = [
-                'name' => 'test_permission_' . Str::random(10) . '_' . $i,
+                'name'       => 'test_permission_' . Str::random(10) . '_' . $i,
                 'guard_name' => 'web',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -38,7 +37,7 @@ class TestPermissionSeeder extends Seeder
         }
 
         // Insert remaining permissions if any
-        if (!empty($permissions)) {
+        if (! empty($permissions)) {
             Permission::insert($permissions);
             echo "Inserted final batch of permissions\n";
         }

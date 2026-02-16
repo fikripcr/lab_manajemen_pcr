@@ -19,6 +19,98 @@ class ExamExecutionController extends Controller
     }
 
     /**
+     * Unified Dashboard (Admin & Camaba)
+     */
+    public function dashboard()
+    {
+        return view('pages.cbt.dashboard.index');
+    }
+
+    /**
+     * API: Save answer
+     */
+    public function saveAnswerApi(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
+                ->where('status', 'Sedang_Mengerjakan')
+                ->firstOrFail();
+
+            $this->ExamExecutionService->saveAnswer($riwayat, $request->all());
+            
+            return response()->json(['success' => true]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * API: Submit exam
+     */
+    public function submitExamApi(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
+                ->where('status', 'Sedang_Mengerjakan')
+                ->firstOrFail();
+
+            $this->ExamExecutionService->submitExam($riwayat);
+            
+            return response()->json([
+                'success' => true, 
+                'redirect' => route('cbt.exam.complete', $riwayat->hashid)
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * API: Log violation
+     */
+    public function logViolationApi(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
+                ->where('status', 'Sedang_Mengerjakan')
+                ->first();
+
+            if ($riwayat) {
+                \App\Models\Cbt\LogPelanggaran::create([
+                    'riwayat_id' => $riwayat->id,
+                    'jenis_pelanggaran' => $request->type,
+                    'keterangan' => $request->keterangan ?? null,
+                    'waktu_kejadian' => now()
+                ]);
+            }
+            
+            return response()->json(['success' => true]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * API: Toggle token
+     */
+    public function toggleTokenApi(JadwalUjian $jadwal)
+    {
+        try {
+            $jadwal->update(['is_token_aktif' => !$jadwal->is_token_aktif]);
+            
+            return response()->json([
+                'success' => true,
+                'is_active' => $jadwal->is_token_aktif
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Show token validation form (Modal)
      */
     public function tokenForm(JadwalUjian $jadwal)

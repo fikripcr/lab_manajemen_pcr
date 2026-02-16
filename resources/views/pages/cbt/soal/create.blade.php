@@ -94,7 +94,7 @@
 </div>
 @endsection
 
-@push('js')
+@push('scripts')
 <script>
     $(document).ready(function() {
         $('#tipe_soal').on('change', function() {

@@ -1,9 +1,31 @@
 <?php
 
+use App\Http\Controllers\Cbt\ExamExecutionController;
 use App\Http\Controllers\Cbt\MataUjiController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group(function () {
+
+    // Dashboard (Unified for Admin & Camaba)
+    Route::get('/', [ExamExecutionController::class, 'dashboard'])->name('dashboard');
+
+    // Monitoring & Reporting (Placeholders)
+    Route::get('/monitor/{jadwal}', function () {
+        return "Fitur Monitoring Ujian (Coming Soon)";
+    })->name('monitor');
+
+    Route::get('/violations', function () {
+        return "Laporan Pelanggaran (Coming Soon)";
+    })->name('laporan.pelanggaran');
+
+    // API Routes for Exam Execution
+    Route::prefix('api')->name('api.')->group(function () {
+        Route::post('/save-answer', [ExamExecutionController::class, 'saveAnswerApi'])->name('save-answer');
+        Route::post('/submit-exam', [ExamExecutionController::class, 'submitExamApi'])->name('submit-exam');
+        Route::post('/log-violation', [ExamExecutionController::class, 'logViolationApi'])->name('log-violation');
+        Route::post('/toggle-token/{jadwal}', [ExamExecutionController::class, 'toggleTokenApi'])->name('toggle-token');
+    });
+
     // Mata Uji
     Route::prefix('mata-uji')->name('mata-uji.')->group(function () {
         Route::get('/', [MataUjiController::class, 'index'])->name('index');

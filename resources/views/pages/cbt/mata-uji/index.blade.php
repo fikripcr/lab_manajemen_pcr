@@ -43,7 +43,7 @@
 </div>
 @endsection
 
-@push('js')
+@push('scripts')
 <script>
     $(document).ready(function() {
         $('#modal-action').on('show.bs.modal', function(e) {

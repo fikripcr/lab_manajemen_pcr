@@ -54,7 +54,7 @@
 </div>
 @endsection
 
-@push('js')
+@push('scripts')
 <script>
     $(document).ready(function() {
         $('#filter-mata-uji').on('change', function() {

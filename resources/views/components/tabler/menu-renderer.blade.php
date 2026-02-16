@@ -33,6 +33,22 @@
         ],
         [
             'type'  => 'header',
+            'title' => 'PMB & CBT',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Dashboard PMB',
+            'route' => 'pmb.dashboard',
+            'icon'  => 'ti ti-users',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Dashboard CBT',
+            'route' => 'cbt.dashboard',
+            'icon'  => 'ti ti-file-text',
+        ],
+        [
+            'type'  => 'header',
             'title' => 'Master Data',
         ],
         [

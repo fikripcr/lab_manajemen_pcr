@@ -8,7 +8,7 @@
                 <h2 class="page-title">Penjadwalan Ujian (CBT)</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-action" data-title="Tambah Jadwal Ujian" data-url="{{ route('cbt.jadwal.create') }}">
+                <button type="button" class="btn btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Jadwal Ujian" data-url="{{ route('cbt.jadwal.create') }}">
                     <i class="ti ti-plus"></i> Tambah Jadwal
                 </button>
             </div>
@@ -37,10 +37,5 @@
         </div>
     </div>
 </div>
-
-<div class="modal modal-blur fade" id="modal-action" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" id="modal-content-body"></div>
-    </div>
-</div>
 @endsection
+

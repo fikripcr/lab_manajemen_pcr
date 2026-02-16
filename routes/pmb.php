@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
 
+    // Dashboard (Unified for Admin & Camaba)
+    Route::get('/', [PendaftaranController::class, 'dashboard'])->name('dashboard');
+
     // Pendaftaran Management (Admin focus for now)
     Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
         Route::get('/', [PendaftaranController::class, 'index'])->name('index');

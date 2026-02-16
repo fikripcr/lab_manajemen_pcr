@@ -8,7 +8,7 @@
                 <h2 class="page-title">Paket Ujian (CBT)</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-action" data-title="Tambah Paket Ujian" data-url="{{ route('cbt.paket.create') }}">
+                <button type="button" class="btn btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Paket Ujian" data-url="{{ route('cbt.paket.create') }}">
                     <i class="ti ti-plus"></i> Tambah Paket
                 </button>
             </div>
@@ -37,10 +37,5 @@
         </div>
     </div>
 </div>
-
-<div class="modal modal-blur fade" id="modal-action" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" id="modal-content-body"></div>
-    </div>
-</div>
 @endsection
+

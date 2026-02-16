@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders\Eoffice;
+namespace Database\Seeders;
 
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\JenisLayananDisposisi;
@@ -16,7 +16,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class EofficeSeeder extends Seeder
+class MainEofficeSeeder extends Seeder
 {
     /**
      * Run the database seeds.

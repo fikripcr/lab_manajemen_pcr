@@ -126,7 +126,7 @@
 </div>
 @endsection
 
-@push('js')
+@push('scripts')
 <script>
     // --- 1. DATA & STATE ---
     const soalData = {!! $paketSoal->toJson() !!};

@@ -1,12 +1,6 @@
 <?php
 namespace Database\Seeders;
 
-use Database\Seeders\Pemutu\DokumenSeeder;
-use Database\Seeders\Pemutu\IndikatorSeeder;
-use Database\Seeders\Pemutu\PemutuSeeder;
-use Database\Seeders\Pemutu\PersonilSeeder;
-use Database\Seeders\Sys\SysRoleSuperAdminSeeder;
-use Database\Seeders\Sys\SysSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,30 +14,19 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // Sys Data
-            SysSeeder::class,
-            SysRoleSuperAdminSeeder::class,
-            UserSeeder::class,
+            // Core System
+            MainSysSeeder::class,
 
-            // // HR Data
-            // HrJabatanFungsionalSeeder::class,
-            // HrOrgUnitSeeder::class,
-            // HrStatusPegawaiSeeder::class,
-            // HrStatusAktifitasSeeder::class,
-            // HrJenisIzinSeeder::class,
-            // HrJenisIndisiplinerSeeder::class,
-            // HrJenisShiftSeeder::class,
-            // HumanCapitalSeeder::class,
+            // Modules
+            MainHrSeeder::class,
+            MainLabSeeder::class,
+            MainPemutuSeeder::class,
+            MainEofficeSeeder::class,
+            MainPmbSeeder::class,
+            MainCbtSeeder::class,
 
-            // Lab Data
-            Lab\LabSeeder::class,
-
-            // Pemutu Data
-            PemutuSeeder::class,
-            DokumenSeeder::class,
-            PersonilSeeder::class,
-            IndikatorSeeder::class,
-            Eoffice\EofficeSeeder::class,
+            // Optional/Mock
+            MockSeeder::class,
         ]);
     }
 }

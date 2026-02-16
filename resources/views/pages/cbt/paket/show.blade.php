@@ -95,7 +95,7 @@
 </div>
 @endsection
 
-@push('js')
+@push('scripts')
 <script>
     $(document).on('click', '.btn-delete-komposisi', function() {
         var btn = $(this);

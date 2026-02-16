@@ -17,6 +17,14 @@ class PendaftaranController extends Controller
     }
 
     /**
+     * Unified Dashboard (Admin & Camaba)
+     */
+    public function dashboard()
+    {
+        return view('pages.pmb.dashboard.index');
+    }
+
+    /**
      * Display a listing of registrations (Admin)
      */
     public function index()
