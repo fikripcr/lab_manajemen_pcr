@@ -240,6 +240,7 @@ return new class extends Migration
         Schema::create('hr_riwayat_statpegawai', function (Blueprint $table) {
             $table->id('riwayatstatpegawai_id');
             $table->unsignedBigInteger('pegawai_id')->index();
+            $table->unsignedBigInteger('before_id')->nullable()->index();
             $table->unsignedBigInteger('statuspegawai_id')->nullable();
             $table->date('tmt')->nullable();
             $table->date('tgl_akhir')->nullable();
@@ -480,6 +481,48 @@ return new class extends Migration
             $table->foreign('jenisfile_id')->references('jenisfile_id')->on('hr_jenis_file')->onDelete('cascade');
         });
 
+        // 18. Lembur Tables
+        Schema::create('hr_lembur', function (Blueprint $table) {
+            $table->id('lembur_id');
+            $table->unsignedBigInteger('pengusul_id')->comment('ID pegawai yang mengusulkan');
+            $table->string('judul', 255)->comment('Judul/ringkasan lembur');
+            $table->text('uraian_pekerjaan')->nullable()->comment('Deskripsi detail pekerjaan');
+            $table->text('alasan')->nullable()->comment('Alasan lembur');
+            $table->date('tgl_pelaksanaan')->comment('Tanggal pelaksanaan lembur');
+            $table->time('jam_mulai')->comment('Jam mulai lembur');
+            $table->time('jam_selesai')->comment('Jam selesai lembur');
+            $table->integer('durasi_menit')->nullable()->comment('Durasi dalam menit (auto-calculated)');
+            $table->boolean('is_dibayar')->default(true)->comment('Apakah lembur dibayar?');
+            $table->string('metode_bayar', 50)->nullable()->comment('Metode pembayaran: uang, cuti_pengganti, tidak_dibayar');
+            $table->decimal('nominal_per_jam', 10, 2)->nullable()->comment('Nominal per jam jika dibayar');
+            $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable()->index();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->index(['pengusul_id', 'tgl_pelaksanaan']);
+            $table->foreign('pengusul_id')->references('pegawai_id')->on('hr_pegawai')->onDelete('cascade');
+        });
+
+        Schema::create('hr_lembur_pegawai', function (Blueprint $table) {
+            $table->id('lemburpegawai_id');
+            $table->unsignedBigInteger('lembur_id')->index();
+            $table->unsignedBigInteger('pegawai_id')->index();
+            $table->decimal('override_nominal', 10, 2)->nullable();
+            $table->text('catatan')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->unique(['lembur_id', 'pegawai_id', 'deleted_at'], 'unique_lembur_pegawai');
+            $table->foreign('lembur_id')->references('lembur_id')->on('hr_lembur')->onDelete('cascade');
+            $table->foreign('pegawai_id')->references('pegawai_id')->on('hr_pegawai')->onDelete('cascade');
+        });
+
         // Add foreign keys for blameable if needed, generally implicit or added via separate schema call.
         // Given we are in a Consolidation, and users table exists, we can add them.
         // But to keep it simple and avoid potential issues, we rely on the column presence.
@@ -490,6 +533,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('hr_lembur_pegawai');
+        Schema::dropIfExists('hr_lembur');
         Schema::dropIfExists('hr_file_pegawai');
         Schema::dropIfExists('hr_presensi');
         Schema::dropIfExists('hr_riwayat_penugasan');

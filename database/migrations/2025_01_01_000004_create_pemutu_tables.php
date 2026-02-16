@@ -148,6 +148,50 @@ return new class extends Migration
             $table->foreign('dok_id')->references('dok_id')->on('pemutu_dokumen')->cascadeOnDelete();
         });
 
+        // ---------------------------------------------------------------------
+        // Period Tables
+        // ---------------------------------------------------------------------
+        Schema::create('pemutu_periode_spmi', function (Blueprint $table) {
+            $table->id('periodespmi_id');
+            $table->integer('periode');
+            $table->string('jenis_periode', 20);
+            $table->date('penetapan_awal')->nullable();
+            $table->date('penetapan_akhir')->nullable();
+            $table->date('ed_awal')->nullable();
+            $table->date('ed_akhir')->nullable();
+            $table->date('ami_awal')->nullable();
+            $table->date('ami_akhir')->nullable();
+            $table->date('pengendalian_awal')->nullable();
+            $table->date('pengendalian_akhir')->nullable();
+            $table->date('peningkatan_awal')->nullable();
+            $table->date('peningkatan_akhir')->nullable();
+            $table->timestamps();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+        });
+
+        Schema::create('pemutu_periode_kpi', function (Blueprint $table) {
+            $table->id('periode_kpi_id');
+            $table->string('nama', 100);
+            $table->enum('semester', ['Ganjil', 'Genap']);
+            $table->string('tahun_akademik', 20);
+            $table->integer('tahun');
+            $table->date('tanggal_mulai');
+            $table->date('tanggal_selesai');
+            $table->boolean('is_active')->default(false);
+            $table->timestamps();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+        });
+
         Schema::create('pemutu_indikator', function (Blueprint $table) {
             $table->id('indikator_id');
             $table->unsignedBigInteger('parent_id')->nullable();
@@ -161,6 +205,7 @@ return new class extends Migration
             $table->string('periode_jenis', 30)->nullable();
             $table->dateTime('periode_mulai')->nullable();
             $table->dateTime('periode_selesai')->nullable();
+            $table->string('unit_ukuran', 50)->nullable();
             $table->text('keterangan')->nullable();
             $table->integer('seq')->nullable();
             $table->string('level_risk', 20)->nullable();
@@ -235,10 +280,16 @@ return new class extends Migration
             $table->id('id');
             $table->unsignedBigInteger('personil_id');
             $table->unsignedBigInteger('indikator_id');
+            $table->unsignedBigInteger('periode_kpi_id')->nullable();
             $table->integer('year');
             $table->string('semester', 20);
             $table->decimal('weight', 5, 2)->nullable();
             $table->decimal('target_value', 10, 2)->nullable();
+            $table->text('realization')->nullable();
+            $table->decimal('score', 5, 2)->nullable();
+            $table->string('attachment')->nullable();
+            $table->string('status', 20)->default('draft'); // draft, submitted, approved, rejected
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             // Blameable
@@ -249,6 +300,7 @@ return new class extends Migration
 
             $table->foreign('personil_id')->references('personil_id')->on('pemutu_personil')->cascadeOnDelete();
             $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
+            $table->foreign('periode_kpi_id')->references('periode_kpi_id')->on('pemutu_periode_kpi')->onDelete('set null');
         });
 
         Schema::create('pemutu_dok_approval', function (Blueprint $table) {
@@ -285,46 +337,6 @@ return new class extends Migration
         });
 
         // ---------------------------------------------------------------------
-        // Consolidated from: 2026_02_14_000001_create_pemutu_periode_spmi_table
-        // ---------------------------------------------------------------------
-        Schema::create('pemutu_periode_spmi', function (Blueprint $table) {
-            $table->id('periodespmi_id');
-            $table->integer('periode');
-            $table->string('jenis_periode', 20);
-
-            // Penetapan
-            $table->date('penetapan_awal')->nullable();
-            $table->date('penetapan_akhir')->nullable();
-
-            // Pelaksanaan (ED)
-            $table->date('ed_awal')->nullable();
-            $table->date('ed_akhir')->nullable();
-
-            // Evaluasi (AMI)
-            $table->date('ami_awal')->nullable();
-            $table->date('ami_akhir')->nullable();
-
-            // Pengendalian
-            $table->date('pengendalian_awal')->nullable();
-            $table->date('pengendalian_akhir')->nullable();
-
-            // Peningkatan
-            $table->date('peningkatan_awal')->nullable();
-            $table->date('peningkatan_akhir')->nullable();
-
-            $table->timestamps();
-
-            // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->softDeletes();
-
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
-        });
-
-        // ---------------------------------------------------------------------
         // Consolidated from: 2026_02_14_170800_create_rapats_table
         // ---------------------------------------------------------------------
 
@@ -343,6 +355,13 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         // 2. Child Table: pemutu_rapat_agenda
@@ -353,6 +372,10 @@ return new class extends Migration
             $table->text('isi');
             $table->integer('seq');
             $table->timestamps();
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
         // 3. Child Table: pemutu_rapat_peserta
@@ -361,7 +384,14 @@ return new class extends Migration
             $table->foreignId('rapat_id')->constrained('pemutu_rapat', 'rapat_id')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('jabatan', 100);
+            $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa'])->nullable();
+            $table->timestamp('waktu_hadir')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
         // 4. Child Table: pemutu_rapat_entitas
@@ -372,6 +402,10 @@ return new class extends Migration
             $table->unsignedBigInteger('model_id');
             $table->text('keterangan')->nullable();
             $table->timestamps();
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
     }
 
@@ -385,6 +419,7 @@ return new class extends Migration
         Schema::dropIfExists('pemutu_rapat_peserta');
         Schema::dropIfExists('pemutu_rapat_agenda');
         Schema::dropIfExists('pemutu_rapat');
+        Schema::dropIfExists('pemutu_periode_kpi');
         Schema::dropIfExists('pemutu_periode_spmi');
 
         Schema::dropIfExists('pemutu_indikator_personil');

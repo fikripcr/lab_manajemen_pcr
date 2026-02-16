@@ -11,6 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 0. Approval System for Lab
+        Schema::create('lab_riwayat_approval', function (Blueprint $table) {
+            $table->id('riwayatapproval_id');
+            $table->string('model', 100)->nullable();
+            $table->unsignedBigInteger('model_id')->nullable();
+            $table->string('status', 50)->nullable();
+            $table->string('pejabat', 191)->nullable();
+            $table->string('jenis_jabatan', 191)->nullable();
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+        });
+
         // 1. Labs (Renamed to lab_labs)
         Schema::create('lab_labs', function (Blueprint $table) {
             $table->id('lab_id');
@@ -142,6 +158,7 @@ return new class extends Migration
             $table->time('jam_mulai');
             $table->time('jam_selesai');
             $table->string('status', 20)->default('pending');
+            $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->string('dokumentasi_path', 500)->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -153,6 +170,9 @@ return new class extends Migration
 
             $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
             $table->foreign('penyelenggara_id')->references('id')->on('users');
+            $table->foreign('latest_riwayatapproval_id')
+                ->references('riwayatapproval_id')->on('lab_riwayat_approval')
+                ->onDelete('set null');
             $table->index(['tanggal', 'status']);
         });
 
@@ -219,6 +239,7 @@ return new class extends Migration
 
             $table->text('deskripsi');
             $table->string('status', 20)->default('pending');
+            $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -230,6 +251,9 @@ return new class extends Migration
 
             $table->foreign('dosen_id')->references('id')->on('users');
             $table->foreign('periodsoftreq_id')->references('periodsoftreq_id')->on('lab_periode_softrequest')->onDelete('set null');
+            $table->foreign('latest_riwayatapproval_id')
+                ->references('riwayatapproval_id')->on('lab_riwayat_approval')
+                ->onDelete('set null');
             $table->index(['status']);
         });
 
@@ -356,8 +380,9 @@ return new class extends Migration
             $table->id('surat_bebas_lab_id');
             $table->unsignedBigInteger('student_id');
             $table->string('status', 20)->default('pending'); // pending, approved, rejected
-            $table->string('file_path')->nullable();          // Path to generated PDF
-            $table->text('remarks')->nullable();              // Catatan penolakan/approval
+            $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
+            $table->string('file_path')->nullable(); // Path to generated PDF
+            $table->text('remarks')->nullable();     // Catatan penolakan/approval
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
 
@@ -371,6 +396,7 @@ return new class extends Migration
 
             $table->foreign('student_id')->references('id')->on('users');
             $table->foreign('approved_by')->references('id')->on('users');
+            // $table->foreign('latest_riwayatapproval_id')->references('riwayatapproval_id')->on('lab_riwayat_approval')->onDelete('set null');
         });
 
         // 16. Lab Mahasiswa
@@ -437,6 +463,7 @@ return new class extends Migration
         Schema::dropIfExists('lab_jadwal_kuliah');
         Schema::dropIfExists('lab_mata_kuliahs');
         Schema::dropIfExists('lab_semesters');
+        Schema::dropIfExists('lab_riwayat_approval');
         Schema::dropIfExists('lab_labs');
     }
 };
