@@ -94,12 +94,11 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" type="button" 
-                                            data-bs-toggle="collapse" 
-                                            data-bs-target="#jawaban-{{ $pengisian->id }}"
-                                            aria-expanded="false">
-                                        <i class="ti ti-eye"></i> Detail
-                                    </button>
+                                    <x-tabler.button size="sm" variant="outline-primary" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#jawaban-{{ $pengisian->id }}"
+                                        aria-expanded="false"
+                                        icon="ti ti-eye" label="Detail" />
                                 </td>
                             </tr>
                             <tr class="collapse" id="jawaban-{{ $pengisian->id }}">

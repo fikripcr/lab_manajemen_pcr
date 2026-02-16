@@ -112,18 +112,12 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="edit-halaman-id">
-                <div class="mb-3">
-                    <label class="form-label">Judul Halaman</label>
-                    <input type="text" class="form-control" id="edit-halaman-judul" placeholder="Judul Halaman">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Keterangan</label>
-                    <textarea class="form-control" id="edit-halaman-deskripsi" rows="3" placeholder="Instruksi singkat untuk responden di halaman ini..."></textarea>
-                </div>
+                <x-tabler.form-input name="judul_halaman" label="Judul Halaman" id="edit-halaman-judul" placeholder="Judul Halaman" />
+                <x-tabler.form-textarea name="deskripsi_halaman" label="Keterangan" id="edit-halaman-deskripsi" rows="3" placeholder="Instruksi singkat untuk responden di halaman ini..." />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" onclick="saveHalaman()">Simpan</button>
+                <x-tabler.button type="submit" onclick="saveHalaman()" label="Simpan" />
             </div>
         </div>
     </div>

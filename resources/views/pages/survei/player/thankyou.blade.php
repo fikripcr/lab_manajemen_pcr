@@ -18,10 +18,7 @@
                     Kembali ke Dashboard
                 </a> --}}
                 @else
-                <a href="{{ url('/') }}" class="btn btn-primary">
-                    <i class="ti ti-home me-1"></i>
-                    Kembali ke Beranda
-                </a>
+                <x-tabler.button href="{{ url('/') }}" icon="ti ti-home" label="Kembali ke Beranda" />
                 @endauth
             </div>
         </div>
