@@ -9,18 +9,24 @@
 </x-tabler.page-header>
 @endsection
 @section('content')
-<div class="page-body">
+<<div class="page-body">
     <div class="container-xl">
         <div class="card">
             <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="btn-group" id="bulk-actions" style="display: none;">
+                        <button type="button" class="btn btn-outline-secondary btn-duplicate-bulk">
+                            <i class="ti ti-copy me-2"></i>Duplikasi Terpilih
+                        </button>
+                    </div>
+                </div>
                 <x-tabler.datatable 
                 id="table-survei" 
+                checkbox="true"
                 :columns="[
-                    ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false],
                     ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul Survei'],
-                    ['data' => 'target_role', 'name' => 'target_role', 'title' => 'Target'],
-                    ['data' => 'tanggal_mulai', 'name' => 'tanggal_mulai', 'title' => 'Mulai'],
-                    ['data' => 'tanggal_selesai', 'name' => 'tanggal_selesai', 'title' => 'Selesai'],
+                    ['data' => 'periode', 'name' => 'periode', 'title' => 'Periode'],
+                    ['data' => 'pelaksanaan', 'name' => 'pelaksanaan', 'title' => 'Pelaksanaan', 'orderable' => false],
                     ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
                     ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
                 ]" 
@@ -34,7 +40,86 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle Status (Publish/Unpublish) via POST with SweetAlert confirmation
+    // Toggle Bulk Actions based on CustomDataTables selection
+    function updateBulkActions() {
+        const dt = window['DT_table-survei'];
+        if (dt && dt.selectedIds.size > 0) {
+            $('#bulk-actions').fadeIn();
+        } else {
+            $('#bulk-actions').fadeOut();
+        }
+    }
+
+    // Listen to checkbox changes (delegated)
+    $(document).on('change', '.select-row, #selectAll-table-survei', function() {
+        // Small delay to let CustomDataTables update its Set
+        setTimeout(updateBulkActions, 50);
+    });
+
+    // Bulk Duplicate
+    $('.btn-duplicate-bulk').on('click', function() {
+        const dt = window['DT_table-survei'];
+        if (!dt || dt.selectedIds.size === 0) return;
+
+        const ids = Array.from(dt.selectedIds);
+
+        Swal.fire({
+            title: 'Duplikasi survei terpilih?',
+            text: `Seluruh struktur (${ids.length} survei) akan diduplikasi.`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Duplikasi',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#206bc4',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                showLoadingMessage('Menduplikasi...', 'Harap tunggu');
+                
+                const promises = ids.map(id => {
+                    const url = "{{ route('survei.duplicate', ':id') }}".replace(':id', id);
+                    return axios.post(url);
+                });
+
+                Promise.all(promises)
+                    .then(() => {
+                        window['DT_table-survei'].table.ajax.reload();
+                        window['DT_table-survei'].selectedIds.clear();
+                        $('#selectAll-table-survei').prop('checked', false);
+                        updateBulkActions();
+                        showSuccessMessage('Berhasil menduplikasi survei terpilih.');
+                    })
+                    .catch(() => {
+                        showErrorMessage('Error!', 'Gagal menduplikasi beberapa survei.');
+                    });
+            }
+        });
+    });
+
+    // Single Duplicate (from dropdown)
+    $(document).on('click', '.btn-duplicate-single', function(e) {
+        e.preventDefault();
+        const url = $(this).data('url');
+        
+        Swal.fire({
+            title: 'Duplikasi survei ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Duplikasi',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                showLoadingMessage('Menduplikasi...', 'Harap tunggu');
+                axios.post(url).then(response => {
+                    if (window['DT_table-survei']) window['DT_table-survei'].table.ajax.reload(null, false);
+                    showSuccessMessage('Survei berhasil diduplikasi.');
+                }).catch(error => {
+                    showErrorMessage('Error!', 'Gagal menduplikasi survei.');
+                });
+            }
+        });
+    });
+
+    // Toggle Status (Publish/Unpublish)
     $(document).on('click', '.btn-toggle-status', function(e) {
         e.preventDefault();
         const $btn = $(this);
@@ -53,36 +138,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoadingMessage('Memproses...', 'Harap tunggu');
                 axios.post(url)
                     .then(response => {
-                        if ($.fn.DataTable && $('.dataTable').length) {
-                            $('.dataTable').DataTable().ajax.reload(null, false);
+                        if (window['DT_table-survei']) {
+                            window['DT_table-survei'].table.ajax.reload(null, false);
                         }
                         showSuccessMessage(response.data.message || 'Berhasil!');
                     })
                     .catch(error => {
-                        let msg = 'Gagal mengubah status';
-                        if (error.response && error.response.data && error.response.data.message) {
-                            msg = error.response.data.message;
-                        }
-                        showErrorMessage('Error!', msg);
+                        showErrorMessage('Error!', 'Gagal mengubah status');
                     });
             }
         });
     });
 
-    // Copy Shareable Link to clipboard
+    // Copy Shareable Link (delegated because it's in dropdown)
     $(document).on('click', '.btn-copy-link', function(e) {
         e.preventDefault();
         const link = $(this).data('link');
         navigator.clipboard.writeText(link).then(() => {
-            showSuccessMessage('Link survei berhasil disalin!');
-        }).catch(() => {
-            // Fallback for older browsers
-            const input = document.createElement('input');
-            input.value = link;
-            document.body.appendChild(input);
-            input.select();
-            document.execCommand('copy');
-            document.body.removeChild(input);
             showSuccessMessage('Link survei berhasil disalin!');
         });
     });

@@ -7,6 +7,7 @@
     </div>
     <div class="modal-body">
         <x-tabler.form-input name="judul" label="Judul Survei" required="true" :value="$survei->judul" />
+        <x-tabler.form-input name="periode" label="Periode" :value="$survei->periode" placeholder="Contoh: Ganjil 2024/2025" />
         <x-tabler.form-textarea name="deskripsi" label="Deskripsi" rows="3" :value="$survei->deskripsi" />
         
         <div class="row">
@@ -17,7 +18,7 @@
             </div>
             <div class="col-md-6">
                 <x-tabler.form-select name="is_aktif" label="Status"
-                    :options="['1' => 'Aktif', '0' => 'Draft / Tidak Aktif']"
+                    :options="['1' => 'Publish', '0' => 'Draft']"
                     :selected="$survei->is_aktif ? '1' : '0'" :placeholder="false" />
             </div>
         </div>
@@ -45,7 +46,6 @@
         <x-tabler.form-checkbox name="wajib_login" label="Wajib Login (User Kampus)" :switch="true" :checked="$survei->wajib_login" />
         
         <input type="hidden" name="bisa_isi_ulang" value="0">
-        <x-tabler.form-checkbox name="bisa_isi_ulang" label="Boleh Mengisi Berulang Kali?" :switch="true" :checked="$survei->bisa_isi_ulang" />
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>

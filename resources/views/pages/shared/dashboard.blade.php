@@ -9,7 +9,7 @@
                     Overview
                 </div>
                 <h2 class="page-title">
-                    Dashboard
+                    Beranda
                 </h2>
             </div>
         </div>
@@ -21,6 +21,42 @@
 <div class="page-body">
     <div class="container-xl">
         <div class="row row-cards">
+            @if($slideshows->count() > 0)
+            <div class="col-12">
+                <div id="carousel-slideshow" class="carousel slide card shadow-sm border-0" data-bs-ride="carousel" style="border-radius: 12px; overflow: hidden;">
+                    <div class="carousel-indicators">
+                        @foreach($slideshows as $index => $slide)
+                        <button type="button" data-bs-target="#carousel-slideshow" data-bs-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}"></button>
+                        @endforeach
+                    </div>
+                    <div class="carousel-inner">
+                        @foreach($slideshows as $index => $slide)
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                            <img src="{{ asset('storage/' . $slide->image_url) }}" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="{{ $slide->title }}">
+                            @if($slide->title || $slide->caption)
+                            <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border-radius: 8px; padding: 1rem; bottom: 2rem;">
+                                @if($slide->title) <h3 class="fw-bold">{{ $slide->title }}</h3> @endif
+                                @if($slide->caption) <p>{{ $slide->caption }}</p> @endif
+                                @if($slide->link)
+                                <a href="{{ $slide->link }}" class="btn btn-primary btn-sm mt-2">Selengkapnya</a>
+                                @endif
+                            </div>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-slideshow" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-slideshow" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            @endif
+
             <div class="col-12">
                 <div class="card card-md border-0 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #1d273b 0%, #2c3e50 100%); color: white; border-radius: 12px;">
                     <div class="card-body d-flex align-items-center py-5">

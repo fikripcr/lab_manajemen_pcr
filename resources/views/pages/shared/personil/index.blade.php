@@ -1,16 +1,14 @@
 @extends('layouts.admin.app')
 
 @section('header')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <div class="page-pretitle">Shared Data</div>
-                <h2 class="page-title">Data Personil (Outsource)</h2>
-            </div>
-        </div>
-    </div>
-</div>
+<x-tabler.page-header title="Manajemen Personil" pretitle="Master Data">
+    <x-slot:actions>
+        <a href="{{ route('shared.personil.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+            <i class="ti ti-plus icon"></i>
+            Tambah Personil
+        </a>
+    </x-slot:actions>
+</x-tabler.page-header>
 @endsection
 
 @section('content')
@@ -18,44 +16,21 @@
     <div class="container-xl">
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table" id="table-personil" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>Email</th>
-                                <th>Posisi</th>
-                                <th>Vendor</th>
-                                <th>Unit Kerja</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+                <x-tabler.datatable 
+                    id="table-personil"
+                    :columns="[
+                        ['data' => 'DT_RowIndex', 'name' => 'personil_id', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'nama', 'name' => 'nama', 'title' => 'Nama'],
+                        ['data' => 'nip', 'name' => 'nip', 'title' => 'NIP/NIK'],
+                        ['data' => 'posisi', 'name' => 'posisi', 'title' => 'Posisi'],
+                        ['data' => 'user_info', 'name' => 'user_info', 'title' => 'User Terkoneksi'],
+                        ['data' => 'status_aktif', 'name' => 'status_aktif', 'title' => 'Status'],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+                    ]"
+                    :route="route('shared.personil.paginate')"
+                />
             </div>
         </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    $('#table-personil').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('shared.personil.index') }}",
-        columns: [
-            {data: 'DT_RowIndex', name: 'personil_id', orderable: false, searchable: false},
-            {data: 'nama', name: 'nama'},
-            {data: 'email', name: 'email'},
-            {data: 'posisi', name: 'posisi'},
-            {data: 'vendor', name: 'vendor'},
-            {data: 'unit_kerja.name', name: 'unitKerja.name', defaultContent: '-'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
-        ]
-    });
-});
-</script>
-@endpush

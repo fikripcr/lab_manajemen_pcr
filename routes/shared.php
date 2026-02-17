@@ -28,9 +28,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('pengumuman.index');
         Route::get('/pengumuman/{id}', [PengumumanController::class, 'show'])->name('pengumuman.show');
 
-        // Personil (Outsource)
-        Route::get('/personil', [PersonilController::class, 'index'])->name('personil.index');
-        Route::get('/personil/{id}', [PersonilController::class, 'show'])->name('personil.show');
+        // Personil (Unified)
+        Route::get('/personil/paginate', [PersonilController::class, 'paginate'])->name('personil.paginate');
+        Route::get('/personil/{personil}/edit-modal', [PersonilController::class, 'editModal'])->name('personil.edit-modal.show');
+        Route::resource('personil', PersonilController::class);
+
+        // Slideshow
+        Route::get('/slideshow/paginate', [\App\Http\Controllers\Shared\SlideshowController::class, 'paginate'])->name('slideshow.paginate');
+        Route::resource('slideshow', \App\Http\Controllers\Shared\SlideshowController::class);
+
+        // FAQ
+        Route::get('/faq/paginate', [\App\Http\Controllers\Shared\FAQController::class, 'paginate'])->name('faq.paginate');
+        Route::resource('faq', \App\Http\Controllers\Shared\FAQController::class);
 
         // Struktur Organisasi
         Route::post('/struktur-organisasi/reorder', [StrukturOrganisasiController::class, 'reorder'])->name('struktur-organisasi.reorder');

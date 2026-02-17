@@ -1,0 +1,51 @@
+<?php
+namespace App\Services\Shared;
+
+use App\Models\Shared\FAQ;
+use Illuminate\Support\Facades\DB;
+
+class FAQService
+{
+    public function getFilteredQuery(array $filters = [])
+    {
+        return FAQ::query();
+    }
+
+    public function createFAQ(array $data): FAQ
+    {
+        return DB::transaction(function () use ($data) {
+            $faq = FAQ::create($data);
+
+            logActivity('faq_management', "Menambah FAQ baru: {$faq->question}", $faq);
+
+            return $faq;
+        });
+    }
+
+    public function updateFAQ($id, array $data): bool
+    {
+        return DB::transaction(function () use ($id, $data) {
+            $faq = FAQ::findOrFail($id);
+
+            $faq->update($data);
+
+            logActivity('faq_management', "Memperbarui FAQ: {$faq->question}", $faq);
+
+            return true;
+        });
+    }
+
+    public function deleteFAQ($id): bool
+    {
+        return DB::transaction(function () use ($id) {
+            $faq      = FAQ::findOrFail($id);
+            $question = $faq->question;
+
+            $faq->delete();
+
+            logActivity('faq_management', "Menghapus FAQ: {$question}");
+
+            return true;
+        });
+    }
+}

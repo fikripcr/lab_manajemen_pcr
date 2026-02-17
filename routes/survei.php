@@ -24,6 +24,8 @@ Route::middleware(['auth'])->prefix('survei')->name('survei.')->group(function (
     Route::delete('/{survei}', [SurveiController::class, 'destroy'])->name('destroy');
 
     Route::post('/{survei}/toggle-status', [SurveiController::class, 'toggleStatus'])->name('toggle-status');
+    Route::post('/{survei}/duplicate', [SurveiController::class, 'duplicate'])->name('duplicate');
+    Route::get('/{survei}/export', [SurveiController::class, 'export'])->name('export');
     Route::get('/{survei}/responses', [SurveiController::class, 'responses'])->name('responses');
 
     // Preview

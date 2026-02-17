@@ -13,6 +13,7 @@ class Survei extends Model
 
     protected $fillable = [
         'judul',
+        'periode',
         'deskripsi',
         'slug',
         'mode',

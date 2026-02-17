@@ -3,11 +3,17 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shared\Pengumuman;
+use App\Models\Shared\Slideshow;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Slideshow
+        $slideshows = Slideshow::where('is_active', true)
+            ->orderBy('seq', 'asc')
+            ->get();
+
         // 5 Latest News
         $recentNews = Pengumuman::where('is_published', true)
             ->where('jenis', 'artikel_berita')
@@ -22,6 +28,6 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return view('pages.shared.dashboard', compact('recentNews', 'recentAnnouncements'));
+        return view('pages.shared.dashboard', compact('slideshows', 'recentNews', 'recentAnnouncements'));
     }
 }
