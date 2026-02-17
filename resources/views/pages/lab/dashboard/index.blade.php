@@ -118,46 +118,55 @@
             </div>
         </div>
 
-        <div class="row row-cards mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-transparent border-0 py-3">
-                        <h3 class="card-title fw-bold"><i class="ti ti-chart-bar me-2 text-primary"></i> Statistik Inventaris & Tim Per Lab</h3>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter table-nowrap card-table">
-                            <thead>
-                                <tr>
-                                    <th>Nama Lab</th>
-                                    <th>Lokasi</th>
-                                    <th class="text-center">Jumlah Inventaris</th>
-                                    <th class="text-center">Jumlah Tim</th>
-                                    <th class="w-1"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($labs as $lab)
-                                <tr>
-                                    <td>
-                                        <div class="fw-bold">{{ $lab->name }}</div>
-                                    </td>
-                                    <td class="text-muted">{{ $lab->location ?? '-' }}</td>
-                                    <td class="text-center">
-                                        <span class="badge bg-blue-lt fw-bold">{{ $lab->lab_inventaris_count }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-green-lt fw-bold">{{ $lab->lab_teams_count }}</span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('lab.labs.show', $lab->lab_id) }}" class="btn btn-ghost-secondary btn-sm">Detail</a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+        <div class="row align-items-center mb-2">
+            <div class="col">
+                <h4 class="fw-bold mb-0"><i class="ti ti-chart-bar me-2 text-primary"></i> Statistik Inventaris & Tim Per Lab</h4>
+            </div>
+        </div>
+
+        <div class="row g-2 mb-3">
+            @foreach($labs as $lab)
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body p-3 d-flex flex-column">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="avatar avatar-sm bg-blue-lt shadow-sm me-2"><i class="ti ti-building"></i></span>
+                            <div class="text-truncate">
+                                <h4 class="card-title mb-0 fw-bold text-truncate">{{ $lab->name }}</h4>
+                                <div class="text-muted small text-truncate">
+                                    <i class="ti ti-map-pin me-1"></i>{{ $lab->location ?? 'No Location' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-1 mb-2">
+                            <div class="col-6">
+                                <div class="border rounded p-1 text-center bg-light">
+                                    <div class="text-muted" style="font-size: 0.7rem;">Inventaris</div>
+                                    <div class="h4 mb-0 fw-bold text-primary">{{ $lab->lab_inventaris_count }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded p-1 text-center bg-light">
+                                    <div class="text-muted" style="font-size: 0.7rem;">Tim</div>
+                                    <div class="h4 mb-0 fw-bold text-success">{{ $lab->lab_teams_count }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-2 border-top text-center">
+                            <a href="{{ route('lab.labs.show', $lab->lab_id) }}" class="small fw-bold text-primary text-decoration-none">
+                                <i class="ti ti-eye me-1"></i>Detail
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
+            @endforeach
+        </div>
+
+        <div class="d-flex justify-content-center mb-3">
+            {{ $labs->links() }}
         </div>
 
         <div class="row row-cards">

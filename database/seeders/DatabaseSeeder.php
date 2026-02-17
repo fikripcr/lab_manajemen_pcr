@@ -15,16 +15,16 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             // Core System
-            MainSysSeeder::class,
+            // MainSysSeeder::class,
 
             // Modules
-            MainHrSeeder::class,
-            MainLabSeeder::class,
-            MainPemutuSeeder::class,
-            MainEofficeSeeder::class,
-            MainPmbSeeder::class,
+            // MainHrSeeder::class,
+            // MainLabSeeder::class,
+            // MainPemutuSeeder::class,
+            // MainEofficeSeeder::class,
+            // MainPmbSeeder::class,
             MainCbtSeeder::class,
-            MainSurveiSeeder::class,
+            // MainSurveiSeeder::class,
 
             // Optional/Mock
             //MockSeeder::class,
