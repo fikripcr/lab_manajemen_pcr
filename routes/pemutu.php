@@ -14,24 +14,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('periode-kpis/{periodeKpi}/activate', [App\Http\Controllers\Pemutu\PeriodeKpiController::class, 'activate'])->name('periode-kpis.activate');
     Route::resource('periode-kpis', App\Http\Controllers\Pemutu\PeriodeKpiController::class);
 
-    // Rapat
-    Route::get('rapat/data', [App\Http\Controllers\Pemutu\RapatController::class, 'paginate'])->name('rapat.data');
-    Route::post('rapat/{rapat}/attendance', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAttendance'])->name('rapat.update-attendance');
-    Route::post('rapat/{rapat}/agenda', [App\Http\Controllers\Pemutu\RapatController::class, 'updateAgenda'])->name('rapat.update-agenda');
-    Route::post('rapat/{rapat}/agenda/store', [App\Http\Controllers\Pemutu\RapatController::class, 'storeAgenda'])->name('rapat.agenda.store');
-    Route::post('rapat/{rapat}/officials', [App\Http\Controllers\Pemutu\RapatController::class, 'updateOfficials'])->name('rapat.update-officials');
-    Route::post('rapat/{rapat}/participants', [App\Http\Controllers\Pemutu\RapatController::class, 'storeParticipants'])->name('rapat.participants.store');
-    Route::get('rapat/{rapat}/pdf', [App\Http\Controllers\Pemutu\RapatController::class, 'generatePdf'])->name('rapat.generate-pdf');
-    Route::resource('rapat', App\Http\Controllers\Pemutu\RapatController::class);
-
-    // Rapat Peserta
-    Route::get('rapat/peserta/data', [App\Http\Controllers\Pemutu\RapatPesertaController::class, 'data'])->name('rapat.peserta.data');
-    Route::resource('rapat/peserta', App\Http\Controllers\Pemutu\RapatPesertaController::class);
-
-    // Rapat Agenda
-    Route::get('rapat/agenda/data', [App\Http\Controllers\Pemutu\RapatAgendaController::class, 'data'])->name('rapat.agenda.data');
-    Route::resource('rapat/agenda', App\Http\Controllers\Pemutu\RapatAgendaController::class);
-
     // Label Types (modal forms only - no index page)
     Route::resource('label-types', App\Http\Controllers\Pemutu\LabelTypeController::class)->except(['index', 'show']);
 
