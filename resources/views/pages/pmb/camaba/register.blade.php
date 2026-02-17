@@ -38,7 +38,7 @@
                                 <label class="form-label required">Pilihan Program Studi (Maks 2)</label>
                                 <select name="pilihan_prodi[]" class="form-select" multiple size="5" required>
                                     @foreach($prodi as $p)
-                                        <option value="{{ $p->id }}">{{ $p->nama_prodi }}</option>
+                                        <option value="{{ $p->orgunit_id }}">{{ $p->name }}</option>
                                     @endforeach
                                 </select>
                                 <small class="text-muted">Tekan Ctrl untuk memilih lebih dari satu (Jika jalur mengijinkan).</small>

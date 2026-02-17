@@ -39,8 +39,8 @@
                             <tr><td width="30%">No. Pendaftaran</td><td>: <strong>{{ $pendaftaran->no_pendaftaran }}</strong></td></tr>
                             <tr><td>Nama Lengkap</td><td>: {{ $pendaftaran->user->name }}</td></tr>
                             <tr><td>Jalur</td><td>: {{ $pendaftaran->jalur->nama_jalur }}</td></tr>
-                            <tr><td>Pilihan 1</td><td>: {{ $pendaftaran->pilihanProdi[0]->prodi->nama_prodi ?? '-' }}</td></tr>
-                            <tr><td>Pilihan 2</td><td>: {{ $pendaftaran->pilihanProdi[1]->prodi->nama_prodi ?? '-' }}</td></tr>
+                            <tr><td>Pilihan 1</td><td>: {{ $pendaftaran->pilihanProdi[0]->orgUnit->name ?? '-' }}</td></tr>
+                            <tr><td>Pilihan 2</td><td>: {{ $pendaftaran->pilihanProdi[1]->orgUnit->name ?? '-' }}</td></tr>
                         </table>
 
                         <div class="mt-4 p-3 border rounded">

@@ -9,8 +9,7 @@ use App\Models\Cbt\JadwalUjian;
 use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\Pendaftaran;
-use App\Models\Pmb\Prodi;
-use App\Models\Pmb\SyaratDokumenJalur;
+use App\Models\Pmb\SyaratDokumenJalur; // Use OrgUnit
 use App\Services\Pmb\CamabaService;
 use App\Services\Pmb\PeriodeService;
 use Exception;
@@ -34,7 +33,7 @@ class CamabaController extends Controller
     public function dashboard()
     {
         $user        = Auth::user();
-        $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.prodi', 'prodiDiterima'])
+        $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'orgUnitDiterima'])
             ->where('user_id', $user->id)
             ->latest()
             ->first();
@@ -74,8 +73,9 @@ class CamabaController extends Controller
             return redirect()->route('pmb.camaba.dashboard')->with('info', 'Anda sudah memiliki pendaftaran di periode ini.');
         }
 
-        $jalur  = Jalur::where('is_aktif', true)->get();
-        $prodi  = Prodi::all();
+        $jalur = Jalur::where('is_aktif', true)->get();
+        // Fetch Prodi from StrukturOrganisasi
+        $prodi  = StrukturOrganisasi::where('type', 'Prodi')->orderBy('name')->get();
         $profil = $user->profilPmb;
 
         return view('pages.pmb.camaba.register', compact('periodeAktif', 'jalur', 'prodi', 'profil'));
@@ -188,7 +188,7 @@ class CamabaController extends Controller
     public function examCard()
     {
         $user        = Auth::user();
-        $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.prodi', 'pesertaUjian.sesiUjian'])
+        $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'pesertaUjian.sesiUjian'])
             ->where('user_id', $user->id)
             ->latest()
             ->firstOrFail();

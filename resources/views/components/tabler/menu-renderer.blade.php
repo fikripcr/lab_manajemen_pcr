@@ -464,12 +464,7 @@
                             'active_routes' => ['pmb.jalur.*'],
                             'icon'          => 'ti ti-map-2',
                         ],
-                        [
-                            'title'         => 'Program Studi',
-                            'route'         => 'pmb.prodi.index',
-                            'active_routes' => ['pmb.prodi.*'],
-                            'icon'          => 'ti ti-books',
-                        ],
+
                         [
                             'title'         => 'Jenis Dokumen',
                             'route'         => 'pmb.jenis-dokumen.index',

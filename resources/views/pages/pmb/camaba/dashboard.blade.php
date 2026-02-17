@@ -65,12 +65,12 @@
                                         <tr><td>Pilihan Prodi</td><td>: 
                                             <ol class="ps-3 mb-0">
                                                 @foreach($pendaftaran->pilihanProdi as $p)
-                                                    <li>{{ $p->prodi->nama_prodi }}</li>
+                                                    <li>{{ $p->orgUnit->name ?? '-' }}</li>
                                                 @endforeach
                                             </ol>
                                         </td></tr>
                                         @if($pendaftaran->status_terkini == 'Lulus')
-                                            <tr><td><strong>Diterima di</strong></td><td>: <span class="badge bg-success">{{ $pendaftaran->prodiDiterima->nama_prodi ?? '-' }}</span></td></tr>
+                                            <tr><td><strong>Diterima di</strong></td><td>: <span class="badge bg-success">{{ $pendaftaran->orgUnitDiterima->name ?? '-' }}</span></td></tr>
                                             <tr><td><strong>NIM Akhir</strong></td><td>: <strong>{{ $pendaftaran->nim_final }}</strong></td></tr>
                                         @endif
                                     </table>

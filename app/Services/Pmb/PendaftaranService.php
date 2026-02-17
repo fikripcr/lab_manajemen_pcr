@@ -46,9 +46,11 @@ class PendaftaranService
 
             // 3. Create Pilihan Prodi
             foreach ($data['pilihan_prodi'] as $index => $prodiId) {
+                // If FE sends prodi_id (which is now orgunit_id), use it directly.
+                // Assuming FE dropdowns are updated to return orgunit_id.
                 PilihanProdi::create([
                     'pendaftaran_id' => $pendaftaran->id,
-                    'prodi_id'       => $prodiId,
+                    'orgunit_id'     => $prodiId, // This should be orgunit_id
                     'urutan'         => $index + 1,
                 ]);
             }
@@ -109,9 +111,9 @@ class PendaftaranService
             $pendaftaran = Pendaftaran::findOrFail($pendaftaranId);
 
             $pendaftaran->update([
-                'status_terkini'    => 'Lulus',
-                'prodi_diterima_id' => $prodiDiterimaId,
-                'nim_final'         => $nim,
+                'status_terkini'      => 'Lulus',
+                'orgunit_diterima_id' => $prodiDiterimaId, // This is orgunit_id
+                'nim_final'           => $nim,
             ]);
 
             $this->logStatusHistory($pendaftaranId, 'Lulus', 'Pendaftaran telah difinalisasi dengan NIM ' . $nim, 'Siap_Ujian');
@@ -144,7 +146,7 @@ class PendaftaranService
      */
     public function getFilteredQuery(array $filters = [])
     {
-        $query = Pendaftaran::with(['user', 'periode', 'jalur', 'prodiDiterima']);
+        $query = Pendaftaran::with(['user', 'periode', 'jalur', 'orgUnitDiterima']);
 
         if (! empty($filters['status'])) {
             $query->where('status_terkini', $filters['status']);

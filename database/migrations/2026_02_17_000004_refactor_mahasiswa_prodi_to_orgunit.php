@@ -51,7 +51,8 @@ return new class extends Migration
         // Step 325 added it. The constraint name is usually mahasiswa_prodi_id_foreign.
         Schema::table('mahasiswa', function (Blueprint $table) {
             // Check if FK exists or try-catch? Schema::hasColumn logic usually implies FK standard naming.
-            $table->dropForeign(['prodi_id']);
+            // Foreign key dropped in 000003 to allow table drop
+            // $table->dropForeign(['prodi_id']);
             $table->dropColumn('prodi_id');
         });
     }

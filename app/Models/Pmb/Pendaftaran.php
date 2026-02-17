@@ -21,7 +21,7 @@ class Pendaftaran extends Model
         'jalur_id',
         'status_terkini',
         'nim_final',
-        'prodi_diterima_id',
+        'orgunit_diterima_id',
         'waktu_daftar',
     ];
 
@@ -48,9 +48,9 @@ class Pendaftaran extends Model
         return $this->belongsTo(Jalur::class, 'jalur_id');
     }
 
-    public function prodiDiterima()
+    public function orgUnitDiterima()
     {
-        return $this->belongsTo(Prodi::class, 'prodi_diterima_id');
+        return $this->belongsTo(\App\Models\Shared\StrukturOrganisasi::class, 'orgunit_diterima_id');
     }
 
     public function riwayat()

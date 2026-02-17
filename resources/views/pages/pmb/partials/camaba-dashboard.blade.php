@@ -1,7 +1,7 @@
 {{-- CAMABA DASHBOARD PARTIAL --}}
 @php
     $user = auth()->user();
-    $pendaftaran = App\Models\Pmb\Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.prodi', 'prodiDiterima', 'dokumenUpload.jenisDokumen', 'pembayaran'])
+    $pendaftaran = App\Models\Pmb\Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'orgUnitDiterima', 'dokumenUpload.jenisDokumen', 'pembayaran'])
         ->where('user_id', $user->id)
         ->latest()
         ->first();

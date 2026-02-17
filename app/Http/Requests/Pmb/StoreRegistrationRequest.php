@@ -24,7 +24,7 @@ class StoreRegistrationRequest extends FormRequest
             'periode_id'       => 'required|exists:pmb_periode,id',
             'jalur_id'         => 'required|exists:pmb_jalur,id',
             'pilihan_prodi'    => 'required|array|min:1|max:2',
-            'pilihan_prodi.*'  => 'required|exists:pmb_prodi,id',
+            'pilihan_prodi.*'  => 'required|exists:struktur_organisasi,orgunit_id',
             'nik'              => 'required|string|size:16',
             'no_hp'            => 'required|string|max:20',
             'tempat_lahir'     => 'required|string|max:255',

@@ -15,7 +15,7 @@ class PilihanProdi extends Model
 
     protected $fillable = [
         'pendaftaran_id',
-        'prodi_id',
+        'orgunit_id',
         'urutan',
         'rekomendasi_sistem',
         'keputusan_admin',
@@ -34,8 +34,8 @@ class PilihanProdi extends Model
         return $this->belongsTo(Pendaftaran::class, 'pendaftaran_id');
     }
 
-    public function prodi()
+    public function orgUnit()
     {
-        return $this->belongsTo(Prodi::class, 'prodi_id');
+        return $this->belongsTo(\App\Models\Shared\StrukturOrganisasi::class, 'orgunit_id');
     }
 }
