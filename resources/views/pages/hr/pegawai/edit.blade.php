@@ -56,31 +56,21 @@
 
             <h3 class="card-title mt-4">Informasi Kepegawaian</h3>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <x-tabler.form-select name="orgunit_departemen_id" label="Unit / Departemen">
                         <option value="">Pilih Departemen</option>
                         @foreach($departemen as $d)
-                            <option value="{{ $d->org_unit_id }}" {{ (old('orgunit_departemen_id', $pegawai->latestDataDiri->orgunit_departemen_id ?? '') == $d->org_unit_id) ? 'selected' : '' }}>
+                            <option value="{{ $d->orgunit_id }}" {{ (old('orgunit_departemen_id', $pegawai->latestDataDiri->orgunit_departemen_id ?? '') == $d->orgunit_id) ? 'selected' : '' }}>
                                 {{ $d->name }}
                             </option>
                         @endforeach
                     </x-tabler.form-select>
                 </div>
-                <div class="col-md-4">
-                    <x-tabler.form-select name="orgunit_prodi_id" label="Program Studi">
-                        <option value="">Pilih Prodi</option>
-                        @foreach($prodi as $p)
-                            <option value="{{ $p->org_unit_id }}" {{ (old('orgunit_prodi_id', $pegawai->latestDataDiri->orgunit_prodi_id ?? '') == $p->org_unit_id) ? 'selected' : '' }}>
-                                {{ $p->name }}
-                            </option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <x-tabler.form-select name="orgunit_posisi_id" label="Posisi">
                         <option value="">Pilih Posisi</option>
                         @foreach($posisi as $p)
-                            <option value="{{ $p->org_unit_id }}" {{ (old('orgunit_posisi_id', $pegawai->latestDataDiri->orgunit_posisi_id ?? '') == $p->org_unit_id) ? 'selected' : '' }}>
+                            <option value="{{ $p->orgunit_id }}" {{ (old('orgunit_posisi_id', $pegawai->latestDataDiri->orgunit_posisi_id ?? '') == $p->orgunit_id) ? 'selected' : '' }}>
                                 {{ $p->name }}
                             </option>
                         @endforeach

@@ -2,10 +2,10 @@
 namespace App\Models\Hr;
 
 use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HashidBinding;
 
 class RiwayatDataDiri extends Model
 {
@@ -59,12 +59,12 @@ class RiwayatDataDiri extends Model
 
     public function departemen()
     {
-        return $this->belongsTo(OrgUnit::class, 'orgunit_departemen_id', 'org_unit_id');
+        return $this->belongsTo(OrgUnit::class, 'orgunit_departemen_id', 'orgunit_id');
     }
 
     public function posisi()
     {
-        return $this->belongsTo(OrgUnit::class, 'orgunit_posisi_id', 'org_unit_id');
+        return $this->belongsTo(OrgUnit::class, 'orgunit_posisi_id', 'orgunit_id');
     }
 
     public function approval()

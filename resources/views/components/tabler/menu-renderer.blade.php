@@ -9,6 +9,12 @@
         ],
         [
             'type'  => 'item',
+            'title' => 'Dashboard Utama',
+            'route' => 'dashboard',
+            'icon'  => 'ti ti-layout-grid',
+        ],
+        [
+            'type'  => 'item',
             'title' => 'Dashboard Lab',
             'route' => 'lab.dashboard',
             'icon'  => 'ti ti-layout-dashboard',
@@ -32,10 +38,6 @@
             'icon'  => 'ti ti-briefcase',
         ],
         [
-            'type'  => 'header',
-            'title' => 'PMB & CBT',
-        ],
-        [
             'type'  => 'item',
             'title' => 'Dashboard PMB',
             'route' => 'pmb.dashboard',
@@ -47,9 +49,49 @@
             'route' => 'cbt.dashboard',
             'icon'  => 'ti ti-file-text',
         ],
+
         [
             'type'  => 'header',
             'title' => 'Master Data',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Struktur Organisasi',
+            'route' => 'shared.struktur-organisasi.index',
+            'active_routes' => ['shared.struktur-organisasi.*'],
+            'icon'  => 'ti ti-hierarchy-2',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Pegawai',
+            'route' => 'hr.pegawai.index',
+            'active_routes' => ['hr.pegawai.*'],
+            'icon'  => 'ti ti-users',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Mahasiswa',
+            'route' => 'lab.mahasiswa.index',
+            'active_routes' => ['lab.mahasiswa.*'],
+            'icon'  => 'ti ti-school',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Pengguna',
+            'route' => 'lab.users.index',
+            'active_routes' => ['lab.users.*'],
+            'icon'  => 'ti ti-user-cog',
+        ],
+        [
+            'type'  => 'item',
+            'title' => 'Manajemen Sistem',
+            'route' => 'sys.dashboard',
+            'icon'  => 'ti ti-settings',
+        ],
+
+        [
+            'type'  => 'header',
+            'title' => 'Modul',
         ],
         [
             'type'          => 'dropdown',
@@ -70,60 +112,45 @@
                 'lab.semesters.*',
                 'lab.mata-kuliah.*',
                 'lab.jadwal.*',
-                'lab.mahasiswa.*',
                 'lab.personil.*',
                 'lab.periode-request.*'
             ],
             'children'      => [
                 [
-                    'title'         => 'Master Data Lab',
-                    'id'            => 'navbar-master-lab',
-                    'icon'          => 'ti ti-database',
-                    'active_routes' => ['lab.labs.*', 'lab.inventaris.*', 'lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*', 'lab.mahasiswa.*', 'lab.personil.*'],
-                    'children'      => [
-                        [
-                            'title'         => 'Data Lab',
-                            'route'         => 'lab.labs.index',
-                            'active_routes' => ['lab.labs.*'],
-                            'icon'          => 'ti ti-flask',
-                        ],
-                        [
-                            'title'         => 'Data Inventaris',
-                            'route'         => 'lab.inventaris.index',
-                            'active_routes' => ['lab.inventaris.*'],
-                            'icon'          => 'ti ti-package',
-                        ],
-                        [
-                            'title'         => 'Data Semester',
-                            'route'         => 'lab.semesters.index',
-                            'active_routes' => ['lab.semesters.*'],
-                            'icon'          => 'ti ti-calendar-stats',
-                        ],
-                        [
-                            'title'         => 'Data Mata Kuliah',
-                            'route'         => 'lab.mata-kuliah.index',
-                            'active_routes' => ['lab.mata-kuliah.*'],
-                            'icon'          => 'ti ti-book',
-                        ],
-                        [
-                            'title'         => 'Jadwal Perkuliahan',
-                            'route'         => 'lab.jadwal.index',
-                            'active_routes' => ['lab.jadwal.*'],
-                            'icon'          => 'ti ti-calendar-event',
-                        ],
-                        [
-                            'title'         => 'Data Mahasiswa',
-                            'route'         => 'lab.mahasiswa.index',
-                            'active_routes' => ['lab.mahasiswa.*'],
-                            'icon'          => 'ti ti-users-group',
-                        ],
-                        [
-                            'title'         => 'Data Personil',
-                            'route'         => 'lab.personil.index',
-                            'active_routes' => ['lab.personil.*'],
-                            'icon'          => 'ti ti-user-check',
-                        ],
-                    ],
+                    'title'         => 'Data Lab',
+                    'route'         => 'lab.labs.index',
+                    'active_routes' => ['lab.labs.*'],
+                    'icon'          => 'ti ti-flask',
+                ],
+                [
+                    'title'         => 'Data Inventaris',
+                    'route'         => 'lab.inventaris.index',
+                    'active_routes' => ['lab.inventaris.*'],
+                    'icon'          => 'ti ti-package',
+                ],
+                [
+                    'title'         => 'Data Semester',
+                    'route'         => 'lab.semesters.index',
+                    'active_routes' => ['lab.semesters.*'],
+                    'icon'          => 'ti ti-calendar-stats',
+                ],
+                [
+                    'title'         => 'Data Mata Kuliah',
+                    'route'         => 'lab.mata-kuliah.index',
+                    'active_routes' => ['lab.mata-kuliah.*'],
+                    'icon'          => 'ti ti-book',
+                ],
+                [
+                    'title'         => 'Jadwal Perkuliahan',
+                    'route'         => 'lab.jadwal.index',
+                    'active_routes' => ['lab.jadwal.*'],
+                    'icon'          => 'ti ti-calendar-event',
+                ],
+                [
+                    'title'         => 'Data Personil',
+                    'route'         => 'lab.personil.index',
+                    'active_routes' => ['lab.personil.*'],
+                    'icon'          => 'ti ti-user-check',
                 ],
                 [
                     'title'         => 'Peminjaman Lab',
@@ -203,34 +230,20 @@
             'title' => 'Penjaminan Mutu',
             'icon' => 'ti ti-checkbox',
             'route' => '#',
-            'active_routes' => ['pemutu.*', 'shared.struktur-organisasi.*'],
+            'active_routes' => ['pemutu.*'],
             'can' => 'admin',
             'children'      => [
                 [
-                    'title'         => 'Master Data',
-                    'id'            => 'navbar-pemutu-master',
-                    'icon'          => 'ti ti-database',
-                    'active_routes' => ['shared.struktur-organisasi.*', 'pemutu.org-units.*', 'pemutu.personils.*', 'pemutu.labels.*', 'pemutu.label-types.*'],
-                    'children'      => [
-                        [
-                            'title' => 'Struktur Organisasi',
-                            'route' => 'shared.struktur-organisasi.index',
-                            'active_routes' => ['shared.struktur-organisasi.*'],
-                            'icon' => 'ti ti-hierarchy-2',
-                        ],
-                        [
-                            'title' => 'Personel',
-                            'route' => 'pemutu.personils.index',
-                            'active_routes' => ['pemutu.personils.*'],
-                            'icon' => 'ti ti-users',
-                        ],
-                        [
-                            'title' => 'Label & Kategori',
-                            'route' => 'pemutu.labels.index',
-                            'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
-                            'icon' => 'ti ti-tags',
-                        ],
-                    ]
+                    'title' => 'Personel Outsource',
+                    'route' => 'pemutu.personils.index',
+                    'active_routes' => ['pemutu.personils.*'],
+                    'icon' => 'ti ti-users',
+                ],
+                [
+                    'title' => 'Label & Kategori',
+                    'route' => 'pemutu.labels.index',
+                    'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
+                    'icon' => 'ti ti-tags',
                 ],
                 [
                     'title' => 'Periode KPI',
@@ -250,12 +263,6 @@
                     'active_routes' => ['pemutu.dokumens.*'],
                     'icon' => 'ti ti-file-text',
                 ],
-                // [
-                //     'title' => 'Indikator',
-                //     'route' => 'pemutu.indikators.index',
-                //     'active_routes' => ['pemutu.indikators.*'],
-                //     'icon' => 'ti ti-target',
-                // ],
                 [
                     'title' => 'Indikator',
                     'route' => 'pemutu.indikators.index',
@@ -287,20 +294,8 @@
             'title'         => 'HR & Kepegawaian',
             'id'            => 'navbar-hr',
             'icon'          => 'ti ti-briefcase',
-            'active_routes' => ['hr.*', 'shared.struktur-organisasi.*'],
+            'active_routes' => ['hr.*'],
             'children'      => [
-                [
-                    'title'         => 'Data Pegawai',
-                    'route'         => 'hr.pegawai.index',
-                    'active_routes' => ['hr.pegawai.*'],
-                    'icon'          => 'ti ti-users',
-                ],
-                [
-                    'title'         => 'Struktur Organisasi',
-                    'route'         => 'shared.struktur-organisasi.index',
-                    'active_routes' => ['shared.struktur-organisasi.*'],
-                    'icon'          => 'ti ti-hierarchy-2',
-                ],
                 [
                     'title'         => 'Approval Data',
                     'route'         => 'hr.approval.index',
@@ -349,7 +344,6 @@
                     'active_routes' => ['hr.presensi.*'],
                     'icon'          => 'ti ti-fingerprint',
                     'badge'         => function() {
-                        // Check if user is currently on presensi page
                         return request()->routeIs('hr.presensi.*');
                     },
                 ],
@@ -522,23 +516,6 @@
             'route' => 'survei.index',
             'icon'  => 'ti ti-forms',
             'active_routes' => ['survei.*'],
-        ],
-        [
-            'type'  => 'header',
-            'title' => 'Lainnya',
-        ],
-        [
-            'type'  => 'item',
-            'title' => 'Pengguna',
-            'route' => 'lab.users.index',
-            'active_routes' => ['lab.users.*'],
-            'icon'  => 'ti ti-users',
-        ],
-        [
-            'type'  => 'item',
-            'title' => 'Manajemen Sistem',
-            'route' => 'sys.dashboard',
-            'icon'  => 'ti ti-settings',
         ],
     ];
 

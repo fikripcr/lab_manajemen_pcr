@@ -19,7 +19,7 @@
         <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
           <div class="post-box">
             <div class="post-img">
-              <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($news->judul) }}">
+              <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($news->judul) }}">
             </div>
             <div class="meta">
               <ul>
@@ -29,11 +29,11 @@
             </div>
             <div class="d-flex align-items-start">
               <div class="flex-shrink-0 me-3">
-                <img src="{{ $news->cover_image['url'] ?? Vite::asset('resources/assets/guest/img/person/person-m-10.webp') }}"
+                <img src="{{ $news->cover_image['url'] ?? Vite::asset('resources/assets/public/img/person/person-m-10.webp') }}"
                      class="img-fluid rounded"
                      alt="{{ e($news->judul) }}"
                      style="width: 80px; height: 80px; object-fit: cover;"
-                     onerror="this.onerror=null; this.src='{{ Vite::asset('resources/assets/guest/img/person/person-m-10.webp') }}';">
+                     onerror="this.onerror=null; this.src='{{ Vite::asset('resources/assets/public/img/person/person-m-10.webp') }}';">
               </div>
               <div class="flex-grow-1">
                 <h3 class="post-title">{{ e($news->judul) }}</h3>

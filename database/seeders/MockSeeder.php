@@ -20,7 +20,7 @@ class MockSeeder extends Seeder
 
         echo "Starting to create 500,000 random permissions...\n";
 
-        for ($i = 0; $i < 500000; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             $permissions[] = [
                 'name'       => 'test_permission_' . Str::random(10) . '_' . $i,
                 'guard_name' => 'web',

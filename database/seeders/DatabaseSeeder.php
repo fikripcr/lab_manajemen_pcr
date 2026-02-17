@@ -24,9 +24,10 @@ class DatabaseSeeder extends Seeder
             MainEofficeSeeder::class,
             MainPmbSeeder::class,
             MainCbtSeeder::class,
+            MainSurveiSeeder::class,
 
             // Optional/Mock
-            MockSeeder::class,
+            //MockSeeder::class,
         ]);
     }
 }

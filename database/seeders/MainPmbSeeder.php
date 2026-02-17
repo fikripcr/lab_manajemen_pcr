@@ -4,8 +4,8 @@ namespace Database\Seeders;
 use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\Periode;
-use App\Models\Pmb\Prodi;
 use App\Models\Pmb\SyaratDokumenJalur;
+use App\Models\Shared\StrukturOrganisasi as OrgUnit;
 use Illuminate\Database\Seeder;
 
 class MainPmbSeeder extends Seeder
@@ -21,7 +21,6 @@ class MainPmbSeeder extends Seeder
         ]);
 
         // 2. Jalur
-        // 2. Jalur
         $jalurReguler = Jalur::create([
             'nama_jalur'        => 'Reguler',
             'biaya_pendaftaran' => 350000,
@@ -34,17 +33,44 @@ class MainPmbSeeder extends Seeder
             'is_aktif'          => true,
         ]);
 
-        // 3. Prodi
-        // 3. Prodi
-        $prodis = [
+        // 3. Prodi (Ensure OrgUnits exist)
+        // MainPemutuSeeder might have created some, but we ensure all PMB prodis exist here.
+        $prodisData = [
             ['nama_prodi' => 'Teknik Informatika', 'kode_prodi' => 'TI', 'fakultas' => 'Ilmu Komputer'],
             ['nama_prodi' => 'Sistem Informasi', 'kode_prodi' => 'SI', 'fakultas' => 'Ilmu Komputer'],
             ['nama_prodi' => 'Teknik Elektro', 'kode_prodi' => 'TE', 'fakultas' => 'Teknik'],
             ['nama_prodi' => 'Akuntansi', 'kode_prodi' => 'AKT', 'fakultas' => 'Ekonomi'],
         ];
 
-        foreach ($prodis as $prodi) {
-            Prodi::create($prodi);
+        // Ensure Root exists if not
+        $pcr = OrgUnit::firstOrCreate(['code' => 'PCR'], ['name' => 'Politeknik Caltex Riau', 'type' => 'Institusi', 'level' => 1]);
+
+        $prodiOrgUnits = [];
+
+        foreach ($prodisData as $data) {
+            // Create Faculty/Jurusan first (simplified mapping for seeder)
+            $jurusanCode = 'JUR-' . strtoupper(substr($data['fakultas'], 0, 3));
+            $jurusan     = OrgUnit::firstOrCreate(
+                ['code' => $jurusanCode],
+                [
+                    'name'      => 'Jurusan ' . $data['fakultas'],
+                    'type'      => 'Jurusan',
+                    'level'     => 2,
+                    'parent_id' => $pcr->orgunit_id,
+                ]
+            );
+
+            // Create Prodi
+            $prodi = OrgUnit::firstOrCreate(
+                ['code' => $data['kode_prodi']],
+                [
+                    'name'      => $data['nama_prodi'],
+                    'type'      => 'Prodi',
+                    'level'     => 3,
+                    'parent_id' => $jurusan->orgunit_id,
+                ]
+            );
+            $prodiOrgUnits[] = $prodi;
         }
 
         // 4. Jenis Dokumen
@@ -145,19 +171,19 @@ class MainPmbSeeder extends Seeder
                 'waktu_daftar'   => $faker->dateTimeBetween('-1 month', 'now'),
             ]);
 
-                                       // Pilihan Prodi
-            $prodi1 = $prodis[$i % 4]; // Distribute evenly
-            $prodi2 = $prodis[($i + 1) % 4];
+                                              // Pilihan Prodi
+            $prodi1 = $prodiOrgUnits[$i % 4]; // Distribute evenly
+            $prodi2 = $prodiOrgUnits[($i + 1) % 4];
 
             \App\Models\Pmb\PilihanProdi::create([
                 'pendaftaran_id' => $pendaftaran->id,
-                'prodi_id'       => \App\Models\Pmb\Prodi::where('kode_prodi', $prodi1['kode_prodi'])->first()->id,
+                'orgunit_id'     => $prodi1->orgunit_id,
                 'urutan'         => 1,
             ]);
 
             \App\Models\Pmb\PilihanProdi::create([
                 'pendaftaran_id' => $pendaftaran->id,
-                'prodi_id'       => \App\Models\Pmb\Prodi::where('kode_prodi', $prodi2['kode_prodi'])->first()->id,
+                'orgunit_id'     => $prodi2->orgunit_id,
                 'urutan'         => 2,
             ]);
 
@@ -206,17 +232,18 @@ class MainPmbSeeder extends Seeder
             }
 
             // 4. Final Decision & Re-registration
+            // Note: Decisions should match orgunit_id of the chosen prodi
             if (in_array($status, ['Lulus', 'Daftar_Ulang'])) {
                 // Update PilihanProdi decision
                 \App\Models\Pmb\PilihanProdi::where('pendaftaran_id', $pendaftaran->id)
                     ->where('urutan', 1)
                     ->update(['keputusan_admin' => 'Disetujui', 'rekomendasi_sistem' => 'Lulus']);
 
-                // Assign Accepted Prodi
-                $pendaftaran->prodi_diterima_id = \App\Models\Pmb\Prodi::where('kode_prodi', $prodi1['kode_prodi'])->first()->id;
+                // Assign Accepted Prodi (OrgUnit)
+                $pendaftaran->orgunit_diterima_id = $prodi1->orgunit_id;
 
                 if ($status == 'Daftar_Ulang') {
-                    $pendaftaran->nim_final = '2024' . $prodi1['kode_prodi'] . str_pad($i, 3, '0', STR_PAD_LEFT);
+                    $pendaftaran->nim_final = '2024' . $prodi1->code . str_pad($i, 3, '0', STR_PAD_LEFT);
 
                     // Daftar Ulang Payment
                     \App\Models\Pmb\Pembayaran::create([

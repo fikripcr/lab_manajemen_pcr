@@ -45,12 +45,11 @@ class PendaftaranService
             ]);
 
             // 3. Create Pilihan Prodi
-            foreach ($data['pilihan_prodi'] as $index => $prodiId) {
-                // If FE sends prodi_id (which is now orgunit_id), use it directly.
-                // Assuming FE dropdowns are updated to return orgunit_id.
+            foreach ($data['pilihan_prodi'] as $index => $orgUnitId) {
+                // If FE sends orgunit_id, use it directly.
                 PilihanProdi::create([
                     'pendaftaran_id' => $pendaftaran->id,
-                    'orgunit_id'     => $prodiId, // This should be orgunit_id
+                    'orgunit_id'     => $orgUnitId,
                     'urutan'         => $index + 1,
                 ]);
             }
@@ -104,7 +103,7 @@ class PendaftaranService
     /**
      * Finalize Graduation (NIM Generation)
      */
-    public function finalizeGraduation($pendaftaranId, $prodiDiterimaId, $nim)
+    public function finalizeGraduation($pendaftaranId, $orgUnitDiterimaId, $nim)
     {
         \DB::beginTransaction();
         try {
@@ -112,7 +111,7 @@ class PendaftaranService
 
             $pendaftaran->update([
                 'status_terkini'      => 'Lulus',
-                'orgunit_diterima_id' => $prodiDiterimaId, // This is orgunit_id
+                'orgunit_diterima_id' => $orgUnitDiterimaId,
                 'nim_final'           => $nim,
             ]);
 

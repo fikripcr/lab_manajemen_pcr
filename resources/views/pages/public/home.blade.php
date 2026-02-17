@@ -121,7 +121,7 @@
             <div class="col-lg-6 hero-images" data-aos="fade-left" data-aos-delay="400">
               <div class="image-stack">
                 <div class="main-image">
-                  <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-3.webp') }}" alt="Luxury Property" class="img-fluid">
+                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" alt="Luxury Property" class="img-fluid">
                   <div class="property-tag">
                     <span class="price">$850,000</span>
                     <span class="type">Featured</span>
@@ -129,12 +129,12 @@
                 </div>
 
                 <div class="secondary-image">
-                  <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-interior-7.webp') }}" alt="Property Interior" class="img-fluid">
+                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-interior-7.webp') }}" alt="Property Interior" class="img-fluid">
                 </div>
 
                 <div class="floating-card">
                   <div class="agent-info">
-                    <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/agent-4.webp') }}" alt="Agent" class="agent-avatar">
+                    <img src="{{ Vite::asset('resources/assets/public/img/real-estate/agent-4.webp') }}" alt="Agent" class="agent-avatar">
                     <div class="agent-details">
                       <h5>Sarah Johnson</h5>
                       <p>Top Real Estate Agent</p>
@@ -169,7 +169,7 @@
           <div class="col-lg-6 order-lg-2" data-aos="fade-left" data-aos-delay="200">
             <div class="image-section">
               <div class="main-image-wrapper">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-7.webp') }}" alt="Premium Property" class="img-fluid main-image">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-7.webp') }}" alt="Premium Property" class="img-fluid main-image">
                 <div class="floating-card">
                   <div class="card-content">
                     <div class="icon">
@@ -184,10 +184,10 @@
               </div>
               <div class="secondary-images">
                 <div class="small-image">
-                  <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-interior-8.webp') }}" alt="Interior Design" class="img-fluid">
+                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-interior-8.webp') }}" alt="Interior Design" class="img-fluid">
                 </div>
                 <div class="small-image">
-                  <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/agent-3.webp') }}" alt="Expert Agent" class="img-fluid">
+                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/agent-3.webp') }}" alt="Expert Agent" class="img-fluid">
                 </div>
               </div>
             </div>
@@ -284,7 +284,7 @@
                 <span class="flag premium">Premium</span>
               </div>
               <a href="property-details.html" class="image-link">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-6.webp') }}" alt="Showcase Villa" class="img-fluid">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-6.webp') }}" alt="Showcase Villa" class="img-fluid">
               </a>
               <div class="quick-specs">
                 <span><i class="bi bi-door-open"></i> 5 Beds</span>
@@ -316,7 +316,7 @@
 
             <article class="mini-card" data-aos="fade-up" data-aos-delay="200">
               <a href="property-details.html" class="thumb">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-interior-2.webp') }}" alt="Loft Haven" class="img-fluid" loading="lazy">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-interior-2.webp') }}" alt="Loft Haven" class="img-fluid" loading="lazy">
                 <span class="label hot"><i class="bi bi-lightning-charge-fill"></i> Hot</span>
               </a>
               <div class="mini-body">
@@ -336,7 +336,7 @@
 
             <article class="mini-card" data-aos="fade-up" data-aos-delay="250">
               <a href="property-details.html" class="thumb">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-3.webp') }}" alt="Suburban Home" class="img-fluid" loading="lazy">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" alt="Suburban Home" class="img-fluid" loading="lazy">
                 <span class="label new"><i class="bi bi-star-fill"></i> New</span>
               </a>
               <div class="mini-body">
@@ -356,7 +356,7 @@
 
             <article class="mini-card" data-aos="fade-up" data-aos-delay="300">
               <a href="property-details.html" class="thumb">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-interior-7.webp') }}" alt="Penthouse" class="img-fluid" loading="lazy">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-interior-7.webp') }}" alt="Penthouse" class="img-fluid" loading="lazy">
                 <span class="label featured"><i class="bi bi-gem"></i> Featured</span>
               </a>
               <div class="mini-body">
@@ -383,7 +383,7 @@
           <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
             <article class="stack-card">
               <figure class="stack-media">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-8.webp') }}" alt="Modern Facade" class="img-fluid" loading="lazy">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-8.webp') }}" alt="Modern Facade" class="img-fluid" loading="lazy">
                 <figcaption>
                   <span class="chip exclusive">Exclusive</span>
                 </figcaption>
@@ -407,7 +407,7 @@
           <div class="col-lg-4" data-aos="fade-up" data-aos-delay="350">
             <article class="stack-card">
               <figure class="stack-media">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-interior-10.webp') }}" alt="Cozy Interior" class="img-fluid" loading="lazy">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-interior-10.webp') }}" alt="Cozy Interior" class="img-fluid" loading="lazy">
                 <figcaption>
                   <span class="chip hot">Hot</span>
                 </figcaption>
@@ -431,7 +431,7 @@
           <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
             <article class="stack-card">
               <figure class="stack-media">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-10.webp') }}" alt="Garden Home" class="img-fluid" loading="lazy">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-10.webp') }}" alt="Garden Home" class="img-fluid" loading="lazy">
                 <figcaption>
                   <span class="chip new">New</span>
                 </figcaption>
@@ -475,7 +475,7 @@
           <div class="col-lg-6 col-xl-4" data-aos="fade-up" data-aos-delay="100">
             <div class="agent-card">
               <div class="agent-image">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/agent-5.webp') }}" alt="Top Agent" class="img-fluid">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/agent-5.webp') }}" alt="Top Agent" class="img-fluid">
                 <div class="agent-overlay">
                   <div class="contact-buttons">
                     <a href="tel:+14159876543" class="btn-contact" title="Call Agent">
@@ -523,7 +523,7 @@
           <div class="col-lg-6 col-xl-4" data-aos="fade-up" data-aos-delay="200">
             <div class="agent-card">
               <div class="agent-image">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/agent-4.webp') }}" alt="Top Agent" class="img-fluid">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/agent-4.webp') }}" alt="Top Agent" class="img-fluid">
                 <div class="agent-overlay">
                   <div class="contact-buttons">
                     <a href="tel:+14159876544" class="btn-contact" title="Call Agent">
@@ -571,7 +571,7 @@
           <div class="col-lg-6 col-xl-4" data-aos="fade-up" data-aos-delay="300">
             <div class="agent-card">
               <div class="agent-image">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/agent-8.webp') }}" alt="Top Agent" class="img-fluid">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/agent-8.webp') }}" alt="Top Agent" class="img-fluid">
                 <div class="agent-overlay">
                   <div class="contact-buttons">
                     <a href="tel:+14159876545" class="btn-contact" title="Call Agent">
@@ -645,7 +645,7 @@
           <div class="col-lg-5" data-aos="fade-right" data-aos-delay="200">
             <div class="image-showcase">
               <div class="main-image-wrapper">
-                <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-3.webp') }}" alt="Premium Property" class="img-fluid main-image">
+                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" alt="Premium Property" class="img-fluid main-image">
                 <div class="image-overlay">
                   <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox">
                     <div class="overlay-content">
@@ -778,7 +778,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="{{ Vite::asset('resources/assets/guest/img/blog/blog-post-1.webp') }}" class="img-fluid" alt="">
+                <img src="{{ Vite::asset('resources/assets/public/images/logo.png') }}" height="40" alt="">
                 <span class="post-date">December 12</span>
               </div>
 
@@ -794,7 +794,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="{{ Vite::asset('resources/assets/guest/img/blog/blog-post-2.webp') }}" class="img-fluid" alt="">
+                <img src="{{ Vite::asset('resources/assets/public/img/blog/blog-post-2.webp') }}" class="img-fluid" alt="">
                 <span class="post-date">July 17</span>
               </div>
 
@@ -810,7 +810,7 @@
             <div class="post-item position-relative h-100">
 
               <div class="post-img position-relative overflow-hidden">
-                <img src="{{ Vite::asset('resources/assets/guest/img/blog/blog-post-3.webp') }}" class="img-fluid" alt="">
+                <img src="{{ Vite::asset('resources/assets/public/img/blog/blog-post-3.webp') }}" class="img-fluid" alt="">
                 <span class="post-date">September 05</span>
               </div>
 
@@ -843,7 +843,7 @@
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
               <div class="post-box">
                 <div class="post-img">
-                  <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($news->judul) }}">
+                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($news->judul) }}">
                 </div>
                 <div class="meta">
                   <ul>
@@ -857,7 +857,7 @@
                          class="img-fluid rounded"
                          alt="{{ e($news->judul) }}"
                          style="width: 80px; height: 80px; object-fit: cover;"
-                         onerror="this.onerror=null; this.src='{{ Vite::asset('resources/assets/guest/img/person/person-m-10.webp') }}';">
+                         onerror="this.onerror=null; this.src='{{ Vite::asset('resources/assets/public/img/person/person-m-10.webp') }}';">
                   </div>
                   <div class="flex-grow-1">
                     <h3 class="post-title">{{ e($news->judul) }}</h3>
@@ -902,7 +902,7 @@
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
               <div class="post-box">
                 <div class="post-img">
-                  <img src="{{ Vite::asset('resources/assets/guest/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($request->nama_software) }}">
+                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($request->nama_software) }}">
                 </div>
                 <div class="meta">
                   <ul>

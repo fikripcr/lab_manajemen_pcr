@@ -34,11 +34,11 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label mb-1">NIK</label>
-                                <div class="form-control-plaintext">{{ $pendaftaran->profil->nik }}</div>
+                                <div class="form-control-plaintext">{{ $pendaftaran->profil->nik ?? '-' }}</div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label mb-1">Asal Sekolah</label>
-                                <div class="form-control-plaintext">{{ $pendaftaran->profil->asal_sekolah }}</div>
+                                <div class="form-control-plaintext">{{ $pendaftaran->profil->asal_sekolah ?? '-' }}</div>
                             </div>
                         </div>
                     </div>

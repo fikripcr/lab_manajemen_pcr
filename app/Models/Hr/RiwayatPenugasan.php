@@ -30,7 +30,7 @@ class RiwayatPenugasan extends Model
 
     public function orgUnit()
     {
-        return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'org_unit_id');
+        return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'orgunit_id');
     }
 
     public function approvedBy()

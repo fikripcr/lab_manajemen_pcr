@@ -35,7 +35,6 @@ class PegawaiRequest extends FormRequest
 
             'orgunit_posisi_id'     => 'nullable|exists:struktur_organisasi,orgunit_id',
             'orgunit_departemen_id' => 'nullable|exists:struktur_organisasi,orgunit_id',
-            'orgunit_prodi_id'      => 'nullable|exists:struktur_organisasi,orgunit_id',
 
             // 'statuspegawai_id' => 'required|exists:hr_status_pegawai,statuspegawai_id',
             // 'statusaktifitas_id' => 'required|exists:hr_status_aktifitas,statusaktifitas_id',

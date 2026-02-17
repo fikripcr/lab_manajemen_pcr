@@ -119,23 +119,25 @@
                             <tbody>
                                 @forelse($latest_laporan as $laporan)
                                 <tr>
-                                    <td>
-                                        {{ $laporan->inventaris->nama_alat ?? '-' }}
-                                        <div class="text-muted small">{{ $laporan->deskripsi_kerusakan }}</div>
+                                    <td class="w-75">
+                                        <div class="font-weight-medium text-truncate" style="max-width: 400px;">
+                                            {{ $laporan->inventaris->nama_alat ?? '-' }}
+                                        </div>
+                                        <div class="text-muted small text-truncate" style="max-width: 400px;">{{ $laporan->deskripsi_kerusakan }}</div>
                                     </td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         @php
                                             $badges = ['open' => 'danger', 'in_progress' => 'warning', 'resolved' => 'success', 'closed' => 'secondary', 'pending' => 'danger'];
                                             $color = $badges[$laporan->status] ?? 'secondary';
                                         @endphp
-                                        <span class="badge bg-{{ $color }}">{{ ucfirst($laporan->status) }}</span>
+                                        <span class="badge bg-{{ $color }}-lt px-2 py-1">{{ ucfirst($laporan->status) }}</span>
                                     </td>
-                                    <td class="text-muted">
+                                    <td class="text-nowrap text-muted">
                                         {{ $laporan->created_at->diffForHumans() }}
                                     </td>
                                     <td class="text-end">
                                         <a href="{{ route('lab.laporan-kerusakan.show', encryptId($laporan->laporan_kerusakan_id)) }}" class="btn btn-icon btn-sm btn-ghost-secondary">
-                                            <i class="bx bx-show"></i>
+                                            <i class="bx bx-show fs-3"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -161,16 +163,19 @@
                         <div class="list-group-item">
                             <div class="row align-items-center">
                                 <div class="col-auto">
-                                    <span class="avatar bg-blue-lt">{{ $kegiatan->lab->name ?? 'L' }}</span>
+                                    <span class="avatar avatar-md bg-blue-lt fw-bold">{{ substr($kegiatan->lab->name ?? 'L', 0, 1) }}</span>
                                 </div>
-                                <div class="col text-truncate">
-                                    <a href="{{ route('lab.kegiatan.show', encryptId($kegiatan->kegiatan_id)) }}" class="text-reset d-block">{{ $kegiatan->nama_kegiatan }}</a>
-                                    <div class="d-block text-muted text-truncate mt-n1">
-                                        {{ $kegiatan->tanggal->format('d M Y') }} | {{ $kegiatan->jam_mulai->format('H:i') }}
+                                <div class="col">
+                                    <a href="{{ route('lab.kegiatan.show', encryptId($kegiatan->kegiatan_id)) }}" class="text-reset d-block font-weight-medium text-truncate" style="max-width: 300px;">
+                                        {{ $kegiatan->nama_kegiatan }}
+                                    </a>
+                                    <div class="d-flex align-items-center text-muted small mt-1">
+                                        <span class="text-primary font-weight-bold me-2">{{ $kegiatan->lab->name ?? 'Laboratorium' }}</span>
+                                        <span class="text-muted">| {{ $kegiatan->tanggal->format('d M Y') }} | {{ $kegiatan->jam_mulai->format('H:i') }}</span>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <span class="badge bg-{{ $kegiatan->status == 'approved' ? 'success' : 'warning' }}">
+                                    <span class="badge bg-{{ $kegiatan->status == 'approved' ? 'success' : 'warning' }}-lt px-2 py-1">
                                         {{ ucfirst($kegiatan->status) }}
                                     </span>
                                 </div>
