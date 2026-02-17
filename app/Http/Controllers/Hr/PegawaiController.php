@@ -77,9 +77,7 @@ class PegawaiController extends Controller
                 ->addColumn('unit', function ($row) {
                     return $row->latestDataDiri?->departemen?->name ?? '-';
                 })
-                ->addColumn('prodi', function ($row) {
-                    return $row->latestDataDiri?->prodi?->nama_prodi ?? '-';
-                })
+            // Prodi column removed as it is redundant/broken
                 ->addColumn('penyelia', function ($row) {
                     $atasan1 = $row->atasanSatu?->nama ?? null;
                     $atasan2 = $row->atasanDua?->nama ?? null;

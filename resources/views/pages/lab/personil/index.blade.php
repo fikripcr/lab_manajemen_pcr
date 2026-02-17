@@ -44,9 +44,9 @@
                     'name' => 'nama',
                 ],
                 [
-                    'title' => 'Jabatan',
-                    'data' => 'jabatan',
-                    'name' => 'jabatan',
+                    'title' => 'Posisi',
+                    'data' => 'posisi',
+                    'name' => 'posisi',
                 ],
                 [
                     'title' => 'User',

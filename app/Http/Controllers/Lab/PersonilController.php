@@ -66,13 +66,13 @@ class PersonilController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nip' => 'required|string|max:50|unique:lab_personil,nip',
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:lab_personil,email',
-            'jabatan' => 'required|string|max:255',
+            'nip'    => 'required|string|max:50|unique:personil,nip',
+            'nama'   => 'required|string|max:255',
+            'email'  => 'required|email|max:255|unique:personil,email',
+            'posisi' => 'required|string|max:255',
         ]);
 
-        $data = $request->all();
+        $data               = $request->all();
         $data['created_by'] = auth()->id();
         $data['updated_by'] = auth()->id();
 
@@ -84,13 +84,13 @@ class PersonilController extends Controller
     public function update(Request $request, Personil $personil)
     {
         $request->validate([
-            'nip' => 'required|string|max:50|unique:lab_personil,nip,' . $personil->personil_id . ',personil_id',
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:lab_personil,email,' . $personil->personil_id . ',personil_id',
-            'jabatan' => 'required|string|max:255',
+            'nip'    => 'required|string|max:50|unique:personil,nip,' . $personil->personil_id . ',personil_id',
+            'nama'   => 'required|string|max:255',
+            'email'  => 'required|email|max:255|unique:personil,email,' . $personil->personil_id . ',personil_id',
+            'posisi' => 'required|string|max:255',
         ]);
 
-        $data = $request->all();
+        $data               = $request->all();
         $data['updated_by'] = auth()->id();
 
         $personil->update($data);

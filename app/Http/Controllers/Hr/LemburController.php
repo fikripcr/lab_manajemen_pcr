@@ -99,7 +99,7 @@ class LemburController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'pengusul_id'      => 'required|exists:hr_pegawai,pegawai_id',
+            'pengusul_id'      => 'required|exists:pegawai,pegawai_id',
             'judul'            => 'required|string|max:255',
             'uraian_pekerjaan' => 'nullable|string',
             'alasan'           => 'nullable|string',
@@ -110,7 +110,7 @@ class LemburController extends Controller
             'metode_bayar'     => 'nullable|in:uang,cuti_pengganti,tidak_dibayar',
             'nominal_per_jam'  => 'nullable|numeric|min:0',
             'pegawai_ids'      => 'required|array|min:1',
-            'pegawai_ids.*'    => 'exists:hr_pegawai,pegawai_id',
+            'pegawai_ids.*'    => 'exists:pegawai,pegawai_id',
             'override_nominal' => 'nullable|array',
             'catatan_pegawai'  => 'nullable|array',
         ]);
@@ -157,7 +157,7 @@ class LemburController extends Controller
     public function update(Request $request, Lembur $lembur)
     {
         $validated = $request->validate([
-            'pengusul_id'      => 'required|exists:hr_pegawai,pegawai_id',
+            'pengusul_id'      => 'required|exists:pegawai,pegawai_id',
             'judul'            => 'required|string|max:255',
             'uraian_pekerjaan' => 'nullable|string',
             'alasan'           => 'nullable|string',
@@ -168,7 +168,7 @@ class LemburController extends Controller
             'metode_bayar'     => 'nullable|in:uang,cuti_pengganti,tidak_dibayar',
             'nominal_per_jam'  => 'nullable|numeric|min:0',
             'pegawai_ids'      => 'required|array|min:1',
-            'pegawai_ids.*'    => 'exists:hr_pegawai,pegawai_id',
+            'pegawai_ids.*'    => 'exists:pegawai,pegawai_id',
             'override_nominal' => 'nullable|array',
             'catatan_pegawai'  => 'nullable|array',
         ]);

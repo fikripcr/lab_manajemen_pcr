@@ -1,38 +1,12 @@
 <?php
 namespace App\Models\Eoffice;
 
-use App\Models\User;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-class Pegawai extends Model
+/**
+ * Alias for backward compatibility.
+ * The canonical Pegawai model is now App\Models\Shared\Pegawai.
+ * All new code should use App\Models\Shared\Pegawai directly.
+ */
+class Pegawai extends \App\Models\Shared\Pegawai
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
-
-    protected $table      = 'eoffice_pegawai';
-    protected $primaryKey = 'pegawai_id';
-    protected $fillable   = [
-        'user_id',
-        'nip',
-        'nama',
-        'inisial',
-        'email',
-        'departemen',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
-
-    public function getRouteKeyName()
-    {
-        return 'pegawai_id';
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
+    //
 }

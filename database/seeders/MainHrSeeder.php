@@ -153,7 +153,7 @@ class MainHrSeeder extends Seeder
     private function createUnit($parent, $name, $type, $sort_order, $code = null)
     {
         return OrgUnit::create([
-            'parent_id'  => $parent->org_unit_id,
+            'parent_id'  => $parent->orgunit_id,
             'name'       => $name,
             'type'       => $type,
             'level'      => $parent->level + 1,
@@ -313,8 +313,8 @@ class MainHrSeeder extends Seeder
                         'no_hp'                 => $faker->phoneNumber,
                         'status_nikah'          => $faker->randomElement(['Menikah', 'Belum Menikah']),
                         'agama'                 => 'Islam',
-                        'orgunit_departemen_id' => $deptUnits->random()->org_unit_id,
-                        'orgunit_posisi_id'     => $posUnits->random()->org_unit_id,
+                        'orgunit_departemen_id' => $deptUnits->random()->orgunit_id,
+                        'orgunit_posisi_id'     => $posUnits->random()->orgunit_id,
                         'created_by'            => $sysUserId,
                     ];
                     $riwayatDiri = $this->createApprovedHistory(RiwayatDataDiri::class, $riwayatDataDiriData, $sysUserId);

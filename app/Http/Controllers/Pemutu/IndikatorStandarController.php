@@ -71,7 +71,7 @@ class IndikatorStandarController extends Controller
     public function storeAssignment(Request $request, Indikator $indikator)
     {
         $validated = $request->validate([
-            'personil_id'  => 'required|exists:pemutu_personil,personil_id',
+            'personil_id'  => 'required|exists:pegawai,pegawai_id',
             'year'         => 'required|integer',
             'semester'     => 'required|integer',
             'target_value' => 'nullable|string',

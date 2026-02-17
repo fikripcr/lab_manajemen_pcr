@@ -11,7 +11,6 @@ use App\Http\Controllers\Hr\JenisIzinController;
 use App\Http\Controllers\Hr\JenisShiftController;
 use App\Http\Controllers\Hr\KeluargaController;
 use App\Http\Controllers\Hr\LemburController;
-use App\Http\Controllers\Hr\OrgUnitController;
 use App\Http\Controllers\Hr\PegawaiController;
 use App\Http\Controllers\Hr\PengembanganDiriController;
 use App\Http\Controllers\Hr\PerizinanController;
@@ -46,11 +45,8 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::post('pegawai/upload-photo', [PresensiController::class, 'storeUploadPhoto'])->name('pegawai.upload-photo.store');
     Route::resource('pegawai', PegawaiController::class);
 
-    // OrgUnit Routes (Struktur Organisasi)
-    Route::get('org-units/data', [OrgUnitController::class, 'data'])->name('org-units.data');
-    Route::post('org-units/{org_unit}/toggle-status', [OrgUnitController::class, 'toggleStatus'])->name('org-units.toggle-status');
-    Route::post('org-units/reorder', [OrgUnitController::class, 'reorder'])->name('org-units.reorder');
-    Route::resource('org-units', OrgUnitController::class);
+    // OrgUnit Routes (Struktur Organisasi) - Moved to Shared
+    // Route::resource('org-units', OrgUnitController::class);
 
     // Global Data Routes
     Route::get('keluarga/data', [KeluargaController::class, 'data'])->name('keluarga.data');

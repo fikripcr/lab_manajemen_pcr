@@ -1,0 +1,95 @@
+<?php
+namespace App\Models\Shared;
+
+use App\Models\User;
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class StrukturOrganisasi extends Model
+{
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+
+    protected $table      = 'struktur_organisasi';
+    protected $primaryKey = 'orgunit_id';
+
+    protected $appends = ['encrypted_org_unit_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'orgunit_id';
+    }
+
+    protected $fillable = [
+        'parent_id',
+        'name',
+        'code',
+        'type',
+        'level',
+        'seq',
+        'sort_order',
+        'is_active',
+        'description',
+        'successor_id',
+        'auditee_user_id',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function getEncryptedOrgUnitIdAttribute()
+    {
+        return encryptId($this->orgunit_id);
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    // ----------------------------------------------------------------
+    // Relationships
+    // ----------------------------------------------------------------
+
+    public function parent()
+    {
+        return $this->belongsTo(StrukturOrganisasi::class, 'parent_id', 'orgunit_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id');
+    }
+
+    public function activeChildren()
+    {
+        return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id')->where('is_active', true);
+    }
+
+    public function personils()
+    {
+        return $this->hasMany(Personil::class, 'org_unit_id', 'orgunit_id');
+    }
+
+    public function successor()
+    {
+        return $this->belongsTo(StrukturOrganisasi::class, 'successor_id', 'orgunit_id');
+    }
+
+    public function predecessor()
+    {
+        return $this->hasOne(StrukturOrganisasi::class, 'successor_id', 'orgunit_id');
+    }
+
+    public function auditee()
+    {
+        return $this->belongsTo(User::class, 'auditee_user_id', 'id');
+    }
+}

@@ -33,9 +33,9 @@ class PegawaiRequest extends FormRequest
             'nip'                   => 'nullable|string|max:20',
             'inisial'               => 'nullable|string|max:10',
 
-            'orgunit_posisi_id'     => 'nullable|exists:hr_org_unit,org_unit_id',
-            'orgunit_departemen_id' => 'nullable|exists:hr_org_unit,org_unit_id',
-            'orgunit_prodi_id'      => 'nullable|exists:hr_org_unit,org_unit_id',
+            'orgunit_posisi_id'     => 'nullable|exists:struktur_organisasi,orgunit_id',
+            'orgunit_departemen_id' => 'nullable|exists:struktur_organisasi,orgunit_id',
+            'orgunit_prodi_id'      => 'nullable|exists:struktur_organisasi,orgunit_id',
 
             // 'statuspegawai_id' => 'required|exists:hr_status_pegawai,statuspegawai_id',
             // 'statusaktifitas_id' => 'required|exists:hr_status_aktifitas,statusaktifitas_id',

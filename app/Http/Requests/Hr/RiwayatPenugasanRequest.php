@@ -13,7 +13,7 @@ class RiwayatPenugasanRequest extends FormRequest
     public function rules()
     {
         return [
-            'org_unit_id' => 'required|exists:hr_org_unit,org_unit_id',
+            'org_unit_id' => 'required|exists:struktur_organisasi,orgunit_id',
             'tgl_mulai'   => 'required|date',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_mulai',
             'no_sk'       => 'nullable|string|max:100',

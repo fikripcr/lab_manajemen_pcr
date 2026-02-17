@@ -62,14 +62,20 @@
                         />
                     </div>
                     <div class="col-md-6">
-                        <x-tabler.form-input 
-                            name="program_studi" 
-                            label="Program Studi" 
-                            type="text" 
-                            value="{{ old('program_studi') }}"
-                            placeholder="Teknik Informatika" 
-                            required="true" 
-                        />
+                        <div class="mb-3">
+                            <label class="form-label required" for="orgunit_id">Program Studi</label>
+                            <select name="orgunit_id" id="orgunit_id" class="form-select @error('orgunit_id') is-invalid @enderror" required>
+                                <option value="">-- Pilih Program Studi --</option>
+                                @foreach($prodiList as $prodi)
+                                    <option value="{{ $prodi->orgunit_id }}" {{ old('orgunit_id') == $prodi->orgunit_id ? 'selected' : '' }}>
+                                        {{ $prodi->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('orgunit_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 

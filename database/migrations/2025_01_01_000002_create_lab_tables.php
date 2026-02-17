@@ -307,26 +307,7 @@ return new class extends Migration
             $table->index(['status']);
         });
 
-        // 12. Pengumuman (Renamed to lab_pengumuman)
-        Schema::create('lab_pengumuman', function (Blueprint $table) {
-            $table->id('pengumuman_id');
-            $table->unsignedBigInteger('penulis_id');
-            $table->string('judul', 191);
-            $table->text('isi');
-            $table->string('jenis', 50);
-            $table->boolean('is_published')->default(false);
-            $table->timestamp('published_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-
-            // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-
-            $table->foreign('penulis_id')->references('id')->on('users');
-            $table->index(['jenis', 'is_published', 'published_at'], 'idx_pengumuman_main');
-        });
+        // NOTE: lab_pengumuman moved to shared migration as 'pengumuman'
 
         // 13. Lab Inventaris (Renamed to lab_inventaris_penempatan)
         Schema::create('lab_inventaris_penempatan', function (Blueprint $table) {
@@ -399,45 +380,8 @@ return new class extends Migration
             // $table->foreign('latest_riwayatapproval_id')->references('riwayatapproval_id')->on('lab_riwayat_approval')->onDelete('set null');
         });
 
-        // 16. Lab Mahasiswa
-        Schema::create('lab_mahasiswa', function (Blueprint $table) {
-            $table->id('mahasiswa_id');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('nim')->unique();
-            $table->string('nama');
-            $table->string('email')->unique();
-            $table->string('program_studi')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-
-            // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-        });
-
-        // 17. Lab Personil
-        Schema::create('lab_personil', function (Blueprint $table) {
-            $table->id('personil_id');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('nama');
-            $table->string('email')->unique();
-            $table->string('nip')->unique()->nullable();
-            $table->string('jabatan')->nullable();
-            // added jenis_personil
-            $table->string('jenis_personil')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-
-            // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-        });
+        // NOTE: lab_mahasiswa moved to shared migration as 'mahasiswa'
+        // NOTE: lab_personil moved to shared migration as 'personil'
     }
 
     /**
@@ -445,12 +389,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lab_personil');
-        Schema::dropIfExists('lab_mahasiswa');
+        // lab_personil, lab_mahasiswa, lab_pengumuman now in shared migration
         Schema::dropIfExists('lab_surat_bebas_labs');
         Schema::dropIfExists('lab_teams');
         Schema::dropIfExists('lab_inventaris_penempatan');
-        Schema::dropIfExists('lab_pengumuman');
         Schema::dropIfExists('lab_laporan_kerusakan');
         Schema::dropIfExists('lab_inventaris');
         Schema::dropIfExists('lab_request_software_mata_kuliah');

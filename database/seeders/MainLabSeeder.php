@@ -15,6 +15,7 @@ use App\Models\Lab\Pengumuman;
 use App\Models\Lab\Personil;
 use App\Models\Lab\Semester;
 use App\Models\Lab\SuratBebasLab;
+use App\Models\Pmb\Prodi;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -67,13 +68,14 @@ class MainLabSeeder extends Seeder
         foreach ($users as $user) {
             $roleNames = $user->getRoleNames();
             if ($roleNames->contains('mahasiswa')) {
+                $prodiIds = Prodi::pluck('id')->toArray();
                 Mahasiswa::create([
-                    'user_id'       => $user->id,
-                    'nim'           => fake()->unique()->numerify('10##########'),
-                    'nama'          => $user->name,
-                    'email'         => $user->email,
-                    'program_studi' => fake()->randomElement(['Teknik Informatika', 'Sistem Informasi', 'Teknik Komputer', 'Digital Bisnis']),
-                    'created_by'    => $users->first()->id,
+                    'user_id'    => $user->id,
+                    'nim'        => fake()->unique()->numerify('10##########'),
+                    'nama'       => $user->name,
+                    'email'      => $user->email,
+                    'prodi_id'   => ! empty($prodiIds) ? $prodiIds[array_rand($prodiIds)] : null,
+                    'created_by' => $users->first()->id,
                 ]);
             } else {
                 Personil::create([
@@ -81,7 +83,7 @@ class MainLabSeeder extends Seeder
                     'nama'       => $user->name,
                     'email'      => $user->email,
                     'nip'        => fake()->unique()->numerify('19##########'),
-                    'jabatan'    => $roleNames->first() ?? 'Staff',
+                    'posisi'     => $roleNames->first() ?? 'Staff',
                     'created_by' => $users->first()->id,
                 ]);
             }

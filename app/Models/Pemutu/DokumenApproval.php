@@ -28,9 +28,7 @@ class DokumenApproval extends Model
 
     public function approver()
     {
-        // Adjust this if you use Personil instead of Pegawai,
-        // migration showed pegawai_id but based on other pemutu models it might be Personil
-        return $this->belongsTo(Personil::class, 'pegawai_id', 'personil_id');
+        return $this->belongsTo(\App\Models\Shared\Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
     public function statuses()

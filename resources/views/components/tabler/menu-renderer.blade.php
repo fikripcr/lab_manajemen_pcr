@@ -203,19 +203,19 @@
             'title' => 'Penjaminan Mutu',
             'icon' => 'ti ti-checkbox',
             'route' => '#',
-            'active_routes' => ['pemutu.*'],
+            'active_routes' => ['pemutu.*', 'shared.struktur-organisasi.*'],
             'can' => 'admin',
             'children'      => [
                 [
                     'title'         => 'Master Data',
                     'id'            => 'navbar-pemutu-master',
                     'icon'          => 'ti ti-database',
-                    'active_routes' => ['pemutu.org-units.*', 'pemutu.personils.*', 'pemutu.labels.*', 'pemutu.label-types.*'],
+                    'active_routes' => ['shared.struktur-organisasi.*', 'pemutu.org-units.*', 'pemutu.personils.*', 'pemutu.labels.*', 'pemutu.label-types.*'],
                     'children'      => [
                         [
                             'title' => 'Struktur Organisasi',
-                            'route' => 'pemutu.org-units.index',
-                            'active_routes' => ['pemutu.org-units.*'],
+                            'route' => 'shared.struktur-organisasi.index',
+                            'active_routes' => ['shared.struktur-organisasi.*'],
                             'icon' => 'ti ti-hierarchy-2',
                         ],
                         [
@@ -287,7 +287,7 @@
             'title'         => 'HR & Kepegawaian',
             'id'            => 'navbar-hr',
             'icon'          => 'ti ti-briefcase',
-            'active_routes' => ['hr.*'],
+            'active_routes' => ['hr.*', 'shared.struktur-organisasi.*'],
             'children'      => [
                 [
                     'title'         => 'Data Pegawai',
@@ -297,8 +297,8 @@
                 ],
                 [
                     'title'         => 'Struktur Organisasi',
-                    'route'         => 'hr.org-units.index',
-                    'active_routes' => ['hr.org-units.*'],
+                    'route'         => 'shared.struktur-organisasi.index',
+                    'active_routes' => ['shared.struktur-organisasi.*'],
                     'icon'          => 'ti ti-hierarchy-2',
                 ],
                 [

@@ -39,38 +39,8 @@ class MainEofficeSeeder extends Seeder
             ['name' => 'Admin System', 'password' => Hash::make('password')]
         );
 
-        DB::table('eoffice_pegawai')->insert([
-            [
-                'user_id'    => $userAdmin->id,
-                'nip'        => '123456789',
-                'nama'       => 'Admin System',
-                'inisial'    => 'ADM',
-                'email'      => 'admin@example.com',
-                'departemen' => 'TIK',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'user_id'    => $userFikri->id,
-                'nip'        => '19980101202301',
-                'nama'       => 'Fikri Muhaffizh Imani',
-                'inisial'    => 'FMI',
-                'email'      => 'fikri@pcr.ac.id',
-                'departemen' => 'TIK',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
-
-        DB::table('eoffice_mahasiswa')->insert([
-            'user_id'       => $userFikri->id,
-            'nim'           => '20210001',
-            'nama'          => 'Fikri Muhaffizh Imani',
-            'email'         => 'fikri@pcr.ac.id',
-            'program_studi' => 'Teknik Informatika',
-            'created_at'    => now(),
-            'updated_at'    => now(),
-        ]);
+        // NOTE: eoffice_pegawai and eoffice_mahasiswa tables removed — now shared entities
+        // Pegawai and mahasiswa data is managed by HR and shared seeders
 
         // 3. Kategori Perusahaan & Perusahaan
         $catTekno      = KategoriPerusahaan::create(['nama_kategori' => 'Teknologi & Informasi']);
@@ -242,8 +212,7 @@ class MainEofficeSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
         $tables = [
-            'eoffice_pegawai',
-            'eoffice_mahasiswa',
+            // eoffice_pegawai and eoffice_mahasiswa removed — now shared tables
             'eoffice_jenis_layanan',
             'eoffice_jenis_layanan_pic',
             'eoffice_kategori_isian',

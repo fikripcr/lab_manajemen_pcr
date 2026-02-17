@@ -32,7 +32,7 @@
             ['data' => 'email', 'name' => 'email', 'title' => 'Email'],
             ['data' => 'posisi', 'name' => 'posisi', 'title' => 'Posisi'],
             ['data' => 'unit', 'name' => 'unit', 'title' => 'Departemen'],
-            ['data' => 'prodi', 'name' => 'prodi', 'title' => 'Prodi'],
+            // Prodi removed
             ['data' => 'penyelia', 'name' => 'penyelia', 'title' => 'Penyelia 1&2'],
             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end'],
         ]"

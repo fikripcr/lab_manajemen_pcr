@@ -156,7 +156,7 @@ class LayananService
         if ($mhs) {
             $layanan->pengusul_nama  = $mhs->nama;
             $layanan->pengusul_nim   = $mhs->nim;
-            $layanan->pengusul_prodi = $mhs->program_studi;
+            $layanan->pengusul_prodi = $mhs->prodi->nama_prodi ?? null;
             return;
         }
 

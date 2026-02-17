@@ -19,7 +19,7 @@ class DokumenApprovalController extends Controller
     public function store(Request $request, Dokumen $dokumen)
     {
         $request->validate([
-            'approver_id' => 'required|exists:pemutu_personil,personil_id',
+            'approver_id' => 'required|exists:pegawai,pegawai_id',
             'status'      => 'required|in:terima,tolak,tangguhkan',
             'komentar'    => 'nullable|string',
         ]);

@@ -13,8 +13,8 @@ class MassPenugasanRequest extends FormRequest
     public function rules()
     {
         return [
-            'org_unit_id' => 'required|exists:hr_org_unit,org_unit_id',
-            'pegawai_id'  => 'required|exists:hr_pegawai,pegawai_id',
+            'org_unit_id' => 'required|exists:struktur_organisasi,orgunit_id',
+            'pegawai_id'  => 'required|exists:pegawai,pegawai_id',
             'tgl_mulai'   => 'required|date',
             'no_sk'       => 'nullable|string|max:100',
         ];

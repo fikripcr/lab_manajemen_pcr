@@ -45,53 +45,8 @@ return new class extends Migration
             $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
-        Schema::create('pemutu_org_unit', function (Blueprint $table) {
-            $table->id('orgunit_id');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->string('name', 191);
-            $table->string('type', 100)->nullable();
-            $table->integer('level')->default(1);
-            $table->integer('seq')->default(1);
-            $table->boolean('is_active')->default(true);
-            $table->unsignedBigInteger('successor_id')->nullable();
-            $table->unsignedBigInteger('auditee_user_id')->nullable();
-            $table->string('code', 50)->nullable();
-            $table->timestamps();
-
-            // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->softDeletes();
-
-            $table->foreign('parent_id')->references('orgunit_id')->on('pemutu_org_unit')->nullOnDelete();
-            $table->foreign('successor_id')->references('orgunit_id')->on('pemutu_org_unit')->nullOnDelete();
-            $table->foreign('auditee_user_id')->references('id')->on('users')->nullOnDelete();
-        });
-
-        Schema::create('pemutu_personil', function (Blueprint $table) {
-            $table->id('personil_id');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('org_unit_id')->nullable();
-            $table->string('nama', 100);
-            $table->string('email', 100)->nullable();
-            $table->string('ttd_digital', 191)->nullable();
-            $table->string('jenis', 30)->nullable();
-            $table->string('external_source', 50)->nullable();
-            $table->string('external_id', 50)->nullable();
-            $table->timestamps();
-
-            // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->softDeletes();
-
-            $table->foreign('org_unit_id')->references('orgunit_id')->on('pemutu_org_unit')->nullOnDelete();
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
-        });
+        // NOTE: pemutu_org_unit moved to shared migration as 'struktur_organisasi'
+        // NOTE: pemutu_personil moved to shared migration — pemutu now uses shared 'pegawai' table
 
         // Drop if exists to ensure order
         Schema::dropIfExists('pemutu_dok_sub');
@@ -273,12 +228,12 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
-            $table->foreign('org_unit_id')->references('orgunit_id')->on('pemutu_org_unit')->cascadeOnDelete();
+            $table->foreign('org_unit_id')->references('orgunit_id')->on('struktur_organisasi')->cascadeOnDelete();
         });
 
-        Schema::create('pemutu_indikator_personil', function (Blueprint $table) {
+        Schema::create('pemutu_indikator_pegawai', function (Blueprint $table) {
             $table->id('id');
-            $table->unsignedBigInteger('personil_id');
+            $table->unsignedBigInteger('pegawai_id');
             $table->unsignedBigInteger('indikator_id');
             $table->unsignedBigInteger('periode_kpi_id')->nullable();
             $table->integer('year');
@@ -298,7 +253,7 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->softDeletes();
 
-            $table->foreign('personil_id')->references('personil_id')->on('pemutu_personil')->cascadeOnDelete();
+            $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->cascadeOnDelete();
             $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
             $table->foreign('periode_kpi_id')->references('periode_kpi_id')->on('pemutu_periode_kpi')->onDelete('set null');
         });
@@ -422,15 +377,14 @@ return new class extends Migration
         Schema::dropIfExists('pemutu_periode_kpi');
         Schema::dropIfExists('pemutu_periode_spmi');
 
-        Schema::dropIfExists('pemutu_indikator_personil');
+        Schema::dropIfExists('pemutu_indikator_pegawai');
         Schema::dropIfExists('pemutu_indikator_orgunit');
         Schema::dropIfExists('pemutu_indikator_label');
         Schema::dropIfExists('pemutu_indikator_doksub');
         Schema::dropIfExists('pemutu_indikator');
         Schema::dropIfExists('pemutu_dok_sub');
         Schema::dropIfExists('pemutu_dokumen');
-        Schema::dropIfExists('pemutu_personil');
-        Schema::dropIfExists('pemutu_org_unit');
+        // pemutu_personil and pemutu_org_unit now in shared migration
         Schema::dropIfExists('pemutu_label');
         Schema::dropIfExists('pemutu_label_types');
         Schema::enableForeignKeyConstraints();

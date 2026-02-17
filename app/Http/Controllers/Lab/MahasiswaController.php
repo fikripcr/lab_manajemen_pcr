@@ -3,11 +3,18 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lab\Mahasiswa;
+use App\Services\Shared\StrukturOrganisasiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class MahasiswaController extends Controller
 {
+    protected $strukturOrganisasiService;
+
+    public function __construct(StrukturOrganisasiService $strukturOrganisasiService)
+    {
+        $this->strukturOrganisasiService = $strukturOrganisasiService;
+    }
     public function index()
     {
         return view('pages.lab.mahasiswa.index');
@@ -15,7 +22,7 @@ class MahasiswaController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = Mahasiswa::with(['user.roles']);
+        $query = Mahasiswa::with(['user.roles', 'prodi']);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -28,6 +35,9 @@ class MahasiswaController extends Controller
                     return "{$row->user->name} ({$roles})";
                 }
                 return 'Belum terkoneksi';
+            })
+            ->addColumn('prodi_nama', function ($row) {
+                return $row->prodi->name ?? '-';
             })
             ->addColumn('action', function ($row) {
                 $encryptedId = $row->hashid;
@@ -49,29 +59,41 @@ class MahasiswaController extends Controller
 
     public function create()
     {
-        return view('pages.lab.mahasiswa.create');
+        $prodiList = $this->strukturOrganisasiService
+            ->getFilteredQuery(['type' => 'Prodi'])
+            ->orderBy('name')
+            ->get();
+        return view('pages.lab.mahasiswa.create', compact('prodiList'));
     }
 
     public function edit(Mahasiswa $mahasiswa)
     {
-        return view('pages.lab.mahasiswa.edit', compact('mahasiswa'));
+        $prodiList = $this->strukturOrganisasiService
+            ->getFilteredQuery(['type' => 'Prodi'])
+            ->orderBy('name')
+            ->get();
+        return view('pages.lab.mahasiswa.edit', compact('mahasiswa', 'prodiList'));
     }
 
     public function editModal(Mahasiswa $mahasiswa)
     {
-        return view('pages.lab.mahasiswa.edit-ajax', compact('mahasiswa'));
+        $prodiList = $this->strukturOrganisasiService
+            ->getFilteredQuery(['type' => 'Prodi'])
+            ->orderBy('name')
+            ->get();
+        return view('pages.lab.mahasiswa.edit-ajax', compact('mahasiswa', 'prodiList'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nim' => 'required|string|max:50|unique:lab_mahasiswa,nim',
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:lab_mahasiswa,email',
-            'program_studi' => 'required|string|max:255',
+            'nim'        => 'required|string|max:50|unique:mahasiswa,nim',
+            'nama'       => 'required|string|max:255',
+            'email'      => 'required|email|max:255|unique:mahasiswa,email',
+            'orgunit_id' => 'required|exists:struktur_organisasi,orgunit_id',
         ]);
 
-        $data = $request->all();
+        $data               = $request->all();
         $data['created_by'] = auth()->id();
         $data['updated_by'] = auth()->id();
 
@@ -83,13 +105,13 @@ class MahasiswaController extends Controller
     public function update(Request $request, Mahasiswa $mahasiswa)
     {
         $request->validate([
-            'nim' => 'required|string|max:50|unique:lab_mahasiswa,nim,' . $mahasiswa->mahasiswa_id . ',mahasiswa_id',
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:lab_mahasiswa,email,' . $mahasiswa->mahasiswa_id . ',mahasiswa_id',
-            'program_studi' => 'required|string|max:255',
+            'nim'        => 'required|string|max:50|unique:mahasiswa,nim,' . $mahasiswa->mahasiswa_id . ',mahasiswa_id',
+            'nama'       => 'required|string|max:255',
+            'email'      => 'required|email|max:255|unique:mahasiswa,email,' . $mahasiswa->mahasiswa_id . ',mahasiswa_id',
+            'orgunit_id' => 'required|exists:struktur_organisasi,orgunit_id',
         ]);
 
-        $data = $request->all();
+        $data               = $request->all();
         $data['updated_by'] = auth()->id();
 
         $mahasiswa->update($data);

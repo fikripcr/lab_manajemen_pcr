@@ -2,8 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Hr\JenisIndisiplinerStoreRequest;
-use App\Http\Requests\Hr\JenisIndisiplinerUpdateRequest;
+use App\Http\Requests\Hr\JenisIndisiplinerRequest;
 use App\Models\Hr\JenisIndisipliner;
 use Exception;
 use Yajra\DataTables\Facades\DataTables;
@@ -37,7 +36,7 @@ class JenisIndisiplinerController extends Controller
         return view('pages.hr.jenis-indisipliner.create');
     }
 
-    public function store(JenisIndisiplinerStoreRequest $request)
+    public function store(JenisIndisiplinerRequest $request)
     {
         $validated = $request->validated();
 
@@ -55,7 +54,7 @@ class JenisIndisiplinerController extends Controller
         return view('pages.hr.jenis-indisipliner.edit', compact('jenisIndisipliner'));
     }
 
-    public function update(JenisIndisiplinerUpdateRequest $request, JenisIndisipliner $jenis_indisipliner)
+    public function update(JenisIndisiplinerRequest $request, JenisIndisipliner $jenis_indisipliner)
     {
         $validated = $request->validated();
 

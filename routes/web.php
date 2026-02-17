@@ -4,8 +4,8 @@
 use App\Http\Controllers\Lab\GlobalSearchController;
 use Illuminate\Support\Facades\Route;
 
-// 🔹 Route untuk Guest (tanpa login)
-require __DIR__ . '/guest.php';
+// 🔹 Route untuk Public (tanpa login)
+require __DIR__ . '/public.php';
 
 require __DIR__ . '/lab.php';
 require __DIR__ . '/pemutu.php';
@@ -13,6 +13,9 @@ require __DIR__ . '/eoffice.php';
 
 // 🔹 Theme API (public, no auth required)
 Route::post('/theme/save', [App\Http\Controllers\Sys\ThemeTablerController::class, 'save'])->name('theme.save');
+
+// 🔹 Shared Routes (Authenticated)
+require __DIR__ . '/shared.php';
 
 require __DIR__ . '/sys.php';
 

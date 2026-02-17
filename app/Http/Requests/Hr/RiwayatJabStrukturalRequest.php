@@ -13,7 +13,7 @@ class RiwayatJabStrukturalRequest extends FormRequest
     public function rules()
     {
         return [
-            'org_unit_id' => 'required|exists:hr_org_unit,org_unit_id',
+            'org_unit_id' => 'required|exists:struktur_organisasi,orgunit_id',
             'tgl_awal'    => 'required|date',
             'tgl_akhir'   => 'nullable|date|after_or_equal:tgl_awal',
             'no_sk'       => 'nullable|string|max:100',

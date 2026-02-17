@@ -13,13 +13,12 @@ export default defineConfig({
                 'resources/css/sys.css',
                 'resources/css/admin.css',
                 'resources/css/auth.css',
-                'resources/css/guest.css',
-
+                'resources/css/public.css',
                 // JS Entry Points
                 'resources/js/admin.js',
                 'resources/js/sys.js',
                 'resources/js/auth.js',
-                'resources/js/guest.js'
+                'resources/js/public.js'
             ],
             refresh: true,
         }),

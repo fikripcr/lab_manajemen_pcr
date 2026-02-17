@@ -64,10 +64,10 @@
                     </div>
                     <div class="col-md-6">
                         <x-tabler.form-input 
-                            name="jabatan" 
-                            label="Jabatan" 
+                            name="posisi" 
+                            label="Posisi" 
                             type="text" 
-                            value="{{ old('jabatan', $personil->jabatan) }}"
+                            value="{{ old('posisi', $personil->posisi) }}"
                             placeholder="Kepala Lab" 
                             required="true" 
                         />

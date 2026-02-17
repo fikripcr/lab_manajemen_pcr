@@ -2,8 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Hr\IndisiplinerStoreRequest;
-use App\Http\Requests\Hr\IndisiplinerUpdateRequest;
+use App\Http\Requests\Hr\IndisiplinerRequest;
 use App\Models\Hr\Indisipliner;
 use App\Models\Hr\IndisiplinerPegawai;
 use App\Models\Hr\JenisIndisipliner;
@@ -62,7 +61,7 @@ class IndisiplinerController extends Controller
         return view('pages.hr.indisipliner.create', compact('jenisIndisipliner'));
     }
 
-    public function store(IndisiplinerStoreRequest $request)
+    public function store(IndisiplinerRequest $request)
     {
         $validated = $request->validated();
 
@@ -109,7 +108,7 @@ class IndisiplinerController extends Controller
         return view('pages.hr.indisipliner.edit', compact('indisipliner', 'jenisIndisipliner'));
     }
 
-    public function update(IndisiplinerUpdateRequest $request, Indisipliner $indisipliner)
+    public function update(IndisiplinerRequest $request, Indisipliner $indisipliner)
     {
         $validated = $request->validated();
 

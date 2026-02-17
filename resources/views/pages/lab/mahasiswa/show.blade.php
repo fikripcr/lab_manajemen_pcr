@@ -59,7 +59,7 @@
                         </div>
                         <div class="datagrid-item">
                             <div class="datagrid-title">Program Studi</div>
-                            <div class="datagrid-content">{{ $mahasiswa->program_studi ?? '-' }}</div>
+                            <div class="datagrid-content">{{ $mahasiswa->prodi->name ?? '-' }}</div>
                         </div>
                         @if($mahasiswa->user)
                         <div class="datagrid-item">

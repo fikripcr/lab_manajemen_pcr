@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Models\Shared\Pegawai;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +12,9 @@ class IndikatorPersonil extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table    = 'pemutu_indikator_personil';
+    protected $table    = 'pemutu_indikator_pegawai';
     protected $fillable = [
-        'personil_id',
+        'pegawai_id',
         'indikator_id',
         'periode_kpi_id',
         'year',
@@ -35,9 +36,17 @@ class IndikatorPersonil extends Model
         return $this->belongsTo(PeriodeKpi::class, 'periode_kpi_id', 'periode_kpi_id');
     }
 
+    public function pegawai()
+    {
+        return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
+    }
+
+    /**
+     * Alias for backward compatibility — old code may call ->personil()
+     */
     public function personil()
     {
-        return $this->belongsTo(Personil::class, 'personil_id', 'personil_id');
+        return $this->pegawai();
     }
 
     public function indikator()

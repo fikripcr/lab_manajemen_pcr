@@ -124,59 +124,8 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
-        Schema::create('hr_org_unit', function (Blueprint $table) {
-            $table->id('org_unit_id');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->string('name', 191);
-            $table->string('code', 50)->nullable();
-            $table->string('type', 50)->nullable();
-            $table->integer('level')->default(1);
-            $table->integer('sort_order')->default(0);
-            $table->boolean('is_active')->default(true);
-            $table->text('description')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-
-            $table->foreign('parent_id')->references('org_unit_id')->on('hr_org_unit')->onDelete('set null');
-        });
-
-        // Core Tables
-        Schema::create('hr_pegawai', function (Blueprint $table) {
-            $table->id('pegawai_id');
-            $table->unsignedBigInteger('latest_riwayatdatadiri_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatstatpegawai_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatstataktifitas_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatinpassing_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatpendidikan_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatjabfungsional_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatjabstruktural_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatpenugasan_id')->nullable(); // Added
-            $table->unsignedBigInteger('atasan1')->nullable();
-            $table->unsignedBigInteger('atasan2')->nullable();
-
-            // Allow storing user name or FK? Original legacy used string, but mass_sync adds FK created_by.
-            // Let's keep original columns too if code relies on them, but also add audit ones.
-            // Original: created_by (string), updated_by (string).
-            // Mass Sync adds: created_by (bigint). Conflict!
-            // Solution: Rename original string columns if needed or Drop them.
-            // The original migration had: $table->string('created_by', 100)->nullable();
-            // Since I'm consolidating, I can change the type to unsignedBigInteger directly if the code is ready.
-            // But to be safe, I'll use the BigInt version for Audit and maybe 'legacy_created_by' if needed?
-            // Actually, standardizing on BigInt (User ID) is better. I will assume the refactor intends to standardise.
-
-            $table->string('photo', 255)->nullable()->comment('Employee photo for face recognition');   // Added
-            $table->text('face_encoding')->nullable()->comment('Face encoding data for face matching'); // Added
-
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-        });
+        // NOTE: hr_org_unit moved to shared migration as 'struktur_organisasi'
+        // NOTE: hr_pegawai moved to shared migration as 'pegawai'
 
         Schema::create('hr_riwayat_approval', function (Blueprint $table) {
             $table->id('riwayatapproval_id');
@@ -217,8 +166,8 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
 
-            $table->foreign('orgunit_departemen_id')->references('org_unit_id')->on('hr_org_unit')->nullOnDelete();
-            $table->foreign('orgunit_posisi_id')->references('org_unit_id')->on('hr_org_unit')->nullOnDelete();
+            $table->foreign('orgunit_departemen_id')->references('orgunit_id')->on('struktur_organisasi')->nullOnDelete();
+            $table->foreign('orgunit_posisi_id')->references('orgunit_id')->on('struktur_organisasi')->nullOnDelete();
         });
 
         Schema::create('hr_riwayat_pendidikan', function (Blueprint $table) {
@@ -363,7 +312,7 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
 
             $table->foreign('indisipliner_id')->references('indisipliner_id')->on('hr_indisipliner')->cascadeOnDelete();
-            $table->foreign('pegawai_id')->references('pegawai_id')->on('hr_pegawai')->cascadeOnDelete();
+            $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->cascadeOnDelete();
         });
 
         // New Tables from consolidation
@@ -463,7 +412,7 @@ return new class extends Migration
             $table->index(['check_in_time', 'check_out_time']);
             $table->index('shift_id');
 
-            $table->foreign('pegawai_id')->references('pegawai_id')->on('hr_pegawai')->onDelete('set null');
+            $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->onDelete('set null');
         });
 
         Schema::create('hr_file_pegawai', function (Blueprint $table) {
@@ -477,7 +426,7 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
 
-            $table->foreign('pegawai_id')->references('pegawai_id')->on('hr_pegawai')->onDelete('cascade');
+            $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->onDelete('cascade');
             $table->foreign('jenisfile_id')->references('jenisfile_id')->on('hr_jenis_file')->onDelete('cascade');
         });
 
@@ -503,7 +452,7 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
 
             $table->index(['pengusul_id', 'tgl_pelaksanaan']);
-            $table->foreign('pengusul_id')->references('pegawai_id')->on('hr_pegawai')->onDelete('cascade');
+            $table->foreign('pengusul_id')->references('pegawai_id')->on('pegawai')->onDelete('cascade');
         });
 
         Schema::create('hr_lembur_pegawai', function (Blueprint $table) {
@@ -520,7 +469,7 @@ return new class extends Migration
 
             $table->unique(['lembur_id', 'pegawai_id', 'deleted_at'], 'unique_lembur_pegawai');
             $table->foreign('lembur_id')->references('lembur_id')->on('hr_lembur')->onDelete('cascade');
-            $table->foreign('pegawai_id')->references('pegawai_id')->on('hr_pegawai')->onDelete('cascade');
+            $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->onDelete('cascade');
         });
 
         // Add foreign keys for blameable if needed, generally implicit or added via separate schema call.
@@ -553,8 +502,7 @@ return new class extends Migration
         Schema::dropIfExists('hr_riwayat_pendidikan');
         Schema::dropIfExists('hr_riwayat_datadiri');
         Schema::dropIfExists('hr_riwayat_approval');
-        Schema::dropIfExists('hr_pegawai');
-        Schema::dropIfExists('hr_org_unit');
+        // hr_pegawai and hr_org_unit now in shared migration
         Schema::dropIfExists('hr_tanggal_libur');
         Schema::dropIfExists('hr_jenis_shift');
         Schema::dropIfExists('hr_jenis_izin');

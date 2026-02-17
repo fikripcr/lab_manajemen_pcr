@@ -39,12 +39,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('api/labels', [App\Http\Controllers\Pemutu\LabelController::class, 'paginate'])->name('labels.data');
     Route::resource('labels', App\Http\Controllers\Pemutu\LabelController::class);
 
-    // Org Units
-    Route::get('api/org-units', [App\Http\Controllers\Pemutu\OrgUnitController::class, 'paginate'])->name('org-units.data');
-    Route::post('org-units/{org_unit}/toggle-status', [App\Http\Controllers\Pemutu\OrgUnitController::class, 'toggleStatus'])->name('org-units.toggle-status');
-    Route::post('org-units/{org_unit}/set-auditee', [App\Http\Controllers\Pemutu\OrgUnitController::class, 'setAuditee'])->name('org-units.set-auditee');
-    Route::post('org-units/reorder', [App\Http\Controllers\Pemutu\OrgUnitController::class, 'reorder'])->name('org-units.reorder');
-    Route::resource('org-units', App\Http\Controllers\Pemutu\OrgUnitController::class);
+    // Org Units - Moved to Shared
+    // Route::resource('org-units', App\Http\Controllers\Pemutu\OrgUnitController::class);
 
     // Personils
     Route::get('api/personils', [App\Http\Controllers\Pemutu\PersonilController::class, 'paginate'])->name('personils.data');

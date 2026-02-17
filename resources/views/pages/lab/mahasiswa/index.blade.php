@@ -45,8 +45,8 @@
                 ],
                 [
                     'title' => 'Program Studi',
-                    'data' => 'program_studi',
-                    'name' => 'program_studi',
+                    'data' => 'prodi_nama',
+                    'name' => 'prodi_nama',
                 ],
                 [
                     'title' => 'User',

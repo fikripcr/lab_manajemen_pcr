@@ -28,7 +28,7 @@
                         <span class="avatar avatar-xl mb-3 bg-primary-lt">{{ substr($personil->nama, 0, 2) }}</span>
                     @endif
                     <h3 class="m-0">{{ $personil->nama }}</h3>
-                    <div class="text-muted">{{ $personil->jabatan }}</div>
+                    <div class="text-muted">{{ $personil->posisi }}</div>
                     @if($personil->jenis_personil)
                         <div class="mt-2">
                             <span class="badge bg-blue">{{ $personil->jenis_personil }}</span>
@@ -63,8 +63,8 @@
                             </div>
                         </div>
                         <div class="datagrid-item">
-                            <div class="datagrid-title">Jabatan</div>
-                            <div class="datagrid-content">{{ $personil->jabatan ?? '-' }}</div>
+                            <div class="datagrid-title">Posisi</div>
+                            <div class="datagrid-content">{{ $personil->posisi ?? '-' }}</div>
                         </div>
                         <div class="datagrid-item">
                             <div class="datagrid-title">Jenis Personil</div>

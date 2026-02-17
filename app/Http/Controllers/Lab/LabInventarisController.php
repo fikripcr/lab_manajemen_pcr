@@ -2,8 +2,7 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\LabInventarisStoreRequest;
-use App\Http\Requests\Lab\LabInventarisUpdateRequest;
+use App\Http\Requests\Lab\LabInventarisRequest;
 use App\Models\Lab\Inventaris;
 use App\Models\Lab\Lab;
 use App\Services\Lab\InventarisService;
@@ -105,7 +104,7 @@ class LabInventarisController extends Controller
         return view('pages.lab.labs.inventaris.create', compact('lab', 'inventarisList'));
     }
 
-    public function store(LabInventarisStoreRequest $request, $labId)
+    public function store(LabInventarisRequest $request, $labId)
     {
         $realLabId = decryptId($labId);
 
@@ -131,7 +130,7 @@ class LabInventarisController extends Controller
         return view('pages.lab.labs.inventaris.edit', compact('lab', 'labInventaris', 'inventarisList'));
     }
 
-    public function update(LabInventarisUpdateRequest $request, $labId, $id)
+    public function update(LabInventarisRequest $request, $labId, $id)
     {
         $realLabId = decryptId($labId);
         $realId    = decryptId($id);

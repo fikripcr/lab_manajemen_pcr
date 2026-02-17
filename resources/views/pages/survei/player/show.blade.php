@@ -1,4 +1,4 @@
-@extends(auth()->check() ? 'layouts.admin.app' : 'layouts.guest.app')
+@extends(auth()->check() ? 'layouts.admin.app' : 'layouts.public.app')
 
 @section('header')
 @if(isset($isPreview) && $isPreview)

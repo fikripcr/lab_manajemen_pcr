@@ -11,35 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Standalone Personnel Data (formerly VW tables)
-        Schema::create('eoffice_pegawai', function (Blueprint $table) {
-            $table->id('pegawai_id');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('nip')->unique()->nullable();
-            $table->string('nama');
-            $table->string('inisial')->nullable();
-            $table->string('email')->unique();
-            $table->string('departemen')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-        });
-
-        Schema::create('eoffice_mahasiswa', function (Blueprint $table) {
-            $table->id('mahasiswa_id');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('nim')->unique();
-            $table->string('nama');
-            $table->string('email')->unique();
-            $table->string('program_studi')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-        });
+        // NOTE: eoffice_pegawai moved to shared migration as 'pegawai'
+        // NOTE: eoffice_mahasiswa moved to shared migration as 'mahasiswa'
 
         // 2. Service Definitions
         Schema::create('eoffice_jenis_layanan', function (Blueprint $table) {
@@ -340,7 +313,6 @@ return new class extends Migration
         Schema::dropIfExists('eoffice_kategori_isian');
         Schema::dropIfExists('eoffice_jenis_layanan_pic');
         Schema::dropIfExists('eoffice_jenis_layanan');
-        Schema::dropIfExists('eoffice_mahasiswa');
-        Schema::dropIfExists('eoffice_pegawai');
+        // eoffice_mahasiswa and eoffice_pegawai now in shared migration
     }
 };
