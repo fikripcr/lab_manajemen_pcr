@@ -3,13 +3,20 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pemutu\PeriodeKpi;
+use App\Services\Pemutu\PeriodeService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class PeriodeKpiController extends Controller
 {
+    protected $PeriodeService;
+
+    public function __construct(PeriodeService $PeriodeService)
+    {
+        $this->PeriodeService = $PeriodeService;
+    }
+
     public function index()
     {
         $pageTitle = 'Periode KPI';
@@ -19,7 +26,6 @@ class PeriodeKpiController extends Controller
 
     public function data()
     {
-        // Keeping this for now if needed, but index uses direct collection
         $query = PeriodeKpi::query();
         return DataTables::of($query)->make(true);
     }
@@ -32,7 +38,24 @@ class PeriodeKpiController extends Controller
         return view('pages.pemutu.periode_kpis.create', ['pageTitle' => 'Tambah Periode KPI']);
     }
 
-    // store method remains same
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama'            => 'required|string|max:100',
+            'semester'        => 'required|in:Ganjil,Genap',
+            'tahun_akademik'  => 'required|string|max:20',
+            'tahun'           => 'required|integer',
+            'tanggal_mulai'   => 'required|date',
+            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+        ]);
+
+        try {
+            $this->PeriodeService->store($request->all());
+            return jsonSuccess('Periode KPI berhasil disimpan.', route('pemutu.periode-kpis.index'));
+        } catch (Exception $e) {
+            return jsonError($e->getMessage(), 500);
+        }
+    }
 
     public function edit(PeriodeKpi $periodeKpi)
     {
@@ -55,7 +78,7 @@ class PeriodeKpiController extends Controller
         ]);
 
         try {
-            $periodeKpi->update($request->all());
+            $this->PeriodeService->update($periodeKpi, $request->all());
             return jsonSuccess('Periode KPI berhasil diupdate.', route('pemutu.periode-kpis.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -65,10 +88,7 @@ class PeriodeKpiController extends Controller
     public function destroy(PeriodeKpi $periodeKpi)
     {
         try {
-            if ($periodeKpi->is_active) {
-                return jsonError('Tidak dapat menghapus periode yang sedang aktif.', 400);
-            }
-            $periodeKpi->delete();
+            $this->PeriodeService->destroy($periodeKpi);
             return jsonSuccess('Periode KPI berhasil dihapus.', route('pemutu.periode-kpis.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -78,13 +98,7 @@ class PeriodeKpiController extends Controller
     public function activate(PeriodeKpi $periodeKpi)
     {
         try {
-            DB::transaction(function () use ($periodeKpi) {
-                // Deactivate all other periods
-                PeriodeKpi::where('is_active', true)->update(['is_active' => false]);
-                // Activate this period
-                $periodeKpi->update(['is_active' => true]);
-            });
-
+            $this->PeriodeService->activate($periodeKpi);
             return jsonSuccess('Periode KPI berhasil diaktifkan.', route('pemutu.periode-kpis.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

@@ -6,21 +6,22 @@ use App\Http\Requests\Pemutu\IndikatorRequest;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\OrgUnit;
-use App\Models\Pemutu\PeriodeKpi;
 use App\Models\Pemutu\Personil;
 use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\KpiService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class KpiController extends Controller
 {
     protected $IndikatorService;
+    protected $KpiService;
 
-    public function __construct(IndikatorService $IndikatorService)
+    public function __construct(IndikatorService $IndikatorService, KpiService $KpiService)
     {
         $this->IndikatorService = $IndikatorService;
+        $this->KpiService       = $KpiService;
     }
 
     public function index()
@@ -116,7 +117,6 @@ class KpiController extends Controller
     public function store(Request $request)
     {
         try {
-            $type     = 'performa';
             $parentId = $request->input('parent_id');
 
             if (! $parentId) {
@@ -128,54 +128,13 @@ class KpiController extends Controller
                 return jsonError('Minimal satu sasaran kinerja harus diisi.', 422);
             }
 
-            DB::beginTransaction();
-
-            foreach ($items as $item) {
-                if (empty($item['indikator'])) {
-                    continue;
-                }
-
-                $data = [
-                    'type'         => $type,
-                    'parent_id'    => $parentId,
-                    'indikator'    => $item['indikator'],
-                    'target'       => $item['target'] ?? null,
-                    'unit_ukuran'  => $item['unit_ukuran'] ?? null,
-                    'keterangan'   => $item['keterangan'] ?? null,
-                    'no_indikator' => $item['no_indikator'] ?? $this->generateNoIndikator($parentId),
-                    'org_units'    => $item['org_unit_ids'] ?? [],
-                ];
-
-                // Inherit doksub_ids from parent
-                $parent = Indikator::with('dokSubs')->find($parentId);
-                if ($parent && $parent->dokSubs->isNotEmpty()) {
-                    $data['doksub_ids'] = $parent->dokSubs->pluck('doksub_id')->toArray();
-                }
-
-                $this->IndikatorService->createIndikator($data);
-            }
-
-            DB::commit();
+            $this->KpiService->bulkCreateKpi($parentId, $items);
 
             return jsonSuccess('Sasaran Kinerja berhasil dibuat.', route('pemutu.kpi.index'));
 
         } catch (Exception $e) {
-            DB::rollBack();
             return jsonError($e->getMessage(), 500);
         }
-    }
-
-    private function generateNoIndikator($parentId)
-    {
-        $parent = Indikator::find($parentId);
-        if (! $parent) {
-            return null;
-        }
-
-        $prefix = $parent->no_indikator;
-        $count  = Indikator::where('parent_id', $parentId)->count();
-
-        return $prefix . '.' . ($count + 1);
     }
 
     public function edit($id)
@@ -243,7 +202,7 @@ class KpiController extends Controller
         $assignedPersonilIds = $indikator->personils->pluck('personil_id')->toArray();
         $assignments         = $indikator->personils->keyBy('personil_id');
 
-        $activePeriode = PeriodeKpi::where('is_active', true)->first();
+        $activePeriode = $this->KpiService->getActivePeriode();
 
         return view('pages.pemutu.kpi.assign', compact('indikator', 'orgUnits', 'personils', 'assignedPersonilIds', 'assignments', 'activePeriode'));
     }
@@ -263,12 +222,7 @@ class KpiController extends Controller
                 }
             }
 
-            \DB::transaction(function () use ($indikator, $kpiData) {
-                $indikator->personils()->delete();
-                foreach ($kpiData as $assign) {
-                    $indikator->personils()->create($assign);
-                }
-            });
+            $this->KpiService->storeAssignments($indikator, $kpiData);
 
             return jsonSuccess('Penugasan personil berhasil disimpan.', route('pemutu.kpi.index'));
         } catch (Exception $e) {

@@ -45,8 +45,8 @@ class KeluargaController extends Controller
     public function update(KeluargaRequest $request, Pegawai $pegawai, Keluarga $keluarga)
     {
         try {
-            $keluarga->update($request->validated());
-            return jsonSuccess('Data Keluarga berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
+            $this->PegawaiService->requestChange($pegawai, Keluarga::class, $request->validated(), null, $keluarga);
+            return jsonSuccess('Perubahan Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }

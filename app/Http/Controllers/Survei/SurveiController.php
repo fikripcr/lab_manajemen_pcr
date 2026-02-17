@@ -3,11 +3,19 @@ namespace App\Http\Controllers\Survei;
 
 use App\Http\Controllers\Controller;
 use App\Models\Survei\Survei;
+use App\Services\Survei\SurveiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class SurveiController extends Controller
 {
+    protected $SurveiService;
+
+    public function __construct(SurveiService $SurveiService)
+    {
+        $this->SurveiService = $SurveiService;
+    }
+
     public function index()
     {
         return view('pages.survei.admin.index');
@@ -101,15 +109,7 @@ class SurveiController extends Controller
             'mode'            => 'required|in:Linear,Bercabang',
         ]);
 
-        $validated['slug'] = Str::slug($validated['judul']) . '-' . Str::random(5);
-
-        $survei = Survei::create($validated);
-
-        // Auto-create first page
-        $survei->halaman()->create([
-            'judul_halaman' => 'Halaman 1',
-            'urutan'        => 1,
-        ]);
+        $survei = $this->SurveiService->createSurvei($validated);
 
         return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->id));
     }
@@ -133,7 +133,7 @@ class SurveiController extends Controller
             'mode'            => 'required|in:Linear,Bercabang',
         ]);
 
-        $survei->update($validated);
+        $this->SurveiService->updateSurvei($survei, $validated);
 
         return jsonSuccess('Survei berhasil diperbarui.');
     }
@@ -148,50 +148,26 @@ class SurveiController extends Controller
 
     public function toggleStatus(Survei $survei)
     {
-        $survei->update(['is_aktif' => ! $survei->is_aktif]);
+        $this->SurveiService->toggleStatus($survei);
         $status = $survei->is_aktif ? 'dipublikasikan' : 'di-unpublish';
         return jsonSuccess("Survei berhasil {$status}.");
     }
 
     public function duplicate(Survei $survei)
     {
-        $newSurvei           = $survei->replicate();
-        $newSurvei->judul    = $survei->judul . ' (Copy)';
-        $newSurvei->slug     = Str::slug($newSurvei->judul) . '-' . Str::random(5);
-        $newSurvei->is_aktif = false;
-        $newSurvei->save();
-
-        foreach ($survei->halaman as $halaman) {
-            $newHalaman            = $halaman->replicate();
-            $newHalaman->survei_id = $newSurvei->id;
-            $newHalaman->save();
-
-            foreach ($halaman->pertanyaan as $pertanyaan) {
-                $newPertanyaan             = $pertanyaan->replicate();
-                $newPertanyaan->survei_id  = $newSurvei->id;
-                $newPertanyaan->halaman_id = $newHalaman->id;
-                $newPertanyaan->save();
-
-                foreach ($pertanyaan->opsi as $opsi) {
-                    $newOpsi                = $opsi->replicate();
-                    $newOpsi->pertanyaan_id = $newPertanyaan->id;
-                    $newOpsi->save();
-                }
-            }
-        }
-
+        $this->SurveiService->duplicateSurvei($survei);
         return jsonSuccess('Survei berhasil diduplikasi.');
     }
 
     public function export(Survei $survei)
     {
-        $survei->load(['pengisian.jawaban.pertanyaan', 'pengisian.user']);
+        $survei = $this->SurveiService->getResponsesForExport($survei);
 
         $filename = "responses_" . Str::slug($survei->judul) . "_" . date('Ymd_His') . ".csv";
         $handle   = fopen('php://output', 'w');
 
-        // Prepare headers
-        $questions = $survei->pertanyaan()->orderBy('urutan')->get();
+        // Prepare headers (using pre-eager-loaded relation)
+        $questions = $survei->pertanyaan;
         $headers   = ['Timestamp', 'Nama', 'Username', 'Email'];
         foreach ($questions as $q) {
             $headers[] = $q->teks_pertanyaan;
@@ -234,7 +210,7 @@ class SurveiController extends Controller
 
     public function destroy(Survei $survei)
     {
-        $survei->delete();
+        $this->SurveiService->deleteSurvei($survei);
         return jsonSuccess('Survei berhasil dihapus.');
     }
 }

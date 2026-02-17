@@ -47,8 +47,8 @@ class RiwayatPendidikanController extends Controller
     public function update(RiwayatPendidikanRequest $request, Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
         try {
-            $pendidikan->update($request->validated());
-            return jsonSuccess('Riwayat Pendidikan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
+            $this->PegawaiService->requestChange($pegawai, RiwayatPendidikan::class, $request->validated(), null, $pendidikan);
+            return jsonSuccess('Perubahan Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }

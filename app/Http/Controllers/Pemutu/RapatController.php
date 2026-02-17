@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\Pemutu\RapatService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
@@ -166,45 +165,13 @@ class RapatController extends Controller
         $request->validate([
             'attendance'               => 'required|array',
             'attendance.*.status'      => 'nullable|in:hadir,izin,sakit,alpa',
-            'attendance.*.waktu_hadir' => 'nullable', // Can be string time or null
+            'attendance.*.waktu_hadir' => 'nullable',
         ]);
 
         try {
-            DB::beginTransaction();
-            foreach ($request->attendance as $pesertaId => $data) {
-                // If status is present, update it
-                $peserta = $rapat->pesertas()->where('rapatpeserta_id', $pesertaId)->first();
-                if ($peserta) {
-                    $updateData = ['status' => $data['status']];
-
-                    // Handle Waktu Hadir
-                    // If status is hadir and waktu_hadir is provided, use it.
-                    // If status is hadir and waktu_hadir is empty, use current time? Or keep null?
-                    // Let's assume input type="time" or similar.
-                    if ($data['status'] == 'hadir') {
-                        if (! empty($data['waktu_hadir'])) {
-                            // Combine rapat date with time or just save time part if column is timestamp?
-                            // Migration said timestamp. So we need full date.
-                            $time                      = $data['waktu_hadir'];
-                            $date                      = $rapat->tgl_rapat->format('Y-m-d');
-                            $dateTime                  = \Carbon\Carbon::parse("$date $time");
-                            $updateData['waktu_hadir'] = $dateTime;
-                        } else {
-                            // If previously null and now hadir, maybe default to now()?
-                            // Or leave it null
-                        }
-                    } else {
-                        $updateData['waktu_hadir'] = null;
-                    }
-
-                    $peserta->update($updateData);
-                }
-            }
-            DB::commit();
-
+            $this->service->updateAttendance($rapat, $request->attendance);
             return redirect()->to(route('pemutu.rapat.show', $rapat) . '#tabs-info')->with('success', 'Absensi berhasil diperbarui.');
         } catch (\Exception $e) {
-            DB::rollBack();
             return redirect()->to(route('pemutu.rapat.show', $rapat) . '#tabs-info')->with('error', 'Gagal memperbarui absensi: ' . $e->getMessage());
         }
     }
@@ -217,14 +184,7 @@ class RapatController extends Controller
         ]);
 
         try {
-            DB::beginTransaction();
-            foreach ($request->agendas as $agendaId => $data) {
-                $agenda = $rapat->agendas()->where('rapatagenda_id', $agendaId)->first();
-                if ($agenda) {
-                    $agenda->update(['isi' => $data['isi'] ?? '']);
-                }
-            }
-            DB::commit();
+            $this->service->updateAgendas($rapat, $request->agendas);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -235,7 +195,6 @@ class RapatController extends Controller
 
             return back()->with('success', 'Agenda berhasil diperbarui.');
         } catch (\Exception $e) {
-            DB::rollBack();
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
@@ -303,22 +262,19 @@ class RapatController extends Controller
         ]);
 
         try {
-            DB::beginTransaction();
             foreach ($request->user_ids as $userId) {
                 // Check if already invited
                 $exists = $rapat->pesertas()->where('user_id', $userId)->exists();
                 if (! $exists) {
                     $this->service->addPeserta($rapat, [
                         'user_id' => $userId,
-                        'jabatan' => $request->jabatan ?? 'Peserta', // Default jabatan
+                        'jabatan' => $request->jabatan ?? 'Peserta',
                     ]);
                 }
             }
-            DB::commit();
 
             return redirect()->to(route('pemutu.rapat.show', $rapat) . '#tabs-info')->with('success', 'Peserta berhasil ditambahkan.');
         } catch (\Exception $e) {
-            DB::rollBack();
             return redirect()->to(route('pemutu.rapat.show', $rapat) . '#tabs-info')->with('error', 'Gagal menambah peserta: ' . $e->getMessage());
         }
     }

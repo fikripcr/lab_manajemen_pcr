@@ -48,8 +48,8 @@ class PengembanganDiriController extends Controller
     public function update(PengembanganDiriRequest $request, Pegawai $pegawai, PengembanganDiri $pengembangan)
     {
         try {
-            $pengembangan->update($request->validated());
-            return jsonSuccess('Riwayat Pengembangan Diri berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
+            $this->PegawaiService->requestChange($pegawai, PengembanganDiri::class, $request->validated(), null, $pengembangan);
+            return jsonSuccess('Perubahan Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
