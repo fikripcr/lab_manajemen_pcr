@@ -19,6 +19,7 @@ class Pertanyaan extends Model
         'config_json',
         'wajib_diisi',
         'urutan',
+        'next_pertanyaan_id',
     ];
 
     protected $casts = [
@@ -44,5 +45,10 @@ class Pertanyaan extends Model
     public function logika()
     {
         return $this->hasOne(Logika::class, 'pertanyaan_pemicu_id');
+    }
+
+    public function nextPertanyaan()
+    {
+        return $this->belongsTo(Pertanyaan::class, 'next_pertanyaan_id');
     }
 }

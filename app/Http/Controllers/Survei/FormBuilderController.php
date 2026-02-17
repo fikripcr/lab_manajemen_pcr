@@ -18,8 +18,9 @@ class FormBuilderController extends Controller
             'halaman.pertanyaan.opsi',
             'halaman.pertanyaan.logika',
         ]);
+        $allPertanyaan = $survei->pertanyaan()->orderBy('urutan')->get();
 
-        return view('pages.survei.admin.builder', compact('survei'));
+        return view('pages.survei.admin.builder', compact('survei', 'allPertanyaan'));
     }
 
     /**
@@ -133,7 +134,8 @@ class FormBuilderController extends Controller
             DB::commit();
 
             $pertanyaan->load('opsi');
-            $html = view('pages.survei.admin.partials.question_card', compact('pertanyaan'))->render();
+            $allPertanyaan = $survei->pertanyaan()->orderBy('urutan')->get();
+            $html          = view('pages.survei.admin.partials.question_card', compact('pertanyaan', 'allPertanyaan'))->render();
 
             return jsonSuccess('Pertanyaan ditambahkan', null, ['html' => $html]);
 
@@ -145,7 +147,7 @@ class FormBuilderController extends Controller
 
     public function updatePertanyaan(Request $request, Pertanyaan $pertanyaan)
     {
-        $data = $request->only(['teks_pertanyaan', 'bantuan_teks', 'config_json']);
+        $data = $request->only(['teks_pertanyaan', 'bantuan_teks', 'config_json', 'next_pertanyaan_id']);
 
         if ($request->has('wajib_diisi')) {
             $data['wajib_diisi'] = filter_var($request->wajib_diisi, FILTER_VALIDATE_BOOLEAN);
@@ -184,22 +186,30 @@ class FormBuilderController extends Controller
 
         $pertanyaan->update($data);
 
-        // Handle Options Update (Sync Strategy)
+        // Handle Options Update (Improved Sync Strategy)
         if ($request->has('opsi') && is_array($request->opsi)) {
-            $pertanyaan->opsi()->delete();
-            foreach ($request->opsi as $index => $label) {
+            $incomingIds = collect($request->opsi)->map(fn($o) => is_array($o) ? ($o['id'] ?? null) : null)->filter()->toArray();
+            $pertanyaan->opsi()->whereNotIn('id', $incomingIds)->delete();
+
+            foreach ($request->opsi as $index => $opsiData) {
+                $label = is_array($opsiData) ? ($opsiData['label'] ?? '') : $opsiData;
                 if (! empty($label) || $label === '0') {
-                    $pertanyaan->opsi()->create([
-                        'label'  => $label,
-                        'urutan' => $index + 1,
-                    ]);
+                    $pertanyaan->opsi()->updateOrCreate(
+                        ['id' => is_array($opsiData) ? ($opsiData['id'] ?? null) : null],
+                        [
+                            'label'              => $label,
+                            'urutan'             => $index + 1,
+                            'next_pertanyaan_id' => is_array($opsiData) ? ($opsiData['next_pertanyaan_id'] ?? null) : null,
+                        ]
+                    );
                 }
             }
         }
 
         // Reload and return fresh HTML for the question card
         $pertanyaan->load('opsi');
-        $html = view('pages.survei.admin.partials.question_card', compact('pertanyaan'))->render();
+        $allPertanyaan = $pertanyaan->survei->pertanyaan()->orderBy('urutan')->get();
+        $html          = view('pages.survei.admin.partials.question_card', compact('pertanyaan', 'allPertanyaan'))->render();
 
         return jsonSuccess('Pertanyaan disimpan', null, ['html' => $html]);
     }

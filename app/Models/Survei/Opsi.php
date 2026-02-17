@@ -16,10 +16,16 @@ class Opsi extends Model
         'nilai_tersimpan',
         'bobot_skor',
         'urutan',
+        'next_pertanyaan_id',
     ];
 
     public function pertanyaan()
     {
         return $this->belongsTo(Pertanyaan::class, 'pertanyaan_id');
+    }
+
+    public function nextPertanyaan()
+    {
+        return $this->belongsTo(Pertanyaan::class, 'next_pertanyaan_id');
     }
 }

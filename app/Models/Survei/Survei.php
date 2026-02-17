@@ -15,6 +15,7 @@ class Survei extends Model
         'judul',
         'deskripsi',
         'slug',
+        'mode',
         'target_role',
         'is_aktif',
         'wajib_login',

@@ -48,6 +48,7 @@ class SurveiController extends Controller
             'is_aktif'        => 'boolean',
             'wajib_login'     => 'boolean',
             'bisa_isi_ulang'  => 'boolean',
+            'mode'            => 'required|in:Linear,Bercabang',
         ]);
 
         $validated['slug'] = Str::slug($validated['judul']) . '-' . Str::random(5);
@@ -79,6 +80,7 @@ class SurveiController extends Controller
             'is_aktif'        => 'boolean',
             'wajib_login'     => 'boolean',
             'bisa_isi_ulang'  => 'boolean',
+            'mode'            => 'required|in:Linear,Bercabang',
         ]);
 
         $survei->update($validated);

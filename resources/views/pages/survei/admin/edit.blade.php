@@ -23,6 +23,14 @@
         </div>
 
         <div class="row">
+            <div class="col-md-12">
+                <x-tabler.form-select name="mode" label="Mode Navigasi" required="true"
+                    :options="['Linear' => 'Linear (Per Halaman)', 'Bercabang' => 'Bercabang (Dinamis)']"
+                    :selected="$survei->mode" :placeholder="false" />
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-6">
                 <x-tabler.form-input type="date" name="tanggal_mulai" label="Tanggal Mulai" 
                     :value="$survei->tanggal_mulai ? $survei->tanggal_mulai->format('Y-m-d') : ''" />

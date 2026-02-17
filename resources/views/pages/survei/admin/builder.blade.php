@@ -20,7 +20,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Halaman</h3>
                         <div class="card-actions">
-                            <button type="button" class="btn btn-icon btn-sm btn-primary" id="btn-add-halaman" title="Tambah Halaman">
+                            <button type="button" class="btn btn-icon btn-primary" id="btn-add-halaman" title="Tambah Halaman">
                                 <i class="ti ti-plus"></i>
                             </button>
                         </div>
@@ -68,7 +68,7 @@
                                 </div>
                                 <div class="card-actions">
                                     <div class="dropdown me-2">
-                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
                                             <i class="ti ti-plus"></i> Tambah
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
@@ -332,16 +332,16 @@
         };
 
         window.onTypeChange = function(pertanyaanId, selectEl) {
-            window.debounceSave(pertanyaanId);
+            window.savePertanyaan(pertanyaanId, true);
         };
 
         window.addOpsi = function(pertanyaanId) {
             const wrapper = $(`.option-list-${pertanyaanId}`);
             const html = `
-                <div class="input-group input-group-sm mb-1">
-                    <span class="input-group-text"><i class="ti ti-circle"></i></span>
-                    <input type="text" class="form-control" value="Opsi Baru" onchange="debounceSave(${pertanyaanId})">
-                    <button class="btn btn-icon btn-ghost-danger" onclick="$(this).parent().remove(); debounceSave(${pertanyaanId});">
+                <div class="input-group input-group-sm mb-1 opsi-item border-0">
+                    <span class="input-group-text bg-transparent border-end-0"><i class="ti ti-circle"></i></span>
+                    <input type="text" class="form-control opsi-label shadow-none border-start-0" value="Opsi Baru" onchange="debounceSave(${pertanyaanId})">
+                    <button class="btn btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave(${pertanyaanId});">
                         <i class="ti ti-x"></i>
                     </button>
                 </div>`;
@@ -349,7 +349,7 @@
             window.debounceSave(pertanyaanId);
         };
 
-        window.savePertanyaan = function(id) {
+        window.savePertanyaan = function(id, keepEdit = false) {
             const card = $(`.card-pertanyaan[data-id="${id}"]`);
             if (!card.length) return;
 
@@ -360,20 +360,31 @@
                 _method: 'PUT',
                 teks_pertanyaan: card.find('.pertanyaan-teks-input').val(),
                 tipe: card.find('.pertanyaan-tipe-select').val(),
-                wajib_diisi: card.find('.pertanyaan-wajib-check').is(':checked') ? 1 : 0
+                wajib_diisi: card.find('.pertanyaan-wajib-check').is(':checked') ? 1 : 0,
+                next_pertanyaan_id: card.find('.pertanyaan-next-select').val()
             };
 
             let opsi = [];
-            card.find(`.option-list-${id} input[type="text"]`).each(function() {
-                opsi.push($(this).val());
+            card.find(`.option-list-${id} .opsi-item`).each(function() {
+                let $item = $(this);
+                opsi.push({
+                    id: $item.data('id'),
+                    label: $item.find('.opsi-label').val(),
+                    next_pertanyaan_id: $item.find('.opsi-next-select').val()
+                });
             });
-            if (opsi.length > 0) {
+            
+            if (opsi.length >= 0) { // Always send opsi if card has them
                 data.opsi = opsi;
             }
 
             $.post(routeFor('pertanyaanUpdate', id), data, function(res) {
                 if (res.success && res.data && res.data.html) {
                     let $newCard = $(res.data.html);
+                    if (keepEdit || card.find(`.edit-view-${id}`).not('.d-none').length) {
+                        $newCard.find(`.static-view-${id}`).addClass('d-none');
+                        $newCard.find(`.edit-view-${id}`).removeClass('d-none');
+                    }
                     card.replaceWith($newCard);
                 }
                 card.css('opacity', '1');
