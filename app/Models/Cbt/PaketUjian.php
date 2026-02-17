@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\Cbt;
 
+use App\Models\Cbt\JadwalUjian;
+use App\Models\Cbt\KomposisiPaket;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -25,9 +27,14 @@ class PaketUjian extends Model
         'dibuat_oleh',
     ];
 
+    protected $casts = [
+        'is_acak_soal' => 'boolean',
+        'is_acak_opsi' => 'boolean',
+    ];
+
     public function komposisi()
     {
-        return $this->hasMany(KomposisiPacket::class, 'paket_id');
+        return $this->hasMany(KomposisiPaket::class, 'paket_id');
     }
 
     public function jadwal()

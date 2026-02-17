@@ -26,6 +26,11 @@ class RiwayatUjianSiswa extends Model
         'browser_info',
     ];
 
+    protected $casts = [
+        'waktu_mulai'   => 'datetime',
+        'waktu_selesai' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

@@ -1,4 +1,4 @@
-<form action="{{ route('cbt.execute.validate-token', $jadwal->encrypted_id) }}" method="POST" class="ajax-form" data-redirect="true">
+<form action="{{ route('cbt.execute.validate-token', $jadwal->hashid) }}" method="POST" class="ajax-form" data-redirect="true">
     @csrf
     <div class="modal-header">
         <h5 class="modal-title">Validasi Token Ujian</h5>

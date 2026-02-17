@@ -9,12 +9,14 @@ use App\Models\Cbt\JadwalUjian;
 use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\Pendaftaran;
-use App\Models\Pmb\SyaratDokumenJalur; // Use OrgUnit
+use App\Models\Pmb\SyaratDokumenJalur;
+use App\Models\Shared\StrukturOrganisasi;
 use App\Services\Pmb\CamabaService;
 use App\Services\Pmb\PeriodeService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+// Use OrgUnit
 
 class CamabaController extends Controller
 {

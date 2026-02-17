@@ -13,7 +13,7 @@
 
 <div class="page-body">
     <div class="container-xl">
-        <form action="{{ route('cbt.soal.update', $soal->encrypted_id) }}" method="POST" class="ajax-form" data-redirect="{{ route('cbt.soal.index') }}">
+        <form action="{{ route('cbt.soal.update', $soal->hashid) }}" method="POST" class="ajax-form" data-redirect="{{ route('cbt.soal.index') }}">
             @csrf
             @method('PUT')
             <div class="row row-cards">
@@ -63,7 +63,7 @@
                                 <label class="form-label required">Mata Uji</label>
                                 <select name="mata_uji_id" class="form-select" required>
                                     @foreach($mataUji as $mu)
-                                        <option value="{{ $mu->encrypted_id }}" {{ $mu->id == $soal->mata_uji_id ? 'selected' : '' }}>{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
+                                        <option value="{{ $mu->hashid }}" {{ $mu->id == $soal->mata_uji_id ? 'selected' : '' }}>{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
                                     @endforeach
                                 </select>
                             </div>

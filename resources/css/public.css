@@ -1,13 +1,13 @@
 /* Vendor CSS Files */
 /* Bootstrap is loaded from vendor folder in original template, assuming it is customized or specific version */
-@import '../assets/guest/vendor/bootstrap/css/bootstrap.min.css';
-@import '../assets/guest/vendor/bootstrap-icons/bootstrap-icons.css';
-@import '../assets/guest/vendor/glightbox/css/glightbox.min.css';
-@import '../assets/guest/vendor/swiper/swiper-bundle.min.css';
-@import '../assets/guest/vendor/drift-zoom/drift-basic.css';
+@import '../assets/public/vendor/bootstrap/css/bootstrap.min.css';
+@import '../assets/public/vendor/bootstrap-icons/bootstrap-icons.css';
+@import '../assets/public/vendor/glightbox/css/glightbox.min.css';
+@import '../assets/public/vendor/swiper/swiper-bundle.min.css';
+@import '../assets/public/vendor/drift-zoom/drift-basic.css';
 
 /* Main CSS File */
-@import '../assets/guest/css/main.css';
+@import '../assets/public/css/main.css';
 
 /* Note: Select2 and SweetAlert2 CDNs from original template should remain in Blade or be npm installed. 
    Plan does not specify npm installing them, so they stay in blade HEAD for now, 

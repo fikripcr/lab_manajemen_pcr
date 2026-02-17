@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Cbt;
 
+use App\Models\Cbt\JadwalUjian;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 

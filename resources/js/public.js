@@ -1,12 +1,12 @@
 // Vendor JS Files
-import '../assets/guest/vendor/bootstrap/js/bootstrap.bundle.min.js';
-import '../assets/guest/vendor/php-email-form/validate.js';
+import '../assets/public/vendor/bootstrap/js/bootstrap.bundle.min.js';
+import '../assets/public/vendor/php-email-form/validate.js';
 import AOS from 'aos'; // Use AOS from npm
 import 'aos/dist/aos.css'; // Import AOS CSS as well
-import '../assets/guest/vendor/purecounter/purecounter_vanilla.js';
-import '../assets/guest/vendor/glightbox/js/glightbox.min.js';
-import '../assets/guest/vendor/swiper/swiper-bundle.min.js';
-import '../assets/guest/vendor/drift-zoom/Drift.min.js';
+import '../assets/public/vendor/purecounter/purecounter_vanilla.js';
+import '../assets/public/vendor/glightbox/js/glightbox.min.js';
+import '../assets/public/vendor/swiper/swiper-bundle.min.js';
+import '../assets/public/vendor/drift-zoom/Drift.min.js';
 
 /* Note: jQuery and Select2 were CDNs. They should be kept in Blade or installed via npm.
    However, SweetAlert2 was cross-referenced from assets-auth/libs.
@@ -20,10 +20,10 @@ if (typeof window !== 'undefined') {
 }
 
 // Main JS File
-import '../assets/guest/js/main.js';
+import '../assets/public/js/main.js';
 
 // Custom SweetAlert Utils
-import '../assets/guest/js/custom/sweetalert-utils.js';
+import '../assets/public/js/custom/sweetalert-utils.js';
 
 // --- jQuery (dibutuhkan oleh DataTables dan plugin lama)
 import $ from 'jquery';

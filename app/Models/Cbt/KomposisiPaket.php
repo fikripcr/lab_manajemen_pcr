@@ -1,10 +1,14 @@
 <?php
 namespace App\Models\Cbt;
 
+use App\Models\Cbt\PaketUjian;
+use App\Models\Cbt\Soal;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Model;
 
 class KomposisiPaket extends Model
 {
+    use HashidBinding;
     protected $table = 'cbt_komposisi_paket';
 
     protected $fillable = [

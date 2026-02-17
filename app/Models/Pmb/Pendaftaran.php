@@ -1,6 +1,14 @@
 <?php
 namespace App\Models\Pmb;
 
+use App\Models\Pmb\DokumenUpload;
+use App\Models\Pmb\Jalur;
+use App\Models\Pmb\Pembayaran;
+use App\Models\Pmb\Periode;
+use App\Models\Pmb\PesertaUjian;
+use App\Models\Pmb\PilihanProdi;
+use App\Models\Pmb\RiwayatPendaftaran;
+use App\Models\Shared\StrukturOrganisasi;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -50,7 +58,7 @@ class Pendaftaran extends Model
 
     public function orgUnitDiterima()
     {
-        return $this->belongsTo(\App\Models\Shared\StrukturOrganisasi::class, 'orgunit_diterima_id');
+        return $this->belongsTo(StrukturOrganisasi::class, 'orgunit_diterima_id');
     }
 
     public function riwayat()

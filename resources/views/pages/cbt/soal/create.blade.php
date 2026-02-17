@@ -59,7 +59,7 @@
                                 <label class="form-label required">Mata Uji</label>
                                 <select name="mata_uji_id" class="form-select" required>
                                     @foreach($mataUji as $mu)
-                                        <option value="{{ $mu->encrypted_id }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
+                                        <option value="{{ $mu->hashid }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
                                     @endforeach
                                 </select>
                             </div>

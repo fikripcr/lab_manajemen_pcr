@@ -1,8 +1,11 @@
 <div class="btn-group">
-    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modal-action" data-title="Edit Mata Uji" data-url="{{ route('cbt.mata-uji.edit', $mu->encrypted_id) }}">
+    <button type="button" class="btn btn-sm btn-info ajax-modal-btn" 
+        data-url="{{ route('cbt.mata-uji.edit', $mu->hashid) }}" 
+        data-modal-title="Edit Mata Uji">
         <i class="ti ti-edit"></i>
     </button>
-    <button type="button" class="btn btn-sm btn-danger btn-delete" data-url="{{ route('cbt.mata-uji.destroy', $mu->encrypted_id) }}" data-table="#table-mata-uji">
+    <button type="button" class="btn btn-sm btn-danger ajax-delete" 
+        data-url="{{ route('cbt.mata-uji.destroy', $mu->hashid) }}">
         <i class="ti ti-trash"></i>
     </button>
 </div>

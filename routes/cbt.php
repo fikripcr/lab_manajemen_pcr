@@ -9,14 +9,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
     // Dashboard (Unified for Admin & Camaba)
     Route::get('/', [ExamExecutionController::class, 'dashboard'])->name('dashboard');
 
-    // Monitoring & Reporting (Placeholders)
-    Route::get('/monitor/{jadwal}', function () {
-        return "Fitur Monitoring Ujian (Coming Soon)";
-    })->name('monitor');
-
-    Route::get('/violations', function () {
-        return "Laporan Pelanggaran (Coming Soon)";
-    })->name('laporan.pelanggaran');
+    // Monitoring & Reporting
+    Route::get('/monitor/{jadwal}', [ExamExecutionController::class, 'monitor'])->name('monitor');
+    Route::get('/violations', [ExamExecutionController::class, 'violations'])->name('laporan.pelanggaran');
 
     // API Routes for Exam Execution
     Route::prefix('api')->name('api.')->group(function () {
@@ -81,7 +76,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
         Route::post('/validate/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'validateToken'])->name('validate-token');
 
         Route::get('/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'start'])->name('start');
+        Route::get('/{jadwal}/finished', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'finished'])->name('finished');
         Route::post('/save/{riwayat}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'saveAnswer'])->name('save');
         Route::post('/submit/{riwayat}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'submit'])->name('submit');
+        Route::post('/reset/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'resetAdminExam'])->name('reset-admin');
     });
 });

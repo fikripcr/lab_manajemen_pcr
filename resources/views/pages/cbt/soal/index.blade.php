@@ -26,7 +26,7 @@
                         <select id="filter-mata-uji" class="form-select">
                             <option value="">Semua Mata Uji</option>
                             @foreach($mataUji as $mu)
-                                <option value="{{ $mu->encrypted_id }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
+                                <option value="{{ $mu->hashid }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
                             @endforeach
                         </select>
                     </div>

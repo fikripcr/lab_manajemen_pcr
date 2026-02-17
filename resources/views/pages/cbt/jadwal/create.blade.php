@@ -11,7 +11,7 @@
             <label class="form-label required">Paket Ujian</label>
             <select name="paket_id" class="form-select" required>
                 @foreach($paket as $p)
-                    <option value="{{ $p->encrypted_id }}">{{ $p->nama_paket }} ({{ $p->tipe_paket }})</option>
+                    <option value="{{ $p->hashid }}">{{ $p->nama_paket }} ({{ $p->tipe_paket }})</option>
                 @endforeach
             </select>
         </div>

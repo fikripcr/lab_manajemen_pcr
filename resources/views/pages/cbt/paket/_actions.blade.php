@@ -1,11 +1,14 @@
 <div class="btn-group">
-    <a href="{{ route('cbt.paket.show', $p->encrypted_id) }}" class="btn btn-sm btn-primary">
+    <a href="{{ route('cbt.paket.show', $p->hashid) }}" class="btn btn-sm btn-primary">
         <i class="ti ti-eye"></i> Detail Soal
     </a>
-    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modal-action" data-title="Edit Paket" data-url="{{ route('cbt.paket.edit', $p->encrypted_id) }}">
+    <button type="button" class="btn btn-sm btn-info ajax-modal-btn" 
+        data-url="{{ route('cbt.paket.edit', $p->hashid) }}"
+        data-modal-title="Edit Paket">
         <i class="ti ti-edit"></i>
     </button>
-    <button type="button" class="btn btn-sm btn-danger btn-delete" data-url="{{ route('cbt.paket.destroy', $p->encrypted_id) }}" data-table="#table-paket">
+    <button type="button" class="btn btn-sm btn-danger ajax-delete" 
+        data-url="{{ route('cbt.paket.destroy', $p->hashid) }}">
         <i class="ti ti-trash"></i>
     </button>
 </div>

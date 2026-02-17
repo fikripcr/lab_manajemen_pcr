@@ -24,6 +24,10 @@ class Soal extends Model
         'dibuat_oleh',
     ];
 
+    protected $casts = [
+        'is_aktif' => 'boolean',
+    ];
+
     public function mataUji()
     {
         return $this->belongsTo(MataUji::class, 'mata_uji_id');

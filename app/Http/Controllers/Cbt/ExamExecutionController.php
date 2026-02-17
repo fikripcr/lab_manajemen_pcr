@@ -32,13 +32,13 @@ class ExamExecutionController extends Controller
     public function saveAnswerApi(Request $request)
     {
         try {
-            $user = auth()->user();
+            $user    = auth()->user();
             $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
                 ->where('status', 'Sedang_Mengerjakan')
                 ->firstOrFail();
 
             $this->ExamExecutionService->saveAnswer($riwayat, $request->all());
-            
+
             return response()->json(['success' => true]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -51,16 +51,16 @@ class ExamExecutionController extends Controller
     public function submitExamApi(Request $request)
     {
         try {
-            $user = auth()->user();
+            $user    = auth()->user();
             $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
                 ->where('status', 'Sedang_Mengerjakan')
                 ->firstOrFail();
 
             $this->ExamExecutionService->submitExam($riwayat);
-            
+
             return response()->json([
-                'success' => true, 
-                'redirect' => route('pmb.camaba.dashboard')
+                'success'  => true,
+                'redirect' => route('cbt.execute.finished', $riwayat->jadwal->hashid),
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -73,20 +73,20 @@ class ExamExecutionController extends Controller
     public function logViolationApi(Request $request)
     {
         try {
-            $user = auth()->user();
+            $user    = auth()->user();
             $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
                 ->where('status', 'Sedang_Mengerjakan')
                 ->first();
 
             if ($riwayat) {
                 \App\Models\Cbt\LogPelanggaran::create([
-                    'riwayat_id' => $riwayat->id,
+                    'riwayat_id'        => $riwayat->id,
                     'jenis_pelanggaran' => $request->type,
-                    'keterangan' => $request->keterangan ?? null,
-                    'waktu_kejadian' => now()
+                    'keterangan'        => $request->keterangan ?? null,
+                    'waktu_kejadian'    => now(),
                 ]);
             }
-            
+
             return response()->json(['success' => true]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -99,11 +99,11 @@ class ExamExecutionController extends Controller
     public function toggleTokenApi(JadwalUjian $jadwal)
     {
         try {
-            $jadwal->update(['is_token_aktif' => !$jadwal->is_token_aktif]);
-            
+            $jadwal->update(['is_token_aktif' => ! $jadwal->is_token_aktif]);
+
             return response()->json([
-                'success' => true,
-                'is_active' => $jadwal->is_token_aktif
+                'success'   => true,
+                'is_active' => $jadwal->is_token_aktif,
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -132,6 +132,9 @@ class ExamExecutionController extends Controller
                 return jsonError('Token saat ini sedang tidak aktif.');
             }
 
+            // Set session flag to allow access to start exam
+            session(['cbt_token_validated_' . $jadwal->id => true]);
+
             return jsonSuccess('Token valid.', route('cbt.execute.start', $jadwal->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -145,6 +148,14 @@ class ExamExecutionController extends Controller
     {
         try {
             $user = auth()->user();
+
+            // Security check for non-admin
+            if (! $user->hasRole('admin')) {
+                if (! session('cbt_token_validated_' . $jadwal->id)) {
+                    return redirect()->route('pmb.camaba.dashboard')->with('error', 'Silakan masukkan token untuk memulai ujian.');
+                }
+            }
+
             $jadwal->load(['paket.komposisi.soal.opsiJawaban']);
 
             $riwayat = $this->ExamExecutionService->startExam($jadwal, $user, [
@@ -152,7 +163,7 @@ class ExamExecutionController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            if ($riwayat->status !== 'Sedang_Mengerjakan') {
+            if ($riwayat->status !== 'Sedang_Mengerjakan' && ! $user->hasRole('admin')) {
                 return redirect()->route('pmb.camaba.dashboard')->with('error', 'Ujian telah selesai atau tidak dapat diakses.');
             }
 
@@ -187,9 +198,75 @@ class ExamExecutionController extends Controller
     {
         try {
             $this->ExamExecutionService->submitExam($riwayat);
-            return jsonSuccess('Ujian berhasil diserahkan. Terima kasih.', route('pmb.camaba.dashboard'));
+
+            $redirect = auth()->user()->hasRole('admin') ? route('cbt.dashboard') : route('cbt.execute.finished', $riwayat->jadwal->hashid);
+            return jsonSuccess('Ujian berhasil diserahkan. Terima kasih.', $redirect);
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
+    }
+
+    /**
+     * Exam finished / success page
+     */
+    public function finished(JadwalUjian $jadwal)
+    {
+        $user    = auth()->user();
+        $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        return view('pages.cbt.execution.finished', compact('jadwal', 'riwayat'));
+    }
+
+    /**
+     * Reset admin exam history for testing
+     */
+    public function resetAdminExam(JadwalUjian $jadwal)
+    {
+        try {
+            if (! auth()->user()->hasRole('admin')) {
+                return jsonError('Hanya admin yang dapat mereset data ujian testing.');
+            }
+
+            $user    = auth()->user();
+            $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if ($riwayat) {
+                // Delete answers first
+                \App\Models\Cbt\JawabanSiswa::where('riwayat_id', $riwayat->id)->forceDelete();
+                // Delete violations
+                \App\Models\Cbt\LogPelanggaran::where('riwayat_id', $riwayat->id)->forceDelete();
+                // Force delete history
+                $riwayat->forceDelete();
+            }
+
+            return jsonSuccess('Data testing berhasil direset.', route('cbt.execute.start', $jadwal->hashid));
+        } catch (Exception $e) {
+            return jsonError($e->getMessage());
+        }
+    }
+
+    /**
+     * Exam Monitoring for Admin
+     */
+    public function monitor(JadwalUjian $jadwal)
+    {
+        $jadwal->load(['riwayatSiswa.user', 'riwayatSiswa.jawaban']);
+        return view('pages.cbt.execution.monitor', compact('jadwal'));
+    }
+
+    /**
+     * Violation Reports for Admin
+     */
+    public function violations()
+    {
+        $violations = \App\Models\Cbt\LogPelanggaran::with(['riwayatUjianSiswa.user', 'riwayatUjianSiswa.jadwal'])
+            ->latest('waktu_kejadian')
+            ->paginate(20);
+
+        return view('pages.cbt.execution.violations', compact('violations'));
     }
 }

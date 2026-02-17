@@ -66,7 +66,7 @@ class ExamExecutionService
             // 3. Integration with PMB
             $pendaftaran = Pendaftaran::where('user_id', $riwayat->user_id)->latest()->first();
             if ($pendaftaran) {
-                $pendaftaran->update(['status_terkini' => 'Selesai_Ujian']);
+                $pendaftaran->update(['status_terkini' => 'Sudah_Ujian']);
                 $peserta = PesertaUjian::where('pendaftaran_id', $pendaftaran->id)->first();
                 if ($peserta) {
                     $peserta->update(['nilai_akhir' => $totalNilai]);

@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\Pmb;
 
+use App\Models\Pmb\Pendaftaran;
+use App\Models\Shared\StrukturOrganisasi;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,6 +38,6 @@ class PilihanProdi extends Model
 
     public function orgUnit()
     {
-        return $this->belongsTo(\App\Models\Shared\StrukturOrganisasi::class, 'orgunit_id');
+        return $this->belongsTo(StrukturOrganisasi::class, 'orgunit_id');
     }
 }

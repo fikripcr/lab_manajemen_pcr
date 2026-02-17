@@ -25,6 +25,10 @@
                 </button>
             @endif
         </div>
+    @elseif($pendaftaran->status_terkini == 'Sudah_Ujian')
+        <div class="text-success mb-2"><i class="ti ti-check-circle ti-lg"></i></div>
+        <p class="mb-0">Ujian Anda telah selesai dan sedang dalam proses penilaian.</p>
+        <p class="small text-muted">Hasil pengumuman akan diinformasikan melalui dashboard ini atau email resmi.</p>
     @elseif($pendaftaran->status_terkini == 'Lulus')
         <div class="text-success mb-2"><i class="ti ti-confetti ti-lg"></i></div>
         <h3>Selamat! Anda Lulus</h3>

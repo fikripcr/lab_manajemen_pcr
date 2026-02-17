@@ -1,6 +1,9 @@
 <?php
 namespace App\Models\Cbt;
 
+use App\Models\Cbt\OpsiJawaban;
+use App\Models\Cbt\RiwayatUjianSiswa;
+use App\Models\Cbt\Soal;
 use Illuminate\Database\Eloquent\Model;
 
 class JawabanSiswa extends Model
@@ -14,6 +17,10 @@ class JawabanSiswa extends Model
         'jawaban_esai',
         'is_ragu',
         'nilai_didapat',
+    ];
+
+    protected $casts = [
+        'is_ragu' => 'boolean',
     ];
 
     public function riwayat()

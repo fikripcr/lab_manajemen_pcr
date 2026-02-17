@@ -83,7 +83,7 @@ class PaketUjianController extends Controller
     {
         try {
             $this->PaketUjianService->addSoal($paket, $request->input('soal_ids', []));
-            return jsonSuccess('Soal berhasil ditambahkan ke paket.');
+            return jsonSuccess('Soal berhasil ditambahkan ke paket.', route('cbt.paket.show', $paket->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
@@ -93,7 +93,7 @@ class PaketUjianController extends Controller
     {
         try {
             $this->PaketUjianService->removeSoal($komposisi);
-            return jsonSuccess('Soal berhasil dihapus dari paket.');
+            return jsonSuccess('Soal berhasil dihapus dari paket.', route('cbt.paket.show', $paket->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }

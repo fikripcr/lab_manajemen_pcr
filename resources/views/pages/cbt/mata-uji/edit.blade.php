@@ -1,4 +1,4 @@
-<form action="{{ route('cbt.mata-uji.update', $mu->encrypted_id) }}" method="POST" class="ajax-form" data-redirect="true">
+<form action="{{ route('cbt.mata-uji.update', $mu->hashid) }}" method="POST" class="ajax-form" data-redirect="true">
     @csrf
     @method('PUT')
     <div class="modal-header">

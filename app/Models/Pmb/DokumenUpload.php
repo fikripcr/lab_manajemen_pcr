@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\Pmb;
 
+use App\Models\Pmb\JenisDokumen;
+use App\Models\Pmb\Pendaftaran;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;

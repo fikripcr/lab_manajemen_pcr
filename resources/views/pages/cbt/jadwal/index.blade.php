@@ -39,3 +39,22 @@
 </div>
 @endsection
 
+@push('scripts')
+<script>
+    $(document).on('click', '.btn-jadwal-action', function() {
+        const btn = $(this);
+        const url = btn.data('url');
+        
+        btn.prop('disabled', true);
+        $.post(url, { _token: '{{ csrf_token() }}' }, function(res) {
+            if (res.status === 'success') {
+                toastr.success(res.message);
+                $('#table-jadwal').DataTable().ajax.reload(null, false);
+            } else {
+                toastr.error(res.message);
+            }
+        }).always(() => btn.prop('disabled', false));
+    });
+</script>
+@endpush
+

@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Cbt;
 
+use App\Models\Cbt\Soal;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,10 @@ class OpsiJawaban extends Model
         'media_url',
         'is_kunci_jawaban',
         'bobot_nilai',
+    ];
+
+    protected $casts = [
+        'is_kunci_jawaban' => 'boolean',
     ];
 
     public function soal()

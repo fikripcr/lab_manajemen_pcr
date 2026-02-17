@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Cbt;
 
+use App\Models\Cbt\PaketUjian;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,12 @@ class JadwalUjian extends Model
         'waktu_selesai',
         'token_ujian',
         'is_token_aktif',
+    ];
+
+    protected $casts = [
+        'waktu_mulai'    => 'datetime',
+        'waktu_selesai'  => 'datetime',
+        'is_token_aktif' => 'boolean',
     ];
 
     public function paket()

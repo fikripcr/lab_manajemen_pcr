@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Cbt;
 
+use App\Models\Cbt\RiwayatUjianSiswa;
 use Illuminate\Database\Eloquent\Model;
 
 class LogPelanggaran extends Model
@@ -14,7 +15,11 @@ class LogPelanggaran extends Model
         'keterangan',
     ];
 
-    public function riwayat()
+    protected $casts = [
+        'waktu_kejadian' => 'datetime',
+    ];
+
+    public function riwayatUjianSiswa()
     {
         return $this->belongsTo(RiwayatUjianSiswa::class, 'riwayat_id');
     }
