@@ -52,9 +52,9 @@
                         <div class="datagrid-title">Status</div>
                         <div class="datagrid-content">
                             @if($personil->status_aktif)
-                            <span class="badge bg-success">Aktif</span>
+                            <span class="badge bg-success text-white">Aktif</span>
                             @else
-                            <span class="badge bg-danger">Tidak Aktif</span>
+                            <span class="badge bg-danger text-white">Tidak Aktif</span>
                             @endif
                         </div>
                     </div>

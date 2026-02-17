@@ -37,7 +37,7 @@ class StatusPegawaiController extends Controller
                 return $row->nama_status;
             })
             ->editColumn('is_active', function ($row) {
-                return $row->is_active ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Non-Aktif</span>';
+                return $row->is_active ? '<span class="badge bg-success text-white">Aktif</span>' : '<span class="badge bg-danger">Non-Aktif</span>';
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [

@@ -46,17 +46,44 @@
                 </div>
             </div>
 
-            <div class="col-12 mt-4">
+            <div class="col-lg-4 mt-4">
                 <div class="d-flex align-items-center mb-3">
-                    <h3 class="m-0 fw-bold"><i class="ti ti-speakerphone me-2 text-primary"></i> Pengumuman Terbaru</h3>
-                    <div class="ms-auto text-muted">
-                        <a href="{{ route('shared.pengumuman.index') }}" class="small text-muted text-decoration-none">Explore All <i class="ti ti-chevron-right small"></i></a>
+                    <h3 class="m-0 fw-bold"><i class="ti ti-speakerphone me-2 text-primary"></i> Pengumuman</h3>
+                </div>
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-body">
+                        <ul class="steps steps-vertical">
+                            @forelse($recentAnnouncements as $announcement)
+                            <li class="step-item">
+                                <div class="h4 m-0">
+                                    <a href="{{ route('shared.pengumuman.show', $announcement->pengumuman_id) }}" class="text-reset">{{ $announcement->judul }}</a>
+                                </div>
+                                <div class="text-secondary small">{{ $announcement->created_at->format('d M Y') }}</div>
+                                <div class="text-muted small mt-1 text-truncate" style="max-width: 250px;">
+                                    {{ Str::limit(strip_tags($announcement->isi), 50) }}
+                                </div>
+                            </li>
+                            @empty
+                            <p class="text-secondary small">Tidak ada pengumuman terbaru.</p>
+                            @endforelse
+                        </ul>
+                        <div class="mt-3 border-top pt-3">
+                            <a href="{{ route('shared.pengumuman.index') }}" class="btn btn-ghost-primary btn-sm w-100">
+                                Lihat Semua <i class="ti ti-chevron-right ms-1"></i>
+                            </a>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8 mt-4">
+                <div class="d-flex align-items-center mb-3">
+                    <h3 class="m-0 fw-bold"><i class="ti ti-news me-2 text-primary"></i> Berita Terbaru</h3>
                 </div>
                 <div class="row row-cards">
                     @forelse($recentNews as $news)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card card-stacked shadow-sm h-100 hvr-shadow transition-all border-0">
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-stacked shadow-sm h-100 border-0 hvr-shadow" style="border-radius: 12px; overflow: hidden;">
                             @if($news->cover_medium_url)
                             <div class="img-responsive img-responsive-21x9 card-img-top" style="background-image: url({{ $news->cover_medium_url }})"></div>
                             @else
@@ -64,16 +91,17 @@
                                 <i class="ti ti-news text-muted-opacity fs-1"></i>
                             </div>
                             @endif
-                            <div class="card-body d-flex flex-column">
+                            <div class="card-body d-flex flex-column p-3">
                                 <div class="d-flex align-items-center mb-2">
-                                    <span class="badge bg-blue-lt me-2">{{ ucfirst($news->jenis) }}</span>
                                     <span class="text-muted small"><i class="ti ti-calendar-event me-1"></i> {{ $news->created_at->diffForHumans() }}</span>
                                 </div>
-                                <h4 class="card-title mb-2 text-dark">{{ $news->judul }}</h4>
-                                <p class="text-secondary small mb-4 flex-grow-1">{{ Str::limit(strip_tags($news->isi), 100) }}</p>
-                                <div class="mt-auto pt-3 border-top">
-                                    <a href="{{ route('shared.pengumuman.show', $news->pengumuman_id) }}" class="btn btn-ghost-primary w-100 d-flex align-items-center justify-content-center">
-                                        Baca Lengkap <i class="ti ti-arrow-right ms-2"></i>
+                                <h4 class="card-title mb-2">
+                                    <a href="{{ route('shared.pengumuman.show', $news->pengumuman_id) }}" class="text-dark text-decoration-none">{{ $news->judul }}</a>
+                                </h4>
+                                <p class="text-secondary small mb-3 flex-grow-1">{{ Str::limit(strip_tags($news->isi), 80) }}</p>
+                                <div class="mt-auto pt-2 border-top">
+                                    <a href="{{ route('shared.pengumuman.show', $news->pengumuman_id) }}" class="small fw-bold text-primary">
+                                        Baca Lengkap <i class="ti ti-arrow-right ms-1"></i>
                                     </a>
                                 </div>
                             </div>
@@ -81,9 +109,9 @@
                     </div>
                     @empty
                     <div class="col-12">
-                        <div class="card">
+                        <div class="card border-0 shadow-sm">
                             <div class="card-body">
-                                <p class="text-secondary">Tidak ada pengumuman terbaru.</p>
+                                <p class="text-secondary small">Tidak ada berita terbaru.</p>
                             </div>
                         </div>
                     </div>

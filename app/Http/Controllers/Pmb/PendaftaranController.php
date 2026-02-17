@@ -55,7 +55,7 @@ class PendaftaranController extends Controller
                     'Tidak_Lulus' => 'bg-danger',
                     default       => 'bg-primary'
                 };
-                return '<span class="badge ' . $class . '">' . str_replace('_', ' ', $pendaftaran->status_terkini) . '</span>';
+                return '<span class="badge ' . $class . ' text-white">' . str_replace('_', ' ', $pendaftaran->status_terkini) . '</span>';
             })
             ->editColumn('waktu_daftar', function ($pendaftaran) {
                 return formatTanggalIndo($pendaftaran->waktu_daftar);

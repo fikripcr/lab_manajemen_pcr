@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Notifications\Hr;
 
 use App\Models\Hr\RiwayatApproval;
-use App\Models\Hr\Pegawai;
+use App\Models\Shared\Pegawai;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -22,8 +21,8 @@ class ApprovalRequestNotification extends Notification
      */
     public function __construct(RiwayatApproval $approval, ?Pegawai $pegawai, ?User $requestedBy)
     {
-        $this->approval = $approval;
-        $this->pegawai = $pegawai;
+        $this->approval    = $approval;
+        $this->pegawai     = $pegawai;
         $this->requestedBy = $requestedBy;
     }
 
@@ -42,8 +41,8 @@ class ApprovalRequestNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $modelClass = class_basename($this->approval->model);
-        $pegawaiName = $this->pegawai?->nama ?? 'Tidak diketahui';
+        $modelClass      = class_basename($this->approval->model);
+        $pegawaiName     = $this->pegawai?->nama ?? 'Tidak diketahui';
         $requestedByName = $this->requestedBy?->name ?? 'System';
 
         return (new MailMessage)
@@ -67,19 +66,19 @@ class ApprovalRequestNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $modelClass = class_basename($this->approval->model);
+        $modelClass  = class_basename($this->approval->model);
         $pegawaiName = $this->pegawai?->nama ?? 'Tidak diketahui';
 
         return [
-            'title' => 'Pengajuan Perubahan Data HR',
-            'message' => $pegawaiName . ' mengajukan perubahan ' . $modelClass,
-            'type' => 'approval_request',
-            'approval_id' => $this->approval->riwayatapproval_id,
-            'pegawai_id' => $this->pegawai?->pegawai_id,
-            'model' => $this->approval->model,
-            'status' => $this->approval->status,
+            'title'        => 'Pengajuan Perubahan Data HR',
+            'message'      => $pegawaiName . ' mengajukan perubahan ' . $modelClass,
+            'type'         => 'approval_request',
+            'approval_id'  => $this->approval->riwayatapproval_id,
+            'pegawai_id'   => $this->pegawai?->pegawai_id,
+            'model'        => $this->approval->model,
+            'status'       => $this->approval->status,
             'requested_by' => $this->requestedBy?->name,
-            'created_at' => $this->approval->created_at,
+            'created_at'   => $this->approval->created_at,
         ];
     }
 }

@@ -147,9 +147,6 @@
                       <div class="col-auto">
                          <span class="text-muted small">Dibuat: {{ $periode->created_at->diffForHumans() }}</span>
                       </div>
-                      <div class="col-auto ms-auto">
-                         <a href="#" class="btn btn-sm btn-ghost-primary ajax-modal-btn" data-url="{{ route('pemutu.periode-spmis.edit', $periode->encrypted_periodespmi_id) }}">Edit Detail</a>
-                      </div>
                    </div>
                 </div>
             </div>

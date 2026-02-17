@@ -26,9 +26,9 @@
                 <tr>
                     <td>
                         @if($ind->type == 'standar')
-                            <span class="badge bg-blue">Standar</span>
+                            <span class="badge bg-blue text-white">Standar</span>
                         @else
-                            <span class="badge bg-green">Performa</span>
+                            <span class="badge bg-green text-white">Performa</span>
                         @endif
                     </td>
                     <td>

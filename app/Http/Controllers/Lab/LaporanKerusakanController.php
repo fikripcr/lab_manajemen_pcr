@@ -49,7 +49,7 @@ class LaporanKerusakanController extends Controller
                     'closed'      => 'secondary',
                 ];
                 $color = $badges[$row->status] ?? 'secondary';
-                return "<span class='badge bg-{$color}'>{$row->status}</span>";
+                return "<span class='badge bg-{$color} text-white'>{$row->status}</span>";
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [

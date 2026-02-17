@@ -92,7 +92,7 @@
                 <div class="nav-item dropdown me-3 dropdown-notification">
                     <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
                         <i class="ti ti-bell fs-2"></i>
-                        <span class="badge bg-red notification-count" style="display: none;"></span>
+                        <span class="badge bg-red text-white notification-count" style="display: none;"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-card"{{ $dark ? ' data-bs-theme="light"' : '' }}>
                         <div class="card">

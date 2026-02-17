@@ -31,7 +31,7 @@ class JadwalUjianController extends Controller
             ->editColumn('waktu_mulai', fn($j) => formatTanggalIndo($j->waktu_mulai))
             ->editColumn('waktu_selesai', fn($j) => formatTanggalIndo($j->waktu_selesai))
             ->editColumn('token_ujian', function ($j) {
-                $btnClass = $j->is_token_aktif ? 'badge bg-success' : 'badge bg-secondary';
+                $btnClass = $j->is_token_aktif ? 'badge bg-success text-white' : 'badge bg-secondary text-white';
                 return '<span class="' . $btnClass . '">' . ($j->token_ujian ?? '-') . '</span>';
             })
             ->addColumn('action', function ($j) {

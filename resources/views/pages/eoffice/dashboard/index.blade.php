@@ -22,299 +22,203 @@
 @endsection
 
 @section('content')
-<div class="row row-deck row-cards">
-    <!-- KPI Cards -->
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader">Total Layanan</div>
-                    <div class="ms-auto lh-1">
-                        <div class="dropdown">
-                            <a class="dropdown-toggle text-muted" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Last 7 days</a>
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row row-deck row-cards">
+            <!-- KPI Cards -->
+            <div class="col-sm-6 col-lg-3">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="subheader">Total Layanan</div>
                         </div>
-                    </div>
-                </div>
-                <div class="h1 mb-3" id="total-layanan">{{ $stats['total_layanan'] ?? 0 }}</div>
-                <div class="d-flex mb-2">
-                    <div>Perubahan dari bulan lalu</div>
-                    <div class="ms-auto">
-                        <span class="text-green" id="layanan-change">
-                            <i class="ti ti-trending-up"></i> +12.5%
-                        </span>
-                    </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-primary" style="width: 75%" id="layanan-progress"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader">Menunggu Proses</div>
-                    <div class="ms-auto lh-1">
-                        <span class="badge bg-yellow text-yellow-fg" id="pending-count">{{ $stats['pending'] ?? 0 }}</span>
-                    </div>
-                </div>
-                <div class="h1 mb-3" id="pending-percentage">{{ $stats['pending_percentage'] ?? 0 }}%</div>
-                <div class="d-flex mb-2">
-                    <div>Dari total layanan</div>
-                    <div class="ms-auto">
-                        <span class="text-yellow" id="pending-trend">
-                            <i class="ti ti-trending-down"></i> -5.2%
-                        </span>
-                    </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-yellow" style="width: {{ $stats['pending_percentage'] ?? 0 }}%" id="pending-progress"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader">Selesai Diproses</div>
-                    <div class="ms-auto lh-1">
-                        <span class="badge bg-green text-green-fg" id="completed-count">{{ $stats['completed'] ?? 0 }}</span>
-                    </div>
-                </div>
-                <div class="h1 mb-3" id="completed-percentage">{{ $stats['completed_percentage'] ?? 0 }}%</div>
-                <div class="d-flex mb-2">
-                    <div>Success rate</div>
-                    <div class="ms-auto">
-                        <span class="text-green" id="completed-trend">
-                            <i class="ti ti-trending-up"></i> +8.7%
-                        </span>
-                    </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-green" style="width: {{ $stats['completed_percentage'] ?? 0 }}%" id="completed-progress"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader">Response Time</div>
-                    <div class="ms-auto lh-1">
-                        <span class="badge bg-blue text-blue-fg">Avg</span>
-                    </div>
-                </div>
-                <div class="h1 mb-3" id="response-time">{{ $stats['avg_response_time'] ?? 0 }}h</div>
-                <div class="d-flex mb-2">
-                    <div>Waktu rata-rata</div>
-                    <div class="ms-auto">
-                        <span class="text-blue" id="response-trend">
-                            <i class="ti ti-trending-down"></i> -2.1h
-                        </span>
-                    </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div class="progress-bar bg-blue" style="width: 65%" id="response-progress"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Chart Layanan per Bulan -->
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Trend Layanan 6 Bulan Terakhir</h3>
-                <div class="card-actions">
-                    <div class="dropdown">
-                        <a href="#" class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Semua Jenis</a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item active" href="#">Semua Jenis</a>
-                            <a class="dropdown-item" href="#">Akademik</a>
-                            <a class="dropdown-item" href="#">Administrasi</a>
-                            <a class="dropdown-item" href="#">Kemahasiswaan</a>
+                        <div class="h1 mb-2">{{ $stats['total_layanan'] ?? 0 }}</div>
+                        <div class="d-flex mb-2">
+                            <div class="text-muted small">Periode Terpilih</div>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-primary" style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div id="chart-layanan-trend" style="height: 300px;"></div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Jenis Layanan Distribution -->
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Distribusi Jenis Layanan</h3>
-            </div>
-            <div class="card-body">
-                <div id="chart-jenis-layanan" style="height: 300px;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Recent Activities -->
-    <div class="col-lg-6 d-flex">
-        <div class="card h-100">
-            <div class="card-header">
-                <h3 class="card-title">Aktivitas Terbaru</h3>
-                <div class="card-actions">
-                    <a href="{{ route('eoffice.layanan.index') }}" class="btn btn-sm">Lihat Semua</a>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="timeline">
-                    @if(isset($recentActivities) && count($recentActivities) > 0)
-                        @foreach($recentActivities as $activity)
-                        <div class="timeline-item">
-                            <div class="timeline-point timeline-point-primary"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-time">{{ $activity->created_at->diffForHumans() }}</div>
-                                <div class="timeline-title">{{ $activity->jenisLayanan->name ?? 'Unknown' }}</div>
-                                <div class="timeline-body text-muted small">
-                                    {{ $activity->pengusul_nama }} - {{ $activity->no_layanan }}
-                                </div>
-                                <div class="timeline-actions">
-                                    <span class="badge bg-{{ $activity->latestStatus->status_color ?? 'blue' }} text-{{ $activity->latestStatus->status_color ?? 'blue' }}-fg">
-                                        {{ $activity->latestStatus->status_layanan ?? 'Pending' }}
-                                    </span>
-                                </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="subheader">Menunggu Proses</div>
+                            <div class="ms-auto lh-1">
+                                <span class="badge bg-yellow-lt fw-bold">{{ $stats['pending'] ?? 0 }}</span>
                             </div>
                         </div>
-                        @endforeach
-                    @else
-                        <div class="empty">
-                            <div class="empty-img"><img src="{{ asset('images/illustrations/undraw_quitting_time_dm6t.svg') }}" height="128" alt=""></div>
-                            <p class="empty-title">Tidak ada aktivitas</p>
-                            <p class="empty-subtitle text-muted">Belum ada aktivitas layanan terbaru.</p>
+                        <div class="h1 mb-2">{{ $stats['pending_percentage'] ?? 0 }}%</div>
+                        <div class="d-flex mb-2">
+                            <div class="text-muted small">Menunggu Respon PIC</div>
                         </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Top Performers -->
-    <div class="col-lg-6 d-flex">
-        <div class="card h-100">
-            <div class="card-header">
-                <h3 class="card-title">Top PIC Layanan</h3>
-                <div class="card-actions">
-                    <div class="dropdown">
-                        <a href="#" class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bulan Ini</a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item active" href="#">Bulan Ini</a>
-                            <a class="dropdown-item" href="#">Tahun Ini</a>
-                            <a class="dropdown-item" href="#">All Time</a>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-yellow" style="width: {{ $stats['pending_percentage'] ?? 0 }}%"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                @if(isset($topPerformers) && count($topPerformers) > 0)
-                    @foreach($topPerformers as $index => $performer)
-                    <div class="d-flex align-items-center mb-3">
-                        <span class="avatar me-3" style="background-color: {{ ['primary', 'secondary', 'success', 'warning', 'danger'][$index] }};">
-                            {{ $index + 1 }}
-                        </span>
-                        <div class="flex-fill">
-                            <div class="font-weight-medium">{{ $performer->name ?? 'Unknown' }}</div>
-                            <div class="text-muted">{{ $performer->processed_count }} layanan diproses</div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="subheader">Selesai Diproses</div>
+                            <div class="ms-auto lh-1">
+                                <span class="badge bg-green-lt fw-bold">{{ $stats['completed'] ?? 0 }}</span>
+                            </div>
                         </div>
+                        <div class="h1 mb-2">{{ $stats['completed_percentage'] ?? 0 }}%</div>
+                        <div class="d-flex mb-2">
+                            <div class="text-muted small">Layanan Berhasil Selesai</div>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-green" style="width: {{ $stats['completed_percentage'] ?? 0 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="subheader">Response Time</div>
+                        </div>
+                        <div class="h1 mb-2">{{ $stats['avg_response_time'] ?? 0 }}h</div>
+                        <div class="d-flex mb-2">
+                            <div class="text-muted small">Rata-rata Waktu Proses</div>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-blue" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-transparent border-0 py-3">
+                        <h3 class="card-title fw-bold"><i class="ti ti-chart-line me-2 text-primary"></i> Trend Layanan 6 Bulan Terakhir</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart-layanan-trend" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-transparent border-0 py-3">
+                        <h3 class="card-title fw-bold"><i class="ti ti-chart-pie me-2 text-primary"></i> Distribusi Jenis Layanan</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart-jenis-layanan" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section: Activities & Top Performers -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-transparent border-0 py-3 d-flex align-items-center">
+                        <h3 class="card-title fw-bold m-0"><i class="ti ti-activity me-2 text-primary"></i> Aktivitas Terbaru</h3>
                         <div class="ms-auto">
-                            <div class="progress progress-sm" style="width: 100px;">
-                                <div class="progress-bar bg-{{ ['primary', 'secondary', 'success', 'warning', 'danger'][$index] }}" 
-                                     style="width: {{ ($performer->processed_count / $topPerformers->first()->processed_count) * 100 }}%"></div>
-                            </div>
+                            <a href="{{ route('eoffice.layanan.index') }}" class="btn btn-ghost-secondary btn-sm">Lihat Semua</a>
                         </div>
                     </div>
-                    @endforeach
-                @else
-                    <div class="empty">
-                        <div class="empty-img"><img src="{{ asset('images/illustrations/undraw_team_up_re_84ok.svg') }}" height="128" alt=""></div>
-                        <p class="empty-title">Belum ada data</p>
-                        <p class="empty-subtitle text-muted">Belum ada data performer bulan ini.</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Layanan Status Distribution -->
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Status Layanan</h3>
-            </div>
-            <div class="card-body">
-                <div id="chart-status-layanan" style="height: 250px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Quick Actions</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <x-tabler.button href="{{ route('eoffice.layanan.services') }}" class="btn-primary" icon="ti ti-plus" text="Buat Layanan Baru" />
-                    <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-secondary" icon="ti ti-list" text="Daftar Layanan" />
-                    <x-tabler.button href="#" class="btn-outline-secondary disabled" icon="ti ti-chart-bar" text="Laporan (Coming Soon)" />
-                    <x-tabler.button href="#" class="btn-outline-secondary disabled" icon="ti ti-settings" text="Pengaturan (Coming Soon)" />
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- System Status -->
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">System Status</h3>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="badge bg-green me-2"></span>
-                        <span>E-Office Service</span>
-                        <span class="ms-auto text-green">Online</span>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="badge bg-green me-2"></span>
-                        <span>Database</span>
-                        <span class="ms-auto text-green">Connected</span>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="badge bg-green me-2"></span>
-                        <span>Email Service</span>
-                        <span class="ms-auto text-green">Active</span>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="badge bg-yellow me-2"></span>
-                        <span>File Storage</span>
-                        <span class="ms-auto text-yellow">85% Used</span>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter card-table table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Layanan</th>
+                                    <th>Status</th>
+                                    <th>Waktu</th>
+                                    <th class="w-1"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($recentActivities as $activity)
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <span class="avatar avatar-sm rounded-circle bg-blue-lt">
+                                                    {{ substr($activity->jenisLayanan->nama ?? 'L', 0, 2) }}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ $activity->jenisLayanan->nama ?? 'Unknown' }}</div>
+                                                <div class="text-muted small">{{ $activity->no_layanan }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $currStatus = $activity->latestStatus->status_layanan ?? 'Pending';
+                                            $color = match($currStatus) {
+                                                'Selesai' => 'success',
+                                                'Proses'  => 'primary',
+                                                'Pending' => 'warning',
+                                                'Batal'   => 'danger',
+                                                default   => 'secondary',
+                                            };
+                                        @endphp
+                                        <span class="badge bg-{{ $color }}-lt fw-bold">{{ $currStatus }}</span>
+                                    </td>
+                                    <td class="text-muted small">
+                                        {{ $activity->created_at->diffForHumans() }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('eoffice.layanan.show', $activity->layanan_id) }}" class="btn btn-ghost-primary btn-icon btn-sm">
+                                            <i class="ti ti-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">Tidak ada aktivitas terbaru.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="progress">
-                    <div class="progress-bar bg-yellow" style="width: 85%">
-                        <span>85% Storage Used</span>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-transparent border-0 py-3">
+                        <h3 class="card-title fw-bold m-0"><i class="ti ti-award me-2 text-warning"></i> Top Performers (PIC)</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="space-y-4">
+                            @forelse($topPerformers as $performer)
+                            <div class="d-flex align-items-center mb-4">
+                                @if(isset($performer->avatar) && $performer->avatar)
+                                <span class="avatar avatar-md rounded-circle me-3" style="background-image: url({{ $performer->avatar }})"></span>
+                                @else
+                                <span class="avatar avatar-md rounded-circle me-3 bg-primary-lt">
+                                    {{ substr($performer->name ?? '?', 0, 1) }}
+                                </span>
+                                @endif
+                                <div class="flex-fill">
+                                    <div class="fw-bold text-dark">{{ $performer->name ?? 'Unknown' }}</div>
+                                    <div class="text-muted small">{{ $performer->processed_count }} Layanan Selesai</div>
+                                </div>
+                                <div class="ms-auto text-end">
+                                    <div class="badge bg-green-lt fw-bold">#{{ $loop->iteration }}</div>
+                                </div>
+                            </div>
+                            @empty
+                            <p class="text-center text-muted py-3">Belum ada data performer.</p>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
             </div>
@@ -326,121 +230,74 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-// Chart Options
-const chartOptions = {
-    theme: {
-        mode: document.body.classList.contains('dark') ? 'dark' : 'light'
-    }
-};
-
-// Layanan Trend Chart
-const layananTrendOptions = {
-    series: [{
-        name: 'Total Layanan',
-        data: [65, 78, 90, 81, 96, 105]
-    }, {
-        name: 'Selesai',
-        data: [55, 68, 75, 71, 86, 95]
-    }, {
-        name: 'Pending',
-        data: [10, 10, 15, 10, 10, 10]
-    }],
-    chart: {
-        type: 'area',
-        height: 300,
-        ...chartOptions
-    },
-    dataLabels: {
-        enabled: false
-    },
-    stroke: {
-        curve: 'smooth',
-        width: 2
-    },
-    fill: {
-        type: 'gradient',
-        gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.7,
-            opacityTo: 0.3
+document.addEventListener("DOMContentLoaded", function () {
+    // Chart Options
+    const chartOptions = {
+        theme: {
+            mode: document.body.classList.contains('dark') ? 'dark' : 'light'
         }
-    },
-    xaxis: {
-        categories: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    },
-    tooltip: {
-        x: {
-            format: 'dd/MM/yy'
-        }
-    }
-};
+    };
 
-const layananTrendChart = new ApexCharts(document.querySelector("#chart-layanan-trend"), layananTrendOptions);
-layananTrendChart.render();
-
-// Jenis Layanan Pie Chart
-const jenisLayananOptions = {
-    series: [44, 33, 23],
-    chart: {
-        type: 'donut',
-        height: 300,
-        ...chartOptions
-    },
-    labels: ['Akademik', 'Administrasi', 'Kemahasiswaan'],
-    colors: ['#206bc4', '#2f9e44', '#f59f00'],
-    responsive: [{
-        breakpoint: 480,
-        options: {
+    // Layanan Trend Chart
+    const trendData = @json($chartData['monthly_trend'] ?? []);
+    if (trendData.labels) {
+        const trendOptions = {
+            series: [{
+                name: 'Total Layanan',
+                data: trendData.data.map(d => d.total)
+            }, {
+                name: 'Selesai',
+                data: trendData.data.map(d => d.completed)
+            }, {
+                name: 'Proses/Pending',
+                data: trendData.data.map(d => d.pending)
+            }],
             chart: {
-                width: 200
+                type: 'area',
+                height: 300,
+                toolbar: { show: false },
+                ...chartOptions
             },
-            legend: {
-                position: 'bottom'
+            dataLabels: { enabled: false },
+            colors: ['#206bc4', '#2fb344', '#f59f00'],
+            stroke: { curve: 'smooth', width: 2 },
+            xaxis: {
+                categories: trendData.labels
+            },
+            fill: {
+                type: 'gradient',
+                gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05 }
             }
-        }
-    }]
-};
+        };
+        const trendChart = new ApexCharts(document.querySelector("#chart-layanan-trend"), trendOptions);
+        trendChart.render();
+    }
 
-const jenisLayananChart = new ApexCharts(document.querySelector("#chart-jenis-layanan"), jenisLayananOptions);
-jenisLayananChart.render();
-
-// Status Layanan Chart
-const statusLayananOptions = {
-    series: [65, 20, 15],
-    chart: {
-        type: 'pie',
-        height: 250,
-        ...chartOptions
-    },
-    labels: ['Selesai', 'Proses', 'Pending'],
-    colors: ['#2f9e44', '#f59f00', '#fa5252'],
-    responsive: [{
-        breakpoint: 480,
-        options: {
+    // Jenis Layanan Chart
+    const jenisData = @json($chartData['jenis_distribution'] ?? []);
+    if (jenisData.length > 0) {
+        const jenisOptions = {
+            series: jenisData.map(d => d.layanans_count),
             chart: {
-                width: 200
+                type: 'donut',
+                height: 300,
+                ...chartOptions
             },
-            legend: {
-                position: 'bottom'
-            }
-        }
-    }]
-};
+            labels: jenisData.map(d => d.nama),
+            colors: ['#206bc4', '#2fb344', '#f59f00', '#d63384', '#6610f2'],
+            legend: { position: 'bottom' }
+        };
+        const jenisChart = new ApexCharts(document.querySelector("#chart-jenis-layanan"), jenisOptions);
+        jenisChart.render();
+    }
+});
 
-const statusLayananChart = new ApexCharts(document.querySelector("#chart-status-layanan"), statusLayananOptions);
-statusLayananChart.render();
-
-// Functions
 function changePeriod(period) {
-    // Implement period change logic
-    console.log('Changing period to:', period);
-    refreshDashboard();
+    window.location.href = `{{ route('eoffice.dashboard') }}?period=${period}`;
 }
 
 function refreshDashboard() {
-    // Implement dashboard refresh logic
-    console.log('Refreshing dashboard...');
-    // You can add AJAX calls here to refresh data
+    window.location.reload();
 }
 </script>
 @endpush

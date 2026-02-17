@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Listeners\Hr;
 
 use App\Events\Hr\ApprovalRequested;
-use App\Models\Hr\Pegawai;
+use App\Models\Shared\Pegawai;
 use App\Notifications\Hr\ApprovalRequestNotification;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 
 class NotifyApprovalRequested
 {
@@ -22,7 +20,7 @@ class NotifyApprovalRequested
             if ($adminUsers->isEmpty()) {
                 Log::warning('No approval users found for notification', [
                     'approval_id' => $event->approval->riwayatapproval_id,
-                    'model' => $event->approval->model,
+                    'model'       => $event->approval->model,
                 ]);
                 return;
             }
@@ -33,16 +31,16 @@ class NotifyApprovalRequested
             }
 
             Log::info('Approval request notifications sent', [
-                'approval_id' => $event->approval->riwayatapproval_id,
-                'model' => $event->approval->model,
+                'approval_id'    => $event->approval->riwayatapproval_id,
+                'model'          => $event->approval->model,
                 'notified_users' => $adminUsers->pluck('id')->toArray(),
             ]);
 
         } catch (\Exception $e) {
             Log::error('Failed to send approval request notifications', [
                 'approval_id' => $event->approval->riwayatapproval_id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'error'       => $e->getMessage(),
+                'trace'       => $e->getTraceAsString(),
             ]);
         }
     }
@@ -58,11 +56,11 @@ class NotifyApprovalRequested
                 ->orWhere('name', 'admin')
                 ->orWhere('name', 'super-admin');
         })
-        ->orWhereHas('permissions', function ($query) {
-            $query->where('name', 'hr.approval.approve')
-                ->orWhere('name', 'hr.approval.manage');
-        })
-        ->active()
-        ->get();
+            ->orWhereHas('permissions', function ($query) {
+                $query->where('name', 'hr.approval.approve')
+                    ->orWhere('name', 'hr.approval.manage');
+            })
+            ->active()
+            ->get();
     }
 }

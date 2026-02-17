@@ -82,15 +82,21 @@ class DashboardController extends Controller
     {
         $startDate = $this->getStartDate($period);
 
-        // This would need to be implemented based on your user/assignment logic
-        // For now, returning mock data structure
-        return collect([
-            (object) ['name' => 'Ahmad Fauzi', 'processed_count' => 45],
-            (object) ['name' => 'Siti Nurhaliza', 'processed_count' => 38],
-            (object) ['name' => 'Budi Santoso', 'processed_count' => 32],
-            (object) ['name' => 'Dewi Lestari', 'processed_count' => 28],
-            (object) ['name' => 'Eko Prasetyo', 'processed_count' => 25],
-        ]);
+        return LayananStatus::where('status_layanan', 'Selesai')
+            ->whereBetween('created_at', [$startDate, now()])
+            ->with('user')
+            ->selectRaw('created_by, COUNT(*) as processed_count')
+            ->groupBy('created_by')
+            ->orderBy('processed_count', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($item) {
+                return (object) [
+                    'name'            => $item->user->name ?? 'Unknown',
+                    'processed_count' => $item->processed_count,
+                    'avatar'          => $item->user->profile_photo_url ?? null,
+                ];
+            });
     }
 
     private function getChartData($period)

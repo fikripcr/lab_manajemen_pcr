@@ -70,7 +70,7 @@
                                             </ol>
                                         </td></tr>
                                         @if($pendaftaran->status_terkini == 'Lulus')
-                                            <tr><td><strong>Diterima di</strong></td><td>: <span class="badge bg-success">{{ $pendaftaran->orgUnitDiterima->name ?? '-' }}</span></td></tr>
+                                            <tr><td><strong>Diterima di</strong></td><td>: <span class="badge bg-success text-white">{{ $pendaftaran->orgUnitDiterima->name ?? '-' }}</span></td></tr>
                                             <tr><td><strong>NIM Akhir</strong></td><td>: <strong>{{ $pendaftaran->nim_final }}</strong></td></tr>
                                         @endif
                                     </table>

@@ -30,8 +30,8 @@ class PeriodeController extends Controller
             ->editColumn('tanggal_selesai', fn($p) => formatTanggalIndo($p->tanggal_selesai))
             ->editColumn('is_aktif', function ($p) {
                 return $p->is_aktif
-                    ? '<span class="badge bg-success">Aktif</span>'
-                    : '<span class="badge bg-danger">Non-Aktif</span>';
+                    ? '<span class="badge bg-success text-white">Aktif</span>'
+                    : '<span class="badge bg-danger text-white">Non-Aktif</span>';
             })
             ->addColumn('action', function ($p) {
                 return view('pages.pmb.periode._actions', compact('p'));

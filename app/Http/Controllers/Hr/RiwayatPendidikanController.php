@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\RiwayatPendidikanRequest;
-use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatPendidikan;
+use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
 use Exception;

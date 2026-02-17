@@ -41,10 +41,10 @@
                             </td>
                             <td data-label="Status">
                                 @if($upload)
-                                    <span class="badge bg-success">Sudah Diunggah</span>
+                                    <span class="badge bg-success text-white">Sudah Diunggah</span>
                                     <div class="small text-muted">{{ formatTanggalIndo($upload->waktu_upload) }}</div>
                                 @else
-                                    <span class="badge bg-secondary">Belum Diunggah</span>
+                                    <span class="badge bg-secondary text-white">Belum Diunggah</span>
                                 @endif
                             </td>
                             <td>

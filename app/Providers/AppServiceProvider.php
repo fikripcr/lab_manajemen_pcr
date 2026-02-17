@@ -4,6 +4,7 @@ namespace App\Providers;
 use App\Models\Notification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -22,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrapFive();
 
         // Register the custom Notification model
         $this->app->bind('Illuminate\Notifications\DatabaseNotification', function () {
@@ -41,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'Perizinan'                => \App\Models\Hr\Perizinan::class,
             'Lembur'                   => \App\Models\Hr\Lembur::class,
-            'Pegawai'                  => \App\Models\Hr\Pegawai::class,
+            'Pegawai'                  => \App\Models\Shared\Pegawai::class,
             'RiwayatDatadiri'          => \App\Models\Hr\RiwayatDatadiri::class,
             'RiwayatPendidikan'        => \App\Models\Hr\RiwayatPendidikan::class,
             'RiwayatJabatanFungsional' => \App\Models\Hr\RiwayatJabfungsional::class,

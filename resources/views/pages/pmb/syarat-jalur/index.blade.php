@@ -73,7 +73,7 @@
                                         @if($s->is_required)
                                             <span class="badge bg-danger">Wajib</span>
                                         @else
-                                            <span class="badge bg-secondary">Opsional</span>
+                                            <span class="badge bg-secondary text-white">Opsional</span>
                                         @endif
                                     </td>
                                     <td>

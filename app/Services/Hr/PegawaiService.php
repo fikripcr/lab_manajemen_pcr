@@ -3,7 +3,6 @@ namespace App\Services\Hr;
 
 use App\Events\Hr\ApprovalProcessed;
 use App\Events\Hr\ApprovalRequested;
-use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
 use App\Models\Hr\RiwayatInpassing;
@@ -13,6 +12,7 @@ use App\Models\Hr\RiwayatPendidikan;
 use App\Models\Hr\RiwayatPenugasan;
 use App\Models\Hr\RiwayatStatAktifitas;
 use App\Models\Hr\RiwayatStatPegawai;
+use App\Models\Shared\Pegawai;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

@@ -29,9 +29,9 @@
                     <td>{{ $asn->tgl_mulai?->format('d M Y') }}</td>
                     <td>
                         @if($asn->is_active)
-                            <span class="badge bg-success">Aktif</span>
+                            <span class="badge bg-success text-white">Aktif</span>
                         @else
-                            <span class="badge bg-secondary">Selesai</span>
+                            <span class="badge bg-secondary text-white">Selesai</span>
                         @endif
                     </td>
                     <td class="text-end">

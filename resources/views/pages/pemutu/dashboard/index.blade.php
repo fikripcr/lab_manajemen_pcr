@@ -15,44 +15,46 @@
 {{-- Metrics Row --}}
 <div class="row row-cards">
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <div class="card card-sm border-0 shadow-sm bg-primary-lt">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Total Dokumen</div>
+                    <div class="subheader text-primary">Total Dokumen</div>
                 </div>
-                <div class="h1 mb-0">{{ $totalDokumen }}</div>
-                {{-- Breakdown removed --}}
+                <div class="h1 mb-0 fw-bold text-primary">{{ $totalDokumen }}</div>
+                <div class="text-primary opacity-50 small mt-2">Arsip Penjaminan Mutu</div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <div class="card card-sm border-0 shadow-sm bg-success-lt">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Total Indikator</div>
+                    <div class="subheader text-success">Total Indikator</div>
                 </div>
-                <div class="h1 mb-0">{{ $totalIndikator }}</div>
+                <div class="h1 mb-0 fw-bold text-success">{{ $totalIndikator }}</div>
+                <div class="text-success opacity-50 small mt-2">Standar Mutu Internal</div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <div class="card card-sm border-0 shadow-sm bg-warning-lt">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Total KPI</div>
+                    <div class="subheader text-warning">Total KPI</div>
                 </div>
-                <div class="h1 mb-0">{{ $totalKpi }}</div>
-                <div class="text-secondary mt-1">{{ $kpiAchievementRate }}% Submitted</div>
+                <div class="h1 mb-0 fw-bold text-warning">{{ $totalKpi }}</div>
+                <div class="text-warning fw-bold small mt-2">{{ $kpiAchievementRate }}% Submitted</div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <div class="card card-sm border-0 shadow-sm bg-purple-lt">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Total Personil</div>
+                    <div class="subheader text-purple">Total Personil</div>
                 </div>
-                <div class="h1 mb-0">{{ $totalPersonil }}</div>
+                <div class="h1 mb-0 fw-bold text-purple">{{ $totalPersonil }}</div>
+                <div class="text-purple opacity-50 small mt-2">Tim Penjaminan Mutu</div>
             </div>
         </div>
     </div>
@@ -61,21 +63,22 @@
 {{-- Timeline & Detailed Metrics --}}
 <div class="row row-cards mt-3">
     <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Timeline Periode SPMI</h3>
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h3 class="card-title fw-bold"><i class="ti ti-history me-2 text-primary"></i> Timeline Periode SPMI</h3>
             </div>
             <div class="card-body">
                 @if($activePeriodeSpmi)
-                    <div class="mb-3">
-                        <div class="fw-bold fs-3">{{ $activePeriodeSpmi->nama }} ({{ $activePeriodeSpmi->periode }})</div>
+                    <div class="mb-4 text-center p-3 bg-light rounded-3">
+                        <div class="fw-bold fs-2 text-primary">{{ $activePeriodeSpmi->nama }}</div>
+                        <div class="text-muted small">Periode: {{ $activePeriodeSpmi->periode }}</div>
                     </div>
                     
                     <ul class="steps steps-vertical">
                         @php
                             $phases = [
                                 ['label' => 'Penetapan', 'date' => $activePeriodeSpmi->penetapan_awal, 'end' => $activePeriodeSpmi->penetapan_akhir],
-                                ['label' => 'Pelaksanaan', 'date' => $activePeriodeSpmi->penetapan_akhir, 'end' => $activePeriodeSpmi->ami_awal], // Assuming flow gap
+                                ['label' => 'Pelaksanaan', 'date' => $activePeriodeSpmi->penetapan_akhir, 'end' => $activePeriodeSpmi->ami_awal],
                                 ['label' => 'Evaluasi (AMI)', 'date' => $activePeriodeSpmi->ami_awal, 'end' => $activePeriodeSpmi->ami_akhir],
                                 ['label' => 'Pengendalian', 'date' => $activePeriodeSpmi->pengendalian_awal, 'end' => $activePeriodeSpmi->pengendalian_akhir],
                                 ['label' => 'Peningkatan', 'date' => $activePeriodeSpmi->peningkatan_awal, 'end' => $activePeriodeSpmi->peningkatan_akhir],
@@ -89,12 +92,9 @@
                                 $end = $phase['end'] ? \Carbon\Carbon::parse($phase['end']) : null;
                                 $isActive = $now->between($start, $end ?? $start->copy()->addDay());
                                 $isPast = $now->gt($end ?? $start);
-                                $statusClass = $isActive ? 'step-item active' : ($isPast ? 'step-item' : 'step-item text-muted'); // Tabler step classes: active for current
-                                // Actually Tabler steps: step-item active (current), step-item (completed/past is just default?), step-item disabled?
-                                // Let's use simple logic: Active gets blue dot.
                             @endphp
                             <li class="step-item {{ $isActive ? 'active' : '' }}">
-                                <div class="h4 m-0">{{ $phase['label'] }}</div>
+                                <div class="h4 m-0 {{ $isActive ? 'text-primary' : '' }}">{{ $phase['label'] }}</div>
                                 <div class="text-secondary small">
                                     {{ $start->format('d M Y') }} 
                                     @if($end) - {{ $end->format('d M Y') }} @endif
@@ -103,35 +103,23 @@
                         @endforeach
                     </ul>
                 @else
-                    <div class="text-muted text-center py-4">
+                    <div class="text-muted text-center py-5">
+                        <i class="ti ti-calendar-off fs-1 opacity-25 d-block mb-3"></i>
                         Tidak ada periode SPMI yang aktif saat ini.
                     </div>
-                @endif
-                
-                @if($activePeriodeKpi)
-                <div class="mt-4 pt-3 border-top">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>Periode KPI Aktif:</strong> {{ $activePeriodeKpi->nama }}
-                        </div>
-                        <div class="text-muted">
-                            {{ $activePeriodeKpi->tanggal_mulai->format('d M') }} - {{ $activePeriodeKpi->tanggal_selesai->format('d M Y') }}
-                        </div>
-                    </div>
-                </div>
                 @endif
             </div>
         </div>
     </div>
 
     <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Rincian Dokumen & Indikator</h3>
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h3 class="card-title fw-bold"><i class="ti ti-file-description me-2 text-primary"></i> Rincian Dokumen & Indikator</h3>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table card-table table-vcenter">
+                    <table class="table table-vcenter table-nowrap card-table">
                         <thead>
                             <tr>
                                 <th>Kategori</th>
@@ -142,55 +130,55 @@
                         <tbody>
                             {{-- Kebijakan --}}
                             <tr>
-                                <td rowspan="5" class="bg-light-lt"><strong>Kebijakan</strong></td>
+                                <td rowspan="5" class="bg-light fw-bold text-dark">Kebijakan</td>
                                 <td>Visi</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt">{{ $dokumenKebijakan['visi'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['visi'] }}</span></td>
                             </tr>
                             <tr>
                                 <td>Misi</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt">{{ $dokumenKebijakan['misi'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['misi'] }}</span></td>
                             </tr>
                             <tr>
                                 <td>RJP (Jangka Panjang)</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt">{{ $dokumenKebijakan['rjp'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['rjp'] }}</span></td>
                             </tr>
                             <tr>
                                 <td>Renstra (Strategis)</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt">{{ $dokumenKebijakan['renstra'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['renstra'] }}</span></td>
                             </tr>
                             <tr>
                                 <td>Renop (Operasional)</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt">{{ $dokumenKebijakan['renop'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['renop'] }}</span></td>
                             </tr>
 
                             {{-- Standar --}}
                             <tr>
-                                <td rowspan="3" class="bg-blue-lt"><strong>Standar</strong></td>
+                                <td rowspan="3" class="bg-blue-lt fw-bold text-primary">Standar</td>
                                 <td>Standar SPMI</td>
-                                <td class="text-end"><span class="badge bg-primary-lt">{{ $dokumenStandar['standar'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-primary-lt fw-bold">{{ $dokumenStandar['standar'] }}</span></td>
                             </tr>
                             <tr>
                                 <td>Manual Prosedur</td>
-                                <td class="text-end"><span class="badge bg-primary-lt">{{ $dokumenStandar['manual_prosedur'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-primary-lt fw-bold">{{ $dokumenStandar['manual_prosedur'] }}</span></td>
                             </tr>
                             <tr>
                                 <td>Formulir</td>
-                                <td class="text-end"><span class="badge bg-primary-lt">{{ $dokumenStandar['formulir'] }}</span></td>
+                                <td class="text-end"><span class="badge bg-primary-lt fw-bold">{{ $dokumenStandar['formulir'] }}</span></td>
                             </tr>
 
                             {{-- Indikator --}}
                             <tr>
-                                <td rowspan="3" class="bg-green-lt"><strong>Indikator</strong></td>
+                                <td rowspan="3" class="bg-green-lt fw-bold text-success">Indikator</td>
                                 <td>Indikator Standar</td>
-                                <td class="text-end"><span class="badge bg-success-lt">{{ $standarCount }}</span></td>
+                                <td class="text-end"><span class="badge bg-success-lt fw-bold">{{ $standarCount }}</span></td>
                             </tr>
                             <tr>
                                 <td>Indikator Renop</td>
-                                <td class="text-end"><span class="badge bg-success-lt">{{ $renopCount }}</span></td>
+                                <td class="text-end"><span class="badge bg-success-lt fw-bold">{{ $renopCount }}</span></td>
                             </tr>
                             <tr>
                                 <td>Indikator Performa</td>
-                                <td class="text-end"><span class="badge bg-success-lt">{{ $performaCount }}</span></td>
+                                <td class="text-end"><span class="badge bg-success-lt fw-bold">{{ $performaCount }}</span></td>
                             </tr>
                         </tbody>
                     </table>

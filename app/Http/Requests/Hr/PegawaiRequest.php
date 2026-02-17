@@ -22,7 +22,7 @@ class PegawaiRequest extends FormRequest
     {
         $id = $this->route('pegawai'); // Get ID from route for updates
 
-        // Note: Unique checks need to be against 'hr_riwayat_datadiri', not 'hr_pegawai'
+        // Note: Unique checks need to be against 'hr_riwayat_datadiri',
         // But since we store latest ID in hr_pegawai, it's a bit complex.
         // For simplicity, we assume we check against the riwayat table.
         // On update, we ignore rows where pegawai_id = $id.

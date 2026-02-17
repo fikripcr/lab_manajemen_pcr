@@ -28,7 +28,7 @@ class StrukturOrganisasiController extends Controller
                     return $row->parent->name ?? '-';
                 })
                 ->editColumn('is_active', function ($row) {
-                    return $row->is_active ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
+                    return $row->is_active ? '<span class="badge bg-success text-white">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [

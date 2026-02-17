@@ -56,7 +56,7 @@
                 <div class="d-flex align-items-center">
                     <div class="subheader">Menunggu Verifikasi</div>
                     <div class="ms-auto lh-1">
-                        <span class="badge bg-yellow text-yellow-fg">{{ $stats['menunggu_verifikasi'] }}</span>
+                        <span class="badge bg-yellow text-white">{{ $stats['menunggu_verifikasi'] }}</span>
                     </div>
                 </div>
                 <div class="h1 mb-3">{{ $stats['menunggu_verifikasi'] }}</div>
@@ -81,7 +81,7 @@
                 <div class="d-flex align-items-center">
                     <div class="subheader">Siap Ujian</div>
                     <div class="ms-auto lh-1">
-                        <span class="badge bg-blue text-blue-fg">{{ $stats['siap_ujian'] }}</span>
+                        <span class="badge bg-blue text-white">{{ $stats['siap_ujian'] }}</span>
                     </div>
                 </div>
                 <div class="h1 mb-3">{{ $stats['siap_ujian'] }}</div>
@@ -164,7 +164,7 @@
                                 <td>{{ $pendaftar->user->name }}</td>
                                 <td>{{ $pendaftar->jalur->nama_jalur }}</td>
                                 <td>
-                                    <span class="badge {{ getStatusBadgeClass($pendaftar->status_terkini) }}">
+                                    <span class="badge {{ getStatusBadgeClass($pendaftar->status_terkini) }} text-white">
                                         {{ str_replace('_', ' ', $pendaftar->status_terkini) }}
                                     </span>
                                 </td>
@@ -199,7 +199,7 @@
                             <div class="datagrid-item">
                                 <div class="datagrid-title">{{ $stat->nama_jalur }}</div>
                                 <div class="datagrid-content">
-                                    <span class="badge bg-primary">{{ $stat->total }} pendaftar</span>
+                                    <span class="badge bg-primary text-white">{{ $stat->total }} pendaftar</span>
                                 </div>
                             </div>
                         @endforeach
@@ -269,6 +269,6 @@
             'Daftar_Ulang' => 'bg-purple'
         ];
         
-        return $classes[$status] ?? 'bg-primary';
+        return ($classes[$status] ?? 'bg-primary') . ' text-white';
     }
 @endphp

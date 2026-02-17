@@ -88,6 +88,40 @@
             'route' => 'sys.dashboard',
             'icon'  => 'ti ti-settings',
         ],
+        [
+            'type'  => 'item',
+            'title' => 'Personel Lab',
+            'route' => 'lab.personil.index',
+            'active_routes' => ['lab.personil.*'],
+            'icon'  => 'ti ti-user-check',
+        ],
+        [
+            'title' => 'Personel Outsource',
+            'route' => 'pemutu.personils.index',
+            'active_routes' => ['pemutu.personils.*'],
+            'icon' => 'ti ti-users',
+        ],
+        [
+            'type'          => 'dropdown',
+            'title'         => 'Info Publik',
+            'id'            => 'navbar-info-master',
+            'icon'          => 'ti ti-info-circle',
+            'active_routes' => ['lab.pengumuman.*', 'lab.berita.*'],
+            'children'      => [
+                [
+                    'title'         => 'Pengumuman',
+                    'route'         => 'lab.pengumuman.index',
+                    'active_routes' => ['lab.pengumuman.*'],
+                    'icon'          => 'ti ti-speakerphone',
+                ],
+                [
+                    'title'         => 'Berita',
+                    'route'         => 'lab.berita.index',
+                    'active_routes' => ['lab.berita.*'],
+                    'icon'          => 'ti ti-news',
+                ],
+            ],
+        ],
 
         [
             'type'  => 'header',
@@ -108,11 +142,9 @@
                 'lab.log-pc.*',
                 'lab.software-requests.*',
                 'lab.pengumuman.*',
-                'lab.berita.*',
                 'lab.semesters.*',
                 'lab.mata-kuliah.*',
                 'lab.jadwal.*',
-                'lab.personil.*',
                 'lab.periode-request.*'
             ],
             'children'      => [
@@ -145,12 +177,6 @@
                     'route'         => 'lab.jadwal.index',
                     'active_routes' => ['lab.jadwal.*'],
                     'icon'          => 'ti ti-calendar-event',
-                ],
-                [
-                    'title'         => 'Data Personil',
-                    'route'         => 'lab.personil.index',
-                    'active_routes' => ['lab.personil.*'],
-                    'icon'          => 'ti ti-user-check',
                 ],
                 [
                     'title'         => 'Peminjaman Lab',
@@ -202,26 +228,6 @@
                         ],
                     ],
                 ],
-                [
-                    'title'         => 'Info Publik',
-                    'id'            => 'navbar-info-nested',
-                    'icon'          => 'ti ti-info-circle',
-                    'active_routes' => ['lab.pengumuman.*', 'lab.berita.*'],
-                    'children'      => [
-                        [
-                            'title'         => 'Pengumuman',
-                            'route'         => 'lab.pengumuman.index',
-                            'active_routes' => ['lab.pengumuman.*'],
-                            'icon'          => 'ti ti-speakerphone',
-                        ],
-                        [
-                            'title'         => 'Berita',
-                            'route'         => 'lab.berita.index',
-                            'active_routes' => ['lab.berita.*'],
-                            'icon'          => 'ti ti-news',
-                        ],
-                    ],
-                ],
             ],
         ],
 
@@ -233,12 +239,6 @@
             'active_routes' => ['pemutu.*'],
             'can' => 'admin',
             'children'      => [
-                [
-                    'title' => 'Personel Outsource',
-                    'route' => 'pemutu.personils.index',
-                    'active_routes' => ['pemutu.personils.*'],
-                    'icon' => 'ti ti-users',
-                ],
                 [
                     'title' => 'Label & Kategori',
                     'route' => 'pemutu.labels.index',

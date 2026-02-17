@@ -29,8 +29,8 @@ class JalurController extends Controller
             ->editColumn('biaya_pendaftaran', fn($j) => 'Rp ' . number_format($j->biaya_pendaftaran, 0, ',', '.'))
             ->editColumn('is_aktif', function ($j) {
                 return $j->is_aktif
-                    ? '<span class="badge bg-success">Aktif</span>'
-                    : '<span class="badge bg-danger">Non-Aktif</span>';
+                    ? '<span class="badge bg-success text-white">Aktif</span>'
+                    : '<span class="badge bg-danger text-white">Non-Aktif</span>';
             })
             ->addColumn('action', function ($j) {
                 return view('pages.pmb.jalur._actions', compact('j'));

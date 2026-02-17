@@ -157,7 +157,7 @@ const presensiColumnDefs = [
         targets: 2, // Check In column
         render: function(data, type, row) {
             if (data && data !== '--:--') {
-                return `<span class="badge bg-success">${data}</span>`;
+                return `<span class="badge bg-success text-white">${data}</span>`;
             }
             return '<span class="text-muted">--:--</span>';
         }
@@ -175,12 +175,12 @@ const presensiColumnDefs = [
         targets: 4, // Status column
         render: function(data, type, row) {
             const statusMap = {
-                'on_time': '<span class="badge bg-success">Tepat Waktu</span>',
-                'late': '<span class="badge bg-warning">Terlambat</span>',
+                'on_time': '<span class="badge bg-success text-white">Tepat Waktu</span>',
+                'late': '<span class="badge bg-warning text-white">Terlambat</span>',
                 'absent': '<span class="badge bg-danger">Tidak Hadir</span>',
                 'early_checkout': '<span class="badge bg-info">Pulang Awal</span>'
             };
-            return statusMap[data] || '<span class="badge bg-secondary">-</span>';
+            return statusMap[data] || '<span class="badge bg-secondary text-white">-</span>';
         }
     },
     {
@@ -260,7 +260,7 @@ function showDetail(date) {
                     </tr>
                     <tr>
                         <td><strong>Status:</strong></td>
-                        <td><span class="badge bg-success">Tepat Waktu</span></td>
+                        <td><span class="badge bg-success text-white">Tepat Waktu</span></td>
                     </tr>
                     <tr>
                         <td><strong>Durasi:</strong></td>

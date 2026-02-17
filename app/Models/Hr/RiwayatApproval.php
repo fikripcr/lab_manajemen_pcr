@@ -54,7 +54,7 @@ class RiwayatApproval extends Model
         }
 
         // Default check if subject has 'pegawai' relationship or is Pegawai
-        if ($subject instanceof \App\Models\Hr\Pegawai) {
+        if ($subject instanceof \App\Models\Shared\Pegawai) {
             return $subject;
         }
 

@@ -218,15 +218,15 @@
 @php
     function getStatusBadgeClass($status) {
         $classes = [
-            'Draft' => 'bg-secondary',
-            'Menunggu_Verifikasi_Bayar' => 'bg-warning',
-            'Menunggu_Verifikasi_Berkas' => 'bg-warning',
-            'Revisi_Berkas' => 'bg-orange',
-            'Siap_Ujian' => 'bg-info',
-            'Selesai_Ujian' => 'bg-blue',
-            'Lulus' => 'bg-success',
-            'Tidak_Lulus' => 'bg-danger',
-            'Daftar_Ulang' => 'bg-purple'
+            'Draft' => 'bg-secondary text-white',
+            'Menunggu_Verifikasi_Bayar' => 'bg-warning text-white',
+            'Menunggu_Verifikasi_Berkas' => 'bg-warning text-white',
+            'Revisi_Berkas' => 'bg-orange text-white',
+            'Siap_Ujian' => 'bg-info text-white',
+            'Selesai_Ujian' => 'bg-blue text-white',
+            'Lulus' => 'bg-success text-white',
+            'Tidak_Lulus' => 'bg-danger text-white',
+            'Daftar_Ulang' => 'bg-purple text-white'
         ];
         
         return $classes[$status] ?? 'bg-primary';

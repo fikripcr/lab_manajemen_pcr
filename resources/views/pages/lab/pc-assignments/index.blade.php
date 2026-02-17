@@ -79,8 +79,8 @@
                     name: 'is_active',
                     render: function(data, type, row) {
                         return data == 1 
-                            ? '<span class="badge bg-success">Aktif</span>' 
-                            : '<span class="badge bg-secondary">Non-Aktif</span>';
+                            ? '<span class="badge bg-success text-white">Aktif</span>' 
+                            : '<span class="badge bg-secondary text-white">Non-Aktif</span>';
                     }
                 },
                 { data: 'action', name: 'action', orderable: false, searchable: false },

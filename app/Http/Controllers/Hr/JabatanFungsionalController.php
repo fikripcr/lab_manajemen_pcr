@@ -29,7 +29,7 @@ class JabatanFungsionalController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('is_active', function ($row) {
-                return $row->is_active ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Non-Aktif</span>';
+                return $row->is_active ? '<span class="badge bg-success text-white">Aktif</span>' : '<span class="badge bg-danger">Non-Aktif</span>';
             })
             ->editColumn('tunjangan', function ($row) {
                 return 'Rp ' . number_format($row->tunjangan, 0, ',', '.');

@@ -29,7 +29,7 @@ class AttDeviceController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('is_active', function ($row) {
-                return $row->is_active ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Non-Aktif</span>';
+                return $row->is_active ? '<span class="badge bg-success text-white">Aktif</span>' : '<span class="badge bg-danger">Non-Aktif</span>';
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [

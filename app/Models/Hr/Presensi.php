@@ -45,28 +45,26 @@ class Presensi extends Model
         'late_minutes',
         'shift_id',
         'notes',
-        'is_active',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'is_active', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
-        'check_in_time' => 'datetime',
-        'check_out_time' => 'datetime',
-        'check_in_latitude' => 'decimal:8',
-        'check_in_longitude' => 'decimal:8',
-        'check_out_latitude' => 'decimal:8',
-        'check_out_longitude' => 'decimal:8',
-        'check_in_distance' => 'decimal:2',
-        'check_out_distance' => 'decimal:2',
-        'check_in_face_verified' => 'boolean',
+        'tanggal'                 => 'date',
+        'check_in_time'           => 'datetime',
+        'check_out_time'          => 'datetime',
+        'check_in_latitude'       => 'decimal:8',
+        'check_in_longitude'      => 'decimal:8',
+        'check_out_latitude'      => 'decimal:8',
+        'check_out_longitude'     => 'decimal:8',
+        'check_in_distance'       => 'decimal:2',
+        'check_out_distance'      => 'decimal:2',
+        'check_in_face_verified'  => 'boolean',
         'check_out_face_verified' => 'boolean',
-        'duration_minutes' => 'integer',
-        'overtime_minutes' => 'integer',
-        'late_minutes' => 'integer',
-        'is_active' => 'boolean',
+        'duration_minutes'        => 'integer',
+        'overtime_minutes'        => 'integer',
+        'late_minutes'            => 'integer',
+        'is_active'               => 'boolean',
     ];
 
     // Relationships
@@ -98,11 +96,11 @@ class Presensi extends Model
 
     public function getFormattedDurationAttribute()
     {
-        if (!$this->duration_minutes) {
+        if (! $this->duration_minutes) {
             return '-';
         }
 
-        $hours = floor($this->duration_minutes / 60);
+        $hours   = floor($this->duration_minutes / 60);
         $minutes = $this->duration_minutes % 60;
 
         if ($hours > 0) {
@@ -115,13 +113,13 @@ class Presensi extends Model
     public function getStatusBadgeAttribute()
     {
         $badges = [
-            'on_time' => '<span class="badge bg-success">Tepat Waktu</span>',
-            'late' => '<span class="badge bg-warning">Terlambat</span>',
-            'absent' => '<span class="badge bg-danger">Tidak Hadir</span>',
+            'on_time'        => '<span class="badge bg-success text-white">Tepat Waktu</span>',
+            'late'           => '<span class="badge bg-warning text-white">Terlambat</span>',
+            'absent'         => '<span class="badge bg-danger">Tidak Hadir</span>',
             'early_checkout' => '<span class="badge bg-info">Pulang Awal</span>',
         ];
 
-        return $badges[$this->status] ?? '<span class="badge bg-secondary">-</span>';
+        return $badges[$this->status] ?? '<span class="badge bg-secondary text-white">-</span>';
     }
 
     // Scopes
@@ -138,7 +136,7 @@ class Presensi extends Model
     public function scopeByMonth($query, $year, $month)
     {
         return $query->whereYear('tanggal', $year)
-                    ->whereMonth('tanggal', $month);
+            ->whereMonth('tanggal', $month);
     }
 
     public function scopeByStatus($query, $status)
@@ -164,18 +162,18 @@ class Presensi extends Model
     public function scopeComplete($query)
     {
         return $query->whereNotNull('check_in_time')
-                    ->whereNotNull('check_out_time');
+            ->whereNotNull('check_out_time');
     }
 
     // Methods
     public function isCheckedIn()
     {
-        return !is_null($this->check_in_time);
+        return ! is_null($this->check_in_time);
     }
 
     public function isCheckedOut()
     {
-        return !is_null($this->check_out_time);
+        return ! is_null($this->check_out_time);
     }
 
     public function isComplete()
@@ -186,7 +184,7 @@ class Presensi extends Model
     public function calculateDuration()
     {
         if ($this->check_in_time && $this->check_out_time) {
-            $duration = $this->check_in_time->diffInMinutes($this->check_out_time);
+            $duration               = $this->check_in_time->diffInMinutes($this->check_out_time);
             $this->duration_minutes = $duration;
             $this->save();
         }
@@ -195,9 +193,9 @@ class Presensi extends Model
     public function getStatusText()
     {
         $statuses = [
-            'on_time' => 'Tepat Waktu',
-            'late' => 'Terlambat',
-            'absent' => 'Tidak Hadir',
+            'on_time'        => 'Tepat Waktu',
+            'late'           => 'Terlambat',
+            'absent'         => 'Tidak Hadir',
             'early_checkout' => 'Pulang Awal',
         ];
 

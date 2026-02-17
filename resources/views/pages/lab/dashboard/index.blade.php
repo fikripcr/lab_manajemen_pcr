@@ -21,18 +21,18 @@
         
         <!-- Stats Widgets -->
         <div class="row row-cards mb-4">
-            <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
+            <div class="col-sm-6 col-lg-2">
+                <div class="card card-sm shadow-sm border-0">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-auto">
-                                <span class="bg-primary text-white avatar"><i class="bx bx-desktop fs-2"></i></span>
+                                <span class="bg-primary text-white avatar shadow-sm"><i class="ti ti-devices fs-2"></i></span>
                             </div>
                             <div class="col">
-                                <div class="font-weight-medium">
-                                    {{ $stats['pc_assignment'] }} Active
+                                <div class="font-weight-bold h3 mb-0">
+                                    {{ $stats['pc_assignment'] }}
                                 </div>
-                                <div class="text-muted">
+                                <div class="text-muted small">
                                     PC Assignments
                                 </div>
                             </div>
@@ -40,19 +40,19 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
+            <div class="col-sm-6 col-lg-2">
+                <div class="card card-sm shadow-sm border-0">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-auto">
-                                <span class="bg-danger text-white avatar"><i class="bx bx-wrench fs-2"></i></span>
+                                <span class="bg-danger text-white avatar shadow-sm"><i class="ti ti-tool fs-2"></i></span>
                             </div>
                             <div class="col">
-                                <div class="font-weight-medium">
-                                    {{ $stats['laporan_kerusakan_open'] }} Open
+                                <div class="font-weight-bold h3 mb-0">
+                                    {{ $stats['laporan_kerusakan_open'] }}
                                 </div>
-                                <div class="text-muted">
-                                    Laporan Kerusakan
+                                <div class="text-muted small text-truncate">
+                                    Kerusakan
                                 </div>
                             </div>
                         </div>
@@ -60,17 +60,17 @@
                 </div>
             </div>
             <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
+                <div class="card card-sm shadow-sm border-0">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-auto">
-                                <span class="bg-warning text-white avatar"><i class="bx bx-download fs-2"></i></span>
+                                <span class="bg-warning text-white avatar shadow-sm"><i class="ti ti-download fs-2"></i></span>
                             </div>
                             <div class="col">
-                                <div class="font-weight-medium">
-                                    {{ $stats['software_pending'] }} Pending
+                                <div class="font-weight-bold h3 mb-0">
+                                    {{ $stats['software_pending'] }}
                                 </div>
-                                <div class="text-muted">
+                                <div class="text-muted small">
                                     Software Requests
                                 </div>
                             </div>
@@ -78,22 +78,83 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
+            <div class="col-sm-6 col-lg-2">
+                <div class="card card-sm shadow-sm border-0">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-auto">
-                                <span class="bg-info text-white avatar"><i class="bx bx-calendar-event fs-2"></i></span>
+                                <span class="bg-info text-white avatar shadow-sm"><i class="ti ti-calendar-event fs-2"></i></span>
                             </div>
                             <div class="col">
-                                <div class="font-weight-medium">
-                                    {{ $stats['kegiatan_today'] }} Today
+                                <div class="font-weight-bold h3 mb-0">
+                                    {{ $stats['kegiatan_today'] }}
                                 </div>
-                                <div class="text-muted">
+                                <div class="text-muted small">
                                     Kegiatan Lab
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-sm shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <span class="bg-green text-white avatar shadow-sm"><i class="ti ti-archive fs-2"></i></span>
+                            </div>
+                            <div class="col">
+                                <div class="font-weight-bold h3 mb-0">
+                                    {{ $stats['total_inventaris'] }}
+                                </div>
+                                <div class="text-muted small">
+                                    Total Inventaris
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cards mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-transparent border-0 py-3">
+                        <h3 class="card-title fw-bold"><i class="ti ti-chart-bar me-2 text-primary"></i> Statistik Inventaris & Tim Per Lab</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter table-nowrap card-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Lab</th>
+                                    <th>Lokasi</th>
+                                    <th class="text-center">Jumlah Inventaris</th>
+                                    <th class="text-center">Jumlah Tim</th>
+                                    <th class="w-1"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($labs as $lab)
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold">{{ $lab->name }}</div>
+                                    </td>
+                                    <td class="text-muted">{{ $lab->location ?? '-' }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-blue-lt fw-bold">{{ $lab->lab_inventaris_count }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-green-lt fw-bold">{{ $lab->lab_teams_count }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('lab.labs.show', $lab->lab_id) }}" class="btn btn-ghost-secondary btn-sm">Detail</a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

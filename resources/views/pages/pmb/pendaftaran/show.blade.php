@@ -64,9 +64,9 @@
                                     <td>{{ $doc->jenisDokumen->nama_dokumen }}</td>
                                     <td>
                                         @if($doc->is_verified)
-                                            <span class="badge bg-success">Terverifikasi</span>
+                                            <span class="badge bg-success text-white">Terverifikasi</span>
                                         @else
-                                            <span class="badge bg-warning">Belum Dicek</span>
+                                            <span class="badge bg-warning text-white">Belum Dicek</span>
                                         @endif
                                     </td>
                                     <td>

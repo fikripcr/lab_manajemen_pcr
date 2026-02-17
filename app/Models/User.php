@@ -2,7 +2,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Notification;
+use App\Models\Lab\Kegiatan;
+use App\Models\Lab\LaporanKerusakan;
+use App\Models\Lab\LogPenggunaanPc;
+use App\Models\Lab\PcAssignment;
+use App\Models\Lab\RequestSoftware;
+use App\Models\Pmb\ProfilMahasiswa;
+use App\Models\Sys\Notification;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +35,7 @@ class User extends Authenticatable implements HasMedia, Searchable
      */
     public function profilPmb()
     {
-        return $this->hasOne(\App\Models\Pmb\ProfilMahasiswa::class, 'user_id');
+        return $this->hasOne(ProfilMahasiswa::class, 'user_id');
     }
 
     /**

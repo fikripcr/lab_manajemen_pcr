@@ -26,8 +26,8 @@ class PeriodSoftRequestController extends Controller
             })
             ->editColumn('is_active', function ($row) {
                 return $row->is_active
-                    ? '<span class="badge bg-success">Active</span>'
-                    : '<span class="badge bg-secondary">Inactive</span>';
+                    ? '<span class="badge bg-success text-white">Active</span>'
+                    : '<span class="badge bg-secondary text-white">Inactive</span>';
             })
             ->editColumn('date_range', function ($row) {
                 return formatTanggalIndo($row->start_date) . ' - ' . formatTanggalIndo($row->end_date);

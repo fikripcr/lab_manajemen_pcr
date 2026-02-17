@@ -63,7 +63,7 @@ window.addEventListener('load', function() {
                         <h4 class="m-0">{{ auth()->user()->name }}</h4>
                         <p class="text-muted mb-2">{{ date('d F Y') }}</p>
                         <div class="status-info">
-                            <span class="badge bg-warning" id="presensi-status">Belum Presensi</span>
+                            <span class="badge bg-warning text-white" id="presensi-status">Belum Presensi</span>
                         </div>
                     </div>
                 </div>

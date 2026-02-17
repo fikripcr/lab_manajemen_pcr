@@ -95,7 +95,7 @@
                         <div class="question-card p-4" data-soal-id="{{ $komposisi->soal_id }}" style="display: {{ $index === 0 ? 'block' : 'none' }};">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h4 class="m-0">
-                                    <span class="badge bg-primary me-2">{{ $index + 1 }}</span>
+                                    <span class="badge bg-primary text-white me-2">{{ $index + 1 }}</span>
                                     {!! $komposisi->soal->konten_pertanyaan !!}
                                 </h4>
                                 <div class="form-check form-switch">
@@ -122,7 +122,7 @@
                                                    value="{{ $opsi->opsi_id }}"
                                                    onchange="CBT.saveAnswer({{ $komposisi->soal_id }}, {{ $opsi->opsi_id }}, document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)">
                                             <label class="form-check-label d-flex align-items-center" for="opsi_{{ $opsi->opsi_id }}">
-                                                <span class="badge bg-secondary me-2">{{ $opsi->label }}</span>
+                                                <span class="badge bg-secondary text-white me-2">{{ $opsi->label }}</span>
                                                 {!! $opsi->teks_jawaban !!}
                                                 
                                                 @if($opsi->media_url)
@@ -155,7 +155,7 @@
                                                value="true"
                                                onchange="CBT.saveAnswer({{ $komposisi->soal_id }}, 'true', document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)">
                                         <label class="form-check-label" for="benar_{{ $komposisi->soal_id }}">
-                                            <span class="badge bg-success me-2">Benar</span>
+                                            <span class="badge bg-success text-white me-2">Benar</span>
                                         </label>
                                     </div>
                                     <div class="form-check">
@@ -165,7 +165,7 @@
                                                value="false"
                                                onchange="CBT.saveAnswer({{ $komposisi->soal_id }}, 'false', document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)">
                                         <label class="form-check-label" for="salah_{{ $komposisi->soal_id }}">
-                                            <span class="badge bg-danger me-2">Salah</span>
+                                            <span class="badge bg-danger text-white me-2">Salah</span>
                                         </label>
                                     </div>
                                 </div>

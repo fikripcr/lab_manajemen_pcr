@@ -643,7 +643,7 @@ function testLocation() {
                 $('#test-distance').text(`${distance.toFixed(2)} meter`);
                 
                 if (isValid) {
-                    $('#test-status-result').html('<span class="badge bg-success"><i class="ti ti-check me-1"></i>Valid untuk presensi</span>');
+                    $('#test-status-result').html('<span class="badge bg-success text-white"><i class="ti ti-check me-1"></i>Valid untuk presensi</span>');
                 } else {
                     $('#test-status-result').html('<span class="badge bg-danger"><i class="ti ti-x me-1"></i>Di luar radius presensi</span>');
                 }

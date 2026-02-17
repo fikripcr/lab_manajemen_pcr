@@ -212,11 +212,11 @@
                                 <td>{{ $p->semester ?? '-' }}</td>
                                 <td>
                                     @if(now()->between($p->tgl_mulai, $p->tgl_selesai))
-                                        <span class="badge bg-green">Aktif</span>
+                                        <span class="badge bg-green text-white">Aktif</span>
                                     @elseif(now()->lt($p->tgl_mulai))
-                                        <span class="badge bg-azure">Mendatang</span>
+                                        <span class="badge bg-azure text-white">Mendatang</span>
                                     @else
-                                        <span class="badge bg-secondary">Berakhir</span>
+                                        <span class="badge bg-secondary text-white">Berakhir</span>
                                     @endif
                                 </td>
                                 <td>

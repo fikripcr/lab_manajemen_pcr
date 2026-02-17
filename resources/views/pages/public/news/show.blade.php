@@ -41,11 +41,11 @@
 
             <div class="post-tags d-flex justify-content-between align-items-center">
               <div class="tags">
-                <span class="badge bg-primary">{{ ucfirst($pengumuman->jenis) }}</span>
+                <span class="badge bg-primary text-white">{{ ucfirst($pengumuman->jenis) }}</span>
                 @if($pengumuman->is_published)
-                  <span class="badge bg-success">Published</span>
+                  <span class="badge bg-success text-white">Published</span>
                 @else
-                  <span class="badge bg-warning">Draft</span>
+                  <span class="badge bg-warning text-white">Draft</span>
                 @endif
               </div>
               <a href="{{ route('home') }}" class="btn btn-primary">Back to Home</a>

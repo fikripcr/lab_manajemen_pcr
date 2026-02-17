@@ -3,9 +3,10 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Lembur;
-use App\Models\Hr\Pegawai;
 use App\Models\Hr\Perizinan;
+use App\Models\Hr\Presensi;
 use App\Models\Hr\RiwayatApproval;
+use App\Models\Shared\Pegawai;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -91,14 +92,7 @@ class DashboardController extends Controller
 
     private function getTodayAttendanceCount()
     {
-        // This would integrate with your attendance system
-        // For now, returning a simulated count
-        $totalPegawai = Pegawai::whereHas('latestStatusPegawai.statusPegawai', function ($query) {
-            $query->where('is_active', true);
-        })->count();
-
-        // Simulate 85-95% attendance rate
-        return round($totalPegawai * (rand(85, 95) / 100));
+        return Presensi::whereDate('tanggal', now())->count();
     }
 
     private function getLemburHoursThisMonth()
@@ -233,15 +227,21 @@ class DashboardController extends Controller
 
     private function getDepartmentDistribution()
     {
-        // This would query your actual department/pegawai data
-        // For now, returning mock data structure
-        return collect([
-            (object) ['name' => 'Fakultas Teknik', 'count' => 45],
-            (object) ['name' => 'Fakultas Ekonomi', 'count' => 25],
-            (object) ['name' => 'Administrasi', 'count' => 15],
-            (object) ['name' => 'Fakultas Hukum', 'count' => 10],
-            (object) ['name' => 'Lainnya', 'count' => 5],
-        ]);
+        // Get units with employee counts
+        // We link Pegawai to their latest RiwayatJabStruktural
+        return Pegawai::whereHas('latestJabatanStruktural')
+            ->get()
+            ->groupBy('latestJabatanStruktural.org_unit_id')
+            ->map(function ($group, $orgUnitId) {
+                $unit = \App\Models\Shared\StrukturOrganisasi::find($orgUnitId);
+                return (object) [
+                    'name'  => $unit->name ?? 'Unknown',
+                    'count' => $group->count(),
+                ];
+            })
+            ->sortByDesc('count')
+            ->values()
+            ->take(5);
     }
 
     private function getPerformanceMetrics()

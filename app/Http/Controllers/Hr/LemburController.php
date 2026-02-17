@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Lembur;
-use App\Models\Hr\Pegawai;
+use App\Models\Shared\Pegawai;
 use App\Services\Hr\LemburService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -58,7 +58,7 @@ class LemburController extends Controller
                     'rejected' => 'bg-danger',
                 ];
                 $badge = $badges[$status] ?? 'bg-secondary';
-                return '<span class="badge ' . $badge . '">' . ucfirst($status) . '</span>';
+                return '<span class="badge ' . $badge . ' text-white">' . ucfirst($status) . '</span>';
             })
             ->addColumn('action', function ($row) {
                 return '

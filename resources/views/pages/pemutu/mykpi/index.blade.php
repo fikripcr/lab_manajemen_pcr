@@ -30,11 +30,11 @@
                     <td>{{ $kpi->score ?? '-' }}</td>
                     <td>
                         @if($kpi->status == 'approved')
-                            <span class="badge bg-green">Disetujui</span>
+                            <span class="badge bg-green text-white">Disetujui</span>
                         @elseif($kpi->status == 'submitted')
-                            <span class="badge bg-blue">Diajukan</span>
+                            <span class="badge bg-blue text-white">Diajukan</span>
                         @else
-                            <span class="badge bg-secondary">Draft</span>
+                            <span class="badge bg-secondary text-white">Draft</span>
                         @endif
                     </td>
                     <td>

@@ -156,13 +156,13 @@
                                         <div>
                                             <strong>{{ $exam->nama_kegiatan }}</strong>
                                             @if($exam->is_token_aktif)
-                                                <span class="badge bg-success ms-2">Token Aktif</span>
+                                                <span class="badge bg-success text-white ms-2">Token Aktif</span>
                                             @endif
                                         </div>
                                     </td>
                                     <td>{{ $exam->paket->nama_paket }}</td>
                                     <td>
-                                        <span class="badge bg-blue">{{ $exam->riwayatSiswa->count() }} peserta</span>
+                                        <span class="badge bg-blue text-white">{{ $exam->riwayatSiswa->count() }} peserta</span>
                                     </td>
                                     <td>
                                         <small>
@@ -170,7 +170,7 @@
                                         </small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-green">Berlangsung</span>
+                                        <span class="badge bg-green text-white">Berlangsung</span>
                                     </td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
@@ -203,7 +203,7 @@
             <div class="card-header">
                 <h3 class="card-title">Pelanggaran Terbaru</h3>
                 <div class="card-actions">
-                    <span class="badge bg-red">{{ $recentViolations->count() }}</span>
+                    <span class="badge bg-red text-white">{{ $recentViolations->count() }}</span>
                 </div>
             </div>
             <div class="card-body">

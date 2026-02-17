@@ -85,7 +85,7 @@
                             <td>{{ $assign->year }} / {{ $assign->semester == 1 ? 'Ganjil' : 'Genap' }}</td>
                             <td>{{ $assign->target_value ?? $indikator->target }}</td>
                             <td>
-                                <span class="badge bg-{{ $assign->status == 'approved' ? 'green' : ($assign->status == 'submitted' ? 'blue' : 'secondary') }}">
+                                <span class="badge bg-{{ $assign->status == 'approved' ? 'green' : ($assign->status == 'submitted' ? 'blue' : 'secondary') }} text-white">
                                     {{ ucfirst($assign->status) }}
                                 </span>
                             </td>
@@ -109,5 +109,4 @@
         </div>
     </div>
 </div>
-@endsection
 @endsection

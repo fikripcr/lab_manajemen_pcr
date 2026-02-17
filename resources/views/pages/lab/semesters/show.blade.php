@@ -45,9 +45,9 @@
                         <h6 class="text-muted">Status:</h6>
                         <p class="mb-0">
                             @if($semester->is_active)
-                                <span class="badge bg-success">Aktif</span>
+                                <span class="badge bg-success text-white">Aktif</span>
                             @else
-                                <span class="badge bg-secondary">Tidak Aktif</span>
+                                <span class="badge bg-secondary text-white">Tidak Aktif</span>
                             @endif
                         </p>
                     </div>
