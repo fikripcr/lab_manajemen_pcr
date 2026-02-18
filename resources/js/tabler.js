@@ -200,8 +200,8 @@ window.initToastEditor = function (selector, config = {}) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initializing for both Admin and Sys (Unified)
-    window.themeTabler = new ThemeTabler('sys'); // Default to sys mode/standard
+    // Initializing for Unified Tabler Layout
+    window.themeTabler = new ThemeTabler('tabler');
     window.themeTabler.initSettingsPanel();
 
     window.initOfflineSelect2 = function () {
@@ -316,7 +316,7 @@ window.toggleTheme = function (mode) {
     // 4. Persist to Server
     if (window.axios) {
         axios.post('/theme/save', {
-            mode: 'sys', // Default context, might need adjustment for Admin but 'sys' config usually shared for theme
+            mode: 'tabler',
             theme: mode
         }).catch(err => console.error('Failed to save theme preference', err));
     }

@@ -3,9 +3,9 @@
     
     // Load theme controller
     $themeController = app(ThemeTablerController::class);
-    // Always use 'sys' config as we consolidated to it
-    $themeData = $themeController->getThemeData('sys');
-    $layoutData = $themeController->getLayoutData('sys');
+    // Use 'tabler' as the standardized mode
+    $themeData = $themeController->getThemeData('tabler');
+    $layoutData = $themeController->getLayoutData('tabler');
 
     // Extract layout configuration variables
     $condensed = $layoutData['layoutCondensed'] ?? false;
@@ -19,7 +19,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="en" {!! $themeController->getHtmlAttributes('sys') !!}>
+<html lang="en" {!! $themeController->getHtmlAttributes('tabler') !!}>
 
 <head>
     <meta charset="utf-8" />
@@ -39,6 +39,9 @@
     {{-- CSS Files --}}
     @yield('css')
     @vite(['resources/css/tabler.css'])
+    
+    {{-- Theme Custom Styles --}}
+    {!! $themeController->getStyleBlock('tabler') !!}
     
     @stack('styles')
 </head>
@@ -121,7 +124,7 @@
 
      {{-- Theme Settings Component --}}
     @if(env('THEME_CUSTOMIZATION_ENABLED', true))
-        <x-tabler.theme-settings mode="sys" :themeData="$themeData" :layoutData="$layoutData" />
+        <x-tabler.theme-settings mode="tabler" :themeData="$themeData" :layoutData="$layoutData" />
     @endif
 
     {{-- Global Search Modal Component --}}

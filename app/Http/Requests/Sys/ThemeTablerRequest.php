@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Sys;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,16 +21,23 @@ class ThemeTablerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mode' => 'required|in:sys,auth',
-            'theme' => 'nullable|in:light,dark',
-            'theme-primary' => 'nullable|string',
-            'theme-header' => 'nullable|string',
-            'theme-sidebar' => 'nullable|string',
-            'theme-body' => 'nullable|string',
-            'theme-font' => 'nullable|string',
-            'theme-font-size' => 'nullable|string',
-            'theme-radius' => 'nullable|string',
-            'theme-contrast' => 'nullable|string',
+            'mode'                    => 'required|in:sys,auth,tabler',
+            'theme'                   => 'nullable|in:light,dark',
+            'theme-primary'           => 'nullable|string',
+            'theme-font'              => 'nullable|string',
+            'theme-base'              => 'nullable|string',
+            'theme-radius'            => 'nullable|string',
+            'theme-card-style'        => 'nullable|string',
+            'theme-header-sticky'     => 'nullable|string',
+            'theme-bg'                => 'nullable|string',
+            'theme-sidebar-bg'        => 'nullable|string',
+            'theme-header-top-bg'     => 'nullable|string',
+            'theme-header-overlap-bg' => 'nullable|string',
+            'theme-boxed-bg'          => 'nullable|string',
+            'layout'                  => 'nullable|string',
+            'container-width'         => 'nullable|string',
+            'auth-layout'             => 'nullable|string',
+            'auth-form-position'      => 'nullable|string',
         ];
     }
 
@@ -44,8 +50,8 @@ class ThemeTablerRequest extends FormRequest
     {
         return [
             'mode.required' => 'Mode harus diisi.',
-            'mode.in' => 'Mode harus sys atau auth.',
-            'theme.in' => 'Theme harus light atau dark.',
+            'mode.in'       => 'Mode harus sys, auth, atau tabler.',
+            'theme.in'      => 'Theme harus light atau dark.',
         ];
     }
 }
