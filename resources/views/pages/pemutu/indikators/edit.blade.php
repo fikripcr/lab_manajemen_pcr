@@ -9,9 +9,7 @@
                 <h2 class="page-title">Edit Indikator</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="javascript:history.back()" class="btn btn-secondary">
-                    <i class="ti ti-arrow-left me-2"></i> Kembali
-                </a>
+                <x-tabler.button href="javascript:history.back()" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
             </div>
         </div>
     </div>
@@ -190,9 +188,7 @@
                 </div>
             </div>
             <div class="card-footer text-end">
-                <button type="submit" class="btn btn-primary">
-                    <i class="ti ti-device-floppy me-2"></i> Update Indikator
-                </button>
+                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Update Indikator" />
             </div>
         </form>
     </div>

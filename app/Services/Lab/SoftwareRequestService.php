@@ -12,7 +12,7 @@ class SoftwareRequestService
      */
     public function getFilteredQuery(array $filters = [])
     {
-        $query = RequestSoftware::with(['dosen', 'mataKuliahs'])->select('request_software.*');
+        $query = RequestSoftware::with(['dosen', 'mataKuliahs'])->select('lab_request_software.*');
 
         // Check if filtering by specific status
         if (! empty($filters['status'])) {

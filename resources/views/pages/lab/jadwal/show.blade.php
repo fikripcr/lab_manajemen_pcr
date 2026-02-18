@@ -24,13 +24,9 @@
                         <div class="card-header">
                             <h3 class="card-title">Informasi Jadwal</h3>
                             <div class="card-actions">
-                                <a href="{{ route('lab.jadwal.edit', encryptId($jadwal->jadwal_kuliah_id)) }}" class="btn btn-primary">
-                                    <i class="ti ti-edit me-2"></i> Edit
-                                </a>
-                                <a href="{{ route('lab.jadwal.assignments.index', encryptId($jadwal->jadwal_kuliah_id)) }}" class="btn btn-info ms-2">
-                                    <i class="ti ti-desktop me-2"></i> Atur PC
-                                </a>
-                                <a href="{{ route('lab.jadwal.index') }}" class="btn btn-light ms-2">Kembali</a>
+                                <x-tabler.button :href="route('lab.jadwal.edit', encryptId($jadwal->jadwal_kuliah_id))" class="btn-primary" icon="ti ti-edit" text="Edit" />
+                                <x-tabler.button :href="route('lab.jadwal.assignments.index', encryptId($jadwal->jadwal_kuliah_id))" class="btn-info ms-2" icon="ti ti-desktop" text="Atur PC" />
+                                <x-tabler.button :href="route('lab.jadwal.index')" class="btn-light ms-2" text="Kembali" />
                             </div>
                         </div>
                         <div class="card-body">

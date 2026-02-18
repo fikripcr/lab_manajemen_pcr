@@ -15,9 +15,7 @@
                     <span class="badge bg-primary-lt px-3 py-2">
                         <i class="ti ti-clock me-1"></i> {{ $jadwal->waktu_mulai->format('H:i') }} - {{ $jadwal->waktu_selesai->format('H:i') }}
                     </span>
-                    <button type="button" class="btn btn-outline-secondary" onclick="location.reload()">
-                        <i class="ti ti-refresh me-1"></i> Refresh
-                    </button>
+                    <x-tabler.button type="button" class="btn-outline-secondary" onclick="location.reload()" icon="ti ti-refresh" text="Refresh" />
                 </div>
             </div>
         </div>
@@ -145,9 +143,7 @@
                                         </td>
                                         <td>
                                             <div class="btn-list flex-nowrap">
-                                                <button class="btn btn-sm btn-icon" title="Reset Session" onclick="resetRiwayat({{ $riwayat->id }})">
-                                                    <i class="ti ti-refresh text-warning"></i>
-                                                </button>
+                                                <x-tabler.button class="btn-sm btn-icon" title="Reset Session" onclick="resetRiwayat({{ $riwayat->id }})" icon="ti ti-refresh text-warning" />
                                             </div>
                                         </td>
                                     </tr>

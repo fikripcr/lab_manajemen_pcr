@@ -1,28 +1,21 @@
 <div class="p-3 border rounded bg-light">
     @if($pendaftaran->status_terkini == 'Draft')
         <p class="mb-3">Silakan lakukan pembayaran pendaftaran untuk melanjutkan.</p>
-        <a href="{{ route('pmb.camaba.payment') }}" class="btn btn-success">
-            <i class="ti ti-wallet"></i> Ke Pembayaran
-        </a>
+        <x-tabler.button href="{{ route('pmb.camaba.payment') }}" class="btn-success" icon="ti ti-wallet" text="Ke Pembayaran" />
     @elseif($pendaftaran->status_terkini == 'Menunggu_Verifikasi_Bayar')
         <div class="text-warning mb-2"><i class="ti ti-clock ti-lg"></i></div>
         <p>Menunggu verifikasi pembayaran oleh Admin.</p>
     @elseif($pendaftaran->status_terkini == 'Menunggu_Verifikasi_Berkas')
         <p class="mb-3">Pembayaran terverifikasi. Silakan unggah dokumen persyaratan.</p>
-        <a href="{{ route('pmb.camaba.upload') }}" class="btn btn-info">
-            <i class="ti ti-upload"></i> Unggah Berkas
-        </a>
+        <x-tabler.button href="{{ route('pmb.camaba.upload') }}" class="btn-info" icon="ti ti-upload" text="Unggah Berkas" />
     @elseif($pendaftaran->status_terkini == 'Siap_Ujian' || $pendaftaran->status_terkini == 'Sedang_Ujian')
         <div class="text-info mb-2"><i class="ti ti-id"></i></div>
         <p>Berkas terverifikasi. Silakan cetak kartu ujian atau mulai ujian jika jadwal sudah aktif.</p>
         <div class="d-flex flex-column gap-2">
-            <a href="{{ route('pmb.camaba.exam-card') }}" class="btn btn-outline-primary">
-                <i class="ti ti-printer"></i> Cetak Kartu Ujian
-            </a>
+            <x-tabler.button href="{{ route('pmb.camaba.exam-card') }}" class="btn-outline-primary" icon="ti ti-printer" text="Cetak Kartu Ujian" />
             @if($activeJadwal)
-                <button type="button" class="btn btn-success btn-lg ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Validasi Token Ujian" data-url="{{ route('cbt.execute.token-form', $activeJadwal->encrypted_id) }}">
-                    <i class="ti ti-player-play"></i> MULAI UJIAN SEKARANG
-                </button>
+                <x-tabler.button type="button" class="btn-success btn-lg ajax-modal-btn" icon="ti ti-player-play" text="MULAI UJIAN SEKARANG" 
+                    data-modal-target="#modalAction" data-modal-title="Validasi Token Ujian" data-url="{{ route('cbt.execute.token-form', $activeJadwal->encrypted_id) }}" />
             @endif
         </div>
     @elseif($pendaftaran->status_terkini == 'Sudah_Ujian')

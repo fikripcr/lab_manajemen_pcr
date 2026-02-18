@@ -17,9 +17,7 @@
                 </h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="javascript:history.back()" class="btn btn-secondary">
-                    <i class="ti ti-arrow-left me-2"></i> Kembali
-                </a>
+                <x-tabler.button href="javascript:history.back()" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
             </div>
         </div>
     </div>
@@ -71,17 +69,13 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="btn-list flex-nowrap">
-                                        <a href="{{ route('pemutu.indikators.show', $indicator->indikator_id) }}" 
-                                           class="btn btn-sm btn-icon btn-ghost-info" 
-                                           title="Detail">
-                                            <i class="ti ti-eye"></i>
-                                        </a>
-                                        <a href="{{ route('pemutu.indikators.edit', $indicator->indikator_id) }}" 
-                                           class="btn btn-sm btn-icon btn-ghost-primary" 
-                                           title="Edit">
-                                            <i class="ti ti-pencil"></i>
-                                        </a>
+                                    <div class="btn-group">
+                                        <x-tabler.button href="{{ route('pemutu.indikators.show', $indicator->indikator_id) }}" 
+                                           class="btn-sm btn-icon btn-ghost-info" 
+                                           title="Detail" icon="ti ti-eye" />
+                                        <x-tabler.button href="{{ route('pemutu.indikators.edit', $indicator->indikator_id) }}" 
+                                           class="btn-sm btn-icon btn-ghost-primary" 
+                                           title="Edit" icon="ti ti-pencil" />
                                     </div>
                                 </td>
                             </tr>

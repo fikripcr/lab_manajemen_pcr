@@ -34,12 +34,13 @@
                                 {{ $type->name }}
                             </span>
                             <div class="btn-group">
-                                 <button type="button" class="btn btn-sm btn-icon btn-ghost-secondary ajax-modal-btn" data-url="{{ route('pemutu.label-types.edit', $type->labeltype_id) }}" data-modal-title="Edit Tipe">
-                                    <i class="ti ti-pencil"></i>
-                                 </button>
-                                 <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete" data-url="{{ route('pemutu.label-types.destroy', $type->labeltype_id) }}" data-title="Hapus Tipe?" data-text="Menghapus tipe akan menghapus semua label di dalamnya.">
-                                    <i class="ti ti-trash"></i>
-                                 </button>
+                                 <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-secondary ajax-modal-btn" 
+                                    data-url="{{ route('pemutu.label-types.edit', $type->labeltype_id) }}" 
+                                    data-modal-title="Edit Tipe" icon="ti ti-pencil" />
+                                 <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-danger ajax-delete" 
+                                    data-url="{{ route('pemutu.label-types.destroy', $type->labeltype_id) }}" 
+                                    data-title="Hapus Tipe?" 
+                                    data-text="Menghapus tipe akan menghapus semua label di dalamnya." icon="ti ti-trash" />
                             </div>
                         </div>
                         @if($type->description)

@@ -3,12 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $pageTitle }}" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <a href="#" 
-           class="btn btn-primary ajax-modal-btn"
-           data-url="{{ route('pemutu.periode-spmis.create') }}"
-           data-modal-title="Tambah Periode SPMI">
-            <i class="ti ti-plus me-2"></i> Tambah Periode
-        </a>
+        <x-tabler.button href="#" class="ajax-modal-btn btn-primary" data-url="{{ route('pemutu.periode-spmis.create') }}" data-modal-title="Tambah Periode SPMI" icon="ti ti-plus" text="Tambah Periode" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

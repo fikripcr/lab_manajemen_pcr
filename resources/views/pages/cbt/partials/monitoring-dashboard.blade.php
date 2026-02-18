@@ -174,15 +174,9 @@
                                     </td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
-                                            <a href="{{ route('cbt.execute.start', $exam->hashid) }}" class="btn btn-icon btn-sm btn-primary" title="Test Exam">
-                                                <i class="ti ti-player-play"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-icon btn-sm" onclick="monitorExam('{{ $exam->hashid }}')" title="Monitor">
-                                                <i class="ti ti-eye"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-icon btn-sm" onclick="toggleToken('{{ $exam->hashid }}')" title="Toggle Token">
-                                                <i class="ti ti-key"></i>
-                                            </button>
+                                            <x-tabler.button href="{{ route('cbt.execute.start', $exam->hashid) }}" class="btn-icon btn-sm btn-primary" icon="ti ti-player-play" title="Test Exam" />
+                                            <x-tabler.button type="button" class="btn-icon btn-sm" onclick="monitorExam('{{ $exam->hashid }}')" icon="ti ti-eye" title="Monitor" />
+                                            <x-tabler.button type="button" class="btn-icon btn-sm" onclick="toggleToken('{{ $exam->hashid }}')" icon="ti ti-key" title="Toggle Token" />
                                         </div>
                                     </td>
                                 </tr>
@@ -240,44 +234,7 @@
     </div>
 </div>
 
-{{-- Quick Actions --}}
-<div class="row row-cards">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Aksi Cepat</h3>
-            </div>
-            <div class="card-body">
-                <div class="row g-2">
-                    <div class="col-md-6 col-lg-3">
-                        <a href="{{ route('cbt.jadwal.create') }}" class="btn btn-primary w-100">
-                            <i class="ti ti-plus me-2"></i>
-                            Buat Jadwal Ujian
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <a href="{{ route('cbt.paket.create') }}" class="btn btn-secondary w-100">
-                            <i class="ti ti-package me-2"></i>
-                            Buat Paket Soal
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <a href="{{ route('cbt.soal.create') }}" class="btn btn-info w-100">
-                            <i class="ti ti-file-text me-2"></i>
-                            Tambah Soal
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <button type="button" class="btn btn-warning w-100" onclick="showViolationReport()">
-                            <i class="ti ti-alert-triangle me-2"></i>
-                            Lihat Laporan Pelanggaran
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 @push('scripts')
 <script>

@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Tambah Indikator Standar" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.standar.index') }}" style="secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('pemutu.standar.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -51,7 +51,7 @@
             </div>
 
             <div class="card-footer text-end">
-                <x-tabler.button type="submit" style="primary" text="Simpan Indikator" />
+                <x-tabler.button type="submit" class="btn-primary" text="Simpan Indikator" />
             </div>
         </form>
     </div>

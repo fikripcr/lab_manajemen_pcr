@@ -40,22 +40,7 @@ class JenisLayananController extends Controller
                     : '<span class="badge bg-red text-red-fg">Non-Aktif</span>';
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('eoffice.jenis-layanan.edit', $row->hashid);
-                $deleteUrl = route('eoffice.jenis-layanan.destroy', $row->hashid);
-                $showUrl   = route('eoffice.jenis-layanan.show', $row->hashid);
-
-                return '
-                    <div class="btn-group btn-group-sm">
-                        <a href="' . $showUrl . '" class="btn btn-icon btn-ghost-info" title="Manage Detail/PIC/Isian">
-                            <i class="ti ti-settings"></i>
-                        </a>
-                        <button type="button" class="btn btn-icon btn-ghost-primary ajax-modal-btn" data-url="' . $editUrl . '" data-modal-title="Edit Jenis Layanan" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </button>
-                        <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus?" data-text="Menghapus jenis layanan ini akan berdampak pada data terkait lainnya.">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('pages.eoffice.jenis_layanan._action', compact('row'))->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);

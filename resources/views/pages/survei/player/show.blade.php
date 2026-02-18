@@ -14,9 +14,7 @@
 
         @if(isset($isPreview) && $isPreview)
         <div class="mb-3 text-end">
-            <a href="{{ route('survei.builder', $survei->id) }}" class="btn btn-secondary btn-sm">
-                <i class="ti ti-arrow-left me-1"></i>Kembali ke Builder
-            </a>
+            <x-tabler.button href="{{ route('survei.builder', $survei->id) }}" class="btn-secondary btn-sm" icon="ti ti-arrow-left" text="Kembali ke Builder" />
         </div>
         @endif
 
@@ -161,28 +159,25 @@
                 {{-- Navigation --}}
                 <div class="d-flex justify-content-between mt-3 mb-4">
                     @if(!$loop->first)
-                    <button type="button" class="btn btn-outline-secondary btn-prev" data-target="#halaman-{{ $survei->halaman[$index-1]->id }}">
-                        <i class="ti ti-chevron-left me-1"></i>Kembali
-                    </button>
+                    <x-tabler.button type="button" class="btn-outline-secondary btn-prev" data-target="#halaman-{{ $survei->halaman[$index-1]->id }}" icon="ti ti-chevron-left" text="Kembali" />
                     @else
                     <div></div>
                     @endif
 
                     @if(!$loop->last || ($survei->mode === 'Bercabang'))
-                    <button type="button" class="btn btn-primary btn-next" data-target="#halaman-{{ $survei->halaman[$index+1]->id ?? '' }}" data-page="{{ $loop->iteration + 1 }}">
+                    <x-tabler.button type="button" class="btn-primary btn-next" data-target="#halaman-{{ $survei->halaman[$index+1]->id ?? '' }}" data-page="{{ $loop->iteration + 1 }}">
                         Lanjut<i class="ti ti-chevron-right ms-1"></i>
-                    </button>
+                    </x-tabler.button>
                     @endif
 
                     @if($loop->last || ($survei->mode === 'Bercabang'))
                         @php
                             $isPreviewMode = isset($isPreview) && $isPreview;
                         @endphp
-                        <button type="{{ $isPreviewMode ? 'button' : 'submit' }}" 
-                                class="btn btn-success {{ $survei->mode === 'Bercabang' ? 'd-none' : '' }} btn-submit"
-                                {!! $isPreviewMode ? 'onclick="alert(\'Preview: Jawaban tidak disimpan\')"' : '' !!}>
-                            <i class="ti ti-send me-1"></i>Kirim Jawaban
-                        </button>
+                        <x-tabler.button type="{{ $isPreviewMode ? 'button' : 'submit' }}" 
+                                class="btn-success {{ $survei->mode === 'Bercabang' ? 'd-none' : '' }} btn-submit"
+                                onclick="{{ $isPreviewMode ? 'alert(\'Preview: Jawaban tidak disimpan\')' : '' }}"
+                                icon="ti ti-send" text="Kirim Jawaban" />
                     @endif
                 </div>
             </div>

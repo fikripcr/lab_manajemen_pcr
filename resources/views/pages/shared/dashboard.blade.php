@@ -38,7 +38,7 @@
                                 @if($slide->title) <h3 class="fw-bold">{{ $slide->title }}</h3> @endif
                                 @if($slide->caption) <p>{{ $slide->caption }}</p> @endif
                                 @if($slide->link)
-                                <a href="{{ $slide->link }}" class="btn btn-primary btn-sm mt-2">Selengkapnya</a>
+                                <x-tabler.button href="{{ $slide->link }}" class="btn-primary btn-sm mt-2" text="Selengkapnya" />
                                 @endif
                             </div>
                             @endif
@@ -104,9 +104,7 @@
                             @endforelse
                         </ul>
                         <div class="mt-3 border-top pt-3">
-                            <a href="{{ route('shared.pengumuman.index') }}" class="btn btn-ghost-primary btn-sm w-100">
-                                Lihat Semua <i class="ti ti-chevron-right ms-1"></i>
-                            </a>
+                            <x-tabler.button href="{{ route('shared.pengumuman.index') }}" class="btn-ghost-primary btn-sm w-100" text="Lihat Semua" icon="ti ti-chevron-right" />
                         </div>
                     </div>
                 </div>

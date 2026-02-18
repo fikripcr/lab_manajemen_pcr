@@ -18,13 +18,9 @@
                     <div class="card">
                         <div class="card-body">
                             
-                            <div class="mb-3">
-                                <x-tabler.form-select id="select-lab" name="lab_id" label="Lab" :options="$labs->mapWithKeys(fn($lab) => [encryptId($lab->lab_id) => $lab->name])->toArray()" placeholder="Pilih Lab" required class="select2" />
-                            </div>
+                            <x-tabler.form-select id="select-lab" name="lab_id" label="Lab" :options="$labs->mapWithKeys(fn($lab) => [encryptId($lab->lab_id) => $lab->name])->toArray()" placeholder="Pilih Lab" required class="select2 mb-3" />
 
-                            <div class="mb-3">
-                                <x-tabler.form-select id="select-inventaris" name="inventaris_id" label="Inventaris / Alat" :options="[]" placeholder="Pilih Lab Terlebih Dahulu" required disabled class="select2" help="Pilih alat yang rusak. Jika fasilitas umum (AC, Pintu), pilih item terkait jika ada." />
-                            </div>
+                            <x-tabler.form-select id="select-inventaris" name="inventaris_id" label="Inventaris / Alat" :options="[]" placeholder="Pilih Lab Terlebih Dahulu" required disabled class="select2 mb-3" help="Pilih alat yang rusak. Jika fasilitas umum (AC, Pintu), pilih item terkait jika ada." />
 
                             <x-tabler.form-textarea name="deskripsi_kerusakan" label="Deskripsi Kerusakan" rows="4" placeholder="Jelaskan detail kerusakan..." required />
 

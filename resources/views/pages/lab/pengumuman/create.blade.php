@@ -18,35 +18,16 @@
                     <form action="{{ route('lab.'.$type . '.store') }}" method="POST" enctype="multipart/form-data" class="ajax-form">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="judul">Title</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input name="judul" value="{{ old('judul') }}" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input name="judul" label="Title" value="{{ old('judul') }}" required />
 
-                            <div class="col-sm-10">
-                                <x-tabler.form-textarea type="editor" id="isi" name="isi" label="Content" :value="old('isi')" height="400" required="true" class="mb-0" />
-                            </div>
+                        <x-tabler.form-textarea type="editor" id="isi" name="isi" label="Content" :value="old('isi')" height="400" required="true" />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="cover_image">Cover Image</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="file" id="cover_image" name="cover" accept="image/*" help="Upload a cover image for this {{ strtolower($type) }}." class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="file" id="cover_image" name="cover" label="Cover Image" accept="image/*" help="Upload a cover image for this {{ strtolower($type) }}." />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="attachments">Attachments</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="file" id="attachments" name="attachments[]" multiple="true" help="Upload related attachments/files for this {{ strtolower($type) }}." class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="file" id="attachments" name="attachments[]" label="Attachments" multiple="true" help="Upload related attachments/files for this {{ strtolower($type) }}." />
 
-                        <div class="row mb-3">
-                            <div class="col-sm-10 offset-sm-2">
-                                <x-tabler.form-checkbox name="is_published" value="1" label="Publish {{ ucfirst($type) }}" :checked="old('is_published')" switch />
-                            </div>
+                        <div class="mb-3">
+                            <x-tabler.form-checkbox name="is_published" value="1" label="Publish {{ ucfirst($type) }}" :checked="old('is_published')" switch />
                         </div>
 
                         <input type="hidden" name="jenis" value="{{ $type }}">

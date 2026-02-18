@@ -8,9 +8,7 @@
                 <h2 class="page-title">Bank Soal (CBT)</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('cbt.soal.create') }}" class="btn btn-primary">
-                    <i class="ti ti-plus"></i> Tambah Soal
-                </a>
+                <x-tabler.button href="{{ route('cbt.soal.create') }}" class="btn-primary" icon="ti ti-plus" text="Tambah Soal" />
             </div>
         </div>
     </div>
@@ -22,13 +20,12 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
-                        <label class="form-label">Filter Mata Uji</label>
-                        <select id="filter-mata-uji" class="form-select">
+                        <x-tabler.form-select id="filter-mata-uji" label="Filter Mata Uji">
                             <option value="">Semua Mata Uji</option>
                             @foreach($mataUji as $mu)
                                 <option value="{{ $mu->hashid }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                 </div>
             </div>

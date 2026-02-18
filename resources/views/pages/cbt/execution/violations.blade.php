@@ -5,9 +5,7 @@
 @section('content')
 <x-tabler.page-header title="Laporan Pelanggaran" pretitle="CBT Monitoring">
     <x-slot:actions>
-        <button type="button" class="btn btn-outline-secondary" onclick="location.reload()">
-            <i class="ti ti-refresh me-1"></i> Refresh
-        </button>
+        <x-tabler.button class="btn-outline-secondary" onclick="location.reload()" icon="ti ti-refresh" text="Refresh" />
     </x-slot:actions>
 </x-tabler.page-header>
 

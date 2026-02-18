@@ -70,30 +70,7 @@ class PerizinanController extends Controller
                 return '<span class="badge ' . $badge . '">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                $buttons = '
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-icon btn-info ajax-modal-btn"
-                            data-url="' . route('hr.perizinan.show', $row->hashid) . '"
-                            data-modal-title="Detail Perizinan">
-                            <i class="ti ti-eye"></i>
-                        </button>';
-
-                // Only allow edit if Draft
-                if ($row->status === 'Draft') {
-                    $buttons .= '
-                        <button type="button" class="btn btn-sm btn-icon btn-primary ajax-modal-btn"
-                            data-url="' . route('hr.perizinan.edit', $row->hashid) . '"
-                            data-modal-title="Edit Perizinan">
-                            <i class="ti ti-pencil"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete"
-                            data-url="' . route('hr.perizinan.destroy', $row->hashid) . '">
-                            <i class="ti ti-trash"></i>
-                        </button>';
-                }
-
-                $buttons .= '</div>';
-                return $buttons;
+                return view('pages.hr.perizinan._action', compact('row'))->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);

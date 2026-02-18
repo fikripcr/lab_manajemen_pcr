@@ -41,13 +41,7 @@ class ApprovalController extends Controller
                     return $row->created_at ? $row->created_at->format('d M Y H:i') : '-';
                 })
                 ->addColumn('action', function ($row) {
-                    $approveUrl = route('hr.approval.approve', $row->riwayatapproval_id);
-                    $rejectUrl  = route('hr.approval.reject', $row->riwayatapproval_id);
-
-                    return '
-                        <button class="btn btn-success btn-sm btn-approve" data-url="' . $approveUrl . '">Setujui</button>
-                        <button class="btn btn-danger btn-sm btn-reject" data-url="' . $rejectUrl . '">Tolak</button>
-                    ';
+                    return view('pages.hr.approval._action', compact('row'))->render();
                 })
                 ->rawColumns(['action'])
                 ->make(true);

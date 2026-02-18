@@ -57,14 +57,12 @@
                 </div>
 
                 <div class="mt-3">
-                    <button type="button" class="btn btn-ghost-primary" id="add-item-btn">
-                        <i class="ti ti-plus me-1"></i> Tambah Sasaran
-                    </button>
+                    <x-tabler.button type="button" class="btn-ghost-primary" id="add-item-btn" icon="ti ti-plus" text="Tambah Sasaran" />
                 </div>
             </div>
 
             <div class="card-footer text-end">
-                <button type="submit" class="btn btn-primary">Simpan Semua Sasaran</button>
+                <x-tabler.button type="submit" class="btn-primary" text="Simpan Semua Sasaran" />
             </div>
         </form>
     </div>
@@ -98,9 +96,7 @@
             <textarea name="items[INDEX][keterangan]" id="editor-INDEX" class="form-control kpi-editor" placeholder="Keterangan..."></textarea>
         </td>
         <td class="align-top text-end">
-            <button type="button" class="btn btn-icon btn-ghost-danger remove-item-btn" title="Hapus">
-                <i class="ti ti-trash"></i>
-            </button>
+            <x-tabler.button type="button" class="btn-icon btn-ghost-danger remove-item-btn" title="Hapus" icon="ti ti-trash" />
         </td>
     </tr>
 </template>

@@ -41,7 +41,7 @@
                             <x-tabler.form-checkbox name="is_required" label="Wajib Diupload" checked="true" />
 
                             <div class="form-footer mt-3">
-                                <button type="submit" class="btn btn-primary w-100">Tambah Syarat</button>
+                                <x-tabler.button type="submit" class="btn-primary w-100" text="Tambah Syarat" />
                             </div>
                         </form>
                     </div>
@@ -77,9 +77,8 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-icon btn-danger ajax-delete" data-url="{{ route('pmb.syarat-jalur.destroy', $s->encrypted_id) }}" data-title="Hapus Syarat?">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                        <x-tabler.button type="button" class="btn-sm btn-icon btn-danger ajax-delete" 
+                                            data-url="{{ route('pmb.syarat-jalur.destroy', $s->encrypted_id) }}" data-title="Hapus Syarat?" icon="ti ti-trash" />
                                     </td>
                                 </tr>
                                 @empty

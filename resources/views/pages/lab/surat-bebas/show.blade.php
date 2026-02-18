@@ -63,7 +63,7 @@
                             <div class="alert alert-success mt-3">
                                 <h4><i class="bx bx-check-circle me-1"></i> Surat Bebas Lab Disetujui</h4>
                                 <p>Silahkan unduh surat bebas lab anda di bawah ini.</p>
-                                <a href="#" class="btn btn-success mt-2"><i class="bx bx-download me-2"></i> Download PDF</a>
+                                <x-tabler.button href="#" class="btn-success mt-2" icon="bx bx-download" text="Download PDF" />
                             </div>
                         @endif
                     </div>

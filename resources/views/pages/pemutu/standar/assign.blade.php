@@ -90,12 +90,10 @@
                                 </span>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete" 
+                                <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-danger ajax-delete" 
                                     data-url="{{ route('pemutu.standar.destroyAssignment', $assign->id) }}" 
                                     data-title="Hapus Penugasan?" 
-                                    data-text="Data penugasan akan dihapus.">
-                                    <i class="ti ti-trash"></i>
-                                </button>
+                                    data-text="Data penugasan akan dihapus." icon="ti ti-trash" />
                             </td>
                         </tr>
                         @empty

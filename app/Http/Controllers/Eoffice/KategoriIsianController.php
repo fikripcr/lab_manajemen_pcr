@@ -34,18 +34,7 @@ class KategoriIsianController extends Controller
                 return ucwords(str_replace('_', ' ', $row->type));
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('eoffice.kategori-isian.edit', $row->hashid);
-                $deleteUrl = route('eoffice.kategori-isian.destroy', $row->hashid);
-
-                return '
-                    <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-icon btn-ghost-primary ajax-modal-btn" data-url="' . $editUrl . '" data-modal-title="Edit Isian" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </button>
-                        <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus?" data-text="Isian ini akan dihapus permanen.">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('pages.eoffice.kategori_isian._action', compact('row'))->render();
             })
             ->rawColumns(['action'])
             ->make(true);

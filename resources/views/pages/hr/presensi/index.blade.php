@@ -97,18 +97,9 @@ window.addEventListener('load', function() {
                 
                 <!-- Action Buttons -->
                 <div id="action-buttons" class="btn-list justify-content-center">
-                    <button id="btn-checkin" class="btn btn-success btn-lg">
-                        <i class="ti ti-login me-2"></i>
-                        Check In
-                    </button>
-                    <button id="btn-checkout" class="btn btn-danger btn-lg" disabled>
-                        <i class="ti ti-logout me-2"></i>
-                        Check Out
-                    </button>
-                    <button id="btn-refresh-location" class="btn btn-outline-primary">
-                        <i class="ti ti-refresh me-2"></i>
-                        Refresh Lokasi
-                    </button>
+                    <x-tabler.button id="btn-checkin" class="btn-success btn-lg" icon="ti ti-login" text="Check In" />
+                    <x-tabler.button id="btn-checkout" class="btn-danger btn-lg" disabled icon="ti ti-logout" text="Check Out" />
+                    <x-tabler.button id="btn-refresh-location" class="btn-outline-primary" icon="ti ti-refresh" text="Refresh Lokasi" />
                 </div>
                 
                 <!-- Webcam Section (Hidden by default) -->
@@ -126,14 +117,8 @@ window.addEventListener('load', function() {
                                     <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
                                 </div>
                                 <div class="mt-3">
-                                    <button id="btn-start-camera" class="btn btn-primary">
-                                        <i class="ti ti-camera me-2"></i>
-                                        Aktifkan Kamera
-                                    </button>
-                                    <button id="btn-capture" class="btn btn-success" disabled>
-                                        <i class="ti ti-photo me-2"></i>
-                                        Ambil Foto
-                                    </button>
+                                    <x-tabler.button id="btn-start-camera" class="btn-primary" icon="ti ti-camera" text="Aktifkan Kamera" />
+                                    <x-tabler.button id="btn-capture" class="btn-success" disabled icon="ti ti-photo" text="Ambil Foto" />
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -164,18 +149,9 @@ window.addEventListener('load', function() {
                     
                     <!-- Confirm Buttons -->
                     <div id="confirm-buttons" class="btn-list justify-content-center" style="display: none;">
-                        <button id="btn-confirm-checkin" class="btn btn-success btn-lg">
-                            <i class="ti ti-check me-2"></i>
-                            Ya, Check In Sekarang
-                        </button>
-                        <button id="btn-confirm-checkout" class="btn btn-danger btn-lg">
-                            <i class="ti ti-check me-2"></i>
-                            Ya, Check Out Sekarang
-                        </button>
-                        <button id="btn-cancel" class="btn btn-outline-secondary">
-                            <i class="ti ti-x me-2"></i>
-                            Batal
-                        </button>
+                        <x-tabler.button id="btn-confirm-checkin" class="btn-success btn-lg" icon="ti ti-check" text="Ya, Check In Sekarang" />
+                        <x-tabler.button id="btn-confirm-checkout" class="btn-danger btn-lg" icon="ti ti-check" text="Ya, Check Out Sekarang" />
+                        <x-tabler.button id="btn-cancel" class="btn-outline-secondary" icon="ti ti-x" text="Batal" />
                     </div>
                 </div>
             </div>

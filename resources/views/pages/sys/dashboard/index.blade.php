@@ -12,10 +12,7 @@
                 </span>
                 <x-tabler.form-input name="search" placeholder="Search..." aria-label="Search" onclick="openGlobalSearchModal('{{ route('sys-search') }}')" />
             </div>
-            <button class="btn btn-primary" onclick="window.location.reload();">
-                <i class="ti ti-refresh me-2"></i>
-                Refresh
-            </button>
+            <x-tabler.button type="button" class="btn-primary" onclick="window.location.reload();" icon="ti ti-refresh" text="Refresh" />
         </div>
     </x-slot:actions>
 </x-tabler.page-header>
@@ -73,6 +70,58 @@
                 </div>
             </div>
         </div>
+
+        <!-- News Slider -->
+        @if(isset($recentNews) && $recentNews->count() > 0)
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Pengumuman Terbaru</h3>
+                </div>
+                <div class="card-body">
+                    <div id="carousel-news" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @foreach($recentNews as $news)
+                            <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                <div class="row align-items-center">
+                                    <div class="col-md-{{ $news->cover_url ? '8' : '12' }}">
+                                        <h3 class="mb-1">{{ $news->judul }}</h3>
+                                        <div class="text-muted mb-2">
+                                            <small>
+                                                <i class="ti ti-calendar me-1"></i> {{ \Carbon\Carbon::parse($news->published_at)->translatedFormat('d F Y') }}
+                                                &nbsp;&bull;&nbsp;
+                                                <i class="ti ti-user me-1"></i> {{ $news->penulis ? $news->penulis->name : 'System' }}
+                                            </small>
+                                        </div>
+                                        <p class="text-secondary text-truncate" style="max-width: 800px;">
+                                            {{ Str::limit(strip_tags($news->isi), 150) }}
+                                        </p>
+                                        <a href="{{ route('shared.pengumuman.show', $news->hashid) }}" class="btn btn-sm btn-outline-primary">Baca Selengkapnya</a>
+                                    </div>
+                                    @if($news->cover_url)
+                                    <div class="col-md-4">
+                                        <img src="{{ $news->cover_url }}" class="d-block w-100 rounded" alt="{{ $news->judul }}" style="max-height: 200px; object-fit: cover;">
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @if($recentNews->count() > 1)
+                        <a class="carousel-control-prev" href="#carousel-news" role="button" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-primary rounded-circle" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-news" role="button" data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-primary rounded-circle" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 
         <!-- Disk Space and Database Size -->
         <div class="col-12 mb-4">

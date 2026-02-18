@@ -24,9 +24,7 @@
                             <p class="text-muted">Anda belum memiliki pendaftaran aktif. Silakan mulai pendaftaran Anda sekarang.</p>
                             @if($periodeAktif)
                                 <div class="mt-3">
-                                    <a href="{{ route('pmb.camaba.register') }}" class="btn btn-primary btn-lg">
-                                        Mulai Pendaftaran ({{ $periodeAktif->nama_periode }})
-                                    </a>
+                                    <x-tabler.button href="{{ route('pmb.camaba.register') }}" class="btn-primary btn-lg" text="Mulai Pendaftaran ({{ $periodeAktif->nama_periode }})" />
                                 </div>
                             @else
                                 <div class="alert alert-warning mt-3">

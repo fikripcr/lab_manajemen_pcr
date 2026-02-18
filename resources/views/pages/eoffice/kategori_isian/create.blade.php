@@ -23,7 +23,7 @@
     <div id="select-options-container" class="mb-3" style="display: none;">
         <div class="input-group mb-2">
             <x-tabler.form-input name="type_value[]" placeholder="Masukkan opsi" />
-            <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">Hapus</button>
+            <x-tabler.button type="button" class="btn-outline-danger" onclick="removeOption(this)" text="Hapus" />
         </div>
         <div id="additional-options"></div>
         <x-tabler.button type="button" class="btn-outline-primary btn-sm mt-2" onclick="addOption()" icon="ti ti-plus" text="Tambah Opsi" />

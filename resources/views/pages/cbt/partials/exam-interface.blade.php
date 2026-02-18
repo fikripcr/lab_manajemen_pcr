@@ -29,9 +29,7 @@
                     <img src="{{ asset('static/illustrations/undraw_access_denied_re_awnf.svg') }}" height="128" class="mb-n2" alt="">
                     <h3 class="mt-4">Akses Ditolak</h3>
                     <p class="text-muted">Anda tidak memiliki akses ke ujian saat ini.</p>
-                    <a href="{{ route('pmb.camaba.dashboard') }}" class="btn btn-primary">
-                        Kembali ke Dashboard
-                    </a>
+                    <x-tabler.button href="{{ route('pmb.camaba.dashboard') }}" class="btn-primary" text="Kembali ke Dashboard" />
                 </div>
             </div>
         </div>
@@ -137,11 +135,12 @@
                             {{-- Essay --}}
                             @if($komposisi->soal->tipe_soal === 'Esai')
                                 <div class="form-group">
-                                    <textarea class="form-control" 
-                                              name="soal_{{ $komposisi->soal_id }}" 
-                                              rows="5" 
-                                              placeholder="Ketik jawaban Anda di sini..."
-                                              oninput="CBT.saveAnswer({{ $komposisi->soal_id }}, this.value, document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)"></textarea>
+                                    <x-tabler.form-textarea 
+                                        name="soal_{{ $komposisi->soal_id }}" 
+                                        rows="5" 
+                                        placeholder="Ketik jawaban Anda di sini..."
+                                        oninput="CBT.saveAnswer({{ $komposisi->soal_id }}, this.value, document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)" 
+                                    />
                                 </div>
                             @endif
 
@@ -178,20 +177,11 @@
                 <div class="card-footer">
                     <div class="row align-items-center">
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-secondary" id="prev-question" onclick="CBT.navigateQuestion('prev')">
-                                <i class="ti ti-arrow-left me-2"></i>
-                                Sebelumnya
-                            </button>
+                            <x-tabler.button type="button" class="btn-secondary" id="prev-question" onclick="CBT.navigateQuestion('prev')" icon="ti ti-arrow-left" text="Sebelumnya" />
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="button" class="btn btn-primary" id="next-question" onclick="CBT.navigateQuestion('next')">
-                                Selanjutnya
-                                <i class="ti ti-arrow-right ms-2"></i>
-                            </button>
-                            <button type="button" class="btn btn-success ms-2" onclick="CBT.submitExam()">
-                                <i class="ti ti-check me-2"></i>
-                                Selesai Ujian
-                            </button>
+                            <x-tabler.button type="button" class="btn-primary" id="next-question" onclick="CBT.navigateQuestion('next')" text="Selanjutnya" icon="ti ti-arrow-right" trailing-icon />
+                            <x-tabler.button type="button" class="btn-success ms-2" onclick="CBT.submitExam()" icon="ti ti-check" text="Selesai Ujian" />
                         </div>
                     </div>
                 </div>

@@ -92,9 +92,7 @@
                     </div>
 
                     <div class="mt-3 d-flex justify-content-between align-items-center">
-                        <button type="button" class="btn btn-primary" id="getSelect2Value">
-                            <i class="ti ti-code me-1"></i> Get Values
-                        </button>
+                        <x-tabler.button type="button" class="btn-primary" id="getSelect2Value" icon="ti ti-code" text="Get Values" />
                     </div>
 
                     <div class="mt-3">
@@ -137,12 +135,8 @@
                             <x-tabler.form-textarea type="editor" id="editorContent" name="isi" label="Content" :value="old('isi')" height="250" required="true" />
                         </div>
                         <div class="btn-list">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="ti ti-device-floppy me-1"></i> Submit
-                            </button>
-                            <button type="button" class="btn btn-secondary" id="getContentBtn">
-                                <i class="ti ti-eye me-1"></i> Get Content
-                            </button>
+                            <x-tabler.button type="submit" text="Submit" icon="ti ti-device-floppy" />
+                            <x-tabler.button type="button" class="btn-secondary" id="getContentBtn" icon="ti ti-eye" text="Get Content" />
                         </div>
                     </form>
 
@@ -167,22 +161,22 @@
                         <div class="col-md-6">
                             <h4 class="card-subtitle mb-3">Basic Alerts</h4>
                             <div class="btn-list">
-                                <button type="button" class="btn btn-success" id="showSuccessBtn">Success</button>
-                                <button type="button" class="btn btn-danger" id="showErrorBtn">Error</button>
-                                <button type="button" class="btn btn-warning" id="showWarningBtn">Warning</button>
-                                <button type="button" class="btn btn-info" id="showInfoBtn">Info</button>
-                                <button type="button" class="btn btn-secondary" id="showLoadingBtn">Loading</button>
+                                <x-tabler.button type="button" class="btn-success" id="showSuccessBtn" text="Success" />
+                                <x-tabler.button type="button" class="btn-danger" id="showErrorBtn" text="Error" />
+                                <x-tabler.button type="button" class="btn-warning" id="showWarningBtn" text="Warning" />
+                                <x-tabler.button type="button" class="btn-info" id="showInfoBtn" text="Info" />
+                                <x-tabler.button type="button" class="btn-secondary" id="showLoadingBtn" text="Loading" />
                             </div>
                         </div>
                         <div class="col-md-6">
                             <h4 class="card-subtitle mb-3">Advanced Interactions</h4>
                             <div class="btn-list">
-                                <button type="button" class="btn btn-outline-success" id="showConfirmationBtn">Confirm</button>
-                                <button type="button" class="btn btn-outline-danger" id="showDeleteConfirmationBtn">Delete</button>
-                                <button type="button" class="btn btn-outline-primary" id="showFormErrorsBtn">Form Errors</button>
-                                <button type="button" class="btn btn-outline-info" id="handleAjaxResponseBtn">Ajax Response</button>
-                                <button type="button" class="btn btn-outline-warning" id="showBulkActionBtn">Bulk Action</button>
-                                <button type="button" class="btn btn-outline-dark" id="showHtmlContentBtn">HTML Content</button>
+                                <x-tabler.button type="button" class="btn-outline-success" id="showConfirmationBtn" text="Confirm" />
+                                <x-tabler.button type="button" class="btn-outline-danger" id="showDeleteConfirmationBtn" text="Delete" />
+                                <x-tabler.button type="button" class="btn-outline-primary" id="showFormErrorsBtn" text="Form Errors" />
+                                <x-tabler.button type="button" class="btn-outline-info" id="handleAjaxResponseBtn" text="Ajax Response" />
+                                <x-tabler.button type="button" class="btn-outline-warning" id="showBulkActionBtn" text="Bulk Action" />
+                                <x-tabler.button type="button" class="btn-outline-dark" id="showHtmlContentBtn" text="HTML Content" />
                             </div>
                         </div>
                     </div>

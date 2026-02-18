@@ -37,10 +37,8 @@ class VerificationController extends Controller
         return datatables()->of($query)
             ->addIndexColumn()
             ->editColumn('jumlah_bayar', fn($p) => 'Rp ' . number_format($p->jumlah_bayar, 0, ',', '.'))
-            ->addColumn('action', function ($p) {
-                return '<button class="btn btn-sm btn-primary ajax-modal-btn" data-modal-target="#modalAction"
-                        data-modal-title="Verifikasi Pembayaran" data-url="' . route('pmb.verification.payment-form', $p->hashid) . '">
-                        Detail</button>';
+            ->addColumn('action', function ($row) {
+                return view('pages.pmb.verification._payment_action', compact('row'))->render();
             })
             ->rawColumns(['action'])
             ->make(true);

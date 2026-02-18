@@ -8,9 +8,8 @@
                 <h2 class="page-title">Manajemen Sesi Ujian (CBT)</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <button type="button" class="btn btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Sesi Ujian" data-url="{{ route('pmb.sesi-ujian.create') }}">
-                    <i class="ti ti-plus"></i> Tambah Sesi
-                </button>
+                <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Tambah Sesi" 
+                    data-modal-target="#modalAction" data-modal-title="Tambah Sesi Ujian" data-url="{{ route('pmb.sesi-ujian.create') }}" />
             </div>
         </div>
     </div>

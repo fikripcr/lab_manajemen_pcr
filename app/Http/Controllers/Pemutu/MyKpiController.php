@@ -15,7 +15,7 @@ class MyKpiController extends Controller
         // If not, we might need to find the personil_id based on Auth::user()->email
 
         $user     = Auth::user();
-        $personil = Personil::where('email', $user->email)->first();
+        $personil = Personil::find($user->pegawai_id);
 
         if (! $personil) {
             return view('pages.pemutu.mykpi.index', ['kpis' => collect([]), 'error' => 'No Personil data found for your account.']);
@@ -41,8 +41,8 @@ class MyKpiController extends Controller
 
         // Security check
         $user     = Auth::user();
-        $personil = Personil::where('email', $user->email)->first();
-        if ($kpi->personil_id !== $personil->personil_id) {
+        $personil = Personil::find($user->pegawai_id);
+        if ($kpi->personil_id !== $personil?->personil_id) {
             abort(403);
         }
 
@@ -55,8 +55,8 @@ class MyKpiController extends Controller
 
         // Security check
         $user     = Auth::user();
-        $personil = Personil::where('email', $user->email)->first();
-        if ($kpi->personil_id !== $personil->personil_id) {
+        $personil = Personil::find($user->pegawai_id);
+        if ($kpi->personil_id !== $personil?->personil_id) {
             abort(403);
         }
 

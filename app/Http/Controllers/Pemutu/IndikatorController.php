@@ -76,22 +76,7 @@ class IndikatorController extends Controller
                 })->implode('') . '</div>';
             })
             ->addColumn('action', function ($row) {
-                $showUrl   = route('pemutu.indikators.show', $row->indikator_id);
-                $editUrl   = route('pemutu.indikators.edit', $row->indikator_id);
-                $deleteUrl = route('pemutu.indikators.destroy', $row->indikator_id);
-
-                return '
-                    <div class="btn-list flex-nowrap justify-content-end">
-                        <a href="' . $showUrl . '" class="btn btn-sm btn-icon btn-ghost-info" title="Detail">
-                            <i class="ti ti-eye"></i>
-                        </a>
-                        <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-ghost-primary" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus Indikator?" data-text="Data ini akan dihapus permanen.">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('pages.pemutu.indikators._action', compact('row'))->render();
             })
             ->rawColumns(['tipe', 'labels', 'action'])
             ->make(true);

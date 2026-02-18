@@ -12,9 +12,7 @@
                 </h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.surat-bebas.index') }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-2"></i> Kembali
-                </a>
+                <x-tabler.button type="back" href="{{ route('lab.surat-bebas.index') }}" />
             </div>
         </div>
     </div>
@@ -39,7 +37,7 @@
 
                         </div>
                         <div class="card-footer text-end">
-                            <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
+                            <x-tabler.button type="submit" class="btn-primary" text="Kirim Pengajuan" />
                         </div>
                     </div>
                 </form>

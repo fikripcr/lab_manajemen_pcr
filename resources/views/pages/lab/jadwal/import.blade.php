@@ -34,9 +34,7 @@
                                         <li><strong>jam_selesai</strong> - Format: HH:MM (contoh: 10:00)</li>
                                         <li><strong>lab</strong> - Nama lab (contoh: Lab Jaringan)</li>
                                     </ul>
-                                    <a href="{{ Vite::asset('resources/assets/templates/template_import_jadwal.xlsx') }}" class="btn btn-sm btn-outline-info">
-                                        <i class="ti ti-download me-1"></i> Download Template
-                                    </a>
+                                    <x-tabler.button :href="Vite::asset('resources/assets/templates/template_import_jadwal.xlsx')" class="btn-sm btn-outline-info" icon="ti ti-download" text="Download Template" />
                                 </div>
                             </div>
                         </div>
@@ -45,18 +43,11 @@
                     <form method="POST" action="{{ route('jadwal.import') }}" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="file">File Jadwal</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="file" name="file" accept=".xlsx,.xls,.csv" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="file" name="file" label="File Jadwal" accept=".xlsx,.xls,.csv" required />
 
-                        <div class="row mt-4">
-                            <div class="col-sm-10 offset-sm-2">
-                                <x-tabler.button type="submit" text="Import Jadwal" icon="ti ti-upload" />
-                                <x-tabler.button type="cancel" :href="route('jadwal.index')" />
-                            </div>
+                        <div class="mt-4">
+                            <x-tabler.button type="submit" text="Import Jadwal" icon="ti ti-upload" />
+                            <x-tabler.button type="cancel" :href="route('jadwal.index')" />
                         </div>
                     </form>
                 </div>

@@ -4,9 +4,7 @@
 @section('header')
 <x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <a href="{{ route('pemutu.periode-kpis.index') }}" class="btn btn-outline-primary">
-            <i class="ti ti-calendar me-2"></i> Kelola Periode KPI
-        </a>
+        <x-tabler.button href="{{ route('pemutu.periode-kpis.index') }}" class="btn-outline-primary" icon="ti ti-calendar" text="Kelola Periode KPI" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -197,9 +195,7 @@
             <div class="card-header">
                 <h3 class="card-title">Jadwal Rapat Mendatang</h3>
                 <div class="card-actions">
-                    <a href="{{ route('pemutu.rapat.create') }}" class="btn btn-primary btn-sm">
-                        <i class="ti ti-plus me-1"></i> Buat Rapat
-                    </a>
+                    <x-tabler.button href="{{ route('pemutu.rapat.create') }}" class="btn-primary" size="sm" icon="ti ti-plus" text="Buat Rapat" />
                 </div>
             </div>
             <div class="list-group list-group-flush list-group-hoverable">

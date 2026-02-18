@@ -30,9 +30,7 @@
                         
                         {{-- Dropdown for extra actions --}}
                         <div class="dropdown">
-                            <button type="button" class="btn dropdown-toggle btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ti ti-dots-vertical fs-3"></i>
-                            </button>
+                        <x-tabler.button type="button" class="btn dropdown-toggle btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-dots-vertical fs-3" icon-only="true" />
                             <div class="dropdown-menu dropdown-menu-end">
                                 <a class="dropdown-item" href="{{ route('sys.roles.show', $role) }}">
                                     <i class="ti ti-eye me-1"></i> View

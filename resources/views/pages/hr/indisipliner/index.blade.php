@@ -5,7 +5,7 @@
 @section('header')
 <x-tabler.page-header title="Data Indisipliner" pretitle="Manajemen HR">
     <x-slot:actions>
-        <x-tabler.button type="create" class="ajax-modal-btn" data-url="{{ route('hr.indisipliner.create') }}" modal-title="Tambah Data Indisipliner" />
+        <x-tabler.button class="ajax-modal-btn" data-url="{{ route('hr.indisipliner.create') }}" modal-title="Tambah Data Indisipliner" icon="ti ti-plus" text="Tambah Data" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

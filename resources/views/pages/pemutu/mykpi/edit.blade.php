@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Update Realisasi KPI" pretitle="My KPI">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.mykpi.index') }}" style="secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('pemutu.mykpi.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -54,9 +54,7 @@
                         />
                         @if($kpi->attachment)
                             <div class="mt-2">
-                                <a href="{{ asset('storage/' . $kpi->attachment) }}" target="_blank" class="btn btn-sm btn-ghost-info">
-                                    <i class="ti ti-download me-1"></i> Lihat Lampiran Saat Ini
-                                </a>
+                                <x-tabler.button href="{{ asset('storage/' . $kpi->attachment) }}" target="_blank" class="btn-sm btn-ghost-info" icon="ti ti-download" text="Lihat Lampiran Saat Ini" />
                             </div>
                         @endif
                     </div>
@@ -64,7 +62,7 @@
             </div>
 
             <div class="card-footer text-end">
-                <x-tabler.button type="submit" style="primary" text="Simpan & Ajukan" />
+                <x-tabler.button type="submit" class="btn-primary" text="Simpan & Ajukan" />
             </div>
         </form>
     </div>

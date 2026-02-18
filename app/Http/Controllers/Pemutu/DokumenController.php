@@ -196,23 +196,7 @@ class DokumenController extends Controller
                         return '<span class="text-muted">-</span>';
                     })
                     ->addColumn('action', function ($row) use ($dokumen) {
-                        $editUrl    = route('pemutu.dok-subs.edit', $row);
-                        $deleteUrl  = route('pemutu.dok-subs.destroy', $row);
-                        $detailUrl  = route('pemutu.dok-subs.show', $row);
-                        $modalTitle = in_array($dokumen->jenis, ['renop']) ? 'Edit Kegiatan' : 'Edit Sub Standar';
-
-                        return '
-                            <div class="btn-group btn-group-sm">
-                                <a href="' . $detailUrl . '" class="btn btn-icon btn-ghost-info" title="Detail">
-                                    <i class="ti ti-eye"></i>
-                                </a>
-                                <button type="button" class="btn btn-icon btn-ghost-primary ajax-modal-btn" data-url="' . $editUrl . '" data-modal-title="' . $modalTitle . '" title="Edit">
-                                    <i class="ti ti-pencil"></i>
-                                </button>
-                                <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus?" data-text="Poin ini akan dihapus permanen.">
-                                    <i class="ti ti-trash"></i>
-                                </button>
-                            </div>';
+                        return view('pages.pemutu.dok-subs._action', compact('row'))->render();
                     })
                     ->rawColumns(['judul', 'jumlah_turunan', 'action'])
                     ->make(true);
@@ -267,22 +251,7 @@ class DokumenController extends Controller
                         return $html;
                     })
                     ->addColumn('action', function ($row) {
-                        $editUrl   = route('pemutu.dokumens.edit', $row);
-                        $deleteUrl = route('pemutu.dokumens.destroy', $row);
-                        $detailUrl = route('pemutu.dokumens.show', $row);
-
-                        return '
-                            <div class="btn-group btn-group-sm">
-                                <a href="' . $detailUrl . '" class="btn btn-icon btn-ghost-info" title="Detail">
-                                    <i class="ti ti-eye"></i>
-                                </a>
-                                <button type="button" class="btn btn-icon btn-ghost-primary ajax-modal-btn" data-url="' . $editUrl . '" data-modal-title="Edit Dokumen" title="Edit">
-                                    <i class="ti ti-pencil"></i>
-                                </button>
-                                <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus?" data-text="Dokumen ini akan dihapus permanen.">
-                                    <i class="ti ti-trash"></i>
-                                </button>
-                            </div>';
+                        return view('pages.pemutu.dokumens._action', compact('row'))->render();
                     })
                     ->rawColumns(['judul', 'jumlah_turunan', 'action'])
                     ->make(true);

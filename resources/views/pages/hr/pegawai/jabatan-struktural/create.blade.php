@@ -45,8 +45,8 @@
                     </div>
                 </div>
                 <div class="card-footer text-end">
-                    <a href="{{ route('hr.pegawai.show', $pegawai->pegawai_id) }}" class="btn btn-link link-secondary">Batal</a>
-                    <button type="submit" class="btn btn-primary">Ajukan Perubahan</button>
+                    <x-tabler.button href="{{ route('hr.pegawai.show', $pegawai->pegawai_id) }}" class="btn-link link-secondary" text="Batal" />
+                    <x-tabler.button type="submit" class="btn-primary" text="Ajukan Perubahan" />
                 </div>
             </form>
         </div>

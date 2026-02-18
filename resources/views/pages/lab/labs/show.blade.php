@@ -125,9 +125,7 @@
                                                 <div class="text-muted small">{{ round($media->size / 1024, 2) }} KB</div>
                                             </div>
                                         </div>
-                                        <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-icon btn-sm btn-ghost-primary" title="Download">
-                                            <i class="ti ti-download"></i>
-                                        </a>
+                                        <x-tabler.button :href="$media->getUrl()" target="_blank" class="btn-icon btn-sm btn-ghost-primary" title="Download" icon="ti ti-download" />
                                     </div>
                                 @endforeach
                             </div>
@@ -260,66 +258,50 @@
 
 @push('modals')
     <!-- Modal Add Team -->
-    <div class="modal modal-blur fade" id="modalTeamAdd" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Anggota Tim</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('lab.labs.teams.store', $lab->encrypted_lab_id) }}" method="POST" class="lab-assignment-form" id="formTeamAdd">
-                        @csrf
-                        <x-tabler.form-select class="select2-user" name="user_id" label="Pilih User" required="true" style="width: 100%;" />
-                        <div class="mb-3">
-                            <x-tabler.form-input name="jabatan" label="Jabatan" placeholder="Misal: Teknisi" />
-                        </div>
-                        <div class="mb-3">
-                            <x-tabler.form-input type="date" name="tanggal_mulai" label="Tanggal Mulai" value="{{ date('Y-m-d') }}" />
-                        </div>
-                        <div class="modal-footer">
-                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                            <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan" />
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <x-tabler.form-modal
+        id="modalTeamAdd"
+        id_form="formTeamAdd"
+        title="Tambah Anggota Tim"
+        route="{{ route('lab.labs.teams.store', $lab->encrypted_lab_id) }}"
+        method="POST"
+        size="modal-lg"
+        submitText="Simpan"
+        class="lab-assignment-form"
+    >
+        <x-tabler.form-select class="select2-user" name="user_id" label="Pilih User" required="true" style="width: 100%;" />
+        <div class="mb-3">
+            <x-tabler.form-input name="jabatan" label="Jabatan" placeholder="Misal: Teknisi" />
         </div>
-    </div>
+        <div class="mb-3">
+            <x-tabler.form-input type="date" name="tanggal_mulai" label="Tanggal Mulai" value="{{ date('Y-m-d') }}" />
+        </div>
+    </x-tabler.form-modal>
 
     <!-- Modal Add Inventaris -->
-    <div class="modal modal-blur fade" id="modalInventarisAdd" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Inventaris</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('lab.labs.inventaris.store', $lab->encrypted_lab_id) }}" method="POST" class="lab-assignment-form" id="formInventarisAdd">
-                        @csrf
-                        <x-tabler.form-select class="select2-inventaris" name="inventaris_id" label="Nama Alat" required="true" style="width: 100%;" />
-                        <div class="mb-3">
-                            <x-tabler.form-input name="no_series" label="Nomor Seri" required="true" />
-                        </div>
-                        <div class="mb-3">
-                            <x-tabler.form-input type="date" name="tanggal_penempatan" label="Tanggal Penempatan" value="{{ date('Y-m-d') }}" required="true" />
-                        </div>
-                        <x-tabler.form-select name="status" label="Status" value="active">
-                            <option value="active" selected>Active</option>
-                            <option value="moved">Moved</option>
-                            <option value="inactive">Inactive</option>
-                        </x-tabler.form-select>
-                        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" />
-                        <div class="modal-footer">
-                            <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                            <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan" />
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <x-tabler.form-modal
+        id="modalInventarisAdd"
+        id_form="formInventarisAdd"
+        title="Tambah Inventaris"
+        route="{{ route('lab.labs.inventaris.store', $lab->encrypted_lab_id) }}"
+        method="POST"
+        size="modal-lg"
+        submitText="Simpan"
+        class="lab-assignment-form"
+    >
+        <x-tabler.form-select class="select2-inventaris" name="inventaris_id" label="Nama Alat" required="true" style="width: 100%;" />
+        <div class="mb-3">
+            <x-tabler.form-input name="no_series" label="Nomor Seri" required="true" />
         </div>
-    </div>
+        <div class="mb-3">
+            <x-tabler.form-input type="date" name="tanggal_penempatan" label="Tanggal Penempatan" value="{{ date('Y-m-d') }}" required="true" />
+        </div>
+        <x-tabler.form-select name="status" label="Status" value="active">
+            <option value="active" selected>Active</option>
+            <option value="moved">Moved</option>
+            <option value="inactive">Inactive</option>
+        </x-tabler.form-select>
+        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" />
+    </x-tabler.form-modal>
 @endpush
 
 @push('scripts')

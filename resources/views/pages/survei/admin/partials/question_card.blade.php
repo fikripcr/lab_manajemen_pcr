@@ -17,13 +17,9 @@
                             </span>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-icon btn-ghost-primary" 
-                                    onclick="$('.static-view-{{ $pertanyaan->id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->id }}').removeClass('d-none');">
-                                <i class="ti ti-edit"></i>
-                            </button>
-                            <button class="btn btn-icon btn-ghost-danger" onclick="deletePertanyaan({{ $pertanyaan->id }})">
-                                <i class="ti ti-trash"></i>
-                            </button>
+                            <x-tabler.button class="btn-icon btn-ghost-primary" 
+                                    onclick="$('.static-view-{{ $pertanyaan->id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->id }}').removeClass('d-none');" icon="ti ti-edit" />
+                            <x-tabler.button class="btn-icon btn-ghost-danger" onclick="deletePertanyaan({{ $pertanyaan->id }})" icon="ti ti-trash" />
                         </div>
                     </div>
                     <div class="fw-bold text-dark fs-3 mb-1">{{ $pertanyaan->teks_pertanyaan }}</div>
@@ -45,9 +41,7 @@
                 <div class="edit-view-{{ $pertanyaan->id }} d-none">
                     <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
                          <div class="fw-bold text-primary">Edit Soal #{{ $pertanyaan->urutan }}</div>
-                         <button class="btn btn-primary" onclick="window.savePertanyaan({{ $pertanyaan->id }})">
-                             <i class="ti ti-check me-1"></i>Selesai
-                         </button>
+                         <x-tabler.button class="btn-primary" onclick="window.savePertanyaan({{ $pertanyaan->id }})" icon="ti ti-check" text="Selesai" />
                     </div>
 
                     <div class="mb-3">
@@ -116,15 +110,11 @@
                                             @endforeach
                                         </select>
                                     @endif
-                                    <button class="btn btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave({{ $pertanyaan->id }});">
-                                        <i class="ti ti-x"></i>
-                                    </button>
+                                    <x-tabler.button class="btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave({{ $pertanyaan->id }});" icon="ti ti-x" />
                                 </div>
                             @endforeach
                         </div>
-                        <button class="btn btn-ghost-primary" onclick="addOpsi({{ $pertanyaan->id }})">
-                            <i class="ti ti-plus me-1"></i>Tambah Opsi
-                        </button>
+                        <x-tabler.button class="btn-ghost-primary" onclick="addOpsi({{ $pertanyaan->id }})" icon="ti ti-plus" text="Tambah Opsi" />
                     </div>
                     @endif
 

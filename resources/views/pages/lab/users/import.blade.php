@@ -24,15 +24,8 @@
                                 <h4 class="alert-title">Petunjuk Import Pengguna</h4>
                                 <div class="text-muted">
                                     Gunakan format file Excel (.xlsx, .xls) atau CSV dengan struktur kolom sebagai berikut:
-                                    <ul class="mt-2 mb-2">
-                                        <li><strong>Nama:</strong> Nama lengkap pengguna</li>
-                                        <li><strong>Email:</strong> Alamat email pengguna (unik)</li>
-                                        <li><strong>Password:</strong> Sandi pengguna (opsional, akan di-generate jika kosong)</li>
-                                        <li><strong>Role:</strong> Nama role pengguna (contoh: admin, dosen, mahasiswa, dll)</li>
                                     </ul>
-                                    <a href="{{ Vite::asset('resources/assets/templates/template_import_user.xlsx') }}" class="btn btn-sm btn-outline-info">
-                                        <i class="ti ti-download me-1"></i> Download Template
-                                    </a>
+                                    <x-tabler.button :href="Vite::asset('resources/assets/templates/template_import_user.xlsx')" class="btn-sm btn-outline-info" icon="ti ti-download" text="Download Template" />
                                 </div>
                             </div>
                         </div>

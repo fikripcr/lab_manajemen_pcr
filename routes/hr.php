@@ -20,7 +20,7 @@ use App\Http\Controllers\Hr\RiwayatJabFungsionalController;
 use App\Http\Controllers\Hr\RiwayatJabStrukturalController;
 use App\Http\Controllers\Hr\RiwayatPendidikanController;
 use App\Http\Controllers\Hr\RiwayatPenugasanController;
-use App\Http\Controllers\Hr\RiwayatStatAktifitasController; // Check if this is correct, list_dir showed StatusAktifitasController
+use App\Http\Controllers\Hr\RiwayatStatAktifitasController;
 use App\Http\Controllers\Hr\RiwayatStatPegawaiController;
 use App\Http\Controllers\Hr\StatusAktifitasController;
 use App\Http\Controllers\Hr\StatusPegawaiController;
@@ -80,8 +80,8 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
 
         // Single-Value State Changes (Request Change) - These are "Riwayat" lists too, so they need index if we tab them.
         // Status Pegawai
-        Route::get('status-pegawai', [\App\Http\Controllers\Hr\RiwayatStatPegawaiController::class, 'index'])->name('status-pegawai.index');
-        Route::get('status-pegawai/change', [\App\Http\Controllers\Hr\RiwayatStatPegawaiController::class, 'create'])->name('status-pegawai.create');
+        Route::get('status-pegawai', [RiwayatStatPegawaiController::class, 'index'])->name('status-pegawai.index');
+        Route::get('status-pegawai/change', [RiwayatStatPegawaiController::class, 'create'])->name('status-pegawai.create');
         Route::post('status-pegawai/change', [RiwayatStatPegawaiController::class, 'store'])->name('status-pegawai.store');
 
         // Status Aktifitas
@@ -90,8 +90,8 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::post('status-aktifitas/change', [RiwayatStatAktifitasController::class, 'store'])->name('status-aktifitas.store');
 
         // Jabatan Fungsional
-        Route::get('jabatan-fungsional', [\App\Http\Controllers\Hr\RiwayatJabFungsionalController::class, 'index'])->name('jabatan-fungsional.index');
-        Route::get('jabatan-fungsional/change', [\App\Http\Controllers\Hr\RiwayatJabFungsionalController::class, 'create'])->name('jabatan-fungsional.create');
+        Route::get('jabatan-fungsional', [RiwayatJabFungsionalController::class, 'index'])->name('jabatan-fungsional.index');
+        Route::get('jabatan-fungsional/change', [RiwayatJabFungsionalController::class, 'create'])->name('jabatan-fungsional.create');
         Route::post('jabatan-fungsional/change', [RiwayatJabFungsionalController::class, 'store'])->name('jabatan-fungsional.store');
 
         // Jabatan Struktural (Replacing with Penugasan Index? Or keeping custom view?)
@@ -103,16 +103,16 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
 
         // Jabatan Struktural legacy/specific route if needed, otherwise we rely on Penugasan.
         // I will keep the change routes but maybe Redirect index?
-        Route::get('jabatan-struktural/change', [\App\Http\Controllers\Hr\RiwayatJabStrukturalController::class, 'create'])->name('jabatan-struktural.create');
+        Route::get('jabatan-struktural/change', [RiwayatJabStrukturalController::class, 'create'])->name('jabatan-struktural.create');
         Route::post('jabatan-struktural/change', [RiwayatJabStrukturalController::class, 'store'])->name('jabatan-struktural.store');
 
         // Penugasan (Kepala Prodi, Wadir, Direktur, etc.)
-        Route::get('penugasan/create', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'create'])->name('penugasan.create');
+        Route::get('penugasan/create', [RiwayatPenugasanController::class, 'create'])->name('penugasan.create');
         Route::post('penugasan', [RiwayatPenugasanController::class, 'store'])->name('penugasan.store');
-        Route::get('penugasan/{penugasan}/edit', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'edit'])->name('penugasan.edit');
-        Route::put('penugasan/{penugasan}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'update'])->name('penugasan.update');
-        Route::delete('penugasan/{penugasan}', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'destroy'])->name('penugasan.destroy');
-        Route::post('penugasan/{penugasan}/end', [\App\Http\Controllers\Hr\RiwayatPenugasanController::class, 'endAssignment'])->name('penugasan.end');
+        Route::get('penugasan/{penugasan}/edit', [RiwayatPenugasanController::class, 'edit'])->name('penugasan.edit');
+        Route::put('penugasan/{penugasan}', [RiwayatPenugasanController::class, 'update'])->name('penugasan.update');
+        Route::delete('penugasan/{penugasan}', [RiwayatPenugasanController::class, 'destroy'])->name('penugasan.destroy');
+        Route::post('penugasan/{penugasan}/end', [RiwayatPenugasanController::class, 'endAssignment'])->name('penugasan.end');
 
         // File Pegawai
         Route::get('files/data', [FilePegawaiController::class, 'index'])->name('files.data');

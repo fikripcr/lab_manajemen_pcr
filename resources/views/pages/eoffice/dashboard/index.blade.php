@@ -5,10 +5,7 @@
 <x-tabler.page-header title="Dashboard E-Office" pretitle="Sistem Layanan Digital">
     <x-slot:actions>
         <div class="btn-group">
-            <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                <i class="ti ti-calendar me-1"></i>
-                {{ now()->format('F Y') }}
-            </button>
+            <x-tabler.button class="btn-sm dropdown-toggle" data-bs-toggle="dropdown" icon="ti ti-calendar" text="{{ now()->format('F Y') }}" />
             <div class="dropdown-menu">
                 <a href="#" class="dropdown-item" onclick="changePeriod('today')">Hari Ini</a>
                 <a href="#" class="dropdown-item" onclick="changePeriod('week')">Minggu Ini</a>
@@ -129,7 +126,7 @@
                     <div class="card-header bg-transparent border-0 py-3 d-flex align-items-center">
                         <h3 class="card-title fw-bold m-0"><i class="ti ti-activity me-2 text-primary"></i> Aktivitas Terbaru</h3>
                         <div class="ms-auto">
-                            <a href="{{ route('eoffice.layanan.index') }}" class="btn btn-ghost-secondary btn-sm">Lihat Semua</a>
+                            <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-ghost-secondary btn-sm" text="Lihat Semua" />
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -175,9 +172,7 @@
                                         {{ $activity->created_at->diffForHumans() }}
                                     </td>
                                     <td>
-                                        <a href="{{ route('eoffice.layanan.show', $activity->layanan_id) }}" class="btn btn-ghost-primary btn-icon btn-sm">
-                                            <i class="ti ti-eye"></i>
-                                        </a>
+                                        <x-tabler.button href="{{ route('eoffice.layanan.show', $activity->layanan_id) }}" class="btn-ghost-primary btn-icon btn-sm" icon="ti ti-eye" />
                                     </td>
                                 </tr>
                                 @empty

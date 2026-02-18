@@ -18,9 +18,7 @@
                 </div>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('lab.jadwal.assignments.index', encryptId($jadwal->jadwal_kuliah_id)) }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-2"></i> Kembali
-                </a>
+                <x-tabler.button type="back" :href="route('lab.jadwal.assignments.index', encryptId($jadwal->jadwal_kuliah_id))" />
             </div>
         </div>
     </div>
@@ -60,7 +58,7 @@
 
                         </div>
                         <div class="card-footer text-end">
-                            <button type="submit" class="btn btn-primary">Simpan Assignment</button>
+                            <x-tabler.button type="submit" class="btn-primary" text="Simpan Assignment" />
                         </div>
                     </div>
                 </form>

@@ -18,48 +18,18 @@
                     <form action="{{ route('lab.labs.store') }}" method="POST" enctype="multipart/form-data" class="ajax-form">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="name">Lab Name</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input name="name" placeholder="Computer Lab A" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input name="name" label="Lab Name" placeholder="Computer Lab A" required />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="location">Location</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input name="location" placeholder="Building A, Floor 2" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input name="location" label="Location" placeholder="Building A, Floor 2" required />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="capacity">Capacity</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="number" name="capacity" placeholder="30" min="1" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="number" name="capacity" label="Capacity" placeholder="30" min="1" required />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="description">Description</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-textarea type="editor" id="description" name="description" :value="old('description')" height="300" class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-textarea type="editor" id="description" name="description" label="Description" :value="old('description')" height="300" />
 
                         <!-- Media Upload Section -->
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Lab Images</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="file" name="lab_images[]" id="lab_images" class="filepond-input mb-0" multiple data-allow-multiple="true" accept="image/*" help="Upload photos of the lab (multiple allowed)." />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="file" name="lab_images[]" id="lab_images" label="Lab Images" class="filepond-input" multiple data-allow-multiple="true" accept="image/*" help="Upload photos of the lab (multiple allowed)." />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label">Attachments</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="file" name="lab_attachments[]" id="lab_attachments" class="filepond-input mb-0" multiple data-allow-multiple="true" help="Upload documents or other attachments (multiple allowed)." />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="file" name="lab_attachments[]" id="lab_attachments" label="Attachments" class="filepond-input" multiple data-allow-multiple="true" help="Upload documents or other attachments (multiple allowed)." />
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">

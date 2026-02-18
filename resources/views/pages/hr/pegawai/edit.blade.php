@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Edit Data Pegawai" pretitle="Manajemen Kepegawaian">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) }}" style="secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

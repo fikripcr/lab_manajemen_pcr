@@ -4,12 +4,8 @@
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
         <h4 class="fw-bold py-3 mb-0">Semester Details</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('semesters.edit', $semester->encrypted_semester_id) }}" class="btn btn-primary">
-                <i class="bx bx-edit me-1"></i> Edit
-            </a>
-            <a href="{{ route('semesters.index') }}" class="btn btn-secondary">
-                <i class="bx bx-arrow-back me-1"></i> Back to List
-            </a>
+            <x-tabler.button :href="route('semesters.edit', $semester->encrypted_semester_id)" class="btn-primary" icon="bx bx-edit" text="Edit" />
+            <x-tabler.button :href="route('semesters.index')" class="btn-secondary" icon="bx bx-arrow-back" text="Back to List" />
         </div>
     </div>
 
@@ -56,9 +52,7 @@
                         <form method="POST" action="{{ route('semesters.destroy', $semester->encrypted_semester_id) }}">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this semester?')">
-                                <i class="bx bx-trash me-1"></i> Delete Semester
-                            </button>
+                            <x-tabler.button type="submit" class="btn-danger" icon="bx bx-trash" text="Delete Semester" onclick="return confirm('Are you sure you want to delete this semester?')" />
                         </form>
                     </div>
                 </div>

@@ -24,7 +24,7 @@ class Permission extends SpatiePermission implements Searchable
     ];
 
     protected $casts = [
-        'id' => 'string',
+        // 'id' => 'string',
     ];
 
     /**

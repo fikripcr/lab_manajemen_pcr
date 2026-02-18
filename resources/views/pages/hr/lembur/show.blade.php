@@ -112,15 +112,9 @@
                     </div>
                     <x-tabler.form-textarea name="keterangan" label="Keterangan / Komentar" rows="3" placeholder="Tambahkan catatan jika ada..." />
                     <div class="btn-list">
-                        <button type="submit" name="status" value="approved" class="btn btn-success" onclick="this.form.status.value='approved'">
-                            <i class="ti ti-check me-2"></i> Terima Pengajuan
-                        </button>
-                        <button type="submit" name="status" value="pending" class="btn btn-warning" onclick="this.form.status.value='pending'">
-                            <i class="ti ti-clock me-2"></i> Tangguhkan
-                        </button>
-                        <button type="submit" name="status" value="rejected" class="btn btn-danger" onclick="this.form.status.value='rejected'">
-                            <i class="ti ti-x me-2"></i> Tolak Pengajuan
-                        </button>
+                        <x-tabler.button type="submit" name="status" value="approved" class="btn-success" onclick="this.form.status.value='approved'" icon="ti ti-check" text="Terima Pengajuan" />
+                        <x-tabler.button type="submit" name="status" value="pending" class="btn-warning" onclick="this.form.status.value='pending'" icon="ti ti-clock" text="Tangguhkan" />
+                        <x-tabler.button type="submit" name="status" value="rejected" class="btn-danger" onclick="this.form.status.value='rejected'" icon="ti ti-x" text="Tolak Pengajuan" />
                         
                         <!-- Hidden input for status default value handling -->
                         <input type="hidden" name="status" id="approval_status">

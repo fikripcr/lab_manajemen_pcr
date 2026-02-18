@@ -19,10 +19,7 @@
                     <p class="text-muted">Anda belum memiliki pendaftaran aktif. Silakan mulai pendaftaran Anda sekarang.</p>
                     @if($periodeAktif)
                         <div class="mt-3">
-                            <a href="{{ route('pmb.camaba.register') }}" class="btn btn-primary btn-lg">
-                                <i class="ti ti-user-plus me-2"></i>
-                                Mulai Pendaftaran ({{ $periodeAktif->nama_periode }})
-                            </a>
+                            <x-tabler.button href="{{ route('pmb.camaba.register') }}" class="btn-primary btn-lg" icon="ti ti-user-plus" text="Mulai Pendaftaran ({{ $periodeAktif->nama_periode }})" />
                         </div>
                     @else
                         <div class="alert alert-warning mt-3">
@@ -126,55 +123,7 @@
         </div>
     </div>
 
-    {{-- Action Buttons --}}
-    <div class="row row-cards">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Aksi Cepat</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row g-2">
-                        {{-- Upload Documents --}}
-                        <div class="col-md-6 col-lg-3">
-                            <a href="{{ route('pmb.camaba.upload') }}" class="btn btn-outline-primary w-100">
-                                <i class="ti ti-upload me-2"></i>
-                                Upload Dokumen
-                            </a>
-                        </div>
 
-                        {{-- Payment --}}
-                        @if(!$pendaftaran->pembayaran->where('jenis_bayar', 'Formulir')->where('status_verifikasi', 'Lunas')->first())
-                            <div class="col-md-6 col-lg-3">
-                                <a href="{{ route('pmb.camaba.payment') }}" class="btn btn-outline-success w-100">
-                                    <i class="ti ti-cash me-2"></i>
-                                    Konfirmasi Pembayaran
-                                </a>
-                            </div>
-                        @endif
-
-                        {{-- Exam Card --}}
-                        @if(in_array($pendaftaran->status_terkini, ['Siap_Ujian', 'Selesai_Ujian']))
-                            <div class="col-md-6 col-lg-3">
-                                <a href="{{ route('pmb.camaba.exam-card') }}" class="btn btn-outline-info w-100">
-                                    <i class="ti ti-id me-2"></i>
-                                    Kartu Ujian
-                                </a>
-                            </div>
-                        @endif
-
-                        {{-- View Details --}}
-                        <div class="col-md-6 col-lg-3">
-                            <a href="{{ route('pmb.pendaftaran.show', $pendaftaran->hashid) }}" class="btn btn-outline-secondary w-100">
-                                <i class="ti ti-eye me-2"></i>
-                                Lihat Detail
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     {{-- Recent Notifications --}}
     <div class="row row-cards">

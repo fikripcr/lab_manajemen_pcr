@@ -20,33 +20,20 @@
                     <form action="{{ route('lab.labs.teams.store', $lab->encrypted_lab_id) }}" method="POST" class="ajax-form">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="user_id">Pilih User</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-select name="user_id" id="user_id" required class="mb-0" style="width: 100%;">
-                                    @if(old('user_id'))
-                                        @php
-                                            $selectedUser = \App\Models\User::find(decryptId(old('user_id')));
-                                        @endphp
-                                        @if($selectedUser)
-                                            <option value="{{ old('user_id') }}" selected>{{ $selectedUser->name }} ({{ $selectedUser->email }})</option>
-                                        @endif
-                                    @endif
-                                </x-tabler.form-select>
-                            </div>
-                        </div>
+                        <x-tabler.form-select name="user_id" id="user_id" label="Pilih User" required class="mb-3" style="width: 100%;">
+                            @if(old('user_id'))
+                                @php
+                                    $selectedUser = \App\Models\User::find(decryptId(old('user_id')));
+                                @endphp
+                                @if($selectedUser)
+                                    <option value="{{ old('user_id') }}" selected>{{ $selectedUser->name }} ({{ $selectedUser->email }})</option>
+                                @endif
+                            @endif
+                        </x-tabler.form-select>
 
-                        <div class="row mb-3">
-                            <div class="col-sm-10 offset-sm-2">
-                                <x-tabler.form-input name="jabatan" label="Jabatan (Opsional)" placeholder="Misal: PIC, Teknisi, dll" class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input name="jabatan" label="Jabatan (Opsional)" placeholder="Misal: PIC, Teknisi, dll" />
 
-                        <div class="row mb-3">
-                            <div class="col-sm-10 offset-sm-2">
-                                <x-tabler.form-input type="date" name="tanggal_mulai" label="Tanggal Mulai (Opsional)" class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="date" name="tanggal_mulai" label="Tanggal Mulai (Opsional)" />
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">

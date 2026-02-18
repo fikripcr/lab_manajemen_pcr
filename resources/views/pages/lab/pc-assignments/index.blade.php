@@ -23,12 +23,8 @@
                     </div>
                     <div class="col-auto ms-auto d-print-none">
                         <div class="btn-list">
-                            <a href="{{ route('lab.jadwal.index') }}" class="btn btn-secondary">
-                                <i class="bx bx-arrow-back me-2"></i> Kembali
-                            </a>
-                            <a href="{{ route('lab.jadwal.assignments.create', encryptId($jadwal->jadwal_kuliah_id)) }}" class="btn btn-primary">
-                                <i class="bx bx-plus me-2"></i> Tambah Assignment
-                            </a>
+                            <x-tabler.button :href="route('lab.jadwal.index')" class="btn-secondary" icon="bx bx-arrow-back" text="Kembali" />
+                            <x-tabler.button :href="route('lab.jadwal.assignments.create', encryptId($jadwal->jadwal_kuliah_id))" class="btn-primary" icon="bx bx-plus" text="Tambah Assignment" />
                         </div>
                     </div>
                 </div>

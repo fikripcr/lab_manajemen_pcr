@@ -25,13 +25,9 @@
             </div>
 
             <div class="d-flex justify-content-center gap-3">
-                <a href="{{ route('pmb.camaba.dashboard') }}" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">
-                    <i class="ti ti-layout-dashboard me-2"></i> Kembali ke Dashboard
-                </a>
+                <x-tabler.button href="{{ route('pmb.camaba.dashboard') }}" class="btn-primary btn-lg px-5 rounded-pill shadow-sm" icon="ti ti-layout-dashboard" text="Kembali ke Dashboard" />
                 @if(auth()->user()->hasRole('admin'))
-                    <a href="{{ route('cbt.dashboard') }}" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">
-                        <i class="ti ti-settings me-2"></i> Admin Panel
-                    </a>
+                    <x-tabler.button href="{{ route('cbt.dashboard') }}" class="btn-outline-secondary btn-lg px-5 rounded-pill" icon="ti ti-settings" text="Admin Panel" />
                 @endif
             </div>
         </div>

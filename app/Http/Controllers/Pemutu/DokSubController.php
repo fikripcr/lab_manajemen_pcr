@@ -112,18 +112,7 @@ class DokSubController extends Controller
                         ';
                     })
                     ->addColumn('action', function ($row) {
-                        $editUrl   = route('pemutu.dok-subs.edit', $row);
-                        $deleteUrl = route('pemutu.dok-subs.destroy', $row);
-
-                        return '
-                            <div class="btn-list flex-nowrap">
-                                <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-outline-primary" title="Edit Content">
-                                    <i class="ti ti-pencil"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-icon btn-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus Sub-Dokumen?" data-text="Data ini akan dihapus permanen.">
-                                    <i class="ti ti-trash"></i>
-                                </button>
-                            </div>';
+                        return view('pages.pemutu.dok-subs._action', compact('row'))->render();
                     })
                     ->rawColumns(['seq', 'judul', 'action'])
                     ->make(true);

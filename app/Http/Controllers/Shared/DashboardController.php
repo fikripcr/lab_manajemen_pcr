@@ -14,11 +14,11 @@ class DashboardController extends Controller
             ->orderBy('seq', 'asc')
             ->get();
 
-        // 5 Latest News
+        // 4 Latest News
         $recentNews = Pengumuman::where('is_published', true)
             ->where('jenis', 'artikel_berita')
             ->orderBy('created_at', 'desc')
-            ->limit(5)
+            ->limit(4)
             ->get();
 
         // 5 Latest Announcements for Timeline

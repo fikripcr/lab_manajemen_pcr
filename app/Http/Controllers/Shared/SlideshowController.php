@@ -20,7 +20,23 @@ class SlideshowController extends Controller
 
     public function index()
     {
-        return view('pages.shared.slideshow.index');
+        $slideshows = Slideshow::orderBy('seq')->get();
+        return view('pages.shared.slideshow.index', compact('slideshows'));
+    }
+
+    public function reorder(Request $request)
+    {
+        $order = $request->input('order');
+        if ($order && is_array($order)) {
+            foreach ($order as $index => $hashid) {
+                $id = decryptIdIfEncrypted($hashid, false);
+                if ($id) {
+                    Slideshow::where('id', $id)->update(['seq' => $index + 1]);
+                }
+            }
+            return jsonSuccess('Urutan slideshow berhasil diperbarui.');
+        }
+        return jsonError('Data urutan tidak valid.');
     }
 
     public function paginate(Request $request)

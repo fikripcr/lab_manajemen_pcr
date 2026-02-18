@@ -63,20 +63,14 @@
                         />
                     </div>
                     <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label required" for="orgunit_id">Program Studi</label>
-                            <select name="orgunit_id" id="orgunit_id" class="form-select @error('orgunit_id') is-invalid @enderror" required>
-                                <option value="">-- Pilih Program Studi --</option>
-                                @foreach($prodiList as $prodi)
-                                    <option value="{{ $prodi->orgunit_id }}" {{ old('orgunit_id', $mahasiswa->orgunit_id) == $prodi->orgunit_id ? 'selected' : '' }}>
-                                        {{ $prodi->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('orgunit_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <x-tabler.form-select 
+                            name="orgunit_id" 
+                            label="Program Studi"
+                            :options="$prodiList->mapWithKeys(fn($prodi) => [$prodi->orgunit_id => $prodi->name])->toArray()"
+                            :selected="old('orgunit_id', $mahasiswa->orgunit_id)"
+                            placeholder="-- Pilih Program Studi --"
+                            required
+                        />
                     </div>
                 </div>
 

@@ -6,8 +6,6 @@ use App\Http\Requests\Shared\FAQRequest;
 use App\Models\Shared\FAQ;
 use App\Services\Shared\FAQService;
 use Exception;
-use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class FAQController extends Controller
 {
@@ -20,28 +18,8 @@ class FAQController extends Controller
 
     public function index()
     {
-        return view('pages.shared.faq.index');
-    }
-
-    public function paginate(Request $request)
-    {
-        $query = $this->FAQService->getFilteredQuery($request->all());
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->editColumn('is_active', function ($row) {
-                return $row->is_active
-                    ? '<span class="badge bg-success text-white">Aktif</span>'
-                    : '<span class="badge bg-secondary text-white">Draft</span>';
-            })
-            ->addColumn('action', function ($row) {
-                return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('shared.faq.edit', $row->hashid),
-                    'editModal' => true,
-                    'deleteUrl' => route('shared.faq.destroy', $row->hashid),
-                ])->render();
-            })
-            ->rawColumns(['is_active', 'action'])
-            ->make(true);
+        $faqs = FAQ::orderBy('category')->orderBy('seq')->get()->groupBy('category');
+        return view('pages.shared.faq.index', compact('faqs'));
     }
 
     public function create()

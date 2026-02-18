@@ -46,9 +46,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Informasi Meeting</h3>
                                 <div class="card-actions">
-                                    <a href="{{ route('Kegiatan.rapat.edit', $rapat) }}" class="btn btn-primary btn-sm">
-                                        <i class="ti ti-edit me-1"></i> Edit
-                                    </a>
+                                    <x-tabler.button href="{{ route('Kegiatan.rapat.edit', $rapat) }}" class="btn-primary btn-sm" icon="ti ti-edit" text="Edit" />
                                 </div>
                             </div>
                             <div class="card-body p-0">
@@ -292,65 +290,50 @@
     </div> {{-- Closing card-body --}}
 </div> {{-- Closing main card --}}
 {{-- MODAL: Tambah Agenda --}}
-<div class="modal modal-blur fade" id="modal-add-agenda" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <x-tabler.form-modal 
-                title="Tambah Agenda Rapat" 
-                :route="route('Kegiatan.rapat.agenda.store', $rapat) . '#tabs-agenda'"
-            >
-                <x-tabler.form-input name="judul_agenda" label="Judul Agenda" placeholder="Contoh: Pembahasan KPI 2024" required="true" />
-            </x-tabler.form-modal>
-        </div>
-    </div>
-</div>
+<x-tabler.form-modal 
+    id="modal-add-agenda"
+    title="Tambah Agenda Rapat" 
+    :route="route('Kegiatan.rapat.agenda.store', $rapat) . '#tabs-agenda'"
+>
+    <x-tabler.form-input name="judul_agenda" label="Judul Agenda" placeholder="Contoh: Pembahasan KPI 2024" required="true" />
+</x-tabler.form-modal>
 
 {{-- MODAL: Set Pejabat Rapat --}}
-<div class="modal modal-blur fade" id="modal-set-officials" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <x-tabler.form-modal 
-                title="Set Pejabat Rapat" 
-                :route="route('Kegiatan.rapat.update-officials', $rapat) . '#tabs-info'"
-            >
-                <x-tabler.form-select name="ketua_user_id" label="Ketua Rapat" type="select2" required="true" class="select2-modal">
-                    <option value="" selected disabled>Pilih Ketua Rapat</option>
-                    @foreach($rapat->pesertas as $peserta)
-                        <option value="{{ $peserta->user_id }}" {{ $rapat->ketua_user_id == $peserta->user_id ? 'selected' : '' }}>{{ $peserta->user->name }}</option>
-                    @endforeach
-                </x-tabler.form-select>
-                <x-tabler.form-select name="notulen_user_id" label="Notulen Rapat" type="select2" required="true" class="select2-modal">
-                    <option value="" selected disabled>Pilih Notulen Rapat</option>
-                    @foreach($rapat->pesertas as $peserta)
-                        <option value="{{ $peserta->user_id }}" {{ $rapat->notulen_user_id == $peserta->user_id ? 'selected' : '' }}>{{ $peserta->user->name }}</option>
-                    @endforeach
-                </x-tabler.form-select>
-            </x-tabler.form-modal>
-        </div>
-    </div>
-</div>
+<x-tabler.form-modal 
+    id="modal-set-officials"
+    title="Set Pejabat Rapat" 
+    :route="route('Kegiatan.rapat.update-officials', $rapat) . '#tabs-info'"
+>
+    <x-tabler.form-select name="ketua_user_id" label="Ketua Rapat" type="select2" required="true" class="select2-modal">
+        <option value="" selected disabled>Pilih Ketua Rapat</option>
+        @foreach($rapat->pesertas as $peserta)
+            <option value="{{ $peserta->user_id }}" {{ $rapat->ketua_user_id == $peserta->user_id ? 'selected' : '' }}>{{ $peserta->user->name }}</option>
+        @endforeach
+    </x-tabler.form-select>
+    <x-tabler.form-select name="notulen_user_id" label="Notulen Rapat" type="select2" required="true" class="select2-modal">
+        <option value="" selected disabled>Pilih Notulen Rapat</option>
+        @foreach($rapat->pesertas as $peserta)
+            <option value="{{ $peserta->user_id }}" {{ $rapat->notulen_user_id == $peserta->user_id ? 'selected' : '' }}>{{ $peserta->user->name }}</option>
+        @endforeach
+    </x-tabler.form-select>
+</x-tabler.form-modal>
 
 {{-- MODAL: Tambah Peserta Rapat --}}
-<div class="modal modal-blur fade" id="modal-add-participants" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <x-tabler.form-modal 
-                title="Tambah Peserta Rapat" 
-                :route="route('Kegiatan.rapat.participants.store', $rapat) . '#tabs-info'"
-            >
-                <div class="mb-3">
-                    <label class="form-label">Pilih Peserta (Bisa pilih banyak)</label>
-                    <select name="user_ids[]" class="form-select select2-modal-participants" multiple="multiple" data-placeholder="Pilih Peserta..." required>
-                            @foreach(\App\Models\User::all() as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                    </select>
-                </div>
-                <x-tabler.form-input name="jabatan" label="Jabatan/Peran (Opsional)" placeholder="Contoh: Peserta, Narasumber, dll" />
-            </x-tabler.form-modal>
-        </div>
+<x-tabler.form-modal 
+    id="modal-add-participants"
+    title="Tambah Peserta Rapat" 
+    :route="route('Kegiatan.rapat.participants.store', $rapat) . '#tabs-info'"
+>
+    <div class="mb-3">
+        <label class="form-label">Pilih Peserta (Bisa pilih banyak)</label>
+        <select name="user_ids[]" class="form-select select2-modal-participants" multiple="multiple" data-placeholder="Pilih Peserta..." required>
+                @foreach(\App\Models\User::all() as $user)
+                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                @endforeach
+        </select>
     </div>
-</div>
+    <x-tabler.form-input name="jabatan" label="Jabatan/Peran (Opsional)" placeholder="Contoh: Peserta, Narasumber, dll" />
+</x-tabler.form-modal>
 @endsection
 
 @push('scripts')

@@ -41,18 +41,12 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                                    <i class='ti ti-key me-2'></i>Change Password
-                                </button>
+                                <x-tabler.button type="button" class="btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal" icon="ti ti-key" text="Change Password" />
 
                                 @if(auth()->id() == $user->id)
-                                    <a href="{{ route('lab.users.edit', $user->encrypted_id) }}" class="btn btn-primary">
-                                        <i class='ti ti-edit me-2'></i>Edit Profile
-                                    </a>
+                                    <x-tabler.button :href="route('lab.users.edit', $user->encrypted_id)" class="btn-primary" icon="ti ti-edit" text="Edit Profile" />
                                 @else
-                                    <a href="{{ route('lab.users.edit', $user->encrypted_id) }}" class="btn btn-primary">
-                                        <i class='ti ti-edit me-2'></i>Edit User
-                                    </a>
+                                    <x-tabler.button :href="route('lab.users.edit', $user->encrypted_id)" class="btn-primary" icon="ti ti-edit" text="Edit User" />
                                 @endif
                             </div>
                         </div>
@@ -173,47 +167,35 @@
     </div>
 
     <!-- Change Password Modal -->
-    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="post" action="{{ route('password.update') }}">
-                    @csrf
-                    @method('put')
-                    <div class="modal-body">
-                        <x-tabler.form-input 
-                            type="password" 
-                            name="current_password" 
-                            label="Current Password" 
-                            required 
-                            autocomplete="current-password" 
-                        />
+    <x-tabler.form-modal
+        id="changePasswordModal"
+        title="Change Password"
+        route="{{ route('password.update') }}"
+        method="PUT"
+        submitText="Change Password"
+    >
+        <x-tabler.form-input 
+            type="password" 
+            name="current_password" 
+            label="Current Password" 
+            required 
+            autocomplete="current-password" 
+        />
 
-                        <x-tabler.form-input 
-                            type="password" 
-                            name="password" 
-                            label="New Password" 
-                            required 
-                            autocomplete="new-password" 
-                        />
+        <x-tabler.form-input 
+            type="password" 
+            name="password" 
+            label="New Password" 
+            required 
+            autocomplete="new-password" 
+        />
 
-                        <x-tabler.form-input 
-                            type="password" 
-                            name="password_confirmation" 
-                            label="Confirm New Password" 
-                            required 
-                            autocomplete="new-password" 
-                        />
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Change Password</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+        <x-tabler.form-input 
+            type="password" 
+            name="password_confirmation" 
+            label="Confirm New Password" 
+            required 
+            autocomplete="new-password" 
+        />
+    </x-tabler.form-modal>
 @endsection

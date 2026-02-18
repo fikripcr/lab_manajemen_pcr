@@ -1,32 +1,22 @@
 @if(request()->ajax())
-    <form class="ajax-form" action="{{ route('lab.inventaris.store') }}" method="POST">
-        @csrf
-        <div class="modal-header">
-            <h5 class="modal-title" id="modalTitle">Create New Inventory</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <x-tabler.flash-message />
+    <x-tabler.form-modal
+        title="Create New Inventory"
+        route="{{ route('lab.inventaris.store') }}"
+        method="POST"
+        submitText="Create Inventory"
+    >
+        <x-tabler.flash-message />
 
-            <div class="mb-3">
-                <x-tabler.form-select name="lab_id" label="Lab" :options="$labs->pluck('name', 'lab_id')->toArray()" selected="{{ old('lab_id') }}" placeholder="Select Lab" required />
-            </div>
+        <x-tabler.form-select name="lab_id" label="Lab" :options="$labs->pluck('name', 'lab_id')->toArray()" selected="{{ old('lab_id') }}" placeholder="Select Lab" required class="mb-3" />
 
-            <x-tabler.form-input name="nama_alat" label="Equipment Name" placeholder="e.g., Laptop, Microscope, etc." required />
+        <x-tabler.form-input name="nama_alat" label="Equipment Name" placeholder="e.g., Laptop, Microscope, etc." required />
 
-            <x-tabler.form-input name="jenis_alat" label="Type" placeholder="e.g., Electronic, Chemical, Equipment" required />
+        <x-tabler.form-input name="jenis_alat" label="Type" placeholder="e.g., Electronic, Chemical, Equipment" required />
 
-            <div class="mb-3">
-                <x-tabler.form-select name="kondisi_terakhir" label="Condition" :options="['Baik' => 'Good', 'Rusak Ringan' => 'Minor Damage', 'Rusak Berat' => 'Major Damage', 'Tidak Dapat Digunakan' => 'Cannot Be Used']" selected="{{ old('kondisi_terakhir') }}" placeholder="Select Condition" required />
-            </div>
+        <x-tabler.form-select name="kondisi_terakhir" label="Condition" :options="['Baik' => 'Good', 'Rusak Ringan' => 'Minor Damage', 'Rusak Berat' => 'Major Damage', 'Tidak Dapat Digunakan' => 'Cannot Be Used']" selected="{{ old('kondisi_terakhir') }}" placeholder="Select Condition" required class="mb-3" />
 
-            <x-tabler.form-input type="date" name="tanggal_pengecekan" label="Last Check Date" value="{{ date('Y-m-d') }}" required />
-        </div>
-        <div class="modal-footer">
-            <x-tabler.button type="cancel" data-bs-dismiss="modal" />
-            <x-tabler.button type="submit" text="Create Inventory" />
-        </div>
-    </form>
+        <x-tabler.form-input type="date" name="tanggal_pengecekan" label="Last Check Date" value="{{ date('Y-m-d') }}" required />
+    </x-tabler.form-modal>
 @else
     @extends('layouts.admin.app')
 
@@ -48,46 +38,19 @@
                         <form action="{{ route('lab.inventaris.store') }}" method="POST" class="ajax-form">
                             @csrf
 
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label required" for="lab_id">Lab</label>
-                                <div class="col-sm-10">
-                                    <x-tabler.form-select name="lab_id" :options="$labs->pluck('name', 'lab_id')->toArray()" selected="{{ old('lab_id') }}" placeholder="Select Lab" required class="mb-0" />
-                                </div>
-                            </div>
+                            <x-tabler.form-select name="lab_id" label="Lab" :options="$labs->pluck('name', 'lab_id')->toArray()" selected="{{ old('lab_id') }}" placeholder="Select Lab" required class="mb-3" />
 
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label required" for="nama_alat">Equipment Name</label>
-                                <div class="col-sm-10">
-                                    <x-tabler.form-input name="nama_alat" placeholder="e.g., Laptop, Microscope, etc." required class="mb-0" />
-                                </div>
-                            </div>
+                            <x-tabler.form-input name="nama_alat" label="Equipment Name" placeholder="e.g., Laptop, Microscope, etc." required />
 
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label required" for="jenis_alat">Type</label>
-                                <div class="col-sm-10">
-                                    <x-tabler.form-input name="jenis_alat" placeholder="e.g., Electronic, Chemical, Equipment" required class="mb-0" />
-                                </div>
-                            </div>
+                            <x-tabler.form-input name="jenis_alat" label="Type" placeholder="e.g., Electronic, Chemical, Equipment" required />
 
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label required" for="kondisi_terakhir">Condition</label>
-                                <div class="col-sm-10">
-                                    <x-tabler.form-select name="kondisi_terakhir" :options="['Baik' => 'Good', 'Rusak Ringan' => 'Minor Damage', 'Rusak Berat' => 'Major Damage', 'Tidak Dapat Digunakan' => 'Cannot Be Used']" selected="{{ old('kondisi_terakhir') }}" placeholder="Select Condition" required class="mb-0" />
-                                </div>
-                            </div>
+                            <x-tabler.form-select name="kondisi_terakhir" label="Condition" :options="['Baik' => 'Good', 'Rusak Ringan' => 'Minor Damage', 'Rusak Berat' => 'Major Damage', 'Tidak Dapat Digunakan' => 'Cannot Be Used']" selected="{{ old('kondisi_terakhir') }}" placeholder="Select Condition" required class="mb-3" />
 
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label required" for="tanggal_pengecekan">Last Check Date</label>
-                                <div class="col-sm-10">
-                                    <x-tabler.form-input type="date" name="tanggal_pengecekan" value="{{ date('Y-m-d') }}" required class="mb-0" />
-                                </div>
-                            </div>
+                            <x-tabler.form-input type="date" name="tanggal_pengecekan" label="Last Check Date" value="{{ date('Y-m-d') }}" required />
 
-                            <div class="row mt-4">
-                                <div class="col-sm-10 offset-sm-2">
-                                    <x-tabler.button type="submit" text="Create Inventory" />
-                                    <x-tabler.button type="cancel" :href="route('lab.inventaris.index')" />
-                                </div>
+                            <div class="mt-4">
+                                <x-tabler.button type="submit" text="Create Inventory" />
+                                <x-tabler.button type="cancel" :href="route('lab.inventaris.index')" />
                             </div>
                         </form>
                     </div>

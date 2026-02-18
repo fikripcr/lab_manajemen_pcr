@@ -48,12 +48,7 @@
                                 title="Download">
                                 <i class="ti ti-download fs-2"></i>
                             </a>
-                            <button type="button"
-                                    class="btn btn-action text-danger delete-backup"
-                                    data-filename="{{ $backup['name'] }}"
-                                    title="Delete">
-                                <i class="ti ti-trash fs-2"></i>
-                            </button>
+                            <x-tabler.button type="button" class="btn-action text-danger delete-backup" icon="ti ti-trash fs-2" icon-only="true" title="Delete" data-filename="{{ $backup['name'] }}" />
                         </td>
                     </tr>
                 @endforeach

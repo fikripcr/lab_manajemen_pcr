@@ -4,7 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Ubah Sasaran Kinerja" pretitle="KPI">
     <x-slot:actions>
-        <x-tabler.button type="back" :href="route('pemutu.kpi.index')" />
+        <x-tabler.button href="{{ route('pemutu.kpi.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

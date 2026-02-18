@@ -20,9 +20,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Halaman</h3>
                         <div class="card-actions">
-                            <button type="button" class="btn btn-icon btn-primary" id="btn-add-halaman" title="Tambah Halaman">
-                                <i class="ti ti-plus"></i>
-                            </button>
+                            <x-tabler.button type="button" class="btn-icon btn-primary" id="btn-add-halaman" title="Tambah Halaman" icon="ti ti-plus" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush" id="list-halaman">
@@ -68,9 +66,7 @@
                                 </div>
                                 <div class="card-actions">
                                     <div class="dropdown me-2">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                            <i class="ti ti-plus"></i> Tambah
-                                        </button>
+                                        <x-tabler.button class="btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" icon="ti ti-plus" text="Tambah" />
                                         <div class="dropdown-menu dropdown-menu-end">
                                             @foreach(['Teks_Singkat' => 'ti-text-size', 'Esai' => 'ti-align-left', 'Angka' => 'ti-123', 'Pilihan_Ganda' => 'ti-circle-dot', 'Kotak_Centang' => 'ti-checkbox', 'Dropdown' => 'ti-select', 'Skala_Linear' => 'ti-adjustments-horizontal', 'Tanggal' => 'ti-calendar', 'Upload_File' => 'ti-upload'] as $tipe => $icon)
                                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); addPertanyaan({{ $halaman->id }}, '{{ $tipe }}')">
@@ -103,25 +99,21 @@
 </div>
 
 <!-- Modal Edit Halaman -->
-<div class="modal modal-blur fade" id="modalEditHalaman" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Halaman</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="edit-halaman-id">
-                <x-tabler.form-input name="judul_halaman" label="Judul Halaman" id="edit-halaman-judul" placeholder="Judul Halaman" />
-                <x-tabler.form-textarea name="deskripsi_halaman" label="Keterangan" id="edit-halaman-deskripsi" rows="3" placeholder="Instruksi singkat untuk responden di halaman ini..." />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                <x-tabler.button type="submit" onclick="saveHalaman()" label="Simpan" />
-            </div>
-        </div>
-    </div>
-</div>
+<x-tabler.form-modal
+    id="modalEditHalaman"
+    title="Edit Halaman"
+    route="#"
+    id_form="formEditHalaman"
+>
+    <input type="hidden" id="edit-halaman-id">
+    <x-tabler.form-input name="judul_halaman" label="Judul Halaman" id="edit-halaman-judul" placeholder="Judul Halaman" />
+    <x-tabler.form-textarea name="deskripsi_halaman" label="Keterangan" id="edit-halaman-deskripsi" rows="3" placeholder="Instruksi singkat untuk responden di halaman ini..." />
+    
+    <x-slot:footer>
+        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="button" class="btn-primary ms-auto" onclick="window.saveHalaman()" text="Simpan" />
+    </x-slot:footer>
+</x-tabler.form-modal>
 
 @endsection
 

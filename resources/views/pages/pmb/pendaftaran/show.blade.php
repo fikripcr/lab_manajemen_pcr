@@ -8,9 +8,8 @@
                 <h2 class="page-title">Detail Pendaftaran: {{ $pendaftaran->no_pendaftaran }}</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <button type="button" class="btn btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Ubah Status Pendaftaran" data-url="{{ route('pmb.pendaftaran.update-status-form', $pendaftaran->encrypted_id) }}">
-                    <i class="ti ti-settings"></i> Ubah Status
-                </button>
+                <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-settings" text="Ubah Status" 
+                    data-modal-target="#modalAction" data-modal-title="Ubah Status Pendaftaran" data-url="{{ route('pmb.pendaftaran.update-status-form', $pendaftaran->encrypted_id) }}" />
             </div>
         </div>
     </div>
@@ -71,8 +70,9 @@
                                     </td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
-                                            <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="btn btn-sm btn-info">Lihat</a>
-                                            <button type="button" class="btn btn-sm btn-success ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Verifikasi Dokumen" data-url="{{ route('pmb.pendaftaran.verify-document-form', $doc->encrypted_id) }}">Verifikasi</button>
+                                            <x-tabler.button href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="btn-sm btn-info" text="Lihat" />
+                                            <x-tabler.button type="button" class="btn-sm btn-success ajax-modal-btn" text="Verifikasi" 
+                                                data-modal-target="#modalAction" data-modal-title="Verifikasi Dokumen" data-url="{{ route('pmb.pendaftaran.verify-document-form', $doc->encrypted_id) }}" />
                                         </div>
                                     </td>
                                 </tr>

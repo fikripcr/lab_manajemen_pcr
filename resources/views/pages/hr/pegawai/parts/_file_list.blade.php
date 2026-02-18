@@ -24,40 +24,32 @@
 </div>
 
 <!-- Modal Upload -->
-<div class="modal modal-blur fade" id="modal-upload-file" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form id="form-upload-file" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="pegawai_id" value="{{ $pegawai->hashid }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Unggah File Pegawai</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <x-tabler.form-select name="jenisfile_id" label="Kategori File" required="true">
-                            <option value="">Pilih Kategori...</option>
-                            @foreach(\App\Models\Hr\JenisFile::where('is_active', 1)->get() as $jenis)
-                                <option value="{{ $jenis->jenisfile_id }}">{{ $jenis->jenisfile }}</option>
-                            @endforeach
-                        </x-tabler.form-select>
-                    </div>
-                    <div class="mb-3">
-                        <x-tabler.form-input type="file" name="file" label="Pilih File" required="true" help="Maksimal 10MB (PDF, JPG, PNG, DOCX, dll)" />
-                    </div>
-                    <div class="mb-3">
-                        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" placeholder="Tambahkan catatan jika perlu..." />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>
-                    <x-tabler.button type="submit" style="primary" icon="ti ti-upload" text="Unggah Sekarang" />
-                </div>
-            </form>
-        </div>
+<x-tabler.form-modal
+    id="modal-upload-file"
+    id_form="form-upload-file"
+    title="Unggah File Pegawai"
+    route="#"
+    method="POST"
+    submitText="Unggah Sekarang"
+    submitIcon="ti-upload"
+    enctype="multipart/form-data"
+>
+    <input type="hidden" name="pegawai_id" value="{{ $pegawai->hashid }}">
+    <div class="mb-3">
+        <x-tabler.form-select name="jenisfile_id" label="Kategori File" required="true">
+            <option value="">Pilih Kategori...</option>
+            @foreach(\App\Models\Hr\JenisFile::where('is_active', 1)->get() as $jenis)
+                <option value="{{ $jenis->jenisfile_id }}">{{ $jenis->jenisfile }}</option>
+            @endforeach
+        </x-tabler.form-select>
     </div>
-</div>
+    <div class="mb-3">
+        <x-tabler.form-input type="file" name="file" label="Pilih File" required="true" help="Maksimal 10MB (PDF, JPG, PNG, DOCX, dll)" />
+    </div>
+    <div class="mb-3">
+        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" placeholder="Tambahkan catatan jika perlu..." />
+    </div>
+</x-tabler.form-modal>
 
 @push('js')
 <script>

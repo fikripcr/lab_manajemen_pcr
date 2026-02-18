@@ -38,28 +38,18 @@
                             <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
                         </div>
                         <div class="text-center">
-                            <button type="button" id="btnStartCamera" class="btn btn-primary">
-                                <i class="ti ti-camera me-2"></i>Aktifkan Kamera
-                            </button>
-                            <button type="button" id="btnCapturePhoto" class="btn btn-success" disabled>
-                                <i class="ti ti-photo me-2"></i>Ambil Foto
-                            </button>
+                            <x-tabler.button type="button" id="btnStartCamera" class="btn-primary" icon="ti ti-camera" text="Aktifkan Kamera" />
+                            <x-tabler.button type="button" id="btnCapturePhoto" class="btn-success" icon="ti ti-photo" text="Ambil Foto" disabled />
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <button type="button" id="btnToggleWebcam" class="btn btn-outline-secondary">
-                            <i class="ti ti-camera me-2"></i>Gunakan Webcam
-                        </button>
+                        <x-tabler.button type="button" id="btnToggleWebcam" class="btn-outline-secondary" icon="ti ti-camera" text="Gunakan Webcam" />
                     </div>
                     
                     <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="ti ti-upload me-2"></i>Upload Foto
-                        </button>
-                        <a href="{{ route('hr.pegawai.index') }}" class="btn btn-secondary">
-                            <i class="ti ti-arrow-left me-2"></i>Kembali
-                        </a>
+                        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-upload" text="Upload Foto" />
+                        <x-tabler.button href="{{ route('hr.pegawai.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
                     </div>
                 </form>
             </div>

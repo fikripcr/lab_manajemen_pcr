@@ -24,47 +24,42 @@
 {{-- KPI Cards --}}
 <div class="row row-cards mb-4">
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <a href="{{ route('pmb.pendaftaran.index') }}" class="card card-link">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Total Pendaftar</div>
-                    <div class="ms-auto lh-1">
-                        <div class="dropdown">
-                            <a class="dropdown-toggle text-muted" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Time</a>
-                        </div>
-                    </div>
+                    <div class="subheader text-uppercase">Total Pendaftar</div>
                 </div>
                 <div class="h1 mb-3">{{ $stats['total_pendaftar'] }}</div>
                 <div class="d-flex mb-2">
-                    <div>Hari ini</div>
+                    <div class="text-secondary">Pendaftaran baru hari ini</div>
                     <div class="ms-auto">
-                        <span class="text-green">
-                            <i class="ti ti-trending-up"></i> +{{ $stats['pendaftar_hari_ini'] }}
+                        <span class="text-green d-inline-flex align-items-center lh-1">
+                            +{{ $stats['pendaftar_hari_ini'] }} <i class="ti ti-trending-up ms-1"></i>
                         </span>
                     </div>
                 </div>
                 <div class="progress progress-sm">
-                    <div class="progress-bar bg-primary" style="width: 85%"></div>
+                    <div class="progress-bar bg-primary" style="width: 100%"></div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <a href="{{ route('pmb.pendaftaran.index') }}?status=Menunggu_Verifikasi_Berkas" class="card card-link">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Menunggu Verifikasi</div>
+                    <div class="subheader text-uppercase">Menunggu Verifikasi</div>
                     <div class="ms-auto lh-1">
                         <span class="badge bg-yellow text-white">{{ $stats['menunggu_verifikasi'] }}</span>
                     </div>
                 </div>
                 <div class="h1 mb-3">{{ $stats['menunggu_verifikasi'] }}</div>
                 <div class="d-flex mb-2">
-                    <div>Perlu proses</div>
+                    <div class="text-secondary">Perlu verifikasi segera</div>
                     <div class="ms-auto">
-                        <span class="text-yellow">
-                            <i class="ti ti-clock"></i> Pending
+                        <span class="text-yellow d-inline-flex align-items-center lh-1">
+                            <i class="ti ti-clock ms-1"></i>
                         </span>
                     </div>
                 </div>
@@ -72,24 +67,24 @@
                     <div class="progress-bar bg-yellow" style="width: {{ $stats['total_pendaftar'] > 0 ? ($stats['menunggu_verifikasi'] / $stats['total_pendaftar']) * 100 : 0 }}%"></div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <a href="{{ route('pmb.pendaftaran.index') }}?status=Siap_Ujian" class="card card-link">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Siap Ujian</div>
+                    <div class="subheader text-uppercase">Siap Ujian</div>
                     <div class="ms-auto lh-1">
                         <span class="badge bg-blue text-white">{{ $stats['siap_ujian'] }}</span>
                     </div>
                 </div>
                 <div class="h1 mb-3">{{ $stats['siap_ujian'] }}</div>
                 <div class="d-flex mb-2">
-                    <div>Siap mengikuti ujian</div>
+                    <div class="text-secondary">Peserta siap ujian</div>
                     <div class="ms-auto">
-                        <span class="text-blue">
-                            <i class="ti ti-clock-hour-4"></i> Ready
+                        <span class="text-blue d-inline-flex align-items-center lh-1">
+                            <i class="ti ti-school ms-1"></i>
                         </span>
                     </div>
                 </div>
@@ -97,32 +92,29 @@
                     <div class="progress-bar bg-blue" style="width: {{ $stats['total_pendaftar'] > 0 ? ($stats['siap_ujian'] / $stats['total_pendaftar']) * 100 : 0 }}%"></div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="card">
+        <a href="{{ route('pmb.pendaftaran.index') }}?status=Lulus" class="card card-link">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Kelulusan</div>
+                    <div class="subheader text-uppercase">Lulus Seleksi</div>
                     <div class="ms-auto lh-1">
-                        <div class="dropdown">
-                            <a class="dropdown-toggle text-muted" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">This Period</a>
-                        </div>
+                        <span class="badge bg-green text-white">{{ $stats['lulus'] }}</span>
                     </div>
                 </div>
-                <div class="h1 mb-3">
-                    {{ $stats['lulus'] }} / {{ $stats['lulus'] + $stats['tidak_lulus'] }}
-                </div>
+                <div class="h1 mb-3">{{ $stats['lulus'] }}</div>
                 <div class="d-flex mb-2">
-                    <div>Tingkat kelulusan</div>
+                    <div class="text-secondary">Tingkat kelulusan</div>
                     <div class="ms-auto">
-                        <span class="text-green">
+                        <span class="text-green d-inline-flex align-items-center lh-1">
                             @if($stats['lulus'] + $stats['tidak_lulus'] > 0)
                                 {{ round(($stats['lulus'] / ($stats['lulus'] + $stats['tidak_lulus'])) * 100, 1) }}%
                             @else
                                 0%
                             @endif
+                            <i class="ti ti-trophy ms-1"></i>
                         </span>
                     </div>
                 </div>
@@ -216,44 +208,9 @@
     </div>
 </div>
 
-{{-- Quick Actions --}}
-<div class="row row-cards">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Aksi Cepat</h3>
-            </div>
-            <div class="card-body">
-                <div class="row g-2">
-                    <div class="col-md-6 col-lg-3">
-                        <a href="{{ route('pmb.pendaftaran.index') }}" class="btn btn-primary w-100">
-                            <i class="ti ti-users me-2"></i>
-                            Kelola Pendaftaran
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <a href="{{ route('pmb.pendaftaran.index') }}?filter=menunggu_verifikasi" class="btn btn-warning w-100">
-                            <i class="ti ti-clock me-2"></i>
-                            Verifikasi Berkas ({{ $stats['menunggu_verifikasi'] }})
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <a href="{{ route('pmb.periode.index') }}" class="btn btn-secondary w-100">
-                            <i class="ti ti-calendar me-2"></i>
-                            Kelola Periode
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <a href="{{ route('pmb.jalur.index') }}" class="btn btn-info w-100">
-                            <i class="ti ti-category me-2"></i>
-                            Kelola Jalur
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+
+
 
 @php
     function getStatusBadgeClass($status) {

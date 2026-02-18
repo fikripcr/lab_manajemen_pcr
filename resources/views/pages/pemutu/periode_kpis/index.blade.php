@@ -4,12 +4,7 @@
 @section('header')
 <x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <a href="#" 
-           class="btn btn-primary ajax-modal-btn"
-           data-url="{{ route('pemutu.periode-kpis.create') }}"
-           data-modal-title="Tambah Periode KPI">
-            <i class="ti ti-plus me-2"></i> Tambah Periode
-        </a>
+        <x-tabler.button href="#" class="ajax-modal-btn btn-primary" data-url="{{ route('pemutu.periode-kpis.create') }}" data-modal-title="Tambah Periode KPI" icon="ti ti-plus" text="Tambah Periode" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

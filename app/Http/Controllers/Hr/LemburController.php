@@ -61,23 +61,7 @@ class LemburController extends Controller
                 return '<span class="badge ' . $badge . ' text-white">' . ucfirst($status) . '</span>';
             })
             ->addColumn('action', function ($row) {
-                return '
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-icon btn-info ajax-modal-btn"
-                            data-url="' . route('hr.lembur.show', $row->hashid) . '"
-                            data-modal-title="Detail Lembur">
-                            <i class="ti ti-eye"></i>
-                        </button>
-                        <button type="button" class="btn btn-icon btn-warning ajax-modal-btn"
-                            data-url="' . route('hr.lembur.edit', $row->hashid) . '"
-                            data-modal-title="Edit Lembur">
-                            <i class="ti ti-edit"></i>
-                        </button>
-                        <button type="button" class="btn btn-icon btn-danger ajax-delete-btn"
-                            data-url="' . route('hr.lembur.destroy', $row->hashid) . '">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('pages.hr.lembur._action', compact('row'))->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);

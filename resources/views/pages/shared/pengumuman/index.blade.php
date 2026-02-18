@@ -28,7 +28,7 @@
                         <p class="text-secondary">{{ Str::limit(strip_tags($pengumuman->isi), 100) }}</p>
                     </div>
                     <div class="card-footer">
-                        <a href="{{ route('shared.pengumuman.show', $pengumuman->pengumuman_id) }}" class="btn btn-primary btn-sm">Baca Selengkapnya</a>
+                        <x-tabler.button href="{{ route('shared.pengumuman.show', $pengumuman->pengumuman_id) }}" class="btn-primary btn-sm" text="Baca Selengkapnya" />
                     </div>
                 </div>
             </div>

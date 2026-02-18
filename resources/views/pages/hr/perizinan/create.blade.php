@@ -1,46 +1,40 @@
-<div class="modal-header">
-    <h5 class="modal-title">Form Pengajuan Izin</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<form class="ajax-form" action="{{ route('hr.perizinan.store') }}" method="POST">
-    @csrf
-    <div class="modal-body">
-        <x-tabler.form-select class="select2-pegawai" name="pengusul" label="Pegawai (Pengusul)" required="true" data-placeholder="Cari pegawai..." />
-        <x-tabler.form-select name="jenisizin_id" id="jenisizin_id" label="Jenis Izin" required="true">
-            <option value="">Pilih Jenis...</option>
-            @foreach ($jenisIzin as $jenis)
-                <option value="{{ $jenis->jenisizin_id }}" data-waktu="{{ $jenis->pemilihan_waktu }}">
-                    {{ $jenis->nama }} {{ $jenis->max_hari ? "(Maks $jenis->max_hari hari)" : "" }}
-                </option>
-            @endforeach
-        </x-tabler.form-select>
+<x-tabler.form-modal
+    title="Form Pengajuan Izin"
+    route="{{ route('hr.perizinan.store') }}"
+    method="POST"
+    submitText="Kirim Pengajuan"
+>
+    <x-tabler.form-select class="select2-pegawai" name="pengusul" label="Pegawai (Pengusul)" required="true" data-placeholder="Cari pegawai..." />
+    <x-tabler.form-select name="jenisizin_id" id="jenisizin_id" label="Jenis Izin" required="true">
+        <option value="">Pilih Jenis...</option>
+        @foreach ($jenisIzin as $jenis)
+            <option value="{{ $jenis->jenisizin_id }}" data-waktu="{{ $jenis->pemilihan_waktu }}">
+                {{ $jenis->nama }} {{ $jenis->max_hari ? "(Maks $jenis->max_hari hari)" : "" }}
+            </option>
+        @endforeach
+    </x-tabler.form-select>
+    <div class="row">
+        <div class="col-md-6">
+            <x-tabler.form-input type="date" name="tgl_awal" id="tgl_awal" label="Tanggal Awal" required="true" />
+        </div>
+        <div class="col-md-6">
+            <x-tabler.form-input type="date" name="tgl_akhir" id="tgl_akhir" label="Tanggal Akhir" required="true" />
+        </div>
+    </div>
+    <div id="waktu-jam" class="d-none">
         <div class="row">
             <div class="col-md-6">
-                <x-tabler.form-input type="date" name="tgl_awal" id="tgl_awal" label="Tanggal Awal" required="true" />
+                <x-tabler.form-input type="time" name="jam_awal" label="Jam Awal" />
             </div>
             <div class="col-md-6">
-                <x-tabler.form-input type="date" name="tgl_akhir" id="tgl_akhir" label="Tanggal Akhir" required="true" />
+                <x-tabler.form-input type="time" name="jam_akhir" label="Jam Akhir" />
             </div>
         </div>
-        <div id="waktu-jam" class="d-none">
-            <div class="row">
-                <div class="col-md-6">
-                    <x-tabler.form-input type="time" name="jam_awal" label="Jam Awal" />
-                </div>
-                <div class="col-md-6">
-                    <x-tabler.form-input type="time" name="jam_akhir" label="Jam Akhir" />
-                </div>
-            </div>
-        </div>
-        <x-tabler.form-textarea name="pekerjaan_ditinggalkan" label="Pekerjaan yang ditinggalkan" rows="2" placeholder="Sebutkan tugas/pekerjaan yang didelegasikan..." />
-        <x-tabler.form-textarea name="alamat_izin" label="Alamat selama izin" rows="2" placeholder="Alamat atau nomor telepon yang bisa dihubungi..." />
-        <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" placeholder="Alasan detail pengajuan..." />
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
-    </div>
-</form>
+    <x-tabler.form-textarea name="pekerjaan_ditinggalkan" label="Pekerjaan yang ditinggalkan" rows="2" placeholder="Sebutkan tugas/pekerjaan yang didelegasikan..." />
+    <x-tabler.form-textarea name="alamat_izin" label="Alamat selama izin" rows="2" placeholder="Alamat atau nomor telepon yang bisa dihubungi..." />
+    <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" placeholder="Alasan detail pengajuan..." />
+</x-tabler.form-modal>
 
 <script>
 (async function() {

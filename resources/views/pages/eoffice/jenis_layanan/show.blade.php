@@ -241,233 +241,153 @@
 @push('modals')
 
 <!-- Modal Add PIC -->
-<div class="modal modal-blur fade" id="modal-add-pic" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.store-pic', $layanan->hashid) }}" method="POST" class="ajax-form">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah PIC Layanan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <x-tabler.form-select name="user_id" label="Pilih Pegawai" class="select2" required="true">
-                            <option value="">Pilih Pegawai</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                            @endforeach
-                        </x-tabler.form-select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah PIC" />
-                </div>
-            </form>
-        </div>
+<x-tabler.form-modal
+    id="modal-add-pic"
+    title="Tambah PIC Layanan"
+    route="{{ route('eoffice.jenis-layanan.store-pic', $layanan->hashid) }}"
+    method="POST"
+    submitText="Tambah PIC"
+>
+    <div class="mb-3">
+        <x-tabler.form-select name="user_id" label="Pilih Pegawai" class="select2" required="true">
+            <option value="">Pilih Pegawai</option>
+            @foreach($users as $user)
+                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+            @endforeach
+        </x-tabler.form-select>
     </div>
-</div>
+</x-tabler.form-modal>
 
 <!-- Modal Add Isian -->
-<div class="modal modal-blur fade" id="modal-add-isian" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.store-isian', $layanan->hashid) }}" method="POST" class="ajax-form">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Isian Form</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-9 mb-3">
-                            <x-tabler.form-select name="kategoriisian_id" label="Pilih Isian Master" class="select2" required="true">
-                                <option value="">Pilih Isian</option>
-                                @foreach($kategoriIsians as $ki)
-                                    <option value="{{ $ki->kategoriisian_id }}">{{ $ki->nama_isian }} ({{ $ki->type }})</option>
-                                @endforeach
-                            </x-tabler.form-select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <x-tabler.form-input type="number" name="seq" label="No Urut" value="{{ $layanan->isians->max('seq') + 1 }}" required="true" />
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_required" value="1" checked>
-                            <span class="form-check-label">Wajib Diisi (Required)</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah Field" />
-                </div>
-            </form>
+<x-tabler.form-modal
+    id="modal-add-isian"
+    title="Tambah Isian Form"
+    route="{{ route('eoffice.jenis-layanan.store-isian', $layanan->hashid) }}"
+    method="POST"
+    submitText="Tambah Field"
+>
+    <div class="row">
+        <div class="col-md-9 mb-3">
+            <x-tabler.form-select name="kategoriisian_id" label="Pilih Isian Master" class="select2" required="true">
+                <option value="">Pilih Isian</option>
+                @foreach($kategoriIsians as $ki)
+                    <option value="{{ $ki->kategoriisian_id }}">{{ $ki->nama_isian }} ({{ $ki->type }})</option>
+                @endforeach
+            </x-tabler.form-select>
+        </div>
+        <div class="col-md-3 mb-3">
+            <x-tabler.form-input type="number" name="seq" label="No Urut" value="{{ $layanan->isians->max('seq') + 1 }}" required="true" />
         </div>
     </div>
-</div>
+    <div class="mb-3">
+        <label class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" name="is_required" value="1" checked>
+            <span class="form-check-label">Wajib Diisi (Required)</span>
+        </label>
+    </div>
+</x-tabler.form-modal>
 
 <!-- Modal Add Disposisi -->
-<div class="modal modal-blur fade" id="modal-add-disposisi" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.disposisi.store', $layanan->hashid) }}" method="POST" class="ajax-form">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Alur Disposisi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <x-tabler.form-select name="model" label="Model" required="true">
-                            <option value="">Pilih Model</option>
-                            <option value="Posisi">Posisi</option>
-                            <option value="JabatanStruktural">Jabatan Struktural</option>
-                            <option value="Lainnya">Lainnya (Manual)</option>
-                        </x-tabler.form-select>
-                    </div>
-                    <div class="mb-3">
-                        <x-tabler.form-input name="value" label="Value / Nama Tujuan" placeholder="Contoh: Kaprodi, Wadek, atau nama khusus" required="true" />
-                    </div>
-                        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" placeholder="Keterangan disposisi (opsional)" />
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Hari)" value="0" min="0" />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-check form-switch mt-4">
-                                <input class="form-check-input" type="checkbox" name="is_notify_email" value="1" checked>
-                                <span class="form-check-label">Kirim Notifikasi Email</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah Disposisi" />
-                </div>
-            </form>
+<x-tabler.form-modal
+    id="modal-add-disposisi"
+    title="Tambah Alur Disposisi"
+    route="{{ route('eoffice.jenis-layanan.disposisi.store', $layanan->hashid) }}"
+    method="POST"
+    submitText="Tambah Disposisi"
+>
+    <div class="mb-3">
+        <x-tabler.form-select name="model" label="Model" required="true">
+            <option value="">Pilih Model</option>
+            <option value="Posisi">Posisi</option>
+            <option value="JabatanStruktural">Jabatan Struktural</option>
+            <option value="Lainnya">Lainnya (Manual)</option>
+        </x-tabler.form-select>
+    </div>
+    <div class="mb-3">
+        <x-tabler.form-input name="value" label="Value / Nama Tujuan" placeholder="Contoh: Kaprodi, Wadek, atau nama khusus" required="true" />
+    </div>
+        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="2" placeholder="Keterangan disposisi (opsional)" />
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Hari)" value="0" min="0" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-check form-switch mt-4">
+                <input class="form-check-input" type="checkbox" name="is_notify_email" value="1" checked>
+                <span class="form-check-label">Kirim Notifikasi Email</span>
+            </label>
         </div>
     </div>
-</div>
+</x-tabler.form-modal>
 
 <!-- Modal Add Periode -->
-<div class="modal modal-blur fade" id="modal-add-periode" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form action="{{ route('eoffice.jenis-layanan.periode.store', $layanan->hashid) }}" method="POST" class="ajax-form">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Periode Pengajuan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <x-tabler.form-input type="date" name="tgl_mulai" label="Tanggal Mulai" required="true" />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <x-tabler.form-input type="date" name="tgl_selesai" label="Tanggal Selesai" required="true" />
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <x-tabler.form-input name="tahun_ajaran" label="Tahun Ajaran" placeholder="Contoh: 2025/2026" />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <x-tabler.form-select name="semester" label="Semester">
-                                <option value="">Pilih Semester</option>
-                                <option value="Ganjil">Ganjil</option>
-                                <option value="Genap">Genap</option>
-                            </x-tabler.form-select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Tambah Periode" />
-                </div>
-            </form>
+<x-tabler.form-modal
+    id="modal-add-periode"
+    title="Tambah Periode Pengajuan"
+    route="{{ route('eoffice.jenis-layanan.periode.store', $layanan->hashid) }}"
+    method="POST"
+    submitText="Tambah Periode"
+>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <x-tabler.form-input type="date" name="tgl_mulai" label="Tanggal Mulai" required="true" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <x-tabler.form-input type="date" name="tgl_selesai" label="Tanggal Selesai" required="true" />
         </div>
     </div>
-</div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <x-tabler.form-input name="tahun_ajaran" label="Tahun Ajaran" placeholder="Contoh: 2025/2026" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <x-tabler.form-select name="semester" label="Semester">
+                <option value="">Pilih Semester</option>
+                <option value="Ganjil">Ganjil</option>
+                <option value="Genap">Genap</option>
+            </x-tabler.form-select>
+        </div>
+    </div>
+</x-tabler.form-modal>
 
 <!-- Modal Edit Disposisi Info -->
-<div class="modal modal-blur fade" id="modal-edit-disposisi" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form id="form-edit-disposisi" method="POST" class="ajax-form">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Detail Disposisi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <x-tabler.form-input name="text" label="Teks Display / Alias" placeholder="Contoh: Pilih Kaprodi" required="true" />
-                    </div>
-                        <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" placeholder="Muncul di bawah label input" />
-                    <div class="mb-3">
-                        <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Hari)" min="0" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan Perubahan" />
-                </div>
-            </form>
-        </div>
+<x-tabler.form-modal
+    id="modal-edit-disposisi"
+    title="Edit Detail Disposisi"
+    id_form="form-edit-disposisi"
+    submitText="Simpan Perubahan"
+>
+    <div class="mb-3">
+        <x-tabler.form-input name="text" label="Teks Display / Alias" placeholder="Contoh: Pilih Kaprodi" required="true" />
     </div>
-</div>
+        <x-tabler.form-textarea name="keterangan" label="Keterangan Tambahan" rows="2" placeholder="Muncul di bawah label input" />
+    <div class="mb-3">
+        <x-tabler.form-input type="number" name="batas_pengerjaan" label="Batas Pengerjaan (Hari)" min="0" />
+    </div>
+</x-tabler.form-modal>
 
 <!-- Modal Set Rule -->
-<div class="modal modal-blur fade" id="modal-set-rule" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form id="form-set-rule" method="POST" class="ajax-form">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Set Rule Validasi (Laravel Style)</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <x-tabler.form-input name="rule" label="Validation Rules" placeholder="mimes:pdf|max:2048" />
-                        <div class="form-text">Contoh: <code>mimes:pdf,doc,docx|max:5120</code> atau <code>numeric|min:1</code></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan Rule" />
-                </div>
-            </form>
-        </div>
+<x-tabler.form-modal
+    id="modal-set-rule"
+    title="Set Rule Validasi (Laravel Style)"
+    id_form="form-set-rule"
+    submitText="Simpan Rule"
+>
+    <div class="mb-3">
+        <x-tabler.form-input name="rule" label="Validation Rules" placeholder="mimes:pdf|max:2048" />
+        <div class="form-text">Contoh: <code>mimes:pdf,doc,docx|max:5120</code> atau <code>numeric|min:1</code></div>
     </div>
-</div>
+</x-tabler.form-modal>
 
 <!-- Modal Set Info -->
-<div class="modal modal-blur fade" id="modal-set-info" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form id="form-set-info" method="POST" class="ajax-form">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Set Keterangan Isian</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                        <x-tabler.form-textarea name="info_tambahan" label="Keterangan / Instruksi" rows="4" placeholder="Muncul di bawah label input field..." />
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary ms-auto" text="Simpan Keterangan" />
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<x-tabler.form-modal
+    id="modal-set-info"
+    title="Set Keterangan Isian"
+    id_form="form-set-info"
+    submitText="Simpan Keterangan"
+>
+    <x-tabler.form-textarea name="info_tambahan" label="Keterangan / Instruksi" rows="4" placeholder="Muncul di bawah label input field..." />
+</x-tabler.form-modal>
 
 @endpush
 

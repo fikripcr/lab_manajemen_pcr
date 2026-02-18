@@ -9,9 +9,7 @@
                 <h2 class="page-title">Komposisi Paket: {{ $paket->nama_paket }}</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('cbt.paket.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-arrow-left"></i> Kembali
-                </a>
+                <x-tabler.button href="{{ route('cbt.paket.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
             </div>
         </div>
     </div>
@@ -43,12 +41,11 @@
                                     <td class="text-muted">{{ $item->soal->mataUji->nama_mata_uji }}</td>
                                     <td>{!! strip_tags(substr($item->soal->konten_pertanyaan, 0, 100)) !!}...</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-outline-danger ajax-delete" 
+                                        <x-tabler.button class="btn-sm btn-outline-danger ajax-delete" 
                                                 data-url="{{ route('cbt.paket.remove-soal', [$paket->hashid, $item->hashid]) }}"
                                                 data-title="Hapus soal dari paket?"
-                                                data-text="Soal tidak terhapus dari Bank Soal, hanya dihapus dari paket ini.">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                                data-text="Soal tidak terhapus dari Bank Soal, hanya dihapus dari paket ini."
+                                                icon="ti ti-trash" />
                                     </td>
                                 </tr>
                                 @empty
@@ -85,9 +82,7 @@
                                     @endforeach
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 mt-2">
-                                <i class="ti ti-plus"></i> Tambahkan ke Paket
-                            </button>
+                            <x-tabler.button type="submit" class="btn-primary w-100 mt-2" icon="ti ti-plus" text="Tambahkan ke Paket" />
                         </form>
                     </div>
                 </div>

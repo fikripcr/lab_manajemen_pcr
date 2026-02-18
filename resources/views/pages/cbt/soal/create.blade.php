@@ -40,7 +40,7 @@
                                                 </td>
                                                 <td><strong>{{ $label }}</strong></td>
                                                 <td>
-                                                    <input type="text" name="opsi[{{ $label }}]" class="form-control" placeholder="Teks jawaban untuk {{ $label }}">
+                                                    <x-tabler.form-input name="opsi[{{ $label }}]" placeholder="Teks jawaban untuk {{ $label }}" />
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -55,36 +55,25 @@
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label required">Mata Uji</label>
-                                <select name="mata_uji_id" class="form-select" required>
-                                    @foreach($mataUji as $mu)
-                                        <option value="{{ $mu->hashid }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <x-tabler.form-select name="mata_uji_id" label="Mata Uji" required="true">
+                                @foreach($mataUji as $mu)
+                                    <option value="{{ $mu->hashid }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
+                                @endforeach
+                            </x-tabler.form-select>
 
-                            <div class="mb-3">
-                                <label class="form-label required">Tipe Soal</label>
-                                <select name="tipe_soal" id="tipe_soal" class="form-select" required>
-                                    <option value="Pilihan_Ganda">Pilihan Ganda</option>
-                                    <option value="Esai">Esai</option>
-                                    <option value="Benar_Salah">Benar / Salah</option>
-                                </select>
-                            </div>
+                            <x-tabler.form-select name="tipe_soal" id="tipe_soal" label="Tipe Soal" required="true">
+                                <option value="Pilihan_Ganda">Pilihan Ganda</option>
+                                <option value="Esai">Esai</option>
+                                <option value="Benar_Salah">Benar / Salah</option>
+                            </x-tabler.form-select>
 
-                            <div class="mb-3">
-                                <label class="form-label required">Tingkat Kesulitan</label>
-                                <select name="tingkat_kesulitan" class="form-select" required>
-                                    <option value="Mudah">Mudah</option>
-                                    <option value="Sedang">Sedang</option>
-                                    <option value="Sulit">Sulit</option>
-                                </select>
-                            </div>
+                            <x-tabler.form-select name="tingkat_kesulitan" label="Tingkat Kesulitan" required="true">
+                                <option value="Mudah">Mudah</option>
+                                <option value="Sedang">Sedang</option>
+                                <option value="Sulit">Sulit</option>
+                            </x-tabler.form-select>
 
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="ti ti-device-floppy"></i> Simpan Soal
-                            </button>
+                            <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-device-floppy" text="Simpan Soal" />
                         </div>
                     </div>
                 </div>

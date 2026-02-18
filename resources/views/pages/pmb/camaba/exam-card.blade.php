@@ -8,9 +8,7 @@
                 <h2 class="page-title">Kartu Peserta Ujian PMB</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <button type="button" class="btn btn-primary" onclick="window.print();">
-                    <i class="ti ti-printer"></i> Cetak Kartu
-                </button>
+                <x-tabler.button type="button" class="btn-primary" onclick="window.print();" icon="ti ti-printer" text="Cetak Kartu" />
             </div>
         </div>
     </div>

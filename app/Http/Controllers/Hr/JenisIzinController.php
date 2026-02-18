@@ -27,19 +27,7 @@ class JenisIzinController extends Controller
                 return '<span class="badge ' . $badge . '">' . $text . '</span>';
             })
             ->addColumn('action', function ($row) {
-                return '
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-icon btn-primary ajax-modal-btn"
-                            data-url="' . route('hr.jenis-izin.edit', $row->hashid) . '"
-                            data-modal-title="Edit Jenis Izin">
-                            <i class="ti ti-pencil"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-icon btn-danger btn-delete"
-                            data-url="' . route('hr.jenis-izin.destroy', $row->hashid) . '">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>
-                ';
+                return view('pages.hr.jenis_izin._action', compact('row'))->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);

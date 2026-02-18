@@ -19,26 +19,11 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="kode_mk">Kode MK</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input name="kode_mk" value="{{ old('kode_mk', $mataKuliah->kode_mk) }}" placeholder="e.g. IF101" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input name="kode_mk" label="Kode MK" value="{{ old('kode_mk', $mataKuliah->kode_mk) }}" placeholder="e.g. IF101" required />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="nama_mk">Nama MK</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input name="nama_mk" value="{{ old('nama_mk', $mataKuliah->nama_mk) }}" placeholder="e.g. Pemrograman Web" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input name="nama_mk" label="Nama MK" value="{{ old('nama_mk', $mataKuliah->nama_mk) }}" placeholder="e.g. Pemrograman Web" required />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="sks">SKS</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="number" name="sks" value="{{ old('sks', $mataKuliah->sks) }}" min="1" max="6" required class="mb-0" />
-                            </div>
-                        </div>
+                        <x-tabler.form-input type="number" name="sks" label="SKS" value="{{ old('sks', $mataKuliah->sks) }}" min="1" max="6" required />
 
                         <div class="row mt-4">
                             <div class="col-sm-10 offset-sm-2">

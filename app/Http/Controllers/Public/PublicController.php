@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lab\MataKuliah;
 use App\Models\Lab\Pengumuman;
 use App\Models\Lab\RequestSoftware;
+use App\Models\Shared\Slideshow;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -14,7 +15,7 @@ class PublicController extends Controller
         // Get the 6 most recent published announcements/news
         $recentNews = Pengumuman::where('is_published', true)
             ->orderBy('created_at', 'desc')
-            ->limit(6)
+            ->limit(4)
             ->get();
 
         // Get approved software requests
@@ -24,7 +25,18 @@ class PublicController extends Controller
             ->limit(6)
             ->get();
 
-        return view('pages.public.home', compact('recentNews', 'approvedSoftwareRequests'));
+        // Get active slideshows
+        $slideshows = Slideshow::where('is_active', true)
+            ->orderBy('seq', 'asc')
+            ->get();
+
+        // Get active FAQs grouped by category
+        $faqs = \App\Models\Shared\FAQ::where('is_active', true)
+            ->orderBy('seq', 'asc')
+            ->get()
+            ->groupBy('category');
+
+        return view('pages.public.home', compact('recentNews', 'approvedSoftwareRequests', 'slideshows', 'faqs'));
     }
 
     public function showNews($id)

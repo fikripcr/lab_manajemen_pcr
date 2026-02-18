@@ -18,15 +18,9 @@
         </div>
         <div class="card-actions">
             <div class="btn-group" role="group">
-                <a href="#" class="btn btn-outline-secondary ajax-modal-btn" data-url="{{ route('hr.org-units.edit', $orgUnit->org_unit_id) }}" data-modal-title="Edit Unit">
-                    <i class="ti ti-pencil"></i>
-                </a>
-                <a href="#" class="btn btn-outline-primary ajax-modal-btn" data-url="{{ route('hr.org-units.create', ['parent_id' => $orgUnit->org_unit_id]) }}" data-modal-title="Add Sub-Unit">
-                    <i class="ti ti-plus me-2"></i> Sub-Unit
-                </a>
-                <a href="#" class="btn btn-outline-danger ajax-delete" data-url="{{ route('hr.org-units.destroy', $orgUnit->org_unit_id) }}" data-title="Hapus Unit?" data-text="Unit ini akan dihapus.">
-                    <i class="ti ti-trash"></i>
-                </a>
+                <x-tabler.button href="#" class="btn-outline-secondary ajax-modal-btn" data-url="{{ route('hr.org-units.edit', $orgUnit->org_unit_id) }}" data-modal-title="Edit Unit" icon="ti ti-pencil" />
+                <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('hr.org-units.create', ['parent_id' => $orgUnit->org_unit_id]) }}" data-modal-title="Add Sub-Unit" icon="ti ti-plus" text="Sub-Unit" />
+                <x-tabler.button href="#" class="btn-outline-danger ajax-delete" data-url="{{ route('hr.org-units.destroy', $orgUnit->org_unit_id) }}" data-title="Hapus Unit?" data-text="Unit ini akan dihapus." icon="ti ti-trash" />
             </div>
         </div>
     </div>
@@ -36,9 +30,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center w-100">
             <h4 class="card-title mb-0">Pegawai Ditugaskan</h4>
-            <a href="#" class="btn btn-sm btn-outline-primary ajax-modal-btn" data-url="{{ route('hr.pegawai.penugasan.create', ['pegawai' => 0]) }}?org_unit_id={{ $orgUnit->org_unit_id }}" data-modal-title="Tambah Penugasan">
-                <i class="ti ti-user-plus me-1"></i> Add Personil
-            </a>
+            <x-tabler.button href="#" class="btn-sm btn-outline-primary ajax-modal-btn" data-url="{{ route('hr.pegawai.penugasan.create', ['pegawai' => 0]) }}?org_unit_id={{ $orgUnit->org_unit_id }}" data-modal-title="Tambah Penugasan" icon="ti ti-user-plus" text="Add Personil" />
         </div>
     </div>
     <div class="card-body p-0">
@@ -69,9 +61,7 @@
                                 @endif
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-ghost-danger ajax-delete" data-url="{{ route('hr.pegawai.penugasan.destroy', [$penugasan->pegawai_id, $penugasan->riwayatpenugasan_id]) }}">
-                                    <i class="ti ti-trash"></i>
-                                </button>
+                                <x-tabler.button type="button" class="btn-sm btn-ghost-danger ajax-delete" data-url="{{ route('hr.pegawai.penugasan.destroy', [$penugasan->pegawai_id, $penugasan->riwayatpenugasan_id]) }}" icon="ti ti-trash" />
                             </td>
                         </tr>
                     @empty

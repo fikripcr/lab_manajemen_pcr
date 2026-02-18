@@ -30,7 +30,7 @@ class SuratBebasLabController extends Controller
                     'rejected' => 'danger',
                 ];
                 $color = $badges[$row->status] ?? 'secondary';
-                return "<span class='badge bg-{$color}'>" . ucfirst($row->status) . "</span>";
+                return "<span class='badge bg-{$color} text-white'>" . ucfirst($row->status) . "</span>";
             })
             ->addColumn('tanggal', function ($row) {
                 return $row->created_at->format('d M Y');

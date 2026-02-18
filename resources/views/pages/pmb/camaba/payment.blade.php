@@ -58,12 +58,11 @@
                             <x-tabler.form-input type="date" name="tanggal_bayar" label="Tanggal Pembayaran" value="{{ date('Y-m-d') }}" required="true" />
                             
                             <div class="mb-3">
-                                <label class="form-label required">Bukti Transfer (Gambar/PDF)</label>
-                                <input type="file" name="bukti_bayar" class="form-control" accept="image/*,application/pdf" required>
+                                <x-tabler.form-input type="file" name="bukti_bayar" label="Bukti Transfer (Gambar/PDF)" accept="image/*,application/pdf" required="true" />
                             </div>
 
                             <div class="form-footer">
-                                <button type="submit" class="btn btn-success w-100">Kirim Konfirmasi</button>
+                                <x-tabler.button type="submit" class="btn-success w-100" text="Kirim Konfirmasi" />
                             </div>
                         </form>
                     </div>

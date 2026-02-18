@@ -3,14 +3,8 @@
 @section('header')
 <x-tabler.page-header title="Detail Kegiatan: {{ $Kegiatan->judul_Kegiatan }}" pretitle="Kegiatan">
     <x-slot:actions>
-        <a href="{{ route('Kegiatan.Kegiatans.index') }}" class="btn btn-secondary">
-            <i class="ti ti-arrow-left icon"></i>
-            Kembali
-        </a>
-        <a href="{{ route('Kegiatan.Kegiatans.edit', $Kegiatan->hashid) }}" class="btn btn-primary">
-            <i class="ti ti-edit icon"></i>
-            Edit Kegiatan
-        </a>
+        <x-tabler.button href="{{ route('Kegiatan.Kegiatans.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('Kegiatan.Kegiatans.edit', $Kegiatan->hashid) }}" class="btn-primary" icon="ti ti-edit" text="Edit Kegiatan" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -79,9 +73,7 @@
                             <div class="tab-pane" id="tabs-panitia">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h4 class="m-0">Anggota Tim</h4>
-    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal-ajax" data-url="{{ route('Kegiatan.teams.create', ['event_id' => $Kegiatan->event_id]) }}">
-        Tambah Anggota
-    </button>
+                                    <x-tabler.button class="btn-sm btn-primary ajax-modal-btn" data-modal-title="Tambah Anggota" data-url="{{ route('Kegiatan.teams.create', ['event_id' => $Kegiatan->event_id]) }}" text="Tambah Anggota" />
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-vcenter">
@@ -107,9 +99,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="btn-list flex-nowrap">
-                                                            <button class="btn btn-icon btn-sm" data-bs-toggle="modal" data-bs-target="#modal-ajax" data-url="{{ route('Kegiatan.teams.edit', $team->hashid) }}">
-                                                                <i class="ti ti-edit"></i>
-                                                            </button>
+                                                            <x-tabler.button class="btn-icon btn-sm ajax-modal-btn" data-modal-title="Edit Anggota" data-url="{{ route('Kegiatan.teams.edit', $team->hashid) }}" icon="ti ti-edit" />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -125,9 +115,7 @@
                             <div class="tab-pane" id="tabs-tamu">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h4 class="m-0">Buku Tamu</h4>
-    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal-ajax" data-url="{{ route('Kegiatan.tamus.create', ['event_id' => $Kegiatan->event_id]) }}">
-        Tambah Tamu
-    </button>
+                                    <x-tabler.button class="btn-sm btn-primary ajax-modal-btn" data-modal-title="Tambah Tamu" data-url="{{ route('Kegiatan.tamus.create', ['event_id' => $Kegiatan->event_id]) }}" text="Tambah Tamu" />
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-vcenter table-mobile-md card-table">
@@ -155,9 +143,7 @@
                                                     <td class="text-muted">{{ $tamu->waktu_datang?->format('H:i') ?: '-' }}</td>
                                                     <td>
                                                         <div class="btn-list flex-nowrap">
-                                                            <button class="btn btn-icon btn-sm" data-bs-toggle="modal" data-bs-target="#modal-ajax" data-url="{{ route('Kegiatan.tamus.edit', $tamu->hashid) }}">
-                                                                <i class="ti ti-edit"></i>
-                                                            </button>
+                                                            <x-tabler.button class="btn-icon btn-sm ajax-modal-btn" data-modal-title="Edit Tamu" data-url="{{ route('Kegiatan.tamus.edit', $tamu->hashid) }}" icon="ti ti-edit" />
                                                         </div>
                                                     </td>
                                                 </tr>

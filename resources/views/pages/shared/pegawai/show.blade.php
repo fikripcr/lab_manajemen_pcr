@@ -14,7 +14,7 @@
             </div>
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <a href="{{ route('shared.pegawai.index') }}" class="btn btn-secondary">Kembali</a>
+                    <x-tabler.button href="{{ route('shared.pegawai.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
                 </div>
             </div>
         </div>

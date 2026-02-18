@@ -36,22 +36,7 @@ class PerusahaanController extends Controller
                 return $row->kategori->nama_kategori ?? '-';
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('eoffice.perusahaan.edit', $row->hashid);
-                $deleteUrl = route('eoffice.perusahaan.destroy', $row->hashid);
-                $showUrl   = route('eoffice.perusahaan.show', $row->hashid);
-
-                return '
-                    <div class="btn-group btn-group-sm">
-                        <a href="' . $showUrl . '" class="btn btn-icon btn-ghost-info" title="Detail">
-                            <i class="ti ti-eye"></i>
-                        </a>
-                        <button type="button" class="btn btn-icon btn-ghost-primary ajax-modal-btn" data-url="' . $editUrl . '" data-modal-title="Edit Perusahaan" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </button>
-                        <button type="button" class="btn btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus?" data-text="Perusahaan ini akan dihapus permanen.">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('pages.eoffice.perusahaan._action', compact('row'))->render();
             })
             ->rawColumns(['action'])
             ->make(true);

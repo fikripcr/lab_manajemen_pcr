@@ -206,9 +206,7 @@
                                         {{ $laporan->created_at->diffForHumans() }}
                                     </td>
                                     <td class="text-end">
-                                        <a href="{{ route('lab.laporan-kerusakan.show', encryptId($laporan->laporan_kerusakan_id)) }}" class="btn btn-icon btn-sm btn-ghost-secondary">
-                                            <i class="bx bx-show fs-3"></i>
-                                        </a>
+                                        <x-tabler.button :href="route('lab.laporan-kerusakan.show', encryptId($laporan->laporan_kerusakan_id))" class="btn-icon btn-sm btn-ghost-secondary" icon="bx bx-show fs-3" />
                                     </td>
                                 </tr>
                                 @empty

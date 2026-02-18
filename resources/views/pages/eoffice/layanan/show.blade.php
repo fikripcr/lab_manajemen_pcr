@@ -7,7 +7,7 @@
         <div class="btn-list">
             <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-link link-secondary" icon="ti ti-arrow-left" text="Kembali" />
             <div class="dropdown">
-                <button type="button" class="btn btn-ghost-secondary dropdown-toggle" data-bs-toggle="dropdown">Action</button>
+                <x-tabler.button type="button" class="btn-ghost-secondary dropdown-toggle" data-bs-toggle="dropdown" text="Action" />
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class="dropdown-item {{ in_array($layanan->latestStatus->status_layanan, ['Selesai', 'Selesai (Otomatis)']) ? '' : 'disabled' }}" href="{{ route('eoffice.layanan.download-pdf', $layanan->hashid) }}">
                         <i class="ti ti-file-download me-1"></i> Unduh Bukti PDF
@@ -377,41 +377,36 @@
 
 @if($layanan->jenisLayanan->is_feedback && !$layanan->feedback)
 <!-- Modal Feedback -->
-<div class="modal modal-blur fade" id="modal-feedback" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form action="{{ route('eoffice.feedback.store') }}" method="POST" class="ajax-form">
-                @csrf
-                <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Beri Penilaian Layanan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center py-4">
-                    <div class="mb-3">
-                        <div class="text-muted mb-2">Ketuk bintang untuk memberi nilai</div>
-                        <div class="rating-stars">
-                            @for($i=1; $i<=5; $i++)
-                                <input type="radio" name="rating" id="rating-{{ $i }}" value="{{ $i }}" class="d-none">
-                                <label for="rating-{{ $i }}" class="cursor-pointer">
-                                    <i class="ti ti-star fs-1 text-muted star-icon" data-value="{{ $i }}"></i>
-                                </label>
-                            @endfor
-                        </div>
-                        <div class="mt-2 fw-bold text-warning" id="rating-text">Pilih rating...</div>
-                    </div>
-                    <div class="mb-3 text-start">
-                        <x-tabler.form-textarea name="catatan" label="Catatan / Masukan (Opsional)" rows="3" placeholder="Ceritakan pengalaman Anda..." />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-warning ms-auto" text="Kirim Feedback" />
-                </div>
-            </form>
+<!-- Modal Feedback -->
+<x-tabler.form-modal
+    id="modal-feedback"
+    title="Beri Penilaian Layanan"
+    route="{{ route('eoffice.feedback.store') }}"
+    method="POST"
+    submitText="Kirim Feedback"
+    submitIcon="ti-star"
+    class="btn-warning ms-auto"
+>
+    <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
+    
+    <div class="text-center py-4">
+        <div class="mb-3">
+            <div class="text-muted mb-2">Ketuk bintang untuk memberi nilai</div>
+            <div class="rating-stars">
+                @for($i=1; $i<=5; $i++)
+                    <input type="radio" name="rating" id="rating-{{ $i }}" value="{{ $i }}" class="d-none">
+                    <label for="rating-{{ $i }}" class="cursor-pointer">
+                        <i class="ti ti-star fs-1 text-muted star-icon" data-value="{{ $i }}"></i>
+                    </label>
+                @endfor
+            </div>
+            <div class="mt-2 fw-bold text-warning" id="rating-text">Pilih rating...</div>
+        </div>
+        <div class="mb-3 text-start">
+            <x-tabler.form-textarea name="catatan" label="Catatan / Masukan (Opsional)" rows="3" placeholder="Ceritakan pengalaman Anda..." />
         </div>
     </div>
-</div>
+</x-tabler.form-modal>
 @endif
 
 @push('scripts')

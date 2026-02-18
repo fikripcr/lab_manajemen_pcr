@@ -1,8 +1,10 @@
-<div class="modal-header">
-    <h5 class="modal-title">Verifikasi Pembayaran: {{ $pembayaran->pendaftaran->no_pendaftaran }}</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<div class="modal-body">
+<x-tabler.form-modal
+    title="Verifikasi Pembayaran: {{ $pembayaran->pendaftaran->no_pendaftaran }}"
+    route="{{ route('pmb.verification.verify-payment', $pembayaran->encrypted_id) }}"
+    method="POST"
+    submitText="Simpan Hasil Verifikasi"
+    data-redirect="true"
+>
     <div class="row">
         <div class="col-md-5">
             <h3 class="card-title">Bukti Transfer</h3>
@@ -20,8 +22,7 @@
                 <tr><td>Nominal</td><td>: <strong>Rp {{ number_format($pembayaran->jumlah_bayar, 0, ',', '.') }}</strong></td></tr>
             </table>
 
-            <form action="{{ route('pmb.verification.verify-payment', $pembayaran->encrypted_id) }}" method="POST" class="ajax-form mt-3" data-redirect="true">
-                @csrf
+            <div class="mt-3">
                 <div class="mb-3">
                     <label class="form-label">Hasil Verifikasi</label>
                     <div class="form-selectgroup">
@@ -36,12 +37,7 @@
                     </div>
                 </div>
                 <x-tabler.form-textarea name="keterangan" label="Keterangan / Alasan (Opsional)" placeholder="Masukkan alasan jika ditolak..." />
-
-                <div class="modal-footer px-0 pb-0">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary ms-auto">Simpan Hasil Verifikasi</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
+</x-tabler.form-modal>

@@ -11,7 +11,7 @@ use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\KpiService;
 use Exception;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 class KpiController extends Controller
 {

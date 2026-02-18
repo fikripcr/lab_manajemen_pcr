@@ -3,41 +3,36 @@
     $canProduceIndikator = in_array($jenis, ['standar', 'formulir', 'manual_prosedur', 'renop']);
 @endphp
 
-<div class="modal-header">
-    <h5 class="modal-title">{{ $canProduceIndikator ? 'Tambah Poin / Kegiatan' : 'Tambah Sub-Dokumen' }}</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<form action="{{ route('pemutu.dok-subs.store') }}" method="POST" class="ajax-form">
-    @csrf
+<x-tabler.form-modal
+    title="{{ $canProduceIndikator ? 'Tambah Poin / Kegiatan' : 'Tambah Sub-Dokumen' }}"
+    route="{{ route('pemutu.dok-subs.store') }}"
+    method="POST"
+    submitText="Simpan"
+>
     <input type="hidden" name="dok_id" value="{{ $dokumen->dok_id }}">
-    <div class="modal-body">
-         <div class="mb-3">
-               <x-tabler.form-input name="judul" label="Judul" id="judul" required="true" placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan / Kegiatan Operasional 1' : 'Contoh: Misi 1' }}" />
-          </div>
-          
-          @if($canProduceIndikator)
-          <div class="mb-3">
-              <x-tabler.form-checkbox 
-                  name="is_hasilkan_indikator" 
-                  label="Hasilkan Indikator {{ ucfirst($jenis === 'renop' ? 'renop' : 'standar') }}?" 
-                  value="1" 
-                  :checked="$jenis === 'renop'" 
-                  switch 
-              />
-              <div class="text-muted small">Jika dicentang, poin ini nantinya akan memiliki tombol untuk input Indikator di halaman detail.</div>
-          </div>
-          @endif
+    
+    <div class="mb-3">
+        <x-tabler.form-input name="judul" label="Judul" id="judul" required="true" placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan / Kegiatan Operasional 1' : 'Contoh: Misi 1' }}" />
+    </div>
+    
+    @if($canProduceIndikator)
+    <div class="mb-3">
+        <x-tabler.form-checkbox 
+            name="is_hasilkan_indikator" 
+            label="Hasilkan Indikator {{ ucfirst($jenis === 'renop' ? 'renop' : 'standar') }}?" 
+            value="1" 
+            :checked="$jenis === 'renop'" 
+            switch 
+        />
+        <div class="text-muted small">Jika dicentang, poin ini nantinya akan memiliki tombol untuk input Indikator di halaman detail.</div>
+    </div>
+    @endif
 
-          @if(!$canProduceIndikator || $jenis === 'renop')
-          <div class="mb-3">
-              <x-tabler.form-input type="number" id="seq" name="seq" label="Urutan" placeholder="Contoh: 1" />
-          </div>
-          <x-tabler.form-textarea name="isi" id="isi" label="Isi Dokumen" rows="4" placeholder="Isi sub-dokumen..." />
-          @endif
+    @if(!$canProduceIndikator || $jenis === 'renop')
+    <div class="mb-3">
+        <x-tabler.form-input type="number" id="seq" name="seq" label="Urutan" placeholder="Contoh: 1" class="mb-3" />
     </div>
-    <div class="modal-footer">
-        <x-tabler.button type="button" text="Batal" class="btn-link link-secondary" data-bs-dismiss="modal" />
-        <x-tabler.button type="submit" text="Simpan" />
-    </div>
-</form>
+    <x-tabler.form-textarea name="isi" id="isi" label="Isi Dokumen" rows="4" placeholder="Isi sub-dokumen..." />
+    @endif
+</x-tabler.form-modal>
 

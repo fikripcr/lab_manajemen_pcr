@@ -1,18 +1,10 @@
-<form class="ajax-form" action="{{route('sys.permissions.update',$permission->encryptedId)}}" method="POST">
-    @csrf
-    @method('PUT')
-    <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Edit Permission</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<x-tabler.form-modal
+    title="Edit Permission"
+    route="{{ route('sys.permissions.update', $permission->encryptedId) }}"
+    method="PUT"
+>
+    <div class="mb-3">
+        <x-tabler.form-input name="name" label="Permission Name" id="editName" value="{{ $permission->name }}" required="true" />
+        <div class="form-text">Use lowercase letters and underscores only (e.g., manage users, view dashboard)</div>
     </div>
-    <div class="modal-body">
-        <div class="mb-3">
-            <x-tabler.form-input name="name" label="Permission Name" id="editName" value="{{ $permission->name }}" required="true" />
-            <div class="form-text">Use lowercase letters and underscores only (e.g., manage users, view dashboard)</div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" />
-        <x-tabler.button type="submit" />
-    </div>
-</form>
+</x-tabler.form-modal>

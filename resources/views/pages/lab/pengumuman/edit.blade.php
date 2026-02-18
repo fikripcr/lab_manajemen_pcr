@@ -19,56 +19,41 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label required" for="judul">Title</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input name="judul" value="{{ old('judul', $pengumuman->judul) }}" required class="mb-0" />
-                            </div>
+                        <x-tabler.form-input name="judul" label="Title" value="{{ old('judul', $pengumuman->judul) }}" required />
+
+                        <x-tabler.form-textarea type="editor" id="isi" name="isi" label="Content" :value="old('isi', $pengumuman->isi)" height="400" required="true" />
+
+                        <div class="mb-3">
+                            <x-tabler.form-input type="file" id="cover_image" name="cover" label="Cover Image" accept="image/*" help="Upload a new cover image to replace the current one." />
+                            
+                            @if ($pengumuman->hasMedia('info_cover'))
+                                <div class="mt-2 text-center">
+                                    <div class="form-label">Current Cover:</div>
+                                    <img src="{{ $pengumuman->getFirstMediaUrl('info_cover', 'medium') }}" alt="Current Cover" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                            @endif
                         </div>
 
-                            <div class="col-sm-10">
-                                <x-tabler.form-textarea type="editor" id="isi" name="isi" label="Content" :value="old('isi', $pengumuman->isi)" height="400" required="true" class="mb-0" />
-                            </div>
+                        <div class="mb-3">
+                            <x-tabler.form-input type="file" id="attachments" name="attachments[]" label="Attachments" multiple="true" help="Upload additional files (current ones will be kept)." />
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="cover_image">Cover Image</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="file" id="cover_image" name="cover" accept="image/*" help="Upload a new cover image to replace the current one." class="mb-0" />
-                                
-                                @if ($pengumuman->hasMedia('info_cover'))
-                                    <div class="mt-2">
-                                        <div class="form-label">Current Cover:</div>
-                                        <img src="{{ $pengumuman->getFirstMediaUrl('info_cover', 'medium') }}" alt="Current Cover" class="img-thumbnail" style="max-height: 150px;">
-                                    </div>
-                                @endif
-                            </div>
+                            @if ($pengumuman->hasMedia('info_attachment'))
+                                <div class="mt-2">
+                                    <div class="form-label">Current Attachments:</div>
+                                    <ul class="list-group list-group-flush border rounded">
+                                        @foreach ($pengumuman->getMedia('info_attachment') as $attachment)
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>{{ $attachment->file_name }}</span>
+                                                <x-tabler.button :href="$attachment->getUrl()" class="btn-sm btn-ghost-secondary" target="_blank" text="View" />
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         </div>
 
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="attachments">Attachments</label>
-                            <div class="col-sm-10">
-                                <x-tabler.form-input type="file" id="attachments" name="attachments[]" multiple="true" help="Upload additional files (current ones will be kept)." class="mb-0" />
-
-                                @if ($pengumuman->hasMedia('info_attachment'))
-                                    <div class="mt-2">
-                                        <div class="form-label">Current Attachments:</div>
-                                        <ul class="list-group list-group-flush border rounded">
-                                            @foreach ($pengumuman->getMedia('info_attachment') as $attachment)
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <span>{{ $attachment->file_name }}</span>
-                                                    <a href="{{ $attachment->getUrl() }}" class="btn btn-sm btn-ghost-secondary" target="_blank">View</a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-10 offset-sm-2">
-                                <x-tabler.form-checkbox name="is_published" value="1" label="Publish {{ ucfirst($type) }}" :checked="old('is_published', $pengumuman->is_published)" switch />
-                            </div>
+                        <div class="mb-3">
+                            <x-tabler.form-checkbox name="is_published" value="1" label="Publish {{ ucfirst($type) }}" :checked="old('is_published', $pengumuman->is_published)" switch />
                         </div>
 
                         <input type="hidden" name="jenis" value="{{ $type }}">

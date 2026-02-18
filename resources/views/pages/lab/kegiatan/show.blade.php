@@ -62,9 +62,7 @@
                             <div class="mb-3">
                                 <label class="form-label text-muted">Dokumen Pendukung</label>
                                 <div>
-                                    <a href="{{ asset('storage/' . $kegiatan->dokumentasi_path) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                                        <i class="bx bx-file me-2"></i> Lihat Dokumen
-                                    </a>
+                                    <x-tabler.button :href="asset('storage/' . $kegiatan->dokumentasi_path)" target="_blank" class="btn-outline-secondary btn-sm" icon="bx bx-file" text="Lihat Dokumen" />
                                 </div>
                             </div>
                         @endif

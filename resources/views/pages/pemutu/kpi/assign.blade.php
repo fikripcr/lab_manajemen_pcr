@@ -58,9 +58,7 @@
                     <label class="form-label small">Target</label>
                     <input type="number" step="0.01" id="bulk-target" class="form-control form-control-sm" placeholder="0.00">
                 </div>
-                <button type="button" id="btn-apply-bulk" class="btn btn-outline-primary btn-sm w-100">
-                    Terapkan ke Terpilih
-                </button>
+                <x-tabler.button type="button" id="btn-apply-bulk" class="btn-outline-primary btn-sm w-100" text="Terapkan ke Terpilih" />
             </div>
         </div>
     </div>
@@ -158,9 +156,7 @@
                     </table>
                 </div>
                 <div class="card-footer text-end">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-device-floppy me-2"></i> Simpan Penugasan
-                    </button>
+                    <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Penugasan" />
                 </div>
             </div>
         </form>

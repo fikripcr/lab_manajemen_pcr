@@ -2,9 +2,8 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Survei" pretitle="Feedback Module">
     <x-slot:actions>
-        <button type="button" class="btn btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Buat Survei Baru" data-url="{{ route('survei.create') }}">
-            <i class="ti ti-plus"></i> Buat Survei
-        </button>
+        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Buat Survei" 
+            data-modal-target="#modalAction" data-modal-title="Buat Survei Baru" data-url="{{ route('survei.create') }}" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -15,9 +14,7 @@
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
                     <div class="btn-group" id="bulk-actions" style="display: none;">
-                        <button type="button" class="btn btn-outline-secondary btn-duplicate-bulk">
-                            <i class="ti ti-copy me-2"></i>Duplikasi Terpilih
-                        </button>
+                        <x-tabler.button type="button" class="btn-outline-secondary btn-duplicate-bulk" icon="ti ti-copy" text="Duplikasi Terpilih" />
                     </div>
                 </div>
                 <x-tabler.datatable 

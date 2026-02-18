@@ -3,10 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Buku Tamu Kegiatan" pretitle="Kegiatan">
     <x-slot:actions>
-        <button class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-ajax" data-url="{{ route('Kegiatan.tamus.create') }}">
-            <i class="ti ti-plus icon"></i>
-            Tambah Tamu
-        </button>
+        <x-tabler.button class="btn-primary d-none d-sm-inline-block ajax-modal-btn" data-modal-title="Tambah Tamu" data-url="{{ route('Kegiatan.tamus.create') }}" icon="ti ti-plus" text="Tambah Tamu" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

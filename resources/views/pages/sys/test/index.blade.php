@@ -21,9 +21,7 @@
                     </div>
                     <h3 class="card-title">Test Email</h3>
                     <p class="text-secondary small">Send a notification via email to <strong>{{ auth()->user()->email }}</strong></p>
-                    <button type="button" class="btn btn-primary w-100" onclick="testEmail()">
-                        <i class="ti ti-send me-2"></i> Send Test Email
-                    </button>
+                    <x-tabler.button type="button" class="btn-primary w-100" onclick="testEmail()" icon="ti ti-send" text="Send Test Email" />
                 </div>
             </div>
         </div>
@@ -37,9 +35,7 @@
                     </div>
                     <h3 class="card-title">Test Notification</h3>
                     <p class="text-secondary small">Send a notification via database to <strong>{{ auth()->user()->email }}</strong></p>
-                    <button type="button" class="btn btn-success w-100" onclick="testNotification()">
-                        <i class="ti ti-bell-ringing me-2"></i> Send Test Notification
-                    </button>
+                    <x-tabler.button type="button" class="btn-success w-100" onclick="testNotification()" icon="ti ti-bell-ringing" text="Send Test Notification" />
                 </div>
             </div>
         </div>
@@ -74,9 +70,7 @@
                         </a>
                     </h3>
                     <p class="text-secondary small">Generate a test PDF report with sample system data and QR code</p>
-                    <button type="button" class="btn btn-danger w-100" onclick="testPdfExport()">
-                        <i class="ti ti-download me-2"></i> Generate PDF
-                    </button>
+                    <x-tabler.button type="button" class="btn-danger w-100" onclick="testPdfExport()" icon="ti ti-download" text="Generate PDF" />
                 </div>
             </div>
         </div>
@@ -95,9 +89,7 @@
                         </a>
                     </h3>
                     <p class="text-secondary small">Generate a test Excel report with sample system data and QR code</p>
-                    <button type="button" class="btn btn-success w-100" onclick="testExcelExport()">
-                        <i class="ti ti-download me-2"></i> Generate Excel
-                    </button>
+                    <x-tabler.button type="button" class="btn-success w-100" onclick="testExcelExport()" icon="ti ti-download" text="Generate Excel" />
                 </div>
             </div>
         </div>
@@ -116,9 +108,7 @@
                         </a>
                     </h3>
                     <p class="text-secondary small">Generate a test Word document with sample system data and QR code</p>
-                    <button type="button" class="btn btn-primary w-100" onclick="testWordExport()">
-                        <i class="ti ti-download me-2"></i> Generate Word
-                    </button>
+                    <x-tabler.button type="button" class="btn-primary w-100" onclick="testWordExport()" icon="ti ti-download" text="Generate Word" />
                 </div>
             </div>
         </div>
@@ -158,9 +148,7 @@
                         </a>
                     </h3>
                     <p class="text-secondary small">Upload DOCX template with variables</p>
-                    <button type="button" class="btn btn-warning w-100" onclick="testDocxTemplate()">
-                        <i class="ti ti-upload me-2"></i> Process DOCX
-                    </button>
+                    <x-tabler.button type="button" class="btn-warning w-100" onclick="testDocxTemplate()" icon="ti ti-upload" text="Process DOCX" />
                 </div>
             </div>
         </div>

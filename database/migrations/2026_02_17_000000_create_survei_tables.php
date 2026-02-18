@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('judul');
             $table->text('deskripsi')->nullable();
             $table->string('slug')->unique();
+            $table->string('periode')->nullable();
+            $table->enum('mode', ['Linear', 'Bercabang'])->default('Linear');
 
             // Target & Akses
             $table->enum('target_role', ['Mahasiswa', 'Dosen', 'Tendik', 'Alumni', 'Umum']);
@@ -67,6 +69,7 @@ return new class extends Migration
 
             $table->boolean('wajib_diisi')->default(true);
             $table->integer('urutan')->default(0);
+            $table->foreignId('next_pertanyaan_id')->nullable()->constrained('survei_pertanyaan')->onDelete('set null');
             $table->timestamps();
         });
 
@@ -79,6 +82,7 @@ return new class extends Migration
             $table->integer('bobot_skor')->default(0);     // Penting untuk SPMI/Kuis
 
             $table->integer('urutan')->default(0);
+            $table->foreignId('next_pertanyaan_id')->nullable()->constrained('survei_pertanyaan')->onDelete('set null');
             $table->timestamps();
         });
 

@@ -52,9 +52,9 @@
                         <div class="mb-3">
                             <label class="form-label text-muted">Bukti Foto</label>
                             <div>
-                                <a href="{{ asset('storage/' . $laporan->foto_sebelum) }}" target="_blank">
+                                <x-tabler.button :href="asset('storage/' . $laporan->foto_sebelum)" target="_blank" class="btn-ghost-secondary p-0" title="Klik untuk memperbesar">
                                     <img src="{{ asset('storage/' . $laporan->foto_sebelum) }}" class="img-fluid rounded" style="max-height: 300px" alt="Bukti Foto">
-                                </a>
+                                </x-tabler.button>
                             </div>
                         </div>
                         @endif

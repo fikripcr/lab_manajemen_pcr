@@ -60,9 +60,7 @@
                                                 </span>
                                             </x-slot:prepend>
                                             <x-slot:append>
-                                                <button type="button" class="btn btn-primary" id="btn-get-lat" title="Dapatkan lokasi saat ini">
-                                                    <i class="ti ti-crosshair"></i>
-                                                </button>
+                                                <x-tabler.button type="button" class="btn-primary" id="btn-get-lat" title="Dapatkan lokasi saat ini" icon="ti ti-crosshair" />
                                             </x-slot:append>
                                         </x-tabler.form-input>
                                         <div class="form-text">Koordinat latitude lokasi kantor (contoh: -6.208763)</div>
@@ -78,9 +76,7 @@
                                                 </span>
                                             </x-slot:prepend>
                                             <x-slot:append>
-                                                <button type="button" class="btn btn-primary" id="btn-get-lng" title="Dapatkan lokasi saat ini">
-                                                    <i class="ti ti-crosshair"></i>
-                                                </button>
+                                                <x-tabler.button type="button" class="btn-primary" id="btn-get-lng" title="Dapatkan lokasi saat ini" icon="ti ti-crosshair" />
                                             </x-slot:append>
                                         </x-tabler.form-input>
                                         <div class="form-text">Koordinat longitude lokasi kantor (contoh: 106.845599)</div>
@@ -152,14 +148,8 @@
                         <!-- Action Buttons -->
                         <div class="col-12">
                             <div class="d-flex gap-2 justify-content-end">
-                                <button type="button" class="btn btn-outline-danger" id="btn-reset-default">
-                                    <i class="ti ti-refresh me-2"></i>
-                                    Reset Default
-                                </button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="ti ti-device-floppy me-2"></i>
-                                    Simpan Pengaturan
-                                </button>
+                                <x-tabler.button type="button" class="btn-outline-danger" id="btn-reset-default" icon="ti ti-refresh" text="Reset Default" />
+                                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Pengaturan" />
                             </div>
                         </div>
                     </div>
@@ -236,10 +226,7 @@
                 </div>
                 
                 <!-- Test Button -->
-                <button type="button" class="btn btn-success w-100 btn-lg" id="btn-test-location">
-                    <i class="ti ti-crosshair me-2"></i>
-                    Test Lokasi Sekarang
-                </button>
+                <x-tabler.button type="button" class="btn-success w-100 btn-lg" id="btn-test-location" icon="ti ti-crosshair" text="Test Lokasi Sekarang" />
                 <p class="text-muted text-center mt-2 mb-0">
                     <small>Klik untuk menguji apakah lokasi Anda berada dalam radius presensi</small>
                 </p>
@@ -298,48 +285,43 @@
 </div>
 
 <!-- Location Test Modal (Hidden, using inline instead) -->
-<div class="modal fade" id="locationTestModal" tabindex="-1" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Test Lokasi Presensi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="test-status" class="alert alert-info">
-                    <i class="ti ti-map-pin me-2"></i>
-                    Mendapatkan lokasi Anda...
-                </div>
-                
-                <div id="test-results" style="display: none;">
-                    <div class="mb-3">
-                        <h6>Lokasi Anda:</h6>
-                        <div id="test-current-location" class="text-muted"></div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>Lokasi Kantor:</h6>
-                        <div id="test-office-location" class="text-muted"></div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>Jarak:</h6>
-                        <div id="test-distance" class="fw-bold"></div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>Status:</h6>
-                        <div id="test-status-result"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary" id="btn-retest">Test Ulang</button>
-            </div>
+<x-tabler.form-modal
+    id="locationTestModal"
+    title="Test Lokasi Presensi"
+    submitText=""
+    submitIcon=""
+>
+    <div id="test-status" class="alert alert-info">
+        <i class="ti ti-map-pin me-2"></i>
+        Mendapatkan lokasi Anda...
+    </div>
+    
+    <div id="test-results" style="display: none;">
+        <div class="mb-3">
+            <h6>Lokasi Anda:</h6>
+            <div id="test-current-location" class="text-muted"></div>
+        </div>
+        
+        <div class="mb-3">
+            <h6>Lokasi Kantor:</h6>
+            <div id="test-office-location" class="text-muted"></div>
+        </div>
+        
+        <div class="mb-3">
+            <h6>Jarak:</h6>
+            <div id="test-distance" class="fw-bold"></div>
+        </div>
+        
+        <div class="mb-3">
+            <h6>Status:</h6>
+            <div id="test-status-result"></div>
         </div>
     </div>
-</div>
+    <x-slot:footer>
+        <x-tabler.button type="button" class="btn-secondary" data-bs-dismiss="modal" text="Tutup" />
+        <x-tabler.button type="button" class="btn-primary" id="btn-retest" text="Test Ulang" />
+    </x-slot:footer>
+</x-tabler.form-modal>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

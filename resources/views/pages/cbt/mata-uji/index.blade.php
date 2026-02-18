@@ -8,9 +8,7 @@
                 <h2 class="page-title">Management Mata Uji (CBT)</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <button type="button" class="btn btn-primary ajax-modal-btn" data-modal-title="Tambah Mata Uji" data-url="{{ route('cbt.mata-uji.create') }}">
-                    <i class="ti ti-plus"></i> Tambah Mata Uji
-                </button>
+                <x-tabler.button type="button" class="btn-primary ajax-modal-btn" data-modal-title="Tambah Mata Uji" data-url="{{ route('cbt.mata-uji.create') }}" icon="ti ti-plus" text="Tambah Mata Uji" />
             </div>
         </div>
     </div>

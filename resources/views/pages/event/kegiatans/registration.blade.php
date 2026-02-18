@@ -38,15 +38,9 @@
                             </div>
                             
                             <div class="mt-2">
-                                <button type="button" id="btn-start-camera" class="btn btn-sm btn-outline-primary">
-                                    <i class="ti ti-video me-1"></i> Aktifkan Kamera
-                                </button>
-                                <button type="button" id="btn-capture" class="btn btn-sm btn-primary" style="display: none;">
-                                    <i class="ti ti-camera me-1"></i> Ambil Foto
-                                </button>
-                                <button type="button" id="btn-retake" class="btn btn-sm btn-outline-warning" style="display: none;">
-                                    <i class="ti ti-refresh me-1"></i> Ambil Ulang
-                                </button>
+                                <x-tabler.button type="button" id="btn-start-camera" class="btn-sm btn-outline-primary" icon="ti ti-video" text="Aktifkan Kamera" />
+                                <x-tabler.button type="button" id="btn-capture" class="btn-sm btn-primary" style="display: none;" icon="ti ti-camera" text="Ambil Foto" />
+                                <x-tabler.button type="button" id="btn-retake" class="btn-sm btn-outline-warning" style="display: none;" icon="ti ti-refresh" text="Ambil Ulang" />
                             </div>
                         </div>
                         <input type="hidden" name="foto" id="input-foto">
@@ -56,9 +50,7 @@
                         <div class="border rounded bg-light p-2">
                             <canvas id="signature-pad" class="w-100 border rounded" style="touch-action: none; background-color: #fff; min-height: 200px;"></canvas>
                             <div class="mt-2 text-center">
-                                <button type="button" id="btn-clear-sig" class="btn btn-sm btn-outline-warning">
-                                    <i class="ti ti-eraser me-1"></i> Hapus TTD
-                                </button>
+                                <x-tabler.button type="button" id="btn-clear-sig" class="btn-sm btn-outline-warning" icon="ti ti-eraser" text="Hapus TTD" />
                             </div>
                         </div>
                         <input type="hidden" name="ttd" id="input-ttd">
@@ -66,9 +58,7 @@
                 </div>
 
                 <div class="form-footer">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="ti ti-device-floppy me-1"></i> Simpan Data & Masuk
-                    </button>
+                    <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-device-floppy" text="Simpan Data & Masuk" />
                 </div>
             </form>
         </div>

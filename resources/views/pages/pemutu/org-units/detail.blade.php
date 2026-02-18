@@ -39,9 +39,7 @@
         <div class="d-flex justify-content-between align-items-center w-100">
             <h4 class="card-title mb-0">Personil</h4>
             {{-- Placeholder for Add Personil (to be implemented with Personil module) --}}
-            <button class="btn btn-sm btn-outline-primary" disabled>
-                <i class="ti ti-user-plus me-1"></i> Add Personil
-            </button>
+            <x-tabler.button class="btn-sm btn-outline-primary" disabled icon="ti ti-user-plus" text="Add Personil" />
         </div>
     </div>
     <div class="card-body p-0">

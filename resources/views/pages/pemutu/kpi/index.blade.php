@@ -4,7 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Sasaran Kinerja (KPI)" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button type="a" href="{{ route('pemutu.kpi.create') }}" icon="ti ti-plus" text="Tambah Sasaran Kinerja" class="btn-primary" />
+        <x-tabler.button href="{{ route('pemutu.kpi.create') }}" icon="ti ti-plus" text="Tambah Sasaran Kinerja" class="btn-primary" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -18,37 +18,39 @@
         </div>
     </div>
     
-    <div class="collapse" id="filter-section">
-        <div class="card-body border-bottom">
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <x-tabler.form-select 
-                        id="filter-dokumen" 
-                        name="dokumen_id"
-                        label="Dokumen Standar"
-                        class="select2-filter" 
-                        :options="['' => 'Semua Dokumen'] + $dokumens" 
-                    />
-                </div>
-                <div class="col-md-8 mb-3">
-                    <x-tabler.form-select 
-                        id="filter-parent" 
-                        name="parent_id"
-                        label="Indikator Standar (Induk)"
-                        class="select2-filter" 
-                        :options="['' => 'Semua Indikator Standar'] + $parents" 
-                    />
-                </div>
-                <div class="col-12 text-end">
-                     <x-tabler.button type="button" id="btn-reset-filter" style="ghost-danger" text="Reset Filter" />
-                     <x-tabler.button type="button" id="btn-apply-filter" style="primary" text="Terapkan Filter" />
+    <div id="filter-section" class="collapse">
+        <form id="kpi-table-filter">
+            <div class="card-body border-bottom">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <x-tabler.form-select 
+                            id="filter-dokumen" 
+                            name="dokumen_id"
+                            label="Dokumen Standar"
+                            class="select2-filter" 
+                            :options="['' => 'Semua Dokumen'] + $dokumens" 
+                        />
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <x-tabler.form-select 
+                            id="filter-parent" 
+                            name="parent_id"
+                            label="Indikator Standar (Induk)"
+                            class="select2-filter" 
+                            :options="['' => 'Semua Indikator Standar'] + $parents" 
+                        />
+                    </div>
+                    <div class="col-12 text-end">
+                         <x-tabler.button type="button" id="btn-reset-filter" class="btn-ghost-danger" text="Reset Filter" />
+                         <x-tabler.button type="button" id="btn-apply-filter" class="btn-primary" text="Terapkan Filter" />
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 
-    <div class="table-responsive">
-        <x-tabler.datatable-client 
+    <div class="card-body p-0">
+        <x-tabler.datatable 
             id="kpi-table" 
             route="{{ route('pemutu.kpi.data') }}" 
             :columns="[
@@ -67,38 +69,41 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const table = window.LaravelDataTables['kpi-table'];
+        // Use a small delay to ensure CustomDataTables is initialized
+        setTimeout(() => {
+            const tableInstance = window['DT_kpi-table'];
+            const table = tableInstance ? tableInstance.table : null;
 
-        $('#btn-apply-filter').on('click', function() {
-            table.draw();
-        });
+            if (!table) {
+                console.error('DataTable instance not found for kpi-table');
+                return;
+            }
 
-        $('#btn-reset-filter').on('click', function() {
-            $('#filter-dokumen').val('').trigger('change');
-            $('#filter-parent').val('').trigger('change');
-            table.draw();
-        });
-
-        // Initialize Select2 if available
-        if (window.loadSelect2) {
-             window.loadSelect2().then(() => {
-                $('.select2-filter').select2({
-                    theme: 'bootstrap-5',
-                    width: '100%',
-                    placeholder: 'Pilih opsi...'
-                });
+            $('#btn-apply-filter').on('click', function() {
+                table.draw();
             });
-        }
 
-        // Custom filtering logic for DataTables
-        table.on('preXhr.dt', function (e, settings, data) {
-            data.dokumen_id = $('#filter-dokumen').val();
-            // We might need to handle parent_id in service/controller specifically if we want to filter by specific parent
-            // But currently IndikatorService uses getFilteredQuery which supports 'dokumen_id' but not explicit 'parent_id' directly unless added.
-            // Let's rely on standard search or extend service later if strictly needed.
-            // Actually, IndikatorService doesnt filter by parent_id. 
-            // We can add it to the request and if service ignores it, no harm.
-        });
+            $('#btn-reset-filter').on('click', function() {
+                const filterForm = document.getElementById('kpi-table-filter');
+                if (filterForm) {
+                    filterForm.reset();
+                    // Manually trigger change for Select2
+                    $(filterForm).find('.select2-filter').val('').trigger('change');
+                }
+                table.draw();
+            });
+
+            // Initialize Select2 if available
+            if (window.loadSelect2) {
+                 window.loadSelect2().then(() => {
+                    $('.select2-filter').select2({
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        placeholder: 'Pilih opsi...'
+                    });
+                });
+            }
+        }, 100);
     });
 </script>
 @endpush

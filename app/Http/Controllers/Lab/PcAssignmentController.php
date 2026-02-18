@@ -51,14 +51,8 @@ class PcAssignmentController extends Controller
                 '<span class="badge bg-label-success">Active</span>' :
                 '<span class="badge bg-label-secondary">Inactive</span>';
             })
-            ->addColumn('action', function ($assignment) use ($jadwalId) {
-                $encryptedId = encryptId($assignment->pc_assignments_id);
-                // Kita gunakan route destroy saja untuk hapus assignment
-                return '
-                    <button type="button" class="btn btn-sm btn-icon btn-outline-danger" onclick="deleteAssignment(\'' . route('lab.jadwal.assignments.destroy', [$jadwalId, $encryptedId]) . '\')">
-                        <i class="bx bx-trash"></i>
-                    </button>
-                ';
+            ->addColumn('action', function ($row) use ($jadwalId) {
+                return view('pages.lab.pc-assignments._action', compact('row', 'jadwalId'))->render();
             })
             ->rawColumns(['is_active', 'action'])
             ->make(true);

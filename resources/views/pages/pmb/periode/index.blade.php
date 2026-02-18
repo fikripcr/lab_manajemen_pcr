@@ -9,9 +9,8 @@
             </div>
             <div class="col-8 col-md-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <button type="button" class="btn btn-primary d-none d-sm-inline-block ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Periode" data-url="{{ route('pmb.periode.create') }}">
-                        <i class="ti ti-plus"></i> Tambah Periode
-                    </button>
+                    <x-tabler.button type="button" class="btn-primary d-none d-sm-inline-block ajax-modal-btn" icon="ti ti-plus" text="Tambah Periode" 
+                        data-modal-target="#modalAction" data-modal-title="Tambah Periode" data-url="{{ route('pmb.periode.create') }}" />
                 </div>
             </div>
         </div>

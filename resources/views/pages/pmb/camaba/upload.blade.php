@@ -48,15 +48,12 @@
                                 @endif
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-primary ajax-modal-btn" data-modal-target="#modalAction" 
+                                <x-tabler.button type="button" class="btn-sm btn-primary ajax-modal-btn" icon="ti ti-upload" text="Unggah"
+                                    data-modal-target="#modalAction" 
                                     data-modal-title="Upload {{ $s->jenisDokumen->nama_dokumen }}" 
-                                    data-url="{{ route('pmb.camaba.upload-form', ['pendaftaran' => $pendaftaran->encrypted_id, 'jenis' => $s->jenisDokumen->encrypted_id]) }}">
-                                    <i class="ti ti-upload"></i> Unggah
-                                </button>
+                                    data-url="{{ route('pmb.camaba.upload-form', ['pendaftaran' => $pendaftaran->encrypted_id, 'jenis' => $s->jenisDokumen->encrypted_id]) }}" />
                                 @if($upload)
-                                <a href="{{ asset('storage/' . $upload->file_path) }}" target="_blank" class="btn btn-sm btn-info">
-                                    <i class="ti ti-eye"></i> Lihat
-                                </a>
+                                <x-tabler.button href="{{ asset('storage/' . $upload->file_path) }}" target="_blank" class="btn-sm btn-info" icon="ti ti-eye" text="Lihat" />
                                 @endif
                             </td>
                         </tr>
@@ -69,7 +66,7 @@
                 <form action="{{ route('pmb.camaba.finalize-files') }}" method="POST" class="ajax-form" data-redirect="true">
                     @csrf
                     <input type="hidden" name="pendaftaran_id" value="{{ $pendaftaran->encrypted_id }}">
-                    <button type="submit" class="btn btn-success btn-lg">Selesai Unggah & Ajukan Verifikasi</button>
+                    <x-tabler.button type="submit" class="btn-success btn-lg" text="Selesai Unggah & Ajukan Verifikasi" />
                 </form>
             </div>
             @endif

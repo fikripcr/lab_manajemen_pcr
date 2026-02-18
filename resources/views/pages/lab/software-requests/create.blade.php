@@ -40,7 +40,6 @@
                                 <input type="hidden" name="periodsoftreq_id" value="{{ $activePeriod->periodsoftreq_id }}">
                             @endif
                             
-                            <div class="mb-3">
                                 <x-tabler.form-select 
                                     name="mata_kuliah_ids[]" 
                                     label="Mata Kuliah" 
@@ -48,10 +47,9 @@
                                     multiple 
                                     required
                                     placeholder="Pilih Mata Kuliah"
-                                    class="select2"
+                                    class="select2 mb-3"
                                     help="Pilih satu atau lebih mata kuliah yang membutuhkan software ini."
                                 />
-                            </div>
 
                             <x-tabler.form-input name="nama_software" label="Nama Software" placeholder="Misal: Visual Studio Code, MATLAB 2024" required :disabled="!$activePeriod" />
 

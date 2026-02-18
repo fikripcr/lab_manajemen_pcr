@@ -74,6 +74,9 @@ class DashboardController extends Controller
             // Retrieve server monitoring data
             $serverMonitoringData = $this->dashboardService->getServerMonitoringData();
 
+            // Get recent news
+            $recentNews = $this->dashboardService->getRecentNews(5);
+
             return view('pages.sys.dashboard.index', compact(
                 'totalUsers',
                 'totalRoles',
@@ -89,7 +92,8 @@ class DashboardController extends Controller
                 'roleUserCounts',
                 'activityChartData',
                 'errorChartData',
-                'serverMonitoringData'
+                'serverMonitoringData',
+                'recentNews'
             ));
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());

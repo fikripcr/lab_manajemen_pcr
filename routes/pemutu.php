@@ -1,5 +1,18 @@
 <?php
 
+use App\Http\Controllers\Pemutu\DashboardController;
+use App\Http\Controllers\Pemutu\DokSubController;
+use App\Http\Controllers\Pemutu\DokumenApprovalController;
+use App\Http\Controllers\Pemutu\DokumenController;
+use App\Http\Controllers\Pemutu\IndikatorController;
+use App\Http\Controllers\Pemutu\KpiController;
+use App\Http\Controllers\Pemutu\LabelController;
+use App\Http\Controllers\Pemutu\LabelTypeController;
+use App\Http\Controllers\Pemutu\MyKpiController;
+use App\Http\Controllers\Pemutu\PeriodeKpiController;
+use App\Http\Controllers\Pemutu\PeriodeSpmiController;
+use App\Http\Controllers\Pemutu\PersonilController;
+use App\Http\Controllers\Pemutu\RenopController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================
@@ -7,69 +20,62 @@ use Illuminate\Support\Facades\Route;
 // ==========================
 Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')->group(function () {
     // Dashboard
-    Route::get('/dashboard', [App\Http\Controllers\Pemutu\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Periode KPI
-    Route::get('periode-kpis/data', [App\Http\Controllers\Pemutu\PeriodeKpiController::class, 'data'])->name('periode-kpis.data');
-    Route::post('periode-kpis/{periodeKpi}/activate', [App\Http\Controllers\Pemutu\PeriodeKpiController::class, 'activate'])->name('periode-kpis.activate');
-    Route::resource('periode-kpis', App\Http\Controllers\Pemutu\PeriodeKpiController::class);
+    Route::get('periode-kpis/data', [PeriodeKpiController::class, 'data'])->name('periode-kpis.data');
+    Route::post('periode-kpis/{periodeKpi}/activate', [PeriodeKpiController::class, 'activate'])->name('periode-kpis.activate');
+    Route::resource('periode-kpis', PeriodeKpiController::class);
 
     // Label Types (modal forms only - no index page)
-    Route::resource('label-types', App\Http\Controllers\Pemutu\LabelTypeController::class)->except(['index', 'show']);
+    Route::resource('label-types', LabelTypeController::class)->except(['index', 'show']);
 
     // Labels
-    Route::get('api/labels', [App\Http\Controllers\Pemutu\LabelController::class, 'paginate'])->name('labels.data');
-    Route::resource('labels', App\Http\Controllers\Pemutu\LabelController::class);
-
-    // Org Units - Moved to Shared
-    // Route::resource('org-units', App\Http\Controllers\Pemutu\OrgUnitController::class);
+    Route::get('api/labels', [LabelController::class, 'paginate'])->name('labels.data');
+    Route::resource('labels', LabelController::class);
 
     // Personils
-    Route::get('api/personils', [App\Http\Controllers\Pemutu\PersonilController::class, 'paginate'])->name('personils.data');
-    Route::match(['get', 'post'], 'personils/import', [App\Http\Controllers\Pemutu\PersonilController::class, 'import'])->name('personils.import');
-    Route::resource('personils', App\Http\Controllers\Pemutu\PersonilController::class);
+    Route::get('api/personils', [PersonilController::class, 'paginate'])->name('personils.data');
+    Route::match(['get', 'post'], 'personils/import', [PersonilController::class, 'import'])->name('personils.import');
+    Route::resource('personils', PersonilController::class);
 
     // Dokumen & Structure
-    // Dokumen & Structure
-    Route::post('dokumens/reorder', [App\Http\Controllers\Pemutu\DokumenController::class, 'reorder'])->name('dokumens.reorder');
-    Route::get('dokumens/create-standar', [App\Http\Controllers\Pemutu\DokumenController::class, 'createStandar'])->name('dokumens.create-standar');
-    Route::get('dokumens/{dokumen}/children-data', [App\Http\Controllers\Pemutu\DokumenController::class, 'childrenData'])->name('dokumens.children-data');
-    Route::get('dokumens/{dokumen}/renop-with-indicators', [App\Http\Controllers\Pemutu\DokumenController::class, 'showRenopWithIndicators'])->name('dokumens.show-renop-with-indicators');
-    Route::resource('dokumens', App\Http\Controllers\Pemutu\DokumenController::class);
+    Route::post('dokumens/reorder', [DokumenController::class, 'reorder'])->name('dokumens.reorder');
+    Route::get('dokumens/create-standar', [DokumenController::class, 'createStandar'])->name('dokumens.create-standar');
+    Route::get('dokumens/{dokumen}/children-data', [DokumenController::class, 'childrenData'])->name('dokumens.children-data');
+    Route::get('dokumens/{dokumen}/renop-with-indicators', [DokumenController::class, 'showRenopWithIndicators'])->name('dokumens.show-renop-with-indicators');
+    Route::resource('dokumens', DokumenController::class);
 
     // Sub-Documents (DokSub)
-    Route::get('dok-subs/{dokumen}/data', [App\Http\Controllers\Pemutu\DokSubController::class, 'data'])->name('dok-subs.data');
-    Route::resource('dok-subs', App\Http\Controllers\Pemutu\DokSubController::class);
+    Route::get('dok-subs/{dokumen}/data', [DokSubController::class, 'data'])->name('dok-subs.data');
+    Route::resource('dok-subs', DokSubController::class);
 
     // Indikators
-    Route::get('api/indikators', [App\Http\Controllers\Pemutu\IndikatorController::class, 'paginate'])->name('indikators.data');
-    Route::resource('indikators', App\Http\Controllers\Pemutu\IndikatorController::class);
+    Route::get('api/indikators', [IndikatorController::class, 'paginate'])->name('indikators.data');
+    Route::resource('indikators', IndikatorController::class);
 
     // KPI (Sasaran Kinerja)
-    Route::get('api/kpi', [App\Http\Controllers\Pemutu\KpiController::class, 'paginate'])->name('kpi.data');
-    Route::get('kpi/{kpi}/assign', [App\Http\Controllers\Pemutu\KpiController::class, 'assign'])->name('kpi.assign');
-    Route::post('kpi/{kpi}/assign', [App\Http\Controllers\Pemutu\KpiController::class, 'storeAssignment'])->name('kpi.assign.store');
-    Route::resource('kpi', App\Http\Controllers\Pemutu\KpiController::class);
+    Route::get('api/kpi', [KpiController::class, 'paginate'])->name('kpi.data');
+    Route::get('kpi/{kpi}/assign', [KpiController::class, 'assign'])->name('kpi.assign');
+    Route::post('kpi/{kpi}/assign', [KpiController::class, 'storeAssignment'])->name('kpi.assign.store');
+    Route::resource('kpi', KpiController::class);
 
     // Document Approvals
-    Route::get('dokumens/{dokumen}/approve', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'create'])->name('dokumens.approve.create');
-    Route::post('dokumens/{dokumen}/approve', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'store'])->name('dokumens.approve');
-    Route::delete('dokumens/approval/{approval}', [App\Http\Controllers\Pemutu\DokumenApprovalController::class, 'destroy'])->name('dokumens.approval.destroy');
+    Route::get('dokumens/{dokumen}/approve', [DokumenApprovalController::class, 'create'])->name('dokumens.approve.create');
+    Route::post('dokumens/{dokumen}/approve', [DokumenApprovalController::class, 'store'])->name('dokumens.approve');
+    Route::delete('dokumens/approval/{approval}', [DokumenApprovalController::class, 'destroy'])->name('dokumens.approval.destroy');
 
     // Period SPMI (PEPP Cycle)
-    Route::get('api/periode-spmi', [App\Http\Controllers\Pemutu\PeriodeSpmiController::class, 'paginate'])->name('periode-spmis.data');
-    Route::resource('periode-spmis', App\Http\Controllers\Pemutu\PeriodeSpmiController::class);
+    Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'paginate'])->name('periode-spmis.data');
+    Route::resource('periode-spmis', PeriodeSpmiController::class);
 
     // Renop (Rencana Operasional)
-    Route::get('renop/create', [App\Http\Controllers\Pemutu\RenopController::class, 'create'])->name('renop.create');
-    Route::post('renop', [App\Http\Controllers\Pemutu\RenopController::class, 'store'])->name('renop.store');
-    Route::get('renop', [App\Http\Controllers\Pemutu\RenopController::class, 'index'])->name('renop.index');
-    // Assignment removed from Renop
-
-    // Standard & Performance Indicators
+    Route::get('renop/create', [RenopController::class, 'create'])->name('renop.create');
+    Route::post('renop', [RenopController::class, 'store'])->name('renop.store');
+    Route::get('renop', [RenopController::class, 'index'])->name('renop.index');
 
     // My KPI
-    Route::get('mykpi', [App\Http\Controllers\Pemutu\MyKpiController::class, 'index'])->name('mykpi.index');
-    Route::get('mykpi/{id}/edit', [App\Http\Controllers\Pemutu\MyKpiController::class, 'edit'])->name('mykpi.edit');
-    Route::put('mykpi/{id}', [App\Http\Controllers\Pemutu\MyKpiController::class, 'update'])->name('mykpi.update');
+    Route::get('mykpi', [MyKpiController::class, 'index'])->name('mykpi.index');
+    Route::get('mykpi/{id}/edit', [MyKpiController::class, 'edit'])->name('mykpi.edit');
+    Route::put('mykpi/{id}', [MyKpiController::class, 'update'])->name('mykpi.update');
 });

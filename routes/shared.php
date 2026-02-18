@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('personil', PersonilController::class);
 
         // Slideshow
+        Route::post('/slideshow/reorder', [\App\Http\Controllers\Shared\SlideshowController::class, 'reorder'])->name('slideshow.reorder');
         Route::get('/slideshow/paginate', [\App\Http\Controllers\Shared\SlideshowController::class, 'paginate'])->name('slideshow.paginate');
         Route::resource('slideshow', \App\Http\Controllers\Shared\SlideshowController::class);
 

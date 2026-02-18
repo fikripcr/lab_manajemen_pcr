@@ -3,10 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Personil" pretitle="Master Data">
     <x-slot:actions>
-        <a href="{{ route('shared.personil.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-            <i class="ti ti-plus icon"></i>
-            Tambah Personil
-        </a>
+        <x-tabler.button href="{{ route('shared.personil.create') }}" class="btn-primary d-none d-sm-inline-block" icon="ti ti-plus" text="Tambah Personil" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

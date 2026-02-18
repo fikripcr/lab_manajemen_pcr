@@ -45,7 +45,7 @@
     </div>
 
     <div class="modal-footer px-0 pb-0">
-        <x-tabler.button type="button" style="outline-secondary" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" style="primary" icon="ti ti-device-floppy" text="Simpan Approval" />
+        <x-tabler.button type="button" class="btn-outline-secondary" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Approval" />
     </div>
 </form>

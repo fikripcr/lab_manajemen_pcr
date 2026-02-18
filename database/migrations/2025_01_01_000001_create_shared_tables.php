@@ -84,6 +84,18 @@ return new class extends Migration
             $table->string('nama');
             $table->string('email')->unique();
             $table->unsignedBigInteger('orgunit_id')->nullable();
+
+            // Demographic fields ( consolidated from 2026_02_17 )
+            $table->string('jenis_kelamin', 20)->nullable();
+            $table->string('tempat_lahir', 100)->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('agama', 30)->nullable();
+            $table->string('kewarganegaraan', 50)->nullable();
+            $table->string('no_hp', 20)->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('angkatan', 4)->nullable();
+            $table->string('foto')->nullable();
+
             $table->foreign('orgunit_id')->references('orgunit_id')->on('struktur_organisasi')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
@@ -147,6 +159,47 @@ return new class extends Migration
             $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
             $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
+
+        // =====================================================================
+        // 6. Slideshows ( consolidated from 2026_02_17 )
+        // =====================================================================
+        Schema::create('slideshows', function (Blueprint $table) {
+            $table->id();
+            $table->string('image_url');
+            $table->string('title')->nullable();
+            $table->string('caption')->nullable();
+            $table->string('link')->nullable();
+            $table->integer('seq')->default(0);
+            $table->boolean('is_active')->default(true);
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // =====================================================================
+        // 7. FAQs ( consolidated from 2026_02_17 )
+        // =====================================================================
+        Schema::create('faqs', function (Blueprint $table) {
+            $table->id();
+            $table->string('question');
+            $table->text('answer');
+            $table->string('category')->nullable();
+            $table->integer('seq')->default(0);
+            $table->boolean('is_active')->default(true);
+
+            // Blameable
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
@@ -155,6 +208,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('faqs');
+        Schema::dropIfExists('slideshows');
         Schema::dropIfExists('personil');
         Schema::dropIfExists('pengumuman');
         Schema::dropIfExists('mahasiswa');

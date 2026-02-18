@@ -13,10 +13,7 @@
                 <i class="ti ti-arrow-left me-2"></i>
                 Kembali
             </a>
-            <button class="btn btn-outline-success" id="btn-export">
-                <i class="ti ti-download me-2"></i>
-                Export
-            </button>
+            <x-tabler.button class="btn-outline-success" id="btn-export" icon="ti ti-download" text="Export" />
         </div>
     </div>
 </div>
@@ -91,24 +88,17 @@
 </div>
 
 <!-- Detail Modal -->
-<div class="modal fade" id="detailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Detail Presensi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="detail-content">
-                    <!-- Detail content will be loaded here -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
-        </div>
+<x-tabler.form-modal
+    id="detailModal"
+    title="Detail Presensi"
+    size="modal-lg"
+    submitText=""
+    submitIcon=""
+>
+    <div id="detail-content">
+        <!-- Detail content will be loaded here -->
     </div>
-</div>
+</x-tabler.form-modal>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -206,9 +196,7 @@ const presensiColumnDefs = [
         render: function(data, type, row) {
             return `
                 <div class="btn-list">
-                    <button class="btn btn-sm btn-outline-primary" onclick="showDetail('${row.date}')">
-                        <i class="ti ti-eye"></i>
-                    </button>
+                    <x-tabler.button class="btn-sm btn-outline-primary" onclick="showDetail('${row.date}')" icon="ti ti-eye" />
                 </div>
             `;
         }

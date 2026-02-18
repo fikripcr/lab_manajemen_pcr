@@ -258,9 +258,7 @@
 
                     <div class="card-footer bg-white border-top-0 pb-5 pt-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <button class="btn btn-outline-secondary btn-lg px-4 rounded-pill" id="btn-prev">
-                                <i class="ti ti-arrow-left me-2"></i> Sebelumnya
-                            </button>
+                            <x-tabler.button class="btn-outline-secondary btn-lg px-4 rounded-pill" id="btn-prev" icon="ti ti-arrow-left" text="Sebelumnya" />
                             
                             <div class="d-none d-md-block">
                                 <label class="btn btn-outline-warning border-2 btn-lg px-4 rounded-pill transition-all cursor-pointer d-flex align-items-center gap-2">
@@ -269,9 +267,7 @@
                                 </label>
                             </div>
 
-                            <button class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm" id="btn-next">
-                                Selanjutnya <i class="ti ti-arrow-right ms-2"></i>
-                            </button>
+                            <x-tabler.button class="btn-primary btn-lg px-5 rounded-pill shadow-sm" id="btn-next" text="Selanjutnya" icon="ti ti-arrow-right" trailing-icon="true" />
                         </div>
                         <div class="text-center mt-4 d-md-none">
                             <label class="btn btn-outline-warning border-2 btn-sm px-4 rounded-pill cursor-pointer d-flex align-items-center gap-2 justify-content-center">
@@ -295,14 +291,10 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-success w-100 btn-lg" id="btn-finish">
-                            <i class="ti ti-check me-2"></i> Selesaikan Ujian
-                        </button>
+                        <x-tabler.button class="btn-success w-100 btn-lg" id="btn-finish" icon="ti ti-check" text="Selesaikan Ujian" />
 
                         @if(auth()->user()->hasRole('admin'))
-                        <button type="button" class="btn btn-outline-danger w-100 mt-3" onclick="resetAdminData()">
-                            <i class="ti ti-refresh me-2"></i> Reset Data Testing
-                        </button>
+                        <x-tabler.button type="button" class="btn-outline-danger w-100 mt-3" onclick="resetAdminData()" icon="ti ti-refresh" text="Reset Data Testing" />
                         @endif
                     </div>
                 </div>
@@ -342,9 +334,7 @@
                     <div class="card-body p-3 text-center">
                         <div class="mb-2 text-red font-weight-bold"><i class="ti ti-shield-lock me-1"></i> Admin Panel</div>
                         <p class="small mb-3">Hapus history Anda sendiri untuk jadwal ini dan mulai ulang testing.</p>
-                        <button class="btn btn-red w-100" id="btn-reset-admin">
-                            <i class="ti ti-refresh me-2"></i> Reset My Progress
-                        </button>
+                        <x-tabler.button class="btn-red w-100" id="btn-reset-admin" icon="ti ti-refresh" text="Reset My Progress" />
                     </div>
                 </div>
                 @endif

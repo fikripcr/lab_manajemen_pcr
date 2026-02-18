@@ -47,10 +47,10 @@ class EventController extends Controller
 
     public function create()
     {
-        $pageTitle = 'Tambah Event';
+        $pageTitle = 'Tambah Kegiatan';
         $users     = User::all();
-        $event     = new Event();
-        return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'event'));
+        $Kegiatan  = new Event();
+        return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'Kegiatan'));
     }
 
     public function store(EventRequest $request)
@@ -60,7 +60,7 @@ class EventController extends Controller
             return response()->json([
                 'success'  => true,
                 'message'  => 'Kegiatan berhasil disimpan',
-                'redirect' => route('event.events.index'),
+                'redirect' => route('Kegiatan.Kegiatans.index'),
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -88,7 +88,7 @@ class EventController extends Controller
             return response()->json([
                 'success'  => true,
                 'message'  => 'Kegiatan berhasil diperbarui',
-                'redirect' => route('event.events.index'),
+                'redirect' => route('Kegiatan.Kegiatans.index'),
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

@@ -267,7 +267,7 @@
         ],
         [
             'type'          => 'dropdown',
-            'title'         => 'Modul Kegiatan',
+            'title'         => 'Kegiatan',
             'id'            => 'navbar-event',
             'icon'          => 'ti ti-calendar-star',
             'active_routes' => ['Kegiatan.*'],

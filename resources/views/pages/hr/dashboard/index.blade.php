@@ -5,10 +5,7 @@
 <x-tabler.page-header title="Dashboard HR" pretitle="Human Resources Management">
     <x-slot:actions>
         <div class="btn-group">
-            <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                <i class="ti ti-calendar me-1"></i>
-                {{ now()->format('F Y') }}
-            </button>
+            <x-tabler.button class="btn-sm dropdown-toggle" data-bs-toggle="dropdown" icon="ti ti-calendar" text="{{ now()->format('F Y') }}" />
             <div class="dropdown-menu">
                 <a href="#" class="dropdown-item" onclick="changePeriod('today')">Hari Ini</a>
                 <a href="#" class="dropdown-item" onclick="changePeriod('week')">Minggu Ini</a>
@@ -127,7 +124,7 @@
                     <div class="card-header bg-transparent border-0 py-3 d-flex align-items-center">
                         <h3 class="card-title fw-bold m-0"><i class="ti ti-clipboard-check me-2 text-primary"></i> Menunggu Persetujuan</h3>
                         <div class="ms-auto">
-                            <a href="{{ route('hr.approval.index') }}" class="btn btn-ghost-secondary btn-sm">Lihat Semua</a>
+                            <x-tabler.button href="{{ route('hr.approval.index') }}" class="btn-ghost-secondary btn-sm" text="Lihat Semua" />
                         </div>
                     </div>
                     <div class="card-body pb-0">
@@ -163,12 +160,8 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                <a href="{{ route('hr.approval.approve', $approval->riwayatapproval_id) }}" class="btn btn-icon btn-ghost-success btn-sm">
-                                                    <i class="ti ti-check"></i>
-                                                </a>
-                                                <a href="{{ route('hr.approval.reject', $approval->riwayatapproval_id) }}" class="btn btn-icon btn-ghost-danger btn-sm">
-                                                    <i class="ti ti-x"></i>
-                                                </a>
+                                                <x-tabler.button href="{{ route('hr.approval.approve', $approval->riwayatapproval_id) }}" class="btn-icon btn-ghost-success btn-sm" icon="ti ti-check" />
+                                                <x-tabler.button href="{{ route('hr.approval.reject', $approval->riwayatapproval_id) }}" class="btn-icon btn-ghost-danger btn-sm" icon="ti ti-x" />
                                             </div>
                                         </td>
                                     </tr>

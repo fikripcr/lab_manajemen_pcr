@@ -71,15 +71,13 @@
                             <input type="number" class="form-control" id="qrSizeInput" value="200" min="100" max="500">
                         </div>
 
-                        <button type="button" class="btn btn-primary w-100" id="generateQrBtn">
-                            Generate QR Code (SVG)
-                        </button>
+                        <x-tabler.button type="button" class="btn-primary w-100" id="generateQrBtn" text="Generate QR Code (SVG)" />
 
                         <div id="qrCodeContainer" class="mt-4 text-center" style="display: none;">
                             <h6>Generated QR Code:</h6>
                             <div id="qrCodeDisplay" class="d-inline-block bg-white border rounded"></div>
                             <div class="mt-2">
-                                <button type="button" class="btn btn-outline-secondary btn-sm" id="downloadQrPngBtn">Download PNG</button>
+                                <x-tabler.button type="button" class="btn-outline-secondary btn-sm" id="downloadQrPngBtn" text="Download PNG" />
                             </div>
                         </div>
                     </div>
@@ -93,18 +91,14 @@
                     <div class="card-body">
                         <div class="mb-4">
                             <div class="d-grid">
-                                <button type="button" class="btn btn-outline-primary" id="turnOnCameraBtn">
-                                    <i class='bx bx-camera'></i> Activate Camera Scanner
-                                </button>
+                                <x-tabler.button type="button" class="btn-outline-primary" id="turnOnCameraBtn" icon="bx bx-camera" text="Activate Camera Scanner" />
                             </div>
                         </div>
 
                         <div id="cameraContainer" class="border rounded p-2 bg-light" style="display: none;">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <small class="text-muted">Camera Preview</small>
-                                <button type="button" class="btn btn-sm btn-outline-danger" id="stopCameraBtn">
-                                    <i class='bx bx-stop-circle'></i> Stop
-                                </button>
+                                <x-tabler.button type="button" class="btn-sm btn-outline-danger" id="stopCameraBtn" icon="bx bx-stop-circle" text="Stop" />
                             </div>
                             <video id="cameraPreview" autoplay  playsinline class="w-100 border rounded" style="max-height: 300px;"></video>
                         </div>
@@ -124,12 +118,8 @@
                     <div class="card-body">
                         <div id="html5qr-code-container"></div>
                         <div class="mt-3">
-                            <button type="button" class="btn btn-primary w-100" id="startHtml5QrScanner">
-                                <i class='bx bx-qr-scan'></i> Start HTML5 Scanner
-                            </button>
-                            <button type="button" class="btn btn-danger w-100 mt-2" id="stopHtml5QrScanner" style="display: none;">
-                                <i class='bx bx-stop-circle'></i> Stop HTML5 Scanner
-                            </button>
+                            <x-tabler.button type="button" class="btn-primary w-100" id="startHtml5QrScanner" icon="bx bx-qr-scan" text="Start HTML5 Scanner" />
+                            <x-tabler.button type="button" class="btn-danger w-100 mt-2" id="stopHtml5QrScanner" style="display: none;" icon="bx bx-stop-circle" text="Stop HTML5 Scanner" />
                         </div>
                         <div id="html5qr-result" class="mt-3">
                             <h6 class="mb-2">HTML5 Scan Results</h6>

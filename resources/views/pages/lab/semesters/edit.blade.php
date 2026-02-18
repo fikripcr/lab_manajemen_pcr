@@ -57,7 +57,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <x-tabler.button type="submit" />
+                            <x-tabler.button type="submit" text="Update Semester" />
                             <x-tabler.button type="cancel" :href="route('lab.semesters.index')" />
                         </div>
                     </form>

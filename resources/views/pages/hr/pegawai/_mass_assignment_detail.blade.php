@@ -35,10 +35,8 @@
                         @endif
                     </td>
                     <td class="text-end">
-                        <button type="button" class="btn btn-sm btn-ghost-danger btn-remove-assignment" 
-                                data-url="{{ route('hr.pegawai.penugasan.destroy', [$asn->pegawai_id, $asn->riwayatpenugasan_id]) }}">
-                            <i class="ti ti-trash"></i>
-                        </button>
+                        <x-tabler.button type="button" class="btn-sm btn-ghost-danger btn-remove-assignment" 
+                                data-url="{{ route('hr.pegawai.penugasan.destroy', [$asn->pegawai_id, $asn->riwayatpenugasan_id]) }}" icon="ti ti-trash" icon-only />
                     </td>
                 </tr>
                 @endforeach
@@ -73,9 +71,7 @@
             </div>
         </div>
         <div class="mt-3">
-            <button type="submit" class="btn btn-primary">
-                <i class="ti ti-plus me-1"></i> Tambah Penugasan
-            </button>
+            <x-tabler.button type="submit" class="btn-primary" icon="ti ti-plus" text="Tambah Penugasan" />
         </div>
     </form>
 </div>

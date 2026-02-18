@@ -68,7 +68,7 @@ class SurveiController extends Controller
                             'url'        => '#',
                             'icon'       => 'link',
                             'class'      => 'btn-copy-link',
-                            'attributes' => 'data-link="' . route('survei.player', $s->slug) . '"',
+                            'attributes' => 'data-link="' . route('survei.public.show', $s->slug) . '"',
                         ],
                         [
                             'label'      => 'Duplikasi',

@@ -27,44 +27,40 @@
                             $field = $isian->kategoriIsian;
                             $fieldName = 'field_' . $field->kategoriisian_id;
                             $oldValue = $answers[$field->nama_isian]->isi ?? '';
+                            $required = $isian->is_required ? 'required' : '';
                         @endphp
 
                         <div class="mb-3">
-                            <label class="form-label {{ $isian->is_required ? 'required' : '' }}">
-                                {{ $field->nama_isian }}
-                            </label>
-
                             @if($field->type === 'textarea')
-                                <textarea name="{{ $fieldName }}" class="form-control" rows="3" {{ $isian->is_required ? 'required' : '' }}>{{ $oldValue }}</textarea>
+                                <x-tabler.form-textarea name="{{ $fieldName }}" label="{{ $field->nama_isian }}" rows="3" required="{{ $isian->is_required }}">{{ $oldValue }}</x-tabler.form-textarea>
                             
                             @elseif($field->type === 'date')
-                                <input type="date" name="{{ $fieldName }}" class="form-control" value="{{ $oldValue }}" {{ $isian->is_required ? 'required' : '' }}>
+                                <x-tabler.form-input type="date" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" value="{{ $oldValue }}" required="{{ $isian->is_required }}" />
                             
                             @elseif($field->type === 'time')
-                                <input type="time" name="{{ $fieldName }}" class="form-control" value="{{ $oldValue }}" {{ $isian->is_required ? 'required' : '' }}>
+                                <x-tabler.form-input type="time" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" value="{{ $oldValue }}" required="{{ $isian->is_required }}" />
                             
                             @elseif($field->type === 'file')
-                                @if($oldValue)
-                                    <div class="mb-2">
-                                        <span class="badge bg-blue-lt">File Saat Ini:</span> 
-                                        <a href="{{ Storage::url($oldValue) }}" target="_blank" class="ms-1">{{ basename($oldValue) }}</a>
-                                    </div>
-                                @endif
-                                <input type="file" name="{{ $fieldName }}" class="form-control">
-                                <small class="form-hint">Upload file baru untuk mengganti yang lama.</small>
+                                <x-tabler.form-input type="file" name="{{ $fieldName }}" label="{{ $field->nama_isian }}">
+                                    @if($oldValue)
+                                        <div class="mb-2">
+                                            <span class="badge bg-blue-lt">File Saat Ini:</span> 
+                                            <a href="{{ Storage::url($oldValue) }}" target="_blank" class="ms-1">{{ basename($oldValue) }}</a>
+                                        </div>
+                                    @endif
+                                    <small class="form-hint">Upload file baru untuk mengganti yang lama.</small>
+                                </x-tabler.form-input>
                             
                             @elseif($field->type === 'select')
-                                @php
-                                    $options = $field->type_value ?? []; // Assuming options are stored here if any
-                                    // Fallback text input if simple select not implemented yet
-                                @endphp
-                                <select name="{{ $fieldName }}" class="form-select" {{ $isian->is_required ? 'required' : '' }}>
+                                <x-tabler.form-select name="{{ $fieldName }}" label="{{ $field->nama_isian }}" required="{{ $isian->is_required }}">
                                     <option value="">Pilih...</option>
-                                    {{-- Custom options logic if needed --}}
-                                </select>
+                                    @foreach($field->type_value ?? [] as $opt)
+                                        <option value="{{ $opt }}" {{ $opt == $oldValue ? 'selected' : '' }}>{{ $opt }}</option>
+                                    @endforeach
+                                </x-tabler.form-select>
                             
                             @else
-                                <input type="text" name="{{ $fieldName }}" class="form-control" value="{{ $oldValue }}" {{ $isian->is_required ? 'required' : '' }}>
+                                <x-tabler.form-input type="text" name="{{ $fieldName }}" label="{{ $field->nama_isian }}" value="{{ $oldValue }}" required="{{ $isian->is_required }}" />
                             @endif
 
                             @if($isian->info_tambahan)
@@ -92,9 +88,7 @@
             </div>
 
             <div class="form-footer text-end">
-                <button type="submit" class="btn btn-primary">
-                    <i class="ti ti-device-floppy me-1"></i> Simpan Perubahan & Ajukan Ulang
-                </button>
+                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Perubahan & Ajukan Ulang" />
             </div>
         </form>
     </div>

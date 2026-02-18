@@ -25,22 +25,20 @@
                             <x-tabler.form-input label="Periode" value="{{ $periodeAktif->nama_periode }}" readonly="true" />
                             
                             <div class="mb-3">
-                                <label class="form-label required">Jalur Pendaftaran</label>
-                                <select name="jalur_id" class="form-select" required>
+                                <x-tabler.form-select name="jalur_id" label="Jalur Pendaftaran" required>
                                     <option value="">-- Pilih Jalur --</option>
                                     @foreach($jalur as $j)
                                         <option value="{{ $j->id }}">{{ $j->nama_jalur }} (Rp {{ number_format($j->biaya_pendaftaran, 0, ',', '.') }})</option>
                                     @endforeach
-                                </select>
+                                </x-tabler.form-select>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label required">Pilihan Program Studi (Maks 2)</label>
-                                <select name="pilihan_prodi[]" class="form-select" multiple size="5" required>
+                                <x-tabler.form-select name="pilihan_prodi[]" label="Pilihan Program Studi (Maks 2)" multiple size="5" required>
                                     @foreach($prodi as $p)
                                         <option value="{{ $p->orgunit_id }}">{{ $p->name }}</option>
                                     @endforeach
-                                </select>
+                                </x-tabler.form-select>
                                 <small class="text-muted">Tekan Ctrl untuk memilih lebih dari satu (Jika jalur mengijinkan).</small>
                             </div>
                         </div>
@@ -80,7 +78,7 @@
                     </div>
 
                     <div class="card-footer text-end px-0">
-                        <button type="submit" class="btn btn-primary btn-lg">Kirim Pendaftaran</button>
+                        <x-tabler.button type="submit" class="btn-primary btn-lg" text="Kirim Pendaftaran" />
                     </div>
                 </form>
             </div>
