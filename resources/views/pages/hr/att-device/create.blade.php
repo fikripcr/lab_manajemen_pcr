@@ -2,7 +2,6 @@
     title="Tambah Mesin Presensi"
     route="{{ route('hr.att-device.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="row">
         <div class="col-md-12 mb-3">

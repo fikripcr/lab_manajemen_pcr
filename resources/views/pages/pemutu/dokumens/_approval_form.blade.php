@@ -1,13 +1,19 @@
-<form action="{{ route('pemutu.dokumens.approve', $dokumen) }}" method="POST" class="ajax-form">
-    @csrf
+<x-tabler.form-modal
+    title="Persetujuan Dokumen"
+    route="{{ route('pemutu.dokumens.approve', $dokumen) }}"
+    method="POST"
+    submitText="Simpan Approval"
+    submitIcon="ti ti-device-floppy"
+>
     <div class="mb-3">
-        <x-tabler.form-select name="approver_id" label="Approver (Personil)" required="true" class="select2">
+        <x-tabler.form-select name="approver_id" label="Approver (Personil)" required="true" class="select2" data-dropdown-parent="#modalAction">
             <option value="">Pilih Personil...</option>
             @foreach($personils as $p)
                 <option value="{{ $p->personil_id }}">{{ $p->nama }} ({{ $p->jenis ?? '-' }})</option>
             @endforeach
         </x-tabler.form-select>
     </div>
+    
     <div class="mb-3">
         <label class="form-label required">Status Approval</label>
         <div class="form-selectgroup form-selectgroup-boxes d-flex flex-row gap-2">
@@ -40,12 +46,8 @@
             </label>
         </div>
     </div>
+    
     <div class="mb-3">
         <x-tabler.form-textarea name="komentar" label="Komentar / Catatan" placeholder="Masukkan komentar jika ada..." rows="3" />
     </div>
-
-    <div class="modal-footer px-0 pb-0">
-        <x-tabler.button type="button" class="btn-outline-secondary" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Approval" />
-    </div>
-</form>
+</x-tabler.form-modal>

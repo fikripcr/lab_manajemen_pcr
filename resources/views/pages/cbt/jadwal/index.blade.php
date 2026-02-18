@@ -1,18 +1,14 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Penjadwalan Ujian (CBT)" pretitle="CBT">
+    <x-slot:actions>
+        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Jadwal Ujian" data-url="{{ route('cbt.jadwal.create') }}" icon="ti ti-plus" text="Tambah Jadwal" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Penjadwalan Ujian (CBT)</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <x-tabler.button type="button" class="btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Jadwal Ujian" data-url="{{ route('cbt.jadwal.create') }}" icon="ti ti-plus" text="Tambah Jadwal" />
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

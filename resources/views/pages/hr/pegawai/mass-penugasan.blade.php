@@ -1,16 +1,10 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Penugasan Massal" pretitle="Kelola penugasan pegawai berdasarkan struktur organisasi" />
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Penugasan Massal</h2>
-                <div class="text-muted mt-1">Kelola penugasan pegawai berdasarkan struktur organisasi</div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

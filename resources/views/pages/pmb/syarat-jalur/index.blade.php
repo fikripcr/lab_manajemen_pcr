@@ -1,21 +1,14 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Syarat Dokumen: {{ $jalur->nama_jalur }}" pretitle="Pengaturan Jalur">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('pmb.jalur.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <div class="page-pretitle">Pengaturan Jalur</div>
-                <h2 class="page-title">Syarat Dokumen: {{ $jalur->nama_jalur }}</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <a href="{{ route('pmb.jalur.index') }}" class="btn btn-secondary">
-                    <i class="ti ti-arrow-left"></i> Kembali
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

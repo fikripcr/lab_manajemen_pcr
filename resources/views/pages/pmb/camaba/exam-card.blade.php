@@ -1,18 +1,15 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Kartu Peserta Ujian PMB" pretitle="PMB">
+    <x-slot:actions>
+        <x-tabler.button type="button" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" href="{{ route('pmb.camaba.dashboard') }}" />
+        <x-tabler.button type="button" class="btn-primary" onclick="window.print();" icon="ti ti-printer" text="Cetak Kartu" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Kartu Peserta Ujian PMB</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <x-tabler.button type="button" class="btn-primary" onclick="window.print();" icon="ti ti-printer" text="Cetak Kartu" />
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

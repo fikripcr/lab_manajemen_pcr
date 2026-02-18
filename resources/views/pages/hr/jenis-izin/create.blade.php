@@ -2,7 +2,6 @@
     title="Tambah Jenis Izin"
     route="{{ route('hr.jenis-izin.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="mb-3">
         <x-tabler.form-input name="nama" label="Nama Izin" required="true" placeholder="Contoh: Cuti Tahunan" />

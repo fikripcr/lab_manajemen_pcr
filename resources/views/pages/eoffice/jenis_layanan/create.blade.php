@@ -1,5 +1,9 @@
-<form action="{{ route('eoffice.jenis-layanan.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
+<x-tabler.form-modal
+    title="Tambah Jenis Layanan"
+    route="{{ route('eoffice.jenis-layanan.store') }}"
+    method="POST"
+    enctype="multipart/form-data"
+>
     <x-tabler.form-input name="nama_layanan" label="Nama Layanan" placeholder="Contoh: Surat Keterangan Mahasiswa Aktif" required />
     
     <div class="row">
@@ -55,9 +59,4 @@
     <div class="mb-3 mt-3">
         <x-tabler.form-checkbox name="is_active" value="1" label="Layanan Aktif" checked switch />
     </div>
-
-    <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" class="btn-primary" text="Simpan" />
-    </div>
-</form>
+</x-tabler.form-modal>

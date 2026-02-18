@@ -1,6 +1,9 @@
-<form action="{{ route('eoffice.jenis-layanan.update', $layanan->jenislayanan_id) }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
+<x-tabler.form-modal
+    title="Ubah Jenis Layanan"
+    route="{{ route('eoffice.jenis-layanan.update', $layanan->jenislayanan_id) }}"
+    method="PUT"
+    enctype="multipart/form-data"
+>
     <x-tabler.form-input name="nama_layanan" label="Nama Layanan" value="{{ $layanan->nama_layanan }}" required />
     
     <div class="row">
@@ -53,9 +56,4 @@
     <div class="mb-3 mt-3">
         <x-tabler.form-checkbox name="is_active" value="1" label="Layanan Aktif" :checked="$layanan->is_active" switch />
     </div>
-
-    <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" class="btn-primary" text="Simpan Perubahan" />
-    </div>
-</form>
+</x-tabler.form-modal>

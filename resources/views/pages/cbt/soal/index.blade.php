@@ -1,18 +1,14 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Bank Soal (CBT)" pretitle="CBT">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('cbt.soal.create') }}" class="btn-primary" icon="ti ti-plus" text="Tambah Soal" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Bank Soal (CBT)</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <x-tabler.button href="{{ route('cbt.soal.create') }}" class="btn-primary" icon="ti ti-plus" text="Tambah Soal" />
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

@@ -68,26 +68,18 @@
 </div>
 
 <!-- Activity Detail Modal -->
-<div class="modal modal-blur" id="activityDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Activity Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="activity-detail-content">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <x-tabler.button type="cancel" data-bs-dismiss="modal" class="btn-secondary" />
-            </div>
+<x-tabler.form-modal
+    id="activityDetailModal"
+    title="Activity Details"
+    submitText=""
+    submitIcon=""
+>
+    <div id="activity-detail-content">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
-</div>
+</x-tabler.form-modal>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

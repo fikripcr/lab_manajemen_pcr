@@ -2,7 +2,6 @@
     title="Tambah Jenis Shift"
     route="{{ route('hr.jenis-shift.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="row">
         <div class="col-md-12 mb-3">

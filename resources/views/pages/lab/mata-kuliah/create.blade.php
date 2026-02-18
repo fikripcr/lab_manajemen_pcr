@@ -1,38 +1,51 @@
-@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
+@if(request()->ajax() || request()->has('ajax'))
+    <x-tabler.form-modal
+        title="Create New Mata Kuliah"
+        route="{{ route('lab.mata-kuliah.store') }}"
+        method="POST"
+        submitText="Save"
+    >
+        <x-tabler.form-input name="kode_mk" label="Kode MK" value="{{ old('kode_mk') }}" placeholder="e.g. IF101" required />
+        <x-tabler.form-input name="nama_mk" label="Nama MK" value="{{ old('nama_mk') }}" placeholder="e.g. Pemrograman Web" required />
+        <x-tabler.form-input type="number" name="sks" label="SKS" value="{{ old('sks', 3) }}" min="1" max="6" required />
+    </x-tabler.form-modal>
+@else
+    @extends('layouts.admin.app')
 
-@section('header')
-    <x-tabler.page-header title="Create New Mata Kuliah" pretitle="Mata Kuliah">
-        <x-slot:actions>
-            <x-tabler.button type="back" :href="route('lab.mata-kuliah.index')" />
-        </x-slot:actions>
-    </x-tabler.page-header>
-@endsection
+    @section('header')
+        <x-tabler.page-header title="Create New Mata Kuliah" pretitle="Mata Kuliah">
+            <x-slot:actions>
+                <x-tabler.button type="back" :href="route('lab.mata-kuliah.index')" />
+            </x-slot:actions>
+        </x-tabler.page-header>
+    @endsection
 
-@section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <x-tabler.flash-message />
+    @section('content')
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <x-tabler.flash-message />
 
-                    <form method="POST" action="{{ route('lab.mata-kuliah.store') }}" class="ajax-form">
-                        @csrf
+                        <form method="POST" action="{{ route('lab.mata-kuliah.store') }}" class="ajax-form">
+                            @csrf
 
-                        <x-tabler.form-input name="kode_mk" label="Kode MK" value="{{ old('kode_mk') }}" placeholder="e.g. IF101" required />
+                            <x-tabler.form-input name="kode_mk" label="Kode MK" value="{{ old('kode_mk') }}" placeholder="e.g. IF101" required />
 
-                        <x-tabler.form-input name="nama_mk" label="Nama MK" value="{{ old('nama_mk') }}" placeholder="e.g. Pemrograman Web" required />
+                            <x-tabler.form-input name="nama_mk" label="Nama MK" value="{{ old('nama_mk') }}" placeholder="e.g. Pemrograman Web" required />
 
-                        <x-tabler.form-input type="number" name="sks" label="SKS" value="{{ old('sks', 3) }}" min="1" max="6" required />
+                            <x-tabler.form-input type="number" name="sks" label="SKS" value="{{ old('sks', 3) }}" min="1" max="6" required />
 
-                        <div class="row mt-4">
-                            <div class="col-sm-10 offset-sm-2">
-                                <x-tabler.button type="submit" text="Save" />
-                                <x-tabler.button type="cancel" :href="route('lab.mata-kuliah.index')" />
+                            <div class="row mt-4">
+                                <div class="col-sm-10 offset-sm-2">
+                                    <x-tabler.button type="submit" text="Save" />
+                                    <x-tabler.button type="cancel" :href="route('lab.mata-kuliah.index')" />
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+    @endsection
+@endif

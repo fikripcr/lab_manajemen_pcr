@@ -2,7 +2,6 @@
     title="Tambah Jabatan Struktural"
     route="{{ route('hr.jabatan-struktural.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="row">
         <div class="col-md-12 mb-3">

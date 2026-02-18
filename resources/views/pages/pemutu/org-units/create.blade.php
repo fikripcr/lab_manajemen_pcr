@@ -2,7 +2,6 @@
     title="Add Unit {{ $parent ? 'to ' . $parent->name : '' }}"
     route="{{ route('pemutu.org-units.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="mb-3">
         <x-tabler.form-select 

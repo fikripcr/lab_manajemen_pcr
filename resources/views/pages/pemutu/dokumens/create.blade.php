@@ -2,7 +2,6 @@
     :title="$pageTitle"
     route="{{ route('pemutu.dokumens.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="mb-3">
         <label for="parent_id" class="form-label">Induk Dokumen (Parent)</label>

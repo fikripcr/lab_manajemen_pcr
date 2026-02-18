@@ -2,7 +2,6 @@
     title="Tambah Status Aktifitas"
     route="{{ route('hr.status-aktifitas.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="row">
         <div class="col-md-4 mb-3">

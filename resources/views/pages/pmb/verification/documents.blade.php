@@ -1,15 +1,10 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Verifikasi Berkas PMB" pretitle="PMB" />
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Verifikasi Berkas PMB</h2>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

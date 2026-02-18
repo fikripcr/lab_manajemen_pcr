@@ -2,25 +2,18 @@
 
 @section('title', 'Monitor Ujian: ' . $jadwal->nama_kegiatan)
 
+@section('header')
+<x-tabler.page-header title="{{ $jadwal->nama_kegiatan }}" pretitle="Monitor CBT">
+    <x-slot:actions>
+        <span class="badge bg-primary-lt px-3 py-2">
+            <i class="ti ti-clock me-1"></i> {{ $jadwal->waktu_mulai->format('H:i') }} - {{ $jadwal->waktu_selesai->format('H:i') }}
+        </span>
+        <x-tabler.button type="button" class="btn-outline-secondary" onclick="location.reload()" icon="ti ti-refresh" text="Refresh" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <div class="page-pretitle">Monitor CBT</div>
-                <h2 class="page-title">{{ $jadwal->nama_kegiatan }}</h2>
-            </div>
-            <div class="col-auto ms-auto">
-                <div class="btn-list">
-                    <span class="badge bg-primary-lt px-3 py-2">
-                        <i class="ti ti-clock me-1"></i> {{ $jadwal->waktu_mulai->format('H:i') }} - {{ $jadwal->waktu_selesai->format('H:i') }}
-                    </span>
-                    <x-tabler.button type="button" class="btn-outline-secondary" onclick="location.reload()" icon="ti ti-refresh" text="Refresh" />
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

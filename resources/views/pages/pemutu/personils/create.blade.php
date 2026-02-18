@@ -2,7 +2,6 @@
     title="Create Personil"
     route="{{ route('pemutu.personils.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <x-tabler.form-input 
         name="nama" 

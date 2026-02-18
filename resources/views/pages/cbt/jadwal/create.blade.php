@@ -3,7 +3,6 @@
     route="{{ route('cbt.jadwal.store') }}"
     method="POST"
     data-redirect="true"
-    submitText="Simpan"
 >
     <x-tabler.form-input name="nama_kegiatan" label="Nama Kegiatan" placeholder="Contoh: Ujian Masuk Gelombang 1" required="true" />
     

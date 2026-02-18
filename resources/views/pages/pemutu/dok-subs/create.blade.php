@@ -7,7 +7,6 @@
     title="{{ $canProduceIndikator ? 'Tambah Poin / Kegiatan' : 'Tambah Sub-Dokumen' }}"
     route="{{ route('pemutu.dok-subs.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <input type="hidden" name="dok_id" value="{{ $dokumen->dok_id }}">
     

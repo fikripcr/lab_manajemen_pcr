@@ -1,6 +1,8 @@
-<form action="{{ route('eoffice.perusahaan.update', $perusahaan->perusahaan_id) }}" method="POST">
-    @csrf
-    @method('PUT')
+<x-tabler.form-modal
+    title="Edit Perusahaan"
+    route="{{ route('eoffice.perusahaan.update', $perusahaan->perusahaan_id) }}"
+    method="PUT"
+>
     <div class="row">
         <div class="col-md-6">
             <x-tabler.form-select name="kategoriperusahaan_id" label="Kategori Perusahaan" required>
@@ -27,9 +29,4 @@
             <x-tabler.form-input name="telp" label="Telepon" value="{{ $perusahaan->telp }}" />
         </div>
     </div>
-    
-    <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" class="btn-primary" text="Simpan Perubahan" />
-    </div>
-</form>
+</x-tabler.form-modal>

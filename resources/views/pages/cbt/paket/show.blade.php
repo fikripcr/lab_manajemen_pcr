@@ -1,19 +1,14 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Komposisi Paket: {{ $paket->nama_paket }}" pretitle="CBT Engine">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('cbt.paket.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <div class="page-pretitle">CBT Engine</div>
-                <h2 class="page-title">Komposisi Paket: {{ $paket->nama_paket }}</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <x-tabler.button href="{{ route('cbt.paket.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

@@ -1,31 +1,24 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Tanggal Libur" pretitle="Daftar hari libur nasional dan cuti bersama">
+    <x-slot:actions>
+        <form action="{{ route('hr.tanggal-libur.index') }}" method="GET" class="d-inline-block me-2 text-start">
+            <x-tabler.form-select name="tahun" label="Pilih Tahun" class="mb-0" onchange="this.form.submit()">
+                @foreach($years as $y)
+                    <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                @endforeach
+            </x-tabler.form-select>
+        </form>
+        <a href="{{ route('hr.tanggal-libur.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+            Tambah Tanggal
+        </a>
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Tanggal Libur</h2>
-                <div class="text-muted mt-1">Daftar hari libur nasional dan cuti bersama</div>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <div class="btn-list">
-                    <form action="{{ route('hr.tanggal-libur.index') }}" method="GET" class="d-inline-block me-2 text-start">
-                        <x-tabler.form-select name="tahun" label="Pilih Tahun" class="mb-0" onchange="this.form.submit()">
-                            @foreach($years as $y)
-                                <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
-                            @endforeach
-                        </x-tabler.form-select>
-                    </form>
-                    <a href="{{ route('hr.tanggal-libur.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        Tambah Tanggal
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

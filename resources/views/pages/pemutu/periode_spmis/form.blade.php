@@ -11,7 +11,6 @@
     :title="$title"
     :route="$route"
     :method="$method"
-    submitText="Simpan"
 >
     <div class="row">
          {{-- Info Dasar --}}

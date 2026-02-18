@@ -2,7 +2,6 @@
     title="Tambah Status Pegawai"
     route="{{ route('hr.status-pegawai.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="row">
         <div class="col-md-4 mb-3">

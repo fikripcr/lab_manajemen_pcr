@@ -3,7 +3,6 @@
     :route="$slideshow->exists ? route('shared.slideshow.update', $slideshow->hashid) : route('shared.slideshow.store')"
     :method="$slideshow->exists ? 'PUT' : 'POST'"
     enctype="multipart/form-data"
-    submitText="Simpan"
 >
     <x-tabler.flash-message />
     

@@ -2,12 +2,11 @@
 
 @section('title', 'Dashboard PMB')
 
+@section('header')
+<x-tabler.page-header title="Dashboard PMB" pretitle="Penerimaan Mahasiswa Baru" />
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <div class="page-pretitle">
 <div class="page-body">
     <div class="container-xl">
         {{-- LOAD DASHBOARD BASED ON ROLE --}}

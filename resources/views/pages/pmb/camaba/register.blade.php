@@ -1,15 +1,14 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Formulir Pendaftaran" pretitle="PMB">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('pmb.camaba.dashboard') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Formulir Pendaftaran</h2>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

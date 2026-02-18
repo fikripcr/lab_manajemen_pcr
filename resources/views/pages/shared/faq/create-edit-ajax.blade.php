@@ -2,7 +2,6 @@
     :title="$faq->exists ? 'Edit FAQ' : 'Tambah FAQ'"
     :route="$faq->exists ? route('shared.faq.update', $faq->hashid) : route('shared.faq.store')"
     :method="$faq->exists ? 'PUT' : 'POST'"
-    submitText="Simpan"
 >
     <x-tabler.flash-message />
     

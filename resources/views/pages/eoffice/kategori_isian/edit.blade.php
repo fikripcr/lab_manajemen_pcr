@@ -1,10 +1,11 @@
-<form action="{{ route('eoffice.kategori-isian.update', $kategori->kategoriisian_id) }}" method="POST">
-    @csrf
-    @method('PUT')
+<x-tabler.form-modal
+    title="Edit Kategori Isian"
+    route="{{ route('eoffice.kategori-isian.update', $kategori->kategoriisian_id) }}"
+    method="PUT"
+>
     <x-tabler.form-input name="nama_isian" label="Nama Isian" value="{{ $kategori->nama_isian }}" required />
     
     <div class="row">
-        <div class="col-md-6 mb-3">
         <div class="col-md-6">
             <x-tabler.form-select name="type" id="type-select-edit" label="Tipe Isian" required>
                 <option value="text" {{ $kategori->type == 'text' ? 'selected' : '' }}>Text (Short)</option>
@@ -30,7 +31,7 @@
         @if(!empty($typeValue))
             @foreach($typeValue as $val)
             <div class="input-group mb-2">
-                        <x-tabler.form-input name="type_value[]" label="Value" value="{{ $val }}" required="true" />
+                <x-tabler.form-input name="type_value[]" value="{{ $val }}" required="true" />
                 <x-tabler.button type="button" class="btn-outline-danger" onclick="removeOptionEdit(this)" text="Hapus" />
             </div>
             @endforeach
@@ -45,12 +46,7 @@
     </div>
 
     <x-tabler.form-textarea name="keterangan_isian" label="Keterangan" rows="2" value="{{ $kategori->keterangan_isian }}" />
-
-    <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" class="btn-primary" text="Simpan Perubahan" />
-    </div>
-</form>
+</x-tabler.form-modal>
 
 <script>
     $('#type-select-edit').on('change', function() {

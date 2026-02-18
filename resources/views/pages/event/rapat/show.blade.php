@@ -210,6 +210,16 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Entitas Terkait</h3>
+                                <div class="card-actions">
+                                    <x-tabler.button 
+                                        type="button" 
+                                        class="btn-sm ajax-modal-btn" 
+                                        data-url="{{ route('Kegiatan.rapat.entitas.create', $rapat) }}" 
+                                        data-modal-title="Tambah Entitas Terkait"
+                                        icon="ti ti-plus" 
+                                        text="Tambah" 
+                                    />
+                                </div>
                             </div>
                             <div class="card-body py-2">
                                 @if($rapat->entitas->count() > 0)

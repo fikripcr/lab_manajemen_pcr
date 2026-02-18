@@ -1,6 +1,3 @@
-@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
-
-@section('content')
 @if(request()->ajax() || request()->has('ajax'))
     <x-tabler.form-modal
         title="Edit: {{ $dokSub->judul }}"
@@ -41,17 +38,13 @@
         <x-tabler.form-textarea type="editor" name="isi" id="isi" label="Konten / Isi Lengkap" :value="$dokSub->isi" height="400" />
     </x-tabler.form-modal>
 @else
-    <div class="container-xl">
-        <div class="page-header d-print-none">
-            <div class="row g-2 align-items-center">
-                <div class="col">
-                    <div class="page-pretitle">SPMI / Sub Dokumen</div>
-                    <h2 class="page-title">Edit Isi Dokumen</h2>
-                </div>
-            </div>
-        </div>
-    </div>
+    @extends('layouts.admin.app')
 
+    @section('header')
+    <x-tabler.page-header title="Edit Isi Dokumen" pretitle="SPMI / Sub Dokumen" />
+    @endsection
+
+    @section('content')
     <div class="page-body">
         <div class="container-xl">
             <div class="card">
@@ -106,6 +99,5 @@
             </div>
         </div>
     </div>
+    @endsection
 @endif
-
-@endsection

@@ -2,7 +2,6 @@
     title="Create Label"
     route="{{ route('pemutu.labels.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="mb-3">
         <x-tabler.form-select id="type_id" name="type_id" label="Type" required="true">

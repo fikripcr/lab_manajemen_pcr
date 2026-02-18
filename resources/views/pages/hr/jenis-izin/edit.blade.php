@@ -2,7 +2,6 @@
     title="Ubah Jenis Izin"
     route="{{ route('hr.jenis-izin.update', $jenis_izin->hashid) }}"
     method="PUT"
-    submitText="Simpan"
 >
     <div class="mb-3">
         <x-tabler.form-input name="nama" label="Nama Izin" value="{{ $jenis_izin->nama }}" required="true" />

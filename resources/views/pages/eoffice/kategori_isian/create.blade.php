@@ -1,5 +1,8 @@
-<form action="{{ route('eoffice.kategori-isian.store') }}" method="POST">
-    @csrf
+<x-tabler.form-modal
+    title="Tambah Kategori Isian"
+    route="{{ route('eoffice.kategori-isian.store') }}"
+    method="POST"
+>
     <x-tabler.form-input name="nama_isian" label="Nama Isian" placeholder="Contoh: Nama Lengkap, NIP, dsb." required />
     
     <div class="row">
@@ -30,12 +33,7 @@
     </div>
 
     <x-tabler.form-textarea name="keterangan_isian" label="Keterangan" rows="2" placeholder="Keterangan tambahan untuk pengusul" />
-
-    <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" class="btn-primary" text="Simpan" />
-    </div>
-</form>
+</x-tabler.form-modal>
 
 <script>
     $('#type-select').on('change', function() {

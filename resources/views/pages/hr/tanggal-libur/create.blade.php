@@ -1,15 +1,11 @@
 @extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
 
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Tambah Tanggal Libur</h2>
-            </div>
-        </div>
-    </div>
-</div>
+@if(!(request()->ajax() || request()->has('ajax')))
+    @section('header')
+    <x-tabler.page-header title="Tambah Tanggal Libur" pretitle="HR" />
+    @endsection
+@endif
 
 <div class="page-body">
     <div class="container-xl">

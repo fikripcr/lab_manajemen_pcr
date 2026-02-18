@@ -3,7 +3,6 @@
     route="{{ route('cbt.paket.store') }}"
     method="POST"
     data-redirect="true"
-    submitText="Simpan"
 >
     <x-tabler.form-input name="nama_paket" label="Nama Paket" placeholder="Contoh: Paket PMB Gel 1 2024" required="true" />
     <x-tabler.form-select name="tipe_paket" label="Tipe Paket" required="true">

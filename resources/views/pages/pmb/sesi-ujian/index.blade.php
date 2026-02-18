@@ -1,19 +1,15 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Manajemen Sesi Ujian (CBT)" pretitle="PMB">
+    <x-slot:actions>
+        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Tambah Sesi" 
+            data-modal-target="#modalAction" data-modal-title="Tambah Sesi Ujian" data-url="{{ route('pmb.sesi-ujian.create') }}" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Manajemen Sesi Ujian (CBT)</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Tambah Sesi" 
-                    data-modal-target="#modalAction" data-modal-title="Tambah Sesi Ujian" data-url="{{ route('pmb.sesi-ujian.create') }}" />
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

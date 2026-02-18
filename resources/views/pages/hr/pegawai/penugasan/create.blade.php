@@ -2,7 +2,6 @@
     title="Tambah Penugasan"
     route="{{ route('hr.pegawai.penugasan.store', $pegawai->pegawai_id) }}"
     method="POST"
-    submitText="Simpan"
 >
     @if($currentPenugasan)
     <div class="alert alert-info">

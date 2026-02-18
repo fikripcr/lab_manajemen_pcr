@@ -1,21 +1,11 @@
 @extends('layouts.admin.app')
 
 @section('header')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <div class="page-pretitle">Detail Data</div>
-                <h2 class="page-title">{{ $pengumuman->judul }}</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <div class="btn-list">
-                    <x-tabler.button href="{{ route('shared.pengumuman.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<x-tabler.page-header title="{{ $pengumuman->judul }}" pretitle="Detail Data">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('shared.pengumuman.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+    </x-slot:actions>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

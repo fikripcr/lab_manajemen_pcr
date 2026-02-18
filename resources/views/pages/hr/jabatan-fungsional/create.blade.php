@@ -2,7 +2,6 @@
     title="Tambah Jabatan Fungsional"
     route="{{ route('hr.jabatan-fungsional.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="row">
         <div class="col-md-4 mb-3">

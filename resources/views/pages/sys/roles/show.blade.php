@@ -1,152 +1,151 @@
-@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.sys.empty' : 'layouts.sys.app')
-
-@section('title', 'Details Role')
-
-@section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">Access Control</div>
-        <h2 class="page-title">Role Details: {{ $role->name }}</h2>
+@if(request()->ajax() || request()->has('ajax'))
+    <div class="modal-header">
+        <h5 class="modal-title">Role Details: {{ $role->name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-            <a href="{{ route('sys.roles.edit', $role) }}" class="btn btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
-                Edit Role
-            </a>
-            <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
-                Back
-            </a>
-        </div>
-    </div>
-</div>
-@endsection
-
-@section('content')
-    <div class="card-body">
-        <x-tabler.flash-message />
-
+    <div class="modal-body">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <h6 class="text-muted">Role Name:</h6>
-                <p class="mb-0">{{ $role->name }}</p>
+                <h6 class="text-muted text-uppercase small fw-bold">Role Name</h6>
+                <p class="mb-0 fs-3">{{ $role->name }}</p>
             </div>
             <div class="col-md-6 mb-3">
-                <h6 class="text-muted">Users Assigned:</h6>
-                <p class="mb-0">{{ $role->users->count() }} users</p>
+                <h6 class="text-muted text-uppercase small fw-bold">Users Assigned</h6>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-blue-lt">{{ $role->users->count() }} users</span>
+                </div>
             </div>
         </div>
 
         <div class="mb-3">
-            <h6 class="text-muted">Assigned Permissions:</h6>
+            <h6 class="text-muted text-uppercase small fw-bold mb-2">Assigned Permissions</h6>
             @if($role->permissions->count() > 0)
-                <div class="permissions-list">
+                <div class="border rounded p-2 bg-light-lt" style="max-height: 200px; overflow-y: auto;">
                     @foreach($role->permissions as $permission)
-                        <span class="badge bg-label-primary me-1 mb-1">{{ $permission->name }}</span>
+                        <span class="badge bg-label-secondary me-1 mb-1">{{ $permission->name }}</span>
                     @endforeach
                 </div>
             @else
-                <p class="text-muted mb-0">No permissions assigned to this role.</p>
+                <div class="text-muted small fst-italic border rounded p-2 bg-light-lt">No permissions assigned to this role.</div>
             @endif
         </div>
 
         <div class="mb-3">
-            <h6 class="text-muted">Assigned Users:</h6>
+            <h6 class="text-muted text-uppercase small fw-bold mb-2">Assigned Users</h6>
             @if($role->users->count() > 0)
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
+                <div class="table-responsive border rounded" style="max-height: 200px; overflow-y: auto;">
+                    <table class="table table-sm table-vcenter mb-0">
+                        <thead class="sticky-top bg-white">
                             <tr>
                                 <th>User Name</th>
                                 <th>Email</th>
-                                <th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($role->users as $user)
                                 <tr>
                                     <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>
-                                        @foreach($user->roles as $userRole)
-                                            <span class="badge bg-label-info me-1">{{ $userRole->name }}</span>
-                                        @endforeach
-                                    </td>
+                                    <td><small class="text-muted">{{ $user->email }}</small></td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             @else
-                <p class="text-muted mb-0">No users are assigned to this role.</p>
+                <div class="text-muted small fst-italic border rounded p-2 bg-light-lt">No users are assigned to this role.</div>
             @endif
         </div>
     </div>
-</div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Close</button>
+        <x-tabler.button :href="route('sys.roles.edit', $role)" class="btn-primary" icon="ti ti-pencil" text="Edit Role" />
+    </div>
+@else
+    @extends('layouts.sys.app')
 
+    @section('title', 'Details Role')
 
-<script>
-    // Function to toggle select all checkboxes
-    function toggleSelectAll() {
-        const selectAllCheckbox = document.getElementById('selectAll');
-        const checkboxes = document.querySelectorAll('.permission-checkbox');
+    @section('header')
+    <div class="row g-2 align-items-center">
+        <div class="col">
+            <div class="page-pretitle">Access Control</div>
+            <h2 class="page-title">Role Details: {{ $role->name }}</h2>
+        </div>
+        <div class="col-auto ms-auto d-print-none">
+            <div class="btn-list">
+                <a href="{{ route('sys.roles.edit', $role) }}" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
+                    Edit Role
+                </a>
+                <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
+                    Back
+                </a>
+            </div>
+        </div>
+    </div>
+    @endsection
 
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = selectAllCheckbox.checked;
-        });
-    }
+    @section('content')
+        <div class="card-body">
+            <x-tabler.flash-message />
 
-    // Function to handle form submission with SweetAlert
-    document.getElementById('permissionForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h6 class="text-muted">Role Name:</h6>
+                    <p class="mb-0">{{ $role->name }}</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <h6 class="text-muted">Users Assigned:</h6>
+                    <p class="mb-0">{{ $role->users->count() }} users</p>
+                </div>
+            </div>
 
-        const form = this;
-        const submitBtn = document.getElementById('savePermissionsBtn');
-        const originalText = submitBtn.innerHTML;
+            <div class="mb-3">
+                <h6 class="text-muted">Assigned Permissions:</h6>
+                @if($role->permissions->count() > 0)
+                    <div class="permissions-list">
+                        @foreach($role->permissions as $permission)
+                            <span class="badge bg-label-primary me-1 mb-1">{{ $permission->name }}</span>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-muted mb-0">No permissions assigned to this role.</p>
+                @endif
+            </div>
 
-        // Disable the button and show loading state
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Saving...';
-
-        const formData = new FormData(form);
-
-        axios.post(form.action, formData, {
-            headers: {
-                'X-HTTP-Method-Override': 'PUT' // Laravel needs this for PUT via form
-            }
-        })
-        .then(function(response) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-
-            if (response.data.success) {
-                showSuccessMessage('Success!', response.data.message);
-            } else {
-                showErrorMessage('Error!', response.data.message);
-            }
-        })
-        .catch(function(error) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-
-            if (error.response && error.response.data && error.response.data.message) {
-                showErrorMessage('Error!', error.response.data.message);
-            } else {
-                showErrorMessage('Error!', 'An error occurred while saving permissions.');
-            }
-        });
-    });
-
-    // Update select all checkbox state when individual checkboxes are checked/unchecked
-    document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const allCheckboxes = document.querySelectorAll('.permission-checkbox');
-            const checkedCheckboxes = document.querySelectorAll('.permission-checkbox:checked');
-
-            const selectAllCheckbox = document.getElementById('selectAll');
-            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
-        });
-    });
-</script>
-@endsection
+            <div class="mb-3">
+                <h6 class="text-muted">Assigned Users:</h6>
+                @if($role->users->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>User Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($role->users as $user)
+                                    <tr>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>
+                                            @foreach($user->roles as $userRole)
+                                                <span class="badge bg-label-info me-1">{{ $userRole->name }}</span>
+                                            @endforeach
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-muted mb-0">No users are assigned to this role.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endsection
+@endif

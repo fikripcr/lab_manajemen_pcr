@@ -1,25 +1,60 @@
-@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
+@if(request()->ajax() || request()->has('ajax'))
+    <x-tabler.form-modal
+        :title="'Edit Request: ' . $softwareRequest->nama_software"
+        route="{{ route('lab.software-requests.update', $softwareRequest->id) }}"
+        method="PUT"
+        submitText="Update Status"
+    >
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <h6 class="text-muted">Nama Software:</h6>
+                <p class="mb-0 fw-bold">{{ $softwareRequest->nama_software }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <h6 class="text-muted">Dosen:</h6>
+                <p class="mb-0">{{ $softwareRequest->dosen ? $softwareRequest->dosen->name : 'Guest' }}</p>
+            </div>
+        </div>
 
-@section('header')
-    <x-tabler.page-header :title="'Edit Request: ' . $softwareRequest->nama_software" pretitle="Software Request">
-        <x-slot:actions>
-            <x-tabler.button type="back" :href="route('lab.software-requests.index')" />
-        </x-slot:actions>
-    </x-tabler.page-header>
-@endsection
+        <div class="mb-3">
+            <h6 class="text-muted">Keterangan / Deskripsi:</h6>
+            <div class="p-3 border rounded bg-light" style="max-height: 200px; overflow-y: auto;">
+                {!! $softwareRequest->deskripsi !!}
+            </div>
+        </div>
 
-@section('content')
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <x-tabler.form-select 
+                    name="status" 
+                    label="Status *" 
+                    :options="['menunggu_approval' => 'Menunggu Approval', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak']" 
+                    :selected="$softwareRequest->status"
+                />
+            </div>
+        </div>
 
-    <div class="row row-cards">
-        <div class="col-12">
-            <form action="{{ route('lab.software-requests.update', $softwareRequest->id) }}" method="POST" class="card ajax-form">
-                @csrf
-                @method('PUT')
-                <div class="card-body">
-                    <x-tabler.flash-message />
+        <x-tabler.form-textarea type="editor" name="catatan" id="catatan_modal" label="Catatan Admin" :value="old('catatan', $softwareRequest->catatan)" height="200" />
+    </x-tabler.form-modal>
+@else
+    @extends('layouts.admin.app')
 
-                    {{-- The original form tag was here, but the instruction implies the outer form should be the main one.
-                         Keeping the content structure as close to the original as possible while applying the changes. --}}
+    @section('header')
+        <x-tabler.page-header :title="'Edit Request: ' . $softwareRequest->nama_software" pretitle="Software Request">
+            <x-slot:actions>
+                <x-tabler.button type="back" :href="route('lab.software-requests.index')" />
+            </x-slot:actions>
+        </x-tabler.page-header>
+    @endsection
+
+    @section('content')
+        <div class="row row-cards">
+            <div class="col-12">
+                <form action="{{ route('lab.software-requests.update', $softwareRequest->id) }}" method="POST" class="card ajax-form">
+                    @csrf
+                    @method('PUT')
+                    <div class="card-body">
+                        <x-tabler.flash-message />
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -72,12 +107,13 @@
                         </div>
 
                         <x-tabler.form-textarea type="editor" name="catatan" id="catatan-editor" label="Catatan Admin" :value="old('catatan', $softwareRequest->catatan)" height="200" />
-                </div>
-                <div class="card-footer text-end">
-                    <x-tabler.button type="submit" text="Update Status" />
-                    <x-tabler.button type="cancel" :href="route('lab.software-requests.index')" />
-                </div>
-            </form>
+                    </div>
+                    <div class="card-footer text-end">
+                        <x-tabler.button type="submit" text="Update Status" />
+                        <x-tabler.button type="cancel" :href="route('lab.software-requests.index')" />
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-@endsection
+    @endsection
+@endif

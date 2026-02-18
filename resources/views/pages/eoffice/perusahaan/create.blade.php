@@ -1,5 +1,8 @@
-<form action="{{ route('eoffice.perusahaan.store') }}" method="POST">
-    @csrf
+<x-tabler.form-modal
+    title="Tambah Perusahaan"
+    route="{{ route('eoffice.perusahaan.store') }}"
+    method="POST"
+>
     <div class="row">
         <div class="col-md-6">
             <x-tabler.form-select name="kategoriperusahaan_id" label="Kategori Perusahaan" required>
@@ -24,9 +27,4 @@
             <x-tabler.form-input name="telp" label="Telepon" placeholder="No. Telepon" />
         </div>
     </div>
-    
-    <div class="text-end">
-        <x-tabler.button type="button" class="btn-link link-secondary me-auto" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="submit" class="btn-primary" text="Simpan" />
-    </div>
-</form>
+</x-tabler.form-modal>

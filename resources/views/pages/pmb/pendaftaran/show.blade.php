@@ -1,19 +1,15 @@
 @extends('layouts.admin.app')
 
+@section('header')
+<x-tabler.page-header title="Detail Pendaftaran: {{ $pendaftaran->no_pendaftaran }}" pretitle="PMB">
+    <x-slot:actions>
+        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-settings" text="Ubah Status" 
+            data-modal-target="#modalAction" data-modal-title="Ubah Status Pendaftaran" data-url="{{ route('pmb.pendaftaran.update-status-form', $pendaftaran->encrypted_id) }}" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
 @section('content')
-<div class="page-header d-print-none">
-    <div class="container-xl">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <h2 class="page-title">Detail Pendaftaran: {{ $pendaftaran->no_pendaftaran }}</h2>
-            </div>
-            <div class="col-auto ms-auto d-print-none">
-                <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-settings" text="Ubah Status" 
-                    data-modal-target="#modalAction" data-modal-title="Ubah Status Pendaftaran" data-url="{{ route('pmb.pendaftaran.update-status-form', $pendaftaran->encrypted_id) }}" />
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="page-body">
     <div class="container-xl">

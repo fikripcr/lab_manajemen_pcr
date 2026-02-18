@@ -85,31 +85,20 @@
 </div>
 
 <!-- Set Auditee Modal -->
-<div class="modal modal-blur fade" id="modal-set-auditee" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Set Auditee</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="form-set-auditee">
-                <div class="modal-body">
-                    <input type="hidden" id="auditee-org-unit-id" name="org_unit_id">
-                    <p class="text-muted mb-3">Set auditee untuk: <strong id="auditee-unit-name"></strong></p>
-                    <div class="mb-3">
-                        <x-tabler.form-select id="auditee-user-select" name="auditee_user_id" label="Pilih User">
-                            <option value="">-- Pilih User --</option>
-                        </x-tabler.form-select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="button" style="ghost-secondary" data-bs-dismiss="modal" text="Batal" />
-                    <x-tabler.button type="submit" style="primary" text="Simpan" />
-                </div>
-            </form>
-        </div>
+<x-tabler.form-modal 
+    id="modal-set-auditee"
+    title="Set Auditee"
+    id_form="form-set-auditee"
+    size="modal-sm"
+>
+    <input type="hidden" id="auditee-org-unit-id" name="org_unit_id">
+    <p class="text-muted mb-3">Set auditee untuk: <strong id="auditee-unit-name"></strong></p>
+    <div class="mb-3">
+        <x-tabler.form-select id="auditee-user-select" name="auditee_user_id" label="Pilih User">
+            <option value="">-- Pilih User --</option>
+        </x-tabler.form-select>
     </div>
-</div>
+</x-tabler.form-modal>
 @endsection
 
 @push('scripts')

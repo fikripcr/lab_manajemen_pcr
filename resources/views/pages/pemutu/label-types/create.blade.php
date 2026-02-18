@@ -2,7 +2,6 @@
     title="Tambah Tipe Label"
     route="{{ route('pemutu.label-types.store') }}"
     method="POST"
-    submitText="Simpan"
 >
     <div class="mb-3">
         <x-tabler.form-input name="name" label="Nama" required="true" placeholder="cth: Kategori Indikator" />
