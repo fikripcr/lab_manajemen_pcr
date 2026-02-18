@@ -240,6 +240,12 @@
                     'icon' => 'ti ti-refresh',
                 ],
                 [
+                    'title' => 'Tim Mutu',
+                    'route' => 'pemutu.tim-mutu.index',
+                    'active_routes' => ['pemutu.tim-mutu.*'],
+                    'icon' => 'ti ti-users-group',
+                ],
+                [
                     'title' => 'Dokumen',
                     'route' => 'pemutu.dokumens.index',
                     'active_routes' => ['pemutu.dokumens.*'],

@@ -41,7 +41,18 @@
                                 <h3 class="card-title">Struktur Organisasi</h3>
                             </div>
                             <div class="card-body overflow-auto" style="max-height: 70vh;">
-                                @include('pages.shared.struktur-organisasi.tree', ['orgUnits' => \App\Models\Shared\StrukturOrganisasi::whereNull('parent_id')->orderBy('sort_order')->orderBy('seq')->get()])
+                                @php
+                                    $treeUnits = \App\Models\Shared\StrukturOrganisasi::whereNull('parent_id')->orderBy('sort_order')->orderBy('seq')->get();
+                                @endphp
+                                @if($treeUnits->isEmpty())
+                                    <x-tabler.empty-state
+                                        title="Belum ada Unit"
+                                        text="Silakan tambahkan unit organisasi baru."
+                                        icon="ti ti-sitemap"
+                                    />
+                                @else
+                                    @include('pages.shared.struktur-organisasi.tree', ['orgUnits' => $treeUnits])
+                                @endif
                             </div>
                         </div>
                     </div>

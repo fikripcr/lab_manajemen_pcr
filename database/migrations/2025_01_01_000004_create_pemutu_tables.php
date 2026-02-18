@@ -291,7 +291,27 @@ return new class extends Migration
             $table->foreign('dokapproval_id')->references('dokapproval_id')->on('pemutu_dok_approval')->cascadeOnDelete();
         });
 
-        // Rapat tables moved to Event module (create_event_tables.php)
+        Schema::create('pemutu_tim_mutu', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('periodespmi_id');
+            $table->unsignedBigInteger('org_unit_id');
+            $table->unsignedBigInteger('pegawai_id');
+            $table->enum('role', ['auditee', 'anggota'])->default('anggota');
+            $table->text('catatan')->nullable();
+            $table->timestamps();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->softDeletes();
+
+            $table->foreign('periodespmi_id')->references('periodespmi_id')->on('pemutu_periode_spmi')->cascadeOnDelete();
+            $table->foreign('org_unit_id')->references('orgunit_id')->on('struktur_organisasi')->cascadeOnDelete();
+            $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->cascadeOnDelete();
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+
+            $table->unique(['periodespmi_id', 'org_unit_id', 'pegawai_id', 'role'], 'tim_mutu_unique');
+        });
     }
 
     public function down(): void
@@ -303,7 +323,6 @@ return new class extends Migration
         // pemutu_rapat tables removed
         Schema::dropIfExists('pemutu_periode_kpi');
         Schema::dropIfExists('pemutu_periode_spmi');
-
         Schema::dropIfExists('pemutu_indikator_pegawai');
         Schema::dropIfExists('pemutu_indikator_orgunit');
         Schema::dropIfExists('pemutu_indikator_label');
@@ -311,9 +330,10 @@ return new class extends Migration
         Schema::dropIfExists('pemutu_indikator');
         Schema::dropIfExists('pemutu_dok_sub');
         Schema::dropIfExists('pemutu_dokumen');
-        // pemutu_personil and pemutu_org_unit now in shared migration
         Schema::dropIfExists('pemutu_label');
         Schema::dropIfExists('pemutu_label_types');
+        Schema::dropIfExists('pemutu_tim_mutu');
+
         Schema::enableForeignKeyConstraints();
     }
 };

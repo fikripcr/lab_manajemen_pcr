@@ -67,13 +67,23 @@ class DokumenController extends Controller
             $parentDokSub = DokSub::find($request->parent_doksub_id);
         }
 
-        // Context-aware allowed types
         if ($activeTab === 'standar') {
-            $allowedTypes = ['standar', 'formulir', 'manual_prosedur'];
-            $pageTitle    = 'Tambah Dokumen Standar';
+            $allowedTypes = [
+                'standar'         => 'Standar',
+                'formulir'        => 'Formulir',
+                'manual_prosedur' => 'Manual Prosedur',
+            ];
+            $pageTitle = 'Tambah Dokumen Standar';
         } else {
-            $allowedTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
-            $pageTitle    = 'Tambah Dokumen Kebijakan';
+            $allowedTypes = [
+                'kebijakan' => 'Kebijakan',
+                'visi'      => 'Visi',
+                'misi'      => 'Misi',
+                'rjp'       => 'Rencana Jangka Panjang (RJP)',
+                'renstra'   => 'Rencana Strategis (Renstra)',
+                'renop'     => 'Rencana Operasional (Renop)',
+            ];
+            $pageTitle = 'Tambah Dokumen Kebijakan';
         }
 
         return view('pages.pemutu.dokumens.create', compact('dokumens', 'parent', 'allowedTypes', 'pageTitle', 'parentDokSub'));
@@ -133,9 +143,20 @@ class DokumenController extends Controller
 
         $activeTab = $this->getTabByJenis($dokumen->jenis);
         if ($activeTab === 'standar') {
-            $allowedTypes = ['standar', 'formulir', 'manual_prosedur'];
+            $allowedTypes = [
+                'standar'         => 'Standar',
+                'formulir'        => 'Formulir',
+                'manual_prosedur' => 'Manual Prosedur',
+            ];
         } else {
-            $allowedTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
+            $allowedTypes = [
+                'kebijakan' => 'Kebijakan',
+                'visi'      => 'Visi',
+                'misi'      => 'Misi',
+                'rjp'       => 'Rencana Jangka Panjang (RJP)',
+                'renstra'   => 'Rencana Strategis (Renstra)',
+                'renop'     => 'Rencana Operasional (Renop)',
+            ];
         }
 
         return view('pages.pemutu.dokumens.edit', compact('dokumen', 'dokumens', 'allowedTypes'));

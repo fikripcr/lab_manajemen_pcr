@@ -22,11 +22,9 @@ class FAQService
         });
     }
 
-    public function updateFAQ($id, array $data): bool
+    public function updateFAQ(FAQ $faq, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $faq = FAQ::findOrFail($id);
-
+        return DB::transaction(function () use ($faq, $data) {
             $faq->update($data);
 
             logActivity('faq_management', "Memperbarui FAQ: {$faq->question}", $faq);
@@ -35,16 +33,44 @@ class FAQService
         });
     }
 
-    public function deleteFAQ($id): bool
+    public function deleteFAQ(FAQ $faq): bool
     {
-        return DB::transaction(function () use ($id) {
-            $faq      = FAQ::findOrFail($id);
+        return DB::transaction(function () use ($faq) {
             $question = $faq->question;
 
             $faq->delete();
 
             logActivity('faq_management', "Menghapus FAQ: {$question}");
 
+            return true;
+        });
+    }
+
+    public function getAllGrouped()
+    {
+        return FAQ::orderBy('category')->orderBy('seq')->get()->groupBy('category');
+    }
+
+    public function reorderFAQs(array $order)
+    {
+        return DB::transaction(function () use ($order) {
+            foreach ($order as $category => $items) {
+                // If category is "null" string or empty, treat as null (General)
+                $catValue = ($category === 'null' || $category === '') ? null : $category;
+
+                if (is_array($items)) {
+                    foreach ($items as $index => $hashid) {
+                        $id = decryptIdIfEncrypted($hashid, false);
+                        if ($id) {
+                            FAQ::where('id', $id)->update([
+                                'seq'      => $index + 1,
+                                'category' => $catValue,
+                            ]);
+                        }
+                    }
+                }
+            }
+            logActivity('faq_management', "Memperbarui urutan FAQ");
             return true;
         });
     }

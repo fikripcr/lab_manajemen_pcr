@@ -49,7 +49,7 @@
         </div>
 
         {{-- 4. COLLAPSE with NAVBAR MENU --}}
-        <div class="collapse navbar-collapse" id="sidebar-menu">
+        <div class="collapse navbar-collapse overflow-y-auto" id="sidebar-menu">
             <x-tabler.menu-renderer type="sidebar" :group="$menuGroup" />
         </div>
     </div>

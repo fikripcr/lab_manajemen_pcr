@@ -98,7 +98,7 @@ class IndikatorController extends Controller
 
         $parents = Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
 
-        $personils = Personil::orderBy('nama')->get();
+        $personils = Personil::with('latestDataDiri')->get()->sortBy('nama');
 
         // Initialize selected doksubs as empty array
         $selectedDokSubs = [];
@@ -206,7 +206,7 @@ class IndikatorController extends Controller
             ->orderBy('no_indikator')
             ->get();
 
-        $personils = Personil::orderBy('nama')->get();
+        $personils = Personil::with('latestDataDiri')->get()->sortBy('nama');
 
         return view('pages.pemutu.indikators.edit', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils'));
     }

@@ -21,90 +21,123 @@
 
 <div class="row row-cards">
     <div class="col-md-5">
-        <form method="POST" action="{{ route('pemutu.standar.storeAssignment', $indikator->indikator_id) }}" class="card ajax-form">
+        <form method="POST" action="{{ route('pemutu.standar.assign.store', $indikator->indikator_id) }}" class="card ajax-form">
             @csrf
             <div class="card-header">
-                <h3 class="card-title">Tugaskan ke Personel</h3>
+                <h3 class="card-title">Penugasan Unit Kerja & Target</h3>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <x-tabler.form-select name="personil_id" label="Personel" required="true">
-                        <option value="">Pilih Personel...</option>
-                        @foreach($personils as $personil)
-                            <option value="{{ $personil->personil_id }}">{{ $personil->nama }} ({{ $personil->jenis }})</option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <x-tabler.form-input name="year" label="Tahun" type="number" value="{{ date('Y') }}" required="true" />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <x-tabler.form-select name="semester" label="Semester" required="true">
-                            <option value="1">Ganjil</option>
-                            <option value="2">Genap</option>
-                        </x-tabler.form-select>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <x-tabler.form-input name="target_value" label="Target (Opsional Override)" placeholder="{{ $indikator->target }}" />
-                    <small class="form-hint">Kosongkan untuk menggunakan target default: {{ $indikator->target }}</small>
-                </div>
-                <div class="mb-3">
-                    <x-tabler.form-input name="weight" label="Bobot (%)" type="number" step="0.01" value="0" />
+            <div class="card-body p-0">
+                <div class="table-responsive border-bottom" style="max-height: 500px; overflow-y: auto;">
+                    <table class="table table-vcenter table-striped">
+                        <thead>
+                            <tr>
+                                <th width="60%" class="ps-3">Unit Kerja</th>
+                                <th width="40%">Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                if(!function_exists('renderUnitRowAssign')){
+                                    function renderUnitRowAssign($unit, $level = 0, $assignments = []) {
+                                        $padding = $level * 20;
+                                        $isBold = $level < 2 ? 'fw-bold' : '';
+                                        
+                                        $isChecked = isset($assignments[$unit->orgunit_id]);
+                                        $targetVal = $isChecked ? $assignments[$unit->orgunit_id]->pivot->target : '';
+                                        $disabled = !$isChecked ? 'disabled' : '';
+
+                                        echo '<tr>';
+                                        echo '<td>';
+                                        echo '<div style="padding-left: '.$padding.'px" class="ps-2">';
+                                        echo '<label class="form-check form-check-inline mb-0">';
+                                        echo '<input class="form-check-input unit-checkbox" type="checkbox" name="assignments['.$unit->orgunit_id.'][selected]" value="1" data-id="'.$unit->orgunit_id.'" '.($isChecked ? 'checked' : '').'>';
+                                        echo '<span class="form-check-label '.$isBold.'">'.$unit->name.'</span>';
+                                        echo '</label>';
+                                        echo '</div>';
+                                        echo '</td>';
+                                        echo '<td>';
+                                        echo '<input type="text" class="form-control form-control-sm" name="assignments['.$unit->orgunit_id.'][target]" id="target-'.$unit->orgunit_id.'" value="'.$targetVal.'" placeholder="Target..." '.$disabled.'>';
+                                        echo '</td>';
+                                        echo '</tr>';
+
+                                        if ($unit->children && $unit->children->count()) {
+                                            foreach($unit->children as $child) {
+                                                renderUnitRowAssign($child, $level + 1, $assignments);
+                                            }
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @foreach($orgUnits as $rootUnit)
+                                {{ renderUnitRowAssign($rootUnit, 0, $assignments) }}
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="card-footer text-end">
-                <x-tabler.button type="submit" style="primary" text="Tugaskan" />
+                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Penugasan" />
             </div>
         </form>
     </div>
     <div class="col-md-7">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Penugasan Saat Ini</h3>
+                <h3 class="card-title">Unit yang Ditugaskan</h3>
             </div>
-            <div class="card-table">
-                <x-tabler.datatable-client
-                    id="table-assignments"
-                    :columns="[
-                        ['name' => 'Personel'],
-                        ['name' => 'Periode'],
-                        ['name' => 'Target'],
-                        ['name' => 'Status'],
-                        ['name' => 'Aksi', 'className' => 'w-10']
-                    ]"
-                >
-                    @forelse($assigned as $assign)
-                    <tr>
-                        <td>
-                            <div>{{ $assign->personil->nama ?? 'Unknown' }}</div>
-                            <div class="text-muted small">{{ $assign->personil->email ?? '' }}</div>
-                        </td>
-                        <td>{{ $assign->year }} / {{ $assign->semester == 1 ? 'Ganjil' : 'Genap' }}</td>
-                        <td>{{ $assign->target_value ?? $indikator->target }}</td>
-                        <td>
-                            <span class="badge bg-{{ $assign->status == 'approved' ? 'green' : ($assign->status == 'submitted' ? 'blue' : 'secondary') }} text-white">
-                                {{ ucfirst($assign->status) }}
-                            </span>
-                        </td>
-                        <td>
-                            <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-danger ajax-delete" 
-                                data-url="{{ route('pemutu.standar.destroyAssignment', $assign->id) }}" 
-                                data-title="Hapus Penugasan?" 
-                                data-text="Data penugasan akan dihapus." icon="ti ti-trash" />
-                        </td>
-                    </tr>
-                    @empty
-                        {{-- Handled by component --}}
-                    @endforelse
-                </x-tabler.datatable-client>
-
-                @if($assigned->isEmpty())
-                    <div class="text-center text-muted p-3">Belum ada penugasan.</div>
-                @endif
+             <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead>
+                        <tr>
+                            <th>Unit Kerja</th>
+                            <th>Target Spesifik</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($indikator->orgUnits as $unit)
+                        <tr>
+                            <td>
+                                <div class="font-weight-medium">{{ $unit->name }}</div>
+                                <div class="text-muted small">{{ $unit->parent ? 'Sub dari: ' . $unit->parent->name : 'Unit Utama' }}</div>
+                            </td>
+                            <td>
+                                @if($unit->pivot->target)
+                                    <span class="badge bg-green-lt">{{ $unit->pivot->target }}</span>
+                                @else
+                                    <span class="text-muted fst-italic">Mengikuti Indikator</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="2" class="text-center text-muted p-4">Belum ada unit yang ditugaskan.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('.unit-checkbox');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const unitId = this.dataset.id;
+                const targetInput = document.getElementById('target-' + unitId);
+                if (this.checked) {
+                    targetInput.removeAttribute('disabled');
+                    if(!targetInput.value) targetInput.focus();
+                } else {
+                    targetInput.setAttribute('disabled', 'disabled');
+                }
+            });
+        });
+    });
+</script>
+@endpush

@@ -10,7 +10,7 @@ class FAQRequest extends FormRequest
         return true;
     }
 
-    public function rules(): bool
+    public function rules(): array
     {
         return [
             'question' => 'required|string|max:191',

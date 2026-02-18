@@ -28,12 +28,7 @@ class SlideshowController extends Controller
     {
         $order = $request->input('order');
         if ($order && is_array($order)) {
-            foreach ($order as $index => $hashid) {
-                $id = decryptIdIfEncrypted($hashid, false);
-                if ($id) {
-                    Slideshow::where('id', $id)->update(['seq' => $index + 1]);
-                }
-            }
+            $this->SlideshowService->reorderSlideshows($order);
             return jsonSuccess('Urutan slideshow berhasil diperbarui.');
         }
         return jsonError('Data urutan tidak valid.');
@@ -78,29 +73,25 @@ class SlideshowController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(Slideshow $slideshow)
     {
-        $id        = decryptIdIfEncrypted($id);
-        $slideshow = Slideshow::findOrFail($id);
         return view('pages.shared.slideshow.create-edit-ajax', compact('slideshow'));
     }
 
-    public function update(SlideshowRequest $request, $id)
+    public function update(SlideshowRequest $request, Slideshow $slideshow)
     {
-        $id = decryptIdIfEncrypted($id);
         try {
-            $this->SlideshowService->updateSlideshow($id, $request->validated());
+            $this->SlideshowService->updateSlideshow($slideshow, $request->validated());
             return jsonSuccess('Slideshow berhasil diperbarui.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(Slideshow $slideshow)
     {
-        $id = decryptIdIfEncrypted($id);
         try {
-            $this->SlideshowService->deleteSlideshow($id);
+            $this->SlideshowService->deleteSlideshow($slideshow);
             return jsonSuccess('Slideshow berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

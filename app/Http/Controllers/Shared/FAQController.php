@@ -18,7 +18,7 @@ class FAQController extends Controller
 
     public function index()
     {
-        $faqs = FAQ::orderBy('category')->orderBy('seq')->get()->groupBy('category');
+        $faqs = $this->FAQService->getAllGrouped();
         return view('pages.shared.faq.index', compact('faqs'));
     }
 
@@ -37,32 +37,37 @@ class FAQController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(FAQ $faq)
     {
-        $id  = decryptIdIfEncrypted($id);
-        $faq = FAQ::findOrFail($id);
         return view('pages.shared.faq.create-edit-ajax', compact('faq'));
     }
 
-    public function update(FAQRequest $request, $id)
+    public function update(FAQRequest $request, FAQ $faq)
     {
-        $id = decryptIdIfEncrypted($id);
         try {
-            $this->FAQService->updateFAQ($id, $request->validated());
+            $this->FAQService->updateFAQ($faq, $request->validated());
             return jsonSuccess('FAQ berhasil diperbarui.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(FAQ $faq)
     {
-        $id = decryptIdIfEncrypted($id);
         try {
-            $this->FAQService->deleteFAQ($id);
+            $this->FAQService->deleteFAQ($faq);
             return jsonSuccess('FAQ berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
+    }
+    public function reorder(\Illuminate\Http\Request $request)
+    {
+        $order = $request->input('order');
+        if (is_array($order)) {
+            $this->FAQService->reorderFAQs($order);
+            return jsonSuccess('Urutan FAQ berhasil diperbarui.');
+        }
+        return jsonError('Data urutan tidak valid.');
     }
 }

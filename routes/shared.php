@@ -8,7 +8,7 @@ use App\Http\Controllers\Shared\PersonilController;
 use App\Http\Controllers\Shared\StrukturOrganisasiController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.expired'])->group(function () {
 
     // General Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('slideshow', \App\Http\Controllers\Shared\SlideshowController::class);
 
         // FAQ
+        Route::post('/faq/reorder', [\App\Http\Controllers\Shared\FAQController::class, 'reorder'])->name('faq.reorder');
         Route::get('/faq/paginate', [\App\Http\Controllers\Shared\FAQController::class, 'paginate'])->name('faq.paginate');
         Route::resource('faq', \App\Http\Controllers\Shared\FAQController::class);
 

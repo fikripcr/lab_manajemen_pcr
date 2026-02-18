@@ -1,8 +1,108 @@
 @if(request()->ajax() || request()->has('ajax'))
-    @php
-        $parentJenis = $dokumen->jenis ? strtolower(trim($dokumen->jenis)) : '';
-    @endphp
-    <div class="modal-header">
+    {{-- AJAX Response for Panel (Not Modal) --}}
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="card-title mb-0">{{ $dokumen->judul }}</h3>
+            <div class="btn-group shadow-sm" role="group">
+                @if($dokumen->jenis === 'renop')
+                    <x-tabler.button type="button" class="btn-primary d-none d-sm-inline-block" href="{{ route('pemutu.dokumens.show-renop-with-indicators', $dokumen) }}" icon="ti ti-chart-bar" text="Akumulasi" />
+                @endif
+                <x-tabler.button href="#" class="btn-white ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $dokumen) }}" data-modal-title="Edit Dokumen" icon="ti ti-pencil" text="Edit" />
+                
+                @php
+                    $childLabel = 'Sub Dokumen';
+                    $parentJenis = $dokumen->jenis ? strtolower(trim($dokumen->jenis)) : '';
+                    if($parentJenis) {
+                        $childLabel = match($parentJenis) {
+                            'visi' => 'Misi',
+                             'misi' => 'RPJP',
+                             'rjp' => 'Renstra',
+                             'renstra' => 'Renop',
+                             'renop' => 'Kegiatan / Poin',
+                             default => 'Sub Dokumen'
+                        };
+                    }
+                    $isDokSubBased = in_array($parentJenis, ['standar', 'formulir', 'manual_prosedur', 'renop']);
+                @endphp
+
+                @if($isDokSubBased)
+                    <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dok-subs.create', ['dok_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus" text="{{ $childLabel }}" />
+                @else
+                    <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus" text="{{ $childLabel }}" />
+                @endif
+                <x-tabler.button href="#" class="btn-outline-danger ajax-delete" data-url="{{ route('pemutu.dokumens.destroy', $dokumen) }}" data-title="Hapus Dokumen?" data-text="Dokumen ini beserta sub-dokumennya akan dihapus permanen." icon="ti ti-trash" text="Hapus" />
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+            @if($dokumen->jenis)
+                <span class="badge badge-outline text-blue bg-blue-lt">{{ strtoupper($dokumen->jenis) }}</span>
+            @endif
+            @if($dokumen->kode)
+                <span class="badge badge-outline text-muted" title="Kode Dokumen">{{ $dokumen->kode }}</span>
+            @endif
+            @if($dokumen->periode)
+                <span class="badge badge-outline text-muted" title="Periode">{{ $dokumen->periode }}</span>
+            @endif
+        </div>
+
+        @include('pages.pemutu.dokumens._detail_content')
+    </div>
+@else
+    @extends('layouts.tabler.app')
+
+    @section('header')
+    <x-tabler.page-header title="{{ $dokumen->judul }}" pretitle="Dokumen SPMI">
+        <x-slot:actions>
+            @if($dokumen->jenis === 'renop')
+                <x-tabler.button type="button" class="btn-primary d-none d-sm-inline-block" href="{{ route('pemutu.dokumens.show-renop-with-indicators', $dokumen) }}" icon="ti ti-chart-bar" text="Akumulasi Indikator" />
+            @endif
+
+            <div class="btn-group shadow-sm" role="group">
+                <x-tabler.button href="#" class="btn-white ajax-modal-btn" data-url="{{ route('pemutu.dokumens.edit', $dokumen) }}" data-modal-title="Edit Dokumen" icon="ti ti-pencil" text="Edit" />
+                @php
+                    $childLabel = 'Sub Dokumen';
+                    $parentJenis = $dokumen->jenis ? strtolower(trim($dokumen->jenis)) : '';
+                    if($parentJenis) {
+                        $childLabel = match($parentJenis) {
+                            'visi' => 'Misi',
+                             'misi' => 'RPJP',
+                             'rjp' => 'Renstra',
+                             'renstra' => 'Renop',
+                             'renop' => 'Kegiatan / Poin',
+                             default => 'Sub Dokumen'
+                        };
+                    }
+                    $isDokSubBased = in_array($parentJenis, ['standar', 'formulir', 'manual_prosedur', 'renop']);
+                @endphp
+                @if($isDokSubBased)
+                    <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dok-subs.create', ['dok_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus" text="{{ $childLabel }}" />
+                @else
+                    <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $dokumen->hashid]) }}" data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus" text="{{ $childLabel }}" />
+                @endif
+                <x-tabler.button href="#" class="btn-outline-danger ajax-delete" data-url="{{ route('pemutu.dokumens.destroy', $dokumen) }}" data-title="Hapus Dokumen?" data-text="Dokumen ini beserta sub-dokumennya akan dihapus permanen." icon="ti ti-trash" text="Hapus" />
+            </div>
+        </x-slot:actions>
+    </x-tabler.page-header>
+    @endsection
+
+    @section('content')
+    <div class="page-body">
+        <div class="container-xl">
+            <ol class="breadcrumb" aria-label="breadcrumbs">
+                <li class="breadcrumb-item"><a href="{{ route('pemutu.dokumens.index') }}">Dokumen SPMI</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detail</li>
+            </ol>
+
+            <div class="card">
+                <div class="card-body">
+                     @include('pages.pemutu.dokumens._detail_content')
+                </div>
+            </div>
+        </div>
+    </div>
+    @endsection
+@endif
         <h5 class="modal-title">Detail Dokumen: {{ $dokumen->judul }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>

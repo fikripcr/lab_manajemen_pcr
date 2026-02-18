@@ -11,49 +11,16 @@
 @section('content')
 <div class="card">
     <x-tabler.datatable-client 
-        id="table-indikator" 
+        id="table-standar" 
+        route="{{ route('pemutu.standar.data') }}"
         :columns="[
-            ['name' => 'Tipe'],
-            ['name' => 'Dokumen / Sub'],
-            ['name' => 'Indikator'],
-            ['name' => 'Target'],
-            ['name' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
+            ['data' => 'doksub_judul', 'name' => 'doksub_judul', 'title' => 'Dokumen / Sub'],
+            ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
+            ['data' => 'target_info', 'name' => 'target_info', 'title' => 'Target'],
+            ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
         ]"
-    >
-        @foreach($indikators as $ind)
-        <tr>
-            <td>
-                @if($ind->type == 'standar')
-                    <span class="badge bg-blue text-white">Standar</span>
-                @else
-                    <span class="badge bg-green text-white">Performa</span>
-                @endif
-            </td>
-            <td>
-                <div class="text-truncate" style="max-width: 200px;">
-                    @foreach($ind->dokSubs as $ds)
-                        <div class="text-muted small">{{ $ds->dokumen->judul ?? '-' }}</div>
-                        <div>{{ $ds->judul }}</div>
-                    @endforeach
-                </div>
-            </td>
-            <td>
-                <div class="text-wrap" style="max-width: 400px;">
-                    {{ $ind->indikator }}
-                </div>
-            </td>
-            <td>{{ $ind->target }}</td>
-            <td class="text-end">
-                <x-tabler.button href="{{ route('pemutu.standar.assign', $ind->indikator_id) }}" class="btn-ghost-primary" size="sm" icon="ti ti-user-plus" text="Assign" />
-            </td>
-        </tr>
-        @endforeach
-    </x-tabler.datatable-client>
+    />
 
-    @if($indikators->hasPages())
-    <div class="card-footer d-flex align-items-center">
-        {{ $indikators->links() }}
-    </div>
-    @endif
 </div>
 @endsection

@@ -10,7 +10,7 @@ class SlideshowRequest extends FormRequest
         return true;
     }
 
-    public function rules(): bool
+    public function rules(): array
     {
         return [
             'slideshow_image' => ($this->isMethod('POST') ? 'required' : 'nullable') . '|image|mimes:jpeg,png,jpg,gif|max:2048',

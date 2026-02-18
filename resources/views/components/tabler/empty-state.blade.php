@@ -22,7 +22,11 @@
         {{ $text }}
     </p>
     
-    @if($actionRoute && $actionText)
+    @if(isset($action))
+        <div class="empty-action">
+            {{ $action }}
+        </div>
+    @elseif($actionRoute && $actionText)
         <div class="empty-action">
             <a href="{{ $actionRoute }}" class="btn {{ $actionClass }}">
                 @if($icon && strpos($actionClass, 'btn-primary') !== false)

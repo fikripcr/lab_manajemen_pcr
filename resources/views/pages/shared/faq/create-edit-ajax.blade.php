@@ -20,22 +20,12 @@
         required="true"
     >{{ $faq->answer }}</x-tabler.form-textarea>
 
-    <div class="row">
-        <div class="col-md-6">
-            <x-tabler.form-input 
-                name="category" 
-                label="Kategori (Opsional)" 
-                value="{{ $faq->category }}"
-            />
-        </div>
-        <div class="col-md-6">
-            <x-tabler.form-input 
-                name="seq" 
-                label="Urutan" 
-                type="number"
-                value="{{ $faq->seq ?? 0 }}"
-            />
-        </div>
+    <div class="mb-3">
+        <x-tabler.form-input 
+            name="category" 
+            label="Kategori (Opsional)" 
+            value="{{ $faq->category }}"
+        />
     </div>
 
     <div class="mt-3">

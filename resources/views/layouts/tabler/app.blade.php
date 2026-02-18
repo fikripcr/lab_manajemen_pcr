@@ -8,10 +8,10 @@
     $layoutData = $themeController->getLayoutData('tabler');
 
     // Extract layout configuration variables
-    $condensed = $layoutData['layoutCondensed'] ?? false;
-    $sticky = $layoutData['layoutSticky'] ?? false;
+    $condensed = $layoutData['layoutNavbarCondensed'] ?? false;
+    $sticky = $layoutData['layoutNavbarSticky'] ?? false;
     $dark = ($themeData['theme'] ?? 'light') === 'dark';
-    $navbarClass = $layoutData['navbarClass'] ?? '';
+    $navbarClass = $layoutData['layoutNavbarClass'] ?? '';
     
     // Hide components based on configuration
     $hideBrand = $layoutData['hideBrand'] ?? false;
@@ -41,6 +41,7 @@
     @vite(['resources/css/tabler.css'])
     
     {{-- Theme Custom Styles --}}
+    {{-- {!! $themeController->getFontLink('tabler') !!} --}}
     {!! $themeController->getStyleBlock('tabler') !!}
     
     @stack('styles')
@@ -54,20 +55,28 @@
         @endif
 
         {{-- Header --}}
-        @include('layouts.tabler.header', [
-            'condensed' => $condensed, 
-            'sticky' => $sticky, 
-            'dark' => $dark,
-            'hideBrand' => $hideBrand,
-            'hideMenu' => !empty($layoutData['layoutSidebar']), // If we have sidebar, standard menu is hidden/moved
-            'navbarClass' => $navbarClass,
-            'layoutData' => $layoutData
-        ])
+        {{-- <div id="header-sticky-wrapper" class="{{ $sticky ? 'sticky-top' : '' }}"> --}}
+            @include('layouts.tabler.header', [
+                'condensed' => $condensed, 
+                'sticky' => $sticky, 
+                'dark' => $dark,
+                'hideBrand' => $hideBrand,
+                'hideMenu' => !empty($layoutData['layoutSidebar']), // If we have sidebar, standard menu is hidden/moved
+                'navbarClass' => $navbarClass,
+                'layoutData' => $layoutData
+            ])
+        {{-- </div> --}}
 
         {{-- Content Wrapper --}}
         <div class="page-wrapper">
-             {{-- Page Header --}}
-            @if(\Illuminate\Support\Facades\View::hasSection('pretitle') || \Illuminate\Support\Facades\View::hasSection('title') || \Illuminate\Support\Facades\View::hasSection('actions'))
+            {{-- Page Header --}}
+            @if(\Illuminate\Support\Facades\View::hasSection('header'))
+                <div class="page-header d-print-none">
+                    <div class="{{ $layoutData['containerClass'] ?? 'container-xl' }}">
+                        @yield('header')
+                    </div>
+                </div>
+            @elseif(\Illuminate\Support\Facades\View::hasSection('pretitle') || \Illuminate\Support\Facades\View::hasSection('title') || \Illuminate\Support\Facades\View::hasSection('actions'))
             <div class="page-header d-print-none">
                 <div class="{{ $layoutData['containerClass'] ?? 'container-xl' }}">
                     <div class="row g-2 align-items-center">

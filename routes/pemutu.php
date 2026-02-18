@@ -13,6 +13,7 @@ use App\Http\Controllers\Pemutu\PeriodeKpiController;
 use App\Http\Controllers\Pemutu\PeriodeSpmiController;
 use App\Http\Controllers\Pemutu\PersonilController;
 use App\Http\Controllers\Pemutu\RenopController;
+use App\Http\Controllers\Pemutu\TimMutuController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================
@@ -54,6 +55,12 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('api/indikators', [IndikatorController::class, 'paginate'])->name('indikators.data');
     Route::resource('indikators', IndikatorController::class);
 
+    // Standar (Indikator Standar)
+    Route::get('api/standar', [App\Http\Controllers\Pemutu\StandarController::class, 'paginate'])->name('standar.data');
+    Route::get('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'assign'])->name('standar.assign');
+    Route::post('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'storeAssignment'])->name('standar.assign.store');
+    Route::resource('standar', App\Http\Controllers\Pemutu\StandarController::class);
+
     // KPI (Sasaran Kinerja)
     Route::get('api/kpi', [KpiController::class, 'paginate'])->name('kpi.data');
     Route::get('kpi/{kpi}/assign', [KpiController::class, 'assign'])->name('kpi.assign');
@@ -68,6 +75,13 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Period SPMI (PEPP Cycle)
     Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'paginate'])->name('periode-spmis.data');
     Route::resource('periode-spmis', PeriodeSpmiController::class);
+
+    // Tim Mutu
+    Route::get('tim-mutu', [TimMutuController::class, 'index'])->name('tim-mutu.index');
+    Route::get('tim-mutu/search-pegawai', [TimMutuController::class, 'searchPegawai'])->name('tim-mutu.search-pegawai');
+    Route::get('tim-mutu/{periode}/manage', [TimMutuController::class, 'manage'])->name('tim-mutu.manage');
+    Route::get('tim-mutu/{periode}/unit/{unit}/edit', [TimMutuController::class, 'editUnit'])->name('tim-mutu.edit-unit');
+    Route::post('tim-mutu/{periode}/unit/{unit}', [TimMutuController::class, 'storeUnit'])->name('tim-mutu.store-unit');
 
     // Renop (Rencana Operasional)
     Route::get('renop/create', [RenopController::class, 'create'])->name('renop.create');

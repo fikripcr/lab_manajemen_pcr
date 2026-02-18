@@ -151,9 +151,6 @@
             title="Belum ada Periode"
             text="Silakan tambahkan periode baru untuk memulai siklus SPMI."
             icon="ti ti-calendar-time"
-            actionClass="btn-primary ajax-modal-btn"
-            :actionRoute="route('pemutu.periode-spmis.create')"
-            actionText="Tambah Periode"
         />
     @endforelse
 </div>

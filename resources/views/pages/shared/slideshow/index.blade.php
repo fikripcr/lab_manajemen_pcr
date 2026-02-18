@@ -3,7 +3,14 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Slideshow" pretitle="Info Publik">
     <x-slot:actions>
-        <x-tabler.button href="#" class="btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modalAction" data-url="{{ route('shared.slideshow.create') }}" icon="ti ti-plus" text="Tambah Slideshow" />
+        <x-tabler.button 
+            type="button" 
+            class="ajax-modal-btn btn-primary d-none d-sm-inline-block" 
+            data-url="{{ route('shared.slideshow.create') }}" 
+            data-modal-title="Tambah Slideshow"
+            icon="ti ti-plus" 
+            text="Tambah Slideshow" 
+        />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -14,15 +21,22 @@
         <div class="card">
             <div class="card-body">
                 @if($slideshows->isEmpty())
-                    <div class="empty">
-                        <div class="empty-icon">
-                            <i class="ti ti-photo fs-1"></i>
-                        </div>
-                        <p class="empty-title">Belum ada Slideshow</p>
-                        <p class="empty-subtitle text-secondary">
-                            Silakan tambahkan slideshow baru.
-                        </p>
-                    </div>
+                    <x-tabler.empty-state
+                        title="Belum ada Slideshow"
+                        text="Silakan tambahkan slideshow baru."
+                        icon="ti ti-photo"
+                    >
+                        <x-slot:action>
+                            <x-tabler.button 
+                                type="button" 
+                                class="ajax-modal-btn btn-primary" 
+                                data-url="{{ route('shared.slideshow.create') }}" 
+                                data-modal-title="Tambah Slideshow"
+                                icon="ti ti-plus" 
+                                text="Tambah Slideshow" 
+                            />
+                        </x-slot:action>
+                    </x-tabler.empty-state>
                 @else
                     <div class="row row-cards" id="slideshow-grid">
                         @foreach($slideshows as $slide)
@@ -56,16 +70,18 @@
                                         <div class="btn-list">
                                             <x-tabler.button 
                                                 type="button" 
-                                                class="btn-icon btn-ghost-primary" 
+                                                class="btn-icon btn-ghost-primary ajax-modal-btn" 
                                                 icon="ti ti-pencil" 
-                                                onclick="openModal('{{ route('shared.slideshow.edit', $slide->hashid) }}', 'Edit Slideshow')"
+                                                data-url="{{ route('shared.slideshow.edit', $slide->hashid) }}"
+                                                data-modal-title="Edit Slideshow"
                                                 title="Edit"
                                             />
                                             <x-tabler.button 
                                                 type="button" 
-                                                class="btn-icon btn-ghost-danger" 
+                                                class="btn-icon btn-ghost-danger ajax-delete" 
                                                 icon="ti ti-trash" 
-                                                onclick="deleteData('{{ route('shared.slideshow.destroy', $slide->hashid) }}')"
+                                                data-url="{{ route('shared.slideshow.destroy', $slide->hashid) }}"
+                                                data-title="Hapus Slideshow?"
                                                 title="Delete"
                                             />
                                         </div>
@@ -74,9 +90,6 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="mt-3 text-center">
-                        <x-tabler.button id="save-order-btn" class="btn-primary d-none" onclick="saveOrder()" icon="ti ti-device-floppy" text="Simpan Urutan Baru" />
-                    </div>
                 @endif
             </div>
         </div>
@@ -84,19 +97,16 @@
 </div>
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var el = document.getElementById('slideshow-grid');
-        if(el){
-            var sortable = Sortable.create(el, {
+        if(el && window.Sortable){
+            Sortable.create(el, {
                 animation: 150,
                 handle: '.cursor-move',
-                ghostClass: 'bg-blue-lt',
+                ghostClass: 'bg-indigo-lt',
                 onEnd: function (evt) {
-                    // Show save button if order changed
-                   saveOrder(); // Auto save or manual? Let's auto save for better UX or show button. 
-                   // Implementation: Auto-save is cleaner.
+                    saveOrder();
                 }
             });
         }
@@ -108,55 +118,40 @@
             order.push(el.getAttribute('data-id'));
         });
 
-        // Show saving...
-        showLoadingMessage('Menyimpan urutan...');
+        // Use global showLoadingMessage if available, or fallback
+        if(typeof showLoadingMessage === 'function') showLoadingMessage('Menyimpan urutan...');
 
         axios.post('{{ route('shared.slideshow.reorder') }}', {
             order: order,
             _token: '{{ csrf_token() }}'
         })
         .then(function (response) {
-            Swal.close();
+            if(window.Swal) Swal.close();
+            
             if(response.data.status === 'success'){
-                showSuccessMessage('Berhasil!', response.data.message);
-                // Optional: reload to update 'Urutan' text if needed, or just let it be.
-                setTimeout(function(){ location.reload(); }, 1000);
+                if(typeof showSuccessMessage === 'function') {
+                    showSuccessMessage('Berhasil!', response.data.message);
+                } else {
+                    alert('Berhasil: ' + response.data.message);
+                }
             } else {
-                showErrorMessage('Gagal!', response.data.message);
+                if(typeof showErrorMessage === 'function') {
+                    showErrorMessage('Gagal!', response.data.message);
+                } else {
+                    alert('Gagal: ' + response.data.message);
+                }
             }
         })
         .catch(function (error) {
-            Swal.close();
-            showErrorMessage('Error!', 'Terjadi kesalahan saat menyimpan urutan.');
+            if(window.Swal) Swal.close();
+            if(typeof showErrorMessage === 'function') {
+                showErrorMessage('Error!', 'Terjadi kesalahan saat menyimpan urutan.');
+            } else {
+                alert('Error processing request');
+            }
             console.error(error);
         });
     }
 </script>
 @endpush
-@section('content-ignore')
-{{-- Closing the section properly to match replaced content structure if needed --}} 
-@endsection
-{{-- Reopening content to match original file structure? No, replace_file_content replaces the BLOCK. --}}
-{{-- The original code block was inside @section('content') ... div.page-body ... div.container ... div.card ... div.card-body ... TOKEN ... div... div... div... @endsection --}}
-{{-- My replacement ends with @push... --}}
-{{-- I need to be careful about not breaking the @endsection of the content section. --}}
-{{-- The target content I selected matches the INSIDE of card-body? --}}
-{{-- Target Content: --}}
-{{-- <x-tabler.datatable ... /> --}}
-{{-- This is inside card-body. --}}
-{{-- My replacement content starts with @if... and ends with @push... --}}
-{{-- If I insert @push inside card-body, it will NOT work because @push must be top level or inside section, but usually usually works in Blade if placed anywhere, BUT better to be outside. --}}
-{{-- However, I am replacing the CONTENT of card-body. --}}
-{{-- I should close the divs and then add push. --}}
-{{-- Wait, if I replace `<x-tabler.datatable ... />` which is INSIDE `card-body` with `... @push ...`, the @push will be inside `card-body`. --}}
-{{-- Blade handles @push anywhere. But the script will be rendered in 'scripts' stack. --}}
-{{-- So structurally it's fine. --}}
-{{-- BUT, I need to make sure I don't leave open divs. --}}
-{{-- The original was just the datatable component. --}}
-{{-- My replacement is `HTML Content` + `@push`. --}}
-{{-- It should be fine. --}}
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
