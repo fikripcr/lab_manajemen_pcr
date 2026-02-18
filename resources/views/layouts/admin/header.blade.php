@@ -45,24 +45,60 @@
                             <div class="card-header">
                                 <h3 class="card-title">Akses Cepat</h3>
                             </div>
-                            <div class="card-body p-2">
-                                <div class="row g-2">
+                            <div class="card-body p-0">
+                                <div class="row g-0">
                                     <div class="col-4">
-                                        <a href="{{ route('lab.dashboard') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
-                                            <i class="ti ti-layout-dashboard fs-2 d-block mb-1"></i>
-                                            <div class="small">Dashboard</div>
+                                        <a href="{{ route('lab.dashboard') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-layout-dashboard fs-2 d-block mb-2"></i>
+                                            <span class="h5">Lab</span>
                                         </a>
                                     </div>
                                     <div class="col-4">
-                                        <a href="{{ route('lab.labs.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
-                                            <i class="ti ti-flask fs-2 d-block mb-1"></i>
-                                            <div class="small">Lab</div>
+                                        <a href="{{ route('hr.dashboard') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-users fs-2 d-block mb-2"></i>
+                                            <span class="h5">HR</span>
                                         </a>
                                     </div>
                                     <div class="col-4">
-                                        <a href="{{ route('lab.inventaris.index') }}" class="text-center d-block text-secondary p-2 rounded hover-bg-light">
-                                            <i class="ti ti-package fs-2 d-block mb-1"></i>
-                                            <div class="small">Inventaris</div>
+                                        <a href="{{ route('eoffice.dashboard') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-briefcase fs-2 d-block mb-2"></i>
+                                            <span class="h5">E-Office</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('cbt.dashboard') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-device-laptop fs-2 d-block mb-2"></i>
+                                            <span class="h5">CBT</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('Kegiatan.Kegiatans.index') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-calendar-event fs-2 d-block mb-2"></i>
+                                            <span class="h5">Event</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('pemutu.dashboard') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-certificate fs-2 d-block mb-2"></i>
+                                            <span class="h5">Pemutu</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('pmb.dashboard') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-user-plus fs-2 d-block mb-2"></i>
+                                            <span class="h5">PMB</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('survei.index') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-forms fs-2 d-block mb-2"></i>
+                                            <span class="h5">Survei</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="{{ route('sys.dashboard') }}" class="d-flex flex-column flex-center text-center text-secondary py-2 px-2 link-hoverable">
+                                            <i class="ti ti-settings fs-2 d-block mb-2"></i>
+                                            <span class="h5">System</span>
                                         </a>
                                     </div>
                                 </div>
@@ -73,10 +109,10 @@
 
                 {{-- Dark Mode Toggle --}}
                 <div class="d-none d-md-flex">
-                    <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                    <a href="javascript:void(0);" onclick="toggleTheme('dark')" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
                         <i class="ti ti-moon fs-2"></i>
                     </a>
-                    <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                    <a href="javascript:void(0);" onclick="toggleTheme('light')" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
                         <i class="ti ti-sun fs-2"></i>
                     </a>
                 </div>

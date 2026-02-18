@@ -197,8 +197,8 @@ window.initToastEditor = function (selector, config = {}) {
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initializing for both Admin and Sys (Unified)
-    const themeManager = new ThemeTabler('sys'); // Default to sys mode/standard
-    themeManager.initSettingsPanel();
+    window.themeTabler = new ThemeTabler('sys'); // Default to sys mode/standard
+    window.themeTabler.initSettingsPanel();
 
     window.initOfflineSelect2 = function () {
         const elements = document.querySelectorAll('.select2-offline');
@@ -256,3 +256,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// --- Dark Mode Toggle (Global) ---
+window.toggleTheme = function (mode) {
+    // 1. Set Attribute
+    document.documentElement.setAttribute('data-bs-theme', mode);
+
+    // 2. Save to LocalStorage
+    localStorage.setItem('tabler-theme', mode);
+
+    // 3. Sync with ThemeTabler if available
+    if (window.themeTabler) {
+        window.themeTabler.refresh();
+    }
+
+    // 4. Persist to Server
+    if (window.axios) {
+        axios.post('/theme/save', {
+            mode: 'sys', // Default context, might need adjustment for Admin but 'sys' config usually shared for theme
+            theme: mode
+        }).catch(err => console.error('Failed to save theme preference', err));
+    }
+};
