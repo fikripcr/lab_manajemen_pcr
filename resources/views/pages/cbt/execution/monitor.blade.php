@@ -87,66 +87,66 @@
             {{-- Participant Table --}}
             <div class="col-12">
                 <div class="card">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
+                    <div class="card-table">
+                        <x-tabler.datatable-client
+                            id="table-peserta"
+                            :columns="[
+                                ['name' => 'No'],
+                                ['name' => 'Nama Peserta'],
+                                ['name' => 'Username'],
+                                ['name' => 'Mulai Pada'],
+                                ['name' => 'Progress'],
+                                ['name' => 'Status'],
+                                ['name' => 'Aksi', 'className' => 'w-1']
+                            ]"
+                        >
+                            @forelse($jadwal->riwayatSiswa as $riwayat)
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nama Peserta</th>
-                                    <th>Username</th>
-                                    <th>Mulai Pada</th>
-                                    <th>Progress</th>
-                                    <th>Status</th>
-                                    <th class="w-1">Aksi</th>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="avatar avatar-sm rounded-circle me-2 bg-blue-lt">{{ substr($riwayat->user->name, 0, 1) }}</span>
+                                            <div>{{ $riwayat->user->name }}</div>
+                                        </div>
+                                    </td>
+                                    <td><div class="text-muted">{{ $riwayat->user->username }}</div></td>
+                                    <td>{{ $riwayat->waktu_mulai->format('H:i:s') }}</td>
+                                    <td>
+                                        @php
+                                            $totalSoal = $jadwal->paket->total_soal ?: $jadwal->paket->komposisi->count();
+                                            $answered = $riwayat->jawaban->count();
+                                            $percent = $totalSoal > 0 ? ($answered / $totalSoal) * 100 : 0;
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-2" style="min-width: 150px">
+                                            <div class="progress progress-sm flex-grow-1">
+                                                <div class="progress-bar bg-primary" style="width: {{ $percent }}%"></div>
+                                            </div>
+                                            <small class="text-muted">{{ $answered }}/{{ $totalSoal }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if($riwayat->status == 'Sedang_Mengerjakan')
+                                            <span class="status status-blue d-flex align-items-center gap-1">
+                                                <span class="status-dot status-dot-animated"></span> Mengerjakan
+                                            </span>
+                                        @else
+                                            <span class="status status-success">Selesai</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="btn-list flex-nowrap">
+                                            <x-tabler.button class="btn-sm btn-icon" title="Reset Session" onclick="resetRiwayat({{ $riwayat->id }})" icon="ti ti-refresh text-warning" />
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($jadwal->riwayatSiswa as $riwayat)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="avatar avatar-sm rounded-circle me-2 bg-blue-lt">{{ substr($riwayat->user->name, 0, 1) }}</span>
-                                                <div>{{ $riwayat->user->name }}</div>
-                                            </div>
-                                        </td>
-                                        <td><div class="text-muted">{{ $riwayat->user->username }}</div></td>
-                                        <td>{{ $riwayat->waktu_mulai->format('H:i:s') }}</td>
-                                        <td>
-                                            @php
-                                                $totalSoal = $jadwal->paket->total_soal ?: $jadwal->paket->komposisi->count();
-                                                $answered = $riwayat->jawaban->count();
-                                                $percent = $totalSoal > 0 ? ($answered / $totalSoal) * 100 : 0;
-                                            @endphp
-                                            <div class="d-flex align-items-center gap-2" style="min-width: 150px">
-                                                <div class="progress progress-sm flex-grow-1">
-                                                    <div class="progress-bar bg-primary" style="width: {{ $percent }}%"></div>
-                                                </div>
-                                                <small class="text-muted">{{ $answered }}/{{ $totalSoal }}</small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @if($riwayat->status == 'Sedang_Mengerjakan')
-                                                <span class="status status-blue d-flex align-items-center gap-1">
-                                                    <span class="status-dot status-dot-animated"></span> Mengerjakan
-                                                </span>
-                                            @else
-                                                <span class="status status-success">Selesai</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="btn-list flex-nowrap">
-                                                <x-tabler.button class="btn-sm btn-icon" title="Reset Session" onclick="resetRiwayat({{ $riwayat->id }})" icon="ti ti-refresh text-warning" />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4 text-muted">Belum ada peserta yang memulai ujian.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                            @empty
+                                {{-- Handled by component --}}
+                            @endforelse
+                        </x-tabler.datatable-client>
+
+                        @if($jadwal->riwayatSiswa->isEmpty())
+                            <div class="text-center py-4 text-muted">Belum ada peserta yang memulai ujian.</div>
+                        @endif
                     </div>
                 </div>
             </div>

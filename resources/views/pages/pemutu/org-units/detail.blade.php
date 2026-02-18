@@ -42,37 +42,35 @@
             <x-tabler.button class="btn-sm btn-outline-primary" disabled icon="ti ti-user-plus" text="Add Personil" />
         </div>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Type</th>
-                        <th class="w-1"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($orgUnit->personils as $personil)
-                        <tr>
-                            <td>
-                                <div>{{ $personil->nama }}</div>
-                                @if($personil->user)<div class="text-muted small">User Linked</div>@endif
-                            </td>
-                            <td>{{ $personil->email ?? '-' }}</td>
-                            <td>{{ $personil->jenis ?? '-' }}</td>
-                            <td>
-                                {{-- Actions --}}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center text-muted py-3">No personil assigned.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <div class="card-table">
+        <x-tabler.datatable-client
+            id="table-personil"
+            :columns="[
+                ['name' => 'Name'],
+                ['name' => 'Email'],
+                ['name' => 'Type'],
+                ['name' => '', 'className' => 'w-1']
+            ]"
+        >
+            @forelse($orgUnit->personils as $personil)
+                <tr>
+                    <td>
+                        <div>{{ $personil->nama }}</div>
+                        @if($personil->user)<div class="text-muted small">User Linked</div>@endif
+                    </td>
+                    <td>{{ $personil->email ?? '-' }}</td>
+                    <td>{{ $personil->jenis ?? '-' }}</td>
+                    <td>
+                        {{-- Actions --}}
+                    </td>
+                </tr>
+            @empty
+                {{-- Handled by component --}}
+            @endforelse
+        </x-tabler.datatable-client>
+        
+        @if($orgUnit->personils->isEmpty())
+            <div class="text-center text-muted p-3">No personil assigned.</div>
+        @endif
     </div>
 </div>

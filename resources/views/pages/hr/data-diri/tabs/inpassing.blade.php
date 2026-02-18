@@ -15,57 +15,22 @@
              @include('pages.hr.pegawai.parts._inpassing_list')
         @else
             {{-- Global Table View for Inpassing --}}
-            <div class="p-3">
-                <div class="table-responsive">
-                    <table class="table table-vcenter card-table table-striped" id="table-inpassing">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Pegawai</th>
-                                <th>Golongan</th>
-                                <th>Terhitung Mulai Tanggal</th>
-                                <th>Nomor SK</th>
-                                <th>Tanggal SK</th>
-                                <th>Masa Kerja</th>
-                                <th>Gaji Pokok</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+            <div class="card-table">
+                 <x-tabler.datatable
+                    id="table-inpassing"
+                    route="{{ route('hr.inpassing.data') }}"
+                    :columns="[
+                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'nama_pegawai', 'name' => 'pegawai.nama', 'title' => 'Pegawai'],
+                        ['data' => 'golongan', 'name' => 'golonganInpassing.golongan', 'title' => 'Golongan'],
+                        ['data' => 'tmt', 'name' => 'tmt', 'title' => 'Terhitung Mulai Tanggal'],
+                        ['data' => 'no_sk', 'name' => 'no_sk', 'title' => 'Nomor SK'],
+                        ['data' => 'tgl_sk', 'name' => 'tgl_sk', 'title' => 'Tanggal SK'],
+                        ['data' => 'masa_kerja_tahun', 'name' => 'masa_kerja_tahun', 'title' => 'Masa Kerja', 'render' => 'function(data, type, row) { return (row.masa_kerja_tahun || 0) + \' Tahun \' + (row.masa_kerja_bulan || 0) + \' Bulan\'; }'],
+                        ['data' => 'gaji_pokok', 'name' => 'gaji_pokok', 'title' => 'Gaji Pokok', 'render' => 'function(data, type, row) { return new Intl.NumberFormat(\'id-ID\', { style: \'currency\', currency: \'IDR\', minimumFractionDigits: 0 }).format(data); }']
+                    ]"
+                />
             </div>
-
-            @push('scripts')
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    $('#table-inpassing').DataTable({
-                        processing: true,
-                        serverSide: true,
-                        ajax: "{{ route('hr.inpassing.data') }}", // Need to add this route too
-                        columns: [
-                            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                            { data: 'nama_pegawai', name: 'pegawai.nama' },
-                            { data: 'golongan', name: 'golonganInpassing.golongan' },
-                            { data: 'tmt', name: 'tmt' },
-                            { data: 'no_sk', name: 'no_sk' },
-                            { data: 'tgl_sk', name: 'tgl_sk' },
-                            { 
-                                data: 'masa_kerja_tahun', 
-                                name: 'masa_kerja_tahun',
-                                render: function(data, type, row) {
-                                    return (row.masa_kerja_tahun || 0) + ' Tahun ' + (row.masa_kerja_bulan || 0) + ' Bulan';
-                                }
-                            },
-                             { 
-                                data: 'gaji_pokok', 
-                                name: 'gaji_pokok',
-                                render: $.fn.dataTable.render.number('.', ',', 0, 'Rp ')
-                            },
-                        ]
-                    });
-                });
-            </script>
-            @endpush
         @endif
     </div>
 </div>

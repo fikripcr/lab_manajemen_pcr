@@ -75,41 +75,41 @@
                                     <h4 class="m-0">Anggota Tim</h4>
                                     <x-tabler.button class="btn-sm btn-primary ajax-modal-btn" data-modal-title="Tambah Anggota" data-url="{{ route('Kegiatan.teams.create', ['event_id' => $Kegiatan->event_id]) }}" text="Tambah Anggota" />
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table table-vcenter">
-                                        <thead>
+                                <div class="card-table">
+                                    <x-tabler.datatable-client
+                                        id="table-tim"
+                                        :columns="[
+                                            ['name' => 'Nama'],
+                                            ['name' => 'Jabatan/Peran'],
+                                            ['name' => 'Status'],
+                                            ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                                        ]"
+                                    >
+                                        @forelse($Kegiatan->teams as $team)
                                             <tr>
-                                                <th>Nama</th>
-                                                <th>Jabatan/Peran</th>
-                                                <th>Status</th>
-                                                <th class="w-1"></th>
+                                                <td>{{ $team->display_name }}</td>
+                                                <td class="text-muted">{{ $team->role ?: '-' }}</td>
+                                                <td>
+                                                    @if($team->is_pic)
+                                                        <span class="badge bg-purple-lt">PIC Utama</span>
+                                                    @else
+                                                        <span class="badge bg-blue-lt">Anggota</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <div class="btn-list flex-nowrap">
+                                                        <x-tabler.button class="btn-icon btn-sm ajax-modal-btn" data-modal-title="Edit Anggota" data-url="{{ route('Kegiatan.teams.edit', $team->hashid) }}" icon="ti ti-edit" />
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($Kegiatan->teams as $team)
-                                                <tr>
-                                                    <td>{{ $team->display_name }}</td>
-                                                    <td class="text-muted">{{ $team->role ?: '-' }}</td>
-                                                    <td>
-                                                        @if($team->is_pic)
-                                                            <span class="badge bg-purple-lt">PIC Utama</span>
-                                                        @else
-                                                            <span class="badge bg-blue-lt">Anggota</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-list flex-nowrap">
-                                                            <x-tabler.button class="btn-icon btn-sm ajax-modal-btn" data-modal-title="Edit Anggota" data-url="{{ route('Kegiatan.teams.edit', $team->hashid) }}" icon="ti ti-edit" />
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="4" class="text-center text-muted">Belum ada anggota tim</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                                        @empty
+                                            {{-- Handled by component --}}
+                                        @endforelse
+                                    </x-tabler.datatable-client>
+                                    
+                                    @if($Kegiatan->teams->isEmpty())
+                                        <div class="text-center text-muted p-3">Belum ada anggota tim</div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="tab-pane" id="tabs-tamu">
@@ -117,43 +117,43 @@
                                     <h4 class="m-0">Buku Tamu</h4>
                                     <x-tabler.button class="btn-sm btn-primary ajax-modal-btn" data-modal-title="Tambah Tamu" data-url="{{ route('Kegiatan.tamus.create', ['event_id' => $Kegiatan->event_id]) }}" text="Tambah Tamu" />
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table table-vcenter table-mobile-md card-table">
-                                        <thead>
+                                <div class="card-table">
+                                    <x-tabler.datatable-client
+                                        id="table-tamu"
+                                        :columns="[
+                                            ['name' => 'Foto', 'className' => 'w-1', 'sortable' => false],
+                                            ['name' => 'Nama'],
+                                            ['name' => 'Instansi'],
+                                            ['name' => 'Waktu Datang'],
+                                            ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                                        ]"
+                                    >
+                                        @forelse($Kegiatan->tamus as $tamu)
                                             <tr>
-                                                <th class="w-1">Foto</th>
-                                                <th>Nama</th>
-                                                <th>Instansi</th>
-                                                <th>Waktu Datang</th>
-                                                <th class="w-1"></th>
+                                                <td>
+                                                    @if($tamu->photo_url)
+                                                        <img src="{{ $tamu->photo_url }}" class="avatar avatar-sm" />
+                                                    @else
+                                                        <span class="avatar avatar-sm">?</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $tamu->nama_tamu }}</td>
+                                                <td class="text-muted">{{ $tamu->instansi ?: '-' }}</td>
+                                                <td class="text-muted">{{ $tamu->waktu_datang?->format('H:i') ?: '-' }}</td>
+                                                <td>
+                                                    <div class="btn-list flex-nowrap">
+                                                        <x-tabler.button class="btn-icon btn-sm ajax-modal-btn" data-modal-title="Edit Tamu" data-url="{{ route('Kegiatan.tamus.edit', $tamu->hashid) }}" icon="ti ti-edit" />
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($Kegiatan->tamus as $tamu)
-                                                <tr>
-                                                    <td>
-                                                        @if($tamu->photo_url)
-                                                            <img src="{{ $tamu->photo_url }}" class="avatar avatar-sm" />
-                                                        @else
-                                                            <span class="avatar avatar-sm">?</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ $tamu->nama_tamu }}</td>
-                                                    <td class="text-muted">{{ $tamu->instansi ?: '-' }}</td>
-                                                    <td class="text-muted">{{ $tamu->waktu_datang?->format('H:i') ?: '-' }}</td>
-                                                    <td>
-                                                        <div class="btn-list flex-nowrap">
-                                                            <x-tabler.button class="btn-icon btn-sm ajax-modal-btn" data-modal-title="Edit Tamu" data-url="{{ route('Kegiatan.tamus.edit', $tamu->hashid) }}" icon="ti ti-edit" />
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="5" class="text-center text-muted">Belum ada tamu terdaftar</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                                        @empty
+                                            {{-- Handled by component --}}
+                                        @endforelse
+                                    </x-tabler.datatable-client>
+                                    
+                                    @if($Kegiatan->tamus->isEmpty())
+                                        <div class="text-center text-muted p-3">Belum ada tamu terdaftar</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

@@ -129,59 +129,59 @@
                             <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-ghost-secondary btn-sm" text="Lihat Semua" />
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table table-nowrap">
-                            <thead>
-                                <tr>
-                                    <th>Layanan</th>
-                                    <th>Status</th>
-                                    <th>Waktu</th>
-                                    <th class="w-1"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentActivities as $activity)
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="me-3">
-                                                <span class="avatar avatar-sm rounded-circle bg-blue-lt">
-                                                    {{ substr($activity->jenisLayanan->nama ?? 'L', 0, 2) }}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold">{{ $activity->jenisLayanan->nama ?? 'Unknown' }}</div>
-                                                <div class="text-muted small">{{ $activity->no_layanan }}</div>
-                                            </div>
+                    <div class="card-table">
+                        <x-tabler.datatable-client
+                            id="table-aktivitas"
+                            :columns="[
+                                ['name' => 'Layanan'],
+                                ['name' => 'Status'],
+                                ['name' => 'Waktu'],
+                                ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                            ]"
+                        >
+                            @forelse($recentActivities as $activity)
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <span class="avatar avatar-sm rounded-circle bg-blue-lt">
+                                                {{ substr($activity->jenisLayanan->nama ?? 'L', 0, 2) }}
+                                            </span>
                                         </div>
-                                    </td>
-                                    <td>
-                                        @php
-                                            $currStatus = $activity->latestStatus->status_layanan ?? 'Pending';
-                                            $color = match($currStatus) {
-                                                'Selesai' => 'success',
-                                                'Proses'  => 'primary',
-                                                'Pending' => 'warning',
-                                                'Batal'   => 'danger',
-                                                default   => 'secondary',
-                                            };
-                                        @endphp
-                                        <span class="badge bg-{{ $color }}-lt fw-bold">{{ $currStatus }}</span>
-                                    </td>
-                                    <td class="text-muted small">
-                                        {{ $activity->created_at->diffForHumans() }}
-                                    </td>
-                                    <td>
-                                        <x-tabler.button href="{{ route('eoffice.layanan.show', $activity->layanan_id) }}" class="btn-ghost-primary btn-icon btn-sm" icon="ti ti-eye" />
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">Tidak ada aktivitas terbaru.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                        <div>
+                                            <div class="fw-bold">{{ $activity->jenisLayanan->nama ?? 'Unknown' }}</div>
+                                            <div class="text-muted small">{{ $activity->no_layanan }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @php
+                                        $currStatus = $activity->latestStatus->status_layanan ?? 'Pending';
+                                        $color = match($currStatus) {
+                                            'Selesai' => 'success',
+                                            'Proses'  => 'primary',
+                                            'Pending' => 'warning',
+                                            'Batal'   => 'danger',
+                                            default   => 'secondary',
+                                        };
+                                    @endphp
+                                    <span class="badge bg-{{ $color }}-lt fw-bold">{{ $currStatus }}</span>
+                                </td>
+                                <td class="text-muted small">
+                                    {{ $activity->created_at->diffForHumans() }}
+                                </td>
+                                <td>
+                                    <x-tabler.button href="{{ route('eoffice.layanan.show', $activity->layanan_id) }}" class="btn-ghost-primary btn-icon btn-sm" icon="ti ti-eye" />
+                                </td>
+                            </tr>
+                            @empty
+                                {{-- Handled by component --}}
+                            @endforelse
+                        </x-tabler.datatable-client>
+                        
+                        @if($recentActivities->isEmpty())
+                            <div class="text-center py-4 text-muted">Tidak ada aktivitas terbaru.</div>
+                        @endif
                     </div>
                 </div>
             </div>

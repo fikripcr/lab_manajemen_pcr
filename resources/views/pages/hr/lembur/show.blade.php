@@ -36,69 +36,61 @@
         </table>
 
         <h4 class="mt-4">Pegawai yang Lembur</h4>
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table">
-                <thead>
+        <div class="card-table">
+            <x-tabler.datatable-client
+                id="table-pegawai-lembur"
+                :columns="[
+                    ['name' => 'No', 'className' => 'w-1'],
+                    ['name' => 'Nama'],
+                    ['name' => 'Catatan']
+                ]"
+            >
+                @forelse($lembur->pegawais as $index => $pegawai)
                     <tr>
-                        <th class="w-1">No</th>
-                        <th>Nama</th>
-                        <th>Catatan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($lembur->pegawais as $index => $pegawai)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>
-                                <div class="d-flex py-1 align-items-center">
-                                    <span class="avatar me-2" style="background-image: url({{ $pegawai->latestDataDiri->foto_url ?? '' }})"></span>
-                                    <div class="flex-fill">
-                                        <div class="font-weight-medium">{{ $pegawai->latestDataDiri?->nama }}</div>
-                                        <div class="text-secondary"><a href="#" class="text-reset">{{ $pegawai->latestDataDiri?->email }}</a></div>
-                                    </div>
+                        <td>{{ $index + 1 }}</td>
+                        <td>
+                            <div class="d-flex py-1 align-items-center">
+                                <span class="avatar me-2" style="background-image: url({{ $pegawai->latestDataDiri->foto_url ?? '' }})"></span>
+                                <div class="flex-fill">
+                                    <div class="font-weight-medium">{{ $pegawai->latestDataDiri?->nama }}</div>
+                                    <div class="text-secondary"><a href="#" class="text-reset">{{ $pegawai->latestDataDiri?->email }}</a></div>
                                 </div>
-                            </td>
-                            <td>{{ $pegawai->pivot->catatan ?? '-' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center">Tidak ada data pegawai</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                            </div>
+                        </td>
+                        <td>{{ $pegawai->pivot->catatan ?? '-' }}</td>
+                    </tr>
+                @empty
+                   {{-- Empty state handled by component --}}
+                @endforelse
+            </x-tabler.datatable-client>
         </div>
 
         <h4 class="mt-4">Riwayat Approval</h4>
-        <div class="table-responsive mb-3">
-             <table class="table table-vcenter card-table">
-                <thead>
+        <div class="card-table mb-3">
+             <x-tabler.datatable-client
+                id="table-approval-history"
+                :columns="[
+                    ['name' => 'Tanggal'],
+                    ['name' => 'Pejabat'],
+                    ['name' => 'Status'],
+                    ['name' => 'Keterangan']
+                ]"
+             >
+                @forelse($lembur->approvals as $approval)
                     <tr>
-                        <th>Tanggal</th>
-                        <th>Pejabat</th>
-                        <th>Status</th>
-                        <th>Keterangan</th>
+                        <td>{{ $approval->created_at->format('d/m/Y H:i') }}</td>
+                        <td>{{ $approval->pejabat }}</td>
+                        <td>
+                            <span class="badge bg-{{ $approval->status == 'approved' ? 'success' : ($approval->status == 'rejected' ? 'danger' : 'warning') }}">
+                                {{ ucfirst($approval->status) }}
+                            </span>
+                        </td>
+                        <td>{{ $approval->keterangan ?? '-' }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse($lembur->approvals as $approval)
-                        <tr>
-                            <td>{{ $approval->created_at->format('d/m/Y H:i') }}</td>
-                            <td>{{ $approval->pejabat }}</td>
-                            <td>
-                                <span class="badge bg-{{ $approval->status == 'approved' ? 'success' : ($approval->status == 'rejected' ? 'danger' : 'warning') }}">
-                                    {{ ucfirst($approval->status) }}
-                                </span>
-                            </td>
-                            <td>{{ $approval->keterangan ?? '-' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center">Belum ada riwayat approval</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                @empty
+                    {{-- Empty state handled by component --}}
+                @endforelse
+            </x-tabler.datatable-client>
         </div>
         
         @if($lembur->status_approval == 'pending')

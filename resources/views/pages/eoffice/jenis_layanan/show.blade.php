@@ -20,39 +20,39 @@
                     <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-pic" icon="ti ti-plus" text="Tambah PIC" />
                 </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-vcenter card-table">
-                    <thead>
+            <div class="card-table">
+                <x-tabler.datatable-client
+                    id="table-pic"
+                    :columns="[
+                        ['name' => 'Nama Pegawai'],
+                        ['name' => 'Aksi', 'className' => 'w-10']
+                    ]"
+                >
+                    @forelse($layanan->pics as $pic)
                         <tr>
-                            <th>Nama Pegawai</th>
-                            <th width="10%">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($layanan->pics as $pic)
-                            <tr>
-                                <td>
-                                    <div class="d-flex py-1 align-items-center">
-                                        <span class="avatar me-2" style="background-image: url('{{ $pic->user->avatar_url ?? '' }}')"></span>
-                                        <div class="flex-fill">
-                                            <div class="font-weight-medium">{{ $pic->user->name }}</div>
-                                            <div class="text-secondary">{{ $pic->user->email }}</div>
-                                        </div>
+                            <td>
+                                <div class="d-flex py-1 align-items-center">
+                                    <span class="avatar me-2" style="background-image: url('{{ $pic->user->avatar_url ?? '' }}')"></span>
+                                    <div class="flex-fill">
+                                        <div class="font-weight-medium">{{ $pic->user->name }}</div>
+                                        <div class="text-secondary">{{ $pic->user->email }}</div>
                                     </div>
-                                </td>
-                                <td>
-                                    <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
-                                        data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->hashid) }}" 
-                                        data-title="Hapus PIC?" data-text="Pegawai ini tidak lagi menjadi PIC untuk layanan ini." icon="ti ti-trash" />
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2" class="text-center text-muted">Belum ada PIC yang ditugaskan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                </div>
+                            </td>
+                            <td>
+                                <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
+                                    data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->hashid) }}" 
+                                    data-title="Hapus PIC?" data-text="Pegawai ini tidak lagi menjadi PIC untuk layanan ini." icon="ti ti-trash" />
+                            </td>
+                        </tr>
+                    @empty
+                        {{-- Handled by component --}}
+                    @endforelse
+                </x-tabler.datatable-client>
+                
+                @if($layanan->pics->isEmpty())
+                    <div class="text-center text-muted p-3">Belum ada PIC yang ditugaskan.</div>
+                @endif
             </div>
         </div>
     </div>
@@ -193,45 +193,45 @@
                     <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-periode" icon="ti ti-plus" text="Tambah Periode" />
                 </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-vcenter card-table" id="tbl-periode">
-                    <thead>
+            <div class="card-table">
+                <x-tabler.datatable-client
+                    id="table-periode"
+                    :columns="[
+                        ['name' => 'Periode'],
+                        ['name' => 'Tahun Ajaran'],
+                        ['name' => 'Semester'],
+                        ['name' => 'Status'],
+                        ['name' => 'Aksi', 'className' => 'w-10']
+                    ]"
+                >
+                    @forelse($layanan->periodes as $p)
                         <tr>
-                            <th>Periode</th>
-                            <th>Tahun Ajaran</th>
-                            <th>Semester</th>
-                            <th>Status</th>
-                            <th width="10%">Aksi</th>
+                            <td>{{ $p->tgl_mulai->format('d M Y') }} - {{ $p->tgl_selesai->format('d M Y') }}</td>
+                            <td>{{ $p->tahun_ajaran ?? '-' }}</td>
+                            <td>{{ $p->semester ?? '-' }}</td>
+                            <td>
+                                @if(now()->between($p->tgl_mulai, $p->tgl_selesai))
+                                    <span class="badge bg-green text-white">Aktif</span>
+                                @elseif(now()->lt($p->tgl_mulai))
+                                    <span class="badge bg-azure text-white">Mendatang</span>
+                                @else
+                                    <span class="badge bg-secondary text-white">Berakhir</span>
+                                @endif
+                            </td>
+                            <td>
+                                <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
+                                    data-url="{{ route('eoffice.jenis-layanan.periode.destroy', [$layanan->hashid, $p->hashid]) }}"
+                                    data-title="Hapus Periode?" data-text="Periode ini akan dihapus." icon="ti ti-trash" />
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($layanan->periodes as $p)
-                            <tr>
-                                <td>{{ $p->tgl_mulai->format('d M Y') }} - {{ $p->tgl_selesai->format('d M Y') }}</td>
-                                <td>{{ $p->tahun_ajaran ?? '-' }}</td>
-                                <td>{{ $p->semester ?? '-' }}</td>
-                                <td>
-                                    @if(now()->between($p->tgl_mulai, $p->tgl_selesai))
-                                        <span class="badge bg-green text-white">Aktif</span>
-                                    @elseif(now()->lt($p->tgl_mulai))
-                                        <span class="badge bg-azure text-white">Mendatang</span>
-                                    @else
-                                        <span class="badge bg-secondary text-white">Berakhir</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
-                                        data-url="{{ route('eoffice.jenis-layanan.periode.destroy', [$layanan->hashid, $p->hashid]) }}"
-                                        data-title="Hapus Periode?" data-text="Periode ini akan dihapus." icon="ti ti-trash" />
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center text-muted">Belum ada periode pengajuan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                    @empty
+                        {{-- Handled by component --}}
+                    @endforelse
+                </x-tabler.datatable-client>
+
+                @if($layanan->periodes->isEmpty())
+                    <div class="text-center text-muted p-3">Belum ada periode pengajuan.</div>
+                @endif
             </div>
         </div>
     </div>

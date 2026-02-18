@@ -34,43 +34,39 @@
         </div>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table">
-                <thead>
+        <div class="card-table">
+            <x-tabler.datatable-client
+                id="table-assignments"
+                :columns="[
+                    ['name' => 'Nama'],
+                    ['name' => 'NIP'],
+                    ['name' => 'Tgl Mulai'],
+                    ['name' => 'Status'],
+                    ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                ]"
+            >
+                @forelse($orgUnit->riwayatPenugasan ?? [] as $penugasan)
                     <tr>
-                        <th>Nama</th>
-                        <th>NIP</th>
-                        <th>Tgl Mulai</th>
-                        <th>Status</th>
-                        <th class="w-1"></th>
+                        <td>
+                            <a href="{{ route('hr.pegawai.show', $penugasan->pegawai_id) }}">{{ $penugasan->pegawai->nama ?? '-' }}</a>
+                        </td>
+                        <td>{{ $penugasan->pegawai->nip ?? '-' }}</td>
+                        <td>{{ $penugasan->tgl_mulai?->format('d M Y') }}</td>
+                        <td>
+                            @if($penugasan->is_active)
+                                <span class="badge bg-success text-white">Aktif</span>
+                            @else
+                                <span class="badge bg-secondary text-white">Selesai</span>
+                            @endif
+                        </td>
+                        <td>
+                            <x-tabler.button type="button" class="btn-sm btn-ghost-danger ajax-delete" data-url="{{ route('hr.pegawai.penugasan.destroy', [$penugasan->pegawai_id, $penugasan->riwayatpenugasan_id]) }}" icon="ti ti-trash" />
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse($orgUnit->riwayatPenugasan ?? [] as $penugasan)
-                        <tr>
-                            <td>
-                                <a href="{{ route('hr.pegawai.show', $penugasan->pegawai_id) }}">{{ $penugasan->pegawai->nama ?? '-' }}</a>
-                            </td>
-                            <td>{{ $penugasan->pegawai->nip ?? '-' }}</td>
-                            <td>{{ $penugasan->tgl_mulai?->format('d M Y') }}</td>
-                            <td>
-                                @if($penugasan->is_active)
-                                    <span class="badge bg-success text-white">Aktif</span>
-                                @else
-                                    <span class="badge bg-secondary text-white">Selesai</span>
-                                @endif
-                            </td>
-                            <td>
-                                <x-tabler.button type="button" class="btn-sm btn-ghost-danger ajax-delete" data-url="{{ route('hr.pegawai.penugasan.destroy', [$penugasan->pegawai_id, $penugasan->riwayatpenugasan_id]) }}" icon="ti ti-trash" />
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-3">Belum ada pegawai ditugaskan.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                @empty
+                    {{-- Empty state handled by component --}}
+                @endforelse
+            </x-tabler.datatable-client>
         </div>
     </div>
 </div>

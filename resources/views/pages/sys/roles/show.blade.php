@@ -117,29 +117,27 @@
             <div class="mb-3">
                 <h6 class="text-muted">Assigned Users:</h6>
                 @if($role->users->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
+                    <div class="card-table">
+                        <x-tabler.datatable-client
+                            id="table-users-{{ $role->id }}"
+                            :columns="[
+                                ['name' => 'User Name'],
+                                ['name' => 'Email'],
+                                ['name' => 'Role']
+                            ]"
+                        >
+                            @foreach($role->users as $user)
                                 <tr>
-                                    <th>User Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>
+                                        @foreach($user->roles as $userRole)
+                                            <span class="badge bg-label-info me-1">{{ $userRole->name }}</span>
+                                        @endforeach
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($role->users as $user)
-                                    <tr>
-                                        <td>{{ $user->name }}</td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>
-                                            @foreach($user->roles as $userRole)
-                                                <span class="badge bg-label-info me-1">{{ $userRole->name }}</span>
-                                            @endforeach
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                            @endforeach
+                        </x-tabler.datatable-client>
                     </div>
                 @else
                     <p class="text-muted mb-0">No users are assigned to this role.</p>

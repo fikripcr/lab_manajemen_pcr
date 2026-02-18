@@ -157,45 +157,43 @@
                             <div class="card-body p-0">
                                 <form action="{{ route('Kegiatan.rapat.update-attendance', $rapat) }}#tabs-info" method="POST">
                                     @csrf
-                                    <div class="table-responsive">
-                                        <table class="table table-vcenter card-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nama & Jabatan</th>
-                                                    <th width="200">Status Kehadiran</th>
-                                                    <th width="150">Waktu Hadir</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($rapat->pesertas as $peserta)
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <span class="avatar avatar-xs me-2 rounded-circle bg-light text-muted">{{ strtoupper(substr($peserta->user->name ?? '?', 0, 1)) }}</span>
-                                                            <div>
-                                                                <div class="font-weight-medium">{{ $peserta->user->name ?? 'User N/A' }}</div>
-                                                                <div class="text-muted small">{{ $peserta->jabatan }}</div>
-                                                            </div>
+                                    <div class="card-table">
+                                        <x-tabler.datatable-client
+                                            id="table-attendance"
+                                            :columns="[
+                                                ['name' => 'Nama & Jabatan'],
+                                                ['name' => 'Status Kehadiran', 'width' => '200px', 'sortable' => false],
+                                                ['name' => 'Waktu Hadir', 'width' => '150px', 'sortable' => false]
+                                            ]"
+                                        >
+                                            @foreach($rapat->pesertas as $peserta)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="avatar avatar-xs me-2 rounded-circle bg-light text-muted">{{ strtoupper(substr($peserta->user->name ?? '?', 0, 1)) }}</span>
+                                                        <div>
+                                                            <div class="font-weight-medium">{{ $peserta->user->name ?? 'User N/A' }}</div>
+                                                            <div class="text-muted small">{{ $peserta->jabatan }}</div>
                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                        <select name="attendance[{{ $peserta->rapatpeserta_id }}][status]" class="form-select">
-                                                            <option value="" {{ is_null($peserta->status) ? 'selected' : '' }}>- Belum Absen -</option>
-                                                            <option value="hadir" {{ $peserta->status == 'hadir' ? 'selected' : '' }}>Hadir</option>
-                                                            <option value="izin" {{ $peserta->status == 'izin' ? 'selected' : '' }}>Izin</option>
-                                                            <option value="sakit" {{ $peserta->status == 'sakit' ? 'selected' : '' }}>Sakit</option>
-                                                            <option value="alpa" {{ $peserta->status == 'alpa' ? 'selected' : '' }}>Alpa</option>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="time" name="attendance[{{ $peserta->rapatpeserta_id }}][waktu_hadir]" 
-                                                            class="form-control"
-                                                            value="{{ $peserta->waktu_hadir ? $peserta->waktu_hadir->format('H:i') : '' }}">
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <select name="attendance[{{ $peserta->rapatpeserta_id }}][status]" class="form-select">
+                                                        <option value="" {{ is_null($peserta->status) ? 'selected' : '' }}>- Belum Absen -</option>
+                                                        <option value="hadir" {{ $peserta->status == 'hadir' ? 'selected' : '' }}>Hadir</option>
+                                                        <option value="izin" {{ $peserta->status == 'izin' ? 'selected' : '' }}>Izin</option>
+                                                        <option value="sakit" {{ $peserta->status == 'sakit' ? 'selected' : '' }}>Sakit</option>
+                                                        <option value="alpa" {{ $peserta->status == 'alpa' ? 'selected' : '' }}>Alpa</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="time" name="attendance[{{ $peserta->rapatpeserta_id }}][waktu_hadir]" 
+                                                        class="form-control"
+                                                        value="{{ $peserta->waktu_hadir ? $peserta->waktu_hadir->format('H:i') : '' }}">
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </x-tabler.datatable-client>
                                     </div>
                                     <div class="p-3 bg-light text-end">
                                         <x-tabler.button type="submit" class="btn-primary" icon="ti ti-check" text="Simpan Absensi" />

@@ -194,42 +194,40 @@
                                            data-modal-title="Tambah {{ $childType }}" text="Tambah {{ $childType }}" />
                                     </div>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table table-vcenter card-table table-striped">
-                                        <thead>
+                                <div class="card-table">
+                                    <x-tabler.datatable-client
+                                        id="table-child-docs"
+                                        :columns="[
+                                            ['name' => 'No', 'className' => 'w-1'],
+                                            ['name' => 'Judul ' . ($childType ?? 'Dokumen')],
+                                            ['name' => 'Kode'],
+                                            ['name' => 'Aksi', 'className' => 'w-1 text-end']
+                                        ]"
+                                    >
+                                        @foreach($dokSub->childDokumens as $child)
                                             <tr>
-                                                <th class="w-1">No</th>
-                                                <th>Judul {{ $childType }}</th>
-                                                <th>Kode</th>
-                                                <th class="w-1 text-end">Aksi</th>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>
+                                                    <a href="{{ route('pemutu.dokumens.show', $child) }}" class="fw-bold text-reset">
+                                                        {{ $child->judul }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ $child->kode ?? '-' }}</td>
+                                                <td class="text-end">
+                                                    <div class="btn-list flex-nowrap justify-content-end">
+                                                        <x-tabler.button href="#" style="outline-secondary" size="sm" icon="ti ti-pencil" class="ajax-modal-btn btn-icon" data-url="{{ route('pemutu.dokumens.edit', $child) }}" data-modal-title="Edit {{ $childType }}" />
+                                                        <x-tabler.button href="#" style="danger" size="sm" icon="ti ti-trash" class="ajax-delete btn-icon" data-url="{{ route('pemutu.dokumens.destroy', $child) }}" data-title="Hapus?" />
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($dokSub->childDokumens as $child)
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>
-                                                        <a href="{{ route('pemutu.dokumens.show', $child) }}" class="fw-bold text-reset">
-                                                            {{ $child->judul }}
-                                                        </a>
-                                                    </td>
-                                                    <td>{{ $child->kode ?? '-' }}</td>
-                                                    <td class="text-end">
-                                                        <div class="btn-list flex-nowrap justify-content-end">
-                                                            <x-tabler.button href="#" style="outline-secondary" size="sm" icon="ti ti-pencil" class="ajax-modal-btn btn-icon" data-url="{{ route('pemutu.dokumens.edit', $child) }}" data-modal-title="Edit {{ $childType }}" />
-                                                            <x-tabler.button href="#" style="danger" size="sm" icon="ti ti-trash" class="ajax-delete btn-icon" data-url="{{ route('pemutu.dokumens.destroy', $child) }}" data-title="Hapus?" />
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="4" class="text-center text-muted py-5 fst-italic">
-                                                        Belum ada data {{ $childType }}.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                                        @endforeach
+                                    </x-tabler.datatable-client>
+                                    
+                                    @if($dokSub->childDokumens->isEmpty())
+                                        <div class="text-center text-muted py-5 fst-italic">
+                                            Belum ada data {{ $childType }}.
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endif

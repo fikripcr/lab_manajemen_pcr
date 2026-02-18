@@ -136,41 +136,39 @@
                     <a href="{{ route('pmb.pendaftaran.index') }}" class="btn-action">Lihat Semua</a>
                 </div>
             </div>
-            <div class="card-table table-vcenter">
-                <table class="table table-vcenter">
-                    <thead>
+            <div class="card-table">
+                <x-tabler.datatable-client
+                    id="table-recent-registrations"
+                    :columns="[
+                        ['name' => 'No. Pendaftaran'],
+                        ['name' => 'Nama'],
+                        ['name' => 'Jalur'],
+                        ['name' => 'Status'],
+                        ['name' => '', 'className' => 'w-1']
+                    ]"
+                >
+                    @foreach($recentPendaftar as $pendaftar)
                         <tr>
-                            <th>No. Pendaftaran</th>
-                            <th>Nama</th>
-                            <th>Jalur</th>
-                            <th>Status</th>
-                            <th class="w-1"></th>
+                            <td>
+                                <span class="badge bg-blue-lt">{{ $pendaftar->no_pendaftaran }}</span>
+                            </td>
+                            <td>{{ $pendaftar->user->name }}</td>
+                            <td>{{ $pendaftar->jalur->nama_jalur }}</td>
+                            <td>
+                                <span class="badge {{ getStatusBadgeClass($pendaftar->status_terkini) }} text-white">
+                                    {{ str_replace('_', ' ', $pendaftar->status_terkini) }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-list flex-nowrap">
+                                    <a href="{{ route('pmb.pendaftaran.show', $pendaftar->hashid) }}" class="btn btn-icon btn-sm">
+                                        <i class="ti ti-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentPendaftar as $pendaftar)
-                            <tr>
-                                <td>
-                                    <span class="badge bg-blue-lt">{{ $pendaftar->no_pendaftaran }}</span>
-                                </td>
-                                <td>{{ $pendaftar->user->name }}</td>
-                                <td>{{ $pendaftar->jalur->nama_jalur }}</td>
-                                <td>
-                                    <span class="badge {{ getStatusBadgeClass($pendaftar->status_terkini) }} text-white">
-                                        {{ str_replace('_', ' ', $pendaftar->status_terkini) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="btn-list flex-nowrap">
-                                        <a href="{{ route('pmb.pendaftaran.show', $pendaftar->hashid) }}" class="btn btn-icon btn-sm">
-                                            <i class="ti ti-eye"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                    @endforeach
+                </x-tabler.datatable-client>
             </div>
         </div>
     </div>

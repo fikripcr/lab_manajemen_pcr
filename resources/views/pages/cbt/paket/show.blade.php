@@ -19,37 +19,37 @@
                     <div class="card-header">
                         <h3 class="card-title">Daftar Soal Terpilih ({{ $paket->komposisi->count() }})</h3>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Mata Uji</th>
-                                    <th>Pertanyaan</th>
-                                    <th class="w-1"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($paket->komposisi as $index => $item)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td class="text-muted">{{ $item->soal->mataUji->nama_mata_uji }}</td>
-                                    <td>{!! strip_tags(substr($item->soal->konten_pertanyaan, 0, 100)) !!}...</td>
-                                    <td>
-                                        <x-tabler.button class="btn-sm btn-outline-danger ajax-delete" 
-                                                data-url="{{ route('cbt.paket.remove-soal', [$paket->hashid, $item->hashid]) }}"
-                                                data-title="Hapus soal dari paket?"
-                                                data-text="Soal tidak terhapus dari Bank Soal, hanya dihapus dari paket ini."
-                                                icon="ti ti-trash" />
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center py-4">Belum ada soal terpilih.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                    <div class="card-table">
+                        <x-tabler.datatable-client
+                            id="table-soal-terpilih"
+                            :columns="[
+                                ['name' => 'No', 'sortable' => true],
+                                ['name' => 'Mata Uji', 'sortable' => true],
+                                ['name' => 'Pertanyaan', 'sortable' => false],
+                                ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                            ]"
+                        >
+                            @forelse($paket->komposisi as $index => $item)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td class="text-muted">{{ $item->soal->mataUji->nama_mata_uji }}</td>
+                                <td>{!! strip_tags(substr($item->soal->konten_pertanyaan, 0, 100)) !!}...</td>
+                                <td>
+                                    <x-tabler.button class="btn-sm btn-outline-danger ajax-delete" 
+                                            data-url="{{ route('cbt.paket.remove-soal', [$paket->hashid, $item->hashid]) }}"
+                                            data-title="Hapus soal dari paket?"
+                                            data-text="Soal tidak terhapus dari Bank Soal, hanya dihapus dari paket ini."
+                                            icon="ti ti-trash" />
+                                </td>
+                            </tr>
+                            @empty
+                                {{-- Handled by component --}}
+                            @endforelse
+                        </x-tabler.datatable-client>
+                        
+                        @if($paket->komposisi->isEmpty())
+                            <div class="text-center py-4">Belum ada soal terpilih.</div>
+                        @endif
                     </div>
                 </div>
             </div>

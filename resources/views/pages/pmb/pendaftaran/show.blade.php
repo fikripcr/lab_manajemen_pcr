@@ -44,37 +44,35 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header"><h3 class="card-title">Berkas Persyaratan</h3></div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
-                                <tr>
-                                    <th>Jenis Dokumen</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($pendaftaran->dokumenUpload as $doc)
-                                <tr>
-                                    <td>{{ $doc->jenisDokumen->nama_dokumen }}</td>
-                                    <td>
-                                        @if($doc->is_verified)
-                                            <span class="badge bg-success text-white">Terverifikasi</span>
-                                        @else
-                                            <span class="badge bg-warning text-white">Belum Dicek</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <div class="btn-list flex-nowrap">
-                                            <x-tabler.button href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="btn-sm btn-info" text="Lihat" />
-                                            <x-tabler.button type="button" class="btn-sm btn-success ajax-modal-btn" text="Verifikasi" 
-                                                data-modal-target="#modalAction" data-modal-title="Verifikasi Dokumen" data-url="{{ route('pmb.pendaftaran.verify-document-form', $doc->encrypted_id) }}" />
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="card-table">
+                        <x-tabler.datatable-client
+                            id="table-documents"
+                            :columns="[
+                                ['name' => 'Jenis Dokumen'],
+                                ['name' => 'Status'],
+                                ['name' => 'Aksi', 'className' => 'w-10']
+                            ]"
+                        >
+                            @foreach($pendaftaran->dokumenUpload as $doc)
+                            <tr>
+                                <td>{{ $doc->jenisDokumen->nama_dokumen }}</td>
+                                <td>
+                                    @if($doc->is_verified)
+                                        <span class="badge bg-success text-white">Terverifikasi</span>
+                                    @else
+                                        <span class="badge bg-warning text-white">Belum Dicek</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="btn-list flex-nowrap">
+                                        <x-tabler.button href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="btn-sm btn-info" text="Lihat" />
+                                        <x-tabler.button type="button" class="btn-sm btn-success ajax-modal-btn" text="Verifikasi" 
+                                            data-modal-target="#modalAction" data-modal-title="Verifikasi Dokumen" data-url="{{ route('pmb.pendaftaran.verify-document-form', $doc->encrypted_id) }}" />
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </x-tabler.datatable-client>
                     </div>
                 </div>
 

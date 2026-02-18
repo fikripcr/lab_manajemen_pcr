@@ -9,43 +9,42 @@
         text="Ubah Jafung" />
 </div>
 <div class="card mb-3">
-    <div class="table-responsive">
-        <table class="table table-vcenter card-table table-striped">
-            <thead>
-                <tr>
-                    <th>Jabatan</th>
-                    <th>TMT</th>
-                    <th>No. SK</th>
-                    <th>Status Aktif</th>
-                    <th>Status Approval</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($pegawai->historyJabFungsional as $item)
-                <tr>
-                    <td>
-                        <span class="badge bg-indigo-lt">{{ $item->jabatanFungsional->jabfungsional ?? '-' }}</span>
-                    </td>
-                    <td>{{ $item->tmt ? $item->tmt->format('d F Y') : '-' }}</td>
-                    <td>{{ $item->no_sk_internal ?? $item->no_sk_kopertis ?? '-' }}</td>
-                        @if($pegawai->latest_riwayatjabfungsional_id == $item->riwayatjabfungsional_id)
-                            <span class="badge bg-success text-success-fg">Aktif Saat Ini</span>
-                        @else
-                            <span class="badge bg-secondary text-secondary-fg">Riwayat</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if($item->approval)
-                            {!! getApprovalBadge($item->approval->status) !!}
-                        @else
-                             -
-                        @endif
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="4" class="text-center text-muted">Belum ada data riwayat jabatan fungsional</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="card-table">
+        <x-tabler.datatable-client
+            id="table-jabfungsional-list"
+            :columns="[
+                ['name' => 'Jabatan'],
+                ['name' => 'TMT'],
+                ['name' => 'No. SK'],
+                ['name' => 'Status Aktif'],
+                ['name' => 'Status Approval']
+            ]"
+        >
+            @forelse($pegawai->historyJabFungsional as $item)
+            <tr>
+                <td>
+                    <span class="badge bg-indigo-lt">{{ $item->jabatanFungsional->jabfungsional ?? '-' }}</span>
+                </td>
+                <td>{{ $item->tmt ? $item->tmt->format('d F Y') : '-' }}</td>
+                <td>{{ $item->no_sk_internal ?? $item->no_sk_kopertis ?? '-' }}</td>
+                <td>
+                    @if($pegawai->latest_riwayatjabfungsional_id == $item->riwayatjabfungsional_id)
+                        <span class="badge bg-success text-success-fg">Aktif Saat Ini</span>
+                    @else
+                        <span class="badge bg-secondary text-secondary-fg">Riwayat</span>
+                    @endif
+                </td>
+                <td>
+                    @if($item->approval)
+                        {!! getApprovalBadge($item->approval->status) !!}
+                    @else
+                         -
+                    @endif
+                </td>
+            </tr>
+            @empty
+                {{-- Empty handled by component --}}
+            @endforelse
+        </x-tabler.datatable-client>
     </div>
 </div>

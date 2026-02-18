@@ -64,45 +64,45 @@
             <div class="card-header">
                 <h3 class="card-title">Penugasan Saat Ini</h3>
             </div>
-            <div class="table-responsive">
-                <table class="table card-table table-vcenter text-nowrap">
-                    <thead>
-                        <tr>
-                            <th>Personel</th>
-                            <th>Periode</th>
-                            <th>Target</th>
-                            <th>Status</th>
-                            <th width="10%">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($assigned as $assign)
-                        <tr>
-                            <td>
-                                <div>{{ $assign->personil->nama ?? 'Unknown' }}</div>
-                                <div class="text-muted small">{{ $assign->personil->email ?? '' }}</div>
-                            </td>
-                            <td>{{ $assign->year }} / {{ $assign->semester == 1 ? 'Ganjil' : 'Genap' }}</td>
-                            <td>{{ $assign->target_value ?? $indikator->target }}</td>
-                            <td>
-                                <span class="badge bg-{{ $assign->status == 'approved' ? 'green' : ($assign->status == 'submitted' ? 'blue' : 'secondary') }} text-white">
-                                    {{ ucfirst($assign->status) }}
-                                </span>
-                            </td>
-                            <td>
-                                <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-danger ajax-delete" 
-                                    data-url="{{ route('pemutu.standar.destroyAssignment', $assign->id) }}" 
-                                    data-title="Hapus Penugasan?" 
-                                    data-text="Data penugasan akan dihapus." icon="ti ti-trash" />
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">Belum ada penugasan.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="card-table">
+                <x-tabler.datatable-client
+                    id="table-assignments"
+                    :columns="[
+                        ['name' => 'Personel'],
+                        ['name' => 'Periode'],
+                        ['name' => 'Target'],
+                        ['name' => 'Status'],
+                        ['name' => 'Aksi', 'className' => 'w-10']
+                    ]"
+                >
+                    @forelse($assigned as $assign)
+                    <tr>
+                        <td>
+                            <div>{{ $assign->personil->nama ?? 'Unknown' }}</div>
+                            <div class="text-muted small">{{ $assign->personil->email ?? '' }}</div>
+                        </td>
+                        <td>{{ $assign->year }} / {{ $assign->semester == 1 ? 'Ganjil' : 'Genap' }}</td>
+                        <td>{{ $assign->target_value ?? $indikator->target }}</td>
+                        <td>
+                            <span class="badge bg-{{ $assign->status == 'approved' ? 'green' : ($assign->status == 'submitted' ? 'blue' : 'secondary') }} text-white">
+                                {{ ucfirst($assign->status) }}
+                            </span>
+                        </td>
+                        <td>
+                            <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-danger ajax-delete" 
+                                data-url="{{ route('pemutu.standar.destroyAssignment', $assign->id) }}" 
+                                data-title="Hapus Penugasan?" 
+                                data-text="Data penugasan akan dihapus." icon="ti ti-trash" />
+                        </td>
+                    </tr>
+                    @empty
+                        {{-- Handled by component --}}
+                    @endforelse
+                </x-tabler.datatable-client>
+
+                @if($assigned->isEmpty())
+                    <div class="text-center text-muted p-3">Belum ada penugasan.</div>
+                @endif
             </div>
         </div>
     </div>

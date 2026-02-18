@@ -6,21 +6,20 @@
         </div>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table" id="table-files" style="width:100%">
-                <thead>
-                    <tr>
-                        <th width="50">No</th>
-                        <th>Kategori</th>
-                        <th>Nama File</th>
-                        <th>Ukuran</th>
-                        <th>Keterangan</th>
-                        <th width="100" class="text-end">Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
+    <div class="card-table">
+        <x-tabler.datatable
+            id="table-files"
+            route="{{ route('hr.pegawai.files.data', $pegawai->hashid) }}"
+            :columns="[
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '50', 'orderable' => false, 'searchable' => false],
+                ['data' => 'category', 'name' => 'jenisfile.jenisfile', 'title' => 'Kategori'],
+                ['data' => 'filename', 'name' => 'media.file_name', 'title' => 'Nama File'],
+                ['data' => 'size', 'name' => 'media.size', 'title' => 'Ukuran', 'searchable' => false],
+                ['data' => 'keterangan', 'name' => 'keterangan', 'title' => 'Keterangan'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '100', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
+            ]"
+        />
+    </div>    </div>
 </div>
 
 <!-- Modal Upload -->
@@ -54,23 +53,6 @@
 @push('js')
 <script>
     $(function() {
-        const tableFiles = $('#table-files').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('hr.pegawai.files.data', $pegawai->hashid) }}",
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'category', name: 'jenisfile.jenisfile' },
-                { data: 'filename', name: 'media.file_name' },
-                { data: 'size', name: 'media.size', searchable: false },
-                { data: 'keterangan', name: 'keterangan' },
-                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-end' }
-            ],
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json"
-            }
-        });
-
         $('#form-upload-file').on('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -88,7 +70,7 @@
                     if (res.success) {
                         $('#modal-upload-file').modal('hide');
                         $('#form-upload-file')[0].reset();
-                        tableFiles.ajax.reload();
+                        $('#table-files').DataTable().ajax.reload();
                         toastr.success(res.message);
                     } else {
                         toastr.error(res.message);
@@ -122,7 +104,7 @@
                         data: { _token: "{{ csrf_token() }}" },
                         success: function(res) {
                             if (res.success) {
-                                tableFiles.ajax.reload();
+                                $('#table-files').DataTable().ajax.reload();
                                 toastr.success(res.message);
                             } else {
                                 toastr.error(res.message);
