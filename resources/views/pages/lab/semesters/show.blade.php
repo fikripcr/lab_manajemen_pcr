@@ -42,7 +42,7 @@
         <x-tabler.button :href="route('lab.semesters.edit', $semester->encrypted_semester_id)" class="btn-primary" icon="bx bx-edit" text="Edit" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('content')
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">

@@ -73,7 +73,7 @@
         <x-tabler.button :href="route('sys.error-log.show', $errorLog->id)" class="btn-primary" icon="ti ti-external-link" text="View Full Page" />
     </div>
 @else
-    @extends('layouts.sys.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Error Log')
 

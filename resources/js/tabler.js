@@ -20,6 +20,10 @@ if (token) {
 import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
 window.bootstrap = bootstrap;
 
+// --- SortableJS
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;
+
 // --- SweetAlert2
 import Swal from 'sweetalert2';
 window.Swal = Swal;
@@ -223,6 +227,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.initFlatpickr = function () {
+        const elements = document.querySelectorAll('.flatpickr-input');
+        if (elements.length > 0) {
+            window.loadFlatpickr().then((fp) => {
+                elements.forEach(el => {
+                    if (el._flatpickr) return; // Skip if already initialized
+
+                    const config = {
+                        dateFormat: "Y-m-d",
+                        allowInput: true,
+                        altInput: true,
+                        altFormat: "j F Y", // e.g. 15 February 2026
+                        ... (el.dataset.flatpickrConfig ? JSON.parse(el.dataset.flatpickrConfig) : {})
+                    };
+
+                    // Handle specific types from data attributes
+                    if (el.dataset.flatpickrType === 'time') {
+                        config.enableTime = true;
+                        config.noCalendar = true;
+                        config.dateFormat = "H:i";
+                        config.time_24hr = true;
+                        config.altInput = true;
+                        config.altFormat = "H:i";
+                    } else if (el.dataset.flatpickrEnableTime === 'true') {
+                        config.enableTime = true;
+                        config.dateFormat = "Y-m-d H:i";
+                        config.altFormat = "j F Y H:i";
+                    }
+
+                    if (el.dataset.flatpickrMode) {
+                        config.mode = el.dataset.flatpickrMode;
+                    }
+
+                    fp(el, config);
+                });
+            });
+        }
+    };
+
     window.initFilePond = function () {
         const elements = document.querySelectorAll('.filepond-input');
         if (elements.length > 0) {
@@ -247,8 +290,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.initOfflineSelect2();
+    window.initFlatpickr();
     window.initFilePond();
-
 
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {

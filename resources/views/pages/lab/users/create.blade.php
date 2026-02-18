@@ -37,7 +37,7 @@
         <x-tabler.form-input type="file" name="avatar" label="Avatar (Optional)" accept="image/png, image/jpeg, image/gif" help="Allowed formats: jpeg, png, jpg, gif. Max size: 2MB." />
     </x-tabler.form-modal>
 @endif
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header title="Create New User" pretitle="Forms">

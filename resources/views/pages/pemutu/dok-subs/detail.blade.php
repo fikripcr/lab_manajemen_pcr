@@ -75,7 +75,7 @@
         <x-tabler.button type="a" :href="route('pemutu.dok-subs.show', $dokSub->doksub_id)" class="btn-primary" text="Detail Lengkap" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
     <x-tabler.page-header title="{{ $dokSub->judul }}" pretitle="SPMI / Sub Dokumen">

@@ -1,4 +1,4 @@
-﻿@php
+@php
     $mode = $mode ?? 'sys'; // 'sys' or 'auth'
     $isAuthMode = $mode === 'auth';
 

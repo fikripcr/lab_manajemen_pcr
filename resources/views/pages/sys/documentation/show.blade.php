@@ -19,7 +19,7 @@
         </div>
     </div>
 @else
-    @extends('layouts.sys.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Documentation: ' . $fileName)
 

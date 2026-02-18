@@ -38,7 +38,7 @@
         <x-tabler.form-textarea type="editor" name="isi" id="isi" label="Konten / Isi Lengkap" :value="$dokSub->isi" height="400" />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
     <x-tabler.page-header title="Edit Isi Dokumen" pretitle="SPMI / Sub Dokumen" />

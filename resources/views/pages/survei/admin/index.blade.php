@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends('layouts.tabler.app')
 @section('header')
 <x-tabler.page-header title="Manajemen Survei" pretitle="Feedback Module">
     <x-slot:actions>

@@ -78,7 +78,7 @@
         <x-tabler.button type="edit" :href="route('lab.'.$pengumuman->jenis.'.edit', $pengumuman)" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header :title="$pengumuman->judul" pretitle="Announcement Details">

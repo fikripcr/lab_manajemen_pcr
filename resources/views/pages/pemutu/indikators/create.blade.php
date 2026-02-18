@@ -216,7 +216,7 @@
         @endpush
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
     <x-tabler.page-header title="Tambah Indikator Baru" pretitle="SPMI / Indikator">

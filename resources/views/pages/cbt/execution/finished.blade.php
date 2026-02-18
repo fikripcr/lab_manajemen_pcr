@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends('layouts.tabler.app')
 {{-- Use admin layout for consistency --}}
 
 @section('title', 'Ujian Selesai')

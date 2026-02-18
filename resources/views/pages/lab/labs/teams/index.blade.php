@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends('layouts.tabler.app')
 
 @section('title', 'Team Lab: ' . $lab->name)
 

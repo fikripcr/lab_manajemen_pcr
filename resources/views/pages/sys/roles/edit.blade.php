@@ -119,7 +119,7 @@
         </script>
     </x-tabler.form-modal>
 @else
-    @extends('layouts.sys.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Edit Role')
 

@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends('layouts.tabler.app')
 @section('title', 'Struktur Organisasi')
 
 @section('header')

@@ -10,7 +10,7 @@
         <x-tabler.form-input type="number" name="sks" label="SKS" value="{{ old('sks', 3) }}" min="1" max="6" required />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header title="Create New Mata Kuliah" pretitle="Mata Kuliah">

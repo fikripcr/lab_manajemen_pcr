@@ -107,7 +107,7 @@
         <x-tabler.button type="edit" :href="route('lab.software-requests.edit', $softwareRequest->id)" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header :title="'Detail Request: ' . $softwareRequest->nama_software" pretitle="Software Request">

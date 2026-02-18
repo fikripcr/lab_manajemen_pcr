@@ -36,7 +36,7 @@
         <x-tabler.button type="edit" :href="route('lab.inventaris.edit', $inventory)" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header :title="$inventory->nama_alat" pretitle="Inventory Details">

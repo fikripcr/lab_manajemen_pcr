@@ -37,7 +37,7 @@
         <x-tabler.form-textarea type="editor" name="catatan" id="catatan_modal" label="Catatan Admin" :value="old('catatan', $softwareRequest->catatan)" height="200" />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header :title="'Edit Request: ' . $softwareRequest->nama_software" pretitle="Software Request">

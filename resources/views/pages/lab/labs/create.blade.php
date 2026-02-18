@@ -19,7 +19,7 @@
         <x-tabler.form-input type="file" name="lab_attachments[]" id="lab_attachments_modal" label="Attachments" class="filepond-input" multiple data-allow-multiple="true" help="Upload documents or other attachments (multiple allowed)." />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header title="Tambah Lab Baru" pretitle="Laboratorium">

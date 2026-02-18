@@ -66,7 +66,7 @@
         </script>
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Tambah Inventaris ke Lab: ' . $lab->name)
 

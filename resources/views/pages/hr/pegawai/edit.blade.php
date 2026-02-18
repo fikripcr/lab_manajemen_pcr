@@ -1,4 +1,4 @@
-@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.admin.empty' : 'layouts.admin.app')
+@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.tabler.empty' : 'layouts.tabler.app')
 
 @section('header')
 <x-tabler.page-header title="Edit Data Pegawai" pretitle="Manajemen Kepegawaian">

@@ -25,7 +25,7 @@
         <x-tabler.form-textarea name="keterangan" :value="$labInventaris->keterangan" label="Keterangan" rows="3" placeholder="Tambahkan keterangan tambahan" />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Edit Inventaris Lab: ' . $labInventaris->kode_inventaris)
 

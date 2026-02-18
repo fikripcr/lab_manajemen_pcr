@@ -40,7 +40,7 @@
         </div>
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header title="Tambah Semester" pretitle="Perkuliahan">

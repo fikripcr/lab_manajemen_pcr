@@ -18,7 +18,7 @@
         <x-tabler.form-input type="date" name="tanggal_pengecekan" label="Last Check Date" value="{{ $inventory->tanggal_pengecekan ? $inventory->tanggal_pengecekan->format('Y-m-d') : '' }}" required />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header title="Edit Inventory" pretitle="Inventory">

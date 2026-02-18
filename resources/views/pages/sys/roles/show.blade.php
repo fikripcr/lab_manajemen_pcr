@@ -61,7 +61,7 @@
         <x-tabler.button :href="route('sys.roles.edit', $role)" class="btn-primary" icon="ti ti-pencil" text="Edit Role" />
     </div>
 @else
-    @extends('layouts.sys.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Details Role')
 

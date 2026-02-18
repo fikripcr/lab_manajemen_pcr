@@ -24,7 +24,7 @@
         <x-tabler.button type="a" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" icon="ti ti-pencil" class="btn-warning" text="Edit" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header title="Mata Kuliah Details" pretitle="Mata Kuliah">

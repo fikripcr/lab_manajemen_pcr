@@ -23,7 +23,7 @@
         </div>
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Edit Anggota Tim Lab: ' . $teamMember->user->name)
 

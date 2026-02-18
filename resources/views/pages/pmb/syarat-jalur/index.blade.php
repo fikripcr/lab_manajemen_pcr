@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends('layouts.tabler.app')
 
 @section('header')
 <x-tabler.page-header title="Syarat Dokumen: {{ $jalur->nama_jalur }}" pretitle="Pengaturan Jalur">

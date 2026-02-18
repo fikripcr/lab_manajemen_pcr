@@ -1,4 +1,4 @@
-@extends('layouts.sys.app')
+@extends('layouts.tabler.app')
 
 @section('title', 'Activity Log')
 

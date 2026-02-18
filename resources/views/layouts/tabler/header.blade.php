@@ -11,9 +11,8 @@
     // Apply sticky-top directly to the header if enabled
     $headerStickyClass = $sticky ? 'sticky-top' : '';
 
+    $menuGroup = request()->is('sys*') ? 'sys' : 'admin';
 @endphp
-
-
 
     {{-- Primary Header --}}
     <header class="navbar navbar-expand-lg{{ $dark ? ' navbar-dark text-white' : '' }}{{ $navbarClass ? ' ' . $navbarClass : '' }} {{ $headerStickyClass }} d-print-none"{!! $dark ? ' data-bs-theme="dark"' : '' !!}>
@@ -27,7 +26,7 @@
             {{-- Brand/Logo --}}
             @unless($hideBrand)
             <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                <a href="{{ route('sys.dashboard') }}">
+                <a href="{{ $menuGroup === 'sys' ? route('sys.dashboard') : route('lab.dashboard') }}">
                     <img src="{{  asset('images/logo-apps.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
                 </a>
             </div>
@@ -233,11 +232,11 @@
                 @if($hideMenu)
                     {{-- Vertical Layout Mobile Menu (Hidden on Desktop) --}}
                     <div class="d-lg-none">
-                        <x-tabler.menu-renderer type="navbar" group="sys" />
+                        <x-tabler.menu-renderer type="navbar" :group="$menuGroup" />
                     </div>
                 @else
                     {{-- Condensed Layout Menu --}}
-                    <x-tabler.menu-renderer type="navbar" group="sys" />
+                    <x-tabler.menu-renderer type="navbar" :group="$menuGroup" />
                 @endif
             </div>
             @endif
@@ -254,7 +253,7 @@
             <div class="navbar"{{ isset($darkSecondary) && $darkSecondary ? ' data-bs-theme="dark"' : '' }}>
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
-                        <x-tabler.menu-renderer type="navbar" group="sys" />
+                        <x-tabler.menu-renderer type="navbar" :group="$menuGroup" />
                     </div>
                 </div>
             </div>

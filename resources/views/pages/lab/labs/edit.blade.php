@@ -19,7 +19,7 @@
         <x-tabler.form-input type="file" name="lab_attachments[]" id="lab_attachments_edit_modal" label="Upload New Attachments" class="filepond-input" multiple data-allow-multiple="true" help="Upload new documents to add to this lab." />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header title="Ubah Lab" pretitle="Laboratorium">

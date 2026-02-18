@@ -80,7 +80,7 @@
         <x-tabler.button type="a" :href="route('lab.labs.show', $lab->encrypted_lab_id)" class="btn-primary" text="Detail Lengkap" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header :title="$lab->name" pretitle="Laboratorium">

@@ -48,7 +48,7 @@
         <x-tabler.button type="a" :href="route('pemutu.dokumens.show', $dokumen->dok_id)" class="btn-primary" text="Detail Dokumen" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
     <x-tabler.page-header title="Total Indikator {{ ucfirst($dokumen->jenis) }} : ({{ $indicators->count() }})" pretitle="Dokumen SPMI">

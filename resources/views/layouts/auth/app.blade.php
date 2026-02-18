@@ -1,4 +1,4 @@
-﻿@php
+@php
     use App\Http\Controllers\Sys\ThemeTablerController;
 
     // Load theme controller for auth

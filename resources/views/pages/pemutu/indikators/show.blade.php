@@ -71,7 +71,7 @@
         <x-tabler.button type="a" :href="route('pemutu.indikators.show', $indikator->indikator_id)" class="btn-primary" text="Detail Lengkap" />
     </div>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
     @section('title', 'Detail Indikator')
 
     @section('header')

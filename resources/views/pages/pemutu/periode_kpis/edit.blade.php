@@ -1,4 +1,4 @@
-@extends(request()->ajax() ? 'layouts.blank' : 'layouts.admin.app')
+@extends(request()->ajax() ? 'layouts.blank' : 'layouts.tabler.app')
 @section('title', $pageTitle)
 
 <x-tabler.form-modal :title="$pageTitle" route="{{ route('pemutu.periode-kpis.update', $periodeKpi->periode_kpi_id) }}" method="PUT">

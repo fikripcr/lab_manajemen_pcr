@@ -1,4 +1,4 @@
-@extends('layouts.admin.app')
+@extends('layouts.tabler.app')
 
 @section('header')
 <x-tabler.page-header title="Detail Unit: {{ $orgUnit->name }}" pretitle="Detail Data">

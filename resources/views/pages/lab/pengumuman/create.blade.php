@@ -20,7 +20,7 @@
         <input type="hidden" name="jenis" value="{{ $type }}">
     </x-tabler.form-modal>
 @else
-    @extends('layouts.admin.app')
+    @extends('layouts.tabler.app')
 
     @section('header')
         <x-tabler.page-header :title="'Create ' . ucfirst($type)" :pretitle="ucfirst($type)">

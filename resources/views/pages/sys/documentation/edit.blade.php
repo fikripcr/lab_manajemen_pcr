@@ -9,7 +9,7 @@
         <x-tabler.form-textarea type="editor" id="content" name="content" label="Content" :value="old('content', $content)" height="500" />
     </x-tabler.form-modal>
 @else
-    @extends('layouts.sys.app')
+    @extends('layouts.tabler.app')
 
     @section('title', 'Edit Documentation: ' . $page)
 
