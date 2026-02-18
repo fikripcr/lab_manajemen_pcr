@@ -119,12 +119,36 @@
         </div>
     </div>
 
+     {{-- Theme Settings Component --}}
+    @if(env('THEME_CUSTOMIZATION_ENABLED', true))
+        <x-tabler.theme-settings mode="sys" :themeData="$themeData" :layoutData="$layoutData" />
+    @endif
+
+    {{-- Global Search Modal Component --}}
+    <x-tabler.modal-global-search />
+
+    {{-- Global Generic Modal --}}
+    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" id="modalContent">
+                <div class="modal-header">
+                    <h5 class="modal-title">Loading...</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @vite([
         'resources/js/tabler.js'
     ])
 
     @stack('scripts')
     
-    {{-- Global Alert/Toast/Modal handling if needed --}}
 </body>
 </html>

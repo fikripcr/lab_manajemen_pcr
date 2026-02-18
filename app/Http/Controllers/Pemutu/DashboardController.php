@@ -2,13 +2,13 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Models\Event\Rapat;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorPersonil;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\Personil;
-use App\Models\Pemutu\Rapat;
 
 class DashboardController extends Controller
 {

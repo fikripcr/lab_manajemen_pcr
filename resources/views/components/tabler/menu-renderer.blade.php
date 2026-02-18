@@ -525,10 +525,6 @@
     // --- 2. SYS MENU STRUCTURE ---
     $sysMenu = [
         [
-            'type'  => 'header',
-            'title' => 'Ringkasan',
-        ],
-        [
             'type'  => 'item',
             'title' => 'Dashboard',
             'route' => 'sys.dashboard',
@@ -538,27 +534,21 @@
             'type'  => 'header',
             'title' => 'Kontrol Akses',
         ],
-        [
-            'type'          => 'dropdown',
-            'title' => 'Kontrol Akses',
-            'id'            => 'navbar-access',
-            'icon'          => '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /><path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12 12l0 2.5" /></svg>',
-            'active_routes' => ['sys.roles.*', 'sys.permissions.*'],
-            'children'      => [
-                [
-                    'title'         => 'Peran (Roles)',
-                    'route'         => 'sys.roles.index',
-                    'active_routes' => ['sys.roles.*'],
-                    'icon'          => 'ti ti-lock-access',
-                ],
-                [
-                    'title'         => 'Izin (Permissions)',
-                    'route'         => 'sys.permissions.index',
-                    'active_routes' => ['sys.permissions.*'],
-                    'icon'          => 'ti ti-shield-lock',
-                ],
+        
+            [
+                'type' => 'item',
+                'title'         => 'Peran (Roles)',
+                'route'         => 'sys.roles.index',
+                'active_routes' => ['sys.roles.*'],
+                'icon'          => 'ti ti-lock-access',
             ],
-        ],
+            [
+                'type' => 'item',
+                'title'         => 'Izin (Permissions)',
+                'route'         => 'sys.permissions.index',
+                'active_routes' => ['sys.permissions.*'],
+                'icon'          => 'ti ti-shield-lock',
+            ],
         [
             'type'  => 'header',
             'title' => 'Log Sistem',
@@ -656,15 +646,6 @@
 
 @if($type === 'sidebar')
     <ul class="navbar-nav pt-lg-3">
-        {{-- Back to Main Apps (Static) --}}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('lab.dashboard') }}">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
-                </span>
-                <span class="nav-link-title">Kembali ke Aplikasi Utama</span>
-            </a>
-        </li>
 
         @foreach($menu as $item)
             @if(($item['type'] ?? 'item') === 'header')
