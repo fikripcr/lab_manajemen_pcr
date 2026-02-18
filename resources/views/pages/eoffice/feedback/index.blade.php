@@ -30,20 +30,18 @@
             </div>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-vcenter card-table" id="tbl-feedback">
-            <thead>
-                <tr>
-                    <th width="5%">#</th>
-                    <th>No Layanan</th>
-                    <th>Jenis Layanan</th>
-                    <th>Rating</th>
-                    <th>Feedback</th>
-                    <th>Tanggal</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
+    <x-tabler.datatable
+        id="tbl-feedback"
+        route="{{ route('eoffice.feedback.data') }}"
+        :columns="[
+            ['data' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'title' => '#', 'width' => '5%'],
+            ['data' => 'no_layanan', 'title' => 'No Layanan'],
+            ['data' => 'nama_layanan', 'title' => 'Jenis Layanan'],
+            ['data' => 'rating_stars', 'title' => 'Rating'],
+            ['data' => 'feedback', 'title' => 'Feedback'],
+            ['data' => 'tanggal', 'title' => 'Tanggal']
+        ]"
+    />
 </div>
 @endsection
 
@@ -51,30 +49,35 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof $ !== 'undefined' && $.fn.DataTable) {
-        var table = $('#tbl-feedback').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: '{{ route("eoffice.feedback.data") }}',
-                data: function(d) {
-                    d.jenislayanan_id = document.getElementById('f_jenislayanan').value;
-                    d.f_tgl_start     = document.getElementById('f_tgl_start').value;
-                    d.f_tgl_end       = document.getElementById('f_tgl_end').value;
-                }
-            },
-            columns: [
-                { data: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'no_layanan' },
-                { data: 'nama_layanan' },
-                { data: 'rating_stars' },
-                { data: 'feedback' },
-                { data: 'tanggal' },
-            ]
-        });
+        // x-tabler.datatable initializes the table automatically.
+        // We need to access the instance to apply custom filtering.
+        
+        // Wait for the table to be initialized (checking window['DT_tbl-feedback'])
+        const checkTableInterval = setInterval(function() {
+            if (window['DT_tbl-feedback']) {
+                clearInterval(checkTableInterval);
+                const table = window['DT_tbl-feedback'];
+                
+                // Override ajax data function to include filters
+                const oldAjax = table.ajax.params; // logic to extend ajax params is slightly different in DataTables
+                
+                // We need to hooking into the ajax request to add our parameters
+                // The standard way with DataTables is updating the 'data' function in ajax config, 
+                // but the component initializes it. 
+                // However, we can use 'preXhr' event or just reload with params if we want simple filtering.
+                // Or better, we can re-assign the ajax.data function.
+                
+                table.on('preXhr.dt', function ( e, settings, data ) {
+                    data.jenislayanan_id = document.getElementById('f_jenislayanan').value;
+                    data.f_tgl_start     = document.getElementById('f_tgl_start').value;
+                    data.f_tgl_end       = document.getElementById('f_tgl_end').value;
+                });
 
-        document.getElementById('btn-filter').addEventListener('click', function() {
-            table.draw();
-        });
+                document.getElementById('btn-filter').addEventListener('click', function() {
+                    table.ajax.reload();
+                });
+            }
+        }, 100);
     }
 });
 </script>

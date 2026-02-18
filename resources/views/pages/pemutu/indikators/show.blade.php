@@ -37,23 +37,21 @@
         @if($indikator->orgUnits->count() > 0)
             <div class="mb-3">
                 <h4 class="card-title mb-2">Unit Kerja & Target</h4>
-                <div class="table-responsive border rounded">
-                    <table class="table table-vcenter table-sm card-table mb-0">
-                        <thead>
+                <div class="border rounded">
+                    <x-tabler.datatable-client
+                        id="table-unit-modal"
+                        :columns="[
+                            ['name' => 'Unit / Lembaga'],
+                            ['name' => 'Target']
+                        ]"
+                    >
+                        @foreach($indikator->orgUnits as $unit)
                             <tr>
-                                <th>Unit / Lembaga</th>
-                                <th>Target</th>
+                                <td>{{ $unit->name }}</td>
+                                <td><span class="badge badge-outline text-blue">{{ $unit->pivot->target ?? '-' }}</span></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($indikator->orgUnits as $unit)
-                                <tr>
-                                    <td>{{ $unit->name }}</td>
-                                    <td><span class="badge badge-outline text-blue">{{ $unit->pivot->target ?? '-' }}</span></td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                        @endforeach
+                    </x-tabler.datatable-client>
                 </div>
             </div>
         @endif
@@ -138,40 +136,38 @@
                 <div class="card-header">
                     <h3 class="card-title">Penugasan Personel (KPI)</h3>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-vcenter card-table">
-                        <thead>
-                            <tr>
-                                <th>Pegawai</th>
-                                <th>Periode</th>
-                                <th>Bobot</th>
-                                <th>Target Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($indikator->personils as $ip)
-                            <tr>
-                                <td>
-                                    <div class="d-flex py-1 align-items-center">
-                                        <span class="avatar me-2" style="background-image: url(https://ui-avatars.com/api/?name={{ urlencode($ip->personil->nama) }})"></span>
-                                        <div class="flex-fill">
-                                            <div class="font-weight-medium">{{ $ip->personil->nama }}</div>
-                                            <div class="text-muted small">{{ $ip->personil->email }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ $ip->year }} - {{ $ip->semester }}</td>
-                                <td>{{ $ip->weight }}%</td>
-                                <td>{{ $ip->target_value }}</td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">Belum ada personel yang ditugaskan untuk sasaran kinerja ini.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                <x-tabler.datatable-client
+                    id="table-personil-kpi"
+                    :columns="[
+                        ['name' => 'Pegawai'],
+                        ['name' => 'Periode'],
+                        ['name' => 'Bobot'],
+                        ['name' => 'Target Value']
+                    ]"
+                >
+                    @forelse($indikator->personils as $ip)
+                    <tr>
+                        <td>
+                            <div class="d-flex py-1 align-items-center">
+                                <span class="avatar me-2" style="background-image: url(https://ui-avatars.com/api/?name={{ urlencode($ip->personil->nama) }})"></span>
+                                <div class="flex-fill">
+                                    <div class="font-weight-medium">{{ $ip->personil->nama }}</div>
+                                    <div class="text-muted small">{{ $ip->personil->email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ $ip->year }} - {{ $ip->semester }}</td>
+                        <td>{{ $ip->weight }}%</td>
+                        <td>{{ $ip->target_value }}</td>
+                    </tr>
+                    @empty
+                        {{-- Handled by component or verified empty state --}}
+                    @endforelse
+                </x-tabler.datatable-client>
+                
+                @if($indikator->personils->isEmpty())
+                    <div class="text-center text-muted py-3">Belum ada personel yang ditugaskan untuk sasaran kinerja ini.</div>
+                @endif
             </div>
             @endif
 
@@ -234,35 +230,35 @@
                 <div class="card-header">
                     <h3 class="card-title">Unit Kerja & Target</h3>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-vcenter table-mobile-md card-table">
-                        <thead>
-                            <tr>
-                                <th>Unit / Lembaga</th>
-                                <th>Target</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($indikator->orgUnits as $unit)
-                                <tr>
-                                    <td data-label="Unit">
-                                        <div class="d-flex align-items-center">
-                                            <i class="ti ti-building me-2 text-muted"></i>
-                                            <span class="fw-medium">{{ $unit->name }}</span>
-                                        </div>
-                                    </td>
-                                    <td data-label="Target">
-                                        <span class="badge badge-outline text-blue">{{ $unit->pivot->target ?? '-' }}</span>
-                                    </td>
-                                </tr>
-                            @empty
-                                    <td colspan="2" class="text-center text-muted py-4">
-                                        Belum ada unit penanggung jawab yang ditugaskan.
-                                    </td>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                <x-tabler.datatable-client
+                    id="table-unit-sidebar"
+                    :columns="[
+                        ['name' => 'Unit / Lembaga'],
+                        ['name' => 'Target']
+                    ]"
+                >
+                    @forelse($indikator->orgUnits as $unit)
+                        <tr>
+                            <td data-label="Unit">
+                                <div class="d-flex align-items-center">
+                                    <i class="ti ti-building me-2 text-muted"></i>
+                                    <span class="fw-medium">{{ $unit->name }}</span>
+                                </div>
+                            </td>
+                            <td data-label="Target">
+                                <span class="badge badge-outline text-blue">{{ $unit->pivot->target ?? '-' }}</span>
+                            </td>
+                        </tr>
+                    @empty
+                       {{-- Handled by component or verified empty state --}}
+                    @endforelse
+                </x-tabler.datatable-client>
+
+                @if($indikator->orgUnits->isEmpty())
+                    <div class="text-center text-muted py-4">
+                        Belum ada unit penanggung jawab yang ditugaskan.
+                    </div>
+                @endif
             </div>
         </div>
     </div>

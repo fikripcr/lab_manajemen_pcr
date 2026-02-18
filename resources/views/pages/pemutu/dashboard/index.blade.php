@@ -236,32 +236,28 @@
             <div class="card-header">
                 <h3 class="card-title">Pengajuan KPI Terbaru</h3>
             </div>
-            <div class="table-responsive">
-                <table class="table table-vcenter card-table">
-                    <thead>
-                        <tr>
-                            <th>Personil</th>
-                            <th>Indikator</th>
-                            <th>Periode</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentKpi as $kpi)
-                        <tr>
-                            <td>{{ $kpi->personil->nama ?? '-' }}</td>
-                            <td class="text-truncate" style="max-width: 300px;">{{ $kpi->indikator->indikator ?? '-' }}</td>
-                            <td>{{ $kpi->semester }} {{ $kpi->year }}</td>
-                            <td>
-                                <span class="badge bg-{{ $kpi->status === 'approved' ? 'success' : 'info' }}-lt">
-                                    {{ ucfirst($kpi->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            <x-tabler.datatable-client
+                id="table-recent-kpi"
+                :columns="[
+                    ['name' => 'Personil'],
+                    ['name' => 'Indikator'],
+                    ['name' => 'Periode'],
+                    ['name' => 'Status']
+                ]"
+            >
+                @foreach($recentKpi as $kpi)
+                <tr>
+                    <td>{{ $kpi->personil->nama ?? '-' }}</td>
+                    <td class="text-truncate" style="max-width: 300px;">{{ $kpi->indikator->indikator ?? '-' }}</td>
+                    <td>{{ $kpi->semester }} {{ $kpi->year }}</td>
+                    <td>
+                        <span class="badge bg-{{ $kpi->status === 'approved' ? 'success' : 'info' }}-lt">
+                            {{ ucfirst($kpi->status) }}
+                        </span>
+                    </td>
+                </tr>
+                @endforeach
+            </x-tabler.datatable-client>
         </div>
     </div>
 </div>

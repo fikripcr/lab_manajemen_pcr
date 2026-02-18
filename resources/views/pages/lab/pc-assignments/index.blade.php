@@ -35,22 +35,19 @@
     <div class="page-body">
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-vcenter card-table" id="table-assignments">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>NPM</th>
-                                <th>Nama Mahasiswa</th>
-                                <th>Nomor PC</th>
-                                <th>Nomor Loker</th>
-                                <th>Status</th>
-                                <th class="w-1">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                <x-tabler.datatable
+                    id="table-assignments"
+                    route="{{ route('lab.jadwal.assignments.data', encryptId($jadwal->jadwal_kuliah_id)) }}"
+                    :columns="[
+                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'mahasiswa_npm', 'name' => 'user.username', 'title' => 'NPM'],
+                        ['data' => 'mahasiswa_nama', 'name' => 'user.name', 'title' => 'Nama Mahasiswa'],
+                        ['data' => 'nomor_pc', 'name' => 'nomor_pc', 'title' => 'Nomor PC'],
+                        ['data' => 'nomor_loker', 'name' => 'nomor_loker', 'title' => 'Nomor Loker'],
+                        ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'render' => 'function(data){ return data == 1 ? \'<span class="badge bg-success text-white">Aktif</span>\' : \'<span class="badge bg-secondary text-white">Non-Aktif</span>\'; }'],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Action', 'orderable' => false, 'searchable' => false],
+                    ]"
+                />
             </div>
         </div>
     </div>
@@ -59,31 +56,9 @@
 
 @push('js')
 <script>
-    $(document).ready(function() {
-        var table = $('#table-assignments').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('lab.jadwal.assignments.data', encryptId($jadwal->jadwal_kuliah_id)) }}",
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'mahasiswa_npm', name: 'user.username' },
-                { data: 'mahasiswa_nama', name: 'user.name' },
-                { data: 'nomor_pc', name: 'nomor_pc' },
-                { data: 'nomor_loker', name: 'nomor_loker' },
-                { 
-                    data: 'is_active', 
-                    name: 'is_active',
-                    render: function(data, type, row) {
-                        return data == 1 
-                            ? '<span class="badge bg-success text-white">Aktif</span>' 
-                            : '<span class="badge bg-secondary text-white">Non-Aktif</span>';
-                    }
-                },
-                { data: 'action', name: 'action', orderable: false, searchable: false },
-            ]
-        });
-    });
-
+    // x-tabler.datatable initializes the table.
+    // Custom delete logic needs to be globally available or attached via delegation.
+    
     function deleteAssignment(url) {
         Swal.fire({
             title: 'Apakah anda yakin?',
@@ -105,7 +80,13 @@
                     success: function(response) {
                         if (response.success) {
                             Swal.fire('Terhapus!', response.message, 'success');
-                            $('#table-assignments').DataTable().ajax.reload();
+                            // Reload using the instance stored in window
+                            if(window['DT_table-assignments']) {
+                                window['DT_table-assignments'].ajax.reload();
+                            } else {
+                                // Fallback if old way is still needed (unlikely if standardized correctly)
+                                location.reload(); 
+                            }
                         } else {
                             Swal.fire('Gagal!', response.message, 'error');
                         }

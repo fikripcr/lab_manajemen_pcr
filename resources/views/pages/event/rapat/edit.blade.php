@@ -126,32 +126,28 @@
                 </div>
                 <div class="card-body">
                     @if($rapat->entitas->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-vcenter table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Model</th>
-                                        <th>Nama Entitas</th>
-                                        <th>Keterangan</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($rapat->entitas as $entitas)
-                                        <tr>
-                                            <td>{{ $entitas->model }}</td>
-                                            <td>{{ $entitas->model_id }}</td>
-                                            <td>{{ $entitas->keterangan ?? '-' }}</td>
-                                            <td>
-                                                <div class="btn-list">
-                                                    <x-tabler.button type="edit" class="btn-sm" href="{{ route('Kegiatan.rapat.edit', $entitas) }}" text="Edit" />
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                        <x-tabler.datatable-client
+                            id="table-entitas"
+                            :columns="[
+                                ['name' => 'Model'],
+                                ['name' => 'Nama Entitas'],
+                                ['name' => 'Keterangan'],
+                                ['name' => 'Actions', 'orderable' => false, 'searchable' => false]
+                            ]"
+                        >
+                            @foreach($rapat->entitas as $entitas)
+                                <tr>
+                                    <td>{{ $entitas->model }}</td>
+                                    <td>{{ $entitas->model_id }}</td>
+                                    <td>{{ $entitas->keterangan ?? '-' }}</td>
+                                    <td>
+                                        <div class="btn-list">
+                                            <x-tabler.button type="edit" class="btn-sm" href="{{ route('Kegiatan.rapat.edit', $entitas) }}" text="Edit" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </x-tabler.datatable-client>
                     @else
                         <div class="alert alert-info">
                             <strong>Belum ada entitas terkait</strong>

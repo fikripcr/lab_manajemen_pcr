@@ -10,20 +10,17 @@
         <h3 class="card-title">Daftar Pengajuan (Pending)</h3>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table card-table table-vcenter text-nowrap datatable" id="approval-table">
-                <thead>
-                    <tr>
-                        <th class="text-center w-1">Tanggal Pengajuan</th>
-                        <th>Pegawai</th>
-                        <th>Tipe Perubahan</th>
-                        <th>Keterangan</th>
-                        <th class="text-end">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+        <x-tabler.datatable
+            id="approval-table"
+            route="{{ route('hr.approval.index') }}"
+            :columns="[
+                ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Tanggal Pengajuan', 'class' => 'text-center w-1'],
+                ['data' => 'pegawai_nama', 'name' => 'pegawai.nama', 'title' => 'Pegawai'],
+                ['data' => 'tipe_request', 'name' => 'model_type', 'title' => 'Tipe Perubahan'],
+                ['data' => 'keterangan', 'name' => 'keterangan', 'title' => 'Keterangan'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end']
+            ]"
+        />
     </div>
 </div>
 @endsection
@@ -31,19 +28,12 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // x-tabler.datatable handles initialization.
+    // Custom action handlers (Approve/Reject) are attached to document, so they remain valid.
+
     window.loadDataTables().then(() => {
-        const table = $('#approval-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('hr.approval.index') }}",
-            columns: [
-                { data: 'created_at', name: 'created_at' },
-                { data: 'pegawai_nama', name: 'pegawai.nama' },
-                { data: 'tipe_request', name: 'model_type' }, // Simplified sort logic
-                { data: 'keterangan', name: 'keterangan' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ]
-        });
+        const table = window['DT_approval-table']; // Access the instance if needed
+        
 
         // Handle Approve
         $(document).on('click', '.btn-approve', function() {

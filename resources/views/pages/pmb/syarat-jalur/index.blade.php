@@ -43,45 +43,46 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header"><h3 class="card-title">Daftar Syarat Dokumen</h3></div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Dokumen</th>
-                                    <th>Tipe/Ukuran</th>
-                                    <th>Wajib</th>
-                                    <th class="w-1"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($syarat as $s)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $s->jenisDokumen->nama_dokumen }}</td>
-                                    <td class="text-muted">
-                                        {{ $s->jenisDokumen->tipe_file ?? '*' }} / {{ formatBytes($s->jenisDokumen->max_size_kb * 1024) }}
-                                    </td>
-                                    <td>
-                                        @if($s->is_required)
-                                            <span class="badge bg-danger">Wajib</span>
-                                        @else
-                                            <span class="badge bg-secondary text-white">Opsional</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <x-tabler.button type="button" class="btn-sm btn-icon btn-danger ajax-delete" 
-                                            data-url="{{ route('pmb.syarat-jalur.destroy', $s->encrypted_id) }}" data-title="Hapus Syarat?" icon="ti ti-trash" />
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">Belum ada syarat dokumen.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-tabler.datatable-client
+                        id="table-syarat"
+                        :columns="[
+                            ['name' => 'No'],
+                            ['name' => 'Nama Dokumen'],
+                            ['name' => 'Tipe/Ukuran'],
+                            ['name' => 'Wajib'],
+                            ['name' => '', 'orderable' => false, 'searchable' => false, 'className' => 'w-1']
+                        ]"
+                    >
+                        @forelse($syarat as $s)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $s->jenisDokumen->nama_dokumen }}</td>
+                            <td class="text-muted">
+                                {{ $s->jenisDokumen->tipe_file ?? '*' }} / {{ formatBytes($s->jenisDokumen->max_size_kb * 1024) }}
+                            </td>
+                            <td>
+                                @if($s->is_required)
+                                    <span class="badge bg-danger">Wajib</span>
+                                @else
+                                    <span class="badge bg-secondary text-white">Opsional</span>
+                                @endif
+                            </td>
+                            <td>
+                                <x-tabler.button type="button" class="btn-sm btn-icon btn-danger ajax-delete" 
+                                    data-url="{{ route('pmb.syarat-jalur.destroy', $s->encrypted_id) }}" data-title="Hapus Syarat?" icon="ti ti-trash" />
+                            </td>
+                        </tr>
+                        @empty
+                            {{-- x-tabler.datatable-client handles empty state --}}
+                        @endforelse
+                    </x-tabler.datatable-client>
+
+                    @if($syarat->isEmpty())
+                        <div class="text-center py-5 text-muted">
+                            <div class="mb-2"><i class="ti ti-file-off ti-lg text-secondary"></i></div>
+                            Belum ada syarat dokumen.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
