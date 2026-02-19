@@ -9,10 +9,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
-        <div class="card">
-            <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="input-icon" style="width: 300px;">
                         <span class="input-icon-addon">
@@ -48,36 +44,76 @@
                                 </div>
                             </div>
                             <div class="card-body pt-3">
-                                {{-- Auditee --}}
-                                <div class="mb-2">
-                                    <span class="text-muted small d-block mb-1">
-                                        <i class="ti ti-user-star text-warning"></i> Auditee
-                                    </span>
-                                    @if($currentAuditee)
-                                        <span class="badge bg-warning-lt fs-6 fw-normal">
-                                            <i class="ti ti-user-star me-1"></i>{{ $currentAuditee->pegawai->nama ?? '-' }}
-                                        </span>
-                                    @else
-                                        <span class="text-muted fst-italic small">— Belum ditentukan —</span>
-                                    @endif
-                                </div>
-
-                                {{-- Anggota --}}
-                                <div>
-                                    <span class="text-muted small d-block mb-1">
-                                        <i class="ti ti-users text-info"></i> Anggota Auditee
-                                    </span>
-                                    <div class="d-flex flex-wrap gap-1">
-                                        @if($currentAnggota->count() > 0)
-                                            @foreach($currentAnggota as $anggota)
-                                                <span class="badge bg-info-lt fs-6 fw-normal">
-                                                    <i class="ti ti-user me-1"></i>{{ $anggota->pegawai->nama ?? '-' }}
+                                <div class="row">
+                                    <div class="col-6 border-end">
+                                        <div class="subheader mb-2">Tim Auditee</div>
+                                        {{-- Auditee --}}
+                                        <div class="mb-3">
+                                            <span class="text-muted small d-block mb-1">
+                                                <i class="ti ti-user-star text-warning"></i> Auditee
+                                            </span>
+                                            @if($currentAuditee)
+                                                <span class="badge bg-warning-lt fs-6 fw-normal text-truncate" style="max-width: 100%;" title="{{ $currentAuditee->pegawai->nama ?? '-' }}">
+                                                    {{ $currentAuditee->pegawai->nama ?? '-' }}
                                                 </span>
-                                            @endforeach
-                                        @else
-                                            <span class="text-muted fst-italic small">— Belum ditentukan —</span>
-                                        @endif
+                                            @else
+                                                <span class="text-muted fst-italic small">-</span>
+                                            @endif
+                                        </div>
+
+                                        {{-- Anggota --}}
+                                        <div class="mb-2">
+                                            <span class="text-muted small d-block mb-1">
+                                                <i class="ti ti-users text-info"></i> Anggota
+                                            </span>
+                                            <div class="d-flex flex-column gap-1">
+                                                @if($currentAnggota->count() > 0)
+                                                    @foreach($currentAnggota as $anggota)
+                                                        <span class="badge bg-info-lt fs-6 fw-normal text-truncate" style="max-width: 100%;" title="{{ $anggota->pegawai->nama ?? '-' }}">
+                                                            {{ $anggota->pegawai->nama ?? '-' }}
+                                                        </span>
+                                                    @endforeach
+                                                @else
+                                                    <span class="text-muted fst-italic small">-</span>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
+                                    <div class="col-6">
+                                        <div class="subheader mb-2">Tim Auditor</div>
+                                        {{-- Ketua Auditor --}}
+                                        <div class="mb-3">
+                                            <span class="text-muted small d-block mb-1">
+                                                <i class="ti ti-crown text-primary"></i> Ketua Auditor
+                                            </span>
+                                            @if(isset($current['ketua_auditor']) && $current['ketua_auditor'])
+                                                <span class="badge bg-primary-lt fs-6 fw-normal text-truncate" style="max-width: 100%;" title="{{ $current['ketua_auditor']->pegawai->nama ?? '-' }}">
+                                                    {{ $current['ketua_auditor']->pegawai->nama ?? '-' }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted fst-italic small">-</span>
+                                            @endif
+                                        </div>
+
+                                        {{-- Auditor --}}
+                                        <div class="mb-2">
+                                            <span class="text-muted small d-block mb-1">
+                                                <i class="ti ti-list-search text-azure"></i> Auditor
+                                            </span>
+                                            @if(isset($current['auditor']) && $current['auditor']->count() > 0)
+                                                <div class="d-flex flex-column gap-1">
+                                                    @foreach($current['auditor'] as $auditor)
+                                                        <span class="badge bg-azure-lt fs-6 fw-normal text-truncate" style="max-width: 100%;" title="{{ $auditor->pegawai->nama ?? '-' }}">
+                                                            {{ $auditor->pegawai->nama ?? '-' }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-muted fst-italic small">-</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -92,10 +128,6 @@
                         </div>
                     @endforelse
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {

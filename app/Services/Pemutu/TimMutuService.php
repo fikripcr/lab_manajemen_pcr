@@ -27,10 +27,12 @@ class TimMutuService
         $assignments = TimMutu::forPeriode($periodeId)->get();
 
         return [
-            'total_units'   => $assignments->pluck('org_unit_id')->unique()->count(),
-            'total_auditee' => $assignments->where('role', 'auditee')->count(),
-            'total_anggota' => $assignments->where('role', 'anggota')->count(),
-            'total_pegawai' => $assignments->pluck('pegawai_id')->unique()->count(),
+            'total_units'         => $assignments->pluck('org_unit_id')->unique()->count(),
+            'total_auditee'       => $assignments->where('role', 'auditee')->count(),
+            'total_anggota'       => $assignments->where('role', 'anggota')->count(),
+            'total_auditor'       => $assignments->where('role', 'auditor')->count(),
+            'total_ketua_auditor' => $assignments->where('role', 'ketua_auditor')->count(),
+            'total_pegawai'       => $assignments->pluck('pegawai_id')->unique()->count(),
         ];
     }
 
@@ -39,8 +41,10 @@ class TimMutuService
      * $data is an array keyed by org_unit_id:
      * [
      *   orgunit_id => [
-     *     'auditee'  => pegawai_id (single),
-     *     'anggota'  => [pegawai_id, pegawai_id, ...],
+     *     'auditee'       => pegawai_id (single),
+     *     'ketua_auditor' => pegawai_id (single),
+     *     'auditor'       => [pegawai_id, ...],
+     *     'anggota'       => [pegawai_id, ...],
      *   ],
      * ]
      */
@@ -52,34 +56,35 @@ class TimMutuService
 
             $inserts = [];
             foreach ($data as $unitId => $roles) {
-                // Auditee (single)
-                if (! empty($roles['auditee'])) {
-                    $inserts[] = [
+                // Helper to add insert
+                $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId) {
+                    return [
                         'periodespmi_id' => $periodeId,
                         'org_unit_id'    => $unitId,
-                        'pegawai_id'     => $roles['auditee'],
-                        'role'           => 'auditee',
+                        'pegawai_id'     => $pegawaiId,
+                        'role'           => $role,
                         'created_at'     => now(),
                         'updated_at'     => now(),
                         'created_by'     => auth()->id(),
                         'updated_by'     => auth()->id(),
                     ];
+                };
+
+                // Single Roles
+                if (! empty($roles['auditee'])) {
+                    $inserts[] = $addInsert($roles['auditee'], 'auditee');
+                }
+                if (! empty($roles['ketua_auditor'])) {
+                    $inserts[] = $addInsert($roles['ketua_auditor'], 'ketua_auditor');
                 }
 
-                // Anggota (multiple)
-                if (! empty($roles['anggota']) && is_array($roles['anggota'])) {
-                    foreach ($roles['anggota'] as $pegawaiId) {
-                        if ($pegawaiId) {
-                            $inserts[] = [
-                                'periodespmi_id' => $periodeId,
-                                'org_unit_id'    => $unitId,
-                                'pegawai_id'     => $pegawaiId,
-                                'role'           => 'anggota',
-                                'created_at'     => now(),
-                                'updated_at'     => now(),
-                                'created_by'     => auth()->id(),
-                                'updated_by'     => auth()->id(),
-                            ];
+                // Multiple Roles
+                foreach (['anggota', 'auditor'] as $roleKey) {
+                    if (! empty($roles[$roleKey]) && is_array($roles[$roleKey])) {
+                        foreach ($roles[$roleKey] as $pegawaiId) {
+                            if ($pegawaiId) {
+                                $inserts[] = $addInsert($pegawaiId, $roleKey);
+                            }
                         }
                     }
                 }
@@ -96,9 +101,9 @@ class TimMutuService
     /**
      * Update Tim Mutu for a single OrgUnit.
      */
-    public function updateUnitTimMutu($periodeId, $unitId, $auditeeId, array $anggotaIds)
+    public function updateUnitTimMutu($periodeId, $unitId, $auditeeId, $ketuaAuditorId, array $auditorIds, array $anggotaIds)
     {
-        return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $anggotaIds) {
+        return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $ketuaAuditorId, $auditorIds, $anggotaIds) {
             $periode = \App\Models\Pemutu\PeriodeSpmi::findOrFail($periodeId);
             $unit    = OrgUnit::findOrFail($unitId);
 
@@ -111,33 +116,35 @@ class TimMutuService
             $now     = now();
             $userId  = auth()->id();
 
-            // Auditee (single)
-            if ($auditeeId) {
-                $inserts[] = [
+            // Helper
+            $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
+                return [
                     'periodespmi_id' => $periodeId,
                     'org_unit_id'    => $unitId,
-                    'pegawai_id'     => $auditeeId,
-                    'role'           => 'auditee',
+                    'pegawai_id'     => $pegawaiId,
+                    'role'           => $role,
                     'created_at'     => $now,
                     'updated_at'     => $now,
                     'created_by'     => $userId,
                     'updated_by'     => $userId,
                 ];
+            };
+
+            if ($auditeeId) {
+                $inserts[] = $addInsert($auditeeId, 'auditee');
+            }
+            if ($ketuaAuditorId) {
+                $inserts[] = $addInsert($ketuaAuditorId, 'ketua_auditor');
             }
 
-            // Anggota (multiple)
+            foreach ($auditorIds as $pegawaiId) {
+                if ($pegawaiId) {
+                    $inserts[] = $addInsert($pegawaiId, 'auditor');
+                }
+            }
             foreach ($anggotaIds as $pegawaiId) {
                 if ($pegawaiId) {
-                    $inserts[] = [
-                        'periodespmi_id' => $periodeId,
-                        'org_unit_id'    => $unitId,
-                        'pegawai_id'     => $pegawaiId,
-                        'role'           => 'anggota',
-                        'created_at'     => $now,
-                        'updated_at'     => $now,
-                        'created_by'     => $userId,
-                        'updated_by'     => $userId,
-                    ];
+                    $inserts[] = $addInsert($pegawaiId, 'anggota');
                 }
             }
 

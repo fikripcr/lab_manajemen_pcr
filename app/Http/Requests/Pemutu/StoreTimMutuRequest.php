@@ -21,9 +21,12 @@ class StoreTimMutuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'auditee_id'    => ['nullable', 'exists:pegawai,pegawai_id'],
-            'anggota_ids'   => ['nullable', 'array'],
-            'anggota_ids.*' => ['nullable', 'exists:pegawai,pegawai_id'],
+            'auditee_id'       => ['nullable', 'exists:pegawai,pegawai_id'],
+            'ketua_auditor_id' => ['nullable', 'exists:pegawai,pegawai_id'],
+            'auditor_ids'      => ['nullable', 'array'],
+            'auditor_ids.*'    => ['nullable', 'exists:pegawai,pegawai_id'],
+            'anggota_ids'      => ['nullable', 'array'],
+            'anggota_ids.*'    => ['nullable', 'exists:pegawai,pegawai_id'],
         ];
     }
 }

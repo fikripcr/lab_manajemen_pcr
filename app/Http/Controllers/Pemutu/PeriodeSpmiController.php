@@ -53,10 +53,10 @@ class PeriodeSpmiController extends Controller
     public function create()
     {
         if (request()->ajax()) {
-            return view('pages.pemutu.periode_spmis.form');
+            return view('pages.pemutu.periode_spmis.create-edit-ajax');
         }
-        $pageTitle = 'Tambah Periode SPMI';
-        return view('pages.pemutu.periode_spmis.create', compact('pageTitle'));
+        // Fallback or full page support if needed, but mainly AJAX
+        return view('pages.pemutu.periode_spmis.create-edit-ajax');
     }
 
     public function store(Request $request)
@@ -83,14 +83,30 @@ class PeriodeSpmiController extends Controller
 
     public function edit(PeriodeSpmi $periodeSpmi)
     {
-        if (request()->ajax()) {
-            return view('pages.pemutu.periode_spmis.form', compact('periodeSpmi'));
-        }
-        $pageTitle = 'Edit Periode SPMI';
-        return view('pages.pemutu.periode_spmis.edit', compact('pageTitle', 'periodeSpmi'));
+        return view('pages.pemutu.periode_spmis.create-edit-ajax', compact('periodeSpmi'));
     }
 
-    // update method remains same
+    public function update(Request $request, PeriodeSpmi $periodeSpmi)
+    {
+        $data = $request->validate([
+            'periode'            => 'required|integer',
+            'jenis_periode'      => 'required|string|max:20',
+            'penetapan_awal'     => 'nullable|date',
+            'penetapan_akhir'    => 'nullable|date',
+            'ed_awal'            => 'nullable|date',
+            'ed_akhir'           => 'nullable|date',
+            'ami_awal'           => 'nullable|date',
+            'ami_akhir'          => 'nullable|date',
+            'pengendalian_awal'  => 'nullable|date',
+            'pengendalian_akhir' => 'nullable|date',
+            'peningkatan_awal'   => 'nullable|date',
+            'peningkatan_akhir'  => 'nullable|date',
+        ]);
+
+        $periodeSpmi->update($data);
+
+        return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmis.index'));
+    }
 
     public function destroy(PeriodeSpmi $periodeSpmi)
     {

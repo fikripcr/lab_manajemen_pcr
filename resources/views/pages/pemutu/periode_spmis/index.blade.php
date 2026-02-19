@@ -42,94 +42,92 @@
                     </div>
                 </div>
 
-                {{-- Card Body --}}
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush">
+                <div class="card-body">
+                    <div class="steps steps-vertical">
                         {{-- 1. PENETAPAN --}}
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="avatar bg-primary text-white">P</span>
-                                </div>
-                                <div class="col">
-                                    <div class="fw-bold">Penetapan</div>
-                                    <div class="text-muted small">
-                                        {{ $periode->penetapan_awal ? \Carbon\Carbon::parse($periode->penetapan_awal)->translatedFormat('d M Y') : '-' }} 
-                                        s/d 
-                                        {{ $periode->penetapan_akhir ? \Carbon\Carbon::parse($periode->penetapan_akhir)->translatedFormat('d M Y') : '-' }}
-                                    </div>
+                        <div class="step-item">
+                            <div class="step-item-icon h-auto w-auto p-0 bg-transparent">
+                                <span class="avatar bg-primary-lt rounded">
+                                    <i class="ti ti-gavel fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="step-item-content pt-1 ms-2">
+                                <div class="h4 m-0 font-weight-bold">Penetapan</div>
+                                <div class="text-muted small">
+                                    {{ $periode->penetapan_awal ? \Carbon\Carbon::parse($periode->penetapan_awal)->translatedFormat('d M Y') : '-' }} 
+                                    s/d 
+                                    {{ $periode->penetapan_akhir ? \Carbon\Carbon::parse($periode->penetapan_akhir)->translatedFormat('d M Y') : '-' }}
                                 </div>
                             </div>
                         </div>
 
                         {{-- 2. PELAKSANAAN --}}
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="avatar bg-teal text-white">P</span>
-                                </div>
-                                <div class="col">
-                                    <div class="fw-bold">Pelaksanaan</div>
-                                    <div class="text-muted small">
-                                        {{-- Custom Logic or Placeholder --}}
-                                        Sepanjang Periode {{ $periode->periode }}
-                                    </div>
+                        <div class="step-item">
+                             <div class="step-item-icon h-auto w-auto p-0 bg-transparent">
+                                <span class="avatar bg-teal-lt rounded">
+                                    <i class="ti ti-player-play fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="step-item-content pt-1 ms-2">
+                                <div class="h4 m-0 font-weight-bold">Pelaksanaan</div>
+                                <div class="text-muted small">
+                                    Sepanjang Periode {{ $periode->periode }}
                                 </div>
                             </div>
                         </div>
 
-                        {{-- 3. EVALUASI (ED & AMI) --}}
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="avatar bg-warning text-white">E</span>
-                                </div>
-                                <div class="col">
-                                    <div class="fw-bold">Evaluasi (AMI & ED)</div>
-                                    <div class="text-muted small">
-                                        @if($periode->ed_awal)
-                                            <div>ED: {{ \Carbon\Carbon::parse($periode->ed_awal)->format('d M') }} - {{ \Carbon\Carbon::parse($periode->ed_akhir)->format('d M') }}</div>
-                                        @endif
-                                        @if($periode->ami_awal)
-                                            <div>AMI: {{ \Carbon\Carbon::parse($periode->ami_awal)->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse($periode->ami_akhir)->translatedFormat('d M Y') }}</div>
-                                        @else
-                                            <span>-</span>
-                                        @endif
-                                    </div>
+                        {{-- 3. EVALUASI --}}
+                        <div class="step-item">
+                             <div class="step-item-icon h-auto w-auto p-0 bg-transparent">
+                                <span class="avatar bg-warning-lt rounded">
+                                    <i class="ti ti-clipboard-check fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="step-item-content pt-1 ms-2">
+                                <div class="h4 m-0 font-weight-bold">Evaluasi (AMI & ED)</div>
+                                <div class="text-muted small">
+                                    @if($periode->ed_awal)
+                                        <div><span class="text-warning">ED:</span> {{ \Carbon\Carbon::parse($periode->ed_awal)->format('d M') }} - {{ \Carbon\Carbon::parse($periode->ed_akhir)->format('d M') }}</div>
+                                    @endif
+                                    @if($periode->ami_awal)
+                                        <div><span class="text-warning">AMI:</span> {{ \Carbon\Carbon::parse($periode->ami_awal)->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse($periode->ami_akhir)->translatedFormat('d M Y') }}</div>
+                                    @else
+                                        <span>-</span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
 
                         {{-- 4. PENGENDALIAN --}}
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="avatar bg-danger text-white">P</span>
-                                </div>
-                                <div class="col">
-                                    <div class="fw-bold">Pengendalian (RTM)</div>
-                                    <div class="text-muted small">
-                                        {{ $periode->pengendalian_awal ? \Carbon\Carbon::parse($periode->pengendalian_awal)->translatedFormat('d M Y') : '-' }}
-                                        s/d
-                                        {{ $periode->pengendalian_akhir ? \Carbon\Carbon::parse($periode->pengendalian_akhir)->translatedFormat('d M Y') : '-' }}
-                                    </div>
+                        <div class="step-item">
+                             <div class="step-item-icon h-auto w-auto p-0 bg-transparent">
+                                <span class="avatar bg-danger-lt rounded">
+                                    <i class="ti ti-settings-exclamation fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="step-item-content pt-1 ms-2">
+                                <div class="h4 m-0 font-weight-bold">Pengendalian (RTM)</div>
+                                <div class="text-muted small">
+                                    {{ $periode->pengendalian_awal ? \Carbon\Carbon::parse($periode->pengendalian_awal)->translatedFormat('d M Y') : '-' }}
+                                    s/d
+                                    {{ $periode->pengendalian_akhir ? \Carbon\Carbon::parse($periode->pengendalian_akhir)->translatedFormat('d M Y') : '-' }}
                                 </div>
                             </div>
                         </div>
 
-                         {{-- 5. PENINGKATAN --}}
-                         <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="avatar bg-success text-white">P</span>
-                                </div>
-                                <div class="col">
-                                    <div class="fw-bold">Peningkatan</div>
-                                    <div class="text-muted small">
-                                        {{ $periode->peningkatan_awal ? \Carbon\Carbon::parse($periode->peningkatan_awal)->translatedFormat('d M Y') : '-' }}
-                                        s/d
-                                        {{ $periode->peningkatan_akhir ? \Carbon\Carbon::parse($periode->peningkatan_akhir)->translatedFormat('d M Y') : '-' }}
-                                    </div>
+                        {{-- 5. PENINGKATAN --}}
+                        <div class="step-item">
+                             <div class="step-item-icon h-auto w-auto p-0 bg-transparent">
+                                <span class="avatar bg-success-lt rounded">
+                                    <i class="ti ti-trending-up fs-3"></i>
+                                </span>
+                            </div>
+                            <div class="step-item-content pt-1 ms-2">
+                                <div class="h4 m-0 font-weight-bold">Peningkatan</div>
+                                <div class="text-muted small">
+                                    {{ $periode->peningkatan_awal ? \Carbon\Carbon::parse($periode->peningkatan_awal)->translatedFormat('d M Y') : '-' }}
+                                    s/d
+                                    {{ $periode->peningkatan_akhir ? \Carbon\Carbon::parse($periode->peningkatan_akhir)->translatedFormat('d M Y') : '-' }}
                                 </div>
                             </div>
                         </div>

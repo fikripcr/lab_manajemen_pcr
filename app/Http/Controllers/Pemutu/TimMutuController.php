@@ -35,6 +35,9 @@ class TimMutuController extends Controller
     /**
      * Manage — card-based assignment page for a specific periode.
      */
+    /**
+     * Manage — card-based assignment page for a specific periode.
+     */
     public function manage($periodeId)
     {
         $periode     = PeriodeSpmi::findOrFail($periodeId);
@@ -45,8 +48,10 @@ class TimMutuController extends Controller
         $assignmentMap = [];
         foreach ($assignments as $unitId => $items) {
             $assignmentMap[$unitId] = [
-                'auditee' => $items->where('role', 'auditee')->first(),
-                'anggota' => $items->where('role', 'anggota')->values(),
+                'auditee'       => $items->where('role', 'auditee')->first(),
+                'ketua_auditor' => $items->where('role', 'ketua_auditor')->first(),
+                'auditor'       => $items->where('role', 'auditor')->values(),
+                'anggota'       => $items->where('role', 'anggota')->values(),
             ];
         }
 
@@ -68,10 +73,12 @@ class TimMutuController extends Controller
             ->with('pegawai')
             ->get();
 
-        $auditee = $assignments->where('role', 'auditee')->first();
-        $anggota = $assignments->where('role', 'anggota');
+        $auditee      = $assignments->where('role', 'auditee')->first();
+        $ketuaAuditor = $assignments->where('role', 'ketua_auditor')->first();
+        $auditor      = $assignments->where('role', 'auditor');
+        $anggota      = $assignments->where('role', 'anggota');
 
-        return view('pages.pemutu.tim-mutu.edit-ajax', compact('periode', 'unit', 'auditee', 'anggota'));
+        return view('pages.pemutu.tim-mutu.edit-ajax', compact('periode', 'unit', 'auditee', 'ketuaAuditor', 'auditor', 'anggota'));
     }
 
     /**
@@ -86,6 +93,8 @@ class TimMutuController extends Controller
                 $periodeId,
                 $unitId,
                 $validated['auditee_id'] ?? null,
+                $validated['ketua_auditor_id'] ?? null,
+                $validated['auditor_ids'] ?? [],
                 $validated['anggota_ids'] ?? []
             );
 
