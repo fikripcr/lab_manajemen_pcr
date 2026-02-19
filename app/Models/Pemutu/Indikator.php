@@ -60,8 +60,8 @@ class Indikator extends Model
 
     public function orgUnits()
     {
-        return $this->belongsToMany(OrgUnit::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
-            ->withPivot('target', 'created_at');
+        return $this->belongsToMany(\App\Models\Shared\StrukturOrganisasi::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
+            ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'created_at');
     }
 
     public function parent()

@@ -217,49 +217,63 @@
             'icon' => 'ti ti-checkbox',
             'route' => '#',
             'active_routes' => ['pemutu.*'],
-            'can' => 'admin',
+            // Removed parent 'can' => 'admin' to allow Auditees to see My KPI / Evaluasi Diri
             'children'      => [
+                [
+                    'title' => 'Penetapan',
+                    'route' => 'pemutu.dokumens.index',
+                    'active_routes' => ['pemutu.dokumens.*'],
+                    'icon' => 'ti ti-file-text',
+                    'can' => 'admin',
+                ],
+                [
+                    'title' => 'Evaluasi Diri',
+                    'route' => 'pemutu.evaluasi-diri.index',
+                    'active_routes' => ['pemutu.evaluasi-diri.*'],
+                    'icon' => 'ti ti-clipboard-check',
+                ],
                 [
                     'title' => 'Label & Kategori',
                     'route' => 'pemutu.labels.index',
                     'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
                     'icon' => 'ti ti-tags',
+                    'can' => 'admin',
                 ],
                 [
                     'title' => 'Periode KPI',
                     'route' => 'pemutu.periode-kpis.index',
                     'active_routes' => ['pemutu.periode-kpis.*'],
                     'icon' => 'ti ti-calendar-event',
+                    'can' => 'admin',
                 ],
                 [
                     'title' => 'Periode SPMI',
                     'route' => 'pemutu.periode-spmis.index',
                     'active_routes' => ['pemutu.periode-spmis.*'],
                     'icon' => 'ti ti-refresh',
+                    'can' => 'admin',
                 ],
                 [
                     'title' => 'Tim Mutu',
                     'route' => 'pemutu.tim-mutu.index',
                     'active_routes' => ['pemutu.tim-mutu.*'],
                     'icon' => 'ti ti-users-group',
+                    'can' => 'admin',
                 ],
-                [
-                    'title' => 'Dokumen',
-                    'route' => 'pemutu.dokumens.index',
-                    'active_routes' => ['pemutu.dokumens.*'],
-                    'icon' => 'ti ti-file-text',
-                ],
+                
                 [
                     'title' => 'Indikator',
                     'route' => 'pemutu.indikators.index',
                     'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
                     'icon' => 'ti ti-target',
+                    'can' => 'admin',
                 ],
                 [
                     'title' => 'Sasaran Kinerja (KPI)',
                     'route' => 'pemutu.kpi.index',
                     'active_routes' => ['pemutu.kpi.*'],
                     'icon' => 'ti ti-chart-arrows',
+                    'can' => 'admin',
                 ],
                 [
                     'title' => 'Sasaran Kinerja Saya',
@@ -267,6 +281,7 @@
                     'active_routes' => ['pemutu.mykpi.*'],
                     'icon' => 'ti ti-user-check',
                 ],
+
             ],
         ],
         [

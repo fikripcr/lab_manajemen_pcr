@@ -51,7 +51,7 @@ class TimMutu extends Model
 
     public function orgUnit()
     {
-        return $this->belongsTo(OrgUnit::class, 'org_unit_id', 'orgunit_id');
+        return $this->belongsTo(\App\Models\Shared\StrukturOrganisasi::class, 'org_unit_id', 'orgunit_id');
     }
 
     public function pegawai()

@@ -191,6 +191,11 @@ class User extends Authenticatable implements HasMedia, Searchable
         return $this->belongsToMany(Lab::class, 'lab_teams', 'user_id', 'lab_id');
     }
 
+    public function pegawai()
+    {
+        return $this->belongsTo(\App\Models\Shared\Pegawai::class, 'pegawai_id', 'pegawai_id');
+    }
+
     /**
      * Accessor to get encrypted ID
      */

@@ -1,0 +1,58 @@
+@extends('layouts.tabler.app')
+@section('title', 'Isi Evaluasi Diri')
+
+@section('header')
+<x-tabler.page-header title="Isi Evaluasi Diri" pretitle="Periode {{ $periode->periode }}">
+    <x-slot:actions>
+        <div class="d-flex align-items-center">
+            @if($unit)
+                <span class="badge bg-blue-lt me-3 fs-3">{{ $unit->name }}</span>
+            @endif
+            <a href="{{ route('pemutu.evaluasi-diri.index') }}" class="btn btn-secondary">Kembali</a>
+        </div>
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
+
+@section('content')
+@if($unit)
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Daftar Indikator</h3>
+        <div class="card-actions ">
+            <span class="badge bg-blue-lt fs-3">{{ $unit->name }}</span>
+        </div>
+    </div>
+    <div class="card-body border-bottom py-3">
+        <div class="text-muted">
+            Berikut adalah daftar indikator yang ditargetkan untuk unit <strong>{{ $unit->name }}</strong>. Silakan isi capaian dan analisis untuk setiap indikator.
+        </div>
+    </div>
+    <div class="table-responsive">
+        <x-tabler.datatable-client 
+            id="table-ed"
+            route="{{ route('pemutu.evaluasi-diri.data', $periode->encrypted_periodespmi_id) }}"
+            :columns="[
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center'],
+                ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
+                ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
+                ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '10%'],
+                ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'width' => '20%'],
+                ['data' => 'file', 'name' => 'file', 'title' => 'Bukti Dukung', 'width' => '10%', 'orderable' => false, 'searchable' => false],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+            ]"
+        />
+    </div>
+</div>
+@else
+<div class="card">
+    <div class="card-body">
+        <x-tabler.empty-state 
+            title="Tidak Terdaftar di Tim Mutu" 
+            text="{{ session('warning') ?? 'Anda tidak terdaftar dalam Tim Mutu atau Unit manapun untuk periode ini.' }}"
+            icon="ti ti-lock-access" 
+        />
+    </div>
+</div>
+@endif
+@endsection

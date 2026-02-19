@@ -186,48 +186,6 @@
     </div>
 </div>
 
-</div>
-
-{{-- Jadwal Rapat --}}
-<div class="row row-cards mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Jadwal Rapat Mendatang</h3>
-                <div class="card-actions">
-                    <x-tabler.button href="{{ route('pemutu.rapat.create') }}" class="btn-primary" size="sm" icon="ti ti-plus" text="Buat Rapat" />
-                </div>
-            </div>
-            <div class="list-group list-group-flush list-group-hoverable">
-                @forelse($upcomingRapats as $rapat)
-                    <div class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <span class="avatar bg-blue-lt">{{ $rapat->tgl_rapat->format('d') }}<br><small>{{ $rapat->tgl_rapat->format('M') }}</small></span>
-                            </div>
-                            <div class="col text-truncate">
-                                <a href="{{ route('pemutu.rapat.show', $rapat->hashid) }}" class="text-reset d-block">{{ $rapat->judul_kegiatan }}</a>
-                                <div class="d-block text-muted text-truncate mt-n1">
-                                    {{ $rapat->jenis_rapat }} &bull; {{ $rapat->waktu_mulai->format('H:i') }} - {{ $rapat->waktu_selesai->format('H:i') }}
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <a href="{{ route('pemutu.rapat.show', $rapat->hashid) }}" class="list-group-item-actions">
-                                    <i class="ti ti-chevron-right text-muted"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="list-group-item">
-                        <div class="text-muted text-center py-3">Tidak ada jadwal rapat mendatang.</div>
-                    </div>
-                @endforelse
-            </div>
-        </div>
-    </div>
-</div>
-
 {{-- Recent KPI Submissions --}}
 @if($recentKpi->count() > 0)
 <div class="row row-cards mt-3">

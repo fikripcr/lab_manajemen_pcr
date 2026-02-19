@@ -177,7 +177,7 @@
                 </div>
                 <div class="list-group list-group-flush">
                     @forelse($indikator->dokSubs as $relSub)
-                        <a href="{{ route('pemutu.dok-subs.show', $relSub->doksub_id) }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <a href="{{ route('pemutu.dok-subs.show', $relSub->encrypted_doksub_id) }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <div>
                                 <span class="badge bg-purple-lt me-2">{{ $relSub->dokumen->jenis }}</span>
                                 {{ $relSub->dokumen->judul }}
