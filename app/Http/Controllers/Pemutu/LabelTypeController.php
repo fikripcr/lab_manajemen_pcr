@@ -17,7 +17,7 @@ class LabelTypeController extends Controller
 
     public function create()
     {
-        return view('pages.pemutu.label-types.create');
+        return view('pages.pemutu.label-types.create-edit-ajax');
     }
 
     public function store(LabelTypeRequest $request)
@@ -38,7 +38,7 @@ class LabelTypeController extends Controller
             abort(404);
         }
 
-        return view('pages.pemutu.label-types.edit', compact('labelType'));
+        return view('pages.pemutu.label-types.create-edit-ajax', compact('labelType'));
     }
 
     public function update(LabelTypeRequest $request, $id)

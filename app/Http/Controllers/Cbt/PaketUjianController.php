@@ -38,7 +38,7 @@ class PaketUjianController extends Controller
 
     public function create()
     {
-        return view('pages.cbt.paket.create');
+        return view('pages.cbt.paket.create-edit-ajax');
     }
 
     public function store(StorePaketRequest $request)
@@ -56,7 +56,7 @@ class PaketUjianController extends Controller
 
     public function edit(PaketUjian $paket)
     {
-        return view('pages.cbt.paket.edit', compact('paket'));
+        return view('pages.cbt.paket.create-edit-ajax', compact('paket'));
     }
 
     public function update(UpdatePaketRequest $request, PaketUjian $paket)

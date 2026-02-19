@@ -27,13 +27,13 @@
                     <span class="ms-auto badge bg-secondary-lt">{{ \App\Models\Pemutu\Label::count() }}</span>
                 </a>
                 @foreach($types as $type)
-                    <div class="list-group-item list-group-item-action flex-column align-items-start label-type-item py-2" data-type-id="{{ $type->labeltype_id }}" onclick="filterLabels(this, '{{ $type->labeltype_id }}')">
+                    <div class="list-group-item list-group-item-action flex-column align-items-start label-type-item py-2" data-type-id="{{ $type->labeltype_id }}" onclick="filterLabels(this, '{{ $type->labeltype_id }}', event)">
                         <div class="d-flex w-100 justify-content-between align-items-center">
                             <span class="d-flex align-items-center gap-2 text-truncate fw-bold" style="cursor: pointer;">
                                 <span class="avatar avatar-xs rounded bg-{{ $type->color ?? 'blue' }}"></span>
                                 {{ $type->name }}
                             </span>
-                            <div class="btn-group">
+                            <div class="d-flex gap-1">
                                  <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-secondary ajax-modal-btn" 
                                     data-url="{{ route('pemutu.label-types.edit', $type->labeltype_id) }}" 
                                     data-modal-title="Edit Tipe" icon="ti ti-pencil" />
@@ -82,9 +82,9 @@
 <script>
     let currentTypeId = '';
 
-    function filterLabels(element, typeId) {
-        // Prevent if clicked on button group
-        if ($(event.target).closest('.btn-group').length) return;
+    function filterLabels(element, typeId, event) {
+        // Prevent if clicked on button group or buttons
+        if (event && $(event.target).closest('.btn-icon').length) return;
 
         $('#label-type-list .list-group-item').removeClass('active');
         // If it's the "All" link or a specific type item (which is now a div for type items, but a tag for 'All')

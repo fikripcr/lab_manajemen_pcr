@@ -4,14 +4,6 @@
     // --- 1. ADMIN MENU STRUCTURE ---
     $adminMenu = [
         [
-            'type'  => 'header',
-            'title' => 'Ringkasan',
-        ],
-        [
-            'type'  => 'header',
-            'title' => 'Ringkasan',
-        ],
-        [
             'type'  => 'item',
             'title' => 'Beranda',
             'route' => 'dashboard',

@@ -53,7 +53,7 @@ class LabelController extends Controller
     public function create()
     {
         $types = $this->LabelService->getAllLabelTypes();
-        return view('pages.pemutu.labels.create', compact('types'));
+        return view('pages.pemutu.labels.create-edit-ajax', compact('types'));
     }
 
     public function store(LabelRequest $request)
@@ -76,7 +76,7 @@ class LabelController extends Controller
 
         $types = $this->LabelService->getAllLabelTypes();
 
-        return view('pages.pemutu.labels.edit', compact('label', 'types'));
+        return view('pages.pemutu.labels.create-edit-ajax', compact('label', 'types'));
     }
 
     public function update(LabelRequest $request, $id)

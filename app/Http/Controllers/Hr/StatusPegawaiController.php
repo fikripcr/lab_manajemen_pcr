@@ -52,7 +52,7 @@ class StatusPegawaiController extends Controller
 
     public function create()
     {
-        return view('pages.hr.status-pegawai.create');
+        return view('pages.hr.status-pegawai.create-edit-ajax');
     }
 
     public function store(StatusPegawaiRequest $request)
@@ -68,7 +68,7 @@ class StatusPegawaiController extends Controller
     public function edit(StatusPegawai $status_pegawai)
     {
         $statusPegawai = $status_pegawai;
-        return view('pages.hr.status-pegawai.edit', compact('statusPegawai'));
+        return view('pages.hr.status-pegawai.create-edit-ajax', compact('statusPegawai'));
     }
 
     public function update(StatusPegawaiRequest $request, StatusPegawai $status_pegawai)

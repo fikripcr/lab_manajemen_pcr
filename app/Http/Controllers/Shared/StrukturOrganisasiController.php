@@ -55,7 +55,7 @@ class StrukturOrganisasiController extends Controller
     {
         $parents = $this->strukturOrganisasiService->getHierarchicalList();
         $types   = $this->strukturOrganisasiService->getTypes();
-        return view('pages.shared.struktur-organisasi.create', compact('parents', 'types'));
+        return view('pages.shared.struktur-organisasi.create-edit-ajax', compact('parents', 'types'));
     }
 
     public function store(StrukturOrganisasiRequest $request)
@@ -89,7 +89,7 @@ class StrukturOrganisasiController extends Controller
         $parents = $this->strukturOrganisasiService->getHierarchicalList();
         $types   = $this->strukturOrganisasiService->getTypes();
 
-        return view('pages.shared.struktur-organisasi.edit', compact('orgUnit', 'parents', 'types'));
+        return view('pages.shared.struktur-organisasi.create-edit-ajax', compact('orgUnit', 'parents', 'types'));
     }
 
     public function update(StrukturOrganisasiRequest $request, $id)
