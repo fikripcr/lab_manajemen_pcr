@@ -46,3 +46,9 @@
         </label>
     </div>
 </x-tabler.form-modal>
+
+<script>
+    if (window.initFilePond) {
+        window.initFilePond();
+    }
+</script>

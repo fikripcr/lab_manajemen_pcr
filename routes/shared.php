@@ -49,6 +49,14 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         Route::post('/struktur-organisasi/{id}/set-auditee', [StrukturOrganisasiController::class, 'setAuditee'])->name('struktur-organisasi.set-auditee');
         Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
 
+        // Info Publik CMS
+        // Public Menu
+        Route::post('/public-menu/reorder', [\App\Http\Controllers\Shared\PublicMenuController::class, 'reorder'])->name('public-menu.reorder');
+        Route::resource('public-menu', \App\Http\Controllers\Shared\PublicMenuController::class);
+
+        // Public Page
+        Route::resource('public-page', \App\Http\Controllers\Shared\PublicPageController::class);
+
     });
 
 });

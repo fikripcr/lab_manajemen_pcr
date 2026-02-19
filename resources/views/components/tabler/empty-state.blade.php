@@ -1,6 +1,6 @@
 @props([
     'title' => 'No results found',
-    'text' => 'Try adjusting your search or filter to find what you\'re looking for.',
+    'text' => '',
     'icon' => 'ti ti-mood-empty',
     'actionRoute' => null,
     'actionText' => null,
@@ -8,7 +8,7 @@
     'image' => null,
 ])
 
-<div class="empty">
+<div {{ $attributes->merge(['class' => 'empty']) }}>
     @if($image)
         <div class="empty-img"><img src="{{ $image }}" height="128" alt=""></div>
     @else
@@ -18,9 +18,11 @@
     @endif
     
     <p class="empty-title">{{ $title }}</p>
-    <p class="empty-subtitle text-muted">
-        {{ $text }}
-    </p>
+    @if($text)
+        <p class="empty-subtitle text-muted">
+            {{ $text }}
+        </p>    
+    @endif
     
     @if(isset($action))
         <div class="empty-action">

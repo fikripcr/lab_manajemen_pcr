@@ -31,7 +31,7 @@ class FAQController extends Controller
     {
         try {
             $this->FAQService->createFAQ($request->validated());
-            return jsonSuccess('FAQ berhasil ditambahkan.');
+            return jsonSuccess('FAQ berhasil ditambahkan.', route('shared.faq.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -46,7 +46,7 @@ class FAQController extends Controller
     {
         try {
             $this->FAQService->updateFAQ($faq, $request->validated());
-            return jsonSuccess('FAQ berhasil diperbarui.');
+            return jsonSuccess('FAQ berhasil diperbarui.', route('shared.faq.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -56,7 +56,7 @@ class FAQController extends Controller
     {
         try {
             $this->FAQService->deleteFAQ($faq);
-            return jsonSuccess('FAQ berhasil dihapus.');
+            return jsonSuccess('FAQ berhasil dihapus.', route('shared.faq.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }

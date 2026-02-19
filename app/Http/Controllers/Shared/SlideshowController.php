@@ -67,7 +67,7 @@ class SlideshowController extends Controller
     {
         try {
             $this->SlideshowService->createSlideshow($request->validated());
-            return jsonSuccess('Slideshow berhasil ditambahkan.');
+            return jsonSuccess('Slideshow berhasil ditambahkan.', route('shared.slideshow.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -82,7 +82,7 @@ class SlideshowController extends Controller
     {
         try {
             $this->SlideshowService->updateSlideshow($slideshow, $request->validated());
-            return jsonSuccess('Slideshow berhasil diperbarui.');
+            return jsonSuccess('Slideshow berhasil diperbarui.', route('shared.slideshow.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
@@ -92,7 +92,7 @@ class SlideshowController extends Controller
     {
         try {
             $this->SlideshowService->deleteSlideshow($slideshow);
-            return jsonSuccess('Slideshow berhasil dihapus.');
+            return jsonSuccess('Slideshow berhasil dihapus.', route('shared.slideshow.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }

@@ -76,7 +76,7 @@
             'title'         => 'Info Publik',
             'id'            => 'navbar-info-master',
             'icon'          => 'ti ti-info-circle',
-            'active_routes' => ['lab.pengumuman.*', 'lab.berita.*', 'shared.slideshow.*', 'shared.faq.*'],
+            'active_routes' => ['lab.pengumuman.*', 'lab.berita.*', 'shared.slideshow.*', 'shared.faq.*', 'shared.public-menu.*', 'shared.public-page.*'],
             'children'      => [
                 [
                     'title'         => 'Pengumuman',
@@ -101,6 +101,12 @@
                     'route'         => 'shared.faq.index',
                     'active_routes' => ['shared.faq.*'],
                     'icon'          => 'ti ti-help',
+                ],
+                [
+                    'title'         => 'Halaman & Menu',
+                    'route'         => 'shared.public-menu.index',
+                    'active_routes' => ['shared.public-menu.*', 'shared.public-page.*'],
+                    'icon'          => 'ti ti-layout-sidebar',
                 ],
             ],
         ],
