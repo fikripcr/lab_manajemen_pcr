@@ -54,9 +54,9 @@ class EventTamuController extends Controller
     {
         try {
             $this->eventTamuService->store($request->validated());
-            return response()->json(['success' => true, 'message' => 'Data tamu berhasil disimpan']);
+            return jsonSuccess('Data tamu berhasil disimpan');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -70,9 +70,9 @@ class EventTamuController extends Controller
     {
         try {
             $this->eventTamuService->update($tamu, $request->validated());
-            return response()->json(['success' => true, 'message' => 'Data tamu berhasil diperbarui']);
+            return jsonSuccess('Data tamu berhasil diperbarui');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -80,9 +80,9 @@ class EventTamuController extends Controller
     {
         try {
             $this->eventTamuService->destroy($tamu);
-            return response()->json(['success' => true, 'message' => 'Data tamu berhasil dihapus']);
+            return jsonSuccess('Data tamu berhasil dihapus');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -102,9 +102,9 @@ class EventTamuController extends Controller
 
         try {
             $this->eventTamuService->storeFromPublic($validated);
-            return response()->json(['success' => true, 'message' => 'Terima kasih, data Anda telah berhasil disimpan.']);
+            return jsonSuccess('Terima kasih, data Anda telah berhasil disimpan.');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

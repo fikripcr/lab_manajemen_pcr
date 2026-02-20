@@ -102,11 +102,7 @@ class LemburController extends Controller
         try {
             $lembur = $this->LemburService->store($validated);
 
-            return response()->json([
-                'success'  => true,
-                'message'  => 'Lembur berhasil ditambahkan',
-                'redirect' => route('hr.lembur.index'),
-            ]);
+            return jsonSuccess('Lembur berhasil ditambahkan', route('hr.lembur.index'));
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

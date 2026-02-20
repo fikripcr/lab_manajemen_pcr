@@ -128,9 +128,9 @@ class RiwayatPenugasanController extends Controller
             $pegawai = Pegawai::findOrFail($request->pegawai_id);
             $this->PegawaiService->addPenugasan($pegawai, $request->validated());
 
-            return response()->json(['success' => true, 'message' => 'Penugasan berhasil ditambahkan.']);
+            return jsonSuccess('Penugasan berhasil ditambahkan.');
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

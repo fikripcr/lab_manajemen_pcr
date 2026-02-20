@@ -16,9 +16,9 @@ class EventTeamController extends Controller
     {
         try {
             $this->service->store($request->validated());
-            return response()->json(['success' => true, 'message' => 'Panitia berhasil ditambahkan']);
+            return jsonSuccess('Panitia berhasil ditambahkan');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -26,9 +26,9 @@ class EventTeamController extends Controller
     {
         try {
             $this->service->update($team, $request->validated());
-            return response()->json(['success' => true, 'message' => 'Data panitia berhasil diperbarui']);
+            return jsonSuccess('Data panitia berhasil diperbarui');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -36,9 +36,9 @@ class EventTeamController extends Controller
     {
         try {
             $this->service->destroy($team);
-            return response()->json(['success' => true, 'message' => 'Panitia berhasil dihapus']);
+            return jsonSuccess('Panitia berhasil dihapus');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

@@ -11,17 +11,17 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PublicPageController extends Controller
 {
-    protected $pageService;
+    protected $PageService;
 
-    public function __construct(PublicPageService $pageService)
+    public function __construct(PublicPageService $PageService)
     {
-        $this->pageService = $pageService;
+        $this->PageService = $PageService;
     }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->pageService->getFilteredQuery($request->all());
+            $query = $this->PageService->getFilteredQuery($request->all());
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->editColumn('is_published', function ($row) {
@@ -59,7 +59,7 @@ class PublicPageController extends Controller
     public function store(PublicPageRequest $request)
     {
         try {
-            $this->pageService->createPage($request->validated());
+            $this->PageService->createPage($request->validated());
             return redirect()->route('shared.public-page.index')->with('success', 'Halaman berhasil dibuat.');
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage())->withInput();
@@ -74,7 +74,7 @@ class PublicPageController extends Controller
     public function update(PublicPageRequest $request, PublicPage $public_page)
     {
         try {
-            $this->pageService->updatePage($public_page, $request->validated());
+            $this->PageService->updatePage($public_page, $request->validated());
             return redirect()->route('shared.public-page.index')->with('success', 'Halaman berhasil diperbarui.');
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage())->withInput();
@@ -84,7 +84,7 @@ class PublicPageController extends Controller
     public function destroy(PublicPage $public_page)
     {
         try {
-            $this->pageService->deletePage($public_page);
+            $this->PageService->deletePage($public_page);
             return jsonSuccess('Halaman berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

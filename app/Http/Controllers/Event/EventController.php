@@ -57,13 +57,9 @@ class EventController extends Controller
     {
         try {
             $event = $this->eventService->store($request->validated());
-            return response()->json([
-                'success'  => true,
-                'message'  => 'Kegiatan berhasil disimpan',
-                'redirect' => route('Kegiatan.Kegiatans.index'),
-            ]);
+            return jsonSuccess('Kegiatan berhasil disimpan', route('Kegiatan.Kegiatans.index'));
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -85,13 +81,9 @@ class EventController extends Controller
     {
         try {
             $this->eventService->update($event, $request->validated());
-            return response()->json([
-                'success'  => true,
-                'message'  => 'Kegiatan berhasil diperbarui',
-                'redirect' => route('Kegiatan.Kegiatans.index'),
-            ]);
+            return jsonSuccess('Kegiatan berhasil diperbarui', route('Kegiatan.Kegiatans.index'));
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -101,7 +93,7 @@ class EventController extends Controller
             $this->eventService->destroy($event);
             return response()->json(['success' => true, 'message' => 'Kegiatan berhasil dihapus']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 }

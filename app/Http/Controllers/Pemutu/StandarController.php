@@ -101,8 +101,8 @@ class StandarController extends Controller
             ->get();
 
         // Pass 'isStandarMode' to hide/show specific fields in the generic view if we reuse it
-        // Or create a dedicated view. For now, let's reuse generic create but pre-fill type.
-        return view('pages.pemutu.indikators.create', [
+        // Or create a dedicated view.
+        return view('pages.pemutu.standar.create-edit-ajax', [
             'labelTypes'      => $labelTypes,
             'orgUnits'        => $orgUnits,
             'dokumens'        => $dokumens,
@@ -110,6 +110,7 @@ class StandarController extends Controller
             'personils'       => [],
             'selectedDokSubs' => [],
             'parentDok'       => null,
+            'indikator'       => new Indikator(),
         ])->with('type', 'standar');
     }
 

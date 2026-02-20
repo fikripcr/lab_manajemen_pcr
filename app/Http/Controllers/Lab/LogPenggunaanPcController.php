@@ -9,11 +9,11 @@ use Yajra\DataTables\DataTables;
 
 class LogPenggunaanPcController extends Controller
 {
-    protected $logService;
+    protected $LogService;
 
-    public function __construct(LogPenggunaanPcService $logService)
+    public function __construct(LogPenggunaanPcService $LogService)
     {
-        $this->logService = $logService;
+        $this->LogService = $LogService;
     }
 
     /**
@@ -26,7 +26,7 @@ class LogPenggunaanPcController extends Controller
 
     public function paginate(Request $request)
     {
-        $logs = $this->logService->getFilteredQuery($request->all());
+        $logs = $this->LogService->getFilteredQuery($request->all());
 
         return DataTables::of($logs)
             ->addIndexColumn()
@@ -55,11 +55,11 @@ class LogPenggunaanPcController extends Controller
     public function create()
     {
         // Auto-detect Schedule
-        $activeJadwal = $this->logService->getCurrentActiveJadwal();
+        $activeJadwal = $this->LogService->getCurrentActiveJadwal();
 
         $assignment = null;
         if ($activeJadwal) {
-            $assignment = $this->logService->getAssignmentForUser(Auth::id(), $activeJadwal->jadwal_kuliah_id);
+            $assignment = $this->LogService->getAssignmentForUser(Auth::id(), $activeJadwal->jadwal_kuliah_id);
         }
 
         return view('pages.lab.log-pc.create', compact('activeJadwal', 'assignment'));
@@ -88,7 +88,7 @@ class LogPenggunaanPcController extends Controller
             $data['jadwal_id'] = decryptId($request->jadwal_id); // Assuming hidden input is encrypted
             $data['lab_id']    = decryptId($request->lab_id);
 
-            $this->logService->storeLog($data);
+            $this->LogService->storeLog($data);
 
             return jsonSuccess('Log berhasil disimpan.', route('lab.log-pc.index'));
         } catch (\Exception $e) {

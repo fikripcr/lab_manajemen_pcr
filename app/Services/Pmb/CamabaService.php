@@ -8,16 +8,16 @@ use Illuminate\Support\Facades\DB;
 
 class CamabaService
 {
-    protected $pendaftaranService;
+    protected $PendaftaranService;
 
-    public function __construct(PendaftaranService $pendaftaranService)
+    public function __construct(PendaftaranService $PendaftaranService)
     {
-        $this->pendaftaranService = $pendaftaranService;
+        $this->PendaftaranService = $PendaftaranService;
     }
 
     public function createRegistration(array $data)
     {
-        return $this->pendaftaranService->createPendaftaran($data);
+        return $this->PendaftaranService->createPendaftaran($data);
     }
 
     public function confirmPayment(Pendaftaran $pendaftaran, array $data, $file)
@@ -35,7 +35,7 @@ class CamabaService
                 'waktu_bayar'       => now(),
             ]);
 
-            $this->pendaftaranService->updateStatus($pendaftaran->id, 'Menunggu_Verifikasi_Bayar', 'Camaba telah mengunggah bukti pembayaran.');
+            $this->PendaftaranService->updateStatus($pendaftaran->id, 'Menunggu_Verifikasi_Bayar', 'Camaba telah mengunggah bukti pembayaran.');
 
             return $pembayaran;
         });
@@ -57,6 +57,6 @@ class CamabaService
 
     public function finalizeFiles(Pendaftaran $pendaftaran)
     {
-        return $this->pendaftaranService->updateStatus($pendaftaran->id, 'Menunggu_Verifikasi_Berkas', 'Camaba telah menyelesaikan unggah berkas.');
+        return $this->PendaftaranService->updateStatus($pendaftaran->id, 'Menunggu_Verifikasi_Berkas', 'Camaba telah menyelesaikan unggah berkas.');
     }
 }

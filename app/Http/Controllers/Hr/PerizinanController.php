@@ -113,10 +113,7 @@ class PerizinanController extends Controller
             'latest_riwayatapproval_id' => $approval->riwayatapproval_id,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Perizinan berhasil dibuat.',
-        ]);
+        return jsonSuccess('Perizinan berhasil dibuat.');
     }
 
     public function show(Perizinan $perizinan)

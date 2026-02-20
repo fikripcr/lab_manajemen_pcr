@@ -42,9 +42,9 @@ class JenisIndisiplinerController extends Controller
 
         try {
             JenisIndisipliner::create($validated);
-            return response()->json(['success' => true, 'message' => 'Jenis indisipliner berhasil dibuat.']);
+            return jsonSuccess('Jenis indisipliner berhasil dibuat.');
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 

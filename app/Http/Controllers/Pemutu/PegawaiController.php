@@ -48,8 +48,9 @@ class PegawaiController extends Controller
 
     public function create()
     {
-        $units = OrgUnit::orderBy('name')->get();
-        return view('pages.pemutu.pegawai.create', compact('units'));
+        $pegawai = new \App\Models\Shared\Pegawai();
+        $units   = OrgUnit::orderBy('name')->get();
+        return view('pages.pemutu.pegawai.create-edit-ajax', compact('pegawai', 'units'));
     }
 
     public function store(PegawaiRequest $request)
@@ -71,7 +72,7 @@ class PegawaiController extends Controller
         }
 
         $units = OrgUnit::orderBy('name')->get();
-        return view('pages.pemutu.pegawai.edit', compact('pegawai', 'units'));
+        return view('pages.pemutu.pegawai.create-edit-ajax', compact('pegawai', 'units'));
     }
 
     public function update(PegawaiRequest $request, $id)

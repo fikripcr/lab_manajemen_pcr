@@ -8,11 +8,11 @@ use Exception;
 
 class BackupController extends Controller
 {
-    protected $backupService;
+    protected $BackupService;
 
-    public function __construct(BackupService $backupService)
+    public function __construct(BackupService $BackupService)
     {
-        $this->backupService = $backupService;
+        $this->BackupService = $BackupService;
     }
 
     /**
@@ -20,7 +20,7 @@ class BackupController extends Controller
      */
     public function index()
     {
-        $backups = $this->backupService->getBackupList();
+        $backups = $this->BackupService->getBackupList();
 
         return view('pages.sys.backup.index', compact('backups'));
     }
@@ -33,7 +33,7 @@ class BackupController extends Controller
         $type = $request->input('type', 'files');
 
         try {
-            $this->backupService->createBackup($type);
+            $this->BackupService->createBackup($type);
 
             return jsonSuccess('Backup created successfully');
         } catch (Exception $e) {
@@ -52,7 +52,7 @@ class BackupController extends Controller
     public function download($filename)
     {
         try {
-            $filePath = $this->backupService->getBackupFilePath($filename);
+            $filePath = $this->BackupService->getBackupFilePath($filename);
 
             return response()->download($filePath);
         } catch (Exception $e) {
@@ -66,7 +66,7 @@ class BackupController extends Controller
     public function destroy($filename)
     {
         try {
-            $this->backupService->deleteBackup($filename);
+            $this->BackupService->deleteBackup($filename);
 
             return jsonSuccess('Backup deleted successfully');
         } catch (Exception $e) {

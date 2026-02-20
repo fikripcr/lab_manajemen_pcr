@@ -9,11 +9,11 @@ use Yajra\DataTables\DataTables;
 
 class MahasiswaController extends Controller
 {
-    protected $strukturOrganisasiService;
+    protected $StrukturOrganisasiService;
 
-    public function __construct(StrukturOrganisasiService $strukturOrganisasiService)
+    public function __construct(StrukturOrganisasiService $StrukturOrganisasiService)
     {
-        $this->strukturOrganisasiService = $strukturOrganisasiService;
+        $this->StrukturOrganisasiService = $StrukturOrganisasiService;
     }
     public function index()
     {
@@ -59,7 +59,7 @@ class MahasiswaController extends Controller
 
     public function create()
     {
-        $prodiList = $this->strukturOrganisasiService
+        $prodiList = $this->StrukturOrganisasiService
             ->getFilteredQuery(['type' => 'Prodi'])
             ->orderBy('name')
             ->get();
@@ -68,7 +68,7 @@ class MahasiswaController extends Controller
 
     public function edit(Mahasiswa $mahasiswa)
     {
-        $prodiList = $this->strukturOrganisasiService
+        $prodiList = $this->StrukturOrganisasiService
             ->getFilteredQuery(['type' => 'Prodi'])
             ->orderBy('name')
             ->get();
@@ -77,7 +77,7 @@ class MahasiswaController extends Controller
 
     public function editModal(Mahasiswa $mahasiswa)
     {
-        $prodiList = $this->strukturOrganisasiService
+        $prodiList = $this->StrukturOrganisasiService
             ->getFilteredQuery(['type' => 'Prodi'])
             ->orderBy('name')
             ->get();

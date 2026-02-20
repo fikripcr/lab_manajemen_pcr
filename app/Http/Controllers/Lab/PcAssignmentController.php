@@ -11,11 +11,11 @@ use Yajra\DataTables\DataTables;
 
 class PcAssignmentController extends Controller
 {
-    protected $pcAssignmentService;
+    protected $PcAssignmentService;
 
-    public function __construct(PcAssignmentService $pcAssignmentService)
+    public function __construct(PcAssignmentService $PcAssignmentService)
     {
-        $this->pcAssignmentService = $pcAssignmentService;
+        $this->PcAssignmentService = $PcAssignmentService;
     }
 
     /**
@@ -36,7 +36,7 @@ class PcAssignmentController extends Controller
     {
         $realJadwalId = decryptId($jadwalId);
 
-        $assignments = $this->pcAssignmentService->getAssignmentsByJadwalQuery($realJadwalId);
+        $assignments = $this->PcAssignmentService->getAssignmentsByJadwalQuery($realJadwalId);
 
         return DataTables::of($assignments)
             ->addIndexColumn()
@@ -99,7 +99,7 @@ class PcAssignmentController extends Controller
         ]);
 
         try {
-            $this->pcAssignmentService->createAssignment($realJadwalId, $jadwal->lab_id, $request->all());
+            $this->PcAssignmentService->createAssignment($realJadwalId, $jadwal->lab_id, $request->all());
 
             return jsonSuccess('Assignment berhasil dibuat.', route('lab.jadwal.assignments.index', $jadwalId));
         } catch (\Exception $e) {
@@ -114,7 +114,7 @@ class PcAssignmentController extends Controller
     {
         try {
             $realId = decryptId($id);
-            $this->pcAssignmentService->deleteAssignment($realId);
+            $this->PcAssignmentService->deleteAssignment($realId);
 
             return jsonSuccess('Assignment berhasil dihapus.', route('lab.jadwal.assignments.index', $jadwalId));
         } catch (\Exception $e) {

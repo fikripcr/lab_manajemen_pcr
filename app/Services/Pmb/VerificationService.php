@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class VerificationService
 {
-    protected $pendaftaranService;
+    protected $PendaftaranService;
 
-    public function __construct(PendaftaranService $pendaftaranService)
+    public function __construct(PendaftaranService $PendaftaranService)
     {
-        $this->pendaftaranService = $pendaftaranService;
+        $this->PendaftaranService = $PendaftaranService;
     }
 
     public function verifyPayment(Pembayaran $pembayaran, array $data)
@@ -27,9 +27,9 @@ class VerificationService
             ]);
 
             if ($status == 'Verified') {
-                $this->pendaftaranService->updateStatus($pembayaran->pendaftaran_id, 'Menunggu_Verifikasi_Berkas', 'Pembayaran terverifikasi.');
+                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran_id, 'Menunggu_Verifikasi_Berkas', 'Pembayaran terverifikasi.');
             } else {
-                $this->pendaftaranService->updateStatus($pembayaran->pendaftaran_id, 'Draft', 'Pembayaran ditolak: ' . $keterangan);
+                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran_id, 'Draft', 'Pembayaran ditolak: ' . $keterangan);
             }
 
             return $pembayaran;
@@ -51,9 +51,9 @@ class VerificationService
                     $nextStatus = 'Lulus_Administrasi';
                 }
 
-                $this->pendaftaranService->updateStatus($pendaftaran->id, $nextStatus, 'Berkas terverifikasi.');
+                $this->PendaftaranService->updateStatus($pendaftaran->id, $nextStatus, 'Berkas terverifikasi.');
             } else {
-                $this->pendaftaranService->updateStatus($pendaftaran->id, 'Draft', 'Berkas ditolak: ' . $keterangan);
+                $this->PendaftaranService->updateStatus($pendaftaran->id, 'Draft', 'Berkas ditolak: ' . $keterangan);
             }
 
             return $pendaftaran;

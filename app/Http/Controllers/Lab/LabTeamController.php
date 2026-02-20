@@ -10,11 +10,11 @@ use Illuminate\Http\Request;
 
 class LabTeamController extends Controller
 {
-    protected $labTeamService;
+    protected $LabTeamService;
 
-    public function __construct(LabTeamService $labTeamService)
+    public function __construct(LabTeamService $LabTeamService)
     {
-        $this->labTeamService = $labTeamService;
+        $this->LabTeamService = $LabTeamService;
     }
 
     /**
@@ -24,7 +24,7 @@ class LabTeamController extends Controller
     {
         $realLabId = decryptId($labId);
         $lab       = Lab::with(['labTeams.user'])->findOrFail($realLabId);
-        $labTeams  = $this->labTeamService->getLabTeamsQuery($realLabId)->paginate(10);
+        $labTeams  = $this->LabTeamService->getLabTeamsQuery($realLabId)->paginate(10);
 
         return view('pages.lab.labs.teams.index', compact('lab', 'labTeams'));
     }
@@ -49,7 +49,7 @@ class LabTeamController extends Controller
         $search    = $request->get('search');
         $realLabId = decryptId($labId);
 
-        $users = $this->labTeamService->getUsersForAutocomplete($realLabId, $search);
+        $users = $this->LabTeamService->getUsersForAutocomplete($realLabId, $search);
 
         $results = $users->map(function ($user) {
             return [
@@ -72,7 +72,7 @@ class LabTeamController extends Controller
         $validated = $request->validated();
         $validated['user_id'] = decryptId($request->user_id); // Decrypt user_id
 
-        $this->labTeamService->assignUserToLab($realLabId, $validated);
+        $this->LabTeamService->assignUserToLab($realLabId, $validated);
 
         return jsonSuccess('Anggota tim berhasil ditambahkan ke lab.', route('lab.labs.teams.index', $labId));
     }
@@ -86,7 +86,7 @@ class LabTeamController extends Controller
             $realLabId = decryptId($labId);
             $realId    = decryptId($id); // Assuming ID passed in route is encrypted
 
-            $this->labTeamService->removeUserFromLab($realLabId, $realId);
+            $this->LabTeamService->removeUserFromLab($realLabId, $realId);
 
             return jsonSuccess('Anggota tim berhasil dihapus dari lab.', route('lab.labs.teams.index', $labId));
         } catch (\Exception $e) {

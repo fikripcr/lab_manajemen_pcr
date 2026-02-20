@@ -17,11 +17,11 @@ use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
-    protected $userService;
+    protected $UserService;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $UserService)
     {
-        $this->userService = $userService;
+        $this->UserService = $UserService;
     }
 
     /**
@@ -47,7 +47,7 @@ class UserController extends Controller
     public function paginate(Request $request)
     {
         // Reuse Service Query
-        $users = $this->userService->getFilteredQuery($request->all());
+        $users = $this->UserService->getFilteredQuery($request->all());
 
         return DataTables::of($users)
             ->addIndexColumn()
@@ -126,7 +126,7 @@ class UserController extends Controller
         }
 
         try {
-            $this->userService->createUser($validated);
+            $this->UserService->createUser($validated);
             return jsonSuccess('Pengguna berhasil dibuat.', route('lab.users.index'));
         } catch (\Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -140,7 +140,7 @@ class UserController extends Controller
     {
         $realId = decryptId($id);
 
-        $user = $this->userService->getUserById($realId); // Uses Service
+        $user = $this->UserService->getUserById($realId); // Uses Service
         if (! $user) {
             abort(404);
         }
@@ -155,7 +155,7 @@ class UserController extends Controller
     {
         $realId = decryptId($id);
 
-        $user = $this->userService->getUserById($realId);
+        $user = $this->UserService->getUserById($realId);
         if (! $user) {
             abort(404);
         }
@@ -181,7 +181,7 @@ class UserController extends Controller
         // Controller validated 'role' (singular or array). Service checks both.
 
         try {
-            $this->userService->updateUser($realId, $validated);
+            $this->UserService->updateUser($realId, $validated);
 
             return jsonSuccess('Pengguna berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -196,7 +196,7 @@ class UserController extends Controller
     {
         try {
             $realId = decryptId($id);
-            $this->userService->deleteUser($realId);
+            $this->UserService->deleteUser($realId);
 
             return jsonSuccess('Data berhasil dihapus.', route('lab.users.index'));
         } catch (\Exception $e) {
@@ -227,7 +227,7 @@ class UserController extends Controller
         if ($id) {
             // Detail report for specific user
             $realId = decryptId($id);
-            $user   = $this->userService->getUserById($realId);
+            $user   = $this->UserService->getUserById($realId);
 
             $data = [
                 'user'       => $user,
@@ -243,7 +243,7 @@ class UserController extends Controller
             $filters = $request->all(); // Pass all filters to Service
 
             // Use Service to get Query
-            $query = $this->userService->getFilteredQuery($filters);
+            $query = $this->UserService->getFilteredQuery($filters);
             $users = $query->get();
 
             $data = [
@@ -319,10 +319,10 @@ class UserController extends Controller
         // Decrypt the user ID
         try {
             $userId     = decryptId($user);
-            $targetUser = $this->userService->getUserById($userId);
+            $targetUser = $this->UserService->getUserById($userId);
         } catch (\Exception $e) {
             // Fallback if not encrypted (should not happen if consistent)
-            $targetUser = $this->userService->getUserById($user);
+            $targetUser = $this->UserService->getUserById($user);
         }
 
         if (! $targetUser) {

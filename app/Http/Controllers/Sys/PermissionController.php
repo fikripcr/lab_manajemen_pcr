@@ -11,11 +11,11 @@ use Yajra\DataTables\DataTables;
 
 class PermissionController extends Controller
 {
-    protected $permissionService;
+    protected $PermissionService;
 
-    public function __construct(PermissionService $permissionService)
+    public function __construct(PermissionService $PermissionService)
     {
-        $this->permissionService = $permissionService;
+        $this->PermissionService = $PermissionService;
     }
 
     /**
@@ -24,8 +24,8 @@ class PermissionController extends Controller
     public function index()
     {
         // Get unique categories for the filter
-        $categories    = $this->permissionService->getUniqueCategories();
-        $subCategories = $this->permissionService->getUniqueSubCategories();
+        $categories    = $this->PermissionService->getUniqueCategories();
+        $subCategories = $this->PermissionService->getUniqueSubCategories();
 
         return view('pages.sys.permissions.index', compact('categories', 'subCategories'));
     }
@@ -40,7 +40,7 @@ class PermissionController extends Controller
             $filters = $request->all();
 
             // Use the service to get the filtered query
-            $permissions = $this->permissionService->getFilteredQuery($filters);
+            $permissions = $this->PermissionService->getFilteredQuery($filters);
 
             return DataTables::of($permissions)
                 ->addIndexColumn()
@@ -84,7 +84,7 @@ class PermissionController extends Controller
     {
         try {
             $data = $request->validated();
-            $this->permissionService->createPermission($data);
+            $this->PermissionService->createPermission($data);
 
             return jsonSuccess('Izin berhasildibuat . ');
         } catch (Exception $e) {
@@ -106,7 +106,7 @@ class PermissionController extends Controller
     public function edit($id)
     {
         $realId     = decryptId($id);
-        $permission = $this->permissionService->getPermissionById($realId);
+        $permission = $this->PermissionService->getPermissionById($realId);
 
         return view('pages.sys.permissions.edit', compact('permission'));
     }
@@ -119,7 +119,7 @@ class PermissionController extends Controller
         try {
             $realId = decryptId($permissionId);
             $data   = $request->validated();
-            $this->permissionService->updatePermission($realId, $data);
+            $this->PermissionService->updatePermission($realId, $data);
 
             return jsonSuccess();
         } catch (Exception $e) {
@@ -134,7 +134,7 @@ class PermissionController extends Controller
     {
         try {
             $realId = decryptId($permissionId);
-            $this->permissionService->deletePermission($realId);
+            $this->PermissionService->deletePermission($realId);
 
             return jsonSuccess('Izin berhasildihapus . ');
 

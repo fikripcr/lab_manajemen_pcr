@@ -79,10 +79,7 @@ class ThemeTablerController extends Controller
         // Log activity
         logActivity('config', "Theme settings updated for {$mode} mode (JSON)", auth()->user() ?? null);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Theme settings saved successfully!',
-        ]);
+        return jsonSuccess('Theme settings saved successfully!');
     }
 
     /**

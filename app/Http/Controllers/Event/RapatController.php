@@ -94,11 +94,7 @@ class RapatController extends Controller
             $data['waktu_selesai'] = \Carbon\Carbon::parse("$date " . $data['waktu_selesai']);
 
             $this->service->store($data);
-            return response()->json([
-                'success'  => true,
-                'message'  => 'Data berhasil disimpan',
-                'redirect' => route('Kegiatan.rapat.index'),
-            ]);
+            return jsonSuccess('Data berhasil disimpan', route('Kegiatan.rapat.index'));
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -132,11 +128,7 @@ class RapatController extends Controller
             $data['waktu_selesai'] = \Carbon\Carbon::parse("$date " . $data['waktu_selesai']);
 
             $this->service->update($rapat, $data);
-            return response()->json([
-                'success'  => true,
-                'message'  => 'Data berhasil diperbarui',
-                'redirect' => route('Kegiatan.rapat.index'),
-            ]);
+            return jsonSuccess('Data berhasil diperbarui', route('Kegiatan.rapat.index'));
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -217,10 +209,7 @@ class RapatController extends Controller
             DB::commit();
 
             if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Agenda berhasil diperbarui secara otomatis.',
-                ]);
+                return jsonSuccess('Agenda berhasil diperbarui secara otomatis.');
             }
 
             return back()->with('success', 'Agenda berhasil diperbarui.');

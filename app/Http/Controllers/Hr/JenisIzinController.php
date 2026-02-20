@@ -44,9 +44,9 @@ class JenisIzinController extends Controller
 
         try {
             JenisIzin::create($validated);
-            return response()->json(['success' => true, 'message' => 'Jenis izin berhasil dibuat.']);
+            return jsonSuccess('Jenis izin berhasil dibuat.');
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 

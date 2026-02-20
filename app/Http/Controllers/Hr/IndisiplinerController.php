@@ -91,10 +91,10 @@ class IndisiplinerController extends Controller
             }
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Indisipliner berhasil dibuat.']);
+            return jsonSuccess('Indisipliner berhasil dibuat.');
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 
@@ -139,10 +139,10 @@ class IndisiplinerController extends Controller
             }
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Indisipliner berhasil diperbarui.']);
+            return jsonSuccess('Indisipliner berhasil diperbarui.');
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return jsonError($e->getMessage(), 500);
         }
     }
 

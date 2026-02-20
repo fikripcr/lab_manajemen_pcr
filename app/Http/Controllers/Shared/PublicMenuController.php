@@ -11,11 +11,11 @@ use Illuminate\Http\Request;
 
 class PublicMenuController extends Controller
 {
-    protected $menuService;
+    protected $MenuService;
 
-    public function __construct(PublicMenuService $menuService)
+    public function __construct(PublicMenuService $MenuService)
     {
-        $this->menuService = $menuService;
+        $this->MenuService = $MenuService;
     }
 
     public function index()
@@ -46,7 +46,7 @@ class PublicMenuController extends Controller
     public function store(PublicMenuRequest $request)
     {
         try {
-            $this->menuService->createMenu($request->validated());
+            $this->MenuService->createMenu($request->validated());
             return jsonSuccess('Menu berhasil ditambahkan.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -68,7 +68,7 @@ class PublicMenuController extends Controller
     public function update(PublicMenuRequest $request, PublicMenu $public_menu)
     {
         try {
-            $this->menuService->updateMenu($public_menu, $request->validated());
+            $this->MenuService->updateMenu($public_menu, $request->validated());
             return jsonSuccess('Menu berhasil diperbarui.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -78,7 +78,7 @@ class PublicMenuController extends Controller
     public function destroy(PublicMenu $public_menu)
     {
         try {
-            $this->menuService->deleteMenu($public_menu);
+            $this->MenuService->deleteMenu($public_menu);
             return jsonSuccess('Menu berhasil dihapus.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -89,7 +89,7 @@ class PublicMenuController extends Controller
     {
         $hierarchy = $request->input('hierarchy');
         if (is_array($hierarchy)) {
-            $this->menuService->reorderMenus($hierarchy);
+            $this->MenuService->reorderMenus($hierarchy);
             return jsonSuccess('Struktur menu berhasil diperbarui.');
         }
         return jsonError('Data struktur tidak valid.');

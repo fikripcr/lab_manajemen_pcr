@@ -6,19 +6,19 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             // 'auth' => \App\Http\Middleware\Authenticate::class,
-            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role'               => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission'         => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'impersonate' => \Lab404\Impersonate\Middleware\ImpersonateMiddleware::class,
-            'check.expired' => \App\Http\Middleware\CheckAccountExpiration::class,
+            'impersonate'        => \Lab404\Impersonate\Middleware\ImpersonateMiddleware::class,
+            'check.expired'      => \App\Http\Middleware\CheckAccountExpiration::class,
             // 'validatePasswordResetToken' => \App\Http\Middleware\ValidatePasswordResetToken::class,
         ]);
     })
@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Report all exceptions to our custom ErrorLog model
         $exceptions->report(function (\Throwable $e) {
             // Only don't log specific exceptions that are routine and not errors
-            if ($e instanceof \Illuminate\Validation\ValidationException ||
+            if ($e instanceof \Illuminate\Validation\ValidationException  ||
                 $e instanceof \Illuminate\Auth\AuthenticationException) {
                 return; // Don't log these as they are routine validation/auth issues, not errors
             }
@@ -36,12 +36,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 // Extract additional context data from exception if it's a database exception
                 $additionalContext = [];
 
-                if ($e instanceof \PDOException || $e instanceof \Illuminate\Database\QueryException) {
+                if ($e instanceof \PDOException  || $e instanceof \Illuminate\Database\QueryException) {
                     if (isset($e->errorInfo) && is_array($e->errorInfo)) {
                         $additionalContext = [
                             'error_info' => [
-                                'SQLSTATE' => $e->errorInfo[0] ?? null,
-                                'Driver Code' => $e->errorInfo[1] ?? null,
+                                'SQLSTATE'       => $e->errorInfo[0] ?? null,
+                                'Driver Code'    => $e->errorInfo[1] ?? null,
                                 'Driver Message' => $e->errorInfo[2] ?? null,
                             ],
                         ];
@@ -52,30 +52,30 @@ return Application::configure(basePath: dirname(__DIR__))
                     $additionalContext['sql_state'] = $e->getSqlState();
                 }
 
-                $request = app('request');
+                $request   = app('request');
                 $errorData = [
-                    'level' => 'error',
-                    'message' => $e->getMessage(),
+                    'level'           => 'error',
+                    'message'         => $e->getMessage(),
                     'exception_class' => get_class($e),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'trace' => collect($e->getTrace())->map(function ($trace) {
+                    'file'            => $e->getFile(),
+                    'line'            => $e->getLine(),
+                    'trace'           => collect($e->getTrace())->map(function ($trace) {
                         return [
-                            'file' => $trace['file'] ?? 'unknown',
-                            'line' => $trace['line'] ?? 'unknown',
+                            'file'     => $trace['file'] ?? 'unknown',
+                            'line'     => $trace['line'] ?? 'unknown',
                             'function' => $trace['function'] ?? 'unknown',
-                            'class' => $trace['class'] ?? null,
-                            'type' => $trace['type'] ?? null,
+                            'class'    => $trace['class'] ?? null,
+                            'type'     => $trace['type'] ?? null,
                         ];
                     })->toArray(),
-                    'context' => array_merge([
-                        'url' => $request->fullUrl(),
-                        'method' => $request->method(),
+                    'context'         => array_merge([
+                        'url'        => $request->fullUrl(),
+                        'method'     => $request->method(),
                         'ip_address' => $request->ip(),
                         'user_agent' => $request->userAgent(),
-                        'user_id' => auth()->id(),
+                        'user_id'    => auth()->id(),
                         'session_id' => session()->getId(),
-                        'timestamp' => now()->toISOString(),
+                        'timestamp'  => now()->toISOString(),
                     ], $additionalContext),
                 ];
 
