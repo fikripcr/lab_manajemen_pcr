@@ -15,6 +15,13 @@ class LayananStatus extends Model
     protected $table      = 'eoffice_layanan_status';
     protected $primaryKey = 'layananstatus_id';
 
+    protected $appends = ['encrypted_layananstatus_id'];
+
+    public function getEncryptedLayananstatusIdAttribute()
+    {
+        return encryptId($this->layananstatus_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'layananstatus_id';

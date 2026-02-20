@@ -15,6 +15,13 @@ class SuratBebasLab extends Model
     protected $table      = 'lab_surat_bebas_labs';
     protected $primaryKey = 'surat_bebas_lab_id';
 
+    protected $appends = ['encrypted_surat_bebas_lab_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'surat_bebas_lab_id';
+    }
+
     protected $fillable = [
         'student_id',
         'status',
@@ -49,7 +56,7 @@ class SuratBebasLab extends Model
         return $this->morphMany(\App\Models\Lab\LabRiwayatApproval::class, 'approvalable', 'model', 'model_id')->orderBy('created_at', 'desc');
     }
 
-    public function getEncryptedIdAttribute()
+    public function getEncryptedSuratBebasLabIdAttribute()
     {
         return encryptId($this->surat_bebas_lab_id);
     }

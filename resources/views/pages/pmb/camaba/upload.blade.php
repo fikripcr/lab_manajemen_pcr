@@ -49,7 +49,7 @@
                             <x-tabler.button type="button" class="btn-sm btn-primary ajax-modal-btn" icon="ti ti-upload" text="Unggah"
                                 data-modal-target="#modalAction" 
                                 data-modal-title="Upload {{ $s->jenisDokumen->nama_dokumen }}" 
-                                data-url="{{ route('pmb.camaba.upload-form', ['pendaftaran' => $pendaftaran->encrypted_id, 'jenis' => $s->jenisDokumen->encrypted_id]) }}" />
+                                data-url="{{ route('pmb.camaba.upload-form', ['pendaftaran' => $pendaftaran->encrypted_pendaftaran_id, 'jenis' => $s->jenisDokumen->encrypted_jenis_dokumen_id]) }}" />
                             @if($upload)
                             <x-tabler.button href="{{ asset('storage/' . $upload->file_path) }}" target="_blank" class="btn-sm btn-info" icon="ti ti-eye" text="Lihat" />
                             @endif
@@ -62,7 +62,7 @@
             <div class="card-footer text-end">
                 <form action="{{ route('pmb.camaba.finalize-files') }}" method="POST" class="ajax-form" data-redirect="true">
                     @csrf
-                    <input type="hidden" name="pendaftaran_id" value="{{ $pendaftaran->encrypted_id }}">
+                    <input type="hidden" name="pendaftaran_id" value="{{ $pendaftaran->encrypted_pendaftaran_id }}">
                     <x-tabler.button type="submit" class="btn-success btn-lg" text="Selesai Unggah & Ajukan Verifikasi" />
                 </form>
             </div>

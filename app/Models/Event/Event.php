@@ -30,9 +30,20 @@ class Event extends Model
     ];
 
     protected $appends = [
+        'encrypted_event_id',
         'judul_Kegiatan',
         'jenis_Kegiatan',
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'event_id';
+    }
+
+    public function getEncryptedEventIdAttribute()
+    {
+        return encryptId($this->event_id);
+    }
 
     protected $casts = [
         'tanggal_mulai'   => 'date',

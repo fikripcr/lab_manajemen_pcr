@@ -46,6 +46,10 @@ class MainCbtSeeder extends Seeder
             ]);
         }
 
+        // Get a valid user ID for 'dibuat_oleh'
+        $firstUser = \App\Models\User::first();
+        $userId    = $firstUser ? $firstUser->id : 1;
+
         // 3. SOAL GENERATION (500 Questions)
         $this->command->info('Generating 500 high-variety CBT Questions...');
 
@@ -109,11 +113,11 @@ class MainCbtSeeder extends Seeder
             $qText = str_replace('{verb}', ['went', 'gone', 'going', 'go'][rand(0, 3)], $qText);
 
             $soal = Soal::create([
-                'mata_uji_id'       => $mu->id,
+                'mata_uji_id'       => $mu->mata_uji_id,
                 'konten_pertanyaan' => "<p>$qText</p>",
                 'tipe_soal'         => 'Pilihan_Ganda',
                 'tingkat_kesulitan' => ['Mudah', 'Sedang', 'Sulit'][rand(0, 2)],
-                'dibuat_oleh'       => 1,
+                'dibuat_oleh'       => $userId,
                 'is_aktif'          => true,
             ]);
 
@@ -129,7 +133,7 @@ class MainCbtSeeder extends Seeder
                 }
 
                 OpsiJawaban::create([
-                    'soal_id'          => $soal->id,
+                    'soal_id'          => $soal->soal_id,
                     'label'            => $label,
                     'teks_jawaban'     => $ansText,
                     'is_kunci_jawaban' => $isCorrect,
@@ -140,7 +144,7 @@ class MainCbtSeeder extends Seeder
 
         // 4. Create 10 Exam Packages
         $this->command->info('Creating 10 Varied Exam Packages...');
-        $allSoalIds = Soal::pluck('id')->toArray();
+        $allSoalIds = Soal::pluck('soal_id')->toArray();
 
         for ($p = 1; $p <= 10; $p++) {
             $paket = PaketUjian::create([
@@ -149,7 +153,7 @@ class MainCbtSeeder extends Seeder
                 'total_soal'         => 50,
                 'total_durasi_menit' => 60,
                 'is_acak_soal'       => (bool) rand(0, 1),
-                'dibuat_oleh'        => 1,
+                'dibuat_oleh'        => $userId,
             ]);
 
             // Assign 50 random questions to each package
@@ -158,7 +162,7 @@ class MainCbtSeeder extends Seeder
 
             foreach ($selectedIds as $index => $sid) {
                 KomposisiPaket::create([
-                    'paket_id'      => $paket->id,
+                    'paket_id'      => $paket->paket_id,
                     'soal_id'       => $sid,
                     'urutan_tampil' => $index + 1,
                 ]);
@@ -167,7 +171,7 @@ class MainCbtSeeder extends Seeder
             // 5. Create Jadwal Ujian for each package
             $now = now();
             JadwalUjian::create([
-                'paket_id'       => $paket->id,
+                'paket_id'       => $paket->paket_id,
                 'nama_kegiatan'  => "Ujian Saringan Masuk - " . $paket->nama_paket,
                 'waktu_mulai'    => $now->copy()->subHours(rand(1, 24)),
                 'waktu_selesai'  => $now->copy()->addDays(rand(1, 7)),

@@ -15,6 +15,13 @@ class LogPenggunaanPc extends Model
     protected $table      = 'lab_log_penggunaan_pcs';
     protected $primaryKey = 'log_penggunaan_pcs_id';
 
+    protected $appends = ['encrypted_log_penggunaan_pcs_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'log_penggunaan_pcs_id';
+    }
+
     protected $fillable = [
         'pc_assignment_id',
         'user_id',

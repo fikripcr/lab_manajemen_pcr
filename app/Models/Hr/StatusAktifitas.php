@@ -14,13 +14,25 @@ class StatusAktifitas extends Model
     protected $table      = 'hr_status_aktifitas';
     protected $primaryKey = 'statusaktifitas_id';
 
+    protected $appends = ['encrypted_statusaktifitas_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'statusaktifitas_id';
+    }
+
+    public function getEncryptedStatusaktifitasIdAttribute()
+    {
+        return encryptId($this->statusaktifitas_id);
+    }
+
     protected $fillable = [
         'kode_status',
         'nama_status',
         'is_active',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

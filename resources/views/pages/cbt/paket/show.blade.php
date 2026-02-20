@@ -36,7 +36,7 @@
                                 <td>{!! strip_tags(substr($item->soal->konten_pertanyaan, 0, 100)) !!}...</td>
                                 <td>
                                     <x-tabler.button class="btn-sm btn-outline-danger ajax-delete" 
-                                            data-url="{{ route('cbt.paket.remove-soal', [$paket->hashid, $item->hashid]) }}"
+                                            data-url="{{ route('cbt.paket.remove-soal', [$paket->encrypted_paket_ujian_id, $item->encrypted_komposisi_paket_id]) }}"
                                             data-title="Hapus soal dari paket?"
                                             data-text="Soal tidak terhapus dari Bank Soal, hanya dihapus dari paket ini."
                                             icon="ti ti-trash" />
@@ -61,14 +61,14 @@
                         <h3 class="card-title">Bank Soal Tersedia</h3>
                     </div>
                     <div class="card-body">
-                        <form id="form-add-soal" action="{{ route('cbt.paket.add-soal', $paket->hashid) }}" method="POST" class="ajax-form" data-redirect="true">
+                        <form id="form-add-soal" action="{{ route('cbt.paket.add-soal', $paket->encrypted_paket_ujian_id) }}" method="POST" class="ajax-form" data-redirect="true">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Pilih Soal (Pilihan Ganda)</label>
                                 <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
                                     @foreach($soalTersedia as $soal)
                                     <label class="list-group-item">
-                                        <input class="form-check-input me-1" type="checkbox" name="soal_ids[]" value="{{ $soal->hashid }}">
+                                        <input class="form-check-input me-1" type="checkbox" name="soal_ids[]" value="{{ $soal->encrypted_soal_id }}">
                                         <span class="d-block">
                                             <span class="badge bg-blue-lt mb-1">{{ $soal->mataUji->nama_mata_uji }}</span>
                                             <span class="d-block text-muted small">{!! strip_tags(substr($soal->konten_pertanyaan, 0, 150)) !!}</span>

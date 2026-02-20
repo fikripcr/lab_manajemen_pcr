@@ -13,11 +13,18 @@ class LayananKeterlibatan extends Model
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'eoffice_layanan_keterlibatan';
-    protected $primaryKey = 'keterlibatan_id';
+    protected $primaryKey = 'layananketerlibatan_id';
+
+    protected $appends = ['encrypted_layananketerlibatan_id'];
 
     public function getRouteKeyName()
     {
-        return 'keterlibatan_id';
+        return 'layananketerlibatan_id';
+    }
+
+    public function getEncryptedLayananketerlibatanIdAttribute()
+    {
+        return encryptId($this->layananketerlibatan_id);
     }
 
     protected $fillable = [

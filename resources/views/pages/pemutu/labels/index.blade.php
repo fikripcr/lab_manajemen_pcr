@@ -34,10 +34,10 @@
                                 {{ $type->name }}
                             </span>
                             <div class="d-flex gap-1">
-                                 <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-secondary ajax-modal-btn" 
+                                 <x-tabler.button type="button" iconOnly class="btn-ghost-secondary ajax-modal-btn" 
                                     data-url="{{ route('pemutu.label-types.edit', $type->labeltype_id) }}" 
                                     data-modal-title="Edit Tipe" icon="ti ti-pencil" />
-                                 <x-tabler.button type="button" class="btn-sm btn-icon btn-ghost-danger ajax-delete" 
+                                 <x-tabler.button type="button" iconOnly class="btn-ghost-danger ajax-delete" 
                                     data-url="{{ route('pemutu.label-types.destroy', $type->labeltype_id) }}" 
                                     data-title="Hapus Tipe?" 
                                     data-text="Menghapus tipe akan menghapus semua label di dalamnya." icon="ti ti-trash" />

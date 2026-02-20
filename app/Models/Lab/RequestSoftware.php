@@ -15,6 +15,13 @@ class RequestSoftware extends Model
     protected $table      = 'lab_request_software';
     protected $primaryKey = 'request_software_id';
 
+    protected $appends = ['encrypted_request_software_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'request_software_id';
+    }
+
     protected $fillable = [
         'dosen_id',
         'periodsoftreq_id',

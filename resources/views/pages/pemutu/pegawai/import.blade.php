@@ -1,6 +1,6 @@
 <x-tabler.form-modal
-    title="Import Personil"
-    route="{{ route('pemutu.personils.import') }}"
+    title="Impor Pegawai"
+    route="{{ route('pemutu.pegawai.import') }}"
     method="POST"
     submitText="Import"
     submitIcon="ti-upload"

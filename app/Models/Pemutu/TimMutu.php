@@ -13,7 +13,19 @@ class TimMutu extends Model
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'pemutu_tim_mutu';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'tim_mutu_id';
+
+    protected $appends = ['encrypted_tim_mutu_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'tim_mutu_id';
+    }
+
+    public function getEncryptedTimMutuIdAttribute()
+    {
+        return encryptId($this->tim_mutu_id);
+    }
 
     protected $fillable = [
         'periodespmi_id',

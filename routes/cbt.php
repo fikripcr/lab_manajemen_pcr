@@ -27,6 +27,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
         Route::get('/paginate', [MataUjiController::class, 'paginate'])->name('paginate');
         Route::get('/create', [MataUjiController::class, 'create'])->name('create');
         Route::post('/', [MataUjiController::class, 'store'])->name('store');
+        Route::get('/{mata_uji}', [MataUjiController::class, 'show'])->name('show');
         Route::get('/{mata_uji}/edit', [MataUjiController::class, 'edit'])->name('edit');
         Route::put('/{mata_uji}', [MataUjiController::class, 'update'])->name('update');
         Route::delete('/{mata_uji}', [MataUjiController::class, 'destroy'])->name('destroy');
@@ -34,10 +35,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
 
     // Soal
     Route::prefix('soal')->name('soal.')->group(function () {
-        Route::get('/', [App\Http\Controllers\Cbt\SoalController::class, 'index'])->name('index');
-        Route::get('/paginate', [App\Http\Controllers\Cbt\SoalController::class, 'paginate'])->name('paginate');
-        Route::get('/create', [App\Http\Controllers\Cbt\SoalController::class, 'create'])->name('create');
-        Route::post('/', [App\Http\Controllers\Cbt\SoalController::class, 'store'])->name('store');
+        Route::get('/create/{mata_uji}', [App\Http\Controllers\Cbt\SoalController::class, 'create'])->name('create');
+        Route::post('/{mata_uji}', [App\Http\Controllers\Cbt\SoalController::class, 'store'])->name('store');
         Route::get('/{soal}/edit', [App\Http\Controllers\Cbt\SoalController::class, 'edit'])->name('edit');
         Route::put('/{soal}', [App\Http\Controllers\Cbt\SoalController::class, 'update'])->name('update');
         Route::delete('/{soal}', [App\Http\Controllers\Cbt\SoalController::class, 'destroy'])->name('destroy');
@@ -76,6 +75,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
         Route::post('/validate/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'validateToken'])->name('validate-token');
 
         Route::get('/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'start'])->name('start');
+        Route::get('/test/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'testExam'])->name('test-exam');
         Route::get('/{jadwal}/finished', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'finished'])->name('finished');
         Route::post('/save/{riwayat}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'saveAnswer'])->name('save');
         Route::post('/submit/{riwayat}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'submit'])->name('submit');

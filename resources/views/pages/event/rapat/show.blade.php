@@ -46,7 +46,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Informasi Meeting</h3>
                                 <div class="card-actions">
-                                    <x-tabler.button href="{{ route('Kegiatan.rapat.edit', $rapat) }}" class="btn-primary btn-sm" icon="ti ti-edit" text="Edit" />
+                                    <x-tabler.button href="{{ route('Kegiatan.rapat.edit', $rapat->encrypted_rapat_id) }}" class="btn-primary btn-sm" icon="ti ti-edit" text="Edit" />
                                 </div>
                             </div>
                             <div class="card-body p-0">
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <form action="{{ route('Kegiatan.rapat.update-attendance', $rapat) }}#tabs-info" method="POST">
+                                <form action="{{ route('Kegiatan.rapat.update-attendance', $rapat->encrypted_rapat_id) }}#tabs-info" method="POST">
                                     @csrf
                                     <div class="card-table">
                                         <x-tabler.datatable-client
@@ -178,7 +178,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <select name="attendance[{{ $peserta->rapatpeserta_id }}][status]" class="form-select">
+                                                    <select name="attendance[{{ $peserta->encrypted_rapatpeserta_id }}][status]" class="form-select">
                                                         <option value="" {{ is_null($peserta->status) ? 'selected' : '' }}>- Belum Absen -</option>
                                                         <option value="hadir" {{ $peserta->status == 'hadir' ? 'selected' : '' }}>Hadir</option>
                                                         <option value="izin" {{ $peserta->status == 'izin' ? 'selected' : '' }}>Izin</option>
@@ -187,7 +187,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="time" name="attendance[{{ $peserta->rapatpeserta_id }}][waktu_hadir]" 
+                                                    <input type="time" name="attendance[{{ $peserta->encrypted_rapatpeserta_id }}][waktu_hadir]" 
                                                         class="form-control"
                                                         value="{{ $peserta->waktu_hadir ? $peserta->waktu_hadir->format('H:i') : '' }}">
                                                 </td>
@@ -212,7 +212,7 @@
                                     <x-tabler.button 
                                         type="button" 
                                         class="btn-sm ajax-modal-btn" 
-                                        data-url="{{ route('Kegiatan.rapat.entitas.create', $rapat) }}" 
+                                        data-url="{{ route('Kegiatan.rapat.entitas.create', $rapat->encrypted_rapat_id) }}" 
                                         data-modal-title="Tambah Entitas Terkait"
                                         icon="ti ti-plus" 
                                         text="Tambah" 
@@ -246,25 +246,25 @@
                     <x-tabler.button type="button" class="btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-agenda" icon="ti ti-plus" text="Tambah Agenda" />
                 </div>
 
-                <form id="form-agenda" action="{{ route('Kegiatan.rapat.update-agenda', $rapat) }}" method="POST">
+                <form id="form-agenda" action="{{ route('Kegiatan.rapat.update-agenda', $rapat->encrypted_rapat_id) }}" method="POST">
                     @csrf
                     <div class="accordion" id="accordion-agenda">
                         @forelse($rapat->agendas as $index => $agenda)
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="heading-{{ $agenda->rapatagenda_id }}">
-                                    <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $agenda->rapatagenda_id }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}">
+                                <h2 class="accordion-header" id="heading-{{ $agenda->encrypted_rapatagenda_id }}">
+                                    <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $agenda->encrypted_rapatagenda_id }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}">
                                         <i class="ti ti-checklist me-2 text-muted"></i>
                                         {{ $loop->iteration }}. {{ $agenda->judul_agenda }}
-                                        <span class="ms-2 badge bg-blue-lt save-status-{{ $agenda->rapatagenda_id }} d-none">Saving...</span>
+                                        <span class="ms-2 badge bg-blue-lt save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none">Saving...</span>
                                     </button>
                                 </h2>
-                                <div id="collapse-{{ $agenda->rapatagenda_id }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" data-bs-parent="#accordion-agenda">
+                                <div id="collapse-{{ $agenda->encrypted_rapatagenda_id }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" data-bs-parent="#accordion-agenda">
                                     <div class="accordion-body">
                                         <label class="form-label">Catatan Pembahasan / Hasil Agenda</label>
                                         <x-tabler.form-textarea 
-                                            name="agendas[{{ $agenda->rapatagenda_id }}][isi]" 
+                                            name="agendas[{{ $agenda->encrypted_rapatagenda_id }}][isi]" 
                                             class="editor-agenda" 
-                                            data-agenda-id="{{ $agenda->rapatagenda_id }}"
+                                            data-agenda-id="{{ $agenda->encrypted_rapatagenda_id }}"
                                             :value="$agenda->isi" 
                                             rows="5" />
                                     </div>
@@ -290,7 +290,7 @@
                         Unduh laporan hasil rapat lengkap dalam format PDF, mencakup informasi rapat, daftar hadir, dan hasil pembahasan agenda.
                     </p>
                     <div>
-                        <x-tabler.button type="button" class="btn-red btn-lg" href="{{ route('Kegiatan.rapat.generate-pdf', $rapat) }}" icon="ti ti-file-type-pdf" text="Download PDF Hasil Rapat" />
+                        <x-tabler.button type="button" class="btn-red btn-lg" href="{{ route('Kegiatan.rapat.generate-pdf', $rapat->encrypted_rapat_id) }}" icon="ti ti-file-type-pdf" text="Download PDF Hasil Rapat" />
                     </div>
                 </div>
             </div>
@@ -301,7 +301,7 @@
 <x-tabler.form-modal 
     id="modal-add-agenda"
     title="Tambah Agenda Rapat" 
-    :route="route('Kegiatan.rapat.agenda.store', $rapat) . '#tabs-agenda'"
+    :route="route('Kegiatan.rapat.agenda.store', $rapat->encrypted_rapat_id) . '#tabs-agenda'"
 >
     <x-tabler.form-input name="judul_agenda" label="Judul Agenda" placeholder="Contoh: Pembahasan KPI 2024" required="true" />
 </x-tabler.form-modal>
@@ -310,7 +310,7 @@
 <x-tabler.form-modal 
     id="modal-set-officials"
     title="Set Pejabat Rapat" 
-    :route="route('Kegiatan.rapat.update-officials', $rapat) . '#tabs-info'"
+    :route="route('Kegiatan.rapat.update-officials', $rapat->encrypted_rapat_id) . '#tabs-info'"
 >
     <x-tabler.form-select name="ketua_user_id" label="Ketua Rapat" type="select2" required="true" class="select2-modal">
         <option value="" selected disabled>Pilih Ketua Rapat</option>
@@ -330,7 +330,7 @@
 <x-tabler.form-modal 
     id="modal-add-participants"
     title="Tambah Peserta Rapat" 
-    :route="route('Kegiatan.rapat.participants.store', $rapat) . '#tabs-info'"
+    :route="route('Kegiatan.rapat.participants.store', $rapat->encrypted_rapat_id) . '#tabs-info'"
 >
     <div class="mb-3">
         <label class="form-label">Pilih Peserta (Bisa pilih banyak)</label>
@@ -367,7 +367,7 @@
         });
 
         // Accordion persistence
-        const activeAccordionId = localStorage.getItem('rapat_active_accordion_{{ $rapat->rapat_id }}');
+        const activeAccordionId = localStorage.getItem('rapat_active_accordion_{{ $rapat->encrypted_rapat_id }}');
         if (activeAccordionId) {
             const accordionBtn = document.querySelector('button[data-bs-target="' + activeAccordionId + '"]');
             if (accordionBtn) {
@@ -392,7 +392,7 @@
         const accordionItems = document.querySelectorAll('#accordion-agenda .accordion-collapse');
         accordionItems.forEach(item => {
             item.addEventListener('shown.bs.collapse', function () {
-                localStorage.setItem('rapat_active_accordion_{{ $rapat->rapat_id }}', '#' + item.id);
+                localStorage.setItem('rapat_active_accordion_{{ $rapat->encrypted_rapat_id }}', '#' + item.id);
             });
         });
 
@@ -448,7 +448,7 @@
             };
             payload.agendas[agendaId] = { isi: content };
 
-            axios.post('{{ route('Kegiatan.rapat.update-agenda', $rapat) }}', payload)
+            axios.post('{{ route('Kegiatan.rapat.update-agenda', $rapat->encrypted_rapat_id) }}', payload)
                 .then(response => {
                     $status.text('Saved').addClass('bg-green-lt').removeClass('bg-blue-lt');
                     setTimeout(() => $status.addClass('d-none'), 2000);

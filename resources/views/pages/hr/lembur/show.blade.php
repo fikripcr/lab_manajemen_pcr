@@ -97,7 +97,7 @@
         <div class="card bg-muted-lt mt-3">
             <div class="card-body">
                 <h4 class="card-title">Proses Approval</h4>
-                <form class="ajax-form" action="{{ route('hr.lembur.approve', $lembur->hashid) }}" method="POST">
+                <form class="ajax-form" action="{{ route('hr.lembur.approve', $lembur->encrypted_lembur_id) }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <x-tabler.form-input name="pejabat" label="Nama Pejabat" value="{{ Auth::check() ? Auth::user()->name : '' }}" required="true" placeholder="Nama Pejabat" />

@@ -14,14 +14,26 @@ class StatusPegawai extends Model
     protected $table      = 'hr_status_pegawai';
     protected $primaryKey = 'statuspegawai_id';
 
+    protected $appends = ['encrypted_statuspegawai_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'statuspegawai_id';
+    }
+
+    public function getEncryptedStatuspegawaiIdAttribute()
+    {
+        return encryptId($this->statuspegawai_id);
+    }
+
     protected $fillable = [
         'kode_status',
         'nama_status',
         'organisasi',
         'is_active',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

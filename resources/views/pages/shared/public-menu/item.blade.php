@@ -1,4 +1,4 @@
-<li class="list-group-item" data-id="{{ $menu->hashid }}">
+<li class="list-group-item" data-id="{{ $menu->encrypted_menu_id }}">
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
             <span class="drag-handle cursor-move me-2 text-muted">
@@ -27,14 +27,14 @@
             <x-tabler.button 
                 type="button" 
                 class="btn-icon btn-ghost-primary ajax-modal-btn" 
-                data-url="{{ route('shared.public-menu.edit', $menu->hashid) }}"
+                data-url="{{ route('shared.public-menu.edit', $menu->encrypted_menu_id) }}"
                 data-modal-title="Edit Menu"
                 icon="ti ti-pencil" 
             />
             <x-tabler.button 
                 type="button" 
                 class="btn-icon btn-ghost-danger ajax-delete" 
-                data-url="{{ route('shared.public-menu.destroy', $menu->hashid) }}"
+                data-url="{{ route('shared.public-menu.destroy', $menu->encrypted_menu_id) }}"
                 data-title="Hapus Menu?"
                 icon="ti ti-trash" 
             />

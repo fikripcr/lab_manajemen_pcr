@@ -1,12 +1,12 @@
 @php
-    $Kegiatan_id = request('Kegiatan_id');
+    $event_id = request('event_id');
 @endphp
 <x-tabler.form-modal 
     title="{{ $team->exists ? 'Edit Panitia' : 'Tambah Panitia' }}" 
-    action="{{ $team->exists ? route('Kegiatan.teams.update', $team->hashid) : route('Kegiatan.teams.store') }}"
+    action="{{ $team->exists ? route('Kegiatan.teams.update', $team->encrypted_eventteam_id) : route('Kegiatan.teams.store') }}"
     method="{{ $team->exists ? 'PUT' : 'POST' }}"
 >
-    <input type="hidden" name="Kegiatan_id" value="{{ $Kegiatan_id ?: $team->Kegiatan_id }}">
+    <input type="hidden" name="event_id" value="{{ $event_id ?: $team->event_id }}">
 
     <div class="row g-3">
         <div class="col-12">

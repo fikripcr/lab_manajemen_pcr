@@ -10,10 +10,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PengembanganDiri extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
-    
+
     protected $table      = 'hr_pengembangan_diri';
     protected $primaryKey = 'pengembangandiri_id';
     protected $guarded    = ['pengembangandiri_id'];
+
+    protected $appends = ['encrypted_pengembangandiri_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'pengembangandiri_id';
+    }
+
+    public function getEncryptedPengembangandiriIdAttribute()
+    {
+        return encryptId($this->pengembangandiri_id);
+    }
 
     protected $fillable = [
         'pegawai_id',
@@ -28,8 +40,8 @@ class PengembanganDiri extends Model
         'file_sertifikat',
         'keterangan',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

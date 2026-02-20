@@ -61,7 +61,7 @@
                     <div class="col-lg-6 hero-images" data-aos="fade-left" data-aos-delay="400">
                         <div class="image-stack">
                             <div class="main-image">
-                                <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" alt="Campus" class="img-fluid rounded shadow">
+                                <img src="https://placehold.co/800x600?text=Campus" alt="Campus" class="img-fluid rounded shadow">
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
           </div>
 
           <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
-            <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-7.webp') }}" alt="Laboratory" class="img-fluid rounded-4 shadow-lg">
+            <img src="https://placehold.co/800x600?text=Laboratory" alt="Laboratory" class="img-fluid rounded-4 shadow-lg">
           </div>
         </div>
       </div>
@@ -186,7 +186,7 @@
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
               <div class="post-box">
                 <div class="post-img">
-                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($news->judul) }}">
+                  <img src="https://placehold.co/800x600?text=News" class="img-fluid" alt="{{ e($news->judul) }}">
                 </div>
                 <div class="meta">
                   <ul>
@@ -200,7 +200,7 @@
                          class="img-fluid rounded"
                          alt="{{ e($news->judul) }}"
                          style="width: 80px; height: 80px; object-fit: cover;"
-                         onerror="this.onerror=null; this.src='{{ Vite::asset('resources/assets/public/img/person/person-m-10.webp') }}';">
+                         onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=User';">
                   </div>
                   <div class="flex-grow-1">
                     <h3 class="post-title">{{ e($news->judul) }}</h3>
@@ -245,7 +245,7 @@
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
               <div class="post-box">
                 <div class="post-img">
-                  <img src="{{ Vite::asset('resources/assets/public/img/real-estate/property-exterior-3.webp') }}" class="img-fluid" alt="{{ e($request->nama_software) }}">
+                  <img src="https://placehold.co/800x600?text=Software" class="img-fluid" alt="{{ e($request->nama_software) }}">
                 </div>
                 <div class="meta">
                   <ul>

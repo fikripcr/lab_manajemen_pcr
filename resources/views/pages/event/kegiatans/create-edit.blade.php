@@ -14,7 +14,7 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="card">
-                    <form class="ajax-form" action="{{ $Kegiatan->exists ? route('Kegiatan.Kegiatans.update', $Kegiatan->hashid) : route('Kegiatan.Kegiatans.store') }}" method="POST">
+                    <form class="ajax-form" action="{{ $Kegiatan->exists ? route('Kegiatan.Kegiatans.update', $Kegiatan->encrypted_event_id) : route('Kegiatan.Kegiatans.store') }}" method="POST">
                         @csrf
                         @if($Kegiatan->exists) @method('PUT') @endif
                         <div class="card-body">

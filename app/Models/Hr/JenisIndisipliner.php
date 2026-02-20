@@ -14,6 +14,8 @@ class JenisIndisipliner extends Model
     protected $table      = 'hr_jenis_indisipliner';
     protected $primaryKey = 'jenisindisipliner_id';
 
+    protected $appends = ['encrypted_jenisindisipliner_id'];
+
     protected $fillable = [
         'jenis_indisipliner',
         'created_by',
@@ -31,6 +33,11 @@ class JenisIndisipliner extends Model
     public function getRouteKeyName()
     {
         return 'jenisindisipliner_id';
+    }
+
+    public function getEncryptedJenisindisiplinerIdAttribute()
+    {
+        return encryptId($this->jenisindisipliner_id);
     }
 
     /**

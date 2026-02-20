@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Sesi Ujian"
-    route="{{ route('pmb.sesi-ujian.update', $sesiUjian->encrypted_id) }}"
+    route="{{ route('pmb.sesi-ujian.update', $sesiUjian->encrypted_sesiujian_id) }}"
     method="PUT"
     submitText="Simpan Perubahan"
     data-redirect="true"
@@ -9,7 +9,7 @@
         <label class="form-label required">Periode</label>
         <select name="periode_id" class="form-select" required>
             @foreach($periode as $p)
-                <option value="{{ $p->id }}" {{ $sesiUjian->periode_id == $p->id ? 'selected' : '' }}>{{ $p->nama_periode }}</option>
+                <option value="{{ $p->periode_id }}" {{ $sesiUjian->periode_id == $p->periode_id ? 'selected' : '' }}>{{ $p->nama_periode }}</option>
             @endforeach
         </select>
     </div>

@@ -21,8 +21,8 @@ class SaveAnswerRequest extends FormRequest
     public function rules()
     {
         return [
-            'soal_id'      => 'required|exists:cbt_soal,id',
-            'opsi_id'      => 'nullable|exists:cbt_opsi_jawaban,id',
+            'soal_id'      => 'required|exists:cbt_soal,soal_id',
+            'opsi_id'      => 'nullable|exists:cbt_opsi_jawaban,opsi_jawaban_id',
             'jawaban_esai' => 'nullable|string',
             'is_ragu'      => 'nullable|boolean',
         ];

@@ -14,6 +14,18 @@ class RiwayatApproval extends Model
     protected $table      = 'hr_riwayat_approval';
     protected $primaryKey = 'riwayatapproval_id';
 
+    protected $appends = ['encrypted_riwayatapproval_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatapproval_id';
+    }
+
+    public function getEncryptedRiwayatapprovalIdAttribute()
+    {
+        return encryptId($this->riwayatapproval_id);
+    }
+
     protected $fillable = [
         'model',
         'model_id',

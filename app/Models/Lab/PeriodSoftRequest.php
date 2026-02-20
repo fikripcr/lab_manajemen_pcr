@@ -14,6 +14,13 @@ class PeriodSoftRequest extends Model
     protected $table      = 'lab_periode_softrequest';
     protected $primaryKey = 'periodsoftreq_id';
 
+    protected $appends = ['encrypted_periodsoftreq_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'periodsoftreq_id';
+    }
+
     protected $fillable = [
         'semester_id',
         'nama_periode',

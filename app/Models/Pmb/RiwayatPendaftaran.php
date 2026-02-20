@@ -8,9 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiwayatPendaftaran extends Model
 {
-    use HasFactory;
+    use HasFactory, HashidBinding;
 
-    protected $table = 'pmb_riwayat_pendaftaran';
+    protected $table      = 'pmb_riwayat_pendaftaran';
+    protected $primaryKey = 'riwayatpendaftaran_id';
+    protected $appends    = ['encrypted_riwayatpendaftaran_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatpendaftaran_id';
+    }
+
+    public function getEncryptedRiwayatpendaftaranIdAttribute()
+    {
+        return encryptId($this->riwayatpendaftaran_id);
+    }
 
     protected $fillable = [
         'pendaftaran_id',

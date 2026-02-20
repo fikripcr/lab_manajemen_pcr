@@ -1,7 +1,7 @@
 @if(request()->ajax() || request()->has('ajax'))
     <x-tabler.form-modal
         :title="'Edit Inventaris Lab: ' . $labInventaris->kode_inventaris"
-        route="{{ route('lab.labs.inventaris.update', [$labInventaris->encrypted_lab_id, $labInventaris->encrypted_id]) }}"
+        route="{{ route('lab.labs.inventaris.update', [$labInventaris->encrypted_lab_id, $labInventaris->encrypted_inventaris_penempatan_id]) }}"
         method="PUT"
         submitText="Simpan Perubahan"
     >
@@ -44,7 +44,7 @@
                     <div class="card-body">
                         <x-tabler.flash-message />
 
-                        <form action="{{ route('lab.labs.inventaris.update', [$labInventaris->encrypted_lab_id, $labInventaris->encrypted_id]) }}" method="POST" class="ajax-form">
+                        <form action="{{ route('lab.labs.inventaris.update', [$labInventaris->encrypted_lab_id, $labInventaris->encrypted_inventaris_penempatan_id]) }}" method="POST" class="ajax-form">
                             @csrf
                             @method('PUT')
 

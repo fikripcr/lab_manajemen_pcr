@@ -12,7 +12,19 @@ class ProfilMahasiswa extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_profil_mahasiswa';
+    protected $table      = 'pmb_profil_mahasiswa';
+    protected $primaryKey = 'profilmahasiswa_id';
+    protected $appends    = ['encrypted_profilmahasiswa_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'profilmahasiswa_id';
+    }
+
+    public function getEncryptedProfilmahasiswaIdAttribute()
+    {
+        return encryptId($this->profilmahasiswa_id);
+    }
 
     protected $fillable = [
         'user_id',
@@ -26,14 +38,6 @@ class ProfilMahasiswa extends Model
         'nisn',
         'nama_ibu_kandung',
     ];
-
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     public function user()
     {

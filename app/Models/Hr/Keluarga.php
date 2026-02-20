@@ -10,10 +10,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Keluarga extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
-    
+
     protected $table      = 'hr_keluarga';
     protected $primaryKey = 'keluarga_id';
     protected $guarded    = ['keluarga_id'];
+
+    protected $appends = ['encrypted_keluarga_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'keluarga_id';
+    }
+
+    public function getEncryptedKeluargaIdAttribute()
+    {
+        return encryptId($this->keluarga_id);
+    }
 
     protected $fillable = [
         'pegawai_id',
@@ -26,8 +38,8 @@ class Keluarga extends Model
         'pekerjaan',
         'keterangan',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

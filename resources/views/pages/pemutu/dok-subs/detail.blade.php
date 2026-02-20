@@ -72,7 +72,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Tutup</button>
-        <x-tabler.button type="a" :href="route('pemutu.dok-subs.show', $dokSub->doksub_id)" class="btn-primary" text="Detail Lengkap" />
+        <x-tabler.button type="a" :href="route('pemutu.dok-subs.show', $dokSub->encrypted_doksub_id)" class="btn-primary" text="Detail Lengkap" />
     </div>
 @else
     @extends('layouts.tabler.app')
@@ -165,14 +165,14 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h4 class="card-title mb-0">Daftar {{ $tab2Label }}</h4>
                                     <div class="card-actions bg-transparent border-0">
-                                        <x-tabler.button href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $parent->hashid, 'doksub_ids[]' => $dokSub->hashid, 'type' => ($parentJenis === 'standar' ? 'standar' : 'renop')]) }}" 
+                                        <x-tabler.button href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $parent->encrypted_dok_id, 'doksub_ids[]' => $dokSub->encrypted_doksub_id, 'type' => ($parentJenis === 'standar' ? 'standar' : 'renop')]) }}" 
                                            style="success" size="sm" icon="ti ti-plus" text="Tambah Indikator" />
                                     </div>
                                 </div>
                                 <div class="table-responsive">
                                     <x-tabler.datatable
                                         id="table-indicators"
-                                        route="{{ route('pemutu.indikators.data', ['doksub_id' => $dokSub->hashid]) }}"
+                                        route="{{ route('pemutu.indikators.data', ['doksub_id' => $dokSub->encrypted_doksub_id]) }}"
                                         ajax-load="true"
                                         :columns="[
                                             ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
@@ -190,7 +190,7 @@
                                     <h4 class="card-title mb-0">Daftar {{ $childType }}</h4>
                                     <div class="card-actions bg-transparent border-0">
                                         <x-tabler.button href="#" style="primary" size="sm" icon="ti ti-plus" class="ajax-modal-btn" 
-                                           data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $parent->hashid, 'parent_doksub_id' => $dokSub->hashid]) }}" 
+                                           data-url="{{ route('pemutu.dokumens.create', ['parent_id' => $parent->encrypted_dok_id, 'parent_doksub_id' => $dokSub->encrypted_doksub_id]) }}" 
                                            data-modal-title="Tambah {{ $childType }}" text="Tambah {{ $childType }}" />
                                     </div>
                                 </div>
@@ -246,7 +246,7 @@
 
             <script>
                 (function() {
-                    const dokId = "{{ $dokSub->hashid ?? $dokSub->doksub_id }}";
+                    const dokId = "{{ $dokSub->encrypted_doksub_id }}";
                     const storageKey = `pemutu_docsub_detail_tab_${dokId}`;
                     const tabs = document.querySelectorAll('#sub-doc-tabs .nav-link');
                     

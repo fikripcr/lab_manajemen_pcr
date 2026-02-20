@@ -13,6 +13,18 @@ class RapatEntitas extends Model
     protected $table      = 'event_rapat_entitas';
     protected $primaryKey = 'rapatentitas_id';
 
+    protected $appends = ['encrypted_rapatentitas_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'rapatentitas_id';
+    }
+
+    public function getEncryptedRapatentitasIdAttribute()
+    {
+        return encryptId($this->rapatentitas_id);
+    }
+
     protected $fillable = [
         'rapat_id',
         'model',

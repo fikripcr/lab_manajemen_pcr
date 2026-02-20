@@ -37,7 +37,7 @@
     @else
         <div class="row row-cards" id="slideshow-grid">
             @foreach($slideshows as $slide)
-                <div class="col-md-6 col-lg-4" data-id="{{ $slide->hashid }}">
+                <div class="col-md-6 col-lg-4" data-id="{{ $slide->encrypted_slideshow_id }}">
                     <div class="card card-sm">
                         <div class="d-block">
                             @if($slide->hasMedia('slideshow_image'))
@@ -77,7 +77,7 @@
                                     type="button" 
                                     class="btn-icon btn-ghost-primary ajax-modal-btn" 
                                     icon="ti ti-pencil" 
-                                    data-url="{{ route('shared.slideshow.edit', $slide->hashid) }}"
+                                    data-url="{{ route('shared.slideshow.edit', $slide->encrypted_slideshow_id) }}"
                                     data-modal-title="Edit Slideshow"
                                     title="Edit"
                                 />
@@ -85,7 +85,7 @@
                                     type="button" 
                                     class="btn-icon btn-ghost-danger ajax-delete" 
                                     icon="ti ti-trash" 
-                                    data-url="{{ route('shared.slideshow.destroy', $slide->hashid) }}"
+                                    data-url="{{ route('shared.slideshow.destroy', $slide->encrypted_slideshow_id) }}"
                                     data-title="Hapus Slideshow?"
                                     title="Delete"
                                 />

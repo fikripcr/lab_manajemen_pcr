@@ -78,6 +78,20 @@ class StrukturOrganisasi extends Model
         return $this->hasMany(Personil::class, 'org_unit_id', 'orgunit_id');
     }
 
+    public function pegawai()
+    {
+        // For compatibility with the shared Pegawai model which doesn't have a direct org_unit_id column,
+        // we bridge through RiwayatPenugasan.
+        return $this->hasManyThrough(
+            Pegawai::class,
+            \App\Models\Hr\RiwayatPenugasan::class,
+            'org_unit_id',
+            'pegawai_id',
+            'orgunit_id',
+            'pegawai_id'
+        );
+    }
+
     public function successor()
     {
         return $this->belongsTo(StrukturOrganisasi::class, 'successor_id', 'orgunit_id');

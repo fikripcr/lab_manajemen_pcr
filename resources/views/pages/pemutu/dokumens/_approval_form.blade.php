@@ -6,10 +6,10 @@
     submitIcon="ti ti-device-floppy"
 >
     <div class="mb-3">
-        <x-tabler.form-select name="approver_id" label="Approver (Personil)" required="true" class="select2" data-dropdown-parent="#modalAction">
-            <option value="">Pilih Personil...</option>
-            @foreach($personils as $p)
-                <option value="{{ $p->personil_id }}">{{ $p->nama }} ({{ $p->jenis ?? '-' }})</option>
+        <x-tabler.form-select name="approver_id" label="Approver (Pegawai)" required="true" class="select2" data-dropdown-parent="#modalAction">
+            <option value="">Pilih Pegawai...</option>
+            @foreach($pegawais as $p)
+                <option value="{{ $p->encrypted_pegawai_id }}">{{ $p->nama }} ({{ $p->jenis ?? '-' }})</option>
             @endforeach
         </x-tabler.form-select>
     </div>

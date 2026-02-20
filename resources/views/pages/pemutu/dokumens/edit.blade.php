@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Ubah Dokumen"
-    route="{{ route('pemutu.dokumens.update', $dokumen->dok_id) }}"
+    route="{{ route('pemutu.dokumens.update', $dokumen->encrypted_dok_id) }}"
     method="PUT"
     submitText="Simpan Perubahan"
 >
@@ -9,7 +9,7 @@
         <x-tabler.form-select id="parent_id" name="parent_id" label="Induk Dokumen (Parent)" class="select2-offline" data-dropdown-parent="#modalAction">
             <option value="">Tanpa Induk (Root)</option>
             @foreach($dokumens as $d)
-                <option value="{{ $d->dok_id }}" {{ $dokumen->parent_id == $d->dok_id ? 'selected' : '' }}>
+                <option value="{{ $d->encrypted_dok_id }}" {{ $dokumen->parent_id == $d->dok_id ? 'selected' : '' }}>
                     {{ $d->judul }}
                 </option>
             @endforeach

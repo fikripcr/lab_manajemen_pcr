@@ -42,6 +42,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
 
 // Registration Routes (Public)
 Route::prefix('event')->name('Kegiatan.')->group(function () {
-    Route::get('events/{hashid}/registrasi', [App\Http\Controllers\Event\EventTamuController::class, 'registration'])->name('Kegiatans.registration');
-    Route::post('events/{hashid}/registrasi', [App\Http\Controllers\Event\EventTamuController::class, 'storeRegistration'])->name('Kegiatans.registration.store');
+    Route::get('events/{event}/registrasi', [App\Http\Controllers\Event\EventTamuController::class, 'registration'])->name('Kegiatans.registration');
+    Route::post('events/{event}/registrasi', [App\Http\Controllers\Event\EventTamuController::class, 'storeRegistration'])->name('Kegiatans.registration.store');
 });

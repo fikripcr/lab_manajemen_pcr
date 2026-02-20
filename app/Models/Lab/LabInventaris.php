@@ -12,7 +12,19 @@ class LabInventaris extends Model
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_inventaris_penempatan';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'inventaris_penempatan_id';
+
+    protected $appends = ['encrypted_inventaris_penempatan_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'inventaris_penempatan_id';
+    }
+
+    public function getEncryptedInventarisPenempatanIdAttribute()
+    {
+        return encryptId($this->inventaris_penempatan_id);
+    }
 
     protected $fillable = [
         'inventaris_id',
@@ -59,10 +71,6 @@ class LabInventaris extends Model
     /**
      * Accessor to get encrypted ID
      */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     /**
      * Accessor to get encrypted lab_id

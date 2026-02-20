@@ -141,7 +141,7 @@
 
 <script>
     (function() {
-        const dokId = "{{ $dokumen->hashid ?? $dokumen->dok_id }}";
+        const dokId = "{{ $dokumen->encrypted_dok_id }}";
         const storageKey = `pemutu_doc_detail_subtab_${dokId}`;
         const tabs = document.querySelectorAll('#doc-detail-tabs .nav-link');
         

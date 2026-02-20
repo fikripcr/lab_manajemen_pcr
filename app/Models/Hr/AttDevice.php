@@ -13,8 +13,13 @@ class AttDevice extends Model
 
     protected $table      = 'hr_att_device';
     protected $primaryKey = 'att_device_id';
-    
+
     protected $appends = ['encrypted_att_device_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'att_device_id';
+    }
 
     protected $fillable = [
         'name',
@@ -23,8 +28,8 @@ class AttDevice extends Model
         'port',
         'is_active',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

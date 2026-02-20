@@ -14,7 +14,12 @@ class PeriodeKpi extends Model
     protected $table      = 'pemutu_periode_kpi';
     protected $primaryKey = 'periode_kpi_id';
     protected $appends    = ['encrypted_periode_kpi_id'];
-    protected $fillable   = [
+
+    public function getRouteKeyName()
+    {
+        return 'periode_kpi_id';
+    }
+    protected $fillable = [
         'nama',
         'semester',
         'tahun_akademik',
@@ -41,6 +46,6 @@ class PeriodeKpi extends Model
     // Relationships
     public function kpiAssignments()
     {
-        return $this->hasMany(IndikatorPersonil::class, 'periode_kpi_id', 'periode_kpi_id');
+        return $this->hasMany(IndikatorPegawai::class, 'periode_kpi_id', 'periode_kpi_id');
     }
 }

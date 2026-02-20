@@ -25,7 +25,17 @@ class LemburPegawai extends Model
         'override_nominal' => 'decimal:2',
     ];
 
-    protected $appends = ['hashid'];
+    protected $appends = ['encrypted_lemburpegawai_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'lemburpegawai_id';
+    }
+
+    public function getEncryptedLemburpegawaiIdAttribute()
+    {
+        return encryptId($this->lemburpegawai_id);
+    }
 
     /**
      * Relasi ke Lembur

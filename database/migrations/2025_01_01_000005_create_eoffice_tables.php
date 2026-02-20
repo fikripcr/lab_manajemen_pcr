@@ -171,7 +171,7 @@ return new class extends Migration
 
         // 6. Discussion & Engagement
         Schema::create('eoffice_layanan_diskusi', function (Blueprint $table) {
-            $table->id('diskusi_id');
+            $table->id('layanandiskusi_id');
             $table->unsignedBigInteger('layanan_id');
             $table->unsignedBigInteger('user_id');
             $table->text('pesan');
@@ -188,7 +188,7 @@ return new class extends Migration
         });
 
         Schema::create('eoffice_layanan_keterlibatan', function (Blueprint $table) {
-            $table->id('keterlibatan_id');
+            $table->id('layananketerlibatan_id');
             $table->unsignedBigInteger('layanan_id');
             $table->unsignedBigInteger('user_id');
             $table->string('peran')->nullable();

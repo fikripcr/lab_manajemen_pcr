@@ -26,7 +26,7 @@
                 <div class="card-body">
                     <x-tabler.flash-message />
 
-                    <form class="ajax-form" action="{{ route('Kegiatan.rapat.update', $rapat) }}" method="POST">
+                    <form class="ajax-form" action="{{ route('Kegiatan.rapat.update', $rapat->encrypted_rapat_id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         
@@ -142,7 +142,7 @@
                                     <td>{{ $entitas->keterangan ?? '-' }}</td>
                                     <td>
                                         <div class="btn-list">
-                                            <x-tabler.button type="edit" class="btn-sm" href="{{ route('Kegiatan.rapat.edit', $entitas) }}" text="Edit" />
+                                            <x-tabler.button type="edit" class="btn-sm" href="{{ route('Kegiatan.rapat.edit', $entitas->encrypted_rapatentitas_id) }}" text="Edit" />
                                         </div>
                                     </td>
                                 </tr>

@@ -16,6 +16,18 @@ class FilePegawai extends Model implements HasMedia
     protected $table      = 'hr_file_pegawai';
     protected $primaryKey = 'filepegawai_id';
 
+    protected $appends = ['encrypted_filepegawai_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'filepegawai_id';
+    }
+
+    public function getEncryptedFilepegawaiIdAttribute()
+    {
+        return encryptId($this->filepegawai_id);
+    }
+
     protected $fillable = [
         'pegawai_id',
         'jenisfile_id',

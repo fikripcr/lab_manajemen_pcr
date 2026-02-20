@@ -161,7 +161,7 @@
                             </td>
                             <td>
                                 <div class="btn-list flex-nowrap">
-                                    <a href="{{ route('pmb.pendaftaran.show', $pendaftar->hashid) }}" class="btn btn-icon btn-sm">
+                                    <a href="{{ route('pmb.pendaftaran.show', $pendaftar->encrypted_pendaftaran_id) }}" class="btn btn-icon btn-sm">
                                         <i class="ti ti-eye"></i>
                                     </a>
                                 </div>

@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     :title="'Isi Evaluasi Diri'"
-    :route="route('pemutu.evaluasi-diri.update', encryptId($indikator->indikator_id))"
+    :route="route('pemutu.evaluasi-diri.update', $indikator->encrypted_indikator_id)"
     method="POST" {{-- Not PUT because we handle file upload with POST usually, but form-modal might handle method override. Let's use POST and generic update logic --}}
     data-redirect="false" {{-- Don't redirect, just reload table --}}
 >

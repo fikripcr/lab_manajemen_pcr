@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // 1. BANK DATA (Gudang Soal & Mapel)
         Schema::create('cbt_mata_uji', function (Blueprint $table) {
-            $table->id();
+            $table->id('mata_uji_id');
             $table->string('nama_mata_uji');
             $table->enum('tipe', ['PMB', 'Akademik'])->comment('Pemisah konteks penggunaan');
             $table->text('deskripsi')->nullable();
@@ -22,8 +22,8 @@ return new class extends Migration
         });
 
         Schema::create('cbt_soal', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('mata_uji_id')->constrained('cbt_mata_uji');
+            $table->id('soal_id');
+            $table->unsignedBigInteger('mata_uji_id');
             $table->enum('tipe_soal', ['Pilihan_Ganda', 'Esai', 'Benar_Salah']);
             $table->text('konten_pertanyaan')->comment('Bisa HTML/Rich Text');
             $table->string('media_url')->nullable()->comment('Gambar/Audio jika ada');
@@ -32,11 +32,13 @@ return new class extends Migration
             $table->foreignId('dibuat_oleh')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('mata_uji_id')->references('mata_uji_id')->on('cbt_mata_uji')->onDelete('cascade');
         });
 
         Schema::create('cbt_opsi_jawaban', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('soal_id')->constrained('cbt_soal');
+            $table->id('opsi_jawaban_id');
+            $table->unsignedBigInteger('soal_id');
             $table->string('label', 10)->comment('A, B, C, D, E');
             $table->text('teks_jawaban')->nullable();
             $table->string('media_url')->nullable();
@@ -44,11 +46,13 @@ return new class extends Migration
             $table->integer('bobot_nilai')->default(0);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('soal_id')->references('soal_id')->on('cbt_soal')->onDelete('cascade');
         });
 
         // 2. PERANCANGAN PAKET UJIAN
         Schema::create('cbt_paket_ujian', function (Blueprint $table) {
-            $table->id();
+            $table->id('paket_ujian_id');
             $table->string('nama_paket');
             $table->enum('tipe_paket', ['PMB', 'Akademik']);
             $table->integer('total_soal')->default(0);
@@ -62,17 +66,20 @@ return new class extends Migration
         });
 
         Schema::create('cbt_komposisi_paket', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('paket_id')->constrained('cbt_paket_ujian');
-            $table->foreignId('soal_id')->constrained('cbt_soal');
+            $table->id('komposisi_paket_id');
+            $table->unsignedBigInteger('paket_id');
+            $table->unsignedBigInteger('soal_id');
             $table->integer('urutan_tampil')->default(0);
             $table->timestamps();
+
+            $table->foreign('paket_id')->references('paket_ujian_id')->on('cbt_paket_ujian')->onDelete('cascade');
+            $table->foreign('soal_id')->references('soal_id')->on('cbt_soal')->onDelete('cascade');
         });
 
         // 3. JADWAL & PELAKSANAAN
         Schema::create('cbt_jadwal_ujian', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('paket_id')->constrained('cbt_paket_ujian');
+            $table->id('jadwal_ujian_id');
+            $table->unsignedBigInteger('paket_id');
             $table->string('nama_kegiatan');
             $table->datetime('waktu_mulai');
             $table->datetime('waktu_selesai');
@@ -80,19 +87,23 @@ return new class extends Migration
             $table->boolean('is_token_aktif')->default(false);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('paket_id')->references('paket_ujian_id')->on('cbt_paket_ujian')->onDelete('cascade');
         });
 
         Schema::create('cbt_peserta_berhak', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('jadwal_id')->constrained('cbt_jadwal_ujian');
+            $table->id('peserta_berhak_id');
+            $table->unsignedBigInteger('jadwal_id');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
+
+            $table->foreign('jadwal_id')->references('jadwal_ujian_id')->on('cbt_jadwal_ujian')->onDelete('cascade');
         });
 
         // 4. SESI MAHASISWA (Run-time)
         Schema::create('cbt_riwayat_ujian_siswa', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('jadwal_id')->constrained('cbt_jadwal_ujian');
+            $table->id('riwayat_ujian_id');
+            $table->unsignedBigInteger('jadwal_id');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamp('waktu_mulai')->nullable();
             $table->timestamp('waktu_selesai')->nullable();
@@ -103,27 +114,35 @@ return new class extends Migration
             $table->string('browser_info')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('jadwal_id')->references('jadwal_ujian_id')->on('cbt_jadwal_ujian')->onDelete('cascade');
         });
 
         Schema::create('cbt_jawaban_siswa', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('riwayat_id')->constrained('cbt_riwayat_ujian_siswa');
-            $table->foreignId('soal_id')->constrained('cbt_soal');
-            $table->foreignId('opsi_dipilih_id')->nullable()->constrained('cbt_opsi_jawaban');
+            $table->id('jawaban_siswa_id');
+            $table->unsignedBigInteger('riwayat_id');
+            $table->unsignedBigInteger('soal_id');
+            $table->unsignedBigInteger('opsi_dipilih_id')->nullable();
             $table->text('jawaban_esai')->nullable();
             $table->boolean('is_ragu')->default(false);
             $table->decimal('nilai_didapat', 8, 2)->default(0);
             $table->timestamps();
+
+            $table->foreign('riwayat_id')->references('riwayat_ujian_id')->on('cbt_riwayat_ujian_siswa')->onDelete('cascade');
+            $table->foreign('soal_id')->references('soal_id')->on('cbt_soal')->onDelete('cascade');
+            $table->foreign('opsi_dipilih_id')->references('opsi_jawaban_id')->on('cbt_opsi_jawaban')->onDelete('cascade');
         });
 
         // 5. KEAMANAN & LOG
         Schema::create('cbt_log_pelanggaran', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('riwayat_id')->constrained('cbt_riwayat_ujian_siswa');
+            $table->id('log_pelanggaran_id');
+            $table->unsignedBigInteger('riwayat_id');
             $table->enum('jenis_pelanggaran', ['Pindah_Tab', 'Keluar_Fullscreen', 'Multiple_Login']);
             $table->timestamp('waktu_kejadian')->useCurrent();
             $table->string('keterangan')->nullable();
             $table->timestamps();
+
+            $table->foreign('riwayat_id')->references('riwayat_ujian_id')->on('cbt_riwayat_ujian_siswa')->onDelete('cascade');
         });
     }
 

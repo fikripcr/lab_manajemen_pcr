@@ -13,7 +13,19 @@ class PesertaUjian extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_peserta_ujian';
+    protected $table      = 'pmb_peserta_ujian';
+    protected $primaryKey = 'pesertaujian_id';
+    protected $appends    = ['encrypted_pesertaujian_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'pesertaujian_id';
+    }
+
+    public function getEncryptedPesertaujianIdAttribute()
+    {
+        return encryptId($this->pesertaujian_id);
+    }
 
     protected $fillable = [
         'pendaftaran_id',
@@ -23,14 +35,6 @@ class PesertaUjian extends Model
         'nilai_akhir',
         'status_kehadiran',
     ];
-
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     public function pendaftaran()
     {

@@ -15,6 +15,7 @@ class StoreMataUjiRequest extends FormRequest
         return [
             'nama_mata_uji' => 'required|string|max:255',
             'tipe'          => 'required|in:PMB,Akademik',
+            'durasi_menit'  => 'required|integer|min:1',
             'deskripsi'     => 'nullable|string',
         ];
     }

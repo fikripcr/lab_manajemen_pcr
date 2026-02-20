@@ -1,10 +1,10 @@
 <?php
 namespace App\Models\Hr;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TanggalLibur extends Model
 {
@@ -12,13 +12,23 @@ class TanggalLibur extends Model
     protected $table      = 'hr_tanggal_libur';
     protected $primaryKey = 'tanggallibur_id';
 
+    protected $appends = ['encrypted_tanggallibur_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'tanggallibur_id';
+    }
+
+    public function getEncryptedTanggalliburIdAttribute()
+    {
+        return encryptId($this->tanggallibur_id);
+    }
+
     protected $fillable = [
         'tahun',
         'tgl_libur',
-        'keterangan',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'keterangan', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

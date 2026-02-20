@@ -1,7 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Sasaran Kinerja Saya (My KPI)" pretitle="{{ $personil->nama ?? 'Pegawai' }}">
+<x-tabler.page-header title="Sasaran Kinerja Saya (My KPI)" pretitle="{{ $pegawai->nama ?? 'Pegawai' }}">
 </x-tabler.page-header>
 @endsection
 

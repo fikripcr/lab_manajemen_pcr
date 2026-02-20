@@ -1,4 +1,4 @@
-<li data-id="{{ $dok->hashid }}" data-jenis="{{ $dok->jenis }}" id="tree-node-dok-{{ $dok->hashid }}">
+<li data-id="{{ $dok->encrypted_dok_id }}" data-jenis="{{ $dok->jenis }}" id="tree-node-dok-{{ $dok->encrypted_dok_id }}">
     <div class="d-flex align-items-start mb-2" draggable="true">
         @php
             $hasChildDocs = $dok->children->count() > 0;
@@ -43,7 +43,7 @@
 
         @if($hasDokSubs)
             @foreach($dok->dokSubs as $sub)
-                <li data-id="{{ $sub->hashid ?? $sub->doksub_id }}" data-type="doksub" id="tree-node-sub-{{ $sub->hashid ?? $sub->doksub_id }}">
+                <li data-id="{{ $sub->encrypted_doksub_id }}" data-type="doksub" id="tree-node-sub-{{ $sub->encrypted_doksub_id }}">
                     <div class="d-flex align-items-start mb-2">
                         <span class="text-muted me-2 mt-1" style="width: 20px; display: inline-block; text-align: center;">&bull;</span>
                         <a href="#" class="tree-item-link w-100" data-url="{{ route('pemutu.dok-subs.show', $sub) }}" data-jenis="doksub">

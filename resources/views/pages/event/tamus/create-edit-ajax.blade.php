@@ -1,14 +1,14 @@
 <x-tabler.form-modal 
     title="{{ $tamu->exists ? 'Edit Data Tamu' : 'Tambah Data Tamu' }}" 
-    action="{{ $tamu->exists ? route('Kegiatan.tamus.update', $tamu->hashid) : route('Kegiatan.tamus.store') }}"
+    action="{{ $tamu->exists ? route('Kegiatan.tamus.update', $tamu->encrypted_eventtamu_id) : route('Kegiatan.tamus.store') }}"
     method="{{ $tamu->exists ? 'PUT' : 'POST' }}"
 >
     <div class="row g-3">
         <div class="col-12">
-            <x-tabler.form-select name="Kegiatan_id" label="Kegiatan" required="true">
+            <x-tabler.form-select name="event_id" label="Kegiatan" required="true">
                 <option value="">-- Pilih Kegiatan --</option>
                 @foreach($Kegiatans as $Kegiatan)
-                    <option value="{{ $Kegiatan->Kegiatan_id }}" {{ (isset($active_Kegiatan_id) && $active_Kegiatan_id == $Kegiatan->Kegiatan_id) || $tamu->Kegiatan_id == $Kegiatan->Kegiatan_id ? 'selected' : '' }}>
+                    <option value="{{ $Kegiatan->event_id }}" {{ (isset($active_event_id) && $active_event_id == $Kegiatan->event_id) || $tamu->event_id == $Kegiatan->event_id ? 'selected' : '' }}>
                         {{ $Kegiatan->judul_Kegiatan }} ({{ formatTanggalIndo($Kegiatan->tanggal_mulai) }})
                     </option>
                 @endforeach

@@ -1,11 +1,11 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class LogPenggunaanLab extends Model
 {
@@ -13,6 +13,13 @@ class LogPenggunaanLab extends Model
 
     protected $table      = 'lab_log_penggunaan_labs';
     protected $primaryKey = 'log_penggunaan_labs_id';
+
+    protected $appends = ['encrypted_log_penggunaan_labs_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'log_penggunaan_labs_id';
+    }
 
     protected $fillable = [
         'kegiatan_id',
@@ -23,10 +30,8 @@ class LogPenggunaanLab extends Model
         'nomor_pc',
         'kondisi',
         'catatan_umum',
-        'waktu_isi',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'waktu_isi', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

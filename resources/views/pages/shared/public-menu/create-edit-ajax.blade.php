@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     :title="$menu->exists ? 'Edit Menu' : 'Tambah Menu'"
-    :route="$menu->exists ? route('shared.public-menu.update', $menu->hashid) : route('shared.public-menu.store')"
+    :route="$menu->exists ? route('shared.public-menu.update', $menu->encrypted_menu_id) : route('shared.public-menu.store')"
     :method="$menu->exists ? 'PUT' : 'POST'"
 >
     
@@ -9,7 +9,7 @@
         <select class="form-select" name="parent_id">
             <option value="">-- Menu Utama (Root) --</option>
             @foreach($parents as $parent)
-                <option value="{{ $parent->hashid }}" {{ (old('parent_id') ?? ($menu->parent_id ? $menu->parent->hashid : '')) == $parent->hashid ? 'selected' : '' }}>
+                <option value="{{ $parent->encrypted_menu_id }}" {{ (old('parent_id') ?? ($menu->parent_id ? $menu->parent->encrypted_menu_id : '')) == $parent->encrypted_menu_id ? 'selected' : '' }}>
                     {{ $parent->title }}
                 </option>
             @endforeach
@@ -46,7 +46,7 @@
         <select class="form-select" name="page_id">
             <option value="">-- Pilih Halaman --</option>
             @foreach($pages as $page)
-                <option value="{{ $page->hashid }}" {{ $menu->page_id == $page->page_id ? 'selected' : '' }}>
+                <option value="{{ $page->encrypted_page_id }}" {{ $menu->page_id == $page->page_id ? 'selected' : '' }}>
                     {{ $page->title }}
                 </option>
             @endforeach

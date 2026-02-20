@@ -59,14 +59,14 @@ class SlideshowService
     public function reorderSlideshows(array $order): bool
     {
         return DB::transaction(function () use ($order) {
-            foreach ($order as $index => $hashid) {
-                // We use decryptIdIfEncrypted helper, but here we might need manual decrypt if hashid is passed
+            foreach ($order as $index => $encryptedId) {
+                // We use decryptIdIfEncrypted helper, but here we might need manual decrypt if encrypted ID is passed
                 // The Helper expects decryptIdIfEncrypted to handle both.
-                // However, standard is to use hashid.
-                // Controller was doing: $id = decryptIdIfEncrypted($hashid, false);
+                // However, standard is to use encrypted_{entity}_id.
+                // Controller was doing: $id = decryptIdIfEncrypted($encryptedId, false);
                 // Let's replicate that logic safely.
 
-                $id = decryptIdIfEncrypted($hashid, false);
+                $id = decryptIdIfEncrypted($encryptedId, false);
                 if ($id) {
                     Slideshow::where('id', $id)->update(['seq' => $index + 1]);
                 }

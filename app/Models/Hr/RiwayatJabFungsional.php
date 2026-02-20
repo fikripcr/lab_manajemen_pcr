@@ -15,6 +15,18 @@ class RiwayatJabFungsional extends Model
     protected $primaryKey = 'riwayatjabfungsional_id';
     protected $guarded    = ['riwayatjabfungsional_id'];
 
+    protected $appends = ['encrypted_riwayatjabfungsional_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatjabfungsional_id';
+    }
+
+    public function getEncryptedRiwayatjabfungsionalIdAttribute()
+    {
+        return encryptId($this->riwayatjabfungsional_id);
+    }
+
     protected $fillable = [
         'pegawai_id',
         'before_id',

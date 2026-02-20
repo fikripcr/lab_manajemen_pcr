@@ -18,7 +18,7 @@ class ExamExecutionService
                 'waktu_mulai'  => now(),
                 'status'       => 'Sedang_Mengerjakan',
                 'ip_address'   => $requestData['ip'],
-                'browser_info' => $requestData['user_agent'],
+                'browser_info' => substr($requestData['user_agent'], 0, 255),
             ]
         );
     }

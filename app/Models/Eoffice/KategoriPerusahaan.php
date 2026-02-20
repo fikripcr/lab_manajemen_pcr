@@ -14,6 +14,13 @@ class KategoriPerusahaan extends Model
     protected $table      = 'eoffice_kategori_perusahaan';
     protected $primaryKey = 'kategoriperusahaan_id';
 
+    protected $appends = ['encrypted_kategoriperusahaan_id'];
+
+    public function getEncryptedKategoriperusahaanIdAttribute()
+    {
+        return encryptId($this->kategoriperusahaan_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'kategoriperusahaan_id';

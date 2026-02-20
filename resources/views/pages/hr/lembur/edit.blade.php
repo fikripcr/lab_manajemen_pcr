@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Lembur"
-    route="{{ route('hr.lembur.update', $lembur->hashid) }}"
+    route="{{ route('hr.lembur.update', $lembur->encrypted_lembur_id) }}"
     method="PUT"
     submitText="Update"
 >

@@ -6,11 +6,12 @@ use App\Models\Hr\RiwayatPenugasan;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\Label;
 use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
 use App\Models\Pemutu\PeriodeKpi;
-use App\Models\Pemutu\Personil;
+use App\Models\Shared\Pegawai;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -37,8 +38,8 @@ class MainPemutuSeeder extends Seeder
         // 4. Dokumen
         $this->seedDokumen();
 
-        // 5. Personils
-        $this->seedPersonil();
+        // 5. Pegawai
+        $this->seedPegawai();
 
         // 6. Indikator
         $this->seedIndikator();
@@ -53,7 +54,7 @@ class MainPemutuSeeder extends Seeder
             LabelType::truncate();
             Label::truncate();
             // OrgUnit::truncate(); // Shared table, do not truncate
-            // Personil::truncate(); // Shared table (Pegawai), do not truncate
+            // Pegawai::truncate(); // Shared table, do not truncate
             Dokumen::truncate();
             DokSub::truncate();
             Indikator::truncate();
@@ -166,48 +167,42 @@ class MainPemutuSeeder extends Seeder
         DokSub::create(['dok_id' => $stdPendidikan->dok_id, 'judul' => 'Standar Isi Pembelajaran', 'isi' => '<p>Kedalaman dan keluasan materi...</p>', 'seq' => 1]);
     }
 
-    private function seedPersonil()
+    private function seedPegawai()
     {
-        $this->command->info("Seeding Personil...");
+        $this->command->info("Seeding Pegawai...");
         $faker = \Faker\Factory::create('id_ID');
 
-        // MainPemutuSeeder specific personils
+        // MainPemutuSeeder specific pegawais
         $direktur = OrgUnit::where('type', 'Pimpinan')->where('code', 'DIR')->first();
         if (! $direktur) {
             $direktur = OrgUnit::where('type', 'Institusi')->first();
         }
 
         if ($direktur) {
-            $this->createPersonil($direktur, 'Dr. Dadang Syarif', 'dadang@pcr.ac.id', 'Dosen');
+            $this->createPegawai($direktur, 'Dr. Dadang Syarif', 'dadang@pcr.ac.id', 'Dosen');
         }
 
-        // Run PersonilSeeder logic
+        // Run Pegawai seeding logic
         $units = OrgUnit::all();
         foreach ($units as $unit) {
-            if ($unit->type == 'Institusi') {
-                $this->createPersonil($unit, $faker->name, $faker->unique()->safeEmail, 'Pimpinan');
-            }
-
-            if ($unit->type == 'Jurusan') {
-                $this->createPersonil($unit, $faker->name, $faker->unique()->safeEmail, 'Pimpinan');
+            if ($unit->type == 'Institusi' || $unit->type == 'Jurusan') {
+                $this->createPegawai($unit, $faker->name, $faker->unique()->safeEmail, 'Pimpinan');
             }
 
             if ($unit->type == 'Prodi') {
-                $this->createPersonil($unit, $faker->name, $faker->unique()->safeEmail, 'Dosen');
+                $this->createPegawai($unit, $faker->name, $faker->unique()->safeEmail, 'Dosen');
             }
-
         }
 
         // Golden Path User
         $user1Email = 'user1@contoh-lab.ac.id';
         $user1      = User::where('email', $user1Email)->first();
         if ($user1) {
-            // Ensure this user is linked to a Personil/Pegawai
-            $this->createPersonil(OrgUnit::first(), 'Dosen Sertifikasi (User 1)', $user1Email, 'Dosen');
+            $this->createPegawai(OrgUnit::first(), 'Dosen Sertifikasi (User 1)', $user1Email, 'Dosen');
         }
     }
 
-    private function createPersonil($unit, $nama, $email, $jenis)
+    private function createPegawai($unit, $nama, $email, $jenis)
     {
         // 1. Check existing Data Diri
         $existingData = RiwayatDataDiri::where('email', $email)->latest()->first();
@@ -216,8 +211,8 @@ class MainPemutuSeeder extends Seeder
         if ($existingData) {
             $pegawaiId = $existingData->pegawai_id;
         } else {
-                                                                // Create Pegawai
-            $pegawai   = Personil::create(['created_by' => 1]); // Personil alias = Shared\Pegawai
+            // Create Pegawai
+            $pegawai   = Pegawai::create(['created_by' => 1]);
             $pegawaiId = $pegawai->pegawai_id;
 
             // Create Data Diri
@@ -238,7 +233,7 @@ class MainPemutuSeeder extends Seeder
         }
 
         // Ensure Penugasan exists
-        $pegawai = Personil::find($pegawaiId);
+        $pegawai = Pegawai::find($pegawaiId);
         if (! $pegawai->latest_riwayatpenugasan_id) {
             $penugasan = RiwayatPenugasan::create([
                 'pegawai_id'  => $pegawaiId,
@@ -294,7 +289,118 @@ class MainPemutuSeeder extends Seeder
         $stdDok = Dokumen::where('kode', 'STD-DIK-001')->first();
         if ($stdDok) {
             $indStandar = Indikator::create(['type' => 'standar', 'no_indikator' => 'IND-STD-GOLD-01', 'indikator' => 'Minimal 80% Mata Kuliah memiliki RPS', 'target' => '80%', 'jenis_indikator' => 'Utama', 'seq' => 999]);
-            $indStandar->dokSubs()->attach($stdDok->dokSubs->first()->doksub_id, ['is_hasilkan_indikator' => false]);
+            $indStandar->dokSubs()->attach($stdDok->dokSubs->first()->doksub_id ?? 1, ['is_hasilkan_indikator' => false]);
+            // Attach to PCR
+            $pcr = OrgUnit::where('code', 'PCR')->first();
+            if ($pcr) {
+                $indStandar->orgUnits()->attach($pcr->orgunit_id, ['target' => '80%']);
+            }
         }
+
+        $this->seedMoreIndicators();
+    }
+
+    private function seedMoreIndicators()
+    {
+        $this->command->info("Seeding 30 Standard & 30 KPI Indicators...");
+
+        $dokSubs = DokSub::all();
+        $units   = OrgUnit::whereIn('type', ['Jurusan', 'Prodi', 'Laboratorium'])->get();
+        if ($units->isEmpty()) {
+            $units = OrgUnit::limit(5)->get();
+        }
+
+        $pegawais   = Pegawai::limit(10)->get();
+        $periodeKpi = PeriodeKpi::where('is_active', true)->first();
+
+        // 1. Seed 30 Standard Indicators
+        // Attached to random DokSub, assigned to random Units
+        for ($i = 1; $i <= 30; $i++) {
+            $dokSub    = $dokSubs->random();
+            $indikator = Indikator::create([
+                'type'            => 'standar',
+                'no_indikator'    => 'STD-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'indikator'       => "Indikator Standar $i: " . $this->generateRandomIndikatorText('Standar'),
+                'target'          => rand(70, 100) . '%',
+                'jenis_indikator' => 'Utama',
+                'seq'             => $i,
+            ]);
+
+            if ($dokSub) {
+                $indikator->dokSubs()->syncWithoutDetaching([$dokSub->doksub_id => ['is_hasilkan_indikator' => false]]);
+            }
+
+            // Map to 1-3 Random Units
+            $targetUnits = $units->random(min(3, $units->count()));
+            foreach ($targetUnits as $unit) {
+                $indikator->orgUnits()->attach($unit->orgunit_id, [
+                    'target'     => $indikator->target,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        // 2. Seed 30 KPI Indicators (IKU)
+        // Attached to potentially different DokSub (Renstra?), assigned to Units AND Personils
+        for ($i = 1; $i <= 30; $i++) {
+            $dokSub       = $dokSubs->random();
+            $targetNum    = rand(1, 10);
+            $targetString = $targetNum . ' Artikel';
+
+            // Changed type from 'iku' to 'performa' to match ENUM
+            $indikator = Indikator::create([
+                'type'            => 'performa',
+                'no_indikator'    => 'IKU-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'indikator'       => "Indikator Kinerja $i: " . $this->generateRandomIndikatorText('KPI'),
+                'target'          => $targetString,
+                'jenis_indikator' => 'IKU',
+                'seq'             => $i,
+            ]);
+
+            if ($dokSub) {
+                $indikator->dokSubs()->syncWithoutDetaching([$dokSub->doksub_id => ['is_hasilkan_indikator' => false]]);
+            }
+
+            // Map to 1-3 Random Units
+            $targetUnits = $units->random(min(3, $units->count()));
+            foreach ($targetUnits as $unit) {
+                $indikator->orgUnits()->attach($unit->orgunit_id, [
+                    'target'     => $indikator->target,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            // Map to 1-2 Random Personils (Dosen/Tendik)
+            if ($pegawais->isNotEmpty() && $periodeKpi) {
+                $targetPegawais = $pegawais->random(min(2, $pegawais->count()));
+                foreach ($targetPegawais as $pegawai) {
+                    IndikatorPegawai::create([
+                        'pegawai_id'     => $pegawai->pegawai_id,
+                        'indikator_id'   => $indikator->indikator_id,
+                        'periode_kpi_id' => $periodeKpi->periode_kpi_id,
+                        'year'           => $periodeKpi->tahun,
+                        'semester'       => $periodeKpi->semester == 'Ganjil' ? 1 : 2,
+                        'weight'         => rand(1, 5),
+                        'target_value'   => $targetNum, // Use numeric value
+                        'created_by'     => 1,
+                    ]);
+                }
+            }
+        }
+    }
+
+    private function generateRandomIndikatorText($type)
+    {
+        $actions  = ['Meningkatkan', 'Mempertahankan', 'Menurunkan', 'Mencapai', 'Menghasilkan'];
+        $objects  = ['Kualitas Pembelajaran', 'Jumlah Publikasi', 'Rasio Dosen Mahasiswa', 'Kepuasan Pengguna', 'Serapan Anggaran', 'Prestasi Mahasiswa', 'Kerjasama Industri', 'Sitasi Penelitian'];
+        $contexts = ['Tingkat Nasional', 'Tingkat Internasional', 'di Program Studi', 'di Lingkungan Kampus', 'per Semester'];
+
+        $action  = $actions[array_rand($actions)];
+        $object  = $objects[array_rand($objects)];
+        $context = $contexts[array_rand($contexts)];
+
+        return "$action $object $context ($type)";
     }
 }

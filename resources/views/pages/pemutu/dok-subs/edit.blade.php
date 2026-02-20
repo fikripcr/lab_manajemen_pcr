@@ -1,7 +1,7 @@
 @if(request()->ajax() || request()->has('ajax'))
     <x-tabler.form-modal
         title="Edit: {{ $dokSub->judul }}"
-        route="{{ route('pemutu.dok-subs.update', $dokSub->doksub_id) }}"
+        route="{{ route('pemutu.dok-subs.update', $dokSub->encrypted_doksub_id) }}"
         method="PUT"
         submitText="Simpan Perubahan"
         submitIcon="ti-device-floppy"
@@ -51,7 +51,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Edit: {{ $dokSub->judul }}</h3>
                     <div class="card-actions">
-                        <x-tabler.button href="{{ route('pemutu.dokumens.show', $dokSub->dok_id) }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+                        <x-tabler.button href="{{ route('pemutu.dokumens.show', $dokSub->encrypted_dok_id) }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
                     </div>
                 </div>
 

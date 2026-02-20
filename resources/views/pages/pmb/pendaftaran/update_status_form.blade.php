@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Ubah Status Pendaftaran: {{ $pendaftaran->no_pendaftaran }}"
-    route="{{ route('pmb.pendaftaran.update-status', $pendaftaran->encrypted_id) }}"
+    route="{{ route('pmb.pendaftaran.update-status', $pendaftaran->encrypted_pendaftaran_id) }}"
     method="POST"
     submitText="Update Status"
     data-redirect="true"

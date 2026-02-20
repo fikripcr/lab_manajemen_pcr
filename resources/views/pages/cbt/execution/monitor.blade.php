@@ -135,7 +135,7 @@
                                     </td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
-                                            <x-tabler.button class="btn-sm btn-icon" title="Reset Session" onclick="resetRiwayat({{ $riwayat->id }})" icon="ti ti-refresh text-warning" />
+                                            <x-tabler.button class="btn-sm btn-icon" title="Reset Session" onclick="resetRiwayat('{{ $riwayat->encrypted_riwayat_ujian_id }}')" icon="ti ti-refresh text-warning" />
                                         </div>
                                     </td>
                                 </tr>

@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Verifikasi Dokumen: {{ $document->jenisDokumen->nama_dokumen }}"
-    route="{{ route('pmb.pendaftaran.verify-document', $document->encrypted_id) }}"
+    route="{{ route('pmb.pendaftaran.verify-document', $document->encrypted_dokumenupload_id) }}"
     method="POST"
     submitText="Simpan Verifikasi"
     data-redirect="true"

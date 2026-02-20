@@ -14,6 +14,18 @@ class IndisiplinerPegawai extends Model
     protected $table      = 'hr_indisipliner_pegawai';
     protected $primaryKey = 'indispegawai_id';
 
+    protected $appends = ['encrypted_indispegawai_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'indispegawai_id';
+    }
+
+    public function getEncryptedIndispegawaiIdAttribute()
+    {
+        return encryptId($this->indispegawai_id);
+    }
+
     protected $fillable = [
         'indisipliner_id',
         'pegawai_id',
@@ -31,11 +43,6 @@ class IndisiplinerPegawai extends Model
     /**
      * Get the route key for the model.
      */
-    public function getRouteKeyName()
-    {
-        return 'indispegawai_id';
-    }
-
     /**
      * Get the indisipliner record.
      */

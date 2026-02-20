@@ -13,7 +13,14 @@ class JenisLayananIsian extends Model
 
     protected $table      = 'eoffice_jenis_layanan_isian';
     protected $primaryKey = 'jlisian_id';
-    protected $fillable   = [
+
+    protected $appends = ['encrypted_jlisian_id'];
+
+    public function getEncryptedJlisianIdAttribute()
+    {
+        return encryptId($this->jlisian_id);
+    }
+    protected $fillable = [
         'jenislayanan_id',
         'kategoriisian_id',
         'seq',

@@ -15,6 +15,18 @@ class RiwayatStatAktifitas extends Model
     protected $primaryKey = 'riwayatstataktifitas_id';
     protected $guarded    = ['riwayatstataktifitas_id'];
 
+    protected $appends = ['encrypted_riwayatstataktifitas_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatstataktifitas_id';
+    }
+
+    public function getEncryptedRiwayatstataktifitasIdAttribute()
+    {
+        return encryptId($this->riwayatstataktifitas_id);
+    }
+
     protected $fillable = [
         'pegawai_id',
         'before_id',

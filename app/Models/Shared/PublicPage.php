@@ -14,6 +14,12 @@ class PublicPage extends Model implements HasMedia
     use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
 
     protected $primaryKey = 'page_id';
+    protected $appends    = ['encrypted_page_id'];
+
+    public function getEncryptedPageIdAttribute()
+    {
+        return encryptId($this->page_id);
+    }
 
     protected $fillable = [
         'title',

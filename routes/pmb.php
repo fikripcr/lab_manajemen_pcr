@@ -87,6 +87,9 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
         Route::get('/paginate', [App\Http\Controllers\Pmb\SesiUjianController::class, 'paginate'])->name('paginate');
         Route::get('/create', [App\Http\Controllers\Pmb\SesiUjianController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\Pmb\SesiUjianController::class, 'store'])->name('store');
+        Route::get('/{sesi}/edit', [App\Http\Controllers\Pmb\SesiUjianController::class, 'edit'])->name('edit');
+        Route::put('/{sesi}', [App\Http\Controllers\Pmb\SesiUjianController::class, 'update'])->name('update');
+        Route::delete('/{sesi}', [App\Http\Controllers\Pmb\SesiUjianController::class, 'destroy'])->name('destroy');
     });
 
     // Master Data (Periode, Jalur, Prodi, etc.) - To be implemented

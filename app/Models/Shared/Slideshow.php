@@ -15,6 +15,13 @@ class Slideshow extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
 
+    protected $appends = ['encrypted_slideshow_id'];
+
+    public function getEncryptedSlideshowIdAttribute()
+    {
+        return encryptId($this->id);
+    }
+
     protected $fillable = [
         'image_url',
         'title',

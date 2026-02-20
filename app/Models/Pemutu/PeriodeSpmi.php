@@ -15,6 +15,11 @@ class PeriodeSpmi extends Model
     protected $primaryKey = 'periodespmi_id';
     protected $appends    = ['encrypted_periodespmi_id'];
 
+    public function getRouteKeyName()
+    {
+        return 'periodespmi_id';
+    }
+
     public function getEncryptedPeriodespmiIdAttribute()
     {
         return encryptId($this->periodespmi_id);

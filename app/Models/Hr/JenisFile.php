@@ -14,6 +14,18 @@ class JenisFile extends Model
     protected $table      = 'hr_jenis_file';
     protected $primaryKey = 'jenisfile_id';
 
+    protected $appends = ['encrypted_jenisfile_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'jenisfile_id';
+    }
+
+    public function getEncryptedJenisfileIdAttribute()
+    {
+        return encryptId($this->jenisfile_id);
+    }
+
     protected $fillable = [
         'jenisfile',
         'is_active',

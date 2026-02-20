@@ -1,7 +1,7 @@
 @php
     $item = $paket ?? new \stdClass();
     $method = isset($paket) ? 'PUT' : 'POST';
-    $route = isset($paket) ? route('cbt.paket.update', $paket->hashid) : route('cbt.paket.store');
+    $route = isset($paket) ? route('cbt.paket.update', $paket->encrypted_paket_ujian_id) : route('cbt.paket.store');
     $title = isset($paket) ? 'Edit Paket Ujian' : 'Tambah Paket Ujian';
     $submitText = isset($paket) ? 'Update' : 'Simpan';
 @endphp

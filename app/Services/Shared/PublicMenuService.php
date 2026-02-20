@@ -9,7 +9,7 @@ class PublicMenuService
     public function createMenu(array $data): PublicMenu
     {
         return DB::transaction(function () use ($data) {
-            // Handle page_id hashid if coming from request
+            // Handle page_id encrypted ID if coming from request
             if (isset($data['page_id']) && ! is_numeric($data['page_id'])) {
                 $data['page_id'] = decryptIdIfEncrypted($data['page_id'], false);
             }
@@ -57,7 +57,7 @@ class PublicMenuService
 
     /**
      * Reorder menus recursively
-     * Structure: [ {id: hashid, children: [...]}, ... ]
+     * Structure: [ {id: encrypted_menu_id, children: [...]}, ... ]
      */
     public function reorderMenus(array $hierarchy, $parentId = null)
     {

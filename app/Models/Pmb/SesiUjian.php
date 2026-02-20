@@ -13,7 +13,19 @@ class SesiUjian extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_sesi_ujian';
+    protected $table      = 'pmb_sesi_ujian';
+    protected $primaryKey = 'sesiujian_id';
+    protected $appends    = ['encrypted_sesiujian_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'sesiujian_id';
+    }
+
+    public function getEncryptedSesiujianIdAttribute()
+    {
+        return encryptId($this->sesiujian_id);
+    }
 
     protected $fillable = [
         'periode_id',
@@ -24,13 +36,10 @@ class SesiUjian extends Model
         'kuota',
     ];
 
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
+    protected $casts = [
+        'waktu_mulai'   => 'datetime',
+        'waktu_selesai' => 'datetime',
+    ];
 
     public function periode()
     {

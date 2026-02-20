@@ -12,7 +12,7 @@
             <h2 class="card-title text-center mb-4">Buku Tamu Kegiatan</h2>
             <p class="text-muted text-center mb-4">Silakan isi identitas Anda untuk mengikuti kegiatan: <br><strong>{{ $kegiatan->judul_Kegiatan }}</strong></p>
             
-            <form id="form-registration" action="{{ route('Kegiatan.Kegiatans.registration.store', $kegiatan->hashid) }}" method="POST">
+            <form id="form-registration" action="{{ route('Kegiatan.Kegiatans.registration.store', $kegiatan->encrypted_event_id) }}" method="POST">
                 @csrf
                 <div class="mb-3">
                     <x-tabler.form-input name="nama_tamu" label="Nama Lengkap" placeholder="Masukkan nama lengkap" required="true" />

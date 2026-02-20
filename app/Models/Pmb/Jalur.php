@@ -11,21 +11,25 @@ class Jalur extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_jalur';
+    protected $table      = 'pmb_jalur';
+    protected $primaryKey = 'jalur_id';
+    protected $appends    = ['encrypted_jalur_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'jalur_id';
+    }
+
+    public function getEncryptedJalurIdAttribute()
+    {
+        return encryptId($this->jalur_id);
+    }
 
     protected $fillable = [
         'nama_jalur',
         'biaya_pendaftaran',
         'is_aktif',
     ];
-
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     public function syaratDokumen()
     {

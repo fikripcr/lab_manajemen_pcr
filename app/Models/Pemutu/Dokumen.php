@@ -14,7 +14,12 @@ class Dokumen extends Model
     protected $table      = 'pemutu_dokumen';
     protected $primaryKey = 'dok_id';
 
-    protected $appends  = ['encrypted_dok_id'];
+    protected $appends = ['encrypted_dok_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'dok_id';
+    }
     protected $fillable = [
         'parent_doksub_id', // For potential future hierarchy if needed, though migration says nullable
         'parent_id',

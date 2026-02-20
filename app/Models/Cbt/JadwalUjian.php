@@ -12,7 +12,9 @@ class JadwalUjian extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'cbt_jadwal_ujian';
+    protected $table      = 'cbt_jadwal_ujian';
+    protected $primaryKey = 'jadwal_ujian_id';
+    protected $appends    = ['encrypted_jadwal_ujian_id'];
 
     protected $fillable = [
         'paket_id',
@@ -28,6 +30,16 @@ class JadwalUjian extends Model
         'waktu_selesai'  => 'datetime',
         'is_token_aktif' => 'boolean',
     ];
+
+    public function getEncryptedJadwalUjianIdAttribute()
+    {
+        return encryptId($this->jadwal_ujian_id);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'jadwal_ujian_id';
+    }
 
     public function paket()
     {

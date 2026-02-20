@@ -14,6 +14,13 @@ class LayananIsian extends Model
     protected $table      = 'eoffice_layanan_isian';
     protected $primaryKey = 'layananisian_id';
 
+    protected $appends = ['encrypted_layananisian_id'];
+
+    public function getEncryptedLayananisianIdAttribute()
+    {
+        return encryptId($this->layananisian_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'layananisian_id';

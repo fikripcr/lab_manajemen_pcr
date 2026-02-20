@@ -21,7 +21,7 @@
 
 <div class="row row-cards">
     <div class="col-md-5">
-        <form method="POST" action="{{ route('pemutu.standar.assign.store', $indikator->indikator_id) }}" class="card ajax-form">
+        <form method="POST" action="{{ route('pemutu.standar.assign.store', $indikator->encrypted_indikator_id) }}" class="card ajax-form">
             @csrf
             <div class="card-header">
                 <h3 class="card-title">Penugasan Unit Kerja & Target</h3>
@@ -45,18 +45,18 @@
                                         $isChecked = isset($assignments[$unit->orgunit_id]);
                                         $targetVal = $isChecked ? $assignments[$unit->orgunit_id]->pivot->target : '';
                                         $disabled = !$isChecked ? 'disabled' : '';
-
+ 
                                         echo '<tr>';
                                         echo '<td>';
                                         echo '<div style="padding-left: '.$padding.'px" class="ps-2">';
                                         echo '<label class="form-check form-check-inline mb-0">';
-                                        echo '<input class="form-check-input unit-checkbox" type="checkbox" name="assignments['.$unit->orgunit_id.'][selected]" value="1" data-id="'.$unit->orgunit_id.'" '.($isChecked ? 'checked' : '').'>';
+                                        echo '<input class="form-check-input unit-checkbox" type="checkbox" name="assignments['.$unit->encrypted_org_unit_id.'][selected]" value="1" data-id="'.$unit->encrypted_org_unit_id.'" '.($isChecked ? 'checked' : '').'>';
                                         echo '<span class="form-check-label '.$isBold.'">'.$unit->name.'</span>';
                                         echo '</label>';
                                         echo '</div>';
                                         echo '</td>';
                                         echo '<td>';
-                                        echo '<input type="text" class="form-control form-control-sm" name="assignments['.$unit->orgunit_id.'][target]" id="target-'.$unit->orgunit_id.'" value="'.$targetVal.'" placeholder="Target..." '.$disabled.'>';
+                                        echo '<input type="text" class="form-control form-control-sm" name="assignments['.$unit->encrypted_org_unit_id.'][target]" id="target-'.$unit->encrypted_org_unit_id.'" value="'.$targetVal.'" placeholder="Target..." '.$disabled.'>';
                                         echo '</td>';
                                         echo '</tr>';
 

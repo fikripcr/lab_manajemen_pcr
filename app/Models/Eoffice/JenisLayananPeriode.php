@@ -14,6 +14,13 @@ class JenisLayananPeriode extends Model
     protected $table      = 'eoffice_jenis_layanan_periode';
     protected $primaryKey = 'jlperiode_id';
 
+    protected $appends = ['encrypted_jlperiode_id'];
+
+    public function getEncryptedJlperiodeIdAttribute()
+    {
+        return encryptId($this->jlperiode_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'jlperiode_id';

@@ -38,13 +38,13 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 
             // PIC & Isian
             Route::post('/{jenis_layanan}/pic', [JenisLayananController::class, 'storePic'])->name('store-pic');
-            Route::delete('/pic/{id}', [JenisLayananController::class, 'destroyPic'])->name('destroy-pic');
+            Route::delete('/pic/{pic}', [JenisLayananController::class, 'destroyPic'])->name('destroy-pic');
             Route::post('/{jenis_layanan}/isian', [JenisLayananController::class, 'storeIsian'])->name('store-isian');
-            Route::post('/isian/{id}/toggle', [JenisLayananController::class, 'updateIsianField'])->name('update-isian-field');
-            Route::post('/isian/{id}/rule', [JenisLayananController::class, 'updateIsianRule'])->name('update-isian-rule');
-            Route::post('/isian/{id}/info', [JenisLayananController::class, 'updateIsianInfo'])->name('update-isian-info');
-            Route::post('/isian/{id}/seq', [JenisLayananController::class, 'updateIsianSeq'])->name('update-isian-seq');
-            Route::delete('/isian/{id}', [JenisLayananController::class, 'destroyIsian'])->name('destroy-isian');
+            Route::post('/isian/{isian}/toggle', [JenisLayananController::class, 'updateIsianField'])->name('update-isian-field');
+            Route::post('/isian/{isian}/rule', [JenisLayananController::class, 'updateIsianRule'])->name('update-isian-rule');
+            Route::post('/isian/{isian}/info', [JenisLayananController::class, 'updateIsianInfo'])->name('update-isian-info');
+            Route::post('/isian/seq', [JenisLayananController::class, 'updateIsianSeq'])->name('update-isian-seq');
+            Route::delete('/isian/{isian}', [JenisLayananController::class, 'destroyIsian'])->name('destroy-isian');
 
             // 🔹 Disposisi Chain
             Route::prefix('{jenis_layanan}/disposisi')->name('disposisi.')->group(function () {

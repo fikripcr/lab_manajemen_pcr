@@ -13,11 +13,18 @@ class LayananDiskusi extends Model
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'eoffice_layanan_diskusi';
-    protected $primaryKey = 'diskusi_id';
+    protected $primaryKey = 'layanandiskusi_id';
+
+    protected $appends = ['encrypted_layanandiskusi_id'];
 
     public function getRouteKeyName()
     {
-        return 'diskusi_id';
+        return 'layanandiskusi_id';
+    }
+
+    public function getEncryptedLayanandiskusiIdAttribute()
+    {
+        return encryptId($this->layanandiskusi_id);
     }
 
     protected $fillable = [

@@ -1,10 +1,9 @@
 <?php
-
 namespace App\Http\Requests\Pemutu;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PersonilImportRequest extends FormRequest
+class PegawaiImportRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -35,7 +34,7 @@ class PersonilImportRequest extends FormRequest
     {
         return [
             'file.required' => 'File import harus diupload.',
-            'file.mimes' => 'File harus berformat XLSX, XLS, atau CSV.',
+            'file.mimes'    => 'File harus berformat XLSX, XLS, atau CSV.',
         ];
     }
 }

@@ -15,6 +15,18 @@ class RiwayatJabStruktural extends Model
     protected $primaryKey = 'riwayatjabstruktural_id';
     protected $guarded    = ['riwayatjabstruktural_id'];
 
+    protected $appends = ['encrypted_riwayatjabstruktural_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatjabstruktural_id';
+    }
+
+    public function getEncryptedRiwayatjabstrukturalIdAttribute()
+    {
+        return encryptId($this->riwayatjabstruktural_id);
+    }
+
     protected $fillable = [
         'pegawai_id',
         'before_id',

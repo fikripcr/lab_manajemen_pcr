@@ -9,7 +9,7 @@
     <div class="card-table">
         <x-tabler.datatable
             id="table-files"
-            route="{{ route('hr.pegawai.files.data', $pegawai->hashid) }}"
+            route="{{ route('hr.pegawai.files.data', $pegawai->encrypted_pegawai_id) }}"
             :columns="[
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '50', 'orderable' => false, 'searchable' => false],
                 ['data' => 'category', 'name' => 'jenisfile.jenisfile', 'title' => 'Kategori'],
@@ -33,7 +33,7 @@
     submitIcon="ti-upload"
     enctype="multipart/form-data"
 >
-    <input type="hidden" name="pegawai_id" value="{{ $pegawai->hashid }}">
+    <input type="hidden" name="pegawai_id" value="{{ $pegawai->encrypted_pegawai_id }}">
     <div class="mb-3">
         <x-tabler.form-select name="jenisfile_id" label="Kategori File" required="true">
             <option value="">Pilih Kategori...</option>
@@ -61,7 +61,7 @@
             submitBtn.prop('disabled', true).addClass('btn-loading');
 
             $.ajax({
-                url: "{{ route('hr.pegawai.files.store', $pegawai->hashid) }}",
+                url: "{{ route('hr.pegawai.files.store', $pegawai->encrypted_pegawai_id) }}",
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -86,7 +86,7 @@
             });
         });
 
-        window.deleteFile = function(hashid) {
+        window.deleteFile = function(encrypted_id) {
             Swal.fire({
                 title: 'Hapus File?',
                 text: "Dokumen akan dihapus permanen dari riwayat!",
@@ -99,7 +99,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ route('hr.pegawai.files.destroy', [$pegawai->hashid, ':id']) }}".replace(':id', hashid),
+                        url: "{{ route('hr.pegawai.files.destroy', [$pegawai->encrypted_pegawai_id, ':id']) }}".replace(':id', encrypted_id),
                         type: 'DELETE',
                         data: { _token: "{{ csrf_token() }}" },
                         success: function(res) {

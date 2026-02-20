@@ -14,6 +14,18 @@ class DokumenApprovalStatus extends Model
     protected $table      = 'pemutu_dok_approval_status';
     protected $primaryKey = 'dokstatusapproval_id';
 
+    protected $appends = ['encrypted_dokstatusapproval_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'dokstatusapproval_id';
+    }
+
+    public function getEncryptedDokstatusapprovalIdAttribute()
+    {
+        return encryptId($this->dokstatusapproval_id);
+    }
+
     protected $fillable = [
         'dokapproval_id',
         'status_approval',

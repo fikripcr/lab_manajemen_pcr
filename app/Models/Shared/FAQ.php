@@ -11,7 +11,13 @@ class FAQ extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'faqs';
+    protected $table   = 'faqs';
+    protected $appends = ['encrypted_faq_id'];
+
+    public function getEncryptedFaqIdAttribute()
+    {
+        return encryptId($this->id);
+    }
 
     protected $fillable = [
         'question',

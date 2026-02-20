@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class JawabanSiswa extends Model
 {
-    protected $table = 'cbt_jawaban_siswa';
+    protected $table      = 'cbt_jawaban_siswa';
+    protected $primaryKey = 'jawaban_siswa_id';
+    protected $appends    = ['encrypted_jawaban_siswa_id'];
 
     protected $fillable = [
         'riwayat_id',
@@ -20,8 +22,19 @@ class JawabanSiswa extends Model
     ];
 
     protected $casts = [
-        'is_ragu' => 'boolean',
+        'is_ragu'       => 'boolean',
+        'nilai_didapat' => 'decimal:2',
     ];
+
+    public function getEncryptedJawabanSiswaIdAttribute()
+    {
+        return encryptId($this->jawaban_siswa_id);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'jawaban_siswa_id';
+    }
 
     public function riwayat()
     {

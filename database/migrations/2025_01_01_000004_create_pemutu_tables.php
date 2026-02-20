@@ -232,7 +232,7 @@ return new class extends Migration
         });
 
         Schema::create('pemutu_indikator_pegawai', function (Blueprint $table) {
-            $table->id('id');
+            $table->id('indikator_pegawai_id');
             $table->unsignedBigInteger('pegawai_id');
             $table->unsignedBigInteger('indikator_id');
             $table->unsignedBigInteger('periode_kpi_id')->nullable();
@@ -292,7 +292,7 @@ return new class extends Migration
         });
 
         Schema::create('pemutu_tim_mutu', function (Blueprint $table) {
-            $table->id();
+            $table->id('tim_mutu_id');
             $table->unsignedBigInteger('periodespmi_id');
             $table->unsignedBigInteger('org_unit_id');
             $table->unsignedBigInteger('pegawai_id');

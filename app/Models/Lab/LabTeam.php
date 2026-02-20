@@ -13,7 +13,19 @@ class LabTeam extends Model
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_teams';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'lab_team_id';
+
+    protected $appends = ['encrypted_lab_team_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'lab_team_id';
+    }
+
+    public function getEncryptedLabTeamIdAttribute()
+    {
+        return encryptId($this->lab_team_id);
+    }
 
     protected $fillable = [
         'lab_id',
@@ -50,10 +62,6 @@ class LabTeam extends Model
     /**
      * Accessor to get encrypted ID
      */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     /**
      * Accessor to get encrypted lab_id

@@ -6,22 +6,78 @@
         ->where('status_terkini', 'Siap_Ujian')
         ->first();
     
-    if (!$pendaftaran) {
-        abort(403, 'Anda tidak memiliki akses ke ujian');
+    // For testing/admin bypass, we allow viewing even without Pendaftaran
+    $hasPendaftaran = (bool)$pendaftaran;
+    
+    if ($hasPendaftaran) {
+        $pesertaUjian = $pendaftaran->pesertaUjian;
+        $sesiUjian = $pesertaUjian->sesiUjian;
+        $paketUjian = $sesiUjian->paket;
+        
+        // Get questions
+        $questions = App\Models\Cbt\KomposisiPaket::with(['soal.opsiJawaban'])
+            ->where('paket_id', $paketUjian->paket_ujian_id)
+            ->orderBy('urutan_tampil')
+            ->get();
+    } else {
+        // Find active/upcoming sessions for testing
+        $activeSessions = App\Models\Cbt\JadwalUjian::with('paket')
+            ->where('waktu_selesai', '>=', now())
+            ->orderBy('waktu_mulai')
+            ->get();
     }
-    
-    $pesertaUjian = $pendaftaran->pesertaUjian;
-    $sesiUjian = $pesertaUjian->sesiUjian;
-    $paketUjian = $sesiUjian->paket;
-    
-    // Get questions
-    $questions = App\Models\Cbt\KomposisiPaket::with(['soal.opsiJawaban'])
-        ->where('paket_id', $paketUjian->id)
-        ->orderBy('urutan_tampil')
-        ->get();
 @endphp
 
-@if(!$pendaftaran)
+@if(!$hasPendaftaran)
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Sesi Ujian Tersedia (Mode Testing)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="ti ti-info-circle me-2"></i>
+                        Anda belum memiliki pendaftaran ujian yang aktif. Untuk kebutuhan testing, Anda dapat mencoba sesi ujian di bawah ini.
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Nama Kegiatan</th>
+                                    <th>Paket</th>
+                                    <th>Waktu</th>
+                                    <th class="w-1"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($activeSessions as $session)
+                                    <tr>
+                                        <td>{{ $session->nama_kegiatan }}</td>
+                                        <td>{{ $session->paket->nama_paket }}</td>
+                                        <td>
+                                            {{ $session->waktu_mulai->format('d M Y H:i') }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('cbt.execute.test-exam', $session->encrypted_jadwal_ujian_id) }}" class="btn btn-primary btn-sm">
+                                                <i class="ti ti-player-play me-1"></i> Mulai Test
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Tidak ada sesi ujian aktif saat ini.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@else
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -90,16 +146,16 @@
             <div class="card">
                 <div class="card-body p-0">
                     @foreach($questions as $index => $komposisi)
-                        <div class="question-card p-4" data-soal-id="{{ $komposisi->soal_id }}" style="display: {{ $index === 0 ? 'block' : 'none' }};">
+                        <div class="question-card p-4" data-soal-id="{{ $komposisi->soal->encrypted_soal_id }}" style="display: {{ $index === 0 ? 'block' : 'none' }};">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h4 class="m-0">
                                     <span class="badge bg-primary text-white me-2">{{ $index + 1 }}</span>
                                     {!! $komposisi->soal->konten_pertanyaan !!}
                                 </h4>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="ragu-{{ $komposisi->soal_id }}" 
-                                           onchange="CBT.saveAnswer({{ $komposisi->soal_id }}, document.querySelector('input[name=\"soal_{{ $komposisi->soal_id }}\"]:checked')?.value || null, this.checked)">
-                                    <label class="form-check-label" for="ragu-{{ $komposisi->soal_id }}">Ragu</label>
+                                    <input class="form-check-input" type="checkbox" id="ragu-{{ $komposisi->soal->encrypted_soal_id }}" 
+                                           onchange="CBT.saveAnswer('{{ $komposisi->soal->encrypted_soal_id }}', document.querySelector('input[name=\"soal_{{ $komposisi->soal->encrypted_soal_id }}\"]:checked')?.value || null, this.checked)">
+                                    <label class="form-check-label" for="ragu-{{ $komposisi->soal->encrypted_soal_id }}">Ragu</label>
                                 </div>
                             </div>
 
@@ -115,11 +171,11 @@
                                     @foreach($komposisi->soal->opsiJawaban as $opsi)
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" 
-                                                   name="soal_{{ $komposisi->soal_id }}" 
-                                                   id="opsi_{{ $opsi->opsi_id }}" 
-                                                   value="{{ $opsi->opsi_id }}"
-                                                   onchange="CBT.saveAnswer({{ $komposisi->soal_id }}, {{ $opsi->opsi_id }}, document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)">
-                                            <label class="form-check-label d-flex align-items-center" for="opsi_{{ $opsi->opsi_id }}">
+                                                   name="soal_{{ $komposisi->soal->encrypted_soal_id }}" 
+                                                   id="opsi_{{ $opsi->encrypted_opsi_jawaban_id }}" 
+                                                   value="{{ $opsi->encrypted_opsi_jawaban_id }}"
+                                                   onchange="CBT.saveAnswer('{{ $komposisi->soal->encrypted_soal_id }}', '{{ $opsi->encrypted_opsi_jawaban_id }}', document.getElementById('ragu-{{ $komposisi->soal->encrypted_soal_id }}').checked)">
+                                            <label class="form-check-label d-flex align-items-center" for="opsi_{{ $opsi->encrypted_opsi_jawaban_id }}">
                                                 <span class="badge bg-secondary text-white me-2">{{ $opsi->label }}</span>
                                                 {!! $opsi->teks_jawaban !!}
                                                 
@@ -136,10 +192,10 @@
                             @if($komposisi->soal->tipe_soal === 'Esai')
                                 <div class="form-group">
                                     <x-tabler.form-textarea 
-                                        name="soal_{{ $komposisi->soal_id }}" 
+                                        name="soal_{{ $komposisi->soal->encrypted_soal_id }}" 
                                         rows="5" 
                                         placeholder="Ketik jawaban Anda di sini..."
-                                        oninput="CBT.saveAnswer({{ $komposisi->soal_id }}, this.value, document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)" 
+                                        oninput="CBT.saveAnswer('{{ $komposisi->soal->encrypted_soal_id }}', this.value, document.getElementById('ragu-{{ $komposisi->soal->encrypted_soal_id }}').checked)" 
                                     />
                                 </div>
                             @endif
@@ -149,21 +205,21 @@
                                 <div class="space-y">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" 
-                                               name="soal_{{ $komposisi->soal_id }}" 
-                                               id="benar_{{ $komposisi->soal_id }}" 
+                                               name="soal_{{ $komposisi->soal->encrypted_soal_id }}" 
+                                               id="benar_{{ $komposisi->soal->encrypted_soal_id }}" 
                                                value="true"
-                                               onchange="CBT.saveAnswer({{ $komposisi->soal_id }}, 'true', document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)">
-                                        <label class="form-check-label" for="benar_{{ $komposisi->soal_id }}">
+                                               onchange="CBT.saveAnswer('{{ $komposisi->soal->encrypted_soal_id }}', 'true', document.getElementById('ragu-{{ $komposisi->soal->encrypted_soal_id }}').checked)">
+                                        <label class="form-check-label" for="benar_{{ $komposisi->soal->encrypted_soal_id }}">
                                             <span class="badge bg-success text-white me-2">Benar</span>
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" 
-                                               name="soal_{{ $komposisi->soal_id }}" 
-                                               id="salah_{{ $komposisi->soal_id }}" 
+                                               name="soal_{{ $komposisi->soal->encrypted_soal_id }}" 
+                                               id="salah_{{ $komposisi->soal->encrypted_soal_id }}" 
                                                value="false"
-                                               onchange="CBT.saveAnswer({{ $komposisi->soal_id }}, 'false', document.getElementById('ragu-{{ $komposisi->soal_id }}').checked)">
-                                        <label class="form-check-label" for="salah_{{ $komposisi->soal_id }}">
+                                               onchange="CBT.saveAnswer('{{ $komposisi->soal->encrypted_soal_id }}', 'false', document.getElementById('ragu-{{ $komposisi->soal->encrypted_soal_id }}').checked)">
+                                        <label class="form-check-label" for="salah_{{ $komposisi->soal->encrypted_soal_id }}">
                                             <span class="badge bg-danger text-white me-2">Salah</span>
                                         </label>
                                     </div>
@@ -202,7 +258,7 @@
                             <div class="col-auto">
                                 <button type="button" 
                                         class="btn question-nav-btn" 
-                                        data-question-id="{{ $komposisi->soal_id }}"
+                                        data-question-id="{{ $komposisi->soal->encrypted_soal_id }}"
                                         data-index="{{ $index }}"
                                         onclick="CBT.goToQuestion({{ $index }})">
                                     {{ $index + 1 }}

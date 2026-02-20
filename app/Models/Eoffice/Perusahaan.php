@@ -14,6 +14,13 @@ class Perusahaan extends Model
     protected $table      = 'eoffice_perusahaan';
     protected $primaryKey = 'perusahaan_id';
 
+    protected $appends = ['encrypted_perusahaan_id'];
+
+    public function getEncryptedPerusahaanIdAttribute()
+    {
+        return encryptId($this->perusahaan_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'perusahaan_id';

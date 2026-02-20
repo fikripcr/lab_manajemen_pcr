@@ -15,6 +15,13 @@ class LaporanKerusakan extends Model
     protected $table      = 'lab_laporan_kerusakan';
     protected $primaryKey = 'laporan_kerusakan_id';
 
+    protected $appends = ['encrypted_laporan_kerusakan_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'laporan_kerusakan_id';
+    }
+
     protected $fillable = [
         'inventaris_id',
         'teknisi_id',

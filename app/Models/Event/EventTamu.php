@@ -16,6 +16,18 @@ class EventTamu extends Model implements HasMedia
     protected $table      = 'event_tamus';
     protected $primaryKey = 'eventtamu_id';
 
+    protected $appends = ['encrypted_eventtamu_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'eventtamu_id';
+    }
+
+    public function getEncryptedEventtamuIdAttribute()
+    {
+        return encryptId($this->eventtamu_id);
+    }
+
     protected $fillable = [
         'event_id',
         'nama_tamu',

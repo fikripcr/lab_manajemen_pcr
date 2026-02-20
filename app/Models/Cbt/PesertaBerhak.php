@@ -7,12 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class PesertaBerhak extends Model
 {
-    protected $table = 'cbt_peserta_berhak';
+    protected $table      = 'cbt_peserta_berhak';
+    protected $primaryKey = 'peserta_berhak_id';
+    protected $appends    = ['encrypted_peserta_berhak_id'];
 
     protected $fillable = [
         'jadwal_id',
         'user_id',
     ];
+
+    public function getEncryptedPesertaBerhakIdAttribute()
+    {
+        return encryptId($this->peserta_berhak_id);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'peserta_berhak_id';
+    }
 
     public function jadwal()
     {

@@ -16,7 +16,7 @@
             <div class="card-body">
                 <form action="{{ route('pmb.camaba.store') }}" method="POST" class="ajax-form" data-redirect="true">
                     @csrf
-                    <input type="hidden" name="periode_id" value="{{ $periodeAktif->id }}">
+                    <input type="hidden" name="periode_id" value="{{ $periodeAktif->encrypted_periode_id }}">
                     
                     <div class="row">
                         <div class="col-md-6">
@@ -27,7 +27,7 @@
                                 <x-tabler.form-select name="jalur_id" label="Jalur Pendaftaran" required>
                                     <option value="">-- Pilih Jalur --</option>
                                     @foreach($jalur as $j)
-                                        <option value="{{ $j->id }}">{{ $j->nama_jalur }} (Rp {{ number_format($j->biaya_pendaftaran, 0, ',', '.') }})</option>
+                                        <option value="{{ $j->encrypted_jalur_id }}">{{ $j->nama_jalur }} (Rp {{ number_format($j->biaya_pendaftaran, 0, ',', '.') }})</option>
                                     @endforeach
                                 </x-tabler.form-select>
                             </div>
@@ -35,7 +35,7 @@
                             <div class="mb-3">
                                 <x-tabler.form-select name="pilihan_prodi[]" label="Pilihan Program Studi (Maks 2)" multiple size="5" required>
                                     @foreach($prodi as $p)
-                                        <option value="{{ $p->orgunit_id }}">{{ $p->name }}</option>
+                                        <option value="{{ $p->encrypted_org_unit_id }}">{{ $p->name }}</option>
                                     @endforeach
                                 </x-tabler.form-select>
                                 <small class="text-muted">Tekan Ctrl untuk memilih lebih dari satu (Jika jalur mengijinkan).</small>

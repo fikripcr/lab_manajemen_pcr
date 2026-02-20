@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Jalur"
-    route="{{ route('pmb.jalur.update', $jalur->encrypted_id) }}"
+    route="{{ route('pmb.jalur.update', $jalur->encrypted_jalur_id) }}"
     method="PUT"
     data-table="#table-jalur"
     submitText="Simpan Perubahan"

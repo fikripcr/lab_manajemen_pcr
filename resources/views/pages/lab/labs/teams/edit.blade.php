@@ -1,7 +1,7 @@
 @if(request()->ajax() || request()->has('ajax'))
     <x-tabler.form-modal
         :title="'Edit Anggota Tim Lab: ' . $teamMember->user->name"
-        route="{{ route('lab.labs.teams.update', [$teamMember->encrypted_lab_id, $teamMember->encrypted_id]) }}"
+        route="{{ route('lab.labs.teams.update', [$teamMember->encrypted_lab_id, $teamMember->encrypted_lab_team_id]) }}"
         method="PUT"
     >
         <x-tabler.form-input name="user_id_display" label="User" value="{{ $teamMember->user->name }} ({{ $teamMember->user->email }})" disabled />
@@ -42,7 +42,7 @@
                     <div class="card-body">
                         <x-tabler.flash-message />
 
-                        <form action="{{ route('lab.labs.teams.update', [$teamMember->encrypted_lab_id, $teamMember->encrypted_id]) }}" method="POST" class="ajax-form">
+                        <form action="{{ route('lab.labs.teams.update', [$teamMember->encrypted_lab_id, $teamMember->encrypted_lab_team_id]) }}" method="POST" class="ajax-form">
                             @csrf
                             @method('PUT')
 

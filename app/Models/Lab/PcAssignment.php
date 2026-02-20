@@ -13,7 +13,14 @@ class PcAssignment extends Model
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'lab_pc_assignments';
-    protected $primaryKey = 'pc_assignments_id';
+    protected $primaryKey = 'pc_assignment_id';
+
+    protected $appends = ['encrypted_pc_assignment_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'pc_assignment_id';
+    }
 
     protected $fillable = [
         'user_id',
@@ -68,9 +75,9 @@ class PcAssignment extends Model
     /**
      * Accessor to get encrypted pc_assignments_id
      */
-    public function getEncryptedPcAssignmentsIdAttribute()
+    public function getEncryptedPcAssignmentIdAttribute()
     {
-        return encryptId($this->pc_assignments_id);
+        return encryptId($this->pc_assignment_id);
     }
 
     /**

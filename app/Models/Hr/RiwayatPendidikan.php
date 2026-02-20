@@ -15,6 +15,18 @@ class RiwayatPendidikan extends Model
     protected $primaryKey = 'riwayatpendidikan_id';
     protected $guarded    = ['riwayatpendidikan_id'];
 
+    protected $appends = ['encrypted_riwayatpendidikan_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatpendidikan_id';
+    }
+
+    public function getEncryptedRiwayatpendidikanIdAttribute()
+    {
+        return encryptId($this->riwayatpendidikan_id);
+    }
+
     protected $fillable = [
         'pegawai_id',
         'before_id',

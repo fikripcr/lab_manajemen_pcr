@@ -14,6 +14,18 @@ class Perizinan extends Model
     protected $table      = 'hr_perizinan';
     protected $primaryKey = 'perizinan_id';
 
+    protected $appends = ['encrypted_perizinan_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'perizinan_id';
+    }
+
+    public function getEncryptedPerizinanIdAttribute()
+    {
+        return encryptId($this->perizinan_id);
+    }
+
     protected $fillable = [
         'jenisizin_id',
         'pengusul',

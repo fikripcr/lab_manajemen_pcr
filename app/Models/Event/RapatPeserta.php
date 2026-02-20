@@ -14,6 +14,18 @@ class RapatPeserta extends Model
     protected $table      = 'event_rapat_peserta';
     protected $primaryKey = 'rapatpeserta_id';
 
+    protected $appends = ['encrypted_rapatpeserta_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'rapatpeserta_id';
+    }
+
+    public function getEncryptedRapatpesertaIdAttribute()
+    {
+        return encryptId($this->rapatpeserta_id);
+    }
+
     protected $fillable = [
         'rapat_id',
         'user_id',

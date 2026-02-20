@@ -49,9 +49,9 @@
         <div class="card card-sm border-0 shadow-sm bg-purple-lt">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader text-purple">Total Personil</div>
+                    <div class="subheader text-purple">Total Pegawai</div>
                 </div>
-                <div class="h1 mb-0 fw-bold text-purple">{{ $totalPersonil }}</div>
+                <div class="h1 mb-0 fw-bold text-purple">{{ $totalPegawai }}</div>
                 <div class="text-purple opacity-50 small mt-2">Tim Penjaminan Mutu</div>
             </div>
         </div>
@@ -197,7 +197,7 @@
             <x-tabler.datatable-client
                 id="table-recent-kpi"
                 :columns="[
-                    ['name' => 'Personil'],
+                    ['name' => 'Pegawai'],
                     ['name' => 'Indikator'],
                     ['name' => 'Periode'],
                     ['name' => 'Status']
@@ -205,7 +205,7 @@
             >
                 @foreach($recentKpi as $kpi)
                 <tr>
-                    <td>{{ $kpi->personil->nama ?? '-' }}</td>
+                    <td>{{ $kpi->pegawai->nama ?? '-' }}</td>
                     <td class="text-truncate" style="max-width: 300px;">{{ $kpi->indikator->indikator ?? '-' }}</td>
                     <td>{{ $kpi->semester }} {{ $kpi->year }}</td>
                     <td>

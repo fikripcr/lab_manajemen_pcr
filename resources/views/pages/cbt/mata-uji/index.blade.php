@@ -20,6 +20,7 @@
                         ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false],
                         ['data' => 'nama_mata_uji', 'name' => 'nama_mata_uji', 'title' => 'Nama Mata Uji'],
                         ['data' => 'tipe', 'name' => 'tipe', 'title' => 'Tipe'],
+                        ['data' => 'durasi_menit', 'name' => 'durasi_menit', 'title' => 'Durasi (Menit)'],
                         ['data' => 'deskripsi', 'name' => 'deskripsi', 'title' => 'Deskripsi'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
                     ]"

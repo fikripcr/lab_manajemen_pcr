@@ -12,7 +12,7 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-10">
-        <form action="{{ route('pemutu.kpi.update', $indikator->indikator_id) }}" method="POST" class="card ajax-form">
+        <form action="{{ route('pemutu.kpi.update', $indikator->encrypted_indikator_id) }}" method="POST" class="card ajax-form">
             @csrf
             <input type="hidden" name="type" value="performa">
             @method('PUT')
@@ -29,9 +29,9 @@
                             label="Indikator Standar (Induk)" 
                             type="select2" 
                             :options="$parents->mapWithKeys(function($p) {
-                                return [$p->indikator_id => '[' . $p->no_indikator . '] ' . Str::limit($p->indikator, 150)];
+                                return [$p->encrypted_indikator_id => '[' . $p->no_indikator . '] ' . Str::limit($p->indikator, 150)];
                             })->toArray()"
-                            :selected="old('parent_id', $indikator->parent_id)" 
+                            :selected="old('parent_id', $indikator->encrypted_parent_id)" 
                             placeholder="Cari indikator standar..." 
                             required="true" 
                         />

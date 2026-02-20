@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     :title="$faq->exists ? 'Edit FAQ' : 'Tambah FAQ'"
-    :route="$faq->exists ? route('shared.faq.update', $faq->hashid) : route('shared.faq.store')"
+    :route="$faq->exists ? route('shared.faq.update', $faq->encrypted_faq_id) : route('shared.faq.store')"
     :method="$faq->exists ? 'PUT' : 'POST'"
 >
     <x-tabler.flash-message />

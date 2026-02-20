@@ -13,7 +13,19 @@ class Pembayaran extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_pembayaran';
+    protected $table      = 'pmb_pembayaran';
+    protected $primaryKey = 'pembayaran_id';
+    protected $appends    = ['encrypted_pembayaran_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'pembayaran_id';
+    }
+
+    public function getEncryptedPembayaranIdAttribute()
+    {
+        return encryptId($this->pembayaran_id);
+    }
 
     protected $fillable = [
         'pendaftaran_id',
@@ -24,14 +36,6 @@ class Pembayaran extends Model
         'verifikator_id',
         'waktu_bayar',
     ];
-
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     public function pendaftaran()
     {

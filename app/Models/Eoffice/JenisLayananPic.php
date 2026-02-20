@@ -13,7 +13,14 @@ class JenisLayananPic extends Model
 
     protected $table      = 'eoffice_jenis_layanan_pic';
     protected $primaryKey = 'jlpic_id';
-    protected $fillable   = [
+
+    protected $appends = ['encrypted_jlpic_id'];
+
+    public function getEncryptedJlpicIdAttribute()
+    {
+        return encryptId($this->jlpic_id);
+    }
+    protected $fillable = [
         'jenislayanan_id',
         'user_id',
         'expired',

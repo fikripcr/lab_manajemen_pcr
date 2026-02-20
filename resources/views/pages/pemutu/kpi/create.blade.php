@@ -27,7 +27,7 @@
                             label="Indikator Standar (Induk)" 
                             type="select2" 
                             :options="$parents->mapWithKeys(function($p) {
-                                return [$p->indikator_id => '[' . $p->no_indikator . '] ' . Str::limit($p->indikator, 150)];
+                                return [$p->encrypted_indikator_id => '[' . $p->no_indikator . '] ' . Str::limit($p->indikator, 150)];
                             })->toArray()"
                             :selected="old('parent_id')" 
                             placeholder="Cari indikator standar..." 

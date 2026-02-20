@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Data Indisipliner"
-    route="{{ route('hr.indisipliner.update', $indisipliner->hashid) }}"
+    route="{{ route('hr.indisipliner.update', $indisipliner->encrypted_indisipliner_id) }}"
     method="PUT"
     submitText="Simpan Perubahan"
 >

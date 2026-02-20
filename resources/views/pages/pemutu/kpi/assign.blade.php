@@ -1,8 +1,8 @@
 @extends('layouts.tabler.app')
-@section('title', 'Penugasan Personel')
+@section('title', 'Penugasan Pegawai')
 
 @section('header')
-<x-tabler.page-header title="Penugasan Personel" pretitle="KPI">
+<x-tabler.page-header title="Penugasan Pegawai" pretitle="KPI">
     <x-slot:actions>
         <x-tabler.button type="a" href="{{ route('pemutu.kpi.index') }}" icon="ti ti-arrow-left" text="Kembali" class="btn-secondary" />
     </x-slot:actions>
@@ -42,9 +42,9 @@
                     <select id="unit-filter" class="form-select">
                         <option value="">Semua Unit</option>
                         @foreach($orgUnits as $unit)
-                            <option value="{{ $unit->orgunit_id }}">{{ $unit->name }}</option>
+                            <option value="{{ $unit->encrypted_org_unit_id }}">{{ $unit->name }}</option>
                             @foreach($unit->children as $child)
-                                <option value="{{ $child->orgunit_id }}">-- {{ $child->name }}</option>
+                                <option value="{{ $child->encrypted_org_unit_id }}">-- {{ $child->name }}</option>
                             @endforeach
                         @endforeach
                     </select>
@@ -64,18 +64,18 @@
     </div>
 
     <div class="col-lg-9">
-        <form action="{{ route('pemutu.kpi.assign.store', $indikator->indikator_id) }}" method="POST" class="ajax-form">
+        <form action="{{ route('pemutu.kpi.assign.store', $indikator) }}" method="POST" class="ajax-form">
             @csrf
             <div class="card">
                 <div class="card-header justify-content-between">
-                    <h3 class="card-title">Daftar Personel <span id="personnel-count" class="badge bg-blue-lt ms-2">{{ $personils->count() }}</span></h3>
+                    <h3 class="card-title">Daftar Pegawai <span id="pegawai-count" class="badge bg-blue-lt ms-2">{{ $pegawais->count() }}</span></h3>
                     <div class="form-check mb-0">
                         <input class="form-check-input" type="checkbox" id="check-all-filtered">
                         <label class="form-check-label">Pilih Semua yang Terfilter</label>
                     </div>
                 </div>
                 <div class="table-responsive border-bottom" style="max-height: 600px; overflow-y: auto;">
-                    <table class="table table-vcenter table-mobile-md card-table table-striped" id="personnel-table">
+                    <table class="table table-vcenter table-mobile-md card-table table-striped" id="pegawai-table">
                         <thead>
                             <tr>
                                 <th width="5%">
@@ -89,22 +89,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($personils as $index => $person)
+                            @foreach($pegawais as $index => $person)
                             @php
-                                $isAssigned = in_array($person->personil_id, $assignedPersonilIds);
-                                $assignData = $assignments->get($person->personil_id);
+                                $isAssigned = in_array($person->pegawai_id, $assignedPegawaiIds);
+                                $assignData = $assignments->get($person->pegawai_id);
                             @endphp
                             <tr class="person-row" 
                                 data-name="{{ strtolower($person->nama) }}" 
-                                data-unit="{{ $person->org_unit_id }}"
-                                data-parent-unit="{{ $person->orgUnit->parent_id ?? '' }}">
+                                data-unit="{{ $person->encrypted_org_unit_id }}"
+                                data-parent-unit="{{ $person->orgUnit->encrypted_org_unit_id ?? '' }}">
                                 <td>
                                     <input type="checkbox" class="form-check-input kpi-checkbox" 
                                         name="kpi_assign[{{ $index }}][selected]" 
                                         value="1" 
                                         data-index="{{ $index }}"
                                         {{ $isAssigned ? 'checked' : '' }}>
-                                    <input type="hidden" name="kpi_assign[{{ $index }}][personil_id]" value="{{ $person->personil_id }}">
+                                    <input type="hidden" name="kpi_assign[{{ $index }}][pegawai_id]" value="{{ $person->encrypted_pegawai_id }}">
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -170,7 +170,7 @@
         const searchInput = document.getElementById('member-search');
         const unitFilter = document.getElementById('unit-filter');
         const rows = document.querySelectorAll('.person-row');
-        const countBadge = document.getElementById('personnel-count');
+        const countBadge = document.getElementById('pegawai-count');
         const masterCheckbox = document.getElementById('master-checkbox');
         const checkAllFiltered = document.getElementById('check-all-filtered');
 

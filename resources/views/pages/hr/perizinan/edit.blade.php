@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Pengajuan Izin"
-    route="{{ route('hr.perizinan.update', $perizinan->hashid) }}"
+    route="{{ route('hr.perizinan.update', $perizinan->encrypted_perizinan_id) }}"
     method="PUT"
     submitText="Simpan Perubahan"
 >

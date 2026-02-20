@@ -14,6 +14,18 @@ class RiwayatDataDiri extends Model
     protected $table      = 'hr_riwayat_datadiri';
     protected $primaryKey = 'riwayatdatadiri_id';
 
+    protected $appends = ['encrypted_riwayatdatadiri_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatdatadiri_id';
+    }
+
+    public function getEncryptedRiwayatdatadiriIdAttribute()
+    {
+        return encryptId($this->riwayatdatadiri_id);
+    }
+
     protected $fillable = [
         'pegawai_id',
         'nip',

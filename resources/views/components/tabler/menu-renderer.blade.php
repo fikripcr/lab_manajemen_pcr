@@ -500,23 +500,9 @@
             'children'      => [
                 [
                     'title'         => 'Bank Soal',
-                    'id'            => 'navbar-cbt-bank',
-                    'icon'          => 'ti ti-database',
+                    'route'         => 'cbt.mata-uji.index',
                     'active_routes' => ['cbt.mata-uji.*', 'cbt.soal.*'],
-                    'children'      => [
-                        [
-                            'title'         => 'Mata Uji',
-                            'route'         => 'cbt.mata-uji.index',
-                            'active_routes' => ['cbt.mata-uji.*'],
-                            'icon'          => 'ti ti-book',
-                        ],
-                        [
-                            'title'         => 'Daftar Soal',
-                            'route'         => 'cbt.soal.index',
-                            'active_routes' => ['cbt.soal.*'],
-                            'icon'          => 'ti ti-list-check',
-                        ],
-                    ],
+                    'icon'          => 'ti ti-database',
                 ],
                 [
                     'title'         => 'Paket Ujian',

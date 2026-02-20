@@ -14,6 +14,13 @@ class TanggalTidakHadir extends Model
     protected $table      = 'eoffice_tanggal_tidak_hadir';
     protected $primaryKey = 'tanggaltidakhadir_id';
 
+    protected $appends = ['encrypted_tanggaltidakhadir_id'];
+
+    public function getEncryptedTanggaltidakhadirIdAttribute()
+    {
+        return encryptId($this->tanggaltidakhadir_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'tanggaltidakhadir_id';

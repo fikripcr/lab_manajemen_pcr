@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Periode"
-    route="{{ route('pmb.periode.update', $periode->encrypted_id) }}"
+    route="{{ route('pmb.periode.update', $periode->encrypted_periode_id) }}"
     method="PUT"
     data-table="#table-periode"
     submitText="Simpan Perubahan"

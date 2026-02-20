@@ -14,6 +14,13 @@ class JenisLayananDisposisi extends Model
     protected $table      = 'eoffice_jenis_layanan_disposisi';
     protected $primaryKey = 'jldisposisi_id';
 
+    protected $appends = ['encrypted_jldisposisi_id'];
+
+    public function getEncryptedJldisposisiIdAttribute()
+    {
+        return encryptId($this->jldisposisi_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'jldisposisi_id';

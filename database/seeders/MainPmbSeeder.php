@@ -86,18 +86,18 @@ class MainPmbSeeder extends Seeder
         $dokPrestasi = JenisDokumen::firstOrCreate(['nama_dokumen' => 'Sertifikat Prestasi']);
 
         // 5. Syarat Dokumen Jalur
-        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurReguler->id, 'jenis_dokumen_id' => $dokIjazah->id]);
-        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurReguler->id, 'jenis_dokumen_id' => $dokKK->id]);
-        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurReguler->id, 'jenis_dokumen_id' => $dokFoto->id]);
+        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurReguler->jalur_id, 'jenis_dokumen_id' => $dokIjazah->jenis_dokumen_id]);
+        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurReguler->jalur_id, 'jenis_dokumen_id' => $dokKK->jenis_dokumen_id]);
+        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurReguler->jalur_id, 'jenis_dokumen_id' => $dokFoto->jenis_dokumen_id]);
 
-        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->id, 'jenis_dokumen_id' => $dokIjazah->id]);
-        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->id, 'jenis_dokumen_id' => $dokKK->id]);
-        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->id, 'jenis_dokumen_id' => $dokFoto->id]);
-        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->id, 'jenis_dokumen_id' => $dokPrestasi->id]);
+        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->jalur_id, 'jenis_dokumen_id' => $dokIjazah->jenis_dokumen_id]);
+        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->jalur_id, 'jenis_dokumen_id' => $dokKK->jenis_dokumen_id]);
+        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->jalur_id, 'jenis_dokumen_id' => $dokFoto->jenis_dokumen_id]);
+        SyaratDokumenJalur::firstOrCreate(['jalur_id' => $jalurPrestasi->jalur_id, 'jenis_dokumen_id' => $dokPrestasi->jenis_dokumen_id]);
 
         // 6. Sesi Ujian (Needed for exam flow)
         $sesi1 = \App\Models\Pmb\SesiUjian::updateOrCreate(
-            ['nama_sesi' => 'Gelombang 1 - Sesi Pagi', 'periode_id' => $periode->id],
+            ['nama_sesi' => 'Gelombang 1 - Sesi Pagi', 'periode_id' => $periode->periode_id],
             [
                 'waktu_mulai'   => now()->addDays(7)->setTime(8, 0),
                 'waktu_selesai' => now()->addDays(7)->setTime(10, 0),
@@ -107,7 +107,7 @@ class MainPmbSeeder extends Seeder
         );
 
         $sesi2 = \App\Models\Pmb\SesiUjian::updateOrCreate(
-            ['nama_sesi' => 'Gelombang 1 - Sesi Siang', 'periode_id' => $periode->id],
+            ['nama_sesi' => 'Gelombang 1 - Sesi Siang', 'periode_id' => $periode->periode_id],
             [
                 'waktu_mulai'   => now()->addDays(7)->setTime(13, 0),
                 'waktu_selesai' => now()->addDays(7)->setTime(15, 0),
@@ -173,10 +173,10 @@ class MainPmbSeeder extends Seeder
 
             // Create Pendaftaran
             $pendaftaran = \App\Models\Pmb\Pendaftaran::updateOrCreate(
-                ['user_id' => $user->id, 'periode_id' => $periode->id],
+                ['user_id' => $user->id, 'periode_id' => $periode->periode_id],
                 [
                     'no_pendaftaran' => 'REG-2024-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
-                    'jalur_id'       => $jalur->id,
+                    'jalur_id'       => $jalur->jalur_id,
                     'status_terkini' => $status,
                     'waktu_daftar'   => $faker->dateTimeBetween('-1 month', 'now'),
                 ]
@@ -187,12 +187,12 @@ class MainPmbSeeder extends Seeder
             $prodi2 = $prodiOrgUnits[($i + 1) % 4];
 
             \App\Models\Pmb\PilihanProdi::updateOrCreate(
-                ['pendaftaran_id' => $pendaftaran->id, 'urutan' => 1],
+                ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'urutan' => 1],
                 ['orgunit_id' => $prodi1->orgunit_id]
             );
 
             \App\Models\Pmb\PilihanProdi::updateOrCreate(
-                ['pendaftaran_id' => $pendaftaran->id, 'urutan' => 2],
+                ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'urutan' => 2],
                 ['orgunit_id' => $prodi2->orgunit_id]
             );
 
@@ -201,7 +201,7 @@ class MainPmbSeeder extends Seeder
             // 1. Payment (Formulir)
             if ($status != 'Draft') {
                 \App\Models\Pmb\Pembayaran::updateOrCreate(
-                    ['pendaftaran_id' => $pendaftaran->id, 'jenis_bayar' => 'Formulir'],
+                    ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'jenis_bayar' => 'Formulir'],
                     [
                         'jumlah_bayar'      => $jalur->biaya_pendaftaran,
                         'bukti_bayar_path'  => 'dummy/bukti_bayar.jpg',
@@ -214,10 +214,10 @@ class MainPmbSeeder extends Seeder
 
             // 2. Upload Documents
             if (! in_array($status, ['Draft', 'Menunggu_Verifikasi_Bayar'])) {
-                $docs = \App\Models\Pmb\SyaratDokumenJalur::where('jalur_id', $jalur->id)->get();
+                $docs = \App\Models\Pmb\SyaratDokumenJalur::where('jalur_id', $jalur->jalur_id)->get();
                 foreach ($docs as $doc) {
                     \App\Models\Pmb\DokumenUpload::updateOrCreate(
-                        ['pendaftaran_id' => $pendaftaran->id, 'jenis_dokumen_id' => $doc->jenis_dokumen_id],
+                        ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'jenis_dokumen_id' => $doc->jenis_dokumen_id],
                         [
                             'path_file'         => 'dummy/doc_' . $doc->jenis_dokumen_id . '.pdf',
                             'status_verifikasi' => ($status == 'Menunggu_Verifikasi_Berkas') ? 'Pending' : 'Valid',
@@ -233,9 +233,9 @@ class MainPmbSeeder extends Seeder
                 $nilai = $faker->randomFloat(2, 40, 100);
 
                 \App\Models\Pmb\PesertaUjian::updateOrCreate(
-                    ['pendaftaran_id' => $pendaftaran->id],
+                    ['pendaftaran_id' => $pendaftaran->pendaftaran_id],
                     [
-                        'sesi_id'          => $sesi->id,
+                        'sesi_id'          => $sesi->sesiujian_id,
                         'username_cbt'     => 'usercbt' . ($user->id), // Use user ID for uniqueness
                         'password_cbt'     => 'passcbt',
                         'nilai_akhir'      => ($status == 'Siap_Ujian') ? null : $nilai,
@@ -248,7 +248,7 @@ class MainPmbSeeder extends Seeder
             // Note: Decisions should match orgunit_id of the chosen prodi
             if (in_array($status, ['Lulus', 'Daftar_Ulang'])) {
                 // Update PilihanProdi decision
-                \App\Models\Pmb\PilihanProdi::where('pendaftaran_id', $pendaftaran->id)
+                \App\Models\Pmb\PilihanProdi::where('pendaftaran_id', $pendaftaran->pendaftaran_id)
                     ->where('urutan', 1)
                     ->update(['keputusan_admin' => 'Disetujui', 'rekomendasi_sistem' => 'Lulus']);
 
@@ -260,7 +260,7 @@ class MainPmbSeeder extends Seeder
 
                     // Daftar Ulang Payment
                     \App\Models\Pmb\Pembayaran::updateOrCreate(
-                        ['pendaftaran_id' => $pendaftaran->id, 'jenis_bayar' => 'Daftar_Ulang'],
+                        ['pendaftaran_id' => $pendaftaran->pendaftaran_id, 'jenis_bayar' => 'Daftar_Ulang'],
                         [
                             'jumlah_bayar'      => 5000000,
                             'bukti_bayar_path'  => 'dummy/daftar_ulang.jpg',
@@ -271,7 +271,7 @@ class MainPmbSeeder extends Seeder
                 }
                 $pendaftaran->save();
             } elseif ($status == 'Tidak_Lulus') {
-                \App\Models\Pmb\PilihanProdi::where('pendaftaran_id', $pendaftaran->id)
+                \App\Models\Pmb\PilihanProdi::where('pendaftaran_id', $pendaftaran->pendaftaran_id)
                     ->update(['keputusan_admin' => 'Ditolak', 'rekomendasi_sistem' => 'Gagal']);
             }
         }

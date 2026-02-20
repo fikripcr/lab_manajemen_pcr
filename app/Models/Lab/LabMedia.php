@@ -1,11 +1,11 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class LabMedia extends Model
 {
@@ -14,14 +14,19 @@ class LabMedia extends Model
     protected $table      = 'lab_media';
     protected $primaryKey = 'lab_media_id';
 
+    protected $appends = ['encrypted_lab_media_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'lab_media_id';
+    }
+
     protected $fillable = [
         'lab_id',
         'media_id',
         'judul',
-        'keterangan',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'keterangan', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

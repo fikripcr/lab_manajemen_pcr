@@ -39,7 +39,17 @@ class Lembur extends Model
         'durasi_menit'    => 'integer',
     ];
 
-    protected $appends = ['hashid'];
+    protected $appends = ['encrypted_lembur_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'lembur_id';
+    }
+
+    public function getEncryptedLemburIdAttribute()
+    {
+        return encryptId($this->lembur_id);
+    }
 
     /**
      * Boot method untuk auto-calculate durasi

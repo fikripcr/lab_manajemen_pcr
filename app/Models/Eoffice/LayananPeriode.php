@@ -14,6 +14,13 @@ class LayananPeriode extends Model
     protected $table      = 'eoffice_layanan_periode';
     protected $primaryKey = 'layananperiode_id';
 
+    protected $appends = ['encrypted_layananperiode_id'];
+
+    public function getEncryptedLayananperiodeIdAttribute()
+    {
+        return encryptId($this->layananperiode_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'layananperiode_id';

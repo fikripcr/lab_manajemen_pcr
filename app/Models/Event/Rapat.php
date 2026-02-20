@@ -14,6 +14,18 @@ class Rapat extends Model
     protected $table      = 'event_rapat';
     protected $primaryKey = 'rapat_id';
 
+    protected $appends = ['encrypted_rapat_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'rapat_id';
+    }
+
+    public function getEncryptedRapatIdAttribute()
+    {
+        return encryptId($this->rapat_id);
+    }
+
     protected $fillable = [
         'jenis_rapat',
         'judul_kegiatan',

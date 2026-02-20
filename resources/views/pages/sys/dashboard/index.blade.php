@@ -96,7 +96,7 @@
                                         <p class="text-secondary text-truncate" style="max-width: 800px;">
                                             {{ Str::limit(strip_tags($news->isi), 150) }}
                                         </p>
-                                        <a href="{{ route('shared.pengumuman.show', $news->hashid) }}" class="btn btn-sm btn-outline-primary">Baca Selengkapnya</a>
+                                        <a href="{{ route('shared.pengumuman.show', $news->encrypted_pengumuman_id) }}" class="btn btn-sm btn-outline-primary">Baca Selengkapnya</a>
                                     </div>
                                     @if($news->cover_url)
                                     <div class="col-md-4">

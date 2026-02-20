@@ -11,16 +11,21 @@ class LabelType extends Model
 {
     use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
-    protected $table = 'pemutu_label_types';
+    protected $table      = 'pemutu_label_types';
     protected $primaryKey = 'labeltype_id';
-    protected $appends = ['encrypted_labeltype_id'];
+    protected $appends    = ['encrypted_labeltype_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'labeltype_id';
+    }
     protected $fillable = [
-        'name', 
-        'description', 
+        'name',
+        'description',
         'color',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     public function getEncryptedLabeltypeIdAttribute()

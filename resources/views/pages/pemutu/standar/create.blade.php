@@ -28,7 +28,7 @@
                         <x-tabler.form-select id="dokumen_id" name="dokumen_id_context" label="Dokumen Standar" required="true">
                             <option value="">Pilih Dokumen...</option>
                             @foreach($dokumens as $dok)
-                                <option value="{{ $dok->dokumen_id }}">{{ $dok->kode }} - {{ $dok->judul }}</option>
+                                <option value="{{ $dok->encrypted_dok_id }}">{{ $dok->kode }} - {{ $dok->judul }}</option>
                             @endforeach
                         </x-tabler.form-select>
                     </div>
@@ -79,7 +79,7 @@
                         dokSubSelect.innerHTML = '<option value="">Select Sub-Document...</option>';
                         data.forEach(item => {
                             const option = document.createElement('option');
-                            option.value = item.doksub_id;
+                            option.value = item.encrypted_doksub_id;
                             option.textContent = item.judul.substring(0, 100) + (item.judul.length > 100 ? '...' : '');
                             dokSubSelect.appendChild(option);
                         });

@@ -145,36 +145,42 @@
                         ['name' => 'Peserta'],
                         ['name' => 'Waktu'],
                         ['name' => 'Status'],
-                        ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                        ['name' => 'Aksi', 'sortable' => false]
                     ]"
                 >
                     @forelse($activeExams as $exam)
                         <tr>
                             <td>
                                 <div>
-                                    <strong>{{ $exam->nama_kegiatan }}</strong>
+                                    <div class="font-weight-bold">{{ $exam->nama_kegiatan }}</div>
                                     @if($exam->is_token_aktif)
-                                        <span class="badge bg-success text-white ms-2">Token Aktif</span>
+                                        <span class="badge bg-success-lt mt-1">Token Aktif</span>
                                     @endif
                                 </div>
                             </td>
                             <td>{{ $exam->paket->nama_paket }}</td>
                             <td>
-                                <span class="badge bg-blue text-white">{{ $exam->riwayatSiswa->count() }} peserta</span>
+                                <span class="badge bg-blue-lt">{{ $exam->riwayatSiswa->count() }} peserta</span>
                             </td>
                             <td>
-                                <small>
+                                <div class="text-muted small">
                                     {{ $exam->waktu_mulai->format('H:i') }} - {{ $exam->waktu_selesai->format('H:i') }}
-                                </small>
+                                </div>
                             </td>
                             <td>
-                                <span class="badge bg-green text-white">Berlangsung</span>
+                                <span class="badge bg-green text-green-fg">Berlangsung</span>
                             </td>
                             <td>
                                 <div class="btn-list flex-nowrap">
-                                    <x-tabler.button href="{{ route('cbt.execute.start', $exam->hashid) }}" class="btn-icon btn-sm btn-primary" icon="ti ti-player-play" title="Test Exam" />
-                                    <x-tabler.button type="button" class="btn-icon btn-sm" onclick="monitorExam('{{ $exam->hashid }}')" icon="ti ti-eye" title="Monitor" />
-                                    <x-tabler.button type="button" class="btn-icon btn-sm" onclick="toggleToken('{{ $exam->hashid }}')" icon="ti ti-key" title="Toggle Token" />
+                                    <a href="{{ route('cbt.execute.test-exam', $exam->encrypted_jadwal_ujian_id) }}" class="btn btn-icon btn-sm btn-primary" title="Test Exam">
+                                        <i class="ti ti-player-play"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-icon btn-sm btn-info" onclick="monitorExam('{{ $exam->encrypted_jadwal_ujian_id }}')" title="Monitor">
+                                        <i class="ti ti-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-icon btn-sm btn-secondary" onclick="toggleToken('{{ $exam->encrypted_jadwal_ujian_id }}')" title="Toggle Token">
+                                        <i class="ti ti-key"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>

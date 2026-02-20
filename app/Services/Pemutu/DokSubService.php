@@ -25,6 +25,12 @@ class DokSubService
     public function createDokSub(array $data): DokSub
     {
         return DB::transaction(function () use ($data) {
+            // Auto Sequence
+            if (! isset($data['seq'])) {
+                $lastSeq     = DokSub::where('dok_id', $data['dok_id'])->max('seq');
+                $data['seq'] = $lastSeq ? $lastSeq + 1 : 1;
+            }
+
             $dokSub = DokSub::create($data);
 
             logActivity(

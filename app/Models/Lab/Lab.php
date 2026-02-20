@@ -17,8 +17,13 @@ class Lab extends Model implements HasMedia
 
     protected $table      = 'lab_labs';
     protected $primaryKey = 'lab_id';
-    
+
     protected $appends = ['encrypted_lab_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'lab_id';
+    }
 
     protected $fillable = [
         'name',
@@ -26,8 +31,8 @@ class Lab extends Model implements HasMedia
         'capacity',
         'description',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

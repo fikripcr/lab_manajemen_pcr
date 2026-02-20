@@ -14,16 +14,26 @@ class JenisIzin extends Model
     protected $table      = 'hr_jenis_izin';
     protected $primaryKey = 'jenisizin_id';
 
+    protected $appends = ['encrypted_jenisizin_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'jenisizin_id';
+    }
+
+    public function getEncryptedJenisizinIdAttribute()
+    {
+        return encryptId($this->jenisizin_id);
+    }
+
     protected $fillable = [
         'nama',
         'kategori',
         'max_hari',
         'pemilihan_waktu',
         'urutan_approval',
-        'is_active',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'is_active', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

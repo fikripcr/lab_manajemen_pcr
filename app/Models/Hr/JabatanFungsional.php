@@ -14,14 +14,26 @@ class JabatanFungsional extends Model
     protected $table      = 'hr_jabatan_fungsional';
     protected $primaryKey = 'jabfungsional_id';
 
+    protected $appends = ['encrypted_jabfungsional_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'jabfungsional_id';
+    }
+
+    public function getEncryptedJabfungsionalIdAttribute()
+    {
+        return encryptId($this->jabfungsional_id);
+    }
+
     protected $fillable = [
         'kode_jabatan',
         'jabfungsional',
         'is_active',
         'tunjangan',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

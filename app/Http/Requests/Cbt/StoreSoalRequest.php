@@ -12,10 +12,9 @@ class StoreSoalRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        if ($this->has('mata_uji_id')) {
-            $this->merge([
-                'mata_uji_id' => decryptId($this->mata_uji_id),
-            ]);
+        $mu = $this->route('mata_uji');
+        if ($mu instanceof \App\Models\Cbt\MataUji) {
+            $this->merge(['mata_uji_id' => $mu->mata_uji_id]);
         }
     }
 
@@ -27,7 +26,7 @@ class StoreSoalRequest extends FormRequest
             'konten_pertanyaan' => 'required|string',
             'tingkat_kesulitan' => 'required|in:Mudah,Sedang,Sulit',
             'opsi'              => 'required_if:tipe_soal,Pilihan_Ganda|array',
-            'kunci_jawaban'     => 'required_if:tipe_soal,Pilihan_Ganda',
+            'kunci_jawaban'     => 'required_unless:tipe_soal,Esai',
         ];
     }
 }

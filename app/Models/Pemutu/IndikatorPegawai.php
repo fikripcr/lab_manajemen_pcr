@@ -8,11 +8,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IndikatorPersonil extends Model
+class IndikatorPegawai extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table    = 'pemutu_indikator_pegawai';
+    protected $table      = 'pemutu_indikator_pegawai';
+    protected $primaryKey = 'indikator_pegawai_id';
+
+    protected $appends = ['encrypted_indikator_pegawai_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'indikator_pegawai_id';
+    }
+
+    public function getEncryptedIndikatorPegawaiIdAttribute()
+    {
+        return encryptId($this->indikator_pegawai_id);
+    }
     protected $fillable = [
         'pegawai_id',
         'indikator_id',
@@ -39,14 +52,6 @@ class IndikatorPersonil extends Model
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
-    }
-
-    /**
-     * Alias for backward compatibility — old code may call ->personil()
-     */
-    public function personil()
-    {
-        return $this->pegawai();
     }
 
     public function indikator()

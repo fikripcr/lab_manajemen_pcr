@@ -8,7 +8,7 @@
     
     <x-tabler.form-select name="paket_id" label="Paket Ujian" required="true">
         @foreach($paket as $p)
-            <option value="{{ $p->hashid }}">{{ $p->nama_paket }} ({{ $p->tipe_paket }})</option>
+            <option value="{{ $p->encrypted_paket_ujian_id }}">{{ $p->nama_paket }} ({{ $p->tipe_paket }})</option>
         @endforeach
     </x-tabler.form-select>
 

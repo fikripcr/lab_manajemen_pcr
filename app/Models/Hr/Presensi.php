@@ -14,6 +14,8 @@ class Presensi extends Model
     protected $table      = 'hr_presensi';
     protected $primaryKey = 'presensi_id';
 
+    protected $appends = ['encrypted_presensi_id'];
+
     /**
      * Get the route key for the model.
      */
@@ -79,7 +81,7 @@ class Presensi extends Model
     }
 
     // Accessors
-    public function getEncryptedIdAttribute()
+    public function getEncryptedPresensiIdAttribute()
     {
         return encryptId($this->presensi_id);
     }

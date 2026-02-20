@@ -15,6 +15,13 @@ class Kegiatan extends Model
     protected $table      = 'lab_kegiatans';
     protected $primaryKey = 'kegiatan_id';
 
+    protected $appends = ['encrypted_kegiatan_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'kegiatan_id';
+    }
+
     protected $fillable = [
         'lab_id',
         'penyelenggara_id',

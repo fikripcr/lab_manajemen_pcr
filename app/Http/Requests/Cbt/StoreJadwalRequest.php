@@ -22,7 +22,7 @@ class StoreJadwalRequest extends FormRequest
     public function rules()
     {
         return [
-            'paket_id'      => 'required|exists:cbt_paket_ujian,id',
+            'paket_id'      => 'required|exists:cbt_paket_ujian,paket_ujian_id',
             'nama_kegiatan' => 'required|string|max:255',
             'waktu_mulai'   => 'required|date',
             'waktu_selesai' => 'required|date|after:waktu_mulai',

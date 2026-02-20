@@ -11,7 +11,19 @@ class JenisDokumen extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_jenis_dokumen';
+    protected $table      = 'pmb_jenis_dokumen';
+    protected $primaryKey = 'jenis_dokumen_id';
+    protected $appends    = ['encrypted_jenis_dokumen_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'jenis_dokumen_id';
+    }
+
+    public function getEncryptedJenisDokumenIdAttribute()
+    {
+        return encryptId($this->jenis_dokumen_id);
+    }
 
     protected $fillable = [
         'nama_dokumen',
@@ -19,11 +31,4 @@ class JenisDokumen extends Model
         'max_size_kb',
     ];
 
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 }

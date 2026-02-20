@@ -11,7 +11,7 @@
                     <i class="ti ti-calendar me-2"></i>
                     Kelola Jadwal
                 </a>
-                <a href="{{ route('cbt.soal.index') }}" class="btn btn-primary">
+                <a href="{{ route('cbt.mata-uji.index') }}" class="btn btn-primary">
                     <i class="ti ti-file-text me-2"></i>
                     Bank Soal
                 </a>

@@ -11,17 +11,22 @@ class Label extends Model
 {
     use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
-    protected $table = 'pemutu_label';
+    protected $table      = 'pemutu_label';
     protected $primaryKey = 'label_id';
-    protected $appends = ['encrypted_label_id'];
+    protected $appends    = ['encrypted_label_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'label_id';
+    }
     protected $fillable = [
-        'type_id', 
-        'name', 
-        'slug', 
+        'type_id',
+        'name',
+        'slug',
         'description',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
     public $timestamps = false;
 

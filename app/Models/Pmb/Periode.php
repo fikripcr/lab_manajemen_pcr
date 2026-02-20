@@ -11,7 +11,19 @@ class Periode extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_periode';
+    protected $table      = 'pmb_periode';
+    protected $primaryKey = 'periode_id';
+    protected $appends    = ['encrypted_periode_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'periode_id';
+    }
+
+    public function getEncryptedPeriodeIdAttribute()
+    {
+        return encryptId($this->periode_id);
+    }
 
     protected $fillable = [
         'nama_periode',
@@ -20,11 +32,4 @@ class Periode extends Model
         'is_aktif',
     ];
 
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 }

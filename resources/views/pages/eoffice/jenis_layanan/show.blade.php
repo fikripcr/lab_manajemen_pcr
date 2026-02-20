@@ -41,7 +41,7 @@
                             </td>
                             <td>
                                 <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
-                                    data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->hashid) }}" 
+                                    data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->encrypted_jlpic_id) }}" 
                                     data-title="Hapus PIC?" data-text="Pegawai ini tidak lagi menjadi PIC untuk layanan ini." icon="ti ti-trash" />
                             </td>
                         </tr>
@@ -80,7 +80,7 @@
                     </thead>
                     <tbody class="sortable-isian">
                         @forelse($layanan->isians->sortBy('seq') as $isian)
-                            <tr data-id="{{ $isian->hashid }}">
+                            <tr data-id="{{ $isian->encrypted_jlisian_id }}">
                                 <td class="handle cursor-move"><i class="ti ti-drag-drop text-muted"></i></td>
                                 <td>
                                     <div class="fw-bold text-wrap">{{ $isian->nama_isian }}</div>
@@ -109,7 +109,7 @@
                                         <x-tabler.button type="button" class="btn-icon btn-ghost-primary edit-rule" title="Set Rule Validasi" icon="ti ti-shield-check" />
                                         <x-tabler.button type="button" class="btn-icon btn-ghost-info edit-info" title="Set Info Tambahan" icon="ti ti-info-circle" />
                                         <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
-                                            data-url="{{ route('eoffice.jenis-layanan.destroy-isian', $isian->hashid) }}" 
+                                            data-url="{{ route('eoffice.jenis-layanan.destroy-isian', $isian->encrypted_jlisian_id) }}" 
                                             data-title="Hapus Field?" data-text="Field ini akan dihapus dari form layanan." icon="ti ti-trash" />
                                     </div>
                                     <input type="hidden" class="isian-rule" value="{{ $isian->rule }}">
@@ -149,7 +149,7 @@
                     </thead>
                     <tbody class="sortable-disposisi">
                         @forelse($layanan->disposisis->sortBy('seq') as $d)
-                            <tr data-id="{{ $d->hashid }}">
+                            <tr data-id="{{ $d->encrypted_jldisposisi_id }}">
                                 <td class="handle cursor-move"><i class="ti ti-drag-drop text-muted"></i></td>
                                 <td>
                                     <div class="fw-medium">{{ $d->value }}</div>
@@ -168,8 +168,8 @@
                                     <div class="btn-group btn-group-sm">
                                         <x-tabler.button type="button" class="btn-icon btn-ghost-primary edit-disposisi" title="Edit Detail Info" icon="ti ti-pencil" />
                                         <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
-                                            data-url="{{ route('eoffice.jenis-layanan.disposisi.destroy', [$layanan->jenislayanan_id, $d->jldisposisi_id]) }}"
-                                            data-title="Hapus Disposisi?" data-text="Disposisi akan dihapus dan urutan otomatis disesuaikan." icon="ti ti-trash" />
+                                            data-url="{{ route('eoffice.jenis-layanan.disposisi.destroy', [$layanan->encrypted_jenislayanan_id, $d->encrypted_jldisposisi_id]) }}"
+                                            data-title="Hapus Disposisi?" data-text="Disposisi akan dihapus and urutan otomatis disesuaikan." icon="ti ti-trash" />
                                     </div>
                                 </td>
                             </tr>
@@ -220,7 +220,7 @@
                             </td>
                             <td>
                                 <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
-                                    data-url="{{ route('eoffice.jenis-layanan.periode.destroy', [$layanan->hashid, $p->hashid]) }}"
+                                    data-url="{{ route('eoffice.jenis-layanan.periode.destroy', [$layanan->encrypted_jenislayanan_id, $p->encrypted_jlperiode_id]) }}"
                                     data-title="Hapus Periode?" data-text="Periode ini akan dihapus." icon="ti ti-trash" />
                             </td>
                         </tr>
@@ -244,7 +244,7 @@
 <x-tabler.form-modal
     id="modal-add-pic"
     title="Tambah PIC Layanan"
-    route="{{ route('eoffice.jenis-layanan.store-pic', $layanan->hashid) }}"
+    route="{{ route('eoffice.jenis-layanan.store-pic', $layanan->encrypted_jenislayanan_id) }}"
     method="POST"
     submitText="Tambah PIC"
 >
@@ -262,7 +262,7 @@
 <x-tabler.form-modal
     id="modal-add-isian"
     title="Tambah Isian Form"
-    route="{{ route('eoffice.jenis-layanan.store-isian', $layanan->hashid) }}"
+    route="{{ route('eoffice.jenis-layanan.store-isian', $layanan->encrypted_jenislayanan_id) }}"
     method="POST"
     submitText="Tambah Field"
 >
@@ -291,7 +291,7 @@
 <x-tabler.form-modal
     id="modal-add-disposisi"
     title="Tambah Alur Disposisi"
-    route="{{ route('eoffice.jenis-layanan.disposisi.store', $layanan->hashid) }}"
+    route="{{ route('eoffice.jenis-layanan.disposisi.store', $layanan->encrypted_jenislayanan_id) }}"
     method="POST"
     submitText="Tambah Disposisi"
 >
@@ -324,7 +324,7 @@
 <x-tabler.form-modal
     id="modal-add-periode"
     title="Tambah Periode Pengajuan"
-    route="{{ route('eoffice.jenis-layanan.periode.store', $layanan->hashid) }}"
+    route="{{ route('eoffice.jenis-layanan.periode.store', $layanan->encrypted_jenislayanan_id) }}"
     method="POST"
     submitText="Tambah Periode"
 >
@@ -413,13 +413,13 @@
                 });
         });
 
-        // Toggle Disposisi Notify
-        $('.disposisi-toggle-notif').on('change', function() {
-            let tr = $(this).closest('tr');
-            let id = tr.data('id');
-            let val = $(this).is(':checked') ? 1 : 0;
-
-            axios.put(`{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}/notify`, { is_notify_email: val })
+            // Toggle Disposisi Notify
+            $('.disposisi-toggle-notif').on('change', function() {
+                let tr = $(this).closest('tr');
+                let id = tr.data('id');
+                let val = $(this).is(':checked') ? 1 : 0;
+    
+                axios.put(`{{ url('eoffice/jenis-layanan/' . $layanan->encrypted_jenislayanan_id . '/disposisi') }}/${id}/notify`, { is_notify_email: val })
                 .then(res => {
                     toastr.success(res.data.message);
                 })
@@ -449,15 +449,15 @@
             $('#modal-set-info').modal('show');
         });
 
-        // Modal Disposisi
-        $('.edit-disposisi').on('click', function() {
-            let tr = $(this).closest('tr');
-            let id = tr.data('id');
-
-            axios.get(`{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}/data`)
+            // Modal Disposisi
+            $('.edit-disposisi').on('click', function() {
+                let tr = $(this).closest('tr');
+                let id = tr.data('id');
+    
+                axios.get(`{{ url('eoffice/jenis-layanan/' . $layanan->encrypted_jenislayanan_id . '/disposisi') }}/${id}/data`)
                 .then(res => {
                     let d = res.data;
-                    $('#form-edit-disposisi').attr('action', `{{ url('eoffice/jenis-layanan/' . $layanan->hashid . '/disposisi') }}/${id}`);
+                    $('#form-edit-disposisi').attr('action', `{{ url('eoffice/jenis-layanan/' . $layanan->encrypted_jenislayanan_id . '/disposisi') }}/${id}`);
                     $('#form-edit-disposisi [name="text"]').val(d.text);
                     $('#form-edit-disposisi [name="keterangan"]').val(d.keterangan);
                     $('#form-edit-disposisi [name="batas_pengerjaan"]').val(d.batas_pengerjaan);
@@ -475,7 +475,7 @@
                     $('.sortable-isian tr').each(function(index) {
                         sequences.push({ id: $(this).data('id'), seq: index + 1 });
                     });
-                    axios.post(`/eoffice/jenis-layanan/{{ $layanan->hashid }}/isian/seq`, {
+                    axios.post(`/eoffice/jenis-layanan/{{ $layanan->encrypted_jenislayanan_id }}/isian/seq`, {
                         sequences: sequences
                     })
                     .then(res => toastr.success(res.data.message));
@@ -488,7 +488,7 @@
                 onEnd: function() {
                     $('.sortable-disposisi tr').each(function(index) {
                         let id = $(this).data('id');
-                        let url = `/eoffice/jenis-layanan/{{ $layanan->hashid }}/disposisi/${id}/seq`;
+                        let url = `/eoffice/jenis-layanan/{{ $layanan->encrypted_jenislayanan_id }}/disposisi/${id}/seq`;
 
                         axios.post(url, { seq: index + 1 });
                     });

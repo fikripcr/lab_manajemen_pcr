@@ -20,7 +20,19 @@ class Pendaftaran extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_pendaftaran';
+    protected $table      = 'pmb_pendaftaran';
+    protected $primaryKey = 'pendaftaran_id';
+    protected $appends    = ['encrypted_pendaftaran_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'pendaftaran_id';
+    }
+
+    public function getEncryptedPendaftaranIdAttribute()
+    {
+        return encryptId($this->pendaftaran_id);
+    }
 
     protected $fillable = [
         'no_pendaftaran',
@@ -32,14 +44,6 @@ class Pendaftaran extends Model
         'orgunit_diterima_id',
         'waktu_daftar',
     ];
-
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     public function user()
     {

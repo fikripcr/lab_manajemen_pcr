@@ -59,8 +59,8 @@ class FAQService
                 $catValue = ($category === 'null' || $category === '') ? null : $category;
 
                 if (is_array($items)) {
-                    foreach ($items as $index => $hashid) {
-                        $id = decryptIdIfEncrypted($hashid, false);
+                    foreach ($items as $index => $encryptedId) {
+                        $id = decryptIdIfEncrypted($encryptedId, false);
                         if ($id) {
                             FAQ::where('id', $id)->update([
                                 'seq'      => $index + 1,

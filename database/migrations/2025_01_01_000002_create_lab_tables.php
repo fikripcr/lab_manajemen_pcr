@@ -311,7 +311,7 @@ return new class extends Migration
 
         // 13. Lab Inventaris (Renamed to lab_inventaris_penempatan)
         Schema::create('lab_inventaris_penempatan', function (Blueprint $table) {
-            $table->id();
+            $table->id('inventaris_penempatan_id');
             $table->unsignedBigInteger('inventaris_id');
             $table->unsignedBigInteger('lab_id');
             $table->string('kode_inventaris', 100)->unique();
@@ -335,7 +335,7 @@ return new class extends Migration
 
         // 14. Lab Teams
         Schema::create('lab_teams', function (Blueprint $table) {
-            $table->id();
+            $table->id('lab_team_id');
             $table->unsignedBigInteger('lab_id');
             $table->unsignedBigInteger('user_id');
             $table->string('jabatan', 100)->nullable();

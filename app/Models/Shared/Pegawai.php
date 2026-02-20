@@ -100,6 +100,18 @@ class Pegawai extends Model
         return $this->belongsTo(RiwayatPenugasan::class, 'latest_riwayatpenugasan_id', 'riwayatpenugasan_id');
     }
 
+    public function orgUnit()
+    {
+        return $this->hasOneThrough(
+            \App\Models\Shared\StrukturOrganisasi::class,
+            \App\Models\Hr\RiwayatPenugasan::class,
+            'riwayatpenugasan_id',
+            'orgunit_id',
+            'latest_riwayatpenugasan_id',
+            'org_unit_id'
+        );
+    }
+
     // ----------------------------------------------------------------
     // Core Relationships
     // ----------------------------------------------------------------

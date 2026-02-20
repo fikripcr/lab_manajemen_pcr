@@ -24,7 +24,7 @@
                     </div>
                     <div class="d-flex align-items-center">
                         {{-- Edit Button (Direct Link) --}}
-                        <a href="{{ route('sys.roles.edit', $role) }}" class="btn btn-action text-primary btn-animate-icon" title="Edit">
+                        <a href="{{ route('sys.roles.edit', $role->encrypted_id) }}" class="btn btn-action text-primary btn-animate-icon" title="Edit">
                             <i class="ti ti-edit fs-2"></i>
                         </a>
                         
@@ -32,11 +32,11 @@
                         <div class="dropdown">
                         <x-tabler.button type="button" class="btn dropdown-toggle btn-action text-secondary" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-dots-vertical fs-3" icon-only="true" />
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="{{ route('sys.roles.show', $role) }}">
+                                <a class="dropdown-item" href="{{ route('sys.roles.show', $role->encrypted_id) }}">
                                     <i class="ti ti-eye me-1"></i> View
                                 </a>
                                 <a href="javascript:void(0)" class="dropdown-item text-danger ajax-delete" 
-                                   data-url="{{ route('sys.roles.destroy', $role) }}" 
+                                   data-url="{{ route('sys.roles.destroy', $role->encrypted_id) }}" 
                                    data-title="Delete Role?" 
                                    data-text="Are you sure? This action cannot be undone!">
                                     <i class="ti ti-trash me-1"></i> Delete

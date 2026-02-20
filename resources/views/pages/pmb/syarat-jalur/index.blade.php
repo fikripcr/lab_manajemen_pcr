@@ -19,14 +19,14 @@
                     <div class="card-body">
                         <form action="{{ route('pmb.syarat-jalur.store') }}" method="POST" class="ajax-form" data-redirect="true">
                             @csrf
-                            <input type="hidden" name="jalur_id" value="{{ $jalur->encrypted_id }}">
+                            <input type="hidden" name="jalur_id" value="{{ $jalur->encrypted_jalur_id }}">
                             
                             <div class="mb-3">
                                 <label class="form-label required">Jenis Dokumen</label>
                                 <select name="jenis_dokumen_id" class="form-select" required>
                                     <option value="">-- Pilih Dokumen --</option>
                                     @foreach($jenisDokumen as $jd)
-                                        <option value="{{ $jd->encrypted_id }}">{{ $jd->nama_dokumen }}</option>
+                                        <option value="{{ $jd->encrypted_jenis_dokumen_id }}">{{ $jd->nama_dokumen }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -69,7 +69,7 @@
                             </td>
                             <td>
                                 <x-tabler.button type="button" class="btn-sm btn-icon btn-danger ajax-delete" 
-                                    data-url="{{ route('pmb.syarat-jalur.destroy', $s->encrypted_id) }}" data-title="Hapus Syarat?" icon="ti ti-trash" />
+                                    data-url="{{ route('pmb.syarat-jalur.destroy', $s->encrypted_syaratdokumenjalur_id) }}" data-title="Hapus Syarat?" icon="ti ti-trash" />
                             </td>
                         </tr>
                         @empty

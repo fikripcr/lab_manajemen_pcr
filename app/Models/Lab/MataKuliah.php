@@ -1,11 +1,11 @@
 <?php
 namespace App\Models\Lab;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Blameable;
-use App\Traits\HashidBinding;
 
 class MataKuliah extends Model
 {
@@ -14,13 +14,18 @@ class MataKuliah extends Model
     protected $table      = 'lab_mata_kuliahs';
     protected $primaryKey = 'mata_kuliah_id';
 
+    protected $appends = ['encrypted_mata_kuliah_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'mata_kuliah_id';
+    }
+
     protected $fillable = [
         'kode_mk',
         'nama_mk',
-        'sks',        'created_by',        'updated_by',        'deleted_by',
-    
-    
-    
+        'sks', 'created_by', 'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

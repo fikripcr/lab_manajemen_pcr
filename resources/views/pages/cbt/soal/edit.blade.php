@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Edit Soal" pretitle="CBT">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('cbt.soal.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('cbt.mata-uji.show', $soal->encrypted_mata_uji_id) }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -12,7 +12,7 @@
 
 <div class="page-body">
     <div class="container-xl">
-        <form action="{{ route('cbt.soal.update', $soal->hashid) }}" method="POST" class="ajax-form" data-redirect="{{ route('cbt.soal.index') }}">
+        <form action="{{ route('cbt.soal.update', $soal->encrypted_soal_id) }}" method="POST" class="ajax-form" data-redirect="{{ route('cbt.mata-uji.show', $soal->encrypted_mata_uji_id) }}">
             @csrf
             @method('PUT')
             <div class="row row-cards">
@@ -60,7 +60,7 @@
                         <div class="card-body">
                             <x-tabler.form-select name="mata_uji_id" label="Mata Uji" required="true">
                                 @foreach($mataUji as $mu)
-                                    <option value="{{ $mu->hashid }}" {{ $mu->id == $soal->mata_uji_id ? 'selected' : '' }}>{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
+                                    <option value="{{ $mu->encrypted_mata_uji_id }}" {{ $mu->id == $soal->mata_uji_id ? 'selected' : '' }}>{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
                                 @endforeach
                             </x-tabler.form-select>
 

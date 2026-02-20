@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Edit Jenis Dokumen"
-    route="{{ route('pmb.jenis-dokumen.update', $jenisDokumen->encrypted_id) }}"
+    route="{{ route('pmb.jenis-dokumen.update', $jenisDokumen->encrypted_jenis_dokumen_id) }}"
     method="PUT"
     data-table="#table-jenis-dokumen"
     submitText="Simpan Perubahan"

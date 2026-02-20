@@ -9,9 +9,9 @@ use App\Http\Controllers\Pemutu\KpiController;
 use App\Http\Controllers\Pemutu\LabelController;
 use App\Http\Controllers\Pemutu\LabelTypeController;
 use App\Http\Controllers\Pemutu\MyKpiController;
+use App\Http\Controllers\Pemutu\PegawaiController;
 use App\Http\Controllers\Pemutu\PeriodeKpiController;
 use App\Http\Controllers\Pemutu\PeriodeSpmiController;
-use App\Http\Controllers\Pemutu\PersonilController;
 use App\Http\Controllers\Pemutu\RenopController;
 use App\Http\Controllers\Pemutu\TimMutuController;
 use Illuminate\Support\Facades\Route;
@@ -35,10 +35,10 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('api/labels', [LabelController::class, 'paginate'])->name('labels.data');
     Route::resource('labels', LabelController::class);
 
-    // Personils
-    Route::get('api/personils', [PersonilController::class, 'paginate'])->name('personils.data');
-    Route::match(['get', 'post'], 'personils/import', [PersonilController::class, 'import'])->name('personils.import');
-    Route::resource('personils', PersonilController::class);
+    // Pegawai
+    Route::get('api/pegawai', [PegawaiController::class, 'paginate'])->name('pegawai.data');
+    Route::match(['get', 'post'], 'pegawai/import', [PegawaiController::class, 'import'])->name('pegawai.import');
+    Route::resource('pegawai', PegawaiController::class);
 
     // Dokumen & Structure
     Route::post('dokumens/reorder', [DokumenController::class, 'reorder'])->name('dokumens.reorder');
@@ -57,6 +57,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Standar (Indikator Standar)
     Route::get('api/standar', [App\Http\Controllers\Pemutu\StandarController::class, 'paginate'])->name('standar.data');
+    // ...
     Route::get('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'assign'])->name('standar.assign');
     Route::post('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'storeAssignment'])->name('standar.assign.store');
     Route::resource('standar', App\Http\Controllers\Pemutu\StandarController::class);
@@ -69,6 +70,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Document Approvals
     Route::get('dokumens/{dokumen}/approve', [DokumenApprovalController::class, 'create'])->name('dokumens.approve.create');
+    // ...
     Route::post('dokumens/{dokumen}/approve', [DokumenApprovalController::class, 'store'])->name('dokumens.approve');
     Route::delete('dokumens/approval/{approval}', [DokumenApprovalController::class, 'destroy'])->name('dokumens.approval.destroy');
 

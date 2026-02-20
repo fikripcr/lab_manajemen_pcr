@@ -15,6 +15,18 @@ class RiwayatInpassing extends Model
     protected $primaryKey = 'riwayatinpassing_id';
     protected $guarded    = ['riwayatinpassing_id'];
 
+    protected $appends = ['encrypted_riwayatinpassing_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatinpassing_id';
+    }
+
+    public function getEncryptedRiwayatinpassingIdAttribute()
+    {
+        return encryptId($this->riwayatinpassing_id);
+    }
+
     protected $casts = [
         'tgl_sk' => 'date',
         'tmt'    => 'date',

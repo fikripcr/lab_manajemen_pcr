@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Validasi Token Ujian"
-    route="{{ route('cbt.execute.validate-token', $jadwal->hashid) }}"
+    route="{{ route('cbt.execute.validate-token', $jadwal->encrypted_jadwal_ujian_id) }}"
     method="POST"
     data-redirect="true"
     submitText="Mulai Ujian"

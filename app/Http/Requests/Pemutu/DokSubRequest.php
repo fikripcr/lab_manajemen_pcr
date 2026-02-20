@@ -16,12 +16,27 @@ class DokSubRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      */
+    protected function prepareForValidation()
+    {
+        if ($this->has('dok_id')) {
+            try {
+                $this->merge([
+                    'dok_id' => decryptId($this->dok_id),
+                ]);
+            } catch (\Exception $e) {
+                // Keep original value
+            }
+        }
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     */
     public function rules(): array
     {
         $rules = [
             'judul'                 => 'required|string|max:150',
             'isi'                   => 'nullable|string',
-            'seq'                   => 'nullable|integer',
             'is_hasilkan_indikator' => 'nullable|boolean',
         ];
 

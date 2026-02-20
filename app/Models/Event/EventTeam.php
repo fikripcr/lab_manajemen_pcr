@@ -14,6 +14,18 @@ class EventTeam extends Model
     protected $table      = 'event_teams';
     protected $primaryKey = 'eventteam_id';
 
+    protected $appends = ['encrypted_eventteam_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'eventteam_id';
+    }
+
+    public function getEncryptedEventteamIdAttribute()
+    {
+        return encryptId($this->eventteam_id);
+    }
+
     protected $fillable = [
         'event_id',
         'memberable_type',

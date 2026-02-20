@@ -14,6 +14,18 @@ class JenisShift extends Model
     protected $table      = 'hr_jenis_shift';
     protected $primaryKey = 'jenis_shift_id';
 
+    protected $appends = ['encrypted_jenis_shift_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'jenis_shift_id';
+    }
+
+    public function getEncryptedJenisShiftIdAttribute()
+    {
+        return encryptId($this->jenis_shift_id);
+    }
+
     protected $fillable = [
         'jenis_shift',
         'jam_masuk',
@@ -24,8 +36,8 @@ class JenisShift extends Model
         'jam_pulang_akhir',
         'is_active',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
 }

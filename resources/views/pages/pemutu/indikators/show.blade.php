@@ -68,7 +68,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Tutup</button>
-        <x-tabler.button type="a" :href="route('pemutu.indikators.show', $indikator->indikator_id)" class="btn-primary" text="Detail Lengkap" />
+        <x-tabler.button type="a" :href="route('pemutu.indikators.show', $indikator->encrypted_indikator_id)" class="btn-primary" text="Detail Lengkap" />
     </div>
 @else
     @extends('layouts.tabler.app')
@@ -79,9 +79,9 @@
         <x-slot:actions>
             <x-tabler.button href="javascript:history.back()" icon="ti ti-arrow-left" text="Kembali" class="btn-secondary" />
             @if($indikator->type == 'performa')
-                <x-tabler.button href="{{ route('pemutu.kpi.assign', $indikator->indikator_id) }}" icon="ti ti-users" text="Assign Personnel" class="btn-purple" />
+                <x-tabler.button href="{{ route('pemutu.kpi.assign', $indikator->encrypted_indikator_id) }}" icon="ti ti-users" text="Tugaskan Pegawai" class="btn-purple" />
             @endif
-            <x-tabler.button href="{{ route('pemutu.indikators.edit', $indikator->indikator_id) }}" icon="ti ti-pencil" text="Edit Indikator" class="btn-primary" />
+            <x-tabler.button href="{{ route('pemutu.indikators.edit', $indikator->encrypted_indikator_id) }}" icon="ti ti-pencil" text="Edit Indikator" class="btn-primary" />
         </x-slot:actions>
     </x-tabler.page-header>
     @endsection
@@ -119,7 +119,7 @@
                             <label class="form-label text-muted">Indikator Induk</label>
                             <div class="form-control-plaintext">
                                 @if($indikator->parent)
-                                    <a href="{{ route('pemutu.indikators.show', $indikator->parent_id) }}">
+                                    <a href="{{ route('pemutu.indikators.show', $indikator->parent->encrypted_indikator_id) }}">
                                         [{{ $indikator->parent->no_indikator }}] {{ \Str::limit($indikator->parent->indikator, 150) }}
                                     </a>
                                 @else
@@ -134,10 +134,10 @@
             @if($indikator->type == 'performa')
             <div class="card mb-3">
                 <div class="card-header">
-                    <h3 class="card-title">Penugasan Personel (KPI)</h3>
+                    <h3 class="card-title">Penugasan Pegawai (KPI)</h3>
                 </div>
                 <x-tabler.datatable-client
-                    id="table-personil-kpi"
+                    id="table-pegawai-kpi"
                     :columns="[
                         ['name' => 'Pegawai'],
                         ['name' => 'Periode'],
@@ -145,14 +145,14 @@
                         ['name' => 'Target Value']
                     ]"
                 >
-                    @forelse($indikator->personils as $ip)
+                    @forelse($indikator->pegawai as $ip)
                     <tr>
                         <td>
                             <div class="d-flex py-1 align-items-center">
-                                <span class="avatar me-2" style="background-image: url(https://ui-avatars.com/api/?name={{ urlencode($ip->personil->nama) }})"></span>
+                                <span class="avatar me-2" style="background-image: url(https://ui-avatars.com/api/?name={{ urlencode($ip->pegawai->nama) }})"></span>
                                 <div class="flex-fill">
-                                    <div class="font-weight-medium">{{ $ip->personil->nama }}</div>
-                                    <div class="text-muted small">{{ $ip->personil->email }}</div>
+                                    <div class="font-weight-medium">{{ $ip->pegawai->nama }}</div>
+                                    <div class="text-muted small">{{ $ip->pegawai->email }}</div>
                                 </div>
                             </div>
                         </td>
@@ -165,8 +165,8 @@
                     @endforelse
                 </x-tabler.datatable-client>
                 
-                @if($indikator->personils->isEmpty())
-                    <div class="text-center text-muted py-3">Belum ada personel yang ditugaskan untuk sasaran kinerja ini.</div>
+                @if($indikator->pegawai->isEmpty())
+                    <div class="text-center text-muted py-3">Belum ada pegawai yang ditugaskan untuk sasaran kinerja ini.</div>
                 @endif
             </div>
             @endif

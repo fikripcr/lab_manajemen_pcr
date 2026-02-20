@@ -13,7 +13,14 @@ class KategoriIsian extends Model
 
     protected $table      = 'eoffice_kategori_isian';
     protected $primaryKey = 'kategoriisian_id';
-    protected $fillable   = [
+
+    protected $appends = ['encrypted_kategoriisian_id'];
+
+    public function getEncryptedKategoriisianIdAttribute()
+    {
+        return encryptId($this->kategoriisian_id);
+    }
+    protected $fillable = [
         'nama_isian',
         'type',
         'type_value',

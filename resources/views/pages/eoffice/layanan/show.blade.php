@@ -9,7 +9,7 @@
             <div class="dropdown">
                 <x-tabler.button type="button" class="btn-ghost-secondary dropdown-toggle" data-bs-toggle="dropdown" text="Action" />
                 <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item {{ in_array($layanan->latestStatus->status_layanan, ['Selesai', 'Selesai (Otomatis)']) ? '' : 'disabled' }}" href="{{ route('eoffice.layanan.download-pdf', $layanan->hashid) }}">
+                    <a class="dropdown-item {{ in_array($layanan->latestStatus->status_layanan, ['Selesai', 'Selesai (Otomatis)']) ? '' : 'disabled' }}" href="{{ route('eoffice.layanan.download-pdf', $layanan->encrypted_layanan_id) }}">
                         <i class="ti ti-file-download me-1"></i> Unduh Bukti PDF
                     </a>
                     <div class="dropdown-divider"></div>
@@ -192,11 +192,11 @@
                     <div class="row g-2">
                         @if($layanan->latestStatus->status_layanan === 'Diajukan')
                             <div class="col-12">
-                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'proses']) }}" class="btn-primary w-100" icon="ti ti-player-play" text="Terima & Proses" />
+                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->encrypted_layanan_id, 'proses']) }}" class="btn-primary w-100" icon="ti ti-player-play" text="Terima & Proses" />
                             </div>
                         @else
                             {{-- Unified form for status updates --}}
-                            <form action="{{ route('eoffice.layanan.update-status', $layanan->hashid) }}" method="POST" class="ajax-form w-100" enctype="multipart/form-data">
+                            <form action="{{ route('eoffice.layanan.update-status', $layanan->encrypted_layanan_id) }}" method="POST" class="ajax-form w-100" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label required">Update Status Pengolahan</label>
@@ -267,7 +267,7 @@
 
                         @if($layanan->latestStatus->status_layanan !== 'Diajukan')
                             <div class="col-12 mt-2">
-                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->hashid, 'batal']) }}" class="btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan." icon="ti ti-history" text="Batal Proses" />
+                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->encrypted_layanan_id, 'batal']) }}" class="btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan." icon="ti ti-history" text="Batal Proses" />
                             </div>
                         @endif
                     </div>
@@ -362,7 +362,7 @@
             <div class="card-footer border-top p-2">
                 <form action="{{ route('eoffice.layanan.diskusi.store') }}" method="POST" class="ajax-form" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
+                    <input type="hidden" name="layanan_id" value="{{ $layanan->encrypted_layanan_id }}">
                     <div class="input-group input-group-sm">
                         <textarea name="pesan" class="form-control" rows="1" placeholder="Pesan..." required></textarea>
                         <x-tabler.button type="submit" class="btn-primary btn-icon" title="Kirim" icon="ti ti-send" />
@@ -387,7 +387,7 @@
     submitIcon="ti-star"
     class="btn-warning ms-auto"
 >
-    <input type="hidden" name="layanan_id" value="{{ $layanan->hashid }}">
+    <input type="hidden" name="layanan_id" value="{{ $layanan->encrypted_layanan_id }}">
     
     <div class="text-center py-4">
         <div class="mb-3">

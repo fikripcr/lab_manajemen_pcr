@@ -229,7 +229,10 @@
 
             $('#document-detail-panel').html('<div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>');
 
-            axios.get(detailUrl, { params: { ajax: 1 } })
+            axios.get(detailUrl, { 
+                params: { ajax: 1 },
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
                 .then(function(response) {
                     $('#document-detail-panel').html(response.data);
                     

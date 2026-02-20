@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Ubah Jenis Izin"
-    route="{{ route('hr.jenis-izin.update', $jenis_izin->hashid) }}"
+    route="{{ route('hr.jenis-izin.update', $jenis_izin->encrypted_jenisizin_id) }}"
     method="PUT"
 >
     <div class="mb-3">

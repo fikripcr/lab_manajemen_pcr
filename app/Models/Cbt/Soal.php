@@ -12,7 +12,9 @@ class Soal extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'cbt_soal';
+    protected $table      = 'cbt_soal';
+    protected $primaryKey = 'soal_id';
+    protected $appends    = ['encrypted_soal_id'];
 
     protected $fillable = [
         'mata_uji_id',
@@ -27,6 +29,16 @@ class Soal extends Model
     protected $casts = [
         'is_aktif' => 'boolean',
     ];
+
+    public function getEncryptedSoalIdAttribute()
+    {
+        return encryptId($this->soal_id);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'soal_id';
+    }
 
     public function mataUji()
     {

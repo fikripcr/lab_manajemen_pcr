@@ -14,7 +14,12 @@ class Indikator extends Model
     protected $table      = 'pemutu_indikator';
     protected $primaryKey = 'indikator_id';
     protected $appends    = ['encrypted_indikator_id'];
-    protected $fillable   = [
+
+    public function getRouteKeyName()
+    {
+        return 'indikator_id';
+    }
+    protected $fillable = [
         'type',
         'parent_id',
         'no_indikator',
@@ -74,8 +79,8 @@ class Indikator extends Model
         return $this->hasMany(Indikator::class, 'parent_id', 'indikator_id')->orderBy('seq');
     }
 
-    public function personils()
+    public function pegawai()
     {
-        return $this->hasMany(IndikatorPersonil::class, 'indikator_id', 'indikator_id');
+        return $this->hasMany(IndikatorPegawai::class, 'indikator_id', 'indikator_id');
     }
 }

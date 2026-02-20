@@ -4,7 +4,7 @@
 <x-tabler.page-header title="Edit Pengajuan: {{ $layanan->no_layanan }}" pretitle="{{ $layanan->jenisLayanan->nama_layanan }}">
     <x-slot:actions>
         <div class="btn-list">
-            <x-tabler.button href="{{ route('eoffice.layanan.show', $layanan->hashid) }}" class="btn-link link-secondary" icon="ti ti-arrow-left" text="Kembali" />
+            <x-tabler.button href="{{ route('eoffice.layanan.show', $layanan->encrypted_layanan_id) }}" class="btn-link link-secondary" icon="ti ti-arrow-left" text="Kembali" />
         </div>
     </x-slot:actions>
 </x-tabler.page-header>
@@ -16,7 +16,7 @@
         <h3 class="card-title">Form Revisi Data</h3>
     </div>
     <div class="card-body">
-        <form action="{{ route('eoffice.layanan.update', $layanan->hashid) }}" method="POST" class="ajax-form" enctype="multipart/form-data">
+        <form action="{{ route('eoffice.layanan.update', $layanan->encrypted_layanan_id) }}" method="POST" class="ajax-form" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             

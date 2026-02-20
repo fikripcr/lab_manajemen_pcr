@@ -13,7 +13,19 @@ class PilihanProdi extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_pilihan_prodi';
+    protected $table      = 'pmb_pilihan_prodi';
+    protected $primaryKey = 'pilihanprodi_id';
+    protected $appends    = ['encrypted_pilihanprodi_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'pilihanprodi_id';
+    }
+
+    public function getEncryptedPilihanprodiIdAttribute()
+    {
+        return encryptId($this->pilihanprodi_id);
+    }
 
     protected $fillable = [
         'pendaftaran_id',
@@ -22,14 +34,6 @@ class PilihanProdi extends Model
         'rekomendasi_sistem',
         'keputusan_admin',
     ];
-
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     public function pendaftaran()
     {

@@ -58,14 +58,14 @@ class KpiService
     }
 
     /**
-     * Store personil assignments for a KPI.
+     * Store pegawai assignments for a KPI.
      */
     public function storeAssignments(Indikator $indikator, array $assignments): void
     {
         DB::transaction(function () use ($indikator, $assignments) {
-            $indikator->personils()->delete();
+            $indikator->pegawai()->delete();
             foreach ($assignments as $assign) {
-                $indikator->personils()->create($assign);
+                $indikator->pegawai()->create($assign);
             }
         });
     }

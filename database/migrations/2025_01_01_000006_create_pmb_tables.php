@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // 1. DATA MASTER & PENGATURAN
         Schema::create('pmb_periode', function (Blueprint $table) {
-            $table->id();
+            $table->id('periode_id');
             $table->string('nama_periode')->comment('Contoh: 2025/2026 Ganjil');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
@@ -23,7 +23,7 @@ return new class extends Migration
         });
 
         Schema::create('pmb_jalur', function (Blueprint $table) {
-            $table->id();
+            $table->id('jalur_id');
             $table->string('nama_jalur')->comment('Contoh: Reguler, Prestasi, KIP-K');
             $table->decimal('biaya_pendaftaran', 15, 2);
             $table->boolean('is_aktif')->default(true);
@@ -32,7 +32,7 @@ return new class extends Migration
         });
 
         Schema::create('pmb_jenis_dokumen', function (Blueprint $table) {
-            $table->id();
+            $table->id('jenis_dokumen_id');
             $table->string('nama_dokumen')->comment('KTP, Ijazah, Sertifikat, Raport');
             $table->string('tipe_file')->nullable()->comment('pdf, jpg, png');
             $table->integer('max_size_kb')->default(2048);
@@ -41,18 +41,21 @@ return new class extends Migration
         });
 
         Schema::create('pmb_syarat_dokumen_jalur', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('jalur_id')->constrained('pmb_jalur');
-            $table->foreignId('jenis_dokumen_id')->constrained('pmb_jenis_dokumen');
+            $table->id('syaratdokumenjalur_id');
+            $table->unsignedBigInteger('jalur_id');
+            $table->unsignedBigInteger('jenis_dokumen_id');
             $table->boolean('is_wajib')->default(true);
             $table->text('keterangan_khusus')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('jalur_id')->references('jalur_id')->on('pmb_jalur')->onDelete('cascade');
+            $table->foreign('jenis_dokumen_id')->references('jenis_dokumen_id')->on('pmb_jenis_dokumen')->onDelete('cascade');
         });
 
         // 2. USER & PROFIL
         Schema::create('pmb_profil_mahasiswa', function (Blueprint $table) {
-            $table->id();
+            $table->id('profilmahasiswa_id');
             $table->foreignId('user_id')->constrained('users');
             $table->string('nik', 16)->unique();
             $table->string('no_hp')->nullable();
@@ -69,11 +72,11 @@ return new class extends Migration
 
         // 3. TRANSAKSI PENDAFTARAN
         Schema::create('pmb_pendaftaran', function (Blueprint $table) {
-            $table->id();
+            $table->id('pendaftaran_id');
             $table->string('no_pendaftaran')->unique()->comment('Format: REG-2025-XXXX');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('periode_id')->constrained('pmb_periode');
-            $table->foreignId('jalur_id')->constrained('pmb_jalur');
+            $table->unsignedBigInteger('periode_id');
+            $table->unsignedBigInteger('jalur_id');
             $table->enum('status_terkini', [
                 'Draft',
                 'Menunggu_Verifikasi_Bayar',
@@ -91,21 +94,26 @@ return new class extends Migration
             $table->timestamp('waktu_daftar')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('periode_id')->references('periode_id')->on('pmb_periode')->onDelete('cascade');
+            $table->foreign('jalur_id')->references('jalur_id')->on('pmb_jalur')->onDelete('cascade');
         });
 
         Schema::create('pmb_riwayat_pendaftaran', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pendaftaran_id')->constrained('pmb_pendaftaran');
+            $table->id('riwayatpendaftaran_id');
+            $table->unsignedBigInteger('pendaftaran_id');
             $table->string('status_baru');
             $table->text('keterangan')->nullable();
             $table->foreignId('user_pelaku_id')->constrained('users');
             $table->timestamp('waktu_kejadian')->useCurrent();
             $table->timestamps();
+
+            $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
         });
 
         Schema::create('pmb_pilihan_prodi', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pendaftaran_id')->constrained('pmb_pendaftaran');
+            $table->id('pilihanprodi_id');
+            $table->unsignedBigInteger('pendaftaran_id');
             $table->unsignedBigInteger('orgunit_id');
             $table->foreign('orgunit_id')->references('orgunit_id')->on('struktur_organisasi');
             $table->integer('urutan');
@@ -113,13 +121,15 @@ return new class extends Migration
             $table->enum('keputusan_admin', ['Disetujui', 'Ditolak', 'Cadangan'])->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
         });
 
         // 4. UPLOAD & PEMBAYARAN
         Schema::create('pmb_dokumen_upload', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pendaftaran_id')->constrained('pmb_pendaftaran');
-            $table->foreignId('jenis_dokumen_id')->constrained('pmb_jenis_dokumen');
+            $table->id('dokumenupload_id');
+            $table->unsignedBigInteger('pendaftaran_id');
+            $table->unsignedBigInteger('jenis_dokumen_id');
             $table->string('path_file');
             $table->enum('status_verifikasi', ['Pending', 'Valid', 'Revisi', 'Ditolak'])->default('Pending');
             $table->text('catatan_revisi')->nullable();
@@ -127,11 +137,14 @@ return new class extends Migration
             $table->timestamp('waktu_upload')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
+            $table->foreign('jenis_dokumen_id')->references('jenis_dokumen_id')->on('pmb_jenis_dokumen')->onDelete('cascade');
         });
 
         Schema::create('pmb_pembayaran', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pendaftaran_id')->constrained('pmb_pendaftaran');
+            $table->id('pembayaran_id');
+            $table->unsignedBigInteger('pendaftaran_id');
             $table->enum('jenis_bayar', ['Formulir', 'Daftar_Ulang']);
             $table->decimal('jumlah_bayar', 15, 2);
             $table->string('bukti_bayar_path')->nullable();
@@ -140,12 +153,14 @@ return new class extends Migration
             $table->timestamp('waktu_bayar')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
         });
 
         // 5. UJIAN
         Schema::create('pmb_sesi_ujian', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('periode_id')->constrained('pmb_periode');
+            $table->id('sesiujian_id');
+            $table->unsignedBigInteger('periode_id');
             $table->string('nama_sesi');
             $table->datetime('waktu_mulai');
             $table->datetime('waktu_selesai');
@@ -153,18 +168,24 @@ return new class extends Migration
             $table->integer('kuota')->default(0);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('periode_id')->references('periode_id')->on('pmb_periode')->onDelete('cascade');
         });
 
         Schema::create('pmb_peserta_ujian', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pendaftaran_id')->unique()->constrained('pmb_pendaftaran');
-            $table->foreignId('sesi_id')->constrained('pmb_sesi_ujian');
+            $table->id('pesertaujian_id');
+            $table->unsignedBigInteger('pendaftaran_id');
+            $table->unsignedBigInteger('sesi_id');
             $table->string('username_cbt')->nullable();
             $table->string('password_cbt')->nullable();
             $table->decimal('nilai_akhir', 8, 2)->nullable();
             $table->boolean('status_kehadiran')->default(false);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique('pendaftaran_id');
+            $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
+            $table->foreign('sesi_id')->references('sesiujian_id')->on('pmb_sesi_ujian')->onDelete('cascade');
         });
     }
 

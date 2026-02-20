@@ -8,7 +8,7 @@
     route="{{ route('pemutu.dok-subs.store') }}"
     method="POST"
 >
-    <input type="hidden" name="dok_id" value="{{ $dokumen->dok_id }}">
+    <input type="hidden" name="dok_id" value="{{ $dokumen->encrypted_dok_id }}">
     
     <div class="mb-3">
         <x-tabler.form-input name="judul" label="Judul" id="judul" required="true" placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan / Kegiatan Operasional 1' : 'Contoh: Misi 1' }}" />
@@ -28,9 +28,6 @@
     @endif
 
     @if(!$canProduceIndikator || $jenis === 'renop')
-    <div class="mb-3">
-        <x-tabler.form-input type="number" id="seq" name="seq" label="Urutan" placeholder="Contoh: 1" class="mb-3" />
-    </div>
     <x-tabler.form-textarea name="isi" id="isi" label="Isi Dokumen" rows="4" placeholder="Isi sub-dokumen..." />
     @endif
 </x-tabler.form-modal>

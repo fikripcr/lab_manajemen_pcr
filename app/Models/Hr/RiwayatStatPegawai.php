@@ -15,6 +15,18 @@ class RiwayatStatPegawai extends Model
     protected $primaryKey = 'riwayatstatpegawai_id';
     protected $guarded    = ['riwayatstatpegawai_id'];
 
+    protected $appends = ['encrypted_riwayatstatpegawai_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatstatpegawai_id';
+    }
+
+    public function getEncryptedRiwayatstatpegawaiIdAttribute()
+    {
+        return encryptId($this->riwayatstatpegawai_id);
+    }
+
     protected $fillable = [
         'pegawai_id',
         'before_id',

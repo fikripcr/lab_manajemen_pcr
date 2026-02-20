@@ -14,7 +14,9 @@ class PaketUjian extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'cbt_paket_ujian';
+    protected $table      = 'cbt_paket_ujian';
+    protected $primaryKey = 'paket_ujian_id';
+    protected $appends    = ['encrypted_paket_ujian_id'];
 
     protected $fillable = [
         'nama_paket',
@@ -31,6 +33,16 @@ class PaketUjian extends Model
         'is_acak_soal' => 'boolean',
         'is_acak_opsi' => 'boolean',
     ];
+
+    public function getEncryptedPaketUjianIdAttribute()
+    {
+        return encryptId($this->paket_ujian_id);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'paket_ujian_id';
+    }
 
     public function komposisi()
     {

@@ -9,7 +9,7 @@
         <label class="form-label required">Periode</label>
         <select name="periode_id" class="form-select" required>
             @foreach($periode as $p)
-                <option value="{{ $p->id }}">{{ $p->nama_periode }}</option>
+                <option value="{{ $p->encrypted_periode_id }}">{{ $p->nama_periode }}</option>
             @endforeach
         </select>
     </div>

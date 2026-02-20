@@ -3,7 +3,10 @@
 @section('header')
 <x-tabler.page-header title="Tambah Soal Baru" pretitle="CBT">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('cbt.soal.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        @php
+            $backRoute = $selectedMataUji ? route('cbt.mata-uji.show', $selectedMataUji) : route('cbt.mata-uji.index');
+        @endphp
+        <x-tabler.button href="{{ $backRoute }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -12,7 +15,7 @@
 
 <div class="page-body">
     <div class="container-xl">
-        <form action="{{ route('cbt.soal.store') }}" method="POST" class="ajax-form" data-redirect="{{ route('cbt.soal.index') }}">
+        <form action="{{ route('cbt.soal.store') }}" method="POST" class="ajax-form" data-redirect="{{ $backRoute }}">
             @csrf
             <div class="row row-cards">
                 <div class="col-md-8">
@@ -56,7 +59,9 @@
                         <div class="card-body">
                             <x-tabler.form-select name="mata_uji_id" label="Mata Uji" required="true">
                                 @foreach($mataUji as $mu)
-                                    <option value="{{ $mu->hashid }}">{{ $mu->nama_mata_uji }} ({{ $mu->tipe }})</option>
+                                    <option value="{{ $mu->encrypted_mata_uji_id }}" {{ $selectedMataUji == $mu->encrypted_mata_uji_id ? 'selected' : '' }}>
+                                        {{ $mu->nama_mata_uji }} ({{ $mu->tipe }})
+                                    </option>
                                 @endforeach
                             </x-tabler.form-select>
 
@@ -72,7 +77,8 @@
                                 <option value="Sulit">Sulit</option>
                             </x-tabler.form-select>
 
-                            <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-device-floppy" text="Simpan Soal" />
+                            <x-tabler.button type="submit" class="btn-primary w-100 mb-2" icon="ti ti-device-floppy" text="Simpan Soal" />
+                            <x-tabler.button type="button" id="btn-save-another" class="btn-outline-primary w-100" icon="ti ti-plus" text="Simpan & Tambah Lagi" />
                         </div>
                     </div>
                 </div>
@@ -91,6 +97,13 @@
             } else {
                 $('#section-pilihan-ganda').hide();
             }
+        $('#btn-save-another').on('click', function() {
+            var form = $(this).closest('form');
+            var oldRedirect = form.data('redirect');
+            form.attr('data-redirect', window.location.href);
+            form.submit();
+            // Restore for future submits if any (though page will reload)
+            form.attr('data-redirect', oldRedirect);
         });
     });
 </script>

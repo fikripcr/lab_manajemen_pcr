@@ -15,6 +15,13 @@ class JadwalKuliah extends Model
     protected $table      = 'lab_jadwal_kuliah';
     protected $primaryKey = 'jadwal_kuliah_id';
 
+    protected $appends = ['encrypted_jadwal_kuliah_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'jadwal_kuliah_id';
+    }
+
     protected $fillable = [
         'semester_id',
         'mata_kuliah_id',

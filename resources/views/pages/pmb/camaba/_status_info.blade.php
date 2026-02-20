@@ -15,7 +15,7 @@
             <x-tabler.button href="{{ route('pmb.camaba.exam-card') }}" class="btn-outline-primary" icon="ti ti-printer" text="Cetak Kartu Ujian" />
             @if($activeJadwal)
                 <x-tabler.button type="button" class="btn-success btn-lg ajax-modal-btn" icon="ti ti-player-play" text="MULAI UJIAN SEKARANG" 
-                    data-modal-target="#modalAction" data-modal-title="Validasi Token Ujian" data-url="{{ route('cbt.execute.token-form', $activeJadwal->encrypted_id) }}" />
+                    data-modal-target="#modalAction" data-modal-title="Validasi Token Ujian" data-url="{{ route('cbt.execute.token-form', $activeJadwal->encrypted_jadwal_ujian_id) }}" />
             @endif
         </div>
     @elseif($pendaftaran->status_terkini == 'Sudah_Ujian')

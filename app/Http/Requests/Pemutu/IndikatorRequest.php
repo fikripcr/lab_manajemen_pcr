@@ -21,8 +21,7 @@ class IndikatorRequest extends FormRequest
         return [
             'type'            => 'required|in:renop,standar,performa',
             'doksub_ids'      => 'nullable|array',
-            'doksub_ids.*'    => 'exists:pemutu_dok_sub,doksub_id',
-            'parent_id'       => 'nullable|exists:pemutu_indikator,indikator_id',
+            'parent_id'       => 'nullable|string',
             'no_indikator'    => 'nullable|string|max:50',
             'indikator'       => 'required|string',
             'target'          => 'nullable|string',

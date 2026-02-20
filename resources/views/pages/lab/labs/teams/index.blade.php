@@ -50,8 +50,8 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex justify-content-end gap-1">
-                                        <x-tabler.button type="edit" :href="route('lab.labs.teams.edit', [$lab->encrypted_lab_id, $team->encrypted_id])" size="sm" />
-                                        <form action="{{ route('lab.labs.teams.destroy', [$lab->encrypted_lab_id, $team->encrypted_id]) }}" method="POST" class="ajax-form-delete d-inline">
+                                        <x-tabler.button type="edit" :href="route('lab.labs.teams.edit', [$lab->encrypted_lab_id, $team->encrypted_lab_team_id])" size="sm" />
+                                        <form action="{{ route('lab.labs.teams.destroy', [$lab->encrypted_lab_id, $team->encrypted_lab_team_id]) }}" method="POST" class="ajax-form-delete d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <x-tabler.button type="delete" size="sm" />

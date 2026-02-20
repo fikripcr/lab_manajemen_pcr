@@ -13,6 +13,18 @@ class RapatAgenda extends Model
     protected $table      = 'event_rapat_agenda';
     protected $primaryKey = 'rapatagenda_id';
 
+    protected $appends = ['encrypted_rapatagenda_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'rapatagenda_id';
+    }
+
+    public function getEncryptedRapatagendaIdAttribute()
+    {
+        return encryptId($this->rapatagenda_id);
+    }
+
     protected $fillable = [
         'rapat_id',
         'judul_agenda',

@@ -14,6 +14,13 @@ class Feedback extends Model
     protected $table      = 'eoffice_feedback';
     protected $primaryKey = 'feedback_id';
 
+    protected $appends = ['encrypted_feedback_id'];
+
+    public function getEncryptedFeedbackIdAttribute()
+    {
+        return encryptId($this->feedback_id);
+    }
+
     public function getRouteKeyName()
     {
         return 'feedback_id';

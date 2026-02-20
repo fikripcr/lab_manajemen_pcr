@@ -29,7 +29,7 @@ class IndikatorService
 
     public function getIndikatorById($id)
     {
-        return Indikator::with(['dokSubs.dokumen', 'labels.type', 'orgUnits', 'personils.personil', 'parent'])->find($id);
+        return Indikator::with(['dokSubs.dokumen', 'labels.type', 'orgUnits', 'pegawai.pegawai', 'parent'])->find($id);
     }
 
     public function createIndikator(array $data)
@@ -55,7 +55,7 @@ class IndikatorService
             // Handle KPI Assignments (only for type performa)
             if ($data['type'] === 'performa' && isset($data['kpi_assignments'])) {
                 foreach ($data['kpi_assignments'] as $assign) {
-                    $indikator->personils()->create($assign);
+                    $indikator->pegawai()->create($assign);
                 }
             }
 
@@ -86,15 +86,15 @@ class IndikatorService
 
             // Handle KPI Assignments (Performa only)
             if ($data['type'] === 'performa') {
-                $indikator->personils()->delete();
+                $indikator->pegawai()->delete();
                 if (isset($data['kpi_assignments'])) {
                     foreach ($data['kpi_assignments'] as $assign) {
-                        $indikator->personils()->create($assign);
+                        $indikator->pegawai()->create($assign);
                     }
                 }
             } else {
-                // If type changed from performa to something else, clear personils
-                $indikator->personils()->delete();
+                // If type changed from performa to something else, clear pegawai
+                $indikator->pegawai()->delete();
             }
 
             return $indikator;
@@ -110,7 +110,7 @@ class IndikatorService
             $indikator->dokSubs()->detach();
             $indikator->orgUnits()->detach();
             $indikator->labels()->detach();
-            $indikator->personils()->delete();
+            $indikator->pegawai()->delete();
 
             return $indikator->delete();
         });

@@ -14,7 +14,19 @@ class DokumenUpload extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_dokumen_upload';
+    protected $table      = 'pmb_dokumen_upload';
+    protected $primaryKey = 'dokumenupload_id';
+    protected $appends    = ['encrypted_dokumenupload_id', 'is_verified'];
+
+    public function getRouteKeyName()
+    {
+        return 'dokumenupload_id';
+    }
+
+    public function getEncryptedDokumenuploadIdAttribute()
+    {
+        return encryptId($this->dokumenupload_id);
+    }
 
     protected $fillable = [
         'pendaftaran_id',
@@ -32,11 +44,6 @@ class DokumenUpload extends Model
     public function getIsVerifiedAttribute()
     {
         return $this->status_verifikasi === 'Valid';
-    }
-
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
     }
 
     public function pendaftaran()

@@ -13,7 +13,19 @@ class SyaratDokumenJalur extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table = 'pmb_syarat_dokumen_jalur';
+    protected $table      = 'pmb_syarat_dokumen_jalur';
+    protected $primaryKey = 'syaratdokumenjalur_id';
+    protected $appends    = ['encrypted_syaratdokumenjalur_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'syaratdokumenjalur_id';
+    }
+
+    public function getEncryptedSyaratdokumenjalurIdAttribute()
+    {
+        return encryptId($this->syaratdokumenjalur_id);
+    }
 
     protected $fillable = [
         'jalur_id',
@@ -21,14 +33,6 @@ class SyaratDokumenJalur extends Model
         'is_wajib',
         'keterangan_khusus',
     ];
-
-    /**
-     * Accessor to get encrypted ID
-     */
-    public function getEncryptedIdAttribute()
-    {
-        return encryptId($this->id);
-    }
 
     public function jalur()
     {

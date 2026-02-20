@@ -24,11 +24,23 @@ class SoalService
             if ($data['tipe_soal'] == 'Pilihan_Ganda' && isset($data['opsi'])) {
                 foreach ($data['opsi'] as $label => $teks) {
                     OpsiJawaban::create([
-                        'soal_id'          => $soal->id,
+                        'soal_id'          => $soal->soal_id,
                         'label'            => $label,
                         'teks_jawaban'     => $teks,
                         'is_kunci_jawaban' => ($data['kunci_jawaban'] == $label),
                         'bobot_nilai'      => ($data['kunci_jawaban'] == $label ? 1 : 0),
+                    ]);
+                }
+            }
+
+            if ($data['tipe_soal'] == 'Benar_Salah') {
+                foreach (['Benar', 'Salah'] as $val) {
+                    OpsiJawaban::create([
+                        'soal_id'          => $soal->soal_id,
+                        'label'            => $val,
+                        'teks_jawaban'     => $val,
+                        'is_kunci_jawaban' => ($data['kunci_jawaban'] == $val),
+                        'bobot_nilai'      => ($data['kunci_jawaban'] == $val ? 1 : 0),
                     ]);
                 }
             }
@@ -51,11 +63,24 @@ class SoalService
                 $soal->opsiJawaban()->delete();
                 foreach ($data['opsi'] as $label => $teks) {
                     OpsiJawaban::create([
-                        'soal_id'          => $soal->id,
+                        'soal_id'          => $soal->soal_id,
                         'label'            => $label,
                         'teks_jawaban'     => $teks,
                         'is_kunci_jawaban' => ($data['kunci_jawaban'] == $label),
                         'bobot_nilai'      => ($data['kunci_jawaban'] == $label ? 1 : 0),
+                    ]);
+                }
+            }
+
+            if ($data['tipe_soal'] == 'Benar_Salah') {
+                $soal->opsiJawaban()->delete();
+                foreach (['Benar', 'Salah'] as $val) {
+                    OpsiJawaban::create([
+                        'soal_id'          => $soal->soal_id,
+                        'label'            => $val,
+                        'teks_jawaban'     => $val,
+                        'is_kunci_jawaban' => ($data['kunci_jawaban'] == $val),
+                        'bobot_nilai'      => ($data['kunci_jawaban'] == $val ? 1 : 0),
                     ]);
                 }
             }

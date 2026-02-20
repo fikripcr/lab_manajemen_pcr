@@ -58,7 +58,8 @@ function initAjaxFormHandler() {
             url: url,
             data: formData,
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                'X-Requested-With': 'XMLHttpRequest'
             }
         })
             .then(function (response) {
@@ -84,6 +85,18 @@ function initAjaxFormHandler() {
 
                 // Success (Toast)
                 showSuccessMessage(response.data.message || 'Success');
+
+                // Fire custom event
+                // Fire custom event
+                const successEvent = new CustomEvent('ajax-form:success', {
+                    detail: { response: response.data, form: $form[0] },
+                    bubbles: true,
+                    cancelable: true
+                });
+                $form[0].dispatchEvent(successEvent);
+
+                // Fire jQuery event (for delegated listeners)
+                $form.trigger('ajax-form:success', [response.data, $form[0]]);
 
                 // Redirect immediately if specified
                 if (response.data.redirect) {
@@ -139,7 +152,9 @@ function initAjaxFormHandler() {
                     // Show loading while deleting
                     showLoadingMessage('Deleting...', 'Please wait');
 
-                    axios.delete(url)
+                    axios.delete(url, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
                         .then(response => {
                             return { value: response };
                         })
@@ -187,9 +202,10 @@ function initAjaxFormHandler() {
         e.preventDefault();
 
         const $btn = $(this);
-        const url = $btn.data('url');
+        const url = $btn.data('url') || $btn.attr('href');
         const target = $btn.data('modal-target') || '#modalAction';
         const title = $btn.data('modal-title');
+        const size = $btn.data('modal-size'); // modal-sm, modal-lg, modal-xl
 
         const $modal = $(target);
         const $modalContent = $modal.find('#modalContent');
@@ -199,6 +215,10 @@ function initAjaxFormHandler() {
         if (!bootstrapModal) {
             bootstrapModal = new window.bootstrap.Modal($modal[0]);
         }
+
+        // Handle size
+        const $modalDialog = $modal.find('.modal-dialog');
+        $modalDialog.removeClass('modal-sm modal-lg modal-xl').addClass(size || '');
 
         // Show modal with loading state
         bootstrapModal.show();
@@ -215,7 +235,9 @@ function initAjaxFormHandler() {
         `);
 
         // Fetch content
-        axios.get(url)
+        axios.get(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
             .then(function (response) {
                 $modalContent.html(response.data);
 
@@ -228,6 +250,25 @@ function initAjaxFormHandler() {
                 }
                 if (typeof window.initFilePond === 'function') {
                     window.initFilePond();
+                }
+
+                // Re-init HugeRTE if present
+                if (typeof window.loadHugeRTE === 'function') {
+                    $modalContent.find('textarea.form-control').each(function () {
+                        const id = $(this).attr('id');
+                        if (id && $(this).closest('.tinymce-container').length > 0) {
+                            window.loadHugeRTE('#' + id, {
+                                height: 200,
+                                menubar: false,
+                                statusbar: false,
+                                setup: function (editor) {
+                                    editor.on('change', function () {
+                                        editor.save();
+                                    });
+                                }
+                            });
+                        }
+                    });
                 }
             })
             .catch(function (error) {

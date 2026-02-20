@@ -44,7 +44,7 @@
                             <div class="card-body p-0">
                                 <div class="list-group list-group-flush sortable-list" data-category="{{ $category }}">
                                     @foreach($items as $faq)
-                                        <div class="list-group-item d-flex justify-content-between align-items-center" data-id="{{ $faq->hashid }}">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center" data-id="{{ $faq->encrypted_faq_id }}">
                                             <div class="drag-handle cursor-move me-2">
                                                 <i class="ti ti-grip-vertical text-muted"></i>
                                             </div>
@@ -66,7 +66,7 @@
                                                     type="button" 
                                                     class="btn-icon btn-ghost-primary ajax-modal-btn" 
                                                     icon="ti ti-pencil" 
-                                                    data-url="{{ route('shared.faq.edit', $faq->hashid) }}"
+                                                    data-url="{{ route('shared.faq.edit', $faq->encrypted_faq_id) }}"
                                                     data-modal-title="Edit FAQ"
                                                     title="Edit"
                                                 />
@@ -74,7 +74,7 @@
                                                     type="button" 
                                                     class="btn-icon btn-ghost-danger ajax-delete" 
                                                     icon="ti ti-trash" 
-                                                    data-url="{{ route('shared.faq.destroy', $faq->hashid) }}"
+                                                    data-url="{{ route('shared.faq.destroy', $faq->encrypted_faq_id) }}"
                                                     data-title="Hapus FAQ?"
                                                     title="Delete"
                                                 />

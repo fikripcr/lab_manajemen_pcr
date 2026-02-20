@@ -14,6 +14,13 @@ class Inventaris extends Model
     protected $table      = 'lab_inventaris';
     protected $primaryKey = 'inventaris_id';
 
+    protected $appends = ['encrypted_inventaris_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'inventaris_id';
+    }
+
     protected $fillable = [
         'nama_alat',
         'jenis_alat',

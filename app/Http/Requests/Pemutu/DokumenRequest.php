@@ -14,17 +14,44 @@ class DokumenRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        if ($this->has('parent_id') && $this->parent_id) {
+            try {
+                $this->merge([
+                    'parent_id' => decryptId($this->parent_id),
+                ]);
+            } catch (\Exception $e) {
+                // Keep original value if decryption fails, validation will likely fail
+            }
+        }
+
+        if ($this->has('parent_doksub_id') && $this->parent_doksub_id) {
+            try {
+                $this->merge([
+                    'parent_doksub_id' => decryptId($this->parent_doksub_id),
+                ]);
+            } catch (\Exception $e) {
+                // Keep original value
+            }
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
         return [
-            'judul'     => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:dokumen,dok_id',
-            'kode'      => 'nullable|string|max:50',
-            'isi'       => 'nullable|string',
-            'jenis'     => 'required|in:visi,misi,rjp,renstra,renop,standar,formulir,manual_prosedur,dll',
-            'periode'   => 'nullable|integer',
+            'judul'            => 'required|string|max:255',
+            'parent_id'        => 'nullable|exists:pemutu_dokumen,dok_id',
+            'parent_doksub_id' => 'nullable|integer|exists:pemutu_dok_sub,doksub_id',
+            'kode'             => 'nullable|string|max:50',
+            'isi'              => 'nullable|string',
+            'jenis'            => 'required|in:visi,misi,rjp,renstra,renop,standar,formulir,manual_prosedur,dll',
+            'periode'          => 'nullable|integer',
         ];
     }
 }

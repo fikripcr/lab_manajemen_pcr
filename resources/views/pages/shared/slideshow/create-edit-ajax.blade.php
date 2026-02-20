@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     :title="$slideshow->exists ? 'Edit Slideshow' : 'Tambah Slideshow'"
-    :route="$slideshow->exists ? route('shared.slideshow.update', $slideshow->hashid) : route('shared.slideshow.store')"
+    :route="$slideshow->exists ? route('shared.slideshow.update', $slideshow->encrypted_slideshow_id) : route('shared.slideshow.store')"
     :method="$slideshow->exists ? 'PUT' : 'POST'"
     enctype="multipart/form-data"
 >

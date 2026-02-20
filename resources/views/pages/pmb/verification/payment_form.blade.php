@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Verifikasi Pembayaran: {{ $pembayaran->pendaftaran->no_pendaftaran }}"
-    route="{{ route('pmb.verification.verify-payment', $pembayaran->encrypted_id) }}"
+    route="{{ route('pmb.verification.verify-payment', $pembayaran->encrypted_pembayaran_id) }}"
     method="POST"
     submitText="Simpan Hasil Verifikasi"
     data-redirect="true"

@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header :title="$page->title" pretitle="Detail Halaman">
     <x-slot:actions>
-        <a href="{{ route('shared.public-page.edit', $page->hashid) }}" class="btn btn-primary d-none d-sm-inline-block">
+        <a href="{{ route('shared.public-page.edit', $page->encrypted_page_id) }}" class="btn btn-primary d-none d-sm-inline-block">
             <i class="ti ti-edit"></i> Edit Halaman
         </a>
         <a href="javascript:void(0)" onclick="history.back()" class="btn btn-secondary d-none d-sm-inline-block">

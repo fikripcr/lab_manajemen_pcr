@@ -348,11 +348,11 @@
 <script>
     // --- 1. DATA & STATE ---
     const soalData = {!! $paketSoal->toJson() !!};
-    const riwayatId = "{{ $riwayat->hashid }}";
-    const saveUrl = "{{ route('cbt.execute.save', $riwayat->hashid) }}";
-    const submitUrl = "{{ route('cbt.execute.submit', $riwayat->hashid) }}";
+    const riwayatId = "{{ $riwayat->encrypted_riwayat_ujian_id }}";
+    const saveUrl = "{{ route('cbt.execute.save', $riwayat->encrypted_riwayat_ujian_id) }}";
+    const submitUrl = "{{ route('cbt.execute.submit', $riwayat->encrypted_riwayat_ujian_id) }}";
     @if(auth()->user()->hasRole('admin'))
-    const resetUrl = "{{ route('cbt.execute.reset-admin', $jadwal->hashid) }}";
+    const resetUrl = "{{ route('cbt.execute.reset-admin', $jadwal->encrypted_jadwal_ujian_id) }}";
     @endif
     const endTime = new Date("{{ $jadwal->waktu_selesai }}").getTime();
     
@@ -606,7 +606,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('cbt.execute.reset-admin', $jadwal->hashid) }}",
+                    url: "{{ route('cbt.execute.reset-admin', $jadwal->encrypted_jadwal_ujian_id) }}",
                     type: 'POST',
                     data: { _token: '{{ csrf_token() }}' },
                     success: function(res) {

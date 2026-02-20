@@ -11,9 +11,14 @@ class DokSub extends Model
 {
     use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
-    protected $table = 'pemutu_dok_sub';
+    protected $table      = 'pemutu_dok_sub';
     protected $primaryKey = 'doksub_id';
-    protected $appends = ['encrypted_doksub_id'];
+    protected $appends    = ['encrypted_doksub_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'doksub_id';
+    }
     protected $fillable = [
         'dok_id',
         'judul',
@@ -21,8 +26,8 @@ class DokSub extends Model
         'seq',
         'is_hasilkan_indikator',
         'created_by',
-        'updated_by',        'deleted_by',
-    
+        'updated_by', 'deleted_by',
+
     ];
 
     protected $casts = [

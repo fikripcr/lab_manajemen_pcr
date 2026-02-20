@@ -16,6 +16,18 @@ class RiwayatPenugasan extends Model
     protected $primaryKey = 'riwayatpenugasan_id';
     protected $guarded    = ['riwayatpenugasan_id'];
 
+    protected $appends = ['encrypted_riwayatpenugasan_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'riwayatpenugasan_id';
+    }
+
+    public function getEncryptedRiwayatpenugasanIdAttribute()
+    {
+        return encryptId($this->riwayatpenugasan_id);
+    }
+
     protected $casts = [
         'tgl_mulai'   => 'date',
         'tgl_selesai' => 'date',
