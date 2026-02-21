@@ -27,4 +27,16 @@ class LaporanKerusakanRequest extends FormRequest
             'bukti_foto'          => 'nullable|image|max:2048',
         ];
     }
+
+    /**
+     * Prepare the request for validation, decrypting encrypted IDs.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('inventaris_id')) {
+            $this->merge([
+                'inventaris_id' => decryptIdIfEncrypted($this->inventaris_id),
+            ]);
+        }
+    }
 }

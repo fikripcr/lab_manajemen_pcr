@@ -75,8 +75,10 @@ class PaketUjianController extends Controller
     public function show(PaketUjian $paket)
     {
         $paket->load(['komposisi.soal.mataUji']);
-        $soalTersedia = Soal::where('tipe_soal', 'Pilihan_Ganda')
-            ->whereNotIn('id', $paket->komposisi->pluck('soal_id'))
+        $soalTersedia = Soal::with('mataUji')
+            ->whereNotIn('soal_id', $paket->komposisi->pluck('soal_id'))
+            ->where('is_aktif', true)
+            ->orderBy('mata_uji_id')
             ->get();
 
         return view('pages.cbt.paket.show', compact('paket', 'soalTersedia'));

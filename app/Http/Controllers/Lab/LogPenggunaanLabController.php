@@ -51,9 +51,10 @@ class LogPenggunaanLabController extends Controller
         $today           = now()->format('Y-m-d');
         $activeKegiatans = Kegiatan::whereDate('tanggal', $today)
             ->where('status', 'approved')
+            ->with('lab')
             ->get();
 
-        $labs = Lab::all();
+        $labs = Lab::with('labTeams')->get();
         $log  = new \App\Models\Lab\LogPenggunaanLab();
         return view('pages.lab.log-lab.create-edit-ajax', compact('activeKegiatans', 'labs', 'log'));
     }
@@ -61,14 +62,13 @@ class LogPenggunaanLabController extends Controller
     public function store(LogPenggunaanLabRequest $request)
     {
         try {
-            $data = $request->all();
+            $data = $request->validated();
 
             if ($request->filled('kegiatan_id')) {
-                $data['kegiatan_id'] = decryptId($request->kegiatan_id);
                 $kegiatan            = Kegiatan::findOrFail($data['kegiatan_id']);
                 $data['lab_id']      = $kegiatan->lab_id;
             } elseif ($request->filled('lab_id')) {
-                $data['lab_id'] = decryptId($request->lab_id);
+                // lab_id already decrypted via Form Request
             } else {
                 return jsonError('Pilih Kegiatan atau Lab');
             }

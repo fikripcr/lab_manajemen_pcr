@@ -17,7 +17,7 @@ class FilePegawaiController extends Controller
      */
     public function index($pegawai_id)
     {
-        $pegawaiId = decryptId($pegawai_id);
+        $pegawaiId = decryptIdIfEncrypted($pegawai_id);
         $query     = $this->filePegawaiService->getQuery($pegawaiId);
 
         return DataTables::of($query)
@@ -47,7 +47,7 @@ class FilePegawaiController extends Controller
     {
 
         try {
-            $pegawaiId = decryptId($request->pegawai_id);
+            $pegawaiId = decryptIdIfEncrypted($request->pegawai_id);
             $this->filePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
 
             return jsonSuccess('File berhasil diunggah');
@@ -59,11 +59,10 @@ class FilePegawaiController extends Controller
     /**
      * Remove the specified file (Soft Delete).
      */
-    public function destroy($id)
+    public function destroy(FilePegawai $file)
     {
         try {
-            $decryptedId = decryptId($id);
-            $this->filePegawaiService->deleteFile($decryptedId);
+            $this->filePegawaiService->deleteFile($file->filepegawai_id);
 
             return jsonSuccess('File berhasil dihapus');
         } catch (Exception $e) {

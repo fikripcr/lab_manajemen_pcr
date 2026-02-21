@@ -20,7 +20,7 @@
                 <div class="row row-cards" id="unit-cards">
                     @forelse($orgUnits as $unit)
                     @php
-                        $unitId = $unit->orgunit_id;
+                        $unitId = $unit->encrypted_org_unit_id;
                         $current = $assignmentMap[$unitId] ?? null;
                         $currentAuditee = $current['auditee'] ?? null;
                         $currentAnggota = $current['anggota'] ?? collect();
@@ -37,7 +37,7 @@
                                 </div>
                                 <div class="card-actions">
                                     <button type="button" class="btn btn-sm btn-outline-primary ajax-modal-btn"
-                                            data-url="{{ route('pemutu.tim-mutu.edit-unit', [$periode->periodespmi_id, $unitId]) }}"
+                                            data-url="{{ route('pemutu.tim-mutu.edit-unit', [$periode->encrypted_periodespmi_id, $unitId]) }}"
                                             data-modal-title="Set Tim Mutu">
                                         <i class="ti ti-settings me-1"></i> Set Tim
                                     </button>

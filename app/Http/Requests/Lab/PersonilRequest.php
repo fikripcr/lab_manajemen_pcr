@@ -30,4 +30,16 @@ class PersonilRequest extends FormRequest
             'user_id' => 'nullable|string', // Encrypted ID
         ];
     }
+
+    /**
+     * Prepare the request for validation, decrypting encrypted IDs.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('user_id')) {
+            $this->merge([
+                'user_id' => decryptIdIfEncrypted($this->user_id),
+            ]);
+        }
+    }
 }

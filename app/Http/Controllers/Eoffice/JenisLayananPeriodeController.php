@@ -20,10 +20,10 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Store a new periode for a Jenis Layanan.
      */
-    public function store(JenisLayananPeriodeStoreRequest $request, JenisLayanan $jenis_layanan)
+    public function store(JenisLayananPeriodeStoreRequest $request, JenisLayanan $jenisLayanan)
     {
         $validated                    = $request->validated();
-        $validated['jenislayanan_id'] = $jenis_layanan->jenislayanan_id;
+        $validated['jenislayanan_id'] = $jenisLayanan->jenislayanan_id;
 
         try {
             $this->jenisLayananPeriodeService->createPeriode($validated);
@@ -64,9 +64,9 @@ class JenisLayananPeriodeController extends Controller
     /**
      * Get periode data for AJAX.
      */
-    public function data(JenisLayanan $jenis_layanan)
+    public function data(JenisLayanan $jenisLayanan)
     {
-        $data = $this->jenisLayananPeriodeService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
+        $data = $this->jenisLayananPeriodeService->getByJenisLayanan($jenisLayanan->jenislayanan_id);
 
         // Format dates for display
         $formatted = $data->map(function ($item) {

@@ -189,19 +189,12 @@ class NotificationsController extends Controller
 
         // Determine recipient - if no user_id provided, use authenticated user
         if ($userId) {
-            // Try to decrypt the user ID first
-            $decryptedId = null;
-            try {
-                $decryptedId = decryptId($userId, false);
-            } catch (Exception $e) {
-                // If decryption fails, we'll try to find by the original value
-                $decryptedId = null;
-            }
-
-            if ($decryptedId !== null) {
-                $recipient = User::findOrFail($decryptedId);
+            // Handle both User model (from route binding) and encrypted ID string
+            if ($userId instanceof User) {
+                $recipient = $userId;
             } else {
-                $recipient = User::findOrFail($userId);
+                $decryptedId = decryptIdIfEncrypted($userId);
+                $recipient = User::findOrFail($decryptedId);
             }
         } else {
             // Use authenticated user if no user_id provided

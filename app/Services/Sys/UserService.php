@@ -16,11 +16,9 @@ class UserService
      */
     public function getUserList(array $filters = []): LengthAwarePaginator
     {
-        return DB::transaction(function () use ($filters) {
-            $query   = $this->getFilteredQuery($filters);
-            $perPage = $filters['per_page'] ?? 10;
-            return $query->paginate($perPage);
-        });
+        $query   = $this->getFilteredQuery($filters);
+        $perPage = $filters['per_page'] ?? 10;
+        return $query->paginate($perPage);
     }
 
     /**

@@ -1,13 +1,14 @@
 @extends('layouts.tabler.app')
+
 @section('title', 'Dokumen SPMI')
 
 @section('header')
 <x-tabler.page-header title="Dokumen SPMI" pretitle="Berkas">
     <x-slot:actions>
         @if($activeTab === 'standar')
-            <x-tabler.button type="button" icon="ti ti-file-plus" text="Tambah Standar" class="ajax-modal-btn btn-success" data-url="{{ route('pemutu.dokumens.create-standar') }}" data-modal-title="Tambah Dokumen Standar" />
+            <x-tabler.button type="create" text="Tambah Standar" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create-standar') }}" data-modal-title="Tambah Dokumen Standar" />
         @else
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Kebijakan" class="ajax-modal-btn btn-primary" data-url="{{ route('pemutu.dokumens.create', ['tabs' => $activeTab]) }}" data-modal-title="Tambah Dokumen Kebijakan" />
+            <x-tabler.button type="create"  text="Tambah Kebijakan" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create', ['tabs' => $activeTab]) }}" data-modal-title="Tambah Dokumen Kebijakan" />
         @endif
     </x-slot:actions>
 </x-tabler.page-header>

@@ -30,8 +30,7 @@ class LabTeamController extends Controller
     public function store(LabTeamStoreRequest $request, Lab $lab)
     {
         try {
-            $validated            = $request->validated();
-            $validated['user_id'] = decryptId($request->user_id);
+            $validated = $request->validated();
 
             $this->labTeamService->assignUserToLab($lab->lab_id, $validated);
             return jsonSuccess('Anggota tim berhasil ditambahkan ke lab.', route('lab.labs.teams.index', $lab->encrypted_lab_id));

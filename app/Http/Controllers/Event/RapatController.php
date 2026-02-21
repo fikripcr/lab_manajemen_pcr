@@ -79,7 +79,7 @@ class RapatController extends Controller
     {
         $pageTitle = 'Tambah Rapat';
         $rapat     = new Rapat();
-        $users     = User::all();
+        $users     = User::with('roles')->get();
         return view('pages.event.rapat.create-edit-ajax', compact('pageTitle', 'users', 'rapat'));
     }
 
@@ -109,7 +109,7 @@ class RapatController extends Controller
     public function edit(Rapat $rapat)
     {
         $pageTitle = 'Edit Rapat';
-        $users     = User::all();
+        $users     = User::with('roles')->get();
         return view('pages.event.rapat.create-edit-ajax', compact('rapat', 'pageTitle', 'users'));
     }
 

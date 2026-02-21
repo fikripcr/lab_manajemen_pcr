@@ -42,9 +42,9 @@ class PublicPageController extends Controller
         return view('pages.shared.public-page.index');
     }
 
-    public function show(PublicPage $public_page)
+    public function show(PublicPage $publicPage)
     {
-        return view('pages.shared.public-page.show', ['page' => $public_page]);
+        return view('pages.shared.public-page.show', ['page' => $publicPage]);
     }
 
     public function create()
@@ -62,25 +62,25 @@ class PublicPageController extends Controller
         }
     }
 
-    public function edit(PublicPage $public_page)
+    public function edit(PublicPage $publicPage)
     {
-        return view('pages.shared.public-page.create-edit', ['page' => $public_page]);
+        return view('pages.shared.public-page.create-edit', ['page' => $publicPage]);
     }
 
-    public function update(PublicPageRequest $request, PublicPage $public_page)
+    public function update(PublicPageRequest $request, PublicPage $publicPage)
     {
         try {
-            $this->pageService->updatePage($public_page, $request->validated());
+            $this->pageService->updatePage($publicPage, $request->validated());
             return redirect()->route('shared.public-page.index')->with('success', 'Halaman berhasil diperbarui.');
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage())->withInput();
         }
     }
 
-    public function destroy(PublicPage $public_page)
+    public function destroy(PublicPage $publicPage)
     {
         try {
-            $this->pageService->deletePage($public_page);
+            $this->pageService->deletePage($publicPage);
             return jsonSuccess('Halaman berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

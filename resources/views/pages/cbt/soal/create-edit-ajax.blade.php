@@ -35,16 +35,16 @@
                     </thead>
                     <tbody>
                         @foreach(['A', 'B', 'C', 'D', 'E'] as $label)
-                        @php 
+                        @php
                             $opsi = $isEdit ? $soal->opsiJawaban->where('label', $label)->first() : null;
                         @endphp
                         <tr>
                             <td class="text-center">
-                                <input type="radio" name="kunci_jawaban" value="{{ $label }}" class="form-check-input" {{ ($opsi && $opsi->is_kunci_jawaban) || (!$isEdit && $label === 'A') ? 'checked' : '' }}>
+                                <x-tabler.form-radio name="kunci_jawaban" :value="$label" :checked="($opsi && $opsi->is_kunci_jawaban) || (!$isEdit && $label === 'A')" />
                             </td>
                             <td class="fw-bold">{{ $label }}</td>
                             <td>
-                                <input type="text" name="opsi[{{ $label }}]" class="form-control" value="{{ $opsi ? $opsi->teks_jawaban : '' }}" placeholder="Teks jawaban {{ $label }}" required>
+                                <x-tabler.form-input type="text" name="opsi[{{ $label }}]" :value="$opsi ? $opsi->teks_jawaban : ''" placeholder="Teks jawaban {{ $label }}" required />
                             </td>
                         </tr>
                         @endforeach

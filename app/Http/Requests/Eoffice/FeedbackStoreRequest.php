@@ -29,6 +29,18 @@ class FeedbackStoreRequest extends FormRequest
     }
 
     /**
+     * Prepare the request for validation, decrypting encrypted IDs.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('layanan_id')) {
+            $this->merge([
+                'layanan_id' => decryptIdIfEncrypted($this->layanan_id),
+            ]);
+        }
+    }
+
+    /**
      * Get custom error messages for validation rules.
      *
      * @return array<string, string>

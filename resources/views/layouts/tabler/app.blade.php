@@ -102,6 +102,8 @@
             {{-- Main Body --}}
             <div class="page-body">
                 <div class="{{ $layoutData['containerClass'] ?? 'container-xl' }}">
+                    <x-tabler.flash-message />
+                    
                     @yield('content')
                 </div>
             </div>

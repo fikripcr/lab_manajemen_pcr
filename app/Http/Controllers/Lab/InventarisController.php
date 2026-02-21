@@ -80,7 +80,7 @@ class InventarisController extends Controller
      */
     public function create()
     {
-        $labs       = Lab::all();
+        $labs       = Lab::with('labTeams')->get();
         $inventaris = new Inventaris();
         return view('pages.lab.inventaris.create-edit-ajax', compact('labs', 'inventaris'));
     }
@@ -112,7 +112,7 @@ class InventarisController extends Controller
      */
     public function edit(Inventaris $inventaris)
     {
-        $labs = Lab::all();
+        $labs = Lab::with('labTeams')->get();
         return view('pages.lab.inventaris.create-edit-ajax', compact('inventaris', 'labs'));
     }
 

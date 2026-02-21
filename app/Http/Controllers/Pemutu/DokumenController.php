@@ -33,7 +33,6 @@ class DokumenController extends Controller
         } else {
             $jenisTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
         }
-
         $dokumentByJenis = [];
         foreach ($jenisTypes as $jenis) {
             $dokumentByJenis[$jenis] = $this->dokumenService->getDokumenByJenis($jenis, $request->periode);

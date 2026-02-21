@@ -15,10 +15,10 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Store a new disposisi for a Jenis Layanan.
      */
-    public function store(JenisLayananDisposisiRequest $request, JenisLayanan $jenis_layanan)
+    public function store(JenisLayananDisposisiRequest $request, JenisLayanan $jenisLayanan)
     {
         try {
-            $this->JenisLayananDisposisiService->store($jenis_layanan->jenislayanan_id, $request->validated());
+            $this->JenisLayananDisposisiService->store($jenisLayanan->jenislayanan_id, $request->validated());
             return jsonSuccess('Disposisi berhasil ditambahkan.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -61,9 +61,9 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Get disposisi data for AJAX (e.g., on Jenis Layanan show page).
      */
-    public function data(JenisLayanan $jenis_layanan)
+    public function data(JenisLayanan $jenisLayanan)
     {
-        $data = $this->JenisLayananDisposisiService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
+        $data = $this->JenisLayananDisposisiService->getByJenisLayanan($jenisLayanan->jenislayanan_id);
         return jsonSuccess('Data retrieved', null, $data);
     }
 

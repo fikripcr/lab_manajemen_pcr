@@ -71,10 +71,8 @@ class LogPenggunaanPcController extends Controller
     public function store(LogPenggunaanPcRequest $request)
     {
         try {
-            $data              = $request->all();
-            $data['user_id']   = Auth::id();
-            $data['jadwal_id'] = decryptId($request->jadwal_id);
-            $data['lab_id']    = decryptId($request->lab_id);
+            $data            = $request->all();
+            $data['user_id'] = Auth::id();
 
             $this->logPenggunaanPcService->storeLog($data);
 

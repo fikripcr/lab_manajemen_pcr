@@ -18,14 +18,13 @@ class LayananDiskusiController extends Controller
     {
         try {
             $validated = $request->validated();
-            $layananId = decryptId($validated['layanan_id']);
 
             if ($request->hasFile('file_lampiran')) {
                 $validated['file_lampiran'] = $request->file('file_lampiran')
                     ->store('eoffice/diskusi/' . date('Y/m'), 'public');
             }
 
-            $this->LayananDiskusiService->store($layananId, $validated);
+            $this->LayananDiskusiService->store($validated);
             return jsonSuccess('Diskusi berhasil dikirim.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());

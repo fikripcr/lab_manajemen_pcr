@@ -49,33 +49,32 @@ class JenisIndisiplinerController extends Controller
         }
     }
 
-    public function edit(JenisIndisipliner $jenis_indisipliner)
+    public function edit(JenisIndisipliner $jenisIndisipliner)
     {
-        $jenisIndisipliner = $jenis_indisipliner;
         return view('pages.hr.jenis-indisipliner.create-edit-ajax', compact('jenisIndisipliner'));
     }
 
-    public function update(JenisIndisiplinerRequest $request, JenisIndisipliner $jenis_indisipliner)
+    public function update(JenisIndisiplinerRequest $request, JenisIndisipliner $jenisIndisipliner)
     {
         $validated = $request->validated();
 
         try {
-            $jenis_indisipliner->update($validated);
+            $jenisIndisipliner->update($validated);
             return jsonSuccess('Jenis Indisipliner berhasil diperbarui.');
         } catch (Exception $e) {
             return jsonError('Gagal memperbarui data: ' . $e->getMessage(), 500);
         }
     }
 
-    public function destroy(JenisIndisipliner $jenis_indisipliner)
+    public function destroy(JenisIndisipliner $jenisIndisipliner)
     {
         try {
             // Check if there are any indisipliner records using this type
-            if ($jenis_indisipliner->indisipliner()->count() > 0) {
+            if ($jenisIndisipliner->indisipliner()->count() > 0) {
                 return jsonError('Tidak dapat menghapus jenis indisipliner yang masih digunakan.', 422);
             }
 
-            $jenis_indisipliner->delete();
+            $jenisIndisipliner->delete();
             return jsonSuccess('Jenis Indisipliner berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError('Gagal menghapus data: ' . $e->getMessage(), 500);

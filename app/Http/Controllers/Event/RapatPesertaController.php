@@ -20,14 +20,14 @@ class RapatPesertaController extends Controller
         $rapatId = decryptIdIfEncrypted($request->rapat_id);
         $rapat   = Rapat::findOrFail($rapatId);
         $peserta = new RapatPeserta(['rapat_id' => $rapatId]);
-        $users   = \App\Models\User::all();
+        $users   = User::with('roles')->get();
         return view('pages.event.rapat.peserta.create-edit-ajax', compact('rapat', 'peserta', 'users'));
     }
 
     public function edit(RapatPeserta $peserta)
     {
         $rapat = $peserta->rapat;
-        $users = User::all();
+        $users = User::with('roles')->get();
         return view('pages.event.rapat.peserta.create-edit-ajax', compact('rapat', 'peserta', 'users'));
     }
 

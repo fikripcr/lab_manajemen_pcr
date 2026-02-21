@@ -200,13 +200,10 @@ class UserController extends Controller
     /**
      * Export users to PDF (summary or detail based on parameters)
      */
-    public function exportPdf(Request $request, $id = null)
+    public function exportPdf(Request $request, User $user = null)
     {
-        if ($id) {
+        if ($user) {
             // Detail report for specific user
-            $realId = decryptId($id);
-            $user   = $this->userService->getUserById($realId);
-
             $data = [
                 'user'       => $user,
                 'reportType' => 'detail',
@@ -274,7 +271,7 @@ class UserController extends Controller
     /**
      * Login as a specific user using laravel-impersonate.
      */
-    public function loginAs(Request $request, $user)
+    public function loginAs(Request $request, User $user)
     {
         $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan'];
 
@@ -289,14 +286,7 @@ class UserController extends Controller
             }
         }
 
-        // Decrypt the user ID
-        try {
-            $userId     = decryptId($user);
-            $targetUser = $this->userService->getUserById($userId);
-        } catch (\Exception $e) {
-            // Fallback if not encrypted (should not happen if consistent)
-            $targetUser = $this->userService->getUserById($user);
-        }
+        $targetUser = $user;
 
         if (! $targetUser) {
             abort(404);

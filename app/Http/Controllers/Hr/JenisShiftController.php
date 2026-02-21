@@ -54,26 +54,25 @@ class JenisShiftController extends Controller
         }
     }
 
-    public function edit(JenisShift $jenis_shift)
+    public function edit(JenisShift $jenisShift)
     {
-        $jenisShift = $jenis_shift;
         return view('pages.hr.jenis-shift.create-edit-ajax', compact('jenisShift'));
     }
 
-    public function update(JenisShiftRequest $request, JenisShift $jenis_shift)
+    public function update(JenisShiftRequest $request, JenisShift $jenisShift)
     {
         try {
-            $this->jenisShiftService->update($jenis_shift, $request->validated());
+            $this->jenisShiftService->update($jenisShift, $request->validated());
             return jsonSuccess('Jenis Shift updated successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy(JenisShift $jenis_shift)
+    public function destroy(JenisShift $jenisShift)
     {
         try {
-            $jenis_shift->delete();
+            $jenisShift->delete();
             return jsonSuccess('Jenis Shift deleted successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

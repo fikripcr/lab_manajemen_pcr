@@ -37,7 +37,7 @@ class PaketUjianService
         return DB::transaction(function () use ($paket, $soalIds) {
             foreach ($soalIds as $soalId) {
                 KomposisiPaket::firstOrCreate([
-                    'paket_id' => $paket->id,
+                    'paket_id' => $paket->paket_ujian_id,
                     'soal_id'  => decryptId($soalId),
                 ]);
             }

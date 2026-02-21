@@ -60,7 +60,7 @@ class LaporanKerusakanController extends Controller
 
     public function create()
     {
-        $labs    = Lab::all();
+        $labs    = Lab::with('labTeams')->get();
         $laporan = new LaporanKerusakan();
         return view('pages.lab.laporan-kerusakan.create-edit-ajax', compact('labs', 'laporan'));
     }
@@ -72,7 +72,7 @@ class LaporanKerusakanController extends Controller
         }
 
         try {
-            $labId = decryptId($request->lab_id);
+            $labId = decryptIdIfEncrypted($request->lab_id);
 
             // Get LabAssignments where status is active
             // Note: Relationship structure depends on implementation.
@@ -104,8 +104,7 @@ class LaporanKerusakanController extends Controller
     public function store(LaporanKerusakanRequest $request)
     {
         try {
-            $data                  = $request->except('bukti_foto');
-            $data['inventaris_id'] = decryptId($request->inventaris_id);
+            $data = $request->validated();
 
             if ($request->hasFile('bukti_foto')) {
                 $data['bukti_foto'] = $request->file('bukti_foto')->store('laporan-kerusakan', 'public');

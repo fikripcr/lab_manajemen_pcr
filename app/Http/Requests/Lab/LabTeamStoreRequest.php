@@ -22,9 +22,21 @@ class LabTeamStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'required',
             'role' => 'required|in:pic,member',
         ];
+    }
+
+    /**
+     * Prepare the request for validation, decrypting encrypted IDs.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('user_id')) {
+            $this->merge([
+                'user_id' => decryptIdIfEncrypted($this->user_id),
+            ]);
+        }
     }
 
     /**

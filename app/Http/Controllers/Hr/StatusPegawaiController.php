@@ -61,26 +61,25 @@ class StatusPegawaiController extends Controller
         }
     }
 
-    public function edit(StatusPegawai $status_pegawai)
+    public function edit(StatusPegawai $statusPegawai)
     {
-        $statusPegawai = $status_pegawai;
         return view('pages.hr.status-pegawai.create-edit-ajax', compact('statusPegawai'));
     }
 
-    public function update(StatusPegawaiRequest $request, StatusPegawai $status_pegawai)
+    public function update(StatusPegawaiRequest $request, StatusPegawai $statusPegawai)
     {
         try {
-            $this->StatusPegawaiService->update($status_pegawai, $request->validated());
+            $this->StatusPegawaiService->update($statusPegawai, $request->validated());
             return jsonSuccess('Status Pegawai updated successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy(StatusPegawai $status_pegawai)
+    public function destroy(StatusPegawai $statusPegawai)
     {
         try {
-            $status_pegawai->delete();
+            $statusPegawai->delete();
             return jsonSuccess('Status Pegawai deleted successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

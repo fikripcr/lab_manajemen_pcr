@@ -39,13 +39,13 @@
             @if(!empty($typeValue))
                 @foreach($typeValue as $val)
                 <div class="input-group mb-2">
-                    <input type="text" name="type_value[]" class="form-control" value="{{ $val }}" required>
+                    <x-tabler.form-input type="text" name="type_value[]" :value="$val" required class="flex-grow-1" />
                     <button class="btn btn-outline-danger" type="button" onclick="removeOptionAjax(this)">Hapus</button>
                 </div>
                 @endforeach
             @else
                 <div class="input-group mb-2">
-                    <input type="text" name="type_value[]" class="form-control" placeholder="Masukkan opsi">
+                    <x-tabler.form-input type="text" name="type_value[]" placeholder="Masukkan opsi" class="flex-grow-1" />
                     <button class="btn btn-outline-danger" type="button" onclick="removeOptionAjax(this)">Hapus</button>
                 </div>
             @endif

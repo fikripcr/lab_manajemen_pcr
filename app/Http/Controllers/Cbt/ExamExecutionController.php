@@ -81,7 +81,7 @@ class ExamExecutionController extends Controller
 
             if ($riwayat) {
                 \App\Models\Cbt\LogPelanggaran::create([
-                    'riwayat_id'        => $riwayat->id,
+                    'riwayat_id'        => $riwayat->riwayat_id,
                     'jenis_pelanggaran' => $request->validated('type'),
                     'keterangan'        => $request->validated('keterangan'),
                     'waktu_kejadian'    => now(),
@@ -134,7 +134,7 @@ class ExamExecutionController extends Controller
             }
 
             // Set session flag to allow access to start exam
-            session(['cbt_token_validated_' . $jadwal->id => true]);
+            session(['cbt_token_validated_' . $jadwal->jadwal_ujian_id => true]);
 
             return jsonSuccess('Token valid.', route('cbt.execute.start', $jadwal->hashid));
         } catch (Exception $e) {
@@ -148,21 +148,28 @@ class ExamExecutionController extends Controller
     public function start(StartExamRequest $request, JadwalUjian $jadwal)
     {
         try {
+
             $user = auth()->user();
-            $jadwal->load(['paket.komposisi.soal.opsiJawaban']);
+            $jadwal->load(['paket.komposisi.soal.opsiJawaban', 'paket.komposisi.soal.mataUji']);
             $riwayat = $this->examExecutionService->startExam($jadwal, $user, [
                 'ip'         => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
-            dd($riwayat);
+
             if ($riwayat->status === 'Selesai') {
                 return redirect()->route('cbt.execute.finished', $jadwal->hashid)
                     ->with('info', 'Anda telah menyelesaikan ujian ini.');
             }
 
-            $paketSoal = $jadwal->paket->komposisi->map(fn($komp) => $komp->soal);
+            // Build flat ordered soal collection from komposisi
+            $paketSoal = $jadwal->paket->komposisi
+                ->sortBy('urutan_tampil')
+                ->map(fn($komp) => $komp->soal)
+                ->filter()
+                ->values();
+
             if ($jadwal->paket->is_acak_soal) {
-                $paketSoal = $paketSoal->shuffle();
+                $paketSoal = $paketSoal->shuffle()->values();
             }
 
             return view('pages.cbt.execution.index', compact('jadwal', 'riwayat', 'paketSoal'));
@@ -206,7 +213,7 @@ class ExamExecutionController extends Controller
     public function finished(JadwalUjian $jadwal)
     {
         $user    = auth()->user();
-        $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->id)
+        $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->jadwal_ujian_id)
             ->where('user_id', $user->id)
             ->firstOrFail();
 
@@ -224,15 +231,15 @@ class ExamExecutionController extends Controller
             }
 
             $user    = auth()->user();
-            $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->id)
+            $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->jadwal_ujian_id)
                 ->where('user_id', $user->id)
                 ->first();
 
             if ($riwayat) {
                 // Delete answers first
-                JawabanSiswa::where('riwayat_id', $riwayat->id)->forceDelete();
+                JawabanSiswa::where('riwayat_id', $riwayat->riwayat_ujian_id)->forceDelete();
                 // Delete violations
-                LogPelanggaran::where('riwayat_id', $riwayat->id)->forceDelete();
+                LogPelanggaran::where('riwayat_id', $riwayat->riwayat_ujian_id)->forceDelete();
                 // Force delete history
                 $riwayat->forceDelete();
             }
@@ -250,13 +257,13 @@ class ExamExecutionController extends Controller
     {
         try {
             $user    = auth()->user();
-            $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->id)
+            $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->jadwal_ujian_id)
                 ->where('user_id', $user->id)
                 ->first();
 
             if ($riwayat) {
-                JawabanSiswa::where('riwayat_id', $riwayat->id)->forceDelete();
-                LogPelanggaran::where('riwayat_id', $riwayat->id)->forceDelete();
+                JawabanSiswa::where('riwayat_id', $riwayat->riwayat_ujian_id)->forceDelete();
+                LogPelanggaran::where('riwayat_id', $riwayat->riwayat_ujian_id)->forceDelete();
                 $riwayat->forceDelete();
             }
 

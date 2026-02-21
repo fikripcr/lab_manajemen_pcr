@@ -100,23 +100,19 @@ class PermissionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Permission $permission)
     {
-        $realId     = decryptId($id);
-        $permission = $this->permissionService->getPermissionById($realId);
-
         return view('pages.sys.permissions.create-edit-ajax', compact('permission'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PermissionRequest $request, $permissionId)
+    public function update(PermissionRequest $request, Permission $permission)
     {
         try {
-            $realId = decryptId($permissionId);
-            $data   = $request->validated();
-            $this->permissionService->updatePermission($realId, $data);
+            $data = $request->validated();
+            $this->permissionService->updatePermission($permission->id, $data);
 
             return jsonSuccess();
         } catch (Exception $e) {
@@ -127,13 +123,12 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($permissionId)
+    public function destroy(Permission $permission)
     {
         try {
-            $realId = decryptId($permissionId);
-            $this->permissionService->deletePermission($realId);
+            $this->permissionService->deletePermission($permission->id);
 
-            return jsonSuccess('Izin berhasildihapus . ');
+            return jsonSuccess('Izin berhasil dihapus.');
 
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

@@ -1,13 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Tim Mutu" pretitle="Penjaminan Mutu">
-    <x-slot:actions>
-        @if($activePeriode)
-            <x-tabler.button href="{{ route('pemutu.tim-mutu.manage', $activePeriode->periodespmi_id) }}" class="btn-primary" icon="ti ti-settings" text="Kelola Tim Mutu" />
-        @endif
-    </x-slot:actions>
-</x-tabler.page-header>
+<x-tabler.page-header title="Tim Mutu" pretitle="Penjaminan Mutu"/>
 @endsection
 
 @section('content')
@@ -22,7 +16,7 @@
                     <x-tabler.form-select name="periode_id" label="Periode" id="periode-select">
                         <option value="">Pilih Periode...</option>
                         @foreach($periodes as $p)
-                            <option value="{{ $p->periodespmi_id }}" {{ $activePeriode && $activePeriode->periodespmi_id == $p->periodespmi_id ? 'selected' : '' }}>
+                            <option value="{{ $p->encrypted_periodespmi_id }}" {{ $activePeriode && $activePeriode->periodespmi_id == $p->periodespmi_id ? 'selected' : '' }}>
                                 {{ $p->periode }} — {{ ucfirst($p->jenis_periode) }}
                             </option>
                         @endforeach

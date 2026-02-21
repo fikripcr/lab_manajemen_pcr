@@ -94,12 +94,10 @@ class ErrorLogController extends Controller
     /**
      * Display the specified error log.
      */
-    public function show($id)
+    public function show(ErrorLog $errorLog)
     {
         try {
-            $realId = decryptId($id);
-
-            $errorLog = $this->errorLogService->findOrFail($realId);
+            $errorLog = $this->errorLogService->findOrFail($errorLog->id);
 
             return view('pages.sys.error-log.show', compact('errorLog'));
         } catch (Exception $e) {

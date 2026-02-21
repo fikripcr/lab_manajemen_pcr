@@ -97,7 +97,7 @@ class SurveiController extends Controller
     {
         try {
             $survei = $this->surveiService->createSurvei($request->validated());
-            return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->id));
+            return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->encrypted_survei_id));
         } catch (Exception $e) {
             logError($e);
             return jsonError('Gagal membuat survei.');
@@ -179,7 +179,7 @@ class SurveiController extends Controller
             ];
 
             foreach ($questions as $q) {
-                $jawaban = $p->jawaban->where('pertanyaan_id', $q->id)->first();
+                $jawaban = $p->jawaban->where('pertanyaan_id', $q->pertanyaan_id)->first();
                 if ($jawaban) {
                     if ($jawaban->opsi_id) {
                         $row[] = $jawaban->opsi->label ?? '-';

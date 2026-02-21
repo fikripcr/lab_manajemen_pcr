@@ -53,7 +53,7 @@ class KegiatanController extends Controller
 
     public function create()
     {
-        $labs     = Lab::all();
+        $labs     = Lab::with('labTeams')->get();
         $kegiatan = new Kegiatan();
         return view('pages.lab.kegiatan.create-edit-ajax', compact('labs', 'kegiatan'));
     }
@@ -62,7 +62,6 @@ class KegiatanController extends Controller
     {
         try {
             $data           = $request->except('dokumentasi_path');
-            $data['lab_id'] = decryptId($request->lab_id);
 
             if ($request->hasFile('dokumentasi_path')) {
                 $data['dokumentasi_path'] = $request->file('dokumentasi_path')->store('kegiatan-docs', 'public');

@@ -56,16 +56,16 @@ class KategoriIsianController extends Controller
         }
     }
 
-    public function edit(KategoriIsian $kategori_isian)
+    public function edit(KategoriIsian $kategoriIsian)
     {
-        $kategori = $kategori_isian;
+        $kategori = $kategoriIsian;
         return view('pages.eoffice.kategori_isian.create-edit-ajax', compact('kategori'));
     }
 
-    public function update(KategoriIsianRequest $request, KategoriIsian $kategori_isian)
+    public function update(KategoriIsianRequest $request, KategoriIsian $kategoriIsian)
     {
         try {
-            $this->KategoriIsianService->updateKategori($kategori_isian->kategoriisian_id, $request->validated());
+            $this->KategoriIsianService->updateKategori($kategoriIsian->kategoriisian_id, $request->validated());
             return jsonSuccess('Isian berhasil diperbarui.');
         } catch (Exception $e) {
             logError($e);
@@ -73,10 +73,10 @@ class KategoriIsianController extends Controller
         }
     }
 
-    public function destroy(KategoriIsian $kategori_isian)
+    public function destroy(KategoriIsian $kategoriIsian)
     {
         try {
-            $this->KategoriIsianService->deleteKategori($kategori_isian->kategoriisian_id);
+            $this->KategoriIsianService->deleteKategori($kategoriIsian->kategoriisian_id);
             return jsonSuccess('Isian berhasil dihapus.');
         } catch (Exception $e) {
             logError($e);

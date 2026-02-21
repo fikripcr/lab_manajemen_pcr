@@ -49,32 +49,32 @@ class PublicMenuController extends Controller
         }
     }
 
-    public function edit(PublicMenu $public_menu)
+    public function edit(PublicMenu $publicMenu)
     {
         $pages   = PublicPage::where('is_published', true)->orderBy('title')->get();
-        $parents = PublicMenu::where('menu_id', '!=', $public_menu->menu_id)->orderBy('title')->get();
+        $parents = PublicMenu::where('menu_id', '!=', $publicMenu->menu_id)->orderBy('title')->get();
 
         return view('pages.shared.public-menu.create-edit-ajax', [
-            'menu'    => $public_menu,
+            'menu'    => $publicMenu,
             'pages'   => $pages,
             'parents' => $parents,
         ]);
     }
 
-    public function update(PublicMenuRequest $request, PublicMenu $public_menu)
+    public function update(PublicMenuRequest $request, PublicMenu $publicMenu)
     {
         try {
-            $this->menuService->updateMenu($public_menu, $request->validated());
+            $this->menuService->updateMenu($publicMenu, $request->validated());
             return jsonSuccess('Menu berhasil diperbarui.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy(PublicMenu $public_menu)
+    public function destroy(PublicMenu $publicMenu)
     {
         try {
-            $this->menuService->deleteMenu($public_menu);
+            $this->menuService->deleteMenu($publicMenu);
             return jsonSuccess('Menu berhasil dihapus.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

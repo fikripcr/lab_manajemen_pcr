@@ -30,8 +30,7 @@ class FeedbackController extends Controller
      */
     public function store(FeedbackStoreRequest $request)
     {
-        $validated               = $request->validated();
-        $validated['layanan_id'] = decryptId($validated['layanan_id']);
+        $validated = $request->validated();
 
         try {
             $this->feedbackService->store($validated);

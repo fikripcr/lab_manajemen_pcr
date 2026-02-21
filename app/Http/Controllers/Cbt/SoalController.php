@@ -41,14 +41,14 @@ class SoalController extends Controller
             ->make(true);
     }
 
-    public function create(MataUji $mata_uji)
+    public function create(MataUji $mataUji)
     {
         // Build an empty Soal instance associated with MataUji for the view
         $soal = new Soal([
             'tipe_soal'   => 'Pilihan_Ganda',
-            'mata_uji_id' => $mata_uji->id,
+            'mata_uji_id' => $mataUji->mata_uji_id,
         ]);
-        $soal->setRelation('mataUji', $mata_uji);
+        $soal->setRelation('mataUji', $mataUji);
 
         return view('pages.cbt.soal.create-edit-ajax', compact('soal'));
     }

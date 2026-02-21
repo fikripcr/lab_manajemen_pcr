@@ -21,15 +21,13 @@ class EvaluasiDiriController extends Controller
         return view('pages.pemutu.evaluasi-diri.index', compact('pageTitle', 'periodes'));
     }
 
-    public function show($encryptedPeriodeId)
+    public function show(PeriodeSpmi $periode)
     {
         try {
-            $periodeId = decryptId($encryptedPeriodeId);
-            $periode   = PeriodeSpmi::findOrFail($periodeId);
             $user      = auth()->user();
 
             // Get User's Unit for this period
-            $timMutu = TimMutu::where('periodespmi_id', $periodeId)
+            $timMutu = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
                 ->where('pegawai_id', $user->pegawai?->pegawai_id)
                 ->first();
 
@@ -46,13 +44,12 @@ class EvaluasiDiriController extends Controller
         }
     }
 
-    public function data($encryptedPeriodeId)
+    public function data(PeriodeSpmi $periode)
     {
         try {
-            $periodeId = decryptId($encryptedPeriodeId);
             $user      = auth()->user();
 
-            $timMutu = TimMutu::where('periodespmi_id', $periodeId)
+            $timMutu = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
                 ->where('pegawai_id', $user->pegawai?->pegawai_id)
                 ->first();
 
@@ -104,11 +101,9 @@ class EvaluasiDiriController extends Controller
         }
     }
 
-    public function edit($encryptedIndikatorId)
+    public function edit(Indikator $indikator)
     {
         try {
-            $indikatorId = decryptId($encryptedIndikatorId);
-            $indikator   = Indikator::findOrFail($indikatorId);
             $user        = auth()->user();
 
             $userUnitIds = [];
@@ -123,7 +118,7 @@ class EvaluasiDiriController extends Controller
             }
 
             $pivot = DB::table('pemutu_indikator_orgunit')
-                ->where('indikator_id', $indikatorId)
+                ->where('indikator_id', $indikator->indikator_id)
                 ->where('org_unit_id', $targetUnitId)
                 ->first();
 
@@ -133,11 +128,10 @@ class EvaluasiDiriController extends Controller
         }
     }
 
-    public function update(\App\Http\Requests\Pemutu\EvaluasiDiriRequest $request, $encryptedIndikatorId)
+    public function update(\App\Http\Requests\Pemutu\EvaluasiDiriRequest $request, Indikator $indikator)
     {
         try {
             $validated   = $request->validated();
-            $indikatorId = decryptId($encryptedIndikatorId);
 
             if ($request->filled('target_unit_id')) {
                 $targetUnitId = $request->target_unit_id;
@@ -151,7 +145,7 @@ class EvaluasiDiriController extends Controller
             }
 
             $pivot = DB::table('pemutu_indikator_orgunit')
-                ->where('indikator_id', $indikatorId)
+                ->where('indikator_id', $indikator->indikator_id)
                 ->where('org_unit_id', $targetUnitId)
                 ->first();
 
@@ -174,14 +168,14 @@ class EvaluasiDiriController extends Controller
                     ->where('indikorgunit_id', $pivot->indikorgunit_id)
                     ->update($data);
             } else {
-                $data['indikator_id'] = $indikatorId;
+                $data['indikator_id'] = $indikator->indikator_id;
                 $data['org_unit_id']  = $targetUnitId;
                 $data['target']       = '-';
                 $data['created_at']   = now();
                 DB::table('pemutu_indikator_orgunit')->insert($data);
             }
 
-            logActivity('pemutu', "Mengisi Evaluasi Diri untuk indikator ID: {$indikatorId}");
+            logActivity('pemutu', "Mengisi Evaluasi Diri untuk indikator ID: {$indikator->indikator_id}");
 
             return jsonSuccess('Evaluasi Diri berhasil disimpan.');
         } catch (Exception $e) {

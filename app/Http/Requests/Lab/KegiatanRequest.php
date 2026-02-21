@@ -30,4 +30,16 @@ class KegiatanRequest extends FormRequest
             'dokumentasi_path' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
     }
+
+    /**
+     * Prepare the request for validation, decrypting encrypted IDs.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('lab_id')) {
+            $this->merge([
+                'lab_id' => decryptIdIfEncrypted($this->lab_id),
+            ]);
+        }
+    }
 }

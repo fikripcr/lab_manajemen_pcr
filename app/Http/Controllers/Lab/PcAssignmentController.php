@@ -17,10 +17,9 @@ class PcAssignmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($jadwalId)
+    public function index(JadwalKuliah $jadwal)
     {
-        $realJadwalId = decryptId($jadwalId);
-        $jadwal       = JadwalKuliah::with(['mataKuliah', 'dosen', 'lab'])->findOrFail($realJadwalId);
+        $jadwal->load(['mataKuliah', 'dosen', 'lab']);
 
         return view('pages.lab.pc-assignments.index', compact('jadwal'));
     }
@@ -28,11 +27,9 @@ class PcAssignmentController extends Controller
     /**
      * Get data for DataTables
      */
-    public function data($jadwalId)
+    public function data(JadwalKuliah $jadwal)
     {
-        $realJadwalId = decryptId($jadwalId);
-
-        $assignments = $this->pcAssignmentService->getAssignmentsByJadwalQuery($realJadwalId);
+        $assignments = $this->pcAssignmentService->getAssignmentsByJadwalQuery($jadwal->jadwal_kuliah_id);
 
         return DataTables::of($assignments)
             ->addIndexColumn()

@@ -62,9 +62,6 @@ class PersonilController extends Controller
     {
         try {
             $data = $request->validated();
-            if ($request->filled('user_id')) {
-                $data['user_id'] = decryptId($request->user_id);
-            }
 
             $this->personilService->createPersonil($data);
             return jsonSuccess('Data Personil berhasil ditambahkan.', route('lab.personil.index'));
@@ -83,9 +80,6 @@ class PersonilController extends Controller
     {
         try {
             $data = $request->validated();
-            if ($request->filled('user_id')) {
-                $data['user_id'] = decryptId($request->user_id);
-            }
 
             $this->personilService->updatePersonil($personil, $data);
             return jsonSuccess('Data Personil berhasil diperbarui.', route('lab.personil.index'));

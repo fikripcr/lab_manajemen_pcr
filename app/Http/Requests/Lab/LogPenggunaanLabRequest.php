@@ -28,4 +28,15 @@ class LogPenggunaanLabRequest extends FormRequest
             'kondisi'      => 'required|string',
         ];
     }
+
+    /**
+     * Prepare the request for validation, decrypting encrypted IDs.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'lab_id'      => decryptIdIfEncrypted($this->lab_id),
+            'kegiatan_id' => decryptIdIfEncrypted($this->kegiatan_id),
+        ]);
+    }
 }

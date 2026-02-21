@@ -53,16 +53,16 @@ class KategoriPerusahaanController extends Controller
         }
     }
 
-    public function edit(KategoriPerusahaan $kategori_perusahaan)
+    public function edit(KategoriPerusahaan $kategoriPerusahaan)
     {
-        $kategori = $kategori_perusahaan;
+        $kategori = $kategoriPerusahaan;
         return view('pages.eoffice.kategori_perusahaan.create-edit-ajax', compact('kategori'));
     }
 
-    public function update(KategoriPerusahaanRequest $request, KategoriPerusahaan $kategori_perusahaan)
+    public function update(KategoriPerusahaanRequest $request, KategoriPerusahaan $kategoriPerusahaan)
     {
         try {
-            $this->kategoriPerusahaanService->updateKategori($kategori_perusahaan->kategoriperusahaan_id, $request->validated());
+            $this->kategoriPerusahaanService->updateKategori($kategoriPerusahaan->kategoriperusahaan_id, $request->validated());
             return jsonSuccess('Kategori berhasil diperbarui.');
         } catch (Exception $e) {
             logError($e);
@@ -70,10 +70,10 @@ class KategoriPerusahaanController extends Controller
         }
     }
 
-    public function destroy(KategoriPerusahaan $kategori_perusahaan)
+    public function destroy(KategoriPerusahaan $kategoriPerusahaan)
     {
         try {
-            $this->kategoriPerusahaanService->deleteKategori($kategori_perusahaan->kategoriperusahaan_id);
+            $this->kategoriPerusahaanService->deleteKategori($kategoriPerusahaan->kategoriperusahaan_id);
             return jsonSuccess('Kategori berhasil dihapus.');
         } catch (Exception $e) {
             logError($e);

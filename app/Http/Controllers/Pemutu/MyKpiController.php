@@ -71,7 +71,7 @@ class MyKpiController extends Controller
 
             $kpi->update($validated);
 
-            logActivity('pemutu', "Memperbarui KPI pribadi: " . ($kpi->indikator?->indikator ?? $kpi->id));
+            logActivity('pemutu', "Memperbarui KPI pribadi: " . ($kpi->indikator?->indikator ?? $kpi->indikator_pegawai_id));
 
             return jsonSuccess('KPI berhasil diperbarui', route('pemutu.mykpi.index'));
         } catch (Exception $e) {

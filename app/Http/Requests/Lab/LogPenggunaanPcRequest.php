@@ -27,4 +27,15 @@ class LogPenggunaanPcRequest extends FormRequest
             'lab_id'       => 'required',
         ];
     }
+
+    /**
+     * Prepare the request for validation, decrypting encrypted IDs.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'jadwal_id' => decryptIdIfEncrypted($this->jadwal_id),
+            'lab_id'    => decryptIdIfEncrypted($this->lab_id),
+        ]);
+    }
 }

@@ -20,8 +20,13 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = $this->roleService->getRoleList([]);
-        return view('pages.sys.roles.index', compact('roles'));
+        try {
+            $roles = $this->roleService->getRoleList([]);
+            return view('pages.sys.roles.index', compact('roles'));
+        } catch (Exception $e) {
+            logError($e);
+            return redirect()->back()->with('error', 'Failed to load roles: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -29,10 +34,15 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $role            = new Role();
-        $permissions     = $this->permissionService->getAllPermissions();
-        $rolePermissions = [];
-        return view('pages.sys.roles.create-edit-ajax', compact('role', 'permissions', 'rolePermissions'));
+        try {
+            $role            = new Role();
+            $permissions     = $this->permissionService->getAllPermissions();
+            $rolePermissions = [];
+            return view('pages.sys.roles.create-edit-ajax', compact('role', 'permissions', 'rolePermissions'));
+        } catch (Exception $e) {
+            logError($e);
+            return redirect()->back()->with('error', 'Failed to load form: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -56,10 +66,15 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $role           = $this->roleService->getRoleById($role->id);
-        $allPermissions = $this->permissionService->getAllPermissions();
+        try {
+            $role           = $this->roleService->getRoleById($role->id);
+            $allPermissions = $this->permissionService->getAllPermissions();
 
-        return view('pages.sys.roles.show', compact('role', 'allPermissions'));
+            return view('pages.sys.roles.show', compact('role', 'allPermissions'));
+        } catch (Exception $e) {
+            logError($e);
+            return redirect()->back()->with('error', 'Failed to load role details: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -67,23 +82,27 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $role            = $this->roleService->getRoleById($role->id);
-        $permissions     = $this->permissionService->getAllPermissions();
-        $rolePermissions = $role->permissions->pluck('name')->toArray();
+        try {
+            $role            = $this->roleService->getRoleById($role->id);
+            $permissions     = $this->permissionService->getAllPermissions();
+            $rolePermissions = $role->permissions->pluck('name')->toArray();
 
-        return view('pages.sys.roles.create-edit-ajax', compact('role', 'permissions', 'rolePermissions'));
+            return view('pages.sys.roles.create-edit-ajax', compact('role', 'permissions', 'rolePermissions'));
+        } catch (Exception $e) {
+            logError($e);
+            return redirect()->back()->with('error', 'Failed to load edit form: ' . $e->getMessage());
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(RoleRequest $request, $id)
+    public function update(RoleRequest $request, Role $role)
     {
         try {
-            $roleId              = decryptId($id);
             $data                = $request->validated();
             $data['permissions'] = $request->input('permissions', []);
-            $this->roleService->updateRole($roleId, $data);
+            $this->roleService->updateRole($role->id, $data);
 
             return jsonSuccess('Data berhasil diperbarui.', route('sys.roles.index'));
         } catch (Exception $e) {

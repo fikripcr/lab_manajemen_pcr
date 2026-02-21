@@ -23,7 +23,7 @@ class NotificationSendRequest extends FormRequest
     {
         return [
             'type' => 'required|in:database,email',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable',
             'title' => 'required|string|max:255',
             'message' => 'required|string|max:1000',
             'level' => 'nullable|in:info,success,warning,error',

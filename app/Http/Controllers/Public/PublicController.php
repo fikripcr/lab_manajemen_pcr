@@ -39,15 +39,8 @@ class PublicController extends Controller
         return view('pages.public.home', compact('recentNews', 'approvedSoftwareRequests', 'slideshows', 'faqs'));
     }
 
-    public function showNews($id)
+    public function showNews(Pengumuman $pengumuman)
     {
-        $realId = decryptId($id);
-        if (! $realId) {
-            abort(404);
-        }
-
-        $pengumuman = Pengumuman::findOrFail($realId);
-
         // Only show published items
         if (! $pengumuman->is_published) {
             abort(404);
@@ -100,11 +93,11 @@ class PublicController extends Controller
             return $query->where('kode_mk', 'LIKE', "%{$search}%")
                 ->orWhere('nama_mk', 'LIKE', "%{$search}%");
         })
-            ->select('id', 'kode_mk', 'nama_mk')
+            ->select('mata_kuliah_id', 'kode_mk', 'nama_mk')
             ->get()
             ->map(function ($mk) {
                 return [
-                    'id'   => $mk->id,
+                    'id'   => $mk->mata_kuliah_idid,
                     'text' => $mk->kode_mk . ' - ' . $mk->nama_mk,
                 ];
             });

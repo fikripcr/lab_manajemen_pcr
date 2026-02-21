@@ -60,16 +60,15 @@ class StatusAktifitasController extends Controller
         }
     }
 
-    public function edit(StatusAktifitas $status_aktifita)
+    public function edit(StatusAktifitas $statusAktifitas)
     {
-        $statusAktifitas = $status_aktifita;
         return view('pages.hr.status-aktifitas.create-edit-ajax', compact('statusAktifitas'));
     }
 
-    public function update(StatusAktifitasRequest $request, StatusAktifitas $status_aktifita)
+    public function update(StatusAktifitasRequest $request, StatusAktifitas $statusAktifitas)
     {
         try {
-            $this->statusAktifitasService->update($status_aktifita, $request->validated());
+            $this->statusAktifitasService->update($statusAktifitas, $request->validated());
             return jsonSuccess('Status Aktifitas updated successfully.');
         } catch (Exception $e) {
             logError($e);
@@ -77,10 +76,10 @@ class StatusAktifitasController extends Controller
         }
     }
 
-    public function destroy(StatusAktifitas $status_aktifita)
+    public function destroy(StatusAktifitas $statusAktifitas)
     {
         try {
-            $status_aktifita->delete();
+            $statusAktifitas->delete();
             return jsonSuccess('Status Aktifitas deleted successfully.');
         } catch (Exception $e) {
             logError($e);

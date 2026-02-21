@@ -57,26 +57,25 @@ class JabatanFungsionalController extends Controller
         }
     }
 
-    public function edit(JabatanFungsional $jabatan_fungsional)
+    public function edit(JabatanFungsional $jabatanFungsional)
     {
-        $jabatanFungsional = $jabatan_fungsional;
         return view('pages.hr.jabatan-fungsional.create-edit-ajax', compact('jabatanFungsional'));
     }
 
-    public function update(JabatanFungsionalRequest $request, JabatanFungsional $jabatan_fungsional)
+    public function update(JabatanFungsionalRequest $request, JabatanFungsional $jabatanFungsional)
     {
         try {
-            $this->jabatanFungsionalService->update($jabatan_fungsional, $request->validated());
+            $this->jabatanFungsionalService->update($jabatanFungsional, $request->validated());
             return jsonSuccess('Jabatan Fungsional updated successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy(JabatanFungsional $jabatan_fungsional)
+    public function destroy(JabatanFungsional $jabatanFungsional)
     {
         try {
-            $jabatan_fungsional->delete();
+            $jabatanFungsional->delete();
             return jsonSuccess('Jabatan Fungsional deleted successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

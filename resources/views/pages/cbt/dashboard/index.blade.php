@@ -22,6 +22,7 @@
 @endsection
 
 @section('content')
+
         @if(auth()->user()->hasRole('camaba'))
             {{-- CAMABA VIEW --}}
             @include('pages.cbt.partials.exam-interface')

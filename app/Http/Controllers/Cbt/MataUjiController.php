@@ -42,6 +42,17 @@ class MataUjiController extends Controller
         return view('pages.cbt.mata-uji.create-edit-ajax');
     }
 
+    public function show(MataUji $mu)
+    {
+        try {
+            $mu->load(['soal']);
+            return view('pages.cbt.mata-uji.show', compact('mu'));
+        } catch (Exception $e) {
+            logError($e);
+            return redirect()->back()->with('error', 'Gagal memuat detail mata uji: ' . $e->getMessage());
+        }
+    }
+
     public function store(StoreMataUjiRequest $request)
     {
         try {

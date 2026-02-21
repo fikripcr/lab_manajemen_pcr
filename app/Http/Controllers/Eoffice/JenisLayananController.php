@@ -65,9 +65,9 @@ class JenisLayananController extends Controller
         }
     }
 
-    public function show(JenisLayanan $jenis_layanan)
+    public function show(JenisLayanan $jenisLayanan)
     {
-        $layanan        = $jenis_layanan;
+        $layanan        = $jenisLayanan;
         $pageTitle      = 'Manage Layanan: ' . $layanan->nama_layanan;
         $users          = User::orderBy('name')->get();
         $kategoriIsians = KategoriIsian::orderBy('nama_isian')->get();
@@ -75,16 +75,16 @@ class JenisLayananController extends Controller
         return view('pages.eoffice.jenis_layanan.show', compact('layanan', 'pageTitle', 'users', 'kategoriIsians'));
     }
 
-    public function edit(JenisLayanan $jenis_layanan)
+    public function edit(JenisLayanan $jenisLayanan)
     {
-        $layanan = $jenis_layanan;
+        $layanan = $jenisLayanan;
         return view('pages.eoffice.jenis_layanan.create-edit-ajax', compact('layanan'));
     }
 
-    public function update(JenisLayananRequest $request, JenisLayanan $jenis_layanan)
+    public function update(JenisLayananRequest $request, JenisLayanan $jenisLayanan)
     {
         try {
-            $this->jenisLayananService->updateJenisLayanan($jenis_layanan->jenislayanan_id, $request->validated());
+            $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, $request->validated());
             return jsonSuccess('Jenis layanan berhasil diperbarui.');
         } catch (Exception $e) {
             logError($e);
@@ -92,10 +92,10 @@ class JenisLayananController extends Controller
         }
     }
 
-    public function destroy(JenisLayanan $jenis_layanan)
+    public function destroy(JenisLayanan $jenisLayanan)
     {
         try {
-            $this->jenisLayananService->updateJenisLayanan($jenis_layanan->jenislayanan_id, ['is_active' => false]);
+            $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, ['is_active' => false]);
             return jsonSuccess('Jenis layanan berhasil dinonaktifkan.');
         } catch (Exception $e) {
             logError($e);
@@ -104,10 +104,10 @@ class JenisLayananController extends Controller
     }
 
     // PIC & Isian Handlers
-    public function storePic(JenisLayananPicStoreRequest $request, JenisLayanan $jenis_layanan)
+    public function storePic(JenisLayananPicStoreRequest $request, JenisLayanan $jenisLayanan)
     {
         try {
-            $this->jenisLayananService->storePic($jenis_layanan->jenislayanan_id, $request->all());
+            $this->jenisLayananService->storePic($jenisLayanan->jenislayanan_id, $request->all());
             return jsonSuccess('PIC berhasil ditambahkan.');
         } catch (Exception $e) {
             logError($e);
@@ -126,10 +126,10 @@ class JenisLayananController extends Controller
         }
     }
 
-    public function storeIsian(JenisLayananIsianStoreRequest $request, JenisLayanan $jenis_layanan)
+    public function storeIsian(JenisLayananIsianStoreRequest $request, JenisLayanan $jenisLayanan)
     {
         try {
-            $this->jenisLayananService->storeIsian($jenis_layanan->jenislayanan_id, $request->all());
+            $this->jenisLayananService->storeIsian($jenisLayanan->jenislayanan_id, $request->all());
             return jsonSuccess('Isian berhasil ditambahkan.');
         } catch (Exception $e) {
             logError($e);

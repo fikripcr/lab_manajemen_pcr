@@ -13,7 +13,7 @@ class ExamExecutionService
     public function startExam(JadwalUjian $jadwal, $user, $requestData)
     {
         return RiwayatUjianSiswa::firstOrCreate(
-            ['jadwal_id' => $jadwal->id, 'user_id' => $user->id],
+            ['jadwal_id' => $jadwal->jadwal_ujian_id, 'user_id' => $user->id],
             [
                 'waktu_mulai'  => now(),
                 'status'       => 'Sedang_Mengerjakan',
@@ -26,7 +26,7 @@ class ExamExecutionService
     public function saveAnswer(RiwayatUjianSiswa $riwayat, array $data)
     {
         return JawabanSiswa::updateOrCreate(
-            ['riwayat_id' => $riwayat->id, 'soal_id' => $data['soal_id']],
+            ['riwayat_id' => $riwayat->riwayat_ujian_id, 'soal_id' => $data['soal_id']],
             [
                 'opsi_dipilih_id' => $data['opsi_id'] ?? null,
                 'jawaban_esai'    => $data['jawaban_esai'] ?? null,
@@ -49,7 +49,7 @@ class ExamExecutionService
             foreach ($riwayat->jawaban as $jw) {
                 if ($jw->soal->tipe_soal === 'Pilihan_Ganda' && $jw->opsi_dipilih_id) {
                     $kunci = $jw->soal->opsiJawaban->where('is_kunci_jawaban', true)->first();
-                    if ($kunci && $kunci->id === $jw->opsi_dipilih_id) {
+                    if ($kunci && $kunci->opsi_jawaban_id === $jw->opsi_dipilih_id) {
                         $totalNilai += $kunci->bobot_nilai;
                         $jw->update(['nilai_didapat' => $kunci->bobot_nilai]);
                     }

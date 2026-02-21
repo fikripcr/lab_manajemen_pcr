@@ -53,15 +53,15 @@ class JenisIzinController extends Controller
         }
     }
 
-    public function edit(JenisIzin $jenis_izin)
+    public function edit(JenisIzin $jenisIzin)
     {
-        return view('pages.hr.jenis-izin.create-edit-ajax', compact('jenis_izin'));
+        return view('pages.hr.jenis-izin.create-edit-ajax', compact('jenisIzin'));
     }
 
-    public function update(JenisIzinStoreRequest $request, JenisIzin $jenis_izin)
+    public function update(JenisIzinStoreRequest $request, JenisIzin $jenisIzin)
     {
         try {
-            $this->jenisIzinService->update($jenis_izin, $request->validated());
+            $this->jenisIzinService->update($jenisIzin, $request->validated());
             return jsonSuccess('Jenis Izin berhasil diperbarui.');
         } catch (Exception $e) {
             logError($e);
@@ -69,10 +69,10 @@ class JenisIzinController extends Controller
         }
     }
 
-    public function destroy(JenisIzin $jenis_izin)
+    public function destroy(JenisIzin $jenisIzin)
     {
         try {
-            $this->jenisIzinService->delete($jenis_izin);
+            $this->jenisIzinService->delete($jenisIzin);
             return jsonSuccess('Jenis Izin berhasil dihapus.');
         } catch (Exception $e) {
             logError($e);
