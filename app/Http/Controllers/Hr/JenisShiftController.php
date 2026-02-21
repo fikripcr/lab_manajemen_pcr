@@ -10,12 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JenisShiftController extends Controller
 {
-    protected $JenisShiftService;
-
-    public function __construct(JenisShiftService $JenisShiftService)
-    {
-        $this->JenisShiftService = $JenisShiftService;
-    }
+    public function __construct(protected JenisShiftService $jenisShiftService)
+    {}
 
     public function index()
     {
@@ -44,13 +40,14 @@ class JenisShiftController extends Controller
 
     public function create()
     {
-        return view('pages.hr.jenis-shift.create');
+        $jenisShift = new JenisShift();
+        return view('pages.hr.jenis-shift.create-edit-ajax', compact('jenisShift'));
     }
 
     public function store(JenisShiftRequest $request)
     {
         try {
-            $this->JenisShiftService->create($request->validated());
+            $this->jenisShiftService->create($request->validated());
             return jsonSuccess('Jenis Shift created successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -60,13 +57,13 @@ class JenisShiftController extends Controller
     public function edit(JenisShift $jenis_shift)
     {
         $jenisShift = $jenis_shift;
-        return view('pages.hr.jenis-shift.edit', compact('jenisShift'));
+        return view('pages.hr.jenis-shift.create-edit-ajax', compact('jenisShift'));
     }
 
     public function update(JenisShiftRequest $request, JenisShift $jenis_shift)
     {
         try {
-            $this->JenisShiftService->update($jenis_shift, $request->validated());
+            $this->jenisShiftService->update($jenis_shift, $request->validated());
             return jsonSuccess('Jenis Shift updated successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

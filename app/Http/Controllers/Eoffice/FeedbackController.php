@@ -5,17 +5,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\FeedbackStoreRequest;
 use App\Models\Eoffice\JenisLayanan;
 use App\Services\Eoffice\FeedbackService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class FeedbackController extends Controller
 {
-    protected $FeedbackService;
-
-    public function __construct(FeedbackService $FeedbackService)
-    {
-        $this->FeedbackService = $FeedbackService;
-    }
+    public function __construct(protected FeedbackService $feedbackService)
+    {}
 
     /**
      * Feedback listing page.
@@ -37,7 +34,7 @@ class FeedbackController extends Controller
         $validated['layanan_id'] = decryptId($validated['layanan_id']);
 
         try {
-            $this->FeedbackService->store($validated);
+            $this->feedbackService->store($validated);
             return jsonSuccess('Feedback berhasil disimpan.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -49,7 +46,7 @@ class FeedbackController extends Controller
      */
     public function data(Request $request)
     {
-        $query = $this->FeedbackService->getPaginateData($request);
+        $query = $this->feedbackService->getPaginateData($request);
 
         return DataTables::of($query)
             ->addIndexColumn()

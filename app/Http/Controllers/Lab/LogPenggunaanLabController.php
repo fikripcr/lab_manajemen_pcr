@@ -2,20 +2,14 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\LogPenggunaanLabRequest;
 use App\Models\Lab\Kegiatan;
-use App\Models\Lab\Lab;
-use App\Services\Lab\LogPenggunaanLabService;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class LogPenggunaanLabController extends Controller
 {
-    protected $service;
-
-    public function __construct(LogPenggunaanLabService $service)
-    {
-        $this->service = $service;
-    }
+    public function __construct(protected LogPenggunaanLabService $logPenggunaanLabService)
+    {}
 
     public function index()
     {
@@ -24,7 +18,7 @@ class LogPenggunaanLabController extends Controller
 
     public function data(Request $request)
     {
-        $query = $this->service->getFilteredQuery($request->all());
+        $query = $this->logPenggunaanLabService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -57,37 +51,30 @@ class LogPenggunaanLabController extends Controller
             ->get();
 
         $labs = Lab::all();
-        return view('pages.lab.log-lab.create', compact('activeKegiatans', 'labs'));
+        $log  = new \App\Models\Lab\LogPenggunaanLab();
+        return view('pages.lab.log-lab.create-edit-ajax', compact('activeKegiatans', 'labs', 'log'));
     }
 
-    public function store(Request $request)
+    public function store(LogPenggunaanLabRequest $request)
     {
-        $request->validate([
-            'nama_peserta' => 'required|string',
-            'lab_id'       => 'required_without:kegiatan_id',
-            'kegiatan_id'  => 'nullable', // If selected, lab_id can be inferred but let's require logic
-            'nomor_pc'     => 'nullable|integer',
-            'kondisi'      => 'required|string',
-        ]);
-
         try {
             $data = $request->all();
 
             if ($request->filled('kegiatan_id')) {
                 $data['kegiatan_id'] = decryptId($request->kegiatan_id);
-                // Auto fill lab_id from kegiatan if not provided?
-                $kegiatan       = Kegiatan::find($data['kegiatan_id']);
-                $data['lab_id'] = $kegiatan->lab_id; // Priority to event's lab
+                $kegiatan            = Kegiatan::findOrFail($data['kegiatan_id']);
+                $data['lab_id']      = $kegiatan->lab_id;
             } elseif ($request->filled('lab_id')) {
                 $data['lab_id'] = decryptId($request->lab_id);
             } else {
-                return jsonError('Pilih Kegiatan atau Lab', 422);
+                return jsonError('Pilih Kegiatan atau Lab');
             }
 
-            $this->service->createLog($data);
+            $this->logPenggunaanLabService->createLog($data);
             return jsonSuccess('Log berhasil disimpan', route('lab.log-lab.index'));
         } catch (\Exception $e) {
-            return jsonError('Gagal: ' . $e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan log: ' . $e->getMessage());
         }
     }
 }

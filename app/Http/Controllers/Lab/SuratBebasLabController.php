@@ -2,13 +2,17 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\SuratBebasLabRequest;
 use App\Models\Lab\SuratBebasLab;
+use App\Services\Lab\SuratBebasLabService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class SuratBebasLabController extends Controller
 {
+    public function __construct(protected SuratBebasLabService $suratBebasLabService)
+    {}
+
     public function index()
     {
         return view('pages.lab.surat-bebas.index');
@@ -16,7 +20,7 @@ class SuratBebasLabController extends Controller
 
     public function data(Request $request)
     {
-        $query = SuratBebasLab::with('student', 'approver')->latest();
+        $query = $this->suratBebasLabService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -37,7 +41,7 @@ class SuratBebasLabController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl' => route('lab.surat-bebas.show', $row->encrypted_id),
+                    'viewUrl' => route('lab.surat-bebas.show', $row->encrypted_surat_bebas_lab_id),
                 ])->render();
             })
             ->rawColumns(['mahasiswa', 'status', 'action'])
@@ -52,83 +56,39 @@ class SuratBebasLabController extends Controller
             ->first();
 
         if ($existing) {
-            return redirect()->route('lab.surat-bebas.show', $existing->encrypted_id)
+            return redirect()->route('lab.surat-bebas.show', $existing->encrypted_surat_bebas_lab_id)
                 ->with('warning', 'Anda sudah memiliki pengajuan yang sedang diproses.');
         }
 
-        return view('pages.lab.surat-bebas.create');
+        $surat = new SuratBebasLab();
+        return view('pages.lab.surat-bebas.create-edit-ajax', compact('surat'));
     }
 
-    public function store(Request $request)
+    public function store(SuratBebasLabRequest $request)
     {
-        // Simple create, logic to check liabilities handles in Approval or Middleware?
-        // Ideally we check here too but for now just submit.
-
-        DB::transaction(function () use ($request) {
-            $surat = SuratBebasLab::create([
-                'student_id' => auth()->id(),
-                'status'     => 'pending',
-                'remarks'    => $request->remarks,
-            ]);
-
-            // Create Initial Approval (Pending)
-            $approval = \App\Models\Lab\LabRiwayatApproval::create([
-                'model'      => SuratBebasLab::class,
-                'model_id'   => $surat->surat_bebas_lab_id,
-                'status'     => 'pending',
-                'keterangan' => 'Pengajuan baru',
-                'created_by' => auth()->id(),
-            ]);
-
-            $surat->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
-        });
-
-        return jsonSuccess('Pengajuan berhasil dikirim.', route('lab.surat-bebas.index'));
+        try {
+            $this->suratBebasLabService->createRequest($request->validated() ?: $request->all());
+            return jsonSuccess('Pengajuan berhasil dikirim.', route('lab.surat-bebas.index'));
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Gagal mengirim pengajuan: ' . $e->getMessage());
+        }
     }
 
-    public function show($id)
+    public function show(SuratBebasLab $suratBeba)
     {
-        $surat = SuratBebasLab::with(['student', 'approver', 'approvals'])->findOrFail(decryptId($id));
+        $surat = $suratBeba->load(['student', 'approver', 'approvals']);
         return view('pages.lab.surat-bebas.show', compact('surat'));
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(SuratBebasLabRequest $request, SuratBebasLab $suratBeba)
     {
-        $request->validate([
-            'status'  => 'required|in:approved,rejected',
-            'remarks' => 'nullable|string',
-        ]);
-
-        $surat = SuratBebasLab::findOrFail(decryptId($id));
-
-        DB::transaction(function () use ($surat, $request) {
-            $updateData = [
-                'status'      => $request->status,
-                'remarks'     => $request->remarks, // Legacy remarks column
-                'approved_by' => auth()->id(),
-                'approved_at' => now(),
-            ];
-
-            // If approved, generate PDF (Simulation)
-            if ($request->status == 'approved') {
-                // $updateData['file_path'] = 'surat-bebas/SB-'. $surat->id . '.pdf';
-            }
-
-            // Create New Approval Record
-            $approval = \App\Models\Lab\LabRiwayatApproval::create([
-                'model'      => SuratBebasLab::class,
-                'model_id'   => $surat->surat_bebas_lab_id,
-                'status'     => $request->status,
-                'pejabat'    => auth()->user()->name,
-                'keterangan' => $request->remarks,
-                'created_by' => auth()->id(),
-            ]);
-
-            $updateData['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;
-
-            $surat->update($updateData);
-        });
-
-        return jsonSuccess('Status berhasil diperbarui.');
+        try {
+            $this->suratBebasLabService->updateStatus($suratBeba, $request->validated());
+            return jsonSuccess('Status berhasil diperbarui.');
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
+        }
     }
 }

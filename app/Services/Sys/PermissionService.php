@@ -2,7 +2,9 @@
 namespace App\Services\Sys;
 
 use App\Models\Sys\Permission;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -101,7 +103,7 @@ class PermissionService
             $permission = $this->findOrFail($permissionId);
 
             if ($permission->roles()->count() > 0) {
-                throw new \Exception("Tidak bisa menghapus izin '{$permission->name}' karena masih digunakan oleh role.");
+                throw new Exception("Tidak bisa menghapus izin '{$permission->name}' karena masih digunakan oleh role.");
             }
 
             $permissionName = $permission->name;
@@ -145,7 +147,7 @@ class PermissionService
     /**
      * 🔑 SINGLE SOURCE OF TRUTH for filtering permissions
      */
-    protected function applyFilters($query, array $filters): \Illuminate\Database\Eloquent\Builder
+    protected function applyFilters($query, array $filters): Builder
     {
         if (! empty($filters['name'])) {
             $query->where('name', 'like', '%' . $filters['name'] . '%');
@@ -186,11 +188,11 @@ class PermissionService
     /**
      * Find model by ID or throw exception
      */
-    protected function findOrFail(int $id): \App\Models\Sys\Permission
+    protected function findOrFail(int $id): Permission
     {
         $model = $this->getPermissionById($id);
         if (! $model) {
-            throw new \Exception("Izin dengan ID {$id} tidak ditemukan.");
+            throw new Exception("Izin dengan ID {$id} tidak ditemukan.");
         }
         return $model;
     }

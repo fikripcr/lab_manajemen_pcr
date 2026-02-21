@@ -5,25 +5,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\FilePegawaiStoreRequest;
 use App\Services\Hr\FilePegawaiService;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class FilePegawaiController extends Controller
 {
-    protected $FilePegawaiService;
-
-    public function __construct(FilePegawaiService $FilePegawaiService)
-    {
-        $this->FilePegawaiService = $FilePegawaiService;
-    }
+    public function __construct(protected FilePegawaiService $filePegawaiService)
+    {}
 
     /**
      * Display a listing of files for a specific employee via AJAX.
      */
-    public function index(Request $request, $pegawai_id)
+    public function index($pegawai_id)
     {
         $pegawaiId = decryptId($pegawai_id);
-        $query     = $this->FilePegawaiService->getQuery($pegawaiId);
+        $query     = $this->filePegawaiService->getQuery($pegawaiId);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -53,7 +48,7 @@ class FilePegawaiController extends Controller
 
         try {
             $pegawaiId = decryptId($request->pegawai_id);
-            $this->FilePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
+            $this->filePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
 
             return jsonSuccess('File berhasil diunggah');
         } catch (Exception $e) {
@@ -68,7 +63,7 @@ class FilePegawaiController extends Controller
     {
         try {
             $decryptedId = decryptId($id);
-            $this->FilePegawaiService->deleteFile($decryptedId);
+            $this->filePegawaiService->deleteFile($decryptedId);
 
             return jsonSuccess('File berhasil dihapus');
         } catch (Exception $e) {

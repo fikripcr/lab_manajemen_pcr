@@ -31,11 +31,6 @@ class LogPenggunaanLabService
     public function createLog(array $data): LogPenggunaanLab
     {
         return DB::transaction(function () use ($data) {
-            // If kegiatan_id is provided, ensure it's valid active event
-            if (! empty($data['kegiatan_id'])) {
-                // validation logic if needed
-            }
-
             $log = LogPenggunaanLab::create([
                 'kegiatan_id'   => $data['kegiatan_id'] ?? null,
                 'lab_id'        => $data['lab_id'],
@@ -47,6 +42,8 @@ class LogPenggunaanLabService
                 'kondisi'       => $data['kondisi'] ?? 'Baik',
                 'catatan_umum'  => $data['catatan_umum'] ?? null,
             ]);
+
+            logActivity('log_penggunaan_lab', "Peserta {$data['nama_peserta']} mengisi log penggunaan lab ID {$data['lab_id']}");
 
             return $log;
         });

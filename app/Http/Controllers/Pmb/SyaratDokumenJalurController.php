@@ -12,18 +12,14 @@ use Illuminate\Http\Request;
 
 class SyaratDokumenJalurController extends Controller
 {
-    protected $SyaratService;
-
-    public function __construct(SyaratDokumenJalurService $SyaratService)
-    {
-        $this->SyaratService = $SyaratService;
-    }
+    public function __construct(protected SyaratDokumenJalurService $syaratDokumenJalurService)
+    {}
 
     public function index(Request $request)
     {
-        $jalurId      = decryptId($request->jalur);
+        $jalurId      = decryptIdIfEncrypted($request->input('jalur'));
         $jalur        = Jalur::findOrFail($jalurId);
-        $syarat       = SyaratDokumenJalur::with('jenisDokumen')->where('jalur_id', $jalurId)->get();
+        $syarat       = $this->syaratDokumenJalurService->getSyaratByJalur($jalurId);
         $jenisDokumen = JenisDokumen::all();
 
         return view('pages.pmb.syarat-jalur.index', compact('jalur', 'syarat', 'jenisDokumen'));
@@ -32,20 +28,22 @@ class SyaratDokumenJalurController extends Controller
     public function store(StoreSyaratRequest $request)
     {
         try {
-            $this->SyaratService->updateOrCreate($request->validated());
-            return jsonSuccess('Syarat dokumen berhasil ditambahkan.', route('pmb.syarat-jalur.index', ['jalur' => $request->jalur]));
+            $this->syaratDokumenJalurService->updateOrCreate($request->validated());
+            return jsonSuccess('Syarat dokumen berhasil dikonfigurasi.', route('pmb.syarat-jalur.index', ['jalur' => $request->jalur]));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal mengonfigurasi syarat dokumen: ' . $e->getMessage());
         }
     }
 
     public function destroy(SyaratDokumenJalur $syarat)
     {
         try {
-            $this->SyaratService->delete($syarat);
+            $this->syaratDokumenJalurService->delete($syarat);
             return jsonSuccess('Syarat dokumen berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menghapus syarat dokumen: ' . $e->getMessage());
         }
     }
 }

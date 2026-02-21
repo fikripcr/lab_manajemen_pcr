@@ -3,25 +3,23 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\InventarisRequest;
+use App\Models\Lab\Inventaris;
 use App\Models\Lab\Lab;
 use App\Services\Lab\InventarisService;
+use Exception;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class InventarisController extends Controller
 {
-    protected $InventarisService;
-
-    public function __construct(InventarisService $InventarisService)
-    {
-        $this->InventarisService = $InventarisService;
-    }
+    public function __construct(protected InventarisService $inventarisService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.lab.inventaris.index');
     }
@@ -32,7 +30,7 @@ class InventarisController extends Controller
     public function paginate(Request $request)
     {
         // Use Service Query
-        $inventaris = $this->InventarisService->getFilteredQuery($request->all());
+        $inventaris = $this->inventarisService->getFilteredQuery($request->all());
 
         return DataTables::of($inventaris)
             ->addIndexColumn()
@@ -82,8 +80,9 @@ class InventarisController extends Controller
      */
     public function create()
     {
-        $labs = Lab::all();
-        return view('pages.lab.inventaris.create', compact('labs'));
+        $labs       = Lab::all();
+        $inventaris = new Inventaris();
+        return view('pages.lab.inventaris.create-edit-ajax', compact('labs', 'inventaris'));
     }
 
     /**
@@ -92,74 +91,56 @@ class InventarisController extends Controller
     public function store(InventarisRequest $request)
     {
         try {
-            $this->InventarisService->createInventaris($request->validated());
-
+            $this->inventarisService->createInventaris($request->validated());
             return jsonSuccess('Inventaris berhasil dibuat.', route('lab.inventaris.index'));
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menyimpan inventaris: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Inventaris $inventaris)
     {
-        $realId = decryptId($id);
-
-        $inventory = $this->InventarisService->getInventarisById($realId); // Uses Service
-        if (! $inventory) {
-            abort(404);
-        }
-
-        return view('pages.lab.inventaris.show', compact('inventory'));
+        return view('pages.lab.inventaris.show', compact('inventaris'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Inventaris $inventaris)
     {
-        $realId = decryptId($id);
-
-        $inventory = $this->InventarisService->getInventarisById($realId);
-        if (! $inventory) {
-            abort(404);
-        }
-
         $labs = Lab::all();
-        return view('pages.lab.inventaris.edit', compact('inventory', 'labs'));
+        return view('pages.lab.inventaris.create-edit-ajax', compact('inventaris', 'labs'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(InventarisRequest $request, $id)
+    public function update(InventarisRequest $request, Inventaris $inventaris)
     {
-        $realId = decryptId($id);
-
         try {
-            $this->InventarisService->updateInventaris($realId, $request->validated());
-
+            $this->inventarisService->updateInventaris($inventaris, $request->validated());
             return jsonSuccess('Inventaris berhasil diperbarui.', route('lab.inventaris.index'));
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui inventaris: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Inventaris $inventaris)
     {
         try {
-            $realId = decryptId($id);
-            $this->InventarisService->deleteInventaris($realId);
-
+            $this->inventarisService->deleteInventaris($inventaris);
             return jsonSuccess('Inventaris berhasil dihapus.', route('lab.inventaris.index'));
-
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus inventaris: ' . $e->getMessage());
         }
     }
 
@@ -176,7 +157,7 @@ class InventarisController extends Controller
         ];
         $columns = $request->get('columns', ['id', 'nama_alat', 'jenis_alat', 'kondisi_terakhir', 'tanggal_pengecekan', 'lab_name']);
 
-        $export = $this->InventarisService->exportInventaris($filters, $columns);
+        $export = $this->inventarisService->exportInventaris($filters, $columns);
 
         return Excel::download($export, 'inventory_' . date('Y-m-d_H-i-s') . '.xlsx');
     }

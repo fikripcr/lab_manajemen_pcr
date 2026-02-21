@@ -31,7 +31,9 @@ class PerusahaanService
      */
     public function createPerusahaan(array $data)
     {
-        return Perusahaan::create($data);
+        $perusahaan = Perusahaan::create($data);
+        logActivity('eoffice', "Menambah perusahaan: {$perusahaan->nama_perusahaan}");
+        return $perusahaan;
     }
 
     /**
@@ -41,6 +43,7 @@ class PerusahaanService
     {
         $perusahaan = Perusahaan::findOrFail($id);
         $perusahaan->update($data);
+        logActivity('eoffice', "Memperbarui perusahaan: {$perusahaan->nama_perusahaan}");
         return $perusahaan;
     }
 
@@ -50,10 +53,10 @@ class PerusahaanService
     public function deletePerusahaan($id)
     {
         $perusahaan = Perusahaan::findOrFail($id);
-
-        // Optional: Check for dependencies (layanan_kp)
-
-        return $perusahaan->delete();
+        $nama       = $perusahaan->nama_perusahaan;
+        $perusahaan->delete();
+        logActivity('eoffice', "Menghapus perusahaan: {$nama}");
+        return true;
     }
 
     public function getById($id)

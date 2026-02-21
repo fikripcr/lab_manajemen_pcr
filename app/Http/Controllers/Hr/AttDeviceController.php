@@ -10,12 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AttDeviceController extends Controller
 {
-    protected $AttDeviceService;
-
-    public function __construct(AttDeviceService $AttDeviceService)
-    {
-        $this->AttDeviceService = $AttDeviceService;
-    }
+    public function __construct(protected \App\Services\Hr\AttDeviceService $attDeviceService)
+    {}
 
     public function index()
     {
@@ -33,9 +29,9 @@ class AttDeviceController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.att-device.edit', ['att_device' => $row->att_device_id]),
+                    'editUrl'   => route('hr.att-device.edit', ['att_device' => $row->hashid]),
                     'editModal' => true,
-                    'deleteUrl' => route('hr.att-device.destroy', ['att_device' => $row->att_device_id]),
+                    'deleteUrl' => route('hr.att-device.destroy', ['att_device' => $row->hashid]),
                 ])->render();
             })
             ->rawColumns(['is_active', 'action'])
@@ -44,40 +40,39 @@ class AttDeviceController extends Controller
 
     public function create()
     {
-        return view('pages.hr.att-device.create');
+        $attDevice = new AttDevice();
+        return view('pages.hr.att-device.create-edit-ajax', compact('attDevice'));
     }
 
     public function store(AttDeviceRequest $request)
     {
         try {
-            $this->AttDeviceService->create($request->validated());
+            $this->attDeviceService->create($request->validated());
             return jsonSuccess('Mesin Presensi created successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function edit($id)
+    public function edit(AttDevice $attDevice)
     {
-        $attDevice = AttDevice::findOrFail($id);
-        return view('pages.hr.att-device.edit', compact('attDevice'));
+        return view('pages.hr.att-device.create-edit-ajax', compact('attDevice'));
     }
 
-    public function update(AttDeviceRequest $request, $id)
+    public function update(AttDeviceRequest $request, AttDevice $attDevice)
     {
         try {
-            $attDevice = AttDevice::findOrFail($id);
-            $this->AttDeviceService->update($attDevice, $request->validated());
+            $this->attDeviceService->update($attDevice, $request->validated());
             return jsonSuccess('Mesin Presensi updated successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(AttDevice $attDevice)
     {
         try {
-            $this->AttDeviceService->delete($id);
+            $this->attDeviceService->delete($attDevice->att_device_id);
             return jsonSuccess('Mesin Presensi deleted successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

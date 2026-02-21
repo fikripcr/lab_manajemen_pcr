@@ -60,9 +60,8 @@
             </div>
             @if($pendaftaran->status_terkini == 'Menunggu_Verifikasi_Berkas')
             <div class="card-footer text-end">
-                <form action="{{ route('pmb.camaba.finalize-files') }}" method="POST" class="ajax-form" data-redirect="true">
+                <form action="{{ route('pmb.camaba.finalize-files', $pendaftaran->encrypted_pendaftaran_id) }}" method="POST" class="ajax-form" data-redirect="true">
                     @csrf
-                    <input type="hidden" name="pendaftaran_id" value="{{ $pendaftaran->encrypted_pendaftaran_id }}">
                     <x-tabler.button type="submit" class="btn-success btn-lg" text="Selesai Unggah & Ajukan Verifikasi" />
                 </form>
             </div>

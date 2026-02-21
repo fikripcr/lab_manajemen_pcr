@@ -2,38 +2,41 @@
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\Jalur;
-use Illuminate\Http\Request;
 
 class JalurService
 {
-    public function getPaginateData(Request $request)
+    public function getPaginateData(array $filters = [])
     {
         $query = Jalur::query();
 
-        if ($request->filled('search.value')) {
-            $search = $request->input('search.value');
+        if (! empty($filters['search']['value'])) {
+            $search = $filters['search']['value'];
             $query->where('nama_jalur', 'like', "%{$search}%");
         }
 
         return $query->latest();
     }
 
-    public function createJalur(array $data)
+    public function createJalur(array $data): Jalur
     {
-        return Jalur::create($data);
-    }
-
-    public function updateJalur($id, array $data)
-    {
-        $jalur = Jalur::findOrFail($id);
-        $jalur->update($data);
+        $jalur = Jalur::create($data);
+        logActivity('pmb_jalur', "Menambahkan jalur baru: {$jalur->nama_jalur}", $jalur);
         return $jalur;
     }
 
-    public function deleteJalur($id)
+    public function updateJalur(Jalur $jalur, array $data): bool
     {
-        $jalur = Jalur::findOrFail($id);
-        return $jalur->delete();
+        $jalur->update($data);
+        logActivity('pmb_jalur', "Memperbarui jalur: {$jalur->nama_jalur}", $jalur);
+        return true;
+    }
+
+    public function deleteJalur(Jalur $jalur): bool
+    {
+        $nama = $jalur->nama_jalur;
+        $jalur->delete();
+        logActivity('pmb_jalur', "Menghapus jalur: {$nama}");
+        return true;
     }
 
     public function getAllActive()

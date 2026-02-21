@@ -85,13 +85,12 @@ class JadwalService
     /**
      * Update an existing Jadwal
      */
-    public function updateJadwal(string $id, array $data): bool
+    public function updateJadwal(JadwalKuliah $jadwal, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $jadwal = $this->findOrFail($id);
+        return DB::transaction(function () use ($jadwal, $data) {
             $jadwal->update($data);
 
-            logActivity('jadwal_management', "Memperbarui jadwal ID: {$id}");
+            logActivity('jadwal_management', "Memperbarui jadwal ID: {$jadwal->jadwal_kuliah_id}");
 
             return true;
         });
@@ -100,11 +99,9 @@ class JadwalService
     /**
      * Delete a Jadwal
      */
-    public function deleteJadwal(string $id): bool
+    public function deleteJadwal(JadwalKuliah $jadwal): bool
     {
-        return DB::transaction(function () use ($id) {
-            $jadwal = $this->findOrFail($id);
-
+        return DB::transaction(function () use ($jadwal) {
             // Dependency Check
             if ($jadwal->pcAssignments()->count() > 0 || $jadwal->logPenggunaanPcs()->count() > 0) {
                 throw new Exception('Tidak dapat menghapus jadwal yang terkait dengan penggunaan PC (Assignments/Logs).');
@@ -112,7 +109,7 @@ class JadwalService
 
             $jadwal->delete();
 
-            logActivity('jadwal_management', "Menghapus jadwal ID: {$id}");
+            logActivity('jadwal_management', "Menghapus jadwal ID: {$jadwal->jadwal_kuliah_id}");
 
             return true;
         });

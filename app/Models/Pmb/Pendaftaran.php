@@ -67,7 +67,7 @@ class Pendaftaran extends Model
 
     public function riwayat()
     {
-        return $this->hasMany(RiwayatPendaftaran::class, 'pendaftaran_id');
+        return $this->hasMany(RiwayatPendaftaran::class, 'pendaftaran_id', 'pendaftaran_id');
     }
 
     public function pilihanProdi()

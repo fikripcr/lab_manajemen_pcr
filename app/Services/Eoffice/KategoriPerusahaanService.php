@@ -26,7 +26,9 @@ class KategoriPerusahaanService
      */
     public function createKategori(array $data)
     {
-        return KategoriPerusahaan::create($data);
+        $kategori = KategoriPerusahaan::create($data);
+        logActivity('eoffice', "Menambah kategori perusahaan: {$kategori->nama_kategori}");
+        return $kategori;
     }
 
     /**
@@ -36,6 +38,7 @@ class KategoriPerusahaanService
     {
         $kategori = KategoriPerusahaan::findOrFail($id);
         $kategori->update($data);
+        logActivity('eoffice', "Memperbarui kategori perusahaan: {$kategori->nama_kategori}");
         return $kategori;
     }
 
@@ -45,13 +48,10 @@ class KategoriPerusahaanService
     public function deleteKategori($id)
     {
         $kategori = KategoriPerusahaan::findOrFail($id);
-
-        // Optional: Check for dependencies before deleting
-        // if ($kategori->perusahaan()->exists()) {
-        //     throw new \Exception('Kategori masih digunakan oleh data perusahaan.');
-        // }
-
-        return $kategori->delete();
+        $nama     = $kategori->nama_kategori;
+        $kategori->delete();
+        logActivity('eoffice', "Menghapus kategori perusahaan: {$nama}");
+        return true;
     }
 
     /**

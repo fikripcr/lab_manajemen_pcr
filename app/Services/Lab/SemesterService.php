@@ -52,11 +52,9 @@ class SemesterService
     /**
      * Update an existing Semester
      */
-    public function updateSemester(string $id, array $data): bool
+    public function updateSemester(Semester $semester, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $semester = $this->findOrFail($id);
-
+        return DB::transaction(function () use ($semester, $data) {
             $oldName = "{$semester->tahun_ajaran} " . ($semester->semester == 1 ? 'Ganjil' : 'Genap');
 
             $semester->update($data);
@@ -75,11 +73,9 @@ class SemesterService
     /**
      * Delete a Semester
      */
-    public function deleteSemester(string $id): bool
+    public function deleteSemester(Semester $semester): bool
     {
-        return DB::transaction(function () use ($id) {
-            $semester = $this->findOrFail($id);
-
+        return DB::transaction(function () use ($semester) {
             // Dependency Checks
             if ($semester->jadwals()->count() > 0) {
                 throw new Exception('Tidak dapat menghapus semester karena masih digunakan dalam Jadwal.');

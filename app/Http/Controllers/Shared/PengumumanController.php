@@ -12,9 +12,8 @@ class PengumumanController extends Controller
         return view('pages.shared.pengumuman.index', compact('pengumumans'));
     }
 
-    public function show($id)
+    public function show(Pengumuman $pengumuman)
     {
-        $pengumuman = Pengumuman::findOrFail($id);
         return view('pages.shared.pengumuman.show', compact('pengumuman'));
     }
 }

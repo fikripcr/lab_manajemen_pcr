@@ -28,18 +28,13 @@ class PcAssignmentService
     /**
      * Create Assignment
      */
-    public function createAssignment(string $jadwalId, string $labId, array $data): PcAssignment
+    public function createAssignment(JadwalKuliah $jadwal, array $data): PcAssignment
     {
-        // Validation Logic could be here or in Request.
-        // Service usually assumes data is validated or performs deep business logic checks.
-        // Controller already does basic validation.
-        // We will repeat the business logic checks here for robustness.
-
         $userId  = $data['user_id'];
         $nomorPc = $data['nomor_pc'];
 
         // Cek apakah mahasiswa sudah punya PC di jadwal ini
-        $existing = PcAssignment::where('jadwal_id', $jadwalId)
+        $existing = PcAssignment::where('jadwal_id', $jadwal->jadwal_kuliah_id)
             ->where('user_id', $userId)
             ->where('is_active', true)
             ->first();
@@ -49,7 +44,7 @@ class PcAssignmentService
         }
 
         // Cek apakah PC sudah dipakai orang lain
-        $pcTaken = PcAssignment::where('jadwal_id', $jadwalId)
+        $pcTaken = PcAssignment::where('jadwal_id', $jadwal->jadwal_kuliah_id)
             ->where('nomor_pc', $nomorPc)
             ->where('is_active', true)
             ->first();
@@ -58,10 +53,10 @@ class PcAssignmentService
             throw new Exception('Nomor PC ini sudah dipakai oleh mahasiswa lain.');
         }
 
-        return DB::transaction(function () use ($jadwalId, $labId, $data) {
+        return DB::transaction(function () use ($jadwal, $data) {
             $assignment = PcAssignment::create([
-                'jadwal_id'     => $jadwalId,
-                'lab_id'        => $labId,
+                'jadwal_id'     => $jadwal->jadwal_kuliah_id,
+                'lab_id'        => $jadwal->lab_id,
                 'user_id'       => $data['user_id'],
                 'nomor_pc'      => $data['nomor_pc'],
                 'nomor_loker'   => $data['nomor_loker'] ?? null,
@@ -69,8 +64,7 @@ class PcAssignmentService
                 'is_active'     => true,
             ]);
 
-            // Optional: Log Activity
-            // logActivity('lab_assignment', "Assign User ID: {$data['user_id']} to PC {$data['nomor_pc']} in Schedule {$jadwalId}");
+            logActivity('lab_assignment', "Assign User ID: {$data['user_id']} to PC {$data['nomor_pc']} in Schedule {$jadwal->jadwal_kuliah_id}");
 
             return $assignment;
         });
@@ -79,11 +73,13 @@ class PcAssignmentService
     /**
      * Remove Assignment
      */
-    public function deleteAssignment(string $id): bool
+    public function deleteAssignment(PcAssignment $assignment): bool
     {
-        $assignment = $this->findOrFail($id);
-
-        return $assignment->delete();
+        return DB::transaction(function () use ($assignment) {
+            $assignment->delete();
+            logActivity('lab_assignment', "Menghapus data assignment PC ID {$assignment->pc_assignment_id}");
+            return true;
+        });
     }
 
     protected function findOrFail(string $id): PcAssignment

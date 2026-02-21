@@ -5,18 +5,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pmb\VerifyPaymentRequest;
 use App\Models\Pmb\Pembayaran;
 use App\Models\Pmb\Pendaftaran;
+use App\Services\Pmb\PendaftaranService;
 use App\Services\Pmb\VerificationService;
 use Exception;
 use Illuminate\Http\Request;
 
 class VerificationController extends Controller
 {
-    protected $VerificationService;
-
-    public function __construct(VerificationService $VerificationService)
-    {
-        $this->VerificationService = $VerificationService;
-    }
+    public function __construct(
+        protected VerificationService $verificationService,
+        protected PendaftaranService $pendaftaranService
+    ) {}
 
     /**
      * List of pending payments
@@ -31,14 +30,14 @@ class VerificationController extends Controller
      */
     public function paginatePayments(Request $request)
     {
-        $query = Pembayaran::with(['pendaftaran.user', 'pendaftaran.jalur'])
-            ->where('status_verifikasi', 'Pending');
-
-        return datatables()->of($query)
+        return datatables()->of($this->verificationService->getPendingPaymentsQuery())
             ->addIndexColumn()
             ->editColumn('jumlah_bayar', fn($p) => 'Rp ' . number_format($p->jumlah_bayar, 0, ',', '.'))
             ->addColumn('action', function ($row) {
-                return view('pages.pmb.verification._payment_action', compact('row'))->render();
+                return view('pages.pmb.verification._payment_action', [
+                    'row'       => $row,
+                    'verifyUrl' => route('pmb.verification.payment-form', $row->encrypted_pembayaran_id),
+                ])->render();
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -49,7 +48,7 @@ class VerificationController extends Controller
      */
     public function paymentForm(Pembayaran $pembayaran)
     {
-        $pembayaran->load(['pendaftaran.user']);
+        $pembayaran = $this->verificationService->getPaymentDetails($pembayaran);
         return view('pages.pmb.verification.payment_form', compact('pembayaran'));
     }
 
@@ -59,10 +58,11 @@ class VerificationController extends Controller
     public function verifyPayment(VerifyPaymentRequest $request, Pembayaran $pembayaran)
     {
         try {
-            $this->VerificationService->verifyPayment($pembayaran, $request->validated());
+            $this->verificationService->verifyPayment($pembayaran, $request->validated());
             return jsonSuccess('Proses verifikasi pembayaran selesai.', route('pmb.verification.payments'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memverifikasi pembayaran: ' . $e->getMessage());
         }
     }
 
@@ -79,13 +79,13 @@ class VerificationController extends Controller
      */
     public function paginateDocuments(Request $request)
     {
-        $query = Pendaftaran::with(['user', 'jalur'])
-            ->where('status_terkini', 'Menunggu_Verifikasi_Berkas');
+        $filters           = $request->all();
+        $filters['status'] = 'Menunggu_Verifikasi_Berkas';
 
-        return datatables()->of($query)
+        return datatables()->of($this->pendaftaranService->getFilteredQuery($filters))
             ->addIndexColumn()
             ->addColumn('action', function ($p) {
-                return '<a href="' . route('pmb.pendaftaran.show', $p->hashid) . '" class="btn btn-sm btn-primary">Verifikasi Berkas</a>';
+                return '<a href="' . route('pmb.pendaftaran.show', $p->encrypted_pendaftaran_id) . '" class="btn btn-sm btn-primary">Verifikasi Berkas</a>';
             })
             ->rawColumns(['action'])
             ->make(true);

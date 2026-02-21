@@ -3,23 +3,19 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
+use App\Http\Requests\Pemutu\StandarAssignmentRequest;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\IndikatorService;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class StandarController extends Controller
 {
-    protected $IndikatorService;
-
-    public function __construct(IndikatorService $IndikatorService)
-    {
-        $this->IndikatorService = $IndikatorService;
-    }
+    public function __construct(protected IndikatorService $indikatorService)
+    {}
 
     public function index()
     {
@@ -37,7 +33,7 @@ class StandarController extends Controller
         $filters         = $request->all();
         $filters['type'] = 'standar';
 
-        $query = $this->IndikatorService->getFilteredQuery($filters)->with(['orgUnits']);
+        $query = $this->indikatorService->getFilteredQuery($filters)->with(['orgUnits']);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -65,22 +61,19 @@ class StandarController extends Controller
                 return '<span class="text-muted">-</span>';
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('pemutu.indikators.edit', $row->indikator_id); // Reuse generic edit for now or create specific
-                $assignUrl = route('pemutu.standar.assign', $row->indikator_id);
-                $deleteUrl = route('pemutu.standar.destroy', $row->indikator_id);
-
-                return '
-                    <div class="btn-list flex-nowrap justify-content-end">
-                        <a href="' . $assignUrl . '" class="btn btn-sm btn-icon btn-ghost-purple" title="Assign Unit">
-                            <i class="ti ti-users"></i>
-                        </a>
-                        <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-ghost-primary" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus Indikator?" data-text="Data ini akan dihapus permanen.">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'       => route('pemutu.indikators.edit', $row->encrypted_indikator_id),
+                    'editModal'     => false,
+                    'deleteUrl'     => route('pemutu.standar.destroy', $row->encrypted_indikator_id),
+                    'customActions' => [
+                        [
+                            'url'   => route('pemutu.standar.assign', $row->encrypted_indikator_id),
+                            'icon'  => 'ti ti-users',
+                            'title' => 'Assign Unit',
+                            'class' => 'btn-ghost-purple',
+                        ],
+                    ],
+                ])->render();
             })
             ->rawColumns(['doksub_judul', 'indikator', 'target_info', 'action'])
             ->make(true);
@@ -116,10 +109,6 @@ class StandarController extends Controller
 
     public function store(IndikatorRequest $request)
     {
-        // For store, we can mostly reuse IndikatorController store or implement specific logic here.
-        // To keep it properly separated as per plan, let's look at IndikatorController::store.
-        // It delegates to IndikatorService.
-
         try {
             $data         = $request->validated();
             $data['type'] = 'standar'; // Force type
@@ -129,38 +118,43 @@ class StandarController extends Controller
                 $syncData = [];
                 foreach ($request->assignments as $unitId => $val) {
                     if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[$unitId] = ['target' => $val['target'] ?? null];
+                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                     }
                 }
                 $data['org_units'] = $syncData;
             }
 
-            $this->IndikatorService->createIndikator($data);
+            if (isset($data['doksub_ids'])) {
+                $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
+            }
+            if (isset($data['labels'])) {
+                $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
+            }
+
+            $this->indikatorService->createIndikator($data);
 
             return jsonSuccess('Indikator Standar berhasil dibuat.', route('pemutu.standar.index'));
 
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan indikator standar: ' . $e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(Indikator $indikator)
     {
         try {
-            $this->IndikatorService->deleteIndikator($id);
+            $this->indikatorService->deleteIndikator($indikator->indikator_id);
+
             return jsonSuccess('Indikator Standar berhasil dihapus.', route('pemutu.standar.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus indikator standar: ' . $e->getMessage());
         }
     }
 
-    public function assign($id)
+    public function assign(Indikator $indikator)
     {
-        $indikator = $this->IndikatorService->getIndikatorById($id);
-        if (! $indikator || $indikator->type !== 'standar') {
-            abort(404);
-        }
-
         $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
 
         // Get currently assigned units ids
@@ -170,25 +164,27 @@ class StandarController extends Controller
         return view('pages.pemutu.standar.assign', compact('indikator', 'orgUnits', 'assignedUnitIds', 'assignments'));
     }
 
-    public function storeAssignment(Request $request, $id)
+    public function storeAssignment(StandarAssignmentRequest $request, Indikator $indikator)
     {
         try {
-            $indikator = Indikator::findOrFail($id);
-
-            $syncData = [];
-            if ($request->has('assignments')) {
-                foreach ($request->assignments as $unitId => $val) {
+            $validated = $request->validated();
+            $syncData  = [];
+            if (isset($validated['assignments'])) {
+                foreach ($validated['assignments'] as $unitId => $val) {
                     if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[$unitId] = ['target' => $val['target'] ?? null];
+                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                     }
                 }
             }
 
             $indikator->orgUnits()->sync($syncData);
 
+            logActivity('pemutu', "Memperbarui penugasan unit kerja untuk indikator: {$indikator->no_indikator}");
+
             return jsonSuccess('Penugasan Unit Kerja berhasil disimpan.', route('pemutu.standar.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan penugasan unit: ' . $e->getMessage());
         }
     }
 }

@@ -13,12 +13,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatJabStrukturalController extends Controller
 {
-    protected $PegawaiService;
-
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
     public function index()
     {
@@ -33,14 +29,15 @@ class RiwayatJabStrukturalController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('pages.hr.pegawai.jabatan-struktural.create', compact('pegawai', 'jabatan'));
+        $riwayat = new RiwayatJabStruktural();
+        return view('pages.hr.pegawai.jabatan-struktural.create-edit-ajax', compact('pegawai', 'jabatan', 'riwayat'));
     }
 
     public function store(RiwayatJabStrukturalRequest $request, Pegawai $pegawai)
     {
         try {
             $headerCol = 'latest_riwayatjabstruktural_id';
-            $this->PegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
+            $this->pegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
             return jsonSuccess('Perubahan Jabatan Struktural berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());

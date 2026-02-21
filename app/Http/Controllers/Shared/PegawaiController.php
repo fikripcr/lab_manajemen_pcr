@@ -24,9 +24,9 @@ class PegawaiController extends Controller
         return view('pages.shared.pegawai.index');
     }
 
-    public function show($id)
+    public function show(Pegawai $pegawai)
     {
-        $pegawai = Pegawai::with(['unitKerja', 'jabatanStruktural'])->findOrFail($id);
+        $pegawai->load(['unitKerja', 'jabatanStruktural']);
         return view('pages.shared.pegawai.show', compact('pegawai'));
     }
 }

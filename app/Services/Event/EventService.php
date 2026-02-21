@@ -9,7 +9,9 @@ class EventService
     public function store(array $data): Event
     {
         return DB::transaction(function () use ($data) {
-            return Event::create($data);
+            $event = Event::create($data);
+            logActivity('event', "Menambah kegiatan baru: {$event->nama_event}");
+            return $event;
         });
     }
 
@@ -17,6 +19,7 @@ class EventService
     {
         return DB::transaction(function () use ($event, $data) {
             $event->update($data);
+            logActivity('event', "Memperbarui kegiatan: {$event->nama_event}");
             return $event;
         });
     }
@@ -24,7 +27,9 @@ class EventService
     public function destroy(Event $event): void
     {
         DB::transaction(function () use ($event) {
+            $nama = $event->nama_event;
             $event->delete();
+            logActivity('event', "Menghapus kegiatan: {$nama}");
         });
     }
 }

@@ -7,58 +7,87 @@ use App\Models\Pmb\Periode;
 use App\Models\Pmb\SesiUjian;
 use App\Services\Pmb\SesiUjianService;
 use Exception;
-use Illuminate\Http\Request;
 
 class SesiUjianController extends Controller
 {
-    protected $SesiUjianService;
-
-    public function __construct(SesiUjianService $SesiUjianService)
-    {
-        $this->SesiUjianService = $SesiUjianService;
-    }
+    public function __construct(protected SesiUjianService $sesiUjianService)
+    {}
 
     public function index()
     {
         return view('pages.pmb.sesi-ujian.index');
     }
 
-    public function paginate(Request $request)
+    public function paginate(\Illuminate\Http\Request $request)
     {
-        $query = SesiUjian::with('periode');
-        return datatables()->of($query)
+        return datatables()->of($this->sesiUjianService->getPaginateQuery())
             ->addIndexColumn()
             ->editColumn('waktu_mulai', fn($s) => formatTanggalIndo($s->waktu_mulai))
             ->editColumn('waktu_selesai', fn($s) => formatTanggalIndo($s->waktu_selesai))
             ->addColumn('action', function ($s) {
-                return view('pages.pmb.sesi-ujian._actions', compact('s'));
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'       => route('pmb.sesi-ujian.edit', $s->encrypted_sesiujian_id),
+                    'editModal'     => true,
+                    'deleteUrl'     => route('pmb.sesi-ujian.destroy', $s->encrypted_sesiujian_id),
+                    'customActions' => [
+                        [
+                            'url'   => route('cbt.dashboard'),
+                            'label' => 'Test Ujian',
+                            'icon'  => 'player-play',
+                            'class' => '',
+                        ],
+                    ],
+                ])->render();
             })
+            ->rawColumns(['action'])
             ->make(true);
     }
 
     public function create()
     {
         $periode = Periode::where('is_aktif', true)->get();
-        return view('pages.pmb.sesi-ujian.create', compact('periode'));
+        return view('pages.pmb.sesi-ujian.create-edit-ajax', [
+            'sesi'    => new SesiUjian(),
+            'periode' => $periode,
+        ]);
     }
 
     public function store(StoreSesiRequest $request)
     {
         try {
-            $this->SesiUjianService->store($request->validated());
+            $this->sesiUjianService->store($request->validated());
             return jsonSuccess('Sesi ujian berhasil dibuat.', route('pmb.sesi-ujian.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal membuat sesi ujian: ' . $e->getMessage());
+        }
+    }
+
+    public function edit(SesiUjian $sesi)
+    {
+        $periode = Periode::where('is_aktif', true)->get();
+        return view('pages.pmb.sesi-ujian.create-edit-ajax', compact('sesi', 'periode'));
+    }
+
+    public function update(StoreSesiRequest $request, SesiUjian $sesi)
+    {
+        try {
+            $this->sesiUjianService->update($sesi, $request->validated());
+            return jsonSuccess('Sesi ujian berhasil diperbarui.', route('pmb.sesi-ujian.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui sesi ujian: ' . $e->getMessage());
         }
     }
 
     public function destroy(SesiUjian $sesi)
     {
         try {
-            $this->SesiUjianService->delete($sesi);
+            $this->sesiUjianService->delete($sesi);
             return jsonSuccess('Sesi ujian berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menghapus sesi ujian: ' . $e->getMessage());
         }
     }
 }

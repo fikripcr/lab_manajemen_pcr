@@ -17,6 +17,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use ReflectionClass;
 
 class PegawaiService
 {
@@ -52,6 +53,8 @@ class PegawaiService
                 'latest_riwayatdatadiri_id' => $riwayat->riwayatdatadiri_id,
             ]);
 
+            logActivity('hr', "Mendaftarkan pegawai baru: {$riwayat->nama}", $pegawai);
+
             return $pegawai;
         });
     }
@@ -82,6 +85,8 @@ class PegawaiService
 
             // 5. Dispatch Event for Notification
             ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
+
+            logActivity('hr', "Mengajukan perubahan data diri untuk pegawai: {$pegawai->nama}", $pegawai);
 
             return $riwayat;
         });
@@ -145,6 +150,9 @@ class PegawaiService
             // 5. Dispatch Event for Notification
             ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
 
+            $modelName = (new ReflectionClass($modelClass))->getShortName();
+            logActivity('hr', "Mengajukan perubahan {$modelName} untuk pegawai: {$pegawai->nama}", $pegawai);
+
             return $model;
         });
     }
@@ -179,6 +187,9 @@ class PegawaiService
 
             // 5. Dispatch Event for Notification
             ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
+
+            $shortName = (new \ReflectionClass($modelClass))->getShortName();
+            logActivity('hr', "Mengajukan penambahan {$shortName} untuk pegawai: {$pegawai->nama}", $pegawai);
 
             return $model;
         });
@@ -227,6 +238,9 @@ class PegawaiService
             // Dispatch Event for Notification
             ApprovalProcessed::dispatch($approval, $pegawai, Auth::user(), 'approved');
 
+            $modelShortName = (new \ReflectionClass($modelClass))->getShortName();
+            logActivity('hr', "Menyetujui pengajuan {$modelShortName} untuk pegawai: {$pegawai->nama}", $pegawai);
+
             return $approval;
         });
     }
@@ -258,6 +272,9 @@ class PegawaiService
             // Dispatch Event for Notification
             ApprovalProcessed::dispatch($approval, $pegawai, Auth::user(), 'rejected');
 
+            $modelShortName = (new \ReflectionClass($modelClass))->getShortName();
+            logActivity('hr', "Menolak pengajuan {$modelShortName} untuk pegawai: {$pegawai->nama} (Alasan: $reason)", $pegawai);
+
             return $approval;
         });
     }
@@ -269,6 +286,7 @@ class PegawaiService
     {
         return DB::transaction(function () use ($pegawaiId) {
             $pegawai = Pegawai::findOrFail($pegawaiId);
+            logActivity('hr', "Menghapus data pegawai: {$pegawai->nama}", $pegawai);
             $pegawai->delete();
             return true;
         });
@@ -289,13 +307,19 @@ class PegawaiService
             // Update latest on pegawai
             $pegawai->update(['latest_riwayatpenugasan_id' => $riwayat->riwayatpenugasan_id]);
 
+            logActivity('hr', "Menambahkan penugasan baru untuk pegawai: {$pegawai->nama}", $pegawai);
+
             return $riwayat;
         });
     }
 
     public function updatePenugasan(RiwayatPenugasan $penugasan, array $data)
     {
-        return $penugasan->update($data);
+        return DB::transaction(function () use ($penugasan, $data) {
+            $updated = $penugasan->update($data);
+            logActivity('hr', "Memperbarui data penugasan untuk pegawai: {$penugasan->pegawai->nama}", $penugasan->pegawai);
+            return $updated;
+        });
     }
 
     public function deletePenugasan(Pegawai $pegawai, RiwayatPenugasan $penugasan)
@@ -311,13 +335,19 @@ class PegawaiService
                 $pegawai->update(['latest_riwayatpenugasan_id' => $latest?->riwayatpenugasan_id]);
             }
 
+            logActivity('hr', "Menghapus data penugasan untuk pegawai: {$pegawai->nama}", $pegawai);
+
             return true;
         });
     }
 
     public function endPenugasan(RiwayatPenugasan $penugasan, $tglSelesai)
     {
-        return $penugasan->update(['tgl_selesai' => $tglSelesai]);
+        return DB::transaction(function () use ($penugasan, $tglSelesai) {
+            $updated = $penugasan->update(['tgl_selesai' => $tglSelesai]);
+            logActivity('hr', "Mengakhiri penugasan untuk pegawai: {$penugasan->pegawai->nama}", $penugasan->pegawai);
+            return $updated;
+        });
     }
 
     /**

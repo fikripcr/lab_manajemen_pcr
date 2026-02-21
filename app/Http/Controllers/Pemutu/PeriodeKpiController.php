@@ -1,21 +1,14 @@
 <?php
 namespace App\Http\Controllers\Pemutu;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\PeriodeKpiRequest;
 use App\Models\Pemutu\PeriodeKpi;
-use App\Services\Pemutu\PeriodeService;
-use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class PeriodeKpiController extends Controller
 {
-    protected $PeriodeService;
-
-    public function __construct(PeriodeService $PeriodeService)
-    {
-        $this->PeriodeService = $PeriodeService;
-    }
+    public function __construct(protected PeriodeService $periodeService)
+    {}
 
     public function index()
     {
@@ -26,82 +19,64 @@ class PeriodeKpiController extends Controller
 
     public function data()
     {
-        $query = PeriodeKpi::query();
-        return DataTables::of($query)->make(true);
+        $query = PeriodeKpi::query()->orderBy('tahun', 'desc')->orderBy('semester', 'desc');
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->make(true);
     }
 
     public function create()
     {
-        if (request()->ajax()) {
-            return view('pages.pemutu.periode_kpis.form');
-        }
-        return view('pages.pemutu.periode_kpis.create', ['pageTitle' => 'Tambah Periode KPI']);
+        $periodeKpi = new PeriodeKpi();
+        return view('pages.pemutu.periode_kpis.create-edit-ajax', compact('periodeKpi'));
     }
 
-    public function store(Request $request)
+    public function store(PeriodeKpiRequest $request)
     {
-        $request->validate([
-            'nama'            => 'required|string|max:100',
-            'semester'        => 'required|in:Ganjil,Genap',
-            'tahun_akademik'  => 'required|string|max:20',
-            'tahun'           => 'required|integer',
-            'tanggal_mulai'   => 'required|date',
-            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
-        ]);
-
         try {
-            $this->PeriodeService->store($request->all());
+            $this->periodeService->store($request->validated());
             return jsonSuccess('Periode KPI berhasil disimpan.', route('pemutu.periode-kpis.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan periode: ' . $e->getMessage());
         }
     }
 
     public function edit(PeriodeKpi $periodeKpi)
     {
-        if (request()->ajax()) {
-            return view('pages.pemutu.periode_kpis.form', compact('periodeKpi'));
-        }
-        $pageTitle = 'Edit Periode KPI';
-        return view('pages.pemutu.periode_kpis.edit', compact('periodeKpi', 'pageTitle'));
+        return view('pages.pemutu.periode_kpis.create-edit-ajax', compact('periodeKpi'));
     }
 
-    public function update(Request $request, PeriodeKpi $periodeKpi)
+    public function update(PeriodeKpiRequest $request, PeriodeKpi $periodeKpi)
     {
-        $request->validate([
-            'nama'            => 'required|string|max:100',
-            'semester'        => 'required|in:Ganjil,Genap',
-            'tahun_akademik'  => 'required|string|max:20',
-            'tahun'           => 'required|integer',
-            'tanggal_mulai'   => 'required|date',
-            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
-        ]);
-
         try {
-            $this->PeriodeService->update($periodeKpi, $request->all());
+            $this->periodeService->update($periodeKpi, $request->validated());
             return jsonSuccess('Periode KPI berhasil diupdate.', route('pemutu.periode-kpis.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui periode: ' . $e->getMessage());
         }
     }
 
     public function destroy(PeriodeKpi $periodeKpi)
     {
         try {
-            $this->PeriodeService->destroy($periodeKpi);
+            $this->periodeService->destroy($periodeKpi);
             return jsonSuccess('Periode KPI berhasil dihapus.', route('pemutu.periode-kpis.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus periode: ' . $e->getMessage());
         }
     }
 
     public function activate(PeriodeKpi $periodeKpi)
     {
         try {
-            $this->PeriodeService->activate($periodeKpi);
+            $this->periodeService->activate($periodeKpi);
             return jsonSuccess('Periode KPI berhasil diaktifkan.', route('pemutu.periode-kpis.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal mengaktifkan periode: ' . $e->getMessage());
         }
     }
 }

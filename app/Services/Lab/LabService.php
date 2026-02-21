@@ -42,10 +42,9 @@ class LabService
     /**
      * Update an existing Lab
      */
-    public function updateLab(string $id, array $data): bool
+    public function updateLab(Lab $lab, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $lab     = $this->findOrFail($id);
+        return DB::transaction(function () use ($lab, $data) {
             $oldName = $lab->name;
 
             $lab->update($data);
@@ -66,12 +65,10 @@ class LabService
     /**
      * Delete a Lab
      */
-    public function deleteLab(string $id): bool
+    public function deleteLab(Lab $lab): bool
     {
-        return DB::transaction(function () use ($id) {
-            $lab  = $this->findOrFail($id);
+        return DB::transaction(function () use ($lab) {
             $name = $lab->name;
-
             $lab->delete();
 
             logActivity('lab_management', "Menghapus lab: {$name}");

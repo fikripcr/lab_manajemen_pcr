@@ -3,20 +3,16 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shared\PublicMenuRequest;
+use App\Http\Requests\Shared\ReorderRequest;
 use App\Models\Shared\PublicMenu;
 use App\Models\Shared\PublicPage;
 use App\Services\Shared\PublicMenuService;
 use Exception;
-use Illuminate\Http\Request;
 
 class PublicMenuController extends Controller
 {
-    protected $MenuService;
-
-    public function __construct(PublicMenuService $MenuService)
-    {
-        $this->MenuService = $MenuService;
-    }
+    public function __construct(protected PublicMenuService $menuService)
+    {}
 
     public function index()
     {
@@ -46,7 +42,7 @@ class PublicMenuController extends Controller
     public function store(PublicMenuRequest $request)
     {
         try {
-            $this->MenuService->createMenu($request->validated());
+            $this->menuService->createMenu($request->validated());
             return jsonSuccess('Menu berhasil ditambahkan.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -68,7 +64,7 @@ class PublicMenuController extends Controller
     public function update(PublicMenuRequest $request, PublicMenu $public_menu)
     {
         try {
-            $this->MenuService->updateMenu($public_menu, $request->validated());
+            $this->menuService->updateMenu($public_menu, $request->validated());
             return jsonSuccess('Menu berhasil diperbarui.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -78,19 +74,24 @@ class PublicMenuController extends Controller
     public function destroy(PublicMenu $public_menu)
     {
         try {
-            $this->MenuService->deleteMenu($public_menu);
+            $this->menuService->deleteMenu($public_menu);
             return jsonSuccess('Menu berhasil dihapus.', route('shared.public-menu.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function reorder(Request $request)
+    public function reorder(ReorderRequest $request)
     {
-        $hierarchy = $request->input('hierarchy');
-        if (is_array($hierarchy)) {
-            $this->MenuService->reorderMenus($hierarchy);
-            return jsonSuccess('Struktur menu berhasil diperbarui.');
+        $hierarchy = $request->validated()['hierarchy'] ?? [];
+        if ($hierarchy) {
+            try {
+                $this->menuService->reorderMenus($hierarchy);
+                return jsonSuccess('Struktur menu berhasil diperbarui.');
+            } catch (Exception $e) {
+                logError($e);
+                return jsonError('Gagal memperbarui struktur menu: ' . $e->getMessage());
+            }
         }
         return jsonError('Data struktur tidak valid.');
     }

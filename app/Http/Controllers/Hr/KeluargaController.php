@@ -8,32 +8,28 @@ use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class KeluargaController extends Controller
 {
-    protected $PegawaiService;
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
-
-    public function index(Request $request, Pegawai $pegawai = null)
+    public function index(Pegawai $pegawai = null)
     {
         return view('pages.hr.data-diri.tabs.keluarga', compact('pegawai'));
     }
 
     public function create(Pegawai $pegawai)
     {
-        return view('pages.hr.pegawai.keluarga.create', compact('pegawai'));
+        $keluarga = new Keluarga();
+        return view('pages.hr.pegawai.keluarga.create-edit-ajax', compact('pegawai', 'keluarga'));
     }
 
     public function store(KeluargaRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->requestAddition($pegawai, Keluarga::class, $request->validated());
+            $this->pegawaiService->requestAddition($pegawai, Keluarga::class, $request->validated());
             return jsonSuccess('Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -41,13 +37,13 @@ class KeluargaController extends Controller
     }
     public function edit(Pegawai $pegawai, Keluarga $keluarga)
     {
-        return view('pages.hr.pegawai.keluarga.edit', compact('pegawai', 'keluarga'));
+        return view('pages.hr.pegawai.keluarga.create-edit-ajax', compact('pegawai', 'keluarga'));
     }
 
     public function update(KeluargaRequest $request, Pegawai $pegawai, Keluarga $keluarga)
     {
         try {
-            $this->PegawaiService->requestChange($pegawai, Keluarga::class, $request->validated(), null, $keluarga);
+            $this->pegawaiService->requestChange($pegawai, Keluarga::class, $request->validated(), null, $keluarga);
             return jsonSuccess('Perubahan Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());

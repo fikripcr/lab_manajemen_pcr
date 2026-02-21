@@ -4,17 +4,14 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\RiwayatApproval;
 use App\Services\Hr\PegawaiService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class ApprovalController extends Controller
 {
-    protected $PegawaiService;
-
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
+    public function __construct(protected \App\Services\Hr\PegawaiService $pegawaiService)
+    {}
 
     public function index(Request $request)
     {
@@ -53,7 +50,7 @@ class ApprovalController extends Controller
     public function approve($id)
     {
         try {
-            $this->PegawaiService->approveRequest($id);
+            $this->pegawaiService->approveRequest($id);
             return jsonSuccess('Pengajuan berhasil didsetujui.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -64,7 +61,7 @@ class ApprovalController extends Controller
     {
         try {
             $reason = $request->input('reason', 'Ditolak tanpa keterangan');
-            $this->PegawaiService->rejectRequest($id, $reason);
+            $this->pegawaiService->rejectRequest($id, $reason);
 
             return jsonSuccess('Pengajuan berhasil ditolak.');
         } catch (Exception $e) {

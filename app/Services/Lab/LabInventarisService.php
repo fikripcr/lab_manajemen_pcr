@@ -59,23 +59,12 @@ class LabInventarisService
     /**
      * Update Assignment
      */
-    public function updateAssignment(string $id, array $data): bool
+    public function updateAssignment(LabInventaris $assignment, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $assignment = $this->findOrFail($id);
-
-            // Allow updating inventaris_id? If so, might need to regenerate code.
-            // Controller allows it. Let's assume code regeneration is NOT required or handled if ID changes?
-            // Controller logic: $labInventaris->update(['inventaris_id' => ...]);
-            // If inventaris_id changes, kode_inventaris might become invalid (it usually contains tool code).
-            // LabInventaris model helper `generateKodeInventaris` uses `Inventaris` type/count.
-            // If we change type, we should probably regenerate code.
-            // But for now, let's stick to simple update as per Controller logic which didn't regenerate code explicitly on update.
-            // Wait, Controller DOES NOT regenerate code on Update. It just updates fields.
-
+        return DB::transaction(function () use ($assignment, $data) {
             $assignment->update($data);
 
-            logActivity('lab_inventaris_management', "Memperbarui inventaris lab ID: {$id}");
+            logActivity('lab_inventaris_management', "Memperbarui inventaris lab ID: {$assignment->id}");
 
             return true;
         });
@@ -84,12 +73,10 @@ class LabInventarisService
     /**
      * Remove Assignment (Soft Delete)
      */
-    public function deleteAssignment(string $id): bool
+    public function deleteAssignment(LabInventaris $assignment): bool
     {
-        return DB::transaction(function () use ($id) {
-            $assignment = $this->findOrFail($id);
-            $kode       = $assignment->kode_inventaris;
-
+        return DB::transaction(function () use ($assignment) {
+            $kode = $assignment->kode_inventaris;
             $assignment->delete();
 
             logActivity('lab_inventaris_management', "Menghapus inventaris lab: {$kode}");

@@ -9,12 +9,8 @@ use Exception;
 
 class LayananStatusController extends Controller
 {
-    protected $LayananStatusService;
-
-    public function __construct(LayananStatusService $LayananStatusService)
-    {
-        $this->LayananStatusService = $LayananStatusService;
-    }
+    public function __construct(protected LayananStatusService $LayananStatusService)
+    {}
 
     /**
      * Update the status of a layanan (disposition workflow).

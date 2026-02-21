@@ -59,6 +59,8 @@ class IndikatorService
                 }
             }
 
+            logActivity('pemutu', "Membuat indikator ({$data['type']}): {$indikator->no_indikator}", $indikator);
+
             return $indikator;
         });
     }
@@ -97,6 +99,8 @@ class IndikatorService
                 $indikator->pegawai()->delete();
             }
 
+            logActivity('pemutu', "Memperbarui indikator ({$indikator->type}): {$indikator->no_indikator}", $indikator);
+
             return $indikator;
         });
     }
@@ -111,6 +115,8 @@ class IndikatorService
             $indikator->orgUnits()->detach();
             $indikator->labels()->detach();
             $indikator->pegawai()->delete();
+
+            logActivity('pemutu', "Menghapus indikator: {$indikator->no_indikator}", $indikator);
 
             return $indikator->delete();
         });

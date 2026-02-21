@@ -27,9 +27,8 @@ class MahasiswaController extends Controller
         return view('pages.shared.mahasiswa.index');
     }
 
-    public function show($id)
+    public function show(Mahasiswa $mahasiswa)
     {
-        $mahasiswa = Mahasiswa::findOrFail($id);
         return view('pages.shared.mahasiswa.show', compact('mahasiswa'));
     }
 }

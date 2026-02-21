@@ -13,12 +13,8 @@ use Yajra\DataTables\DataTables;
 
 class DokumenController extends Controller
 {
-    protected $DokumenService;
-
-    public function __construct(DokumenService $DokumenService)
-    {
-        $this->DokumenService = $DokumenService;
-    }
+    public function __construct(protected DokumenService $dokumenService)
+    {}
 
     public function index(Request $request)
     {
@@ -40,7 +36,7 @@ class DokumenController extends Controller
 
         $dokumentByJenis = [];
         foreach ($jenisTypes as $jenis) {
-            $dokumentByJenis[$jenis] = $this->DokumenService->getDokumenByJenis($jenis, $request->periode);
+            $dokumentByJenis[$jenis] = $this->dokumenService->getDokumenByJenis($jenis, $request->periode);
         }
 
         return view('pages.pemutu.dokumens.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
@@ -51,13 +47,13 @@ class DokumenController extends Controller
         $pageTitle = 'Tambah Dokumen';
         $activeTab = $request->query('tabs', 'kebijakan');
 
-        $dokumens = $this->DokumenService->getHierarchicalDokumens();
+        $dokumens = $this->dokumenService->getHierarchicalDokumens();
 
         $parent       = null;
         $parentDokSub = null;
 
         if ($request->has('parent_id')) {
-            $parent = $this->DokumenService->getDokumenById($request->parent_id);
+            $parent = $this->dokumenService->getDokumenById($request->parent_id);
             if ($parent) {
                 $activeTab = $this->getTabByJenis($parent->jenis);
             }
@@ -99,7 +95,7 @@ class DokumenController extends Controller
     {
         try {
             $data    = $request->validated();
-            $dokumen = $this->DokumenService->createDokumen($data);
+            $dokumen = $this->dokumenService->createDokumen($data);
 
             $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
             if ($request->filled('parent_doksub_id')) {
@@ -108,7 +104,8 @@ class DokumenController extends Controller
 
             return jsonSuccess('Dokumen berhasil dibuat.', $redirectUrl);
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 
@@ -136,7 +133,7 @@ class DokumenController extends Controller
 
     public function edit(Dokumen $dokumen)
     {
-        $allDocs  = $this->DokumenService->getHierarchicalDokumens();
+        $allDocs  = $this->dokumenService->getHierarchicalDokumens();
         $dokumens = $allDocs->filter(function ($d) use ($dokumen) {
             return $d->dok_id != $dokumen->dok_id;
         });
@@ -165,12 +162,13 @@ class DokumenController extends Controller
     public function update(DokumenRequest $request, Dokumen $dokumen)
     {
         try {
-            $this->DokumenService->updateDokumen($dokumen->dok_id, $request->validated());
+            $this->dokumenService->updateDokumen($dokumen->dok_id, $request->validated());
             $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
 
             return jsonSuccess('Dokumen berhasil diperbarui.', $redirectUrl);
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 
@@ -178,21 +176,23 @@ class DokumenController extends Controller
     {
         try {
             $redirectOpt = $this->getIndexUrlByJenis($dokumen->jenis);
-            $this->DokumenService->deleteDokumen($dokumen->dok_id);
+            $this->dokumenService->deleteDokumen($dokumen->dok_id);
             return jsonSuccess('Dokumen berhasil dihapus.', $redirectOpt);
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 
-    public function reorder(Request $request)
+    public function reorder(\App\Http\Requests\Shared\ReorderRequest $request)
     {
         try {
-            $hierarchy = $request->input('hierarchy');
-            $this->DokumenService->reorderDokumens($hierarchy);
+            $hierarchy = $request->validated('hierarchy');
+            $this->dokumenService->reorderDokumens($hierarchy);
             return jsonSuccess('Urutan berhasil diperbarui.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 
@@ -216,13 +216,17 @@ class DokumenController extends Controller
                     ->addColumn('jumlah_turunan', function ($row) {
                         return '<span class="text-muted">-</span>';
                     })
-                    ->addColumn('action', function ($row) use ($dokumen) {
-                        return view('pages.pemutu.dok-subs._action', compact('row'))->render();
+                    ->addColumn('action', function ($row) {
+                        return view('components.tabler.datatables-actions', [
+                            'editUrl'   => route('pemutu.dok-subs.edit', $row->encrypted_doksub_id),
+                            'editModal' => true,
+                            'deleteUrl' => route('pemutu.dok-subs.destroy', $row->encrypted_doksub_id),
+                        ])->render();
                     })
                     ->rawColumns(['judul', 'jumlah_turunan', 'action'])
                     ->make(true);
             } else {
-                $query = $this->DokumenService->getChildrenQuery($dokumen->dok_id);
+                $query = $this->dokumenService->getChildrenQuery($dokumen->dok_id);
                 return DataTables::of($query)
                     ->addIndexColumn()
                     ->addColumn('judul', function ($row) {
@@ -272,13 +276,18 @@ class DokumenController extends Controller
                         return $html;
                     })
                     ->addColumn('action', function ($row) {
-                        return view('pages.pemutu.dokumens._action', compact('row'))->render();
+                        return view('components.tabler.datatables-actions', [
+                            'editUrl'   => route('pemutu.dokumens.edit', $row->encrypted_dok_id),
+                            'editModal' => false,
+                            'deleteUrl' => route('pemutu.dokumens.destroy', $row->encrypted_dok_id),
+                        ])->render();
                     })
                     ->rawColumns(['judul', 'jumlah_turunan', 'action'])
                     ->make(true);
             }
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 

@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Pmb;
 
+use App\Models\Pmb\DokumenUpload;
 use App\Models\Pmb\Pendaftaran;
 use App\Models\Pmb\PilihanProdi;
 use App\Models\Pmb\ProfilMahasiswa;
@@ -10,6 +11,16 @@ use Illuminate\Support\Facades\DB;
 
 class PendaftaranService
 {
+    public function getPendaftaranDetails(Pendaftaran $pendaftaran)
+    {
+        return $pendaftaran->load(['user', 'periode', 'jalur', 'pilihanProdi.orgUnit', 'dokumenUpload.jenisDokumen', 'riwayat.pelaku']);
+    }
+
+    public function getDocumentById($documentId)
+    {
+        return DokumenUpload::findOrFail(decryptId($documentId));
+    }
+
     /**
      * Create a new registration
      */
@@ -46,18 +57,17 @@ class PendaftaranService
 
             // 3. Create Pilihan Prodi
             foreach ($data['pilihan_prodi'] as $index => $orgUnitId) {
-                // If FE sends orgunit_id, use it directly.
                 PilihanProdi::create([
-                    'pendaftaran_id' => $pendaftaran->id,
+                    'pendaftaran_id' => $pendaftaran->pendaftaran_id,
                     'orgunit_id'     => $orgUnitId,
                     'urutan'         => $index + 1,
                 ]);
             }
 
             // 4. Record History
-            $this->recordHistory($pendaftaran->id, 'Draft', 'Pendaftaran baru dibuat oleh calon mahasiswa.');
+            $this->logStatusHistory($pendaftaran, 'Draft', 'Pendaftaran baru dibuat oleh calon mahasiswa.');
 
-            logActivity('pmb_pendaftaran', "Calon mahasiswa baru mendaftar: {$user->name} ({$pendaftaran->no_pendaftaran})");
+            logActivity('pmb_pendaftaran', "Calon mahasiswa baru mendaftar: {$user->name} ({$pendaftaran->no_pendaftaran})", $pendaftaran);
 
             return $pendaftaran;
         });
@@ -72,7 +82,7 @@ class PendaftaranService
         $prefix = "REG-{$year}-";
 
         $last = Pendaftaran::where('no_pendaftaran', 'like', $prefix . '%')
-            ->orderBy('id', 'desc')
+            ->orderBy('pendaftaran_id', 'desc')
             ->first();
 
         if (! $last) {
@@ -88,50 +98,48 @@ class PendaftaranService
     /**
      * Update status pendaftaran with history logging
      */
-    public function updateStatus($pendaftaranId, $status, $keterangan = '')
+    public function updateStatus(Pendaftaran $pendaftaran, $status, $keterangan = '')
     {
-        $pendaftaran = Pendaftaran::findOrFail($pendaftaranId);
-        $statusLama  = $pendaftaran->status_terkini;
+        return DB::transaction(function () use ($pendaftaran, $status, $keterangan) {
+            $statusLama = $pendaftaran->status_terkini;
 
-        $pendaftaran->update(['status_terkini' => $status]);
+            $pendaftaran->update(['status_terkini' => $status]);
 
-        $this->logStatusHistory($pendaftaranId, $status, $keterangan, $statusLama);
+            $this->logStatusHistory($pendaftaran, $status, $keterangan, $statusLama);
 
-        return $pendaftaran;
+            logActivity('pmb_pendaftaran', "Update status pendaftaran {$pendaftaran->no_pendaftaran}: {$statusLama} -> {$status}", $pendaftaran);
+
+            return $pendaftaran;
+        });
     }
 
     /**
      * Finalize Graduation (NIM Generation)
      */
-    public function finalizeGraduation($pendaftaranId, $orgUnitDiterimaId, $nim)
+    public function finalizeGraduation(Pendaftaran $pendaftaran, $orgUnitDiterimaId, $nim)
     {
-        \DB::beginTransaction();
-        try {
-            $pendaftaran = Pendaftaran::findOrFail($pendaftaranId);
-
+        return DB::transaction(function () use ($pendaftaran, $orgUnitDiterimaId, $nim) {
             $pendaftaran->update([
                 'status_terkini'      => 'Lulus',
                 'orgunit_diterima_id' => $orgUnitDiterimaId,
                 'nim_final'           => $nim,
             ]);
 
-            $this->logStatusHistory($pendaftaranId, 'Lulus', 'Pendaftaran telah difinalisasi dengan NIM ' . $nim, 'Siap_Ujian');
+            $this->logStatusHistory($pendaftaran, 'Lulus', 'Pendaftaran telah difinalisasi dengan NIM ' . $nim, 'Siap_Ujian');
 
-            \DB::commit();
+            logActivity('pmb_pendaftaran', "Finalisasi kelulusan pendaftaran {$pendaftaran->no_pendaftaran} dengan NIM {$nim}", $pendaftaran);
+
             return $pendaftaran;
-        } catch (Exception $e) {
-            \DB::rollBack();
-            throw $e;
-        }
+        });
     }
 
     /**
      * Log status history
      */
-    protected function logStatusHistory($pendaftaranId, $statusBaru, $keterangan, $statusLama = null)
+    protected function logStatusHistory(Pendaftaran $pendaftaran, $statusBaru, $keterangan, $statusLama = null)
     {
         return RiwayatPendaftaran::create([
-            'pendaftaran_id' => $pendaftaranId,
+            'pendaftaran_id' => $pendaftaran->pendaftaran_id,
             'status_lama'    => $statusLama,
             'status_baru'    => $statusBaru,
             'keterangan'     => $keterangan,
@@ -173,14 +181,18 @@ class PendaftaranService
     /**
      * Verify individual uploaded document
      */
-    public function verifyUploadedDocument($documentId, $status, $catatan = null)
+    public function verifyUploadedDocument(DokumenUpload $doc, $status, $catatan = null)
     {
-        $doc = \App\Models\Pmb\DokumenUpload::findOrFail($documentId);
-        $doc->update([
-            'status_verifikasi' => $status,
-            'catatan_revisi'    => $catatan,
-            'verifikator_id'    => auth()->id(),
-        ]);
-        return $doc;
+        return DB::transaction(function () use ($doc, $status, $catatan) {
+            $doc->update([
+                'status_verifikasi' => $status,
+                'catatan_revisi'    => $catatan,
+                'verifikator_id'    => auth()->id(),
+            ]);
+
+            logActivity('pmb_verifikasi', "Verifikasi dokumen {$doc->jenisDokumen->nama_dokumen} untuk pendaftaran {$doc->pendaftaran->no_pendaftaran}: {$status}", $doc);
+
+            return $doc;
+        });
     }
 }

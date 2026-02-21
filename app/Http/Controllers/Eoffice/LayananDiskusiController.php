@@ -8,12 +8,8 @@ use Exception;
 
 class LayananDiskusiController extends Controller
 {
-    protected $LayananDiskusiService;
-
-    public function __construct(LayananDiskusiService $LayananDiskusiService)
-    {
-        $this->LayananDiskusiService = $LayananDiskusiService;
-    }
+    public function __construct(protected LayananDiskusiService $LayananDiskusiService)
+    {}
 
     /**
      * Store a new discussion message.

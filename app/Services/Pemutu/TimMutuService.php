@@ -2,6 +2,7 @@
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\OrgUnit;
+use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
 use App\Models\Shared\Pegawai;
 use Illuminate\Support\Facades\DB;
@@ -104,7 +105,7 @@ class TimMutuService
     public function updateUnitTimMutu($periodeId, $unitId, $auditeeId, $ketuaAuditorId, array $auditorIds, array $anggotaIds)
     {
         return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $ketuaAuditorId, $auditorIds, $anggotaIds) {
-            $periode = \App\Models\Pemutu\PeriodeSpmi::findOrFail($periodeId);
+            $periode = PeriodeSpmi::findOrFail($periodeId);
             $unit    = OrgUnit::findOrFail($unitId);
 
             // Delete existing

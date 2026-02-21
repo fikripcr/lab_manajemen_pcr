@@ -15,6 +15,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class TestController extends Controller
@@ -156,7 +159,7 @@ class TestController extends Controller
             ];
 
             // Create a new Word document
-            $phpWord = new \PhpOffice\PhpWord\PhpWord();
+            $phpWord = new PhpWord();
             $section = $phpWord->addSection();
 
             // Add header
@@ -266,7 +269,7 @@ class TestController extends Controller
                 $section->addImage($qrCodePath, [
                     'width'     => 150,
                     'height'    => 150,
-                    'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER,
+                    'alignment' => Jc::CENTER,
                 ]);
             } else {
                 // Fallback if QR code wasn't generated properly
@@ -284,7 +287,7 @@ class TestController extends Controller
             $fileName = 'test-report-' . now()->format('Y-m-d-H-i') . '.docx';
             $filePath = storage_path('app/' . $fileName);
 
-            $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+            $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
             $objWriter->save($filePath);
 
             // Clean up temp QR code file

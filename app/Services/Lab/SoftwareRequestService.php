@@ -37,11 +37,9 @@ class SoftwareRequestService
     /**
      * Update Software Request (Used for Status Updates)
      */
-    public function updateRequest(string $id, array $data): bool
+    public function updateRequest(RequestSoftware $request, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $request = $this->findOrFail($id);
-
+        return DB::transaction(function () use ($request, $data) {
             $oldStatus = $request->status;
 
             $request->update($data);
@@ -49,12 +47,12 @@ class SoftwareRequestService
             if ($oldStatus !== $request->status) {
                 logActivity(
                     'software_request_management',
-                    "Mengubah status request software ID {$id} dari {$oldStatus} ke {$request->status}"
+                    "Mengubah status request software ID {$request->request_software_id} dari {$oldStatus} ke {$request->status}"
                 );
             } else {
                 logActivity(
                     'software_request_management',
-                    "Memperbarui data request software ID {$id}"
+                    "Memperbarui data request software ID {$request->request_software_id}"
                 );
             }
 
@@ -103,11 +101,9 @@ class SoftwareRequestService
     /**
      * Approve Software Request
      */
-    public function approveRequest(string $id, array $data): void
+    public function approveRequest(RequestSoftware $request, array $data): void
     {
-        DB::transaction(function () use ($id, $data) {
-            $request = $this->findOrFail($id);
-
+        DB::transaction(function () use ($request, $data) {
             // Create new approval record
             $approval = \App\Models\Lab\LabRiwayatApproval::create([
                 'model'      => RequestSoftware::class,
@@ -126,7 +122,7 @@ class SoftwareRequestService
 
             logActivity(
                 'software_request_management',
-                "Approval request software ID {$id}: status changed to {$data['status']}"
+                "Approval request software ID {$request->request_software_id}: status changed to {$data['status']}"
             );
         });
     }

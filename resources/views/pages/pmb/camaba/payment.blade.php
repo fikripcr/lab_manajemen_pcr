@@ -48,9 +48,8 @@
                 <div class="card">
                     <div class="card-header"><h3 class="card-title">Konfirmasi Pembayaran</h3></div>
                     <div class="card-body">
-                        <form action="{{ route('pmb.camaba.confirm-payment') }}" method="POST" class="ajax-form" enctype="multipart/form-data" data-redirect="true">
+                        <form action="{{ route('pmb.camaba.confirm-payment', $pendaftaran->encrypted_pendaftaran_id) }}" method="POST" class="ajax-form" enctype="multipart/form-data" data-redirect="true">
                             @csrf
-                            <input type="hidden" name="pendaftaran_id" value="{{ $pendaftaran->encrypted_pendaftaran_id }}">
                             
                             <x-tabler.form-input name="bank_asal" label="Bank Asal" placeholder="Contoh: BNI / BRI / Mandiri" required="true" />
                             <x-tabler.form-input name="nama_pengirim" label="Nama Pengirim di Rekening" placeholder="Sesuai nama di struk" required="true" />

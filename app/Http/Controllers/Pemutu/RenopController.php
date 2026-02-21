@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers\Pemutu;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\RenopRequest;
 use App\Models\Pemutu\Indikator;
-use Illuminate\Http\Request;
+use App\Services\Pemutu\IndikatorService;
 
 class RenopController extends Controller
 {
+    public function __construct(protected IndikatorService $indikatorService)
+    {}
     public function index()
     {
         $renops = Indikator::where('type', 'renop')
@@ -22,20 +24,49 @@ class RenopController extends Controller
     public function create()
     {
         $parents = Indikator::where('type', 'renop')->pluck('indikator', 'indikator_id');
-        return view('pages.pemutu.renop.create', compact('parents'));
+        $model   = new Indikator();
+        return view('pages.pemutu.renop.create-edit-ajax', compact('parents', 'model'));
     }
 
-    public function store(Request $request)
+    public function store(RenopRequest $request)
     {
-        $validated = $request->validate([
-            'indikator' => 'required|string',
-            'target'    => 'required|string',
-            'parent_id' => 'nullable|exists:pemutu_indikator,indikator_id',
-            'seq'       => 'nullable|integer',
-        ]);
+        try {
+            $this->indikatorService->createIndikator($request->validated());
+            return jsonSuccess('Renop created successfully', route('pemutu.renop.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menyimpan Renop: ' . $e->getMessage());
+        }
+    }
 
-        $validated['type'] = 'renop';
+    public function edit(Indikator $renop)
+    {
+        $parents = Indikator::where('type', 'renop')
+            ->where('indikator_id', '!=', $renop->indikator_id)
+            ->pluck('indikator', 'indikator_id');
+        $model = $renop;
+        return view('pages.pemutu.renop.create-edit-ajax', compact('parents', 'model'));
+    }
 
-        return redirect()->route('pemutu.renop.index')->with('success', 'Renop created successfully');
+    public function update(RenopRequest $request, Indikator $renop)
+    {
+        try {
+            $this->indikatorService->updateIndikator($renop->indikator_id, $request->validated());
+            return jsonSuccess('Renop updated successfully', route('pemutu.renop.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui Renop: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(Indikator $renop)
+    {
+        try {
+            $this->indikatorService->deleteIndikator($renop->indikator_id);
+            return jsonSuccess('Renop deleted successfully.');
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus Renop: ' . $e->getMessage());
+        }
     }
 }

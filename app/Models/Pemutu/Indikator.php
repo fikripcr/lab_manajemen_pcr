@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Models\Shared\StrukturOrganisasi;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -65,7 +66,7 @@ class Indikator extends Model
 
     public function orgUnits()
     {
-        return $this->belongsToMany(\App\Models\Shared\StrukturOrganisasi::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
+        return $this->belongsToMany(StrukturOrganisasi::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
             ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'created_at');
     }
 

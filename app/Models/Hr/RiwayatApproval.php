@@ -1,6 +1,9 @@
 <?php
 namespace App\Models\Hr;
 
+use App\Models\Hr\Lembur;
+use App\Models\Hr\Perizinan;
+use App\Models\Shared\Pegawai;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,16 +60,16 @@ class RiwayatApproval extends Model
             return null;
         }
 
-        if ($subject instanceof \App\Models\Hr\Perizinan) {
+        if ($subject instanceof Perizinan) {
             return $subject->pengusulPegawai;
         }
 
-        if ($subject instanceof \App\Models\Hr\Lembur) {
+        if ($subject instanceof Lembur) {
             return $subject->pengusul;
         }
 
         // Default check if subject has 'pegawai' relationship or is Pegawai
-        if ($subject instanceof \App\Models\Shared\Pegawai) {
+        if ($subject instanceof Pegawai) {
             return $subject;
         }
 
@@ -77,7 +80,7 @@ class RiwayatApproval extends Model
         // Check for pegawai_id
         if (isset($subject->pegawai_id)) {
             // Attempt to load if not relation
-            return \App\Models\Hr\Pegawai::find($subject->pegawai_id);
+            return Pegawai::find($subject->pegawai_id);
         }
 
         return null;

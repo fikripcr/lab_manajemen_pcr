@@ -2,23 +2,34 @@
 namespace App\Services\Hr;
 
 use App\Models\Hr\StatusAktifitas;
+use Illuminate\Support\Facades\DB;
 
 class StatusAktifitasService
 {
     public function create(array $data)
     {
-        return StatusAktifitas::create($data);
+        return DB::transaction(function () use ($data) {
+            $statusAktifitas = StatusAktifitas::create($data);
+            logActivity('hr', "Menambahkan status aktifitas: {$statusAktifitas->nama_status}", $statusAktifitas);
+            return $statusAktifitas;
+        });
     }
 
     public function update(StatusAktifitas $statusAktifitas, array $data)
     {
-        $statusAktifitas->update($data);
-        return $statusAktifitas;
+        return DB::transaction(function () use ($statusAktifitas, $data) {
+            $statusAktifitas->update($data);
+            logActivity('hr', "Memperbarui status aktifitas: {$statusAktifitas->nama_status}", $statusAktifitas);
+            return $statusAktifitas;
+        });
     }
 
     public function delete($id)
     {
-        $statusAktifitas = StatusAktifitas::findOrFail($id);
-        $statusAktifitas->delete();
+        return DB::transaction(function () use ($id) {
+            $statusAktifitas = StatusAktifitas::findOrFail($id);
+            logActivity('hr', "Menghapus status aktifitas: {$statusAktifitas->nama_status}", $statusAktifitas);
+            $statusAktifitas->delete();
+        });
     }
 }

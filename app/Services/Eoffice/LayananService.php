@@ -89,15 +89,13 @@ class LayananService
 
             // 3. Store Dynamic Fields
             foreach ($dynamicFields as $nama_isian => $isi) {
-                // If it's a file, we might need special handling (storage path)
-                // For now, assume it's a string or file path already handled by controller
                 $layanan->isians()->create([
                     'nama_isian' => $nama_isian,
                     'isi'        => is_array($isi) ? json_encode($isi) : $isi,
                 ]);
             }
 
-            logActivity('eoffice_layanan', "Mengajukan layanan baru: {$layanan->no_layanan} ({$jenisLayanan->nama_layanan})");
+            logActivity('eoffice', "Mengajukan layanan baru: {$layanan->no_layanan} ({$jenisLayanan->nama_layanan})");
 
             return $layanan;
         });
@@ -115,9 +113,12 @@ class LayananService
                 'status_layanan' => $data['status_layanan'],
                 'keterangan'     => $data['keterangan'] ?? null,
                 'file_lampiran'  => $data['file_lampiran'] ?? null,
+                'user_id'        => Auth::id(), // Ensure user_id is set
             ]);
 
             $layanan->update(['latest_layananstatus_id' => $status->layananstatus_id]);
+
+            logActivity('eoffice', "Memperbarui status layanan {$layanan->no_layanan} menjadi: {$data['status_layanan']}");
 
             return $status;
         });

@@ -3,6 +3,7 @@ namespace App\Services\Sys;
 
 use App\Models\Sys\Notification;
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
@@ -35,7 +36,7 @@ class NotificationService
         // Filter by user if provided
         if (isset($filters['user_id'])) {
             $query->where('notifiable_id', $filters['user_id'])
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         }
 
         $perPage = $filters['per_page'] ?? 10;
@@ -52,7 +53,7 @@ class NotificationService
 
         if ($userId) {
             $query->where('notifiable_id', $userId)
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         } else {
             // If no userId provided, return 0
             return 0;
@@ -77,12 +78,12 @@ class NotificationService
         return DB::transaction(function () use ($notificationId) {
             $notification = Notification::find($notificationId);
             if (! $notification) {
-                throw new \Exception("Notification with ID {$notificationId} not found.");
+                throw new Exception("Notification with ID {$notificationId} not found.");
             }
 
             $notification->read_at = now();
             if (! $notification->save()) {
-                throw new \Exception("Failed to update notification with ID {$notificationId} as read.");
+                throw new Exception("Failed to update notification with ID {$notificationId} as read.");
             }
 
             return true;
@@ -96,7 +97,7 @@ class NotificationService
     {
         return DB::transaction(function () use ($userId) {
             return Notification::where('notifiable_id', $userId)
-                ->where('notifiable_type', 'App\Models\User')
+                ->where('notifiable_type', User::class)
                 ->whereNull('read_at')
                 ->update(['read_at' => now()]);
         });
@@ -184,15 +185,15 @@ class NotificationService
 
         if ($userId) {
             $query->where('notifiable_id', $userId)
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         } else {
             $query->where('notifiable_id', auth()->id())
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         }
 
         $notification = $query->first();
         if (! $notification) {
-            throw new \Exception("Notification with ID {$notificationId} not found or does not belong to the specified user.");
+            throw new Exception("Notification with ID {$notificationId} not found or does not belong to the specified user.");
         }
 
         $notification->markAsRead();
@@ -208,10 +209,10 @@ class NotificationService
 
         if ($userId) {
             $query->where('notifiable_id', $userId)
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         } else {
             $query->where('notifiable_id', auth()->id())
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         }
 
         return $query->update(['read_at' => now()]);
@@ -226,10 +227,10 @@ class NotificationService
 
         if ($userId) {
             $query->where('notifiable_id', $userId)
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         } else {
             $query->where('notifiable_id', auth()->id())
-                ->where('notifiable_type', 'App\Models\User');
+                ->where('notifiable_type', User::class);
         }
 
         return $query->whereNull('read_at')->update(['read_at' => now()]);
@@ -290,6 +291,6 @@ class NotificationService
         }
 
         return $query->where('sys_notifications.notifiable_id', auth()->id())
-            ->where('sys_notifications.notifiable_type', 'App\Models\User');
+            ->where('sys_notifications.notifiable_type', User::class);
     }
 }

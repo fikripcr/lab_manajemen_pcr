@@ -77,11 +77,10 @@ class InventarisService
     /**
      * Update an existing Inventaris
      */
-    public function updateInventaris(string $id, array $data): bool
+    public function updateInventaris(Inventaris $inventaris, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $inventaris = $this->findOrFail($id);
-            $oldName    = $inventaris->nama_alat;
+        return DB::transaction(function () use ($inventaris, $data) {
+            $oldName = $inventaris->nama_alat;
 
             $inventaris->update($data);
 
@@ -97,12 +96,10 @@ class InventarisService
     /**
      * Delete an Inventaris
      */
-    public function deleteInventaris(string $id): bool
+    public function deleteInventaris(Inventaris $inventaris): bool
     {
-        return DB::transaction(function () use ($id) {
-            $inventaris = $this->findOrFail($id);
-            $name       = $inventaris->nama_alat;
-
+        return DB::transaction(function () use ($inventaris) {
+            $name = $inventaris->nama_alat;
             $inventaris->delete();
 
             logActivity('inventaris_management', "Menghapus inventaris: {$name}");

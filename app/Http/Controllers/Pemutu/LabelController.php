@@ -5,27 +5,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelRequest;
 use App\Services\Pemutu\LabelService;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class LabelController extends Controller
 {
-    protected $LabelService;
-
-    public function __construct(LabelService $LabelService)
-    {
-        $this->LabelService = $LabelService;
-    }
+    public function __construct(protected LabelService $labelService)
+    {}
 
     public function index()
     {
-        $types = $this->LabelService->getAllLabelTypes();
+        $types = $this->labelService->getAllLabelTypes();
         return view('pages.pemutu.labels.index', compact('types'));
     }
 
     public function paginate(Request $request)
     {
-        $query = $this->LabelService->getLabelFilteredQuery($request->all());
+        $query = $this->labelService->getLabelFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -41,9 +36,9 @@ class LabelController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.labels.edit', $row->label_id),
+                    'editUrl'   => route('pemutu.labels.edit', $row->encrypted_label_id),
                     'editModal' => true,
-                    'deleteUrl' => route('pemutu.labels.destroy', $row->label_id),
+                    'deleteUrl' => route('pemutu.labels.destroy', $row->encrypted_label_id),
                 ])->render();
             })
             ->rawColumns(['name', 'action'])
@@ -52,52 +47,57 @@ class LabelController extends Controller
 
     public function create()
     {
-        $types = $this->LabelService->getAllLabelTypes();
+        $types = $this->labelService->getAllLabelTypes();
         return view('pages.pemutu.labels.create-edit-ajax', compact('types'));
     }
 
     public function store(LabelRequest $request)
     {
         try {
-            $this->LabelService->createLabel($request->validated());
+            $this->labelService->createLabel($request->validated());
+
+            logActivity('pemutu', "Menambah label baru: " . ($request->name ?? ''));
 
             return jsonSuccess('Label created successfully.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan label: ' . $e->getMessage());
         }
     }
 
-    public function edit($id)
+    public function edit(\App\Models\Pemutu\Label $label)
     {
-        $label = $this->LabelService->getLabelById($id);
-        if (! $label) {
-            abort(404);
-        }
-
-        $types = $this->LabelService->getAllLabelTypes();
+        $types = $this->labelService->getAllLabelTypes();
 
         return view('pages.pemutu.labels.create-edit-ajax', compact('label', 'types'));
     }
 
-    public function update(LabelRequest $request, $id)
+    public function update(LabelRequest $request, \App\Models\Pemutu\Label $label)
     {
         try {
-            $this->LabelService->updateLabel($id, $request->validated());
+            $this->labelService->updateLabel($label->label_id, $request->validated());
+
+            logActivity('pemutu', "Memperbarui label: {$label->name}");
 
             return jsonSuccess('Label updated successfully.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui label: ' . $e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(\App\Models\Pemutu\Label $label)
     {
         try {
-            $this->LabelService->deleteLabel($id);
+            $labelName = $label->name;
+            $this->labelService->deleteLabel($label->label_id);
+
+            logActivity('pemutu', "Menghapus label: {$labelName}");
 
             return jsonSuccess('Label deleted successfully.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus label: ' . $e->getMessage());
         }
     }
 }

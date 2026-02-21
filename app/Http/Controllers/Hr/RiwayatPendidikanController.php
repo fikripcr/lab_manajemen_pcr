@@ -8,32 +8,28 @@ use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatPendidikanController extends Controller
 {
-    protected $PegawaiService;
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
-
-    public function index(Request $request, Pegawai $pegawai = null)
+    public function index(Pegawai $pegawai = null)
     {
         return view('pages.hr.data-diri.tabs.pendidikan', compact('pegawai'));
     }
 
     public function create(Pegawai $pegawai)
     {
-        return view('pages.hr.pegawai.pendidikan.create', compact('pegawai'));
+        $pendidikan = new RiwayatPendidikan();
+        return view('pages.hr.pegawai.pendidikan.create-edit-ajax', compact('pegawai', 'pendidikan'));
     }
 
     public function store(RiwayatPendidikanRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->requestAddition($pegawai, RiwayatPendidikan::class, $request->validated());
+            $this->pegawaiService->requestAddition($pegawai, RiwayatPendidikan::class, $request->validated());
             return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -41,13 +37,13 @@ class RiwayatPendidikanController extends Controller
     }
     public function edit(Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
-        return view('pages.hr.pegawai.pendidikan.edit', compact('pegawai', 'pendidikan'));
+        return view('pages.hr.pegawai.pendidikan.create-edit-ajax', compact('pegawai', 'pendidikan'));
     }
 
     public function update(RiwayatPendidikanRequest $request, Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
         try {
-            $this->PegawaiService->requestChange($pegawai, RiwayatPendidikan::class, $request->validated(), null, $pendidikan);
+            $this->pegawaiService->requestChange($pegawai, RiwayatPendidikan::class, $request->validated(), null, $pendidikan);
             return jsonSuccess('Perubahan Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());

@@ -19,6 +19,8 @@ class EventTamuService
                 $tamu->addMedia($data['ttd'])->toMediaCollection('guest_signature');
             }
 
+            logActivity('event', "Menambah tamu baru: {$tamu->nama_tamu} di kegiatan: {$tamu->event->nama_event}");
+
             return $tamu;
         });
     }
@@ -38,6 +40,8 @@ class EventTamuService
                 $tamu->addMedia($data['ttd'])->toMediaCollection('guest_signature');
             }
 
+            logActivity('event', "Memperbarui data tamu: {$tamu->nama_tamu}");
+
             return $tamu;
         });
     }
@@ -45,7 +49,9 @@ class EventTamuService
     public function destroy(EventTamu $tamu): void
     {
         DB::transaction(function () use ($tamu) {
+            $nama = $tamu->nama_tamu;
             $tamu->delete();
+            logActivity('event', "Menghapus tamu: {$nama}");
         });
     }
 
@@ -65,6 +71,8 @@ class EventTamuService
                     ->usingFileName('guest_signature_' . time() . '.png')
                     ->toMediaCollection('guest_signature');
             }
+
+            logActivity('event', "Tamu baru mendaftar dari publik: {$tamu->nama_tamu}");
 
             return $tamu;
         });

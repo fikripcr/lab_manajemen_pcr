@@ -5,16 +5,27 @@ use App\Models\Pmb\SyaratDokumenJalur;
 
 class SyaratDokumenJalurService
 {
-    public function updateOrCreate(array $data)
+    public function getSyaratByJalur($jalurId)
     {
-        return SyaratDokumenJalur::updateOrCreate(
+        return SyaratDokumenJalur::with('jenisDokumen')->where('jalur_id', $jalurId)->get();
+    }
+
+    public function updateOrCreate(array $data): SyaratDokumenJalur
+    {
+        $syarat = SyaratDokumenJalur::updateOrCreate(
             ['jalur_id' => $data['jalur_id'], 'jenis_dokumen_id' => $data['jenis_dokumen_id']],
             ['is_required' => $data['is_required'] ?? false]
         );
+
+        logActivity('pmb_syarat_jalur', "Update syarat dokumen untuk jalur ID: {$data['jalur_id']}", $syarat);
+
+        return $syarat;
     }
 
-    public function delete(SyaratDokumenJalur $syarat)
+    public function delete(SyaratDokumenJalur $syarat): bool
     {
-        return $syarat->delete();
+        $syarat->delete();
+        logActivity('pmb_syarat_jalur', "Menghapus syarat dokumen ID: {$syarat->syarat_id}");
+        return true;
     }
 }

@@ -1,16 +1,17 @@
 @php
-    $item = $periodeSpmi ?? new \App\Models\Pemutu\PeriodeSpmi();
-    $route = $item->exists 
-        ? route('pemutu.periode-spmis.update', $item->encrypted_periodespmi_id) 
+    $isEdit = isset($periodeSpmi) && $periodeSpmi->exists;
+    $title  = $isEdit ? 'Edit Periode SPMI' : 'Tambah Periode SPMI';
+    $route  = $isEdit 
+        ? route('pemutu.periode-spmis.update', $periodeSpmi->encrypted_periodespmi_id) 
         : route('pemutu.periode-spmis.store');
-    $method = $item->exists ? 'PUT' : 'POST';
-    $title = $item->exists ? 'Edit Periode SPMI' : 'Tambah Periode SPMI';
+    $method = $isEdit ? 'PUT' : 'POST';
 @endphp
 
 <x-tabler.form-modal
     :title="$title"
     :route="$route"
     :method="$method"
+    :submitText="$isEdit ? 'Update' : 'Simpan'"
 >
     <div class="row">
          {{-- Info Dasar --}}
@@ -20,7 +21,7 @@
                 label="Tahun Periode" 
                 type="number" 
                 placeholder="Contoh: 2026"
-                value="{{ $item->periode ?? date('Y') }}" 
+                value="{{ $periodeSpmi->periode ?? date('Y') }}" 
                 required="true" 
             />
         </div>
@@ -34,7 +35,7 @@
                     'Semester Ganjil' => 'Semester Ganjil',
                     'Semester Genap' => 'Semester Genap'
                 ]"
-                :selected="$item->jenis_periode ?? ''"
+                :selected="$periodeSpmi->jenis_periode ?? ''"
             />
         </div>
 
@@ -45,10 +46,10 @@
             <label class="form-label fw-bold text-primary"><i class="ti ti-checkbox me-1"></i> 1. Penetapan</label>
             <div class="row g-2">
                 <div class="col-md-6">
-                    <x-tabler.form-input name="penetapan_awal" label="Tgl Awal" type="date" value="{{ $item->penetapan_awal ? $item->penetapan_awal->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="penetapan_awal" label="Tgl Awal" type="date" value="{{ $periodeSpmi->penetapan_awal ? $periodeSpmi->penetapan_awal->format('Y-m-d') : '' }}" />
                 </div>
                 <div class="col-md-6">
-                    <x-tabler.form-input name="penetapan_akhir" label="Tgl Akhir" type="date" value="{{ $item->penetapan_akhir ? $item->penetapan_akhir->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="penetapan_akhir" label="Tgl Akhir" type="date" value="{{ $periodeSpmi->penetapan_akhir ? $periodeSpmi->penetapan_akhir->format('Y-m-d') : '' }}" />
                 </div>
             </div>
         </div>
@@ -58,10 +59,10 @@
             <label class="form-label fw-bold text-success"><i class="ti ti-player-play me-1"></i> 2. Pelaksanaan / Evaluasi Diri</label>
             <div class="row g-2">
                 <div class="col-md-6">
-                    <x-tabler.form-input name="ed_awal" label="Tgl Awal" type="date" value="{{ $item->ed_awal ? $item->ed_awal->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="ed_awal" label="Tgl Awal" type="date" value="{{ $periodeSpmi->ed_awal ? $periodeSpmi->ed_awal->format('Y-m-d') : '' }}" />
                 </div>
                 <div class="col-md-6">
-                    <x-tabler.form-input name="ed_akhir" label="Tgl Akhir" type="date" value="{{ $item->ed_akhir ? $item->ed_akhir->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="ed_akhir" label="Tgl Akhir" type="date" value="{{ $periodeSpmi->ed_akhir ? $periodeSpmi->ed_akhir->format('Y-m-d') : '' }}" />
                 </div>
             </div>
         </div>
@@ -71,10 +72,10 @@
             <label class="form-label fw-bold text-info"><i class="ti ti-search me-1"></i> 3. Evaluasi / AMI</label>
             <div class="row g-2">
                 <div class="col-md-6">
-                    <x-tabler.form-input name="ami_awal" label="Tgl Awal" type="date" value="{{ $item->ami_awal ? $item->ami_awal->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="ami_awal" label="Tgl Awal" type="date" value="{{ $periodeSpmi->ami_awal ? $periodeSpmi->ami_awal->format('Y-m-d') : '' }}" />
                 </div>
                 <div class="col-md-6">
-                    <x-tabler.form-input name="ami_akhir" label="Tgl Akhir" type="date" value="{{ $item->ami_akhir ? $item->ami_akhir->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="ami_akhir" label="Tgl Akhir" type="date" value="{{ $periodeSpmi->ami_akhir ? $periodeSpmi->ami_akhir->format('Y-m-d') : '' }}" />
                 </div>
             </div>
         </div>
@@ -84,10 +85,10 @@
             <label class="form-label fw-bold text-warning"><i class="ti ti-shield-check me-1"></i> 4. Pengendalian</label>
             <div class="row g-2">
                 <div class="col-md-6">
-                    <x-tabler.form-input name="pengendalian_awal" label="Tgl Awal" type="date" value="{{ $item->pengendalian_awal ? $item->pengendalian_awal->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="pengendalian_awal" label="Tgl Awal" type="date" value="{{ $periodeSpmi->pengendalian_awal ? $periodeSpmi->pengendalian_awal->format('Y-m-d') : '' }}" />
                 </div>
                 <div class="col-md-6">
-                    <x-tabler.form-input name="pengendalian_akhir" label="Tgl Akhir" type="date" value="{{ $item->pengendalian_akhir ? $item->pengendalian_akhir->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="pengendalian_akhir" label="Tgl Akhir" type="date" value="{{ $periodeSpmi->pengendalian_akhir ? $periodeSpmi->pengendalian_akhir->format('Y-m-d') : '' }}" />
                 </div>
             </div>
         </div>
@@ -97,10 +98,10 @@
             <label class="form-label fw-bold text-danger"><i class="ti ti-trending-up me-1"></i> 5. Peningkatan</label>
             <div class="row g-2">
                 <div class="col-md-6">
-                    <x-tabler.form-input name="peningkatan_awal" label="Tgl Awal" type="date" value="{{ $item->peningkatan_awal ? $item->peningkatan_awal->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="peningkatan_awal" label="Tgl Awal" type="date" value="{{ $periodeSpmi->peningkatan_awal ? $periodeSpmi->peningkatan_awal->format('Y-m-d') : '' }}" />
                 </div>
                 <div class="col-md-6">
-                    <x-tabler.form-input name="peningkatan_akhir" label="Tgl Akhir" type="date" value="{{ $item->peningkatan_akhir ? $item->peningkatan_akhir->format('Y-m-d') : '' }}" />
+                    <x-tabler.form-input name="peningkatan_akhir" label="Tgl Akhir" type="date" value="{{ $periodeSpmi->peningkatan_akhir ? $periodeSpmi->peningkatan_akhir->format('Y-m-d') : '' }}" />
                 </div>
             </div>
         </div>

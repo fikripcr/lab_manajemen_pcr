@@ -2,9 +2,12 @@
 namespace App\Services\Sys;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserService
 {
@@ -88,8 +91,8 @@ class UserService
 
             $user->update($updateData);
 
-                                                                       // Sync roles
-            if (class_exists(\Spatie\Permission\Models\Role::class)) { // Safety check
+                                             // Sync roles
+            if (class_exists(Role::class)) { // Safety check
                 if (isset($data['roles'])) {
                     $user->syncRoles($data['roles']);
                 } elseif (isset($data['role'])) {
@@ -118,7 +121,7 @@ class UserService
      */
     private function sanitizeImage($file)
     {
-        if (! $file instanceof \Illuminate\Http\UploadedFile) {
+        if (! $file instanceof UploadedFile) {
             return $file;
         }
 
@@ -139,7 +142,7 @@ class UserService
                     imagedestroy($image);
 
                     // Create a new UploadedFile instance from the sanitized file
-                    return new \Illuminate\Http\UploadedFile(
+                    return new UploadedFile(
                         $tempPath,
                         $file->getClientOriginalName(),
                         $file->getClientMimeType(),
@@ -147,7 +150,7 @@ class UserService
                         true// Mark as test so it doesn't try to move_uploaded_file which might fail on temp
                     );
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // If anything fails, fallback to original file
                 report($e);
             }

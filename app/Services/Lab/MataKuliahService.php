@@ -49,11 +49,10 @@ class MataKuliahService
     /**
      * Update an existing MataKuliah
      */
-    public function updateMataKuliah(string $id, array $data): bool
+    public function updateMataKuliah(MataKuliah $mataKuliah, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $mataKuliah = $this->findOrFail($id);
-            $oldName    = $mataKuliah->nama_mk;
+        return DB::transaction(function () use ($mataKuliah, $data) {
+            $oldName = $mataKuliah->nama_mk;
 
             $mataKuliah->update($data);
 
@@ -69,11 +68,9 @@ class MataKuliahService
     /**
      * Delete a MataKuliah
      */
-    public function deleteMataKuliah(string $id): bool
+    public function deleteMataKuliah(MataKuliah $mataKuliah): bool
     {
-        return DB::transaction(function () use ($id) {
-            $mataKuliah = $this->findOrFail($id);
-
+        return DB::transaction(function () use ($mataKuliah) {
             // Dependency Checks
             if ($mataKuliah->jadwals()->count() > 0) {
                 throw new Exception('Tidak dapat menghapus mata kuliah karena masih digunakan dalam Jadwal.');

@@ -14,12 +14,8 @@ use Yajra\DataTables\DataTables;
 
 class NotificationsController extends Controller
 {
-    protected $NotificationService;
-
-    public function __construct(NotificationService $NotificationService)
-    {
-        $this->NotificationService = $NotificationService;
-    }
+    public function __construct(protected NotificationService $notificationService)
+    {}
     /**
      * Display a listing of the notifications.
      */
@@ -40,7 +36,7 @@ class NotificationsController extends Controller
             'date_to'     => $request->get('date_to'),
         ];
 
-        $query = $this->NotificationService->getFilteredQueryForUser($filters);
+        $query = $this->notificationService->getFilteredQueryForUser($filters);
 
         return DataTables::of($query)
             ->addColumn('checkbox', function ($notification) {
@@ -90,7 +86,7 @@ class NotificationsController extends Controller
      */
     public function markAsRead($id)
     {
-        $result = $this->NotificationService->markAsReadById($id);
+        $result = $this->notificationService->markAsReadById($id);
 
         if (! $result) {
             return redirect()->back()->with('error', 'Notifikasi tidakditemukan . ');
@@ -108,7 +104,7 @@ class NotificationsController extends Controller
     {
         $userId       = auth()->id();
         $count        = Auth::user()->unreadNotifications->count();
-        $updatedCount = $this->NotificationService->markAllAsReadForUser($userId);
+        $updatedCount = $this->notificationService->markAllAsReadForUser($userId);
 
         logActivity('notification', $updatedCount . 'notifications marked as read by user: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
 
@@ -127,7 +123,7 @@ class NotificationsController extends Controller
         }
 
         $userId       = auth()->id();
-        $updatedCount = $this->NotificationService->markSelectedAsRead($selectedIds, $userId);
+        $updatedCount = $this->notificationService->markSelectedAsRead($selectedIds, $userId);
 
         logActivity('notification', $updatedCount . 'selected notifications marked as read by user: ' . auth()->user()->name . '(ID: ' . auth()->id() . ')');
 
@@ -143,7 +139,7 @@ class NotificationsController extends Controller
     public function getUnreadCount()
     {
         $userId = auth()->id();
-        $count  = $this->NotificationService->getUnreadCount($userId);
+        $count  = $this->notificationService->getUnreadCount($userId);
 
         return jsonSuccess(['data' => ['count' => $count]]);
     }
@@ -156,7 +152,7 @@ class NotificationsController extends Controller
         $limit  = $request->get('limit', 5);
         $userId = auth()->id();
 
-        $notifications = $this->NotificationService->getDropdownData($userId, $limit);
+        $notifications = $this->notificationService->getDropdownData($userId, $limit);
 
         return jsonSuccess(['data' => $notifications]);
     }
@@ -167,7 +163,7 @@ class NotificationsController extends Controller
     public function getNotificationCounts()
     {
         $userId = auth()->id();
-        $counts = $this->NotificationService->getNotificationCounts($userId);
+        $counts = $this->notificationService->getNotificationCounts($userId);
 
         return jsonSuccess(['data' => ['counts' => $counts]]);
     }
@@ -175,7 +171,7 @@ class NotificationsController extends Controller
     /**
      * Update notification (currently not implemented)
      */
-    public function update(Request $request, $id = null)
+    public function update($id = null)
     {
         //
     }

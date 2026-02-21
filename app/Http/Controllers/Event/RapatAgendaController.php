@@ -9,54 +9,39 @@ use App\Services\Event\RapatAgendaService;
 class RapatAgendaController extends Controller
 {
     public function __construct(
-        protected RapatAgendaService $service
+        protected RapatAgendaService $rapatAgendaService
     ) {}
 
     public function store(RapatAgendaRequest $request)
     {
         try {
-            $this->service->store($request->validated());
-            return response()->json([
-                'success' => true,
-                'message' => 'Agenda berhasil ditambahkan',
-            ]);
+            $this->rapatAgendaService->store($request->validated());
+            return jsonSuccess('Agenda berhasil ditambahkan');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 
     public function update(RapatAgendaRequest $request, RapatAgenda $agenda)
     {
         try {
-            $this->service->update($agenda, $request->validated());
-            return response()->json([
-                'success' => true,
-                'message' => 'Agenda berhasil diperbarui',
-            ]);
+            $this->rapatAgendaService->update($agenda, $request->validated());
+            return jsonSuccess('Agenda berhasil diperbarui');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 
     public function destroy(RapatAgenda $agenda)
     {
         try {
-            $this->service->destroy($agenda);
-            return response()->json([
-                'success' => true,
-                'message' => 'Agenda berhasil dihapus',
-            ]);
+            $this->rapatAgendaService->destroy($agenda);
+            return jsonSuccess('Agenda berhasil dihapus');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+            logError($e);
+            return jsonError($e->getMessage());
         }
     }
 }

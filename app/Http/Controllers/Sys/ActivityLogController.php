@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Services\Sys\ActivityLogsService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 
 class ActivityLogController extends Controller
@@ -19,7 +18,7 @@ class ActivityLogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.sys.activity-log.index');
     }

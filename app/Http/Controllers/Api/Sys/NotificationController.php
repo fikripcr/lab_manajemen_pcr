@@ -7,12 +7,8 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    protected $notificationService;
-
-    public function __construct(NotificationService $notificationService)
-    {
-        $this->notificationService = $notificationService;
-    }
+    public function __construct(protected NotificationService $notificationService)
+    {}
 
     /**
      * Get count of unread notifications for the authenticated user

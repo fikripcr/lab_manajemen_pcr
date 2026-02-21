@@ -2,7 +2,6 @@
 namespace App\Services\Lab;
 
 use App\Models\Lab\LaporanKerusakan;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class LaporanKerusakanService
@@ -51,13 +50,8 @@ class LaporanKerusakanService
         });
     }
 
-    public function updateStatus($id, $status, $teknisiNote = null)
+    public function updateStatus(LaporanKerusakan $laporan, $status, $teknisiNote = null)
     {
-        $laporan = $this->getLaporanById($id);
-        if (! $laporan) {
-            throw new Exception('Laporan tidak ditemukan');
-        }
-
         return DB::transaction(function () use ($laporan, $status, $teknisiNote) {
             $updateData = [
                 'status'            => $status,
@@ -67,7 +61,7 @@ class LaporanKerusakanService
 
             $laporan->update($updateData);
 
-            logActivity('laporan_kerusakan', "Update status laporan ID {$id} menjadi {$status}");
+            logActivity('laporan_kerusakan', "Update status laporan ID {$laporan->laporan_kerusakan_id} menjadi {$status}");
             return $laporan;
         });
     }

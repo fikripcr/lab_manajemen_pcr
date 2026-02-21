@@ -11,12 +11,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KategoriIsianController extends Controller
 {
-    protected $KategoriIsianService;
-
-    public function __construct(KategoriIsianService $KategoriIsianService)
-    {
-        $this->KategoriIsianService = $KategoriIsianService;
-    }
+    public function __construct(protected \App\Services\Eoffice\KategoriIsianService $KategoriIsianService)
+    {}
 
     public function index()
     {
@@ -34,7 +30,11 @@ class KategoriIsianController extends Controller
                 return ucwords(str_replace('_', ' ', $row->type));
             })
             ->addColumn('action', function ($row) {
-                return view('pages.eoffice.kategori_isian._action', compact('row'))->render();
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('eoffice.kategori-isian.edit', $row->encrypted_kategoriisian_id),
+                    'editModal' => true,
+                    'deleteUrl' => route('eoffice.kategori-isian.destroy', $row->encrypted_kategoriisian_id),
+                ])->render();
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -42,7 +42,7 @@ class KategoriIsianController extends Controller
 
     public function create()
     {
-        return view('pages.eoffice.kategori_isian.create');
+        return view('pages.eoffice.kategori_isian.create-edit-ajax');
     }
 
     public function store(KategoriIsianRequest $request)
@@ -51,14 +51,15 @@ class KategoriIsianController extends Controller
             $this->KategoriIsianService->createKategori($request->validated());
             return jsonSuccess('Isian berhasil ditambahkan.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menambahkan isian: ' . $e->getMessage());
         }
     }
 
     public function edit(KategoriIsian $kategori_isian)
     {
         $kategori = $kategori_isian;
-        return view('pages.eoffice.kategori_isian.edit', compact('kategori'));
+        return view('pages.eoffice.kategori_isian.create-edit-ajax', compact('kategori'));
     }
 
     public function update(KategoriIsianRequest $request, KategoriIsian $kategori_isian)
@@ -67,7 +68,8 @@ class KategoriIsianController extends Controller
             $this->KategoriIsianService->updateKategori($kategori_isian->kategoriisian_id, $request->validated());
             return jsonSuccess('Isian berhasil diperbarui.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memperbarui isian: ' . $e->getMessage());
         }
     }
 
@@ -77,7 +79,8 @@ class KategoriIsianController extends Controller
             $this->KategoriIsianService->deleteKategori($kategori_isian->kategoriisian_id);
             return jsonSuccess('Isian berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menghapus isian: ' . $e->getMessage());
         }
     }
 }

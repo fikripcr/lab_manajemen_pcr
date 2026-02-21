@@ -1,20 +1,18 @@
 <?php
 namespace App\Http\Controllers\Lab;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\LogPenggunaanPcRequest;
+use App\Models\Lab\LogPenggunaanPc;
 use App\Services\Lab\LogPenggunaanPcService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class LogPenggunaanPcController extends Controller
 {
-    protected $LogService;
-
-    public function __construct(LogPenggunaanPcService $LogService)
-    {
-        $this->LogService = $LogService;
-    }
+    public function __construct(protected LogPenggunaanPcService $logPenggunaanPcService)
+    {}
 
     /**
      * Display listing (Monitoring)
@@ -26,7 +24,7 @@ class LogPenggunaanPcController extends Controller
 
     public function paginate(Request $request)
     {
-        $logs = $this->LogService->getFilteredQuery($request->all());
+        $logs = $this->logPenggunaanPcService->getFilteredQuery($request->all());
 
         return DataTables::of($logs)
             ->addIndexColumn()
@@ -55,44 +53,34 @@ class LogPenggunaanPcController extends Controller
     public function create()
     {
         // Auto-detect Schedule
-        $activeJadwal = $this->LogService->getCurrentActiveJadwal();
+        $activeJadwal = $this->logPenggunaanPcService->getCurrentActiveJadwal();
 
         $assignment = null;
         if ($activeJadwal) {
-            $assignment = $this->LogService->getAssignmentForUser(Auth::id(), $activeJadwal->jadwal_kuliah_id);
+            $assignment = $this->logPenggunaanPcService->getAssignmentForUser(Auth::id(), $activeJadwal->jadwal_kuliah_id);
         }
 
-        return view('pages.lab.log-pc.create', compact('activeJadwal', 'assignment'));
+        $log = new LogPenggunaanPc();
+        return view('pages.lab.log-pc.create-edit-ajax', compact('activeJadwal', 'assignment', 'log'));
     }
 
     /**
      * Store Log
      */
-    public function store(Request $request)
+    public function store(LogPenggunaanPcRequest $request)
     {
-        $request->validate([
-            'status_pc'    => 'required|in:Baik,Rusak',
-            'catatan_umum' => 'nullable|string',
-            'jadwal_id'    => 'required', // Hidden input
-            'lab_id'       => 'required', // Hidden input
-        ]);
-
-        // Re-validate Schedule Time Security
-        // ... (Logic in Service preferred, but simple check here or trust UI for now since service stores what is passed)
-        // Let's rely on data passed being valid for Phase 2 MVP.
-
         try {
-            // Force User ID to current user
             $data              = $request->all();
             $data['user_id']   = Auth::id();
-            $data['jadwal_id'] = decryptId($request->jadwal_id); // Assuming hidden input is encrypted
+            $data['jadwal_id'] = decryptId($request->jadwal_id);
             $data['lab_id']    = decryptId($request->lab_id);
 
-            $this->LogService->storeLog($data);
+            $this->logPenggunaanPcService->storeLog($data);
 
             return jsonSuccess('Log berhasil disimpan.', route('lab.log-pc.index'));
-        } catch (\Exception $e) {
-            return jsonError('Gagal menyimpan log: ' . $e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menyimpan log: ' . $e->getMessage());
         }
     }
 }

@@ -3,26 +3,19 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
-use App\Models\Pemutu\Dokumen;
+use App\Http\Requests\Pemutu\KpiRequest;
 use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\OrgUnit;
-use App\Models\Pemutu\Personil;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\KpiService;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class KpiController extends Controller
 {
-    protected $IndikatorService;
-    protected $KpiService;
-
-    public function __construct(IndikatorService $IndikatorService, KpiService $KpiService)
-    {
-        $this->IndikatorService = $IndikatorService;
-        $this->KpiService       = $KpiService;
-    }
+    public function __construct(
+        protected IndikatorService $indikatorService,
+        protected KpiService $kpiService
+    ) {}
 
     public function index()
     {
@@ -43,7 +36,7 @@ class KpiController extends Controller
         $filters         = $request->all();
         $filters['type'] = 'performa';
 
-        $query = $this->IndikatorService->getFilteredQuery($filters)->with(['orgUnits']);
+        $query = $this->indikatorService->getFilteredQuery($filters)->with(['orgUnits']);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -60,7 +53,7 @@ class KpiController extends Controller
                     $html .= '<div class="font-weight-bold">' . e($row->target) . ' ' . e($row->unit_ukuran) . '</div>';
                 }
 
-                $count = $row->personils->count();
+                $count = $row->pegawai->count(); // Use relationship standardized earlier
                 if ($count > 0) {
                     $html .= '<div class="mt-1"><span class="badge bg-purple-lt cursor-help" title="Ditugaskan ke ' . $count . ' orang">' . $count . ' Pegawai</span></div>';
                 }
@@ -81,22 +74,19 @@ class KpiController extends Controller
                 return $html;
             })
             ->addColumn('action', function ($row) {
-                $editUrl   = route('pemutu.kpi.edit', $row->indikator_id);
-                $assignUrl = route('pemutu.kpi.assign', $row->indikator_id);
-                $deleteUrl = route('pemutu.kpi.destroy', $row->indikator_id);
-
-                return '
-                    <div class="btn-list flex-nowrap justify-content-end">
-                        <a href="' . $assignUrl . '" class="btn btn-sm btn-icon btn-ghost-purple" title="Assign Personnel">
-                            <i class="ti ti-users"></i>
-                        </a>
-                        <a href="' . $editUrl . '" class="btn btn-sm btn-icon btn-ghost-primary" title="Edit">
-                            <i class="ti ti-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete" data-url="' . $deleteUrl . '" data-title="Hapus Sasaran Kinerja?" data-text="Data ini akan dihapus permanen.">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>';
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'       => route('pemutu.kpi.edit', $row->encrypted_indikator_id),
+                    'editModal'     => true,
+                    'deleteUrl'     => route('pemutu.kpi.destroy', $row->encrypted_indikator_id),
+                    'customActions' => [
+                        [
+                            'url'   => route('pemutu.kpi.assign', $row->encrypted_indikator_id),
+                            'label' => 'Assign Personnel',
+                            'icon'  => 'ti ti-users',
+                            'class' => '',
+                        ],
+                    ],
+                ])->render();
             })
             ->rawColumns(['parent_info', 'target_info', 'indikator', 'action'])
             ->make(true);
@@ -105,54 +95,48 @@ class KpiController extends Controller
     public function create()
     {
         // Data for the form
-        $parents = Indikator::where('type', 'standar')
+        $parents = \App\Models\Pemutu\Indikator::where('type', 'standar')
             ->orderBy('no_indikator')
             ->get();
 
-        $orgUnits = OrgUnit::active()->orderBy('name')->pluck('name', 'orgunit_id')->toArray();
+        $orgUnits = \App\Models\Pemutu\OrgUnit::active()->orderBy('name')->pluck('name', 'orgunit_id')->toArray();
 
         return view('pages.pemutu.kpi.create', compact('parents', 'orgUnits'));
     }
 
-    public function store(Request $request)
+    public function store(KpiRequest $request)
     {
         try {
-            $parentId = $request->input('parent_id');
+            $parentId = decryptIdIfEncrypted($request->input('parent_id'));
+            $items    = $request->input('items', []);
 
-            if (! $parentId) {
-                return jsonError('Parent Indikator wajib dipilih.', 422);
-            }
-
-            $items = $request->input('items', []);
-            if (empty($items)) {
-                return jsonError('Minimal satu sasaran kinerja harus diisi.', 422);
-            }
-
-            $this->KpiService->bulkCreateKpi($parentId, $items);
+            $this->kpiService->bulkCreateKpi($parentId, $items);
 
             return jsonSuccess('Sasaran Kinerja berhasil dibuat.', route('pemutu.kpi.index'));
 
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan sasaran kinerja: ' . $e->getMessage());
         }
     }
 
-    public function edit($id)
+    public function edit(Indikator $kpi)
     {
-        $indikator = $this->IndikatorService->getIndikatorById($id);
-        if (! $indikator || $indikator->type !== 'performa') {
+        if ($kpi->type !== 'performa') {
             abort(404);
         }
 
-        $parents = Indikator::where('type', 'standar')
-            ->where('indikator_id', '!=', $id)
+        $parents = \App\Models\Pemutu\Indikator::where('type', 'standar')
+            ->where('indikator_id', '!=', $kpi->indikator_id)
             ->orderBy('no_indikator')
             ->get();
 
-        return view('pages.pemutu.kpi.edit', compact('indikator', 'parents'));
+        $model = $kpi;
+
+        return view('pages.pemutu.kpi.create-edit-ajax', compact('model', 'parents'));
     }
 
-    public function update(IndikatorRequest $request, $id)
+    public function update(IndikatorRequest $request, Indikator $kpi)
     {
         try {
             $data         = $request->validated();
@@ -160,73 +144,81 @@ class KpiController extends Controller
 
             // Auto-assign doksub_ids from parent if not present
             if (! empty($data['parent_id']) && empty($data['doksub_ids'])) {
-                $parent = Indikator::with('dokSubs')->find($data['parent_id']);
+                $parent = \App\Models\Pemutu\Indikator::with('dokSubs')->find($data['parent_id']);
                 if ($parent && $parent->dokSubs->isNotEmpty()) {
                     $data['doksub_ids'] = $parent->dokSubs->pluck('doksub_id')->toArray();
                 }
             }
 
-            $this->IndikatorService->updateIndikator($id, $data);
+            $this->indikatorService->updateIndikator($kpi->indikator_id, $data);
 
             return jsonSuccess('Sasaran Kinerja berhasil diperbarui.', route('pemutu.kpi.index'));
 
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui sasaran kinerja: ' . $e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(Indikator $kpi)
     {
         try {
-            $this->IndikatorService->deleteIndikator($id);
+            $this->indikatorService->deleteIndikator($kpi->indikator_id);
+
             return jsonSuccess('Sasaran Kinerja berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus sasaran kinerja: ' . $e->getMessage());
         }
     }
 
-    public function assign($id)
+    public function assign(\App\Models\Pemutu\Indikator $kpi)
     {
-        $indikator = $this->IndikatorService->getIndikatorById($id);
-        if (! $indikator || $indikator->type !== 'performa') {
+        if ($kpi->type !== 'performa') {
             abort(404);
         }
 
-        $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
+        $orgUnits = \App\Models\Pemutu\OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
 
         // Fetch all personils with their current assignment to this indicator if any
-        $personils = Personil::with(['orgUnit', 'user'])
+        $personils = \App\Models\Pemutu\Personil::with(['orgUnit', 'user'])
             ->orderBy('nama')
             ->get();
 
-        $assignedPersonilIds = $indikator->personils->pluck('personil_id')->toArray();
-        $assignments         = $indikator->personils->keyBy('personil_id');
+        $assignedPersonilIds = $kpi->personils->pluck('personil_id')->toArray();
+        $assignments         = $kpi->personils->keyBy('personil_id');
 
-        $activePeriode = $this->KpiService->getActivePeriode();
+        $activePeriode = $this->kpiService->getActivePeriode();
 
-        return view('pages.pemutu.kpi.assign', compact('indikator', 'orgUnits', 'personils', 'assignedPersonilIds', 'assignments', 'activePeriode'));
+        return view('pages.pemutu.kpi.assign', [
+            'indikator'           => $kpi,
+            'orgUnits'            => $orgUnits,
+            'personils'           => $personils,
+            'assignedPersonilIds' => $assignedPersonilIds,
+            'assignments'         => $assignments,
+            'activePeriode'       => $activePeriode,
+        ]);
     }
 
-    public function storeAssignment(Request $request, $id)
+    public function storeAssignment(KpiRequest $request, Indikator $kpi)
     {
         try {
-            $indikator = Indikator::findOrFail($id);
-
             $kpiData = [];
-            if ($request->has('kpi_assign')) {
-                foreach ($request->kpi_assign as $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1) {
-                        unset($val['selected']);
-                        $kpiData[] = $val;
-                    }
+            foreach ($request->kpi_assign as $val) {
+                if (isset($val['selected']) && $val['selected'] == 1) {
+                    unset($val['selected']);
+                    $kpiData[] = $val;
                 }
             }
 
-            $this->KpiService->storeAssignments($indikator, $kpiData);
+            $this->kpiService->storeAssignments($kpi, $kpiData);
+
+            logActivity('pemutu', "Menyimpan penugasan personil untuk KPI: {$kpi->indikator}");
 
             return jsonSuccess('Penugasan personil berhasil disimpan.', route('pemutu.kpi.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan penugasan: ' . $e->getMessage());
         }
     }
 }

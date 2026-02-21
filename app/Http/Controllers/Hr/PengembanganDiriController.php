@@ -8,32 +8,28 @@ use App\Models\Hr\PengembanganDiri;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class PengembanganDiriController extends Controller
 {
-    protected $PegawaiService;
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
-
-    public function index(Request $request, Pegawai $pegawai = null)
+    public function index(Pegawai $pegawai = null)
     {
         return view('pages.hr.data-diri.tabs.pengembangan', compact('pegawai'));
     }
 
     public function create(Pegawai $pegawai)
     {
-        return view('pages.hr.pegawai.pengembangan.create', compact('pegawai'));
+        $pengembangan = new PengembanganDiri();
+        return view('pages.hr.pegawai.pengembangan.create-edit-ajax', compact('pegawai', 'pengembangan'));
     }
 
     public function store(PengembanganDiriRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->requestAddition($pegawai, PengembanganDiri::class, $request->validated());
+            $this->pegawaiService->requestAddition($pegawai, PengembanganDiri::class, $request->validated());
             return jsonSuccess('Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -42,13 +38,13 @@ class PengembanganDiriController extends Controller
 
     public function edit(Pegawai $pegawai, PengembanganDiri $pengembangan)
     {
-        return view('pages.hr.pegawai.pengembangan.edit', compact('pegawai', 'pengembangan'));
+        return view('pages.hr.pegawai.pengembangan.create-edit-ajax', compact('pegawai', 'pengembangan'));
     }
 
     public function update(PengembanganDiriRequest $request, Pegawai $pegawai, PengembanganDiri $pengembangan)
     {
         try {
-            $this->PegawaiService->requestChange($pegawai, PengembanganDiri::class, $request->validated(), null, $pengembangan);
+            $this->pegawaiService->requestChange($pegawai, PengembanganDiri::class, $request->validated(), null, $pengembangan);
             return jsonSuccess('Perubahan Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());

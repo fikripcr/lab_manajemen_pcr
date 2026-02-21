@@ -2,19 +2,16 @@
 namespace App\Http\Controllers\Survei;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Survei\SurveiRequest;
 use App\Models\Survei\Survei;
 use App\Services\Survei\SurveiService;
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Support\Str;
 
 class SurveiController extends Controller
 {
-    protected $SurveiService;
-
-    public function __construct(SurveiService $SurveiService)
-    {
-        $this->SurveiService = $SurveiService;
-    }
+    public function __construct(protected SurveiService $surveiService)
+    {}
 
     public function index()
     {
@@ -38,21 +35,21 @@ class SurveiController extends Controller
             })
             ->addColumn('action', function ($s) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'       => route('survei.edit', $s->id),
+                    'editUrl'       => route('survei.edit', $s->encrypted_survei_id),
                     'editModal'     => true,
                     'editTitle'     => 'Edit Pengaturan Survei',
-                    'deleteUrl'     => route('survei.destroy', $s->id),
+                    'deleteUrl'     => route('survei.destroy', $s->encrypted_survei_id),
                     'deleteTitle'   => 'Hapus Survei?',
                     'customActions' => [
                         [
                             'label' => 'Form Builder',
-                            'url'   => route('survei.builder', $s->id),
+                            'url'   => route('survei.builder', $s->encrypted_survei_id),
                             'icon'  => 'tool',
                             'class' => '',
                         ],
                         [
                             'label' => 'Lihat Jawaban',
-                            'url'   => route('survei.responses', $s->id),
+                            'url'   => route('survei.responses', $s->encrypted_survei_id),
                             'icon'  => 'chart-bar',
                             'class' => '',
                         ],
@@ -61,7 +58,7 @@ class SurveiController extends Controller
                             'url'        => '#',
                             'icon'       => $s->is_aktif ? 'eye-off' : 'eye',
                             'class'      => 'btn-toggle-status',
-                            'attributes' => 'data-url="' . route('survei.toggle-status', $s->id) . '" data-title="' . ($s->is_aktif ? 'Jadikan Draft?' : 'Publish Survei?') . '"',
+                            'attributes' => 'data-url="' . route('survei.toggle-status', $s->encrypted_survei_id) . '" data-title="' . ($s->is_aktif ? 'Jadikan Draft?' : 'Publish Survei?') . '"',
                         ],
                         [
                             'label'      => 'Salin Link',
@@ -75,11 +72,11 @@ class SurveiController extends Controller
                             'url'        => '#',
                             'icon'       => 'copy',
                             'class'      => 'btn-duplicate-single',
-                            'attributes' => 'data-url="' . route('survei.duplicate', $s->id) . '"',
+                            'attributes' => 'data-url="' . route('survei.duplicate', $s->encrypted_survei_id) . '"',
                         ],
                         [
                             'label' => 'Export CSV',
-                            'url'   => route('survei.export', $s->id),
+                            'url'   => route('survei.export', $s->encrypted_survei_id),
                             'icon'  => 'download',
                             'class' => '',
                         ],
@@ -92,50 +89,35 @@ class SurveiController extends Controller
 
     public function create()
     {
-        return view('pages.survei.admin.create');
+        $survei = new Survei();
+        return view('pages.survei.admin.create-edit-ajax', compact('survei'));
     }
 
-    public function store(Request $request)
+    public function store(SurveiRequest $request)
     {
-        $validated = $request->validate([
-            'judul'           => 'required|string|max:255',
-            'deskripsi'       => 'nullable|string',
-            'target_role'     => 'required|in:Mahasiswa,Dosen,Tendik,Alumni,Umum',
-            'tanggal_mulai'   => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-            'is_aktif'        => 'boolean',
-            'wajib_login'     => 'boolean',
-            'bisa_isi_ulang'  => 'boolean',
-            'mode'            => 'required|in:Linear,Bercabang',
-        ]);
-
-        $survei = $this->SurveiService->createSurvei($validated);
-
-        return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->id));
+        try {
+            $survei = $this->surveiService->createSurvei($request->validated());
+            return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->id));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal membuat survei.');
+        }
     }
 
     public function edit(Survei $survei)
     {
-        return view('pages.survei.admin.edit', compact('survei'));
+        return view('pages.survei.admin.create-edit-ajax', compact('survei'));
     }
 
-    public function update(Request $request, Survei $survei)
+    public function update(SurveiRequest $request, Survei $survei)
     {
-        $validated = $request->validate([
-            'judul'           => 'required|string|max:255',
-            'deskripsi'       => 'nullable|string',
-            'target_role'     => 'required|in:Mahasiswa,Dosen,Tendik,Alumni,Umum',
-            'tanggal_mulai'   => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-            'is_aktif'        => 'boolean',
-            'wajib_login'     => 'boolean',
-            'bisa_isi_ulang'  => 'boolean',
-            'mode'            => 'required|in:Linear,Bercabang',
-        ]);
-
-        $this->SurveiService->updateSurvei($survei, $validated);
-
-        return jsonSuccess('Survei berhasil diperbarui.');
+        try {
+            $this->surveiService->updateSurvei($survei, $request->validated());
+            return jsonSuccess('Survei berhasil diperbarui.');
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui survei.');
+        }
     }
 
     public function responses(Survei $survei)
@@ -148,20 +130,30 @@ class SurveiController extends Controller
 
     public function toggleStatus(Survei $survei)
     {
-        $this->SurveiService->toggleStatus($survei);
-        $status = $survei->is_aktif ? 'dipublikasikan' : 'di-unpublish';
-        return jsonSuccess("Survei berhasil {$status}.");
+        try {
+            $this->surveiService->toggleStatus($survei);
+            $status = $survei->is_aktif ? 'dipublikasikan' : 'di-unpublish';
+            return jsonSuccess("Survei berhasil {$status}.");
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal mengubah status survei.');
+        }
     }
 
     public function duplicate(Survei $survei)
     {
-        $this->SurveiService->duplicateSurvei($survei);
-        return jsonSuccess('Survei berhasil diduplikasi.');
+        try {
+            $this->surveiService->duplicateSurvei($survei);
+            return jsonSuccess('Survei berhasil diduplikasi.');
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menduplikasi survei.');
+        }
     }
 
     public function export(Survei $survei)
     {
-        $survei = $this->SurveiService->getResponsesForExport($survei);
+        $survei = $this->surveiService->getResponsesForExport($survei);
 
         $filename = "responses_" . Str::slug($survei->judul) . "_" . date('Ymd_His') . ".csv";
         $handle   = fopen('php://output', 'w');
@@ -210,7 +202,12 @@ class SurveiController extends Controller
 
     public function destroy(Survei $survei)
     {
-        $this->SurveiService->deleteSurvei($survei);
-        return jsonSuccess('Survei berhasil dihapus.');
+        try {
+            $this->surveiService->deleteSurvei($survei);
+            return jsonSuccess('Survei berhasil dihapus.');
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus survei.');
+        }
     }
 }

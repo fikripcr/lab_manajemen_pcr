@@ -15,12 +15,8 @@ use Yajra\DataTables\DataTables;
 
 class IndikatorController extends Controller
 {
-    protected $IndikatorService;
-
-    public function __construct(IndikatorService $IndikatorService)
-    {
-        $this->IndikatorService = $IndikatorService;
-    }
+    public function __construct(protected IndikatorService $indikatorService)
+    {}
 
     public function index()
     {
@@ -34,7 +30,7 @@ class IndikatorController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->IndikatorService->getFilteredQuery($request->all());
+        $query = $this->indikatorService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -76,7 +72,12 @@ class IndikatorController extends Controller
                 })->implode('') . '</div>';
             })
             ->addColumn('action', function ($row) {
-                return view('pages.pemutu.indikators._action', compact('row'))->render();
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl'   => route('pemutu.indikators.show', $row->encrypted_indikator_id),
+                    'editUrl'   => route('pemutu.indikators.edit', $row->encrypted_indikator_id),
+                    'editModal' => false,
+                    'deleteUrl' => route('pemutu.indikators.destroy', $row->encrypted_indikator_id),
+                ])->render();
             })
             ->rawColumns(['tipe', 'labels', 'action'])
             ->make(true);
@@ -125,7 +126,8 @@ class IndikatorController extends Controller
             }
         }
 
-        return view('pages.pemutu.indikators.create', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils', 'parentDok', 'selectedDokSubs'));
+        $indikator = new Indikator(); // Empty for create
+        return view('pages.pemutu.indikators.create-edit-ajax', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils', 'parentDok', 'selectedDokSubs', 'indikator'));
     }
 
     public function store(IndikatorRequest $request)
@@ -138,7 +140,7 @@ class IndikatorController extends Controller
                 $syncData = [];
                 foreach ($request->assignments as $unitId => $val) {
                     if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[$unitId] = ['target' => $val['target'] ?? null];
+                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                     }
                 }
                 $data['org_units'] = $syncData;
@@ -150,46 +152,46 @@ class IndikatorController extends Controller
                 foreach ($request->kpi_assign as $val) {
                     if (isset($val['selected']) && $val['selected'] == 1) {
                         unset($val['selected']);
-                        $kpiData[] = $val;
+                        $val['pegawai_id'] = decryptIdIfEncrypted($val['pegawai_id']);
+                        $kpiData[]         = $val;
                     }
                 }
                 $data['kpi_assignments'] = $kpiData;
             }
 
-            $this->IndikatorService->createIndikator($data);
+            if (isset($data['doksub_ids'])) {
+                $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
+            }
+            if (isset($data['labels'])) {
+                $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
+            }
+            if (isset($data['parent_id'])) {
+                $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
+            }
+
+            $indikator = $this->indikatorService->createIndikator($data);
+
+            logActivity('pemutu', "Menambah indikator baru: {$indikator->no_indikator}");
 
             $redirectUrl = route('pemutu.indikators.index');
             if ($request->has('parent_dok_id')) {
                 $redirectUrl = route('pemutu.dokumens.show-renop-with-indicators', $request->parent_dok_id);
             }
 
-            if ($request->ajax()) {
-                return jsonSuccess('Indikator created successfully.', $redirectUrl);
-            }
-
-            return redirect($redirectUrl)->with('success', 'Indikator created successfully.');
+            return jsonSuccess('Indikator created successfully.', $redirectUrl);
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan indikator: ' . $e->getMessage());
         }
     }
 
-    public function show($id)
+    public function show(Indikator $indikator)
     {
-        $indikator = $this->IndikatorService->getIndikatorById($id);
-        if (! $indikator) {
-            abort(404);
-        }
-
         return view('pages.pemutu.indikators.show', compact('indikator'));
     }
 
-    public function edit($id)
+    public function edit(Indikator $indikator)
     {
-        $indikator = $this->IndikatorService->getIndikatorById($id);
-        if (! $indikator) {
-            abort(404);
-        }
-
         $labelTypes = LabelType::with(['labels' => function ($q) {
             $q->orderBy('name');
         }])->orderBy('name')->get();
@@ -202,16 +204,16 @@ class IndikatorController extends Controller
             ->get();
 
         $parents = Indikator::where('type', 'standar')
-            ->where('indikator_id', '!=', $id)
+            ->where('indikator_id', '!=', $indikator->indikator_id)
             ->orderBy('no_indikator')
             ->get();
 
         $personils = Personil::with('latestDataDiri')->get()->sortBy('nama');
 
-        return view('pages.pemutu.indikators.edit', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils'));
+        return view('pages.pemutu.indikators.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils'));
     }
 
-    public function update(IndikatorRequest $request, $id)
+    public function update(IndikatorRequest $request, Indikator $indikator)
     {
         try {
             $data = $request->validated();
@@ -221,7 +223,7 @@ class IndikatorController extends Controller
                 $syncData = [];
                 foreach ($request->assignments as $unitId => $val) {
                     if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[$unitId] = ['target' => $val['target'] ?? null];
+                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                     }
                 }
                 $data['org_units'] = $syncData;
@@ -232,36 +234,48 @@ class IndikatorController extends Controller
                 foreach ($request->kpi_assign as $val) {
                     if (isset($val['selected']) && $val['selected'] == 1) {
                         unset($val['selected']);
-                        $kpiData[] = $val;
+                        $val['pegawai_id'] = decryptIdIfEncrypted($val['pegawai_id']);
+                        $kpiData[]         = $val;
                     }
                 }
                 $data['kpi_assignments'] = $kpiData;
             }
 
-            // doksub_ids is already in $data from validated()
-
-            $this->IndikatorService->updateIndikator($id, $data);
-
-            $redirectUrl = route('pemutu.indikators.show', $id);
-
-            if ($request->ajax()) {
-                return jsonSuccess('Indikator updated successfully.', $redirectUrl);
+            if (isset($data['doksub_ids'])) {
+                $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
+            }
+            if (isset($data['labels'])) {
+                $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
+            }
+            if (isset($data['parent_id'])) {
+                $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
             }
 
-            return redirect($redirectUrl)->with('success', 'Indikator updated successfully.');
+            $this->indikatorService->updateIndikator($indikator->indikator_id, $data);
+
+            logActivity('pemutu', "Memperbarui indikator: {$indikator->no_indikator}");
+
+            $redirectUrl = route('pemutu.indikators.show', $indikator->encrypted_indikator_id);
+
+            return jsonSuccess('Indikator updated successfully.', $redirectUrl);
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui indikator: ' . $e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(Indikator $indikator)
     {
         try {
-            $this->IndikatorService->deleteIndikator($id);
+            $noIndikator = $indikator->no_indikator;
+            $this->indikatorService->deleteIndikator($indikator->indikator_id);
+
+            logActivity('pemutu', "Menghapus indikator: {$noIndikator}");
 
             return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikators.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus indikator: ' . $e->getMessage());
         }
     }
 }

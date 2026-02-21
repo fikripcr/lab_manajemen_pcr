@@ -9,16 +9,12 @@ use Exception;
 
 class FAQController extends Controller
 {
-    protected $FAQService;
-
-    public function __construct(FAQService $FAQService)
-    {
-        $this->FAQService = $FAQService;
-    }
+    public function __construct(protected FAQService $faqService)
+    {}
 
     public function index()
     {
-        $faqs = $this->FAQService->getAllGrouped();
+        $faqs = $this->faqService->getAllGrouped();
         return view('pages.shared.faq.index', compact('faqs'));
     }
 
@@ -30,10 +26,11 @@ class FAQController extends Controller
     public function store(FAQRequest $request)
     {
         try {
-            $this->FAQService->createFAQ($request->validated());
+            $this->faqService->createFAQ($request->validated());
             return jsonSuccess('FAQ berhasil ditambahkan.', route('shared.faq.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menambahkan FAQ: ' . $e->getMessage());
         }
     }
 
@@ -45,29 +42,37 @@ class FAQController extends Controller
     public function update(FAQRequest $request, FAQ $faq)
     {
         try {
-            $this->FAQService->updateFAQ($faq, $request->validated());
+            $this->faqService->updateFAQ($faq, $request->validated());
             return jsonSuccess('FAQ berhasil diperbarui.', route('shared.faq.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui FAQ: ' . $e->getMessage());
         }
     }
 
     public function destroy(FAQ $faq)
     {
         try {
-            $this->FAQService->deleteFAQ($faq);
+            $this->faqService->deleteFAQ($faq);
             return jsonSuccess('FAQ berhasil dihapus.', route('shared.faq.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus FAQ: ' . $e->getMessage());
         }
     }
-    public function reorder(\Illuminate\Http\Request $request)
+
+    public function reorder(\App\Http\Requests\Shared\ReorderRequest $request)
     {
-        $order = $request->input('order');
-        if (is_array($order)) {
-            $this->FAQService->reorderFAQs($order);
-            return jsonSuccess('Urutan FAQ berhasil diperbarui.');
+        try {
+            $order = $request->validated()['order'] ?? [];
+            if ($order) {
+                $this->faqService->reorderFAQs($order);
+                return jsonSuccess('Urutan FAQ berhasil diperbarui.');
+            }
+            return jsonError('Data urutan tidak valid.');
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui urutan FAQ: ' . $e->getMessage());
         }
-        return jsonError('Data urutan tidak valid.');
     }
 }

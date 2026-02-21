@@ -6,14 +6,12 @@ use App\Http\Requests\Event\EventRequest;
 use App\Models\Event\Event;
 use App\Models\User;
 use App\Services\Event\EventService;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class EventController extends Controller
 {
-    public function __construct(
-        protected EventService $eventService
-    ) {}
+    public function __construct(protected EventService $eventService)
+    {}
 
     public function index()
     {
@@ -21,7 +19,7 @@ class EventController extends Controller
         return view('pages.event.kegiatans.index', compact('pageTitle'));
     }
 
-    public function paginate(Request $request)
+    public function paginate()
     {
         $query = Event::query()->with(['pic']);
         return DataTables::of($query)
@@ -59,7 +57,8 @@ class EventController extends Controller
             $event = $this->eventService->store($request->validated());
             return jsonSuccess('Kegiatan berhasil disimpan', route('Kegiatan.Kegiatans.index'));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan kegiatan: ' . $e->getMessage());
         }
     }
 
@@ -83,7 +82,8 @@ class EventController extends Controller
             $this->eventService->update($event, $request->validated());
             return jsonSuccess('Kegiatan berhasil diperbarui', route('Kegiatan.Kegiatans.index'));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui kegiatan: ' . $e->getMessage());
         }
     }
 
@@ -91,9 +91,10 @@ class EventController extends Controller
     {
         try {
             $this->eventService->destroy($event);
-            return response()->json(['success' => true, 'message' => 'Kegiatan berhasil dihapus']);
+            return jsonSuccess('Kegiatan berhasil dihapus');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus kegiatan: ' . $e->getMessage());
         }
     }
 }

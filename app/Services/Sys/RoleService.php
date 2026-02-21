@@ -2,6 +2,8 @@
 namespace App\Services\Sys;
 
 use App\Models\Sys\Role;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -12,7 +14,7 @@ class RoleService
     {
         $role = Role::find($roleId);
         if (! $role) {
-            throw new \Exception("Role dengan ID {$roleId} tidak ditemukan.");
+            throw new Exception("Role dengan ID {$roleId} tidak ditemukan.");
         }
         return $role;
     }
@@ -89,7 +91,7 @@ class RoleService
             $role = $this->findRoleOrFail($roleId);
 
             if ($role->users()->count() > 0) {
-                throw new \Exception("Tidak bisa menghapus role '{$role->name}' karena masih digunakan oleh pengguna.");
+                throw new Exception("Tidak bisa menghapus role '{$role->name}' karena masih digunakan oleh pengguna.");
             }
 
             $roleName = $role->name;
@@ -146,7 +148,7 @@ class RoleService
     /**
      * 🔑 SINGLE SOURCE OF TRUTH for filtering roles
      */
-    protected function applyFilters($query, array $filters): \Illuminate\Database\Eloquent\Builder
+    protected function applyFilters($query, array $filters): Builder
     {
         if (! empty($filters['name'])) {
             $query->where('name', 'like', '%' . $filters['name'] . '%');

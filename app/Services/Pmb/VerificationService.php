@@ -7,14 +7,10 @@ use Illuminate\Support\Facades\DB;
 
 class VerificationService
 {
-    protected $PendaftaranService;
+    public function __construct(protected PendaftaranService $PendaftaranService)
+    {}
 
-    public function __construct(PendaftaranService $PendaftaranService)
-    {
-        $this->PendaftaranService = $PendaftaranService;
-    }
-
-    public function verifyPayment(Pembayaran $pembayaran, array $data)
+    public function verifyPayment(Pembayaran $pembayaran, array $data): Pembayaran
     {
         return DB::transaction(function () use ($pembayaran, $data) {
             $status     = $data['status'];
@@ -27,16 +23,18 @@ class VerificationService
             ]);
 
             if ($status == 'Verified') {
-                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran_id, 'Menunggu_Verifikasi_Berkas', 'Pembayaran terverifikasi.');
+                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran, 'Menunggu_Verifikasi_Berkas', 'Pembayaran terverifikasi.');
             } else {
-                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran_id, 'Draft', 'Pembayaran ditolak: ' . $keterangan);
+                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran, 'Draft', 'Pembayaran ditolak: ' . $keterangan);
             }
+
+            logActivity('pmb_verifikasi', "Verifikasi pembayaran untuk pendaftaran {$pembayaran->pendaftaran->no_pendaftaran}: {$status}", $pembayaran);
 
             return $pembayaran;
         });
     }
 
-    public function verifyDocument(Pendaftaran $pendaftaran, array $data)
+    public function verifyDocument(Pendaftaran $pendaftaran, array $data): Pendaftaran
     {
         return DB::transaction(function () use ($pendaftaran, $data) {
             $status     = $data['status'];
@@ -51,10 +49,12 @@ class VerificationService
                     $nextStatus = 'Lulus_Administrasi';
                 }
 
-                $this->PendaftaranService->updateStatus($pendaftaran->id, $nextStatus, 'Berkas terverifikasi.');
+                $this->PendaftaranService->updateStatus($pendaftaran, $nextStatus, 'Berkas terverifikasi.');
             } else {
-                $this->PendaftaranService->updateStatus($pendaftaran->id, 'Draft', 'Berkas ditolak: ' . $keterangan);
+                $this->PendaftaranService->updateStatus($pendaftaran, 'Draft', 'Berkas ditolak: ' . $keterangan);
             }
+
+            logActivity('pmb_verifikasi', "Verifikasi berkas untuk pendaftaran {$pendaftaran->no_pendaftaran}: {$status}", $pendaftaran);
 
             return $pendaftaran;
         });

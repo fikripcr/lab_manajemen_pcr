@@ -23,9 +23,6 @@ class TanggalLiburService
                 $dates = explode(', ', $entry['dates']);
 
                 foreach ($dates as $dateStr) {
-                    // Check duplicate? For now, just create.
-                    // Ideally we might want to updateOrInsert or check existence.
-
                     TanggalLibur::create([
                         'tgl_libur'  => trim($dateStr),
                         'tahun'      => $tahun,
@@ -34,6 +31,8 @@ class TanggalLiburService
                     $count++;
                 }
             }
+
+            logActivity('hr', "Menambahkan $count tanggal libur secara bulk untuk tahun $tahun");
 
             return $count;
         });
@@ -44,7 +43,10 @@ class TanggalLiburService
      */
     public function delete($id): void
     {
-        $item = TanggalLibur::findOrFail($id);
-        $item->delete();
+        DB::transaction(function () use ($id) {
+            $item = TanggalLibur::findOrFail($id);
+            logActivity('hr', "Menghapus tanggal libur: {$item->tgl_libur} ({$item->keterangan})", $item);
+            $item->delete();
+        });
     }
 }

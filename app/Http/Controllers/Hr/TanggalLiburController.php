@@ -10,12 +10,8 @@ use Illuminate\Http\Request;
 
 class TanggalLiburController extends Controller
 {
-    protected $TanggalLiburService;
-
-    public function __construct(TanggalLiburService $TanggalLiburService)
-    {
-        $this->TanggalLiburService = $TanggalLiburService;
-    }
+    public function __construct(protected TanggalLiburService $tanggalLiburService)
+    {}
 
     public function index(Request $request)
     {
@@ -42,13 +38,13 @@ class TanggalLiburController extends Controller
 
     public function create()
     {
-        return view('pages.hr.tanggal-libur.create');
+        return view('pages.hr.tanggal-libur.create-edit-ajax');
     }
 
     public function store(TanggalLiburRequest $request)
     {
         try {
-            $count = $this->TanggalLiburService->createBatch($request->validated());
+            $count = $this->tanggalLiburService->createBatch($request->validated());
             return jsonSuccess("Berhasil menambahkan $count tanggal libur.", route('hr.tanggal-libur.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -58,7 +54,7 @@ class TanggalLiburController extends Controller
     public function destroy($id)
     {
         try {
-            $this->TanggalLiburService->delete($id);
+            $this->tanggalLiburService->delete($id);
             return jsonSuccess('Data berhasil dihapus');
         } catch (Exception $e) {
             return jsonError($e->getMessage());

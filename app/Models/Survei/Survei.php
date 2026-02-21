@@ -1,15 +1,29 @@
 <?php
 namespace App\Models\Survei;
 
+use App\Traits\Blameable;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Survei extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table = 'survei_survei';
+
+    protected $appends = ['encrypted_survei_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
+
+    public function getEncryptedSurveiIdAttribute()
+    {
+        return encryptId($this->id);
+    }
 
     protected $fillable = [
         'judul',

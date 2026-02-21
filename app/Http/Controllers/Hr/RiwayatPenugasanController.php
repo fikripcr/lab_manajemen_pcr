@@ -10,18 +10,13 @@ use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatPenugasan;
 use App\Services\Hr\PegawaiService;
 use Exception;
-use Illuminate\Http\Request;
 
 class RiwayatPenugasanController extends Controller
 {
-    protected $PegawaiService;
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
-
-    public function index(Request $request, Pegawai $pegawai = null)
+    public function index(Pegawai $pegawai = null)
     {
         if ($pegawai) {
             return view('pages.hr.data-diri.tabs.penugasan', compact('pegawai'));
@@ -39,14 +34,15 @@ class RiwayatPenugasanController extends Controller
             ->get();
 
         $currentPenugasan = $pegawai->latestPenugasan;
+        $penugasan        = new RiwayatPenugasan();
 
-        return view('pages.hr.pegawai.penugasan.create', compact('pegawai', 'units', 'currentPenugasan'));
+        return view('pages.hr.pegawai.penugasan.create-edit-ajax', compact('pegawai', 'units', 'currentPenugasan', 'penugasan'));
     }
 
     public function store(RiwayatPenugasanRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->addPenugasan($pegawai, $request->validated());
+            $this->pegawaiService->addPenugasan($pegawai, $request->validated());
             return jsonSuccess('Penugasan berhasil ditambahkan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -57,17 +53,16 @@ class RiwayatPenugasanController extends Controller
     {
         $units = OrgUnit::whereIn('type', ['jabatan_struktural', 'departemen', 'prodi'])
             ->where('is_active', true)
-            ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
-        return view('pages.hr.pegawai.penugasan.edit', compact('pegawai', 'penugasan', 'units'));
+        return view('pages.hr.pegawai.penugasan.create-edit-ajax', compact('pegawai', 'penugasan', 'units'));
     }
 
     public function update(RiwayatPenugasanRequest $request, Pegawai $pegawai, RiwayatPenugasan $penugasan)
     {
         try {
-            $this->PegawaiService->updatePenugasan($penugasan, $request->validated());
+            $this->pegawaiService->updatePenugasan($penugasan, $request->validated());
             return jsonSuccess('Penugasan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -77,7 +72,7 @@ class RiwayatPenugasanController extends Controller
     public function destroy(Pegawai $pegawai, RiwayatPenugasan $penugasan)
     {
         try {
-            $this->PegawaiService->deletePenugasan($pegawai, $penugasan);
+            $this->pegawaiService->deletePenugasan($pegawai, $penugasan);
             return jsonSuccess('Penugasan berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -88,7 +83,7 @@ class RiwayatPenugasanController extends Controller
     public function endAssignment(EndPenugasanRequest $request, Pegawai $pegawai, RiwayatPenugasan $penugasan)
     {
         try {
-            $this->PegawaiService->endPenugasan($penugasan, $request->validated()['tgl_selesai']);
+            $this->pegawaiService->endPenugasan($penugasan, $request->validated()['tgl_selesai']);
             return jsonSuccess('Penugasan berhasil diakhiri.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -126,7 +121,7 @@ class RiwayatPenugasanController extends Controller
     {
         try {
             $pegawai = Pegawai::findOrFail($request->pegawai_id);
-            $this->PegawaiService->addPenugasan($pegawai, $request->validated());
+            $this->pegawaiService->addPenugasan($pegawai, $request->validated());
 
             return jsonSuccess('Penugasan berhasil ditambahkan.');
         } catch (Exception $e) {

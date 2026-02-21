@@ -22,6 +22,8 @@ class SurveiService
                 'urutan'        => 1,
             ]);
 
+            logActivity('survei', "Membuat survei baru: {$survei->judul}", $survei);
+
             return $survei;
         });
     }
@@ -31,7 +33,9 @@ class SurveiService
      */
     public function updateSurvei(Survei $survei, array $data): bool
     {
-        return $survei->update($data);
+        $result = $survei->update($data);
+        logActivity('survei', "Memperbarui survei: {$survei->judul}", $survei);
+        return $result;
     }
 
     /**
@@ -39,7 +43,10 @@ class SurveiService
      */
     public function toggleStatus(Survei $survei): bool
     {
-        return $survei->update(['is_aktif' => ! $survei->is_aktif]);
+        $result = $survei->update(['is_aktif' => ! $survei->is_aktif]);
+        $status = $survei->is_aktif ? 'dipublikasikan' : 'di-draft-kan';
+        logActivity('survei', "Survei {$survei->judul} {$status}", $survei);
+        return $result;
     }
 
     /**
@@ -76,6 +83,8 @@ class SurveiService
                 }
             }
 
+            logActivity('survei', "Menduplikasi survei: {$survei->judul} -> {$newSurvei->judul}", $newSurvei);
+
             return $newSurvei;
         });
     }
@@ -97,6 +106,7 @@ class SurveiService
      */
     public function deleteSurvei(Survei $survei): bool
     {
+        logActivity('survei', "Menghapus survei: {$survei->judul}", $survei);
         return $survei->delete();
     }
 }

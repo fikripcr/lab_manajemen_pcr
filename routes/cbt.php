@@ -63,6 +63,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
         Route::get('/paginate', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'paginate'])->name('paginate');
         Route::get('/create', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'store'])->name('store');
+        Route::get('/{jadwal}/edit', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'edit'])->name('edit');
+        Route::put('/{jadwal}', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'update'])->name('update');
         Route::delete('/{jadwal}', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'destroy'])->name('destroy');
 
         Route::post('/{jadwal}/generate-token', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'generateToken'])->name('generate-token');

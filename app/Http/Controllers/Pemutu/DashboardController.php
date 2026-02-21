@@ -5,10 +5,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorPersonil;
+use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Models\Pemutu\PeriodeSpmi;
-use App\Models\Pemutu\Personil;
+use App\Models\Shared\Personil;
 
 class DashboardController extends Controller
 {
@@ -19,7 +19,7 @@ class DashboardController extends Controller
         // Metrics - Total Counts
         $totalDokumen   = Dokumen::count();
         $totalIndikator = Indikator::count();
-        $totalKpi       = IndikatorPersonil::count();
+        $totalKpi       = IndikatorPegawai::count();
         $totalPersonil  = Personil::count();
 
         // Dokumen by Type
@@ -63,19 +63,18 @@ class DashboardController extends Controller
 
         // Recent Activity
         $recentDokumen = Dokumen::latest()->take(5)->get();
-        $recentKpi     = IndikatorPersonil::with(['indikator', 'personil'])
+        $recentKpi     = IndikatorPegawai::with(['indikator', 'pegawai'])
             ->whereIn('status', ['submitted', 'approved'])
             ->latest()
             ->take(5)
             ->get();
 
         // KPI Achievement Rate (submitted/approved vs total)
-        $kpiSubmitted       = IndikatorPersonil::whereIn('status', ['submitted', 'approved'])->count();
+        $kpiSubmitted       = IndikatorPegawai::whereIn('status', ['submitted', 'approved'])->count();
         $kpiAchievementRate = $totalKpi > 0 ? round(($kpiSubmitted / $totalKpi) * 100, 1) : 0;
 
         // KPI by Status
-        $kpiByStatus = IndikatorPersonil::selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
+        $kpiByStatus = IndikatorPegawai::selectRaw('status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
 

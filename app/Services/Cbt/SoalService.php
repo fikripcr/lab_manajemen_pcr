@@ -7,6 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 class SoalService
 {
+    public function getFilteredQuery(array $filters = [])
+    {
+        $query = Soal::with(['mataUji', 'pembuat']);
+
+        if (! empty($filters['mata_uji_id'])) {
+            $query->where('mata_uji_id', decryptId($filters['mata_uji_id']));
+        }
+
+        return $query;
+    }
+
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -44,6 +55,8 @@ class SoalService
                     ]);
                 }
             }
+
+            logActivity('cbt', "Membuat soal baru tipe {$soal->tipe_soal}", $soal);
 
             return $soal;
         });
@@ -85,12 +98,15 @@ class SoalService
                 }
             }
 
+            logActivity('cbt', "Memperbarui soal ID: {$soal->soal_id}", $soal);
+
             return $soal;
         });
     }
 
     public function delete(Soal $soal)
     {
+        logActivity('cbt', "Menghapus soal ID: {$soal->soal_id}", $soal);
         return $soal->delete();
     }
 }

@@ -11,16 +11,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StatusPegawaiController extends Controller
 {
-    protected $StatusPegawaiService;
-
-    public function __construct(StatusPegawaiService $StatusPegawaiService)
-    {
-        $this->StatusPegawaiService = $StatusPegawaiService;
-    }
+    public function __construct(protected \App\Services\Hr\StatusPegawaiService $statusPegawaiService)
+    {}
 
     public function index(Request $request)
     {
-        $activeTab = $request->get('tab', 'status-pegawai');
+        $activeTab = $request->input('tab', 'status-pegawai');
         return view('pages.hr.master-data.index', compact('activeTab'));
     }
 
@@ -58,7 +54,7 @@ class StatusPegawaiController extends Controller
     public function store(StatusPegawaiRequest $request)
     {
         try {
-            $this->StatusPegawaiService->create($request->validated());
+            $this->statusPegawaiService->create($request->validated());
             return jsonSuccess('Status Pegawai created successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

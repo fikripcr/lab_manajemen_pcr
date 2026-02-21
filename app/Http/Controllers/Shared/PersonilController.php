@@ -11,12 +11,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PersonilController extends Controller
 {
-    protected $PersonilService;
-
-    public function __construct(PersonilService $PersonilService)
-    {
-        $this->PersonilService = $PersonilService;
-    }
+    public function __construct(protected PersonilService $personilService)
+    {}
 
     public function index()
     {
@@ -25,7 +21,7 @@ class PersonilController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->PersonilService->getFilteredQuery($request->all());
+        $query = $this->personilService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -43,21 +39,18 @@ class PersonilController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('shared.personil.edit-modal.show', $row->hashid),
+                    'editUrl'   => route('shared.personil.edit-modal.show', $row->encrypted_personil_id),
                     'editModal' => true,
-                    'viewUrl'   => route('shared.personil.show', $row->hashid),
-                    'deleteUrl' => route('shared.personil.destroy', $row->hashid),
+                    'viewUrl'   => route('shared.personil.show', $row->encrypted_personil_id),
+                    'deleteUrl' => route('shared.personil.destroy', $row->encrypted_personil_id),
                 ])->render();
             })
             ->rawColumns(['status_aktif', 'user_info', 'action'])
             ->make(true);
     }
 
-    public function show($id)
+    public function show(Personil $personil)
     {
-        $id       = decryptIdIfEncrypted($id);
-        $personil = $this->PersonilService->getFilteredQuery()->findOrFail($id);
-
         if (request()->ajax()) {
             return view('pages.shared.personil.show-ajax', compact('personil'));
         }
@@ -74,47 +67,44 @@ class PersonilController extends Controller
     public function store(PersonilRequest $request)
     {
         try {
-            $this->PersonilService->createPersonil($request->validated());
+            $this->personilService->createPersonil($request->validated());
             return jsonSuccess('Data Personil berhasil ditambahkan.', route('shared.personil.index'));
         } catch (Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function editModal($id)
+    public function editModal(Personil $personil)
     {
-        $id       = decryptIdIfEncrypted($id);
-        $personil = $this->PersonilService->getFilteredQuery()->findOrFail($id);
-        $units    = StrukturOrganisasi::orderBy('name')->get();
+        $units = StrukturOrganisasi::orderBy('name')->get();
         return view('pages.shared.personil.edit-ajax', compact('personil', 'units'));
     }
 
-    public function edit($id)
+    public function edit(Personil $personil)
     {
-        $id       = decryptIdIfEncrypted($id);
-        $personil = $this->PersonilService->getFilteredQuery()->findOrFail($id);
-        $units    = StrukturOrganisasi::orderBy('name')->get();
+        $units = StrukturOrganisasi::orderBy('name')->get();
         return view('pages.shared.personil.edit', compact('personil', 'units'));
     }
 
-    public function update(PersonilRequest $request, $id)
+    public function update(PersonilRequest $request, Personil $personil)
     {
-        $id = decryptIdIfEncrypted($id);
         try {
-            $this->PersonilService->updatePersonil($id, $request->validated());
+            $this->personilService->updatePersonil($personil->personil_id, $request->validated());
             return jsonSuccess('Data Personil berhasil diperbarui.', route('shared.personil.index'));
         } catch (Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(Personil $personil)
     {
-        $id = decryptIdIfEncrypted($id);
         try {
-            $this->PersonilService->deletePersonil($id);
+            $this->personilService->deletePersonil($personil->personil_id);
             return jsonSuccess('Data Personil berhasil dihapus.');
         } catch (Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }

@@ -135,14 +135,13 @@ class StrukturOrganisasiService
     /**
      * Update OrgUnit
      */
-    public function updateOrgUnit(int $id, array $data): bool
+    public function updateOrgUnit(StrukturOrganisasi $orgUnit, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $orgUnit = $this->findOrFail($id);
+        return DB::transaction(function () use ($orgUnit, $data) {
             $oldName = $orgUnit->name;
 
             // Prevent self-parenting
-            if (isset($data['parent_id']) && $data['parent_id'] == $id) {
+            if (isset($data['parent_id']) && $data['parent_id'] == $orgUnit->orgunit_id) {
                 throw new Exception('Cannot be parent of itself.');
             }
 
@@ -177,11 +176,10 @@ class StrukturOrganisasiService
     /**
      * Delete OrgUnit
      */
-    public function deleteOrgUnit(int $id): bool
+    public function deleteOrgUnit(StrukturOrganisasi $orgUnit): bool
     {
-        return DB::transaction(function () use ($id) {
-            $orgUnit = $this->findOrFail($id);
-            $name    = $orgUnit->name;
+        return DB::transaction(function () use ($orgUnit) {
+            $name = $orgUnit->name;
 
             if ($orgUnit->children()->exists()) {
                 throw new Exception('Unit tidak bisa dihapus karena memiliki sub-unit. Pindahkan atau hapus sub-unit terlebih dahulu.');
@@ -198,10 +196,9 @@ class StrukturOrganisasiService
     /**
      * Toggle Active Status
      */
-    public function toggleStatus(int $id): StrukturOrganisasi
+    public function toggleStatus(StrukturOrganisasi $orgUnit): StrukturOrganisasi
     {
-        return DB::transaction(function () use ($id) {
-            $orgUnit            = $this->findOrFail($id);
+        return DB::transaction(function () use ($orgUnit) {
             $orgUnit->is_active = ! $orgUnit->is_active;
             $orgUnit->save();
 
@@ -217,10 +214,9 @@ class StrukturOrganisasiService
     /**
      * Set Auditee User
      */
-    public function setAuditee(int $id, ?int $userId): bool
+    public function setAuditee(StrukturOrganisasi $orgUnit, ?int $userId): bool
     {
-        return DB::transaction(function () use ($id, $userId) {
-            $orgUnit                  = $this->findOrFail($id);
+        return DB::transaction(function () use ($orgUnit, $userId) {
             $orgUnit->auditee_user_id = $userId;
             $orgUnit->save();
 

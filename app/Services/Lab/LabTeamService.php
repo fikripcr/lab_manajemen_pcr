@@ -70,30 +70,33 @@ class LabTeamService
     /**
      * Remove/Deactivate User from Lab Team
      */
-    public function removeUserFromLab(string $labId, string $labTeamId): bool
+    public function updateLabTeam(LabTeam $labTeam, array $data): bool
     {
-        return DB::transaction(function () use ($labId, $labTeamId) {
-            $labTeam = LabTeam::findOrFail($labTeamId);
+        return DB::transaction(function () use ($labTeam, $data) {
+            $labTeam->update($data);
 
+            logActivity('lab_team_management', "Memperbarui data anggota tim ID {$labTeam->lab_team_id}");
+
+            return true;
+        });
+    }
+
+    /**
+     * Remove/Deactivate User from Lab Team
+     */
+    public function removeUserFromLab(string $labId, LabTeam $labTeam): bool
+    {
+        return DB::transaction(function () use ($labId, $labTeam) {
             if ($labTeam->lab_id != $labId) {
                 throw new Exception('Data tidak ditemukan atau tidak sesuai dengan Lab ini.');
             }
-
-            // Soft delete logic / Deactivate as per requirement
-            // Previous controller logic: is_active = false, tanggal_selesai = now()
-            // It did NOT use delete() method despite SoftDeletes trait in model?
-            // "Update status to inactive instead of deleting" comment exists.
 
             $labTeam->update([
                 'is_active'       => false,
                 'tanggal_selesai' => now(),
             ]);
 
-            // Or should we actually delete? Code said "Update status... instead of deleting".
-            // But model has SoftDeletes.
-            // If we want to keep history, keep as is.
-
-            logActivity('lab_team_management', "Menonaktifkan anggota tim ID {$labTeamId} dari Lab ID {$labId}");
+            logActivity('lab_team_management', "Menonaktifkan anggota tim ID {$labTeam->lab_team_id} dari Lab ID {$labId}");
 
             return true;
         });

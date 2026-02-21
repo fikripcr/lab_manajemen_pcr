@@ -1,26 +1,21 @@
 <?php
-
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\ApiAuthService;
 use App\Services\Auth\TokenManagementService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    protected ApiAuthService $apiAuthService;
-    protected TokenManagementService $tokenManagementService;
-
-    public function __construct(ApiAuthService $apiAuthService, TokenManagementService $tokenManagementService)
-    {
-        $this->apiAuthService = $apiAuthService;
-        $this->tokenManagementService = $tokenManagementService;
-    }
+    public function __construct(
+        protected ApiAuthService $apiAuthService,
+        protected TokenManagementService $tokenManagementService
+    ) {}
 
     /**
      * Authenticate user and create API token
@@ -29,11 +24,11 @@ class AuthController extends Controller
     {
         try {
             $credentials = $request->validated();
-            $deviceName = $request->input('device_name', $request->userAgent());
+            $deviceName  = $request->input('device_name', $request->userAgent());
 
             $result = $this->apiAuthService->loginAndCreateToken($credentials, $deviceName);
 
-            if (!$result) {
+            if (! $result) {
                 throw ValidationException::withMessages([
                     'email' => ['The provided credentials are incorrect.'],
                 ]);
@@ -45,16 +40,16 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Login successful',
-                'data' => [
-                    'user' => $result['user'],
+                'data'    => [
+                    'user'  => $result['user'],
                     'token' => $result['token'],
-                ]
+                ],
             ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Login failed',
-                'errors' => $e->errors(),
+                'errors'  => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
@@ -80,7 +75,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Successfully logged out'
+                'message' => 'Successfully logged out',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -100,7 +95,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data'    => $user,
             ]);
         } catch (\Exception $e) {
             return response()->json([

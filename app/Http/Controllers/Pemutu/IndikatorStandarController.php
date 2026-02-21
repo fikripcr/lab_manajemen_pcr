@@ -1,12 +1,8 @@
 <?php
 namespace App\Http\Controllers\Pemutu;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\IndikatorStandarRequest;
 use App\Models\Pemutu\Dokumen;
-use App\Models\Pemutu\Indikator;
-use App\Models\Pemutu\IndikatorPersonil;
-use App\Models\Pemutu\Personil;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class IndikatorStandarController extends Controller
@@ -33,29 +29,28 @@ class IndikatorStandarController extends Controller
         return response()->json($dokumen->dokSubs()->orderBy('seq')->get(['doksub_id', 'judul']));
     }
 
-    public function store(Request $request)
+    public function store(IndikatorStandarRequest $request)
     {
-        $validated = $request->validate([
-            'doksub_id' => 'required|exists:pemutu_dok_sub,doksub_id',
-            'indikator' => 'required|string',
-            'target'    => 'required|string',
-            'type'      => 'required|in:standar,performa',
-            'parent_id' => 'nullable|exists:pemutu_indikator,indikator_id',
-        ]);
+        try {
+            DB::transaction(function () use ($request) {
+                $indikator = Indikator::create([
+                    'indikator' => $request->indikator,
+                    'target'    => $request->target,
+                    'type'      => $request->type,
+                    'parent_id' => $request->parent_id,
+                ]);
 
-        DB::transaction(function () use ($validated) {
-            $indikator = Indikator::create([
-                'indikator' => $validated['indikator'],
-                'target'    => $validated['target'],
-                'type'      => $validated['type'],
-                'parent_id' => $validated['parent_id'],
-            ]);
+                // Link to DokSub
+                $indikator->dokSubs()->attach($request->doksub_id);
+            });
 
-            // Link to DokSub
-            $indikator->dokSubs()->attach($validated['doksub_id']);
-        });
+            logActivity('pemutu', "Membuat indikator standar baru: {$request->indikator}");
 
-        return jsonSuccess('Indikator Standar berhasil dibuat', route('pemutu.standar.index'));
+            return jsonSuccess('Indikator Standar berhasil dibuat', route('pemutu.standar.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menyimpan indikator standar: ' . $e->getMessage());
+        }
     }
 
     public function assign(Indikator $indikator)
@@ -68,37 +63,44 @@ class IndikatorStandarController extends Controller
         return view('pages.pemutu.standar.assign', compact('indikator', 'personils', 'assigned'));
     }
 
-    public function storeAssignment(Request $request, Indikator $indikator)
+    public function storeAssignment(IndikatorStandarRequest $request, Indikator $indikator)
     {
-        $validated = $request->validate([
-            'personil_id'  => 'required|exists:pegawai,pegawai_id',
-            'year'         => 'required|integer',
-            'semester'     => 'required|integer',
-            'target_value' => 'nullable|string',
-            'weight'       => 'nullable|numeric|min:0',
-        ]);
+        try {
+            IndikatorPersonil::updateOrCreate(
+                [
+                    'indikator_id' => $indikator->indikator_id,
+                    'personil_id'  => $request->personil_id,
+                    'year'         => $request->year,
+                    'semester'     => $request->semester,
+                ],
+                [
+                    'target_value' => $request->target_value ?? $indikator->target,
+                    'weight'       => $request->weight ?? 0,
+                ]
+            );
 
-        IndikatorPersonil::updateOrCreate(
-            [
-                'indikator_id' => $indikator->indikator_id,
-                'personil_id'  => $validated['personil_id'],
-                'year'         => $validated['year'],
-                'semester'     => $validated['semester'],
-            ],
-            [
-                'target_value' => $validated['target_value'] ?? $indikator->target,
-                'weight'       => $validated['weight'] ?? 0,
-            ]
-        );
+            logActivity('pemutu', "Menugaskan personel ke indikator ID: {$indikator->indikator_id}");
 
-        return jsonSuccess('Penugasan Personel berhasil disimpan', route('pemutu.standar.assign', $indikator->indikator_id));
+            return jsonSuccess('Penugasan Personel berhasil disimpan', route('pemutu.standar.assign', $indikator->indikator_id));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menyimpan penugasan: ' . $e->getMessage());
+        }
     }
 
     public function destroyAssignment($id)
     {
-        $assignment = IndikatorPersonil::findOrFail($id);
-        $assignment->delete();
+        try {
+            $assignment  = IndikatorPersonil::findOrFail($id);
+            $indikatorId = $assignment->indikator_id;
+            $assignment->delete();
 
-        return jsonSuccess('Penugasan berhasil dihapus', route('pemutu.standar.assign', $assignment->indikator_id));
+            logActivity('pemutu', "Menghapus penugasan personel untuk indikator ID: {$indikatorId}");
+
+            return jsonSuccess('Penugasan berhasil dihapus', route('pemutu.standar.assign', $indikatorId));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus penugasan: ' . $e->getMessage());
+        }
     }
 }

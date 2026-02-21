@@ -1,24 +1,20 @@
 <?php
-
 namespace App\Http\Controllers\Api\Sys;
 
 use App\Http\Controllers\Controller;
 use App\Services\Sys\PermissionService;
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
-    protected $permissionService;
-
-    public function __construct(PermissionService $permissionService)
-    {
-        $this->permissionService = $permissionService;
-    }
+    public function __construct(protected PermissionService $permissionService)
+    {}
 
     /**
      * Search permissions for autocomplete/select
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -38,25 +34,25 @@ class PermissionController extends Controller
             $results = $permissions->map(function ($permission) {
                 return [
                     'value' => $permission->id,
-                    'label' => $permission->name . 
-                              ($permission->category ? " ({$permission->category})" : ''),
+                    'label' => $permission->name .
+                    ($permission->category ? " ({$permission->category})" : ''),
                     'customProperties' => [
-                        'category' => $permission->category,
+                        'category'     => $permission->category,
                         'sub_category' => $permission->sub_category,
-                    ]
+                    ],
                 ];
             });
 
             return jsonSuccess('Permissions found', null, $results);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return jsonError('Error searching permissions: ' . $e->getMessage(), 500);
         }
     }
 
     /**
      * Get all permissions (for initial load)
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
@@ -70,8 +66,8 @@ class PermissionController extends Controller
             $results = $permissions->map(function ($permission) {
                 return [
                     'value' => $permission->id,
-                    'label' => $permission->name . 
-                              ($permission->category ? " ({$permission->category})" : ''),
+                    'label' => $permission->name .
+                    ($permission->category ? " ({$permission->category})" : ''),
                 ];
             });
 

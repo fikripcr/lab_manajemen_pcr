@@ -92,8 +92,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // My KPI
     Route::get('mykpi', [MyKpiController::class, 'index'])->name('mykpi.index');
-    Route::get('mykpi/{id}/edit', [MyKpiController::class, 'edit'])->name('mykpi.edit');
-    Route::put('mykpi/{id}', [MyKpiController::class, 'update'])->name('mykpi.update');
+    Route::get('mykpi/{kpi}/edit', [MyKpiController::class, 'edit'])->name('mykpi.edit');
+    Route::put('mykpi/{kpi}', [MyKpiController::class, 'update'])->name('mykpi.update');
 
     // Evaluasi Diri
     Route::get('evaluasi-diri', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'index'])->name('evaluasi-diri.index');

@@ -2,17 +2,20 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Hr\PerizinanStoreRequest;
-use App\Http\Requests\Hr\PerizinanUpdateRequest;
+use App\Http\Requests\Hr\PerizinanRequest;
 use App\Models\Hr\JenisIzin;
 use App\Models\Hr\Perizinan;
-use App\Models\Hr\RiwayatApproval;
+use App\Models\Shared\Pegawai;
+use App\Services\Hr\PerizinanService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class PerizinanController extends Controller
 {
+    public function __construct(
+        protected \App\Services\Hr\PerizinanService $perizinanService
+    ) {}
+
     public function index(Request $request)
     {
         $years = Perizinan::selectRaw('YEAR(tgl_awal) as year')
@@ -25,15 +28,16 @@ class PerizinanController extends Controller
             $years = collect([date('Y')]);
         }
 
-        $selectedYear = $request->get('year', date('Y'));
+        $selectedYear = $request->input('year', date('Y'));
+        $pageTitle    = 'Data Perizinan';
 
-        return view('pages.hr.perizinan.index', compact('years', 'selectedYear'));
+        return view('pages.hr.perizinan.index', compact('years', 'selectedYear', 'pageTitle'));
     }
 
     public function data(Request $request)
     {
-        $year   = $request->get('year', date('Y'));
-        $status = $request->get('status');
+        $year   = $request->input('year', date('Y'));
+        $status = $request->input('status');
 
         $query = Perizinan::with(['jenisIzin', 'pengusulPegawai.latestDataDiri', 'latestApproval'])
             ->whereYear('tgl_awal', $year);
@@ -79,41 +83,21 @@ class PerizinanController extends Controller
     public function create()
     {
         $jenisIzin = JenisIzin::active()->get();
-        return view('pages.hr.perizinan.create', compact('jenisIzin'));
+        $pegawais  = Pegawai::with('latestDataDiri')->get();
+        $perizinan = new Perizinan();
+        return view('pages.hr.perizinan.create-edit-ajax', compact('jenisIzin', 'pegawais', 'perizinan'));
     }
 
-    public function store(PerizinanStoreRequest $request)
+    public function store(PerizinanRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $this->perizinanService->store($request->validated());
 
-        // Create perizinan
-        $perizinan = Perizinan::create([
-            'jenisizin_id'           => $validated['jenisizin_id'],
-            'pengusul'               => $validated['pengusul'],
-            'pekerjaan_ditinggalkan' => $validated['pekerjaan_ditinggalkan'] ?? null,
-            'keterangan'             => $validated['keterangan'] ?? null,
-            'alamat_izin'            => $validated['alamat_izin'] ?? null,
-            'tgl_awal'               => $validated['tgl_mulai'],
-            'tgl_akhir'              => $validated['tgl_selesai'],
-            'jam_awal'               => $validated['jam_awal'] ?? null,
-            'jam_akhir'              => $validated['jam_akhir'] ?? null,
-            'periode'                => date('Y'),
-        ]);
-
-        // Create initial approval record
-        $approval = RiwayatApproval::create([
-            'model'            => 'Perizinan',
-            'model_id'         => $perizinan->perizinan_id,
-            'status'           => 'Draft',
-            'created_by_email' => Auth::user()?->email,
-        ]);
-
-        // Link approval to perizinan
-        $perizinan->update([
-            'latest_riwayatapproval_id' => $approval->riwayatapproval_id,
-        ]);
-
-        return jsonSuccess('Perizinan berhasil dibuat.');
+            return jsonSuccess('Perizinan berhasil dibuat.');
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Gagal membuat perizinan: ' . $e->getMessage());
+        }
     }
 
     public function show(Perizinan $perizinan)
@@ -125,43 +109,40 @@ class PerizinanController extends Controller
     public function edit(Perizinan $perizinan)
     {
         $jenisIzin = JenisIzin::active()->get();
+        $pegawais  = Pegawai::with('latestDataDiri')->get();
         $perizinan->load(['pengusulPegawai.latestDataDiri']);
-        return view('pages.hr.perizinan.edit', compact('perizinan', 'jenisIzin'));
+        return view('pages.hr.perizinan.create-edit-ajax', compact('perizinan', 'jenisIzin', 'pegawais'));
     }
 
-    public function update(PerizinanUpdateRequest $request, Perizinan $perizinan)
+    public function update(PerizinanRequest $request, Perizinan $perizinan)
     {
-        // Only allow update if still Draft
         if ($perizinan->status !== 'Draft') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Perizinan tidak dapat diubah karena sudah diproses.',
-            ], 400);
+            return jsonError('Perizinan tidak dapat diubah karena sudah diproses.');
         }
 
-        $perizinan->update($request->validated());
+        try {
+            $this->perizinanService->update($perizinan, $request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Perizinan berhasil diperbarui.',
-        ]);
+            return jsonSuccess('Perizinan berhasil diperbarui.');
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui perizinan: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Perizinan $perizinan)
     {
-        // Only allow delete if still Draft
         if ($perizinan->status !== 'Draft') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Perizinan tidak dapat dihapus karena sudah diproses.',
-            ], 400);
+            return jsonError('Perizinan tidak dapat dihapus karena sudah diproses.');
         }
 
-        $perizinan->delete();
+        try {
+            $perizinan->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Perizinan berhasil dihapus.',
-        ]);
+            return jsonSuccess('Perizinan berhasil dihapus.');
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus perizinan: ' . $e->getMessage());
+        }
     }
 }

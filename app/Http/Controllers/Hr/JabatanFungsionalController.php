@@ -10,12 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JabatanFungsionalController extends Controller
 {
-    protected $JabatanFungsionalService;
-
-    public function __construct(JabatanFungsionalService $JabatanFungsionalService)
-    {
-        $this->JabatanFungsionalService = $JabatanFungsionalService;
-    }
+    public function __construct(protected JabatanFungsionalService $jabatanFungsionalService)
+    {}
 
     public function index()
     {
@@ -47,13 +43,14 @@ class JabatanFungsionalController extends Controller
 
     public function create()
     {
-        return view('pages.hr.jabatan-fungsional.create');
+        $jabatanFungsional = new JabatanFungsional();
+        return view('pages.hr.jabatan-fungsional.create-edit-ajax', compact('jabatanFungsional'));
     }
 
     public function store(JabatanFungsionalRequest $request)
     {
         try {
-            $this->JabatanFungsionalService->create($request->validated());
+            $this->jabatanFungsionalService->create($request->validated());
             return jsonSuccess('Jabatan Fungsional created successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);
@@ -63,13 +60,13 @@ class JabatanFungsionalController extends Controller
     public function edit(JabatanFungsional $jabatan_fungsional)
     {
         $jabatanFungsional = $jabatan_fungsional;
-        return view('pages.hr.jabatan-fungsional.edit', compact('jabatanFungsional'));
+        return view('pages.hr.jabatan-fungsional.create-edit-ajax', compact('jabatanFungsional'));
     }
 
     public function update(JabatanFungsionalRequest $request, JabatanFungsional $jabatan_fungsional)
     {
         try {
-            $this->JabatanFungsionalService->update($jabatan_fungsional, $request->validated());
+            $this->jabatanFungsionalService->update($jabatan_fungsional, $request->validated());
             return jsonSuccess('Jabatan Fungsional updated successfully.');
         } catch (Exception $e) {
             return jsonError($e->getMessage(), 500);

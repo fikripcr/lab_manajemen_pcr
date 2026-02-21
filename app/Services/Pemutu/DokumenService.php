@@ -169,6 +169,7 @@ class DokumenService
                     }
                 }
             }
+            logActivity('dokumen_management', 'Memperbarui urutan dokumen (Reorder)');
             return true;
         });
     }

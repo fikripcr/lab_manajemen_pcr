@@ -10,11 +10,11 @@ use Exception;
 
 class JenisLayananPeriodeController extends Controller
 {
-    protected $JenisLayananPeriodeService;
+    protected $jenisLayananPeriodeService;
 
-    public function __construct(JenisLayananPeriodeService $JenisLayananPeriodeService)
+    public function __construct(JenisLayananPeriodeService $jenisLayananPeriodeService)
     {
-        $this->JenisLayananPeriodeService = $JenisLayananPeriodeService;
+        $this->jenisLayananPeriodeService = $jenisLayananPeriodeService;
     }
 
     /**
@@ -26,7 +26,7 @@ class JenisLayananPeriodeController extends Controller
         $validated['jenislayanan_id'] = $jenis_layanan->jenislayanan_id;
 
         try {
-            $this->JenisLayananPeriodeService->createPeriode($validated);
+            $this->jenisLayananPeriodeService->createPeriode($validated);
             return jsonSuccess('Periode berhasil dibuat.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -41,7 +41,7 @@ class JenisLayananPeriodeController extends Controller
         $validated = $request->validated();
 
         try {
-            $this->JenisLayananPeriodeService->update($periode->jlperiode_id, $validated);
+            $this->jenisLayananPeriodeService->update($periode->jlperiode_id, $validated);
             return jsonSuccess('Periode berhasil diperbarui.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -54,7 +54,7 @@ class JenisLayananPeriodeController extends Controller
     public function destroy(JenisLayananPeriode $periode)
     {
         try {
-            $this->JenisLayananPeriodeService->destroy($periode->jlperiode_id);
+            $this->jenisLayananPeriodeService->destroy($periode->jlperiode_id);
             return jsonSuccess('Periode berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -66,7 +66,7 @@ class JenisLayananPeriodeController extends Controller
      */
     public function data(JenisLayanan $jenis_layanan)
     {
-        $data = $this->JenisLayananPeriodeService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
+        $data = $this->jenisLayananPeriodeService->getByJenisLayanan($jenis_layanan->jenislayanan_id);
 
         // Format dates for display
         $formatted = $data->map(function ($item) {

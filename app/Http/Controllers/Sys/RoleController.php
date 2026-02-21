@@ -10,20 +10,17 @@ use Exception;
 
 class RoleController extends Controller
 {
-    protected $RoleService;
-
-    public function __construct(RoleService $RoleService, PermissionService $permissionService)
-    {
-        $this->RoleService       = $RoleService;
-        $this->permissionService = $permissionService;
-    }
+    public function __construct(
+        protected RoleService $roleService,
+        protected PermissionService $permissionService,
+    ) {}
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $roles = $this->RoleService->getRoleList([]);
+        $roles = $this->roleService->getRoleList([]);
         return view('pages.sys.roles.index', compact('roles'));
     }
 
@@ -32,7 +29,10 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('pages.sys.roles.create');
+        $role            = new Role();
+        $permissions     = $this->permissionService->getAllPermissions();
+        $rolePermissions = [];
+        return view('pages.sys.roles.create-edit-ajax', compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**
@@ -43,7 +43,7 @@ class RoleController extends Controller
         try {
             $data                = $request->validated();
             $data['permissions'] = $request->permissions ?? [];
-            $this->RoleService->createRole($data);
+            $this->roleService->createRole($data);
 
             return jsonSuccess('Peran berhasil dibuat.', route('sys.roles.index'));
         } catch (Exception $e) {
@@ -56,7 +56,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $role           = $this->RoleService->getRoleById($role->id);
+        $role           = $this->roleService->getRoleById($role->id);
         $allPermissions = $this->permissionService->getAllPermissions();
 
         return view('pages.sys.roles.show', compact('role', 'allPermissions'));
@@ -67,11 +67,11 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $role            = $this->RoleService->getRoleById($role->id);
+        $role            = $this->roleService->getRoleById($role->id);
         $permissions     = $this->permissionService->getAllPermissions();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
 
-        return view('pages.sys.roles.edit', compact('role', 'permissions', 'rolePermissions'));
+        return view('pages.sys.roles.create-edit-ajax', compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**
@@ -83,7 +83,7 @@ class RoleController extends Controller
             $roleId              = decryptId($id);
             $data                = $request->validated();
             $data['permissions'] = $request->input('permissions', []);
-            $this->RoleService->updateRole($roleId, $data);
+            $this->roleService->updateRole($roleId, $data);
 
             return jsonSuccess('Data berhasil diperbarui.', route('sys.roles.index'));
         } catch (Exception $e) {
@@ -97,7 +97,7 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         try {
-            $this->RoleService->deleteRole($role->id);
+            $this->roleService->deleteRole($role->id);
 
             return jsonSuccess('Data berhasil dihapus.', route('sys.roles.index'));
         } catch (Exception $e) {

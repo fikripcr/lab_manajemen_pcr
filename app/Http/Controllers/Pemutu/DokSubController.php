@@ -13,14 +13,10 @@ use Yajra\DataTables\DataTables;
 
 class DokSubController extends Controller
 {
-    protected $DokSubService;
-    protected $DokumenService;
-
-    public function __construct(DokSubService $DokSubService, DokumenService $DokumenService)
-    {
-        $this->DokSubService  = $DokSubService;
-        $this->DokumenService = $DokumenService;
-    }
+    public function __construct(
+        protected DokSubService $dokSubService,
+        protected DokumenService $dokumenService,
+    ) {}
 
     public function show(DokSub $dokSub)
     {
@@ -41,13 +37,18 @@ class DokSubController extends Controller
 
     public function create(Request $request)
     {
-        $dokId   = (int) $request->query('dok_id');
-        $dokumen = $this->DokumenService->getDokumenById($dokId);
-        if (! $dokumen) {
+        try {
+            $dokId   = (int) decryptIdIfEncrypted($request->query('dok_id'));
+            $dokumen = $this->dokumenService->getDokumenById($dokId);
+            if (! $dokumen) {
+                abort(404);
+            }
+
+            $dokSub = new DokSub(); // Empty model for create case
+            return view('pages.pemutu.dok-subs.create-edit-ajax', compact('dokumen', 'dokSub'));
+        } catch (Exception $e) {
             abort(404);
         }
-
-        return view('pages.pemutu.dok-subs.create', compact('dokumen'));
     }
 
     public function store(DokSubRequest $request)
@@ -55,17 +56,20 @@ class DokSubController extends Controller
         try {
             $data                          = $request->validated();
             $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
-            $this->DokSubService->createDokSub($data);
+            $dokSub                        = $this->dokSubService->createDokSub($data);
 
-            return jsonSuccess('Sub-Document created successfully.', route('pemutu.dokumens.show', $data['dok_id']));
+            logActivity('pemutu', "Menambah sub-dokumen baru: {$dokSub->judul}");
+
+            return jsonSuccess('Sub-Document created successfully.', route('pemutu.dokumens.show', $dokSub->encrypted_dok_id));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan sub-dokumen: ' . $e->getMessage());
         }
     }
 
     public function edit(DokSub $dokSub)
     {
-        return view('pages.pemutu.dok-subs.edit', compact('dokSub'));
+        return view('pages.pemutu.dok-subs.create-edit-ajax', compact('dokSub'));
     }
 
     public function update(DokSubRequest $request, DokSub $dokSub)
@@ -73,21 +77,29 @@ class DokSubController extends Controller
         try {
             $data                          = $request->validated();
             $data['is_hasilkan_indikator'] = $request->boolean('is_hasilkan_indikator');
-            $this->DokSubService->updateDokSub($dokSub->doksub_id, $data);
+            $this->dokSubService->updateDokSub($dokSub->doksub_id, $data);
 
-            return jsonSuccess('Sub-Document updated successfully.', route('pemutu.dokumens.show', $dokSub->dok_id));
+            logActivity('pemutu', "Memperbarui sub-dokumen: {$dokSub->judul}");
+
+            return jsonSuccess('Sub-Document updated successfully.', route('pemutu.dokumens.show', $dokSub->encrypted_dok_id));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui sub-dokumen: ' . $e->getMessage());
         }
     }
 
     public function destroy(DokSub $dokSub)
     {
         try {
-            $this->DokSubService->deleteDokSub($dokSub->doksub_id);
+            $judul = $dokSub->judul;
+            $this->dokSubService->deleteDokSub($dokSub->doksub_id);
+
+            logActivity('pemutu', "Menghapus sub-dokumen: {$judul}");
+
             return jsonSuccess('Sub-Document deleted successfully.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus sub-dokumen: ' . $e->getMessage());
         }
     }
 
@@ -95,7 +107,7 @@ class DokSubController extends Controller
     {
         if ($request->ajax()) {
             try {
-                $query = $this->DokSubService->getFilteredQuery(['dok_id' => $dokumen->dok_id]);
+                $query = $this->dokSubService->getFilteredQuery(['dok_id' => $dokumen->dok_id]);
 
                 return DataTables::of($query)
                     ->addIndexColumn()
@@ -112,12 +124,18 @@ class DokSubController extends Controller
                         ';
                     })
                     ->addColumn('action', function ($row) {
-                        return view('pages.pemutu.dok-subs._action', compact('row'))->render();
+                        return view('components.tabler.datatables-actions', [
+                            'viewUrl'   => route('pemutu.dok-subs.show', $row->encrypted_doksub_id),
+                            'editUrl'   => route('pemutu.dok-subs.edit', $row->encrypted_doksub_id),
+                            'editModal' => false,
+                            'deleteUrl' => route('pemutu.dok-subs.destroy', $row->encrypted_doksub_id),
+                        ])->render();
                     })
                     ->rawColumns(['seq', 'judul', 'action'])
                     ->make(true);
             } catch (Exception $e) {
-                return jsonError($e->getMessage(), 500);
+                logError($e);
+                return jsonError('Gagal memuat data: ' . $e->getMessage());
             }
         }
     }

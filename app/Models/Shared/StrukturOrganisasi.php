@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\Shared;
 
+use App\Models\Hr\RiwayatPenugasan;
+use App\Models\Pemutu\Indikator;
 use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -84,7 +86,7 @@ class StrukturOrganisasi extends Model
         // we bridge through RiwayatPenugasan.
         return $this->hasManyThrough(
             Pegawai::class,
-            \App\Models\Hr\RiwayatPenugasan::class,
+            RiwayatPenugasan::class,
             'org_unit_id',
             'pegawai_id',
             'orgunit_id',
@@ -109,7 +111,7 @@ class StrukturOrganisasi extends Model
 
     public function indikators()
     {
-        return $this->belongsToMany(\App\Models\Pemutu\Indikator::class, 'pemutu_indikator_orgunit', 'org_unit_id', 'indikator_id')
+        return $this->belongsToMany(Indikator::class, 'pemutu_indikator_orgunit', 'org_unit_id', 'indikator_id')
             ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'created_at');
     }
 }

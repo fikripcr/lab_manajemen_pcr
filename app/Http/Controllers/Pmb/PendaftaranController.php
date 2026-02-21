@@ -2,6 +2,9 @@
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pmb\UpdateStatusRequest;
+use App\Http\Requests\Pmb\VerifyDocRequest;
+use App\Models\Pmb\DokumenUpload;
 use App\Models\Pmb\Pendaftaran;
 use App\Services\Pmb\PendaftaranService;
 use App\Services\Pmb\PeriodeService;
@@ -10,21 +13,17 @@ use Illuminate\Http\Request;
 
 class PendaftaranController extends Controller
 {
-    protected $PendaftaranService;
-    protected $PeriodeService;
-
-    public function __construct(PendaftaranService $PendaftaranService, PeriodeService $PeriodeService)
-    {
-        $this->PendaftaranService = $PendaftaranService;
-        $this->PeriodeService     = $PeriodeService;
-    }
+    public function __construct(
+        protected PendaftaranService $pendaftaranService,
+        protected PeriodeService $periodeService
+    ) {}
 
     /**
      * Unified Dashboard (Admin & Camaba)
      */
     public function dashboard()
     {
-        $periodeAktif = $this->PeriodeService->getActivePeriode();
+        $periodeAktif = $this->periodeService->getActivePeriode();
         return view('pages.pmb.dashboard.index', compact('periodeAktif'));
     }
 
@@ -41,7 +40,7 @@ class PendaftaranController extends Controller
      */
     public function paginate(Request $request)
     {
-        return datatables()->of($this->PendaftaranService->getFilteredQuery($request->all()))
+        return datatables()->of($this->pendaftaranService->getFilteredQuery($request->all()))
             ->addIndexColumn()
             ->editColumn('no_pendaftaran', function ($pendaftaran) {
                 return '<span class="badge bg-blue-lt">' . $pendaftaran->no_pendaftaran . '</span>';
@@ -61,7 +60,21 @@ class PendaftaranController extends Controller
                 return formatTanggalIndo($pendaftaran->waktu_daftar);
             })
             ->addColumn('action', function ($pendaftaran) {
-                return view('pages.pmb.pendaftaran._actions', compact('pendaftaran'));
+                $customActions = [];
+                if (in_array($pendaftaran->status_terkini, ['Menunggu_Verifikasi_Bayar', 'Menunggu_Verifikasi_Berkas'])) {
+                    $customActions[] = [
+                        'url'   => 'javascript:void(0)',
+                        'label' => 'Verifikasi',
+                        'icon'  => 'check',
+                        'class' => 'btn-verify',
+                        'attr'  => 'data-id="' . $pendaftaran->encrypted_pendaftaran_id . '"',
+                    ];
+                }
+
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl'       => route('pmb.pendaftaran.show', $pendaftaran->encrypted_pendaftaran_id),
+                    'customActions' => $customActions,
+                ])->render();
             })
             ->rawColumns(['no_pendaftaran', 'status_terkini', 'action'])
             ->make(true);
@@ -72,7 +85,7 @@ class PendaftaranController extends Controller
      */
     public function show(Pendaftaran $pendaftaran)
     {
-        $pendaftaran->load(['user', 'periode', 'jalur', 'pilihanProdi.orgUnit', 'dokumenUpload.jenisDokumen', 'riwayat.pelaku']);
+        $pendaftaran = $this->pendaftaranService->getPendaftaranDetails($pendaftaran);
         return view('pages.pmb.pendaftaran.show', compact('pendaftaran'));
     }
 
@@ -87,35 +100,36 @@ class PendaftaranController extends Controller
     /**
      * Update pendaftaran status (Admin)
      */
-    public function updateStatus(Request $request, Pendaftaran $pendaftaran)
+    public function updateStatus(UpdateStatusRequest $request, Pendaftaran $pendaftaran)
     {
         try {
-            $this->PendaftaranService->updateStatus($pendaftaran->id, $request->status, $request->keterangan);
+            $this->pendaftaranService->updateStatus($pendaftaran, $request->validated('status'), $request->validated('keterangan'));
             return jsonSuccess('Status pendaftaran berhasil diperbarui.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
         }
     }
 
     /**
      * Show verification form for single document
      */
-    public function verifyDocumentForm($documentId)
+    public function verifyDocumentForm(DokumenUpload $document)
     {
-        $document = \App\Models\Pmb\DokumenUpload::findOrFail(decryptId($documentId));
         return view('pages.pmb.pendaftaran.verify_doc_form', compact('document'));
     }
 
     /**
      * Verify single document
      */
-    public function verifyDocument(Request $request, $documentId)
+    public function verifyDocument(VerifyDocRequest $request, DokumenUpload $document)
     {
         try {
-            $this->PendaftaranService->verifyUploadedDocument(decryptId($documentId), $request->status, $request->keterangan);
+            $this->pendaftaranService->verifyUploadedDocument($document, $request->validated('status'), $request->validated('keterangan'));
             return jsonSuccess('Status dokumen berhasil diperbarui!');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memverifikasi dokumen: ' . $e->getMessage());
         }
     }
 }

@@ -12,12 +12,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PerusahaanController extends Controller
 {
-    protected $PerusahaanService;
-
-    public function __construct(PerusahaanService $PerusahaanService)
-    {
-        $this->PerusahaanService = $PerusahaanService;
-    }
+    public function __construct(protected PerusahaanService $PerusahaanService)
+    {}
 
     public function index()
     {
@@ -36,7 +32,12 @@ class PerusahaanController extends Controller
                 return $row->kategori->nama_kategori ?? '-';
             })
             ->addColumn('action', function ($row) {
-                return view('pages.eoffice.perusahaan._action', compact('row'))->render();
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('eoffice.perusahaan.edit', $row->encrypted_perusahaan_id),
+                    'editModal' => true,
+                    'viewUrl'   => route('eoffice.perusahaan.show', $row->encrypted_perusahaan_id),
+                    'deleteUrl' => route('eoffice.perusahaan.destroy', $row->encrypted_perusahaan_id),
+                ])->render();
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -45,7 +46,7 @@ class PerusahaanController extends Controller
     public function create()
     {
         $categories = KategoriPerusahaan::all();
-        return view('pages.eoffice.perusahaan.create', compact('categories'));
+        return view('pages.eoffice.perusahaan.create-edit-ajax', compact('categories'));
     }
 
     public function store(PerusahaanRequest $request)
@@ -54,7 +55,8 @@ class PerusahaanController extends Controller
             $this->PerusahaanService->createPerusahaan($request->validated());
             return jsonSuccess('Perusahaan berhasil ditambahkan.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menambahkan perusahaan: ' . $e->getMessage());
         }
     }
 
@@ -67,7 +69,7 @@ class PerusahaanController extends Controller
     public function edit(Perusahaan $perusahaan)
     {
         $categories = KategoriPerusahaan::all();
-        return view('pages.eoffice.perusahaan.edit', compact('perusahaan', 'categories'));
+        return view('pages.eoffice.perusahaan.create-edit-ajax', compact('perusahaan', 'categories'));
     }
 
     public function update(PerusahaanRequest $request, Perusahaan $perusahaan)
@@ -76,7 +78,8 @@ class PerusahaanController extends Controller
             $this->PerusahaanService->updatePerusahaan($perusahaan->perusahaan_id, $request->validated());
             return jsonSuccess('Perusahaan berhasil diperbarui.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memperbarui perusahaan: ' . $e->getMessage());
         }
     }
 
@@ -86,7 +89,8 @@ class PerusahaanController extends Controller
             $this->PerusahaanService->deletePerusahaan($perusahaan->perusahaan_id);
             return jsonSuccess('Perusahaan berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menghapus perusahaan: ' . $e->getMessage());
         }
     }
 }

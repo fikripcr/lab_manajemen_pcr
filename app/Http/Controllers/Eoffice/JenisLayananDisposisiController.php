@@ -6,16 +6,11 @@ use App\Http\Requests\Eoffice\JenisLayananDisposisiRequest;
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\JenisLayananDisposisi;
 use App\Services\Eoffice\JenisLayananDisposisiService;
-use Illuminate\Http\Request;
 
 class JenisLayananDisposisiController extends Controller
 {
-    protected $JenisLayananDisposisiService;
-
-    public function __construct(JenisLayananDisposisiService $JenisLayananDisposisiService)
-    {
-        $this->JenisLayananDisposisiService = $JenisLayananDisposisiService;
-    }
+    public function __construct(protected \App\Services\Eoffice\JenisLayananDisposisiService $JenisLayananDisposisiService)
+    {}
 
     /**
      * Store a new disposisi for a Jenis Layanan.
@@ -33,16 +28,16 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Update disposisi (seq, notify email, or text/ket).
      */
-    public function update(Request $request, JenisLayananDisposisi $disposisi, $action = null)
+    public function update(\App\Http\Requests\Eoffice\UpdateDisposisiRequest $request, JenisLayananDisposisi $disposisi, $action = null)
     {
         try {
             $id = $disposisi->jldisposisi_id;
             if ($action === 'seq') {
-                $this->JenisLayananDisposisiService->updateSeq($id, $request->input('seq'));
+                $this->JenisLayananDisposisiService->updateSeq($id, $request->validated('seq'));
             } elseif ($action === 'notify') {
-                $this->JenisLayananDisposisiService->updateNotifyEmail($id, $request->input('is_notify_email'));
+                $this->JenisLayananDisposisiService->updateNotifyEmail($id, $request->validated('is_notify_email'));
             } else {
-                $this->JenisLayananDisposisiService->updateTextKet($id, $request->all());
+                $this->JenisLayananDisposisiService->updateTextKet($id, $request->validated());
             }
             return jsonSuccess('Disposisi berhasil diperbarui.');
         } catch (Exception $e) {
@@ -88,10 +83,10 @@ class JenisLayananDisposisiController extends Controller
     /**
      * Update sequence for drag-and-drop
      */
-    public function updateSeq(Request $request, $id)
+    public function updateSeq(\App\Http\Requests\Shared\ReorderRequest $request, $id)
     {
         try {
-            $this->JenisLayananDisposisiService->updateSeq($id, $request->input('seq'));
+            $this->JenisLayananDisposisiService->updateSeq($id, $request->validated('seq'));
             return jsonSuccess('Urutan berhasil diperbarui.');
         } catch (\Exception $e) {
             return jsonError($e->getMessage());

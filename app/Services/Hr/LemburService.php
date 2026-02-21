@@ -48,6 +48,8 @@ class LemburService
 
             $lembur->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
 
+            logActivity('hr', "Menambahkan pengajuan lembur: {$lembur->judul}", $lembur);
+
             return $lembur->fresh(['pegawais', 'latestApproval']);
         });
     }
@@ -84,6 +86,8 @@ class LemburService
             }
             $lembur->pegawais()->sync($syncData);
 
+            logActivity('hr', "Mengupdate pengajuan lembur: {$lembur->judul}", $lembur);
+
             return $lembur->fresh(['pegawais', 'latestApproval']);
         });
     }
@@ -105,6 +109,8 @@ class LemburService
 
             // Update lembur status pointer
             $lembur->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+
+            logActivity('hr', "Memproses approval lembur ({$data['status']}): {$lembur->judul}", $lembur);
         });
     }
 }

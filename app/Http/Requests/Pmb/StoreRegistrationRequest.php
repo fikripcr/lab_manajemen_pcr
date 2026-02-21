@@ -21,8 +21,8 @@ class StoreRegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'periode_id'       => 'required|exists:pmb_periode,id',
-            'jalur_id'         => 'required|exists:pmb_jalur,id',
+            'periode_id'       => 'required|exists:pmb_periode,periode_id',
+            'jalur_id'         => 'required|exists:pmb_jalur,jalur_id',
             'pilihan_prodi'    => 'required|array|min:1|max:2',
             'pilihan_prodi.*'  => 'required|exists:struktur_organisasi,orgunit_id',
             'nik'              => 'required|string|size:16',

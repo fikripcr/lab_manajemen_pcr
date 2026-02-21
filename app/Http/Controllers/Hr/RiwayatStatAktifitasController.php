@@ -13,12 +13,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatStatAktifitasController extends Controller
 {
-    protected $PegawaiService;
-
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
     public function index()
     {
@@ -28,13 +24,13 @@ class RiwayatStatAktifitasController extends Controller
     public function create(Pegawai $pegawai)
     {
         $statusAktifitas = StatusAktifitas::where('is_active', 1)->get();
-        return view('pages.hr.pegawai.status-aktifitas.create', compact('pegawai', 'statusAktifitas'));
+        return view('pages.hr.pegawai.status-aktifitas.create-edit-ajax', compact('pegawai', 'statusAktifitas'));
     }
 
     public function store(RiwayatStatAktifitasRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->requestChange($pegawai, RiwayatStatAktifitas::class, $request->validated(), 'latest_riwayatstataktifitas_id');
+            $this->pegawaiService->requestChange($pegawai, RiwayatStatAktifitas::class, $request->validated(), 'latest_riwayatstataktifitas_id');
             return jsonSuccess('Riwayat Status Aktifitas berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());

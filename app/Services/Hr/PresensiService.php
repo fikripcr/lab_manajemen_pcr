@@ -1,11 +1,13 @@
 <?php
 namespace App\Services\Hr;
 
+use App\Models\Shared\Pegawai;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PresensiService
 {
@@ -45,7 +47,7 @@ class PresensiService
         Cache::put('presensi_settings', $settings, 3600);
 
         // Log for debugging
-        \Log::info('Presensi settings updated', $settings);
+        Log::info('Presensi settings updated', $settings);
     }
 
     /**

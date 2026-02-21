@@ -87,7 +87,12 @@ class JenisLayananService
      */
     public function deletePic($picId)
     {
-        return JenisLayananPic::findOrFail($picId)->delete();
+        $pic  = JenisLayananPic::findOrFail($picId);
+        $nama = $pic->user->name ?? $picId;
+        $jl   = $pic->jenisLayanan->nama_layanan ?? 'Unknown';
+        $pic->delete();
+        logActivity('eoffice_master', "Menghapus PIC '{$nama}' dari layanan: {$jl}");
+        return true;
     }
 
     /**
@@ -108,7 +113,12 @@ class JenisLayananService
      */
     public function deleteIsian($isianId)
     {
-        return JenisLayananIsian::findOrFail($isianId)->delete();
+        $isian = JenisLayananIsian::findOrFail($isianId);
+        $nama  = $isian->kategoriIsian->nama_isian ?? $isianId;
+        $jl    = $isian->jenisLayanan->nama_layanan ?? 'Unknown';
+        $isian->delete();
+        logActivity('eoffice_master', "Menghapus field isian '{$nama}' dari layanan: {$jl}");
+        return true;
     }
 
     /**
@@ -118,6 +128,7 @@ class JenisLayananService
     {
         $isian = JenisLayananIsian::findOrFail($isianId);
         $isian->update($data);
+        logActivity('eoffice_master', "Memperbarui konfigurasi field '{$isian->kategoriIsian->nama_isian}' untuk layanan: {$isian->jenisLayanan->nama_layanan}");
         return $isian;
     }
 
@@ -126,9 +137,13 @@ class JenisLayananService
      */
     public function updateIsianSeq(array $sequences)
     {
-        foreach ($sequences as $item) {
-            JenisLayananIsian::where('jenislayananisian_id', $item['id'])->update(['seq' => $item['seq']]);
-        }
+        return DB::transaction(function () use ($sequences) {
+            foreach ($sequences as $item) {
+                JenisLayananIsian::where('jenislayananisian_id', $item['id'])->update(['seq' => $item['seq']]);
+            }
+            logActivity('eoffice_master', "Memperbarui urutan field isian layanan.");
+            return true;
+        });
     }
 
     public function getById($id)

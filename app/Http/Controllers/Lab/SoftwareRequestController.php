@@ -6,23 +6,20 @@ use App\Http\Requests\Lab\SoftwareRequestStoreRequest;
 use App\Http\Requests\Lab\SoftwareRequestUpdateRequest;
 use App\Models\Lab\MataKuliah;
 use App\Models\Lab\PeriodSoftRequest;
+use App\Models\Lab\RequestSoftware;
 use App\Services\Lab\SoftwareRequestService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class SoftwareRequestController extends Controller
 {
-    protected $SoftwareRequestService;
-
-    public function __construct(SoftwareRequestService $SoftwareRequestService)
-    {
-        $this->SoftwareRequestService = $SoftwareRequestService;
-    }
+    public function __construct(protected SoftwareRequestService $softwareRequestService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.lab.software-requests.index');
     }
@@ -63,17 +60,18 @@ class SoftwareRequestController extends Controller
     public function store(SoftwareRequestStoreRequest $request)
     {
         try {
-            $this->SoftwareRequestService->createRequest($request->validated());
+            $this->softwareRequestService->createRequest($request->validated());
 
             return jsonSuccess('Permintaan software berhasil dibuat.', route('lab.software-requests.index'));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal membuat permintaan software: ' . $e->getMessage());
         }
     }
 
     public function paginate(Request $request)
     {
-        $softwareRequests = $this->SoftwareRequestService->getFilteredQuery($request->all());
+        $softwareRequests = $this->softwareRequestService->getFilteredQuery($request->all());
 
         return DataTables::of($softwareRequests)
             ->addIndexColumn()
@@ -130,7 +128,7 @@ class SoftwareRequestController extends Controller
     /**
      * Approve Request
      */
-    public function approve(Request $request, $id)
+    public function approve(Request $request, RequestSoftware $requestSoftware)
     {
         $validated = $request->validate([
             'status'     => 'required|in:approved,rejected,pending',
@@ -139,43 +137,30 @@ class SoftwareRequestController extends Controller
         ]);
 
         try {
-            $this->SoftwareRequestService->approveRequest($id, $validated);
+            $this->softwareRequestService->approveRequest($requestSoftware, $validated);
 
             return jsonSuccess('Status permintaan software berhasil diperbarui.');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(RequestSoftware $requestSoftware)
     {
-        $softwareRequest = $this->SoftwareRequestService->getRequestById($id);
-
-        if (! $softwareRequest) {
-            abort(404);
-        }
-
-        // Eager load approval history
-        $softwareRequest->load(['latestApproval', 'approvals']);
-
-        return view('pages.lab.software-requests.show', compact('softwareRequest'));
+        $requestSoftware->load(['latestApproval', 'approvals', 'dosen', 'mataKuliahs']);
+        return view('pages.lab.software-requests.show', compact('requestSoftware'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(RequestSoftware $requestSoftware)
     {
-        $softwareRequest = $this->SoftwareRequestService->getRequestById($id);
-
-        if (! $softwareRequest) {
-            abort(404);
-        }
-
-        $activePeriod = $softwareRequest->period ?? PeriodSoftRequest::where('is_active', true)->first();
+        $activePeriod = $requestSoftware->period ?? PeriodSoftRequest::where('is_active', true)->first();
 
         if ($activePeriod) {
             $mataKuliahs = MataKuliah::whereHas('jadwals', function ($q) use ($activePeriod) {
@@ -185,20 +170,25 @@ class SoftwareRequestController extends Controller
             $mataKuliahs = MataKuliah::all();
         }
 
-        return view('pages.lab.software-requests.edit', compact('softwareRequest', 'mataKuliahs', 'activePeriod'));
+        return view('pages.lab.software-requests.create-edit-ajax', [
+            'softwareRequest' => $requestSoftware,
+            'mataKuliahs'     => $mataKuliahs,
+            'activePeriod'    => $activePeriod,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(SoftwareRequestUpdateRequest $request, $id)
+    public function update(SoftwareRequestUpdateRequest $request, RequestSoftware $requestSoftware)
     {
         try {
-            $this->SoftwareRequestService->updateRequest($id, $request->validated());
+            $this->softwareRequestService->updateRequest($requestSoftware, $request->validated());
 
             return jsonSuccess('Status permintaan software berhasil diperbarui.', route('lab.software-requests.index'));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui permintaan software: ' . $e->getMessage());
         }
     }
 }

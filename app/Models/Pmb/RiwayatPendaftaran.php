@@ -3,6 +3,7 @@ namespace App\Models\Pmb;
 
 use App\Models\Pmb\Pendaftaran;
 use App\Models\User;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

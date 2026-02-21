@@ -2,12 +2,18 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\PeriodeSpmiRequest;
 use App\Models\Pemutu\PeriodeSpmi;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use App\Services\Pemutu\PeriodeSpmiService;
+use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class PeriodeSpmiController extends Controller
 {
+    public function __construct(
+        protected PeriodeSpmiService $periodeSpmiService
+    ) {}
+
     public function index()
     {
         $pageTitle = 'Periode SPMI';
@@ -43,8 +49,8 @@ class PeriodeSpmiController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.periode-spmis.edit', $row),
-                    'deleteUrl' => route('pemutu.periode-spmis.destroy', $row),
+                    'editUrl'   => route('pemutu.periode-spmis.edit', $row->encrypted_periodespmi_id),
+                    'deleteUrl' => route('pemutu.periode-spmis.destroy', $row->encrypted_periodespmi_id),
                 ])->render();
             })
             ->make(true);
@@ -52,33 +58,19 @@ class PeriodeSpmiController extends Controller
 
     public function create()
     {
-        if (request()->ajax()) {
-            return view('pages.pemutu.periode_spmis.create-edit-ajax');
-        }
-        // Fallback or full page support if needed, but mainly AJAX
-        return view('pages.pemutu.periode_spmis.create-edit-ajax');
+        $periodeSpmi = new PeriodeSpmi();
+        return view('pages.pemutu.periode_spmis.create-edit-ajax', compact('periodeSpmi'));
     }
 
-    public function store(Request $request)
+    public function store(PeriodeSpmiRequest $request)
     {
-        $data = $request->validate([
-            'periode'            => 'required|integer',
-            'jenis_periode'      => 'required|string|max:20',
-            'penetapan_awal'     => 'nullable|date',
-            'penetapan_akhir'    => 'nullable|date',
-            'ed_awal'            => 'nullable|date',
-            'ed_akhir'           => 'nullable|date',
-            'ami_awal'           => 'nullable|date',
-            'ami_akhir'          => 'nullable|date',
-            'pengendalian_awal'  => 'nullable|date',
-            'pengendalian_akhir' => 'nullable|date',
-            'peningkatan_awal'   => 'nullable|date',
-            'peningkatan_akhir'  => 'nullable|date',
-        ]);
-
-        PeriodeSpmi::create($data);
-
-        return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmis.index'));
+        try {
+            $this->periodeSpmiService->store($request->validated());
+            return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmis.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menambah periode: ' . $e->getMessage());
+        }
     }
 
     public function edit(PeriodeSpmi $periodeSpmi)
@@ -86,31 +78,25 @@ class PeriodeSpmiController extends Controller
         return view('pages.pemutu.periode_spmis.create-edit-ajax', compact('periodeSpmi'));
     }
 
-    public function update(Request $request, PeriodeSpmi $periodeSpmi)
+    public function update(PeriodeSpmiRequest $request, PeriodeSpmi $periodeSpmi)
     {
-        $data = $request->validate([
-            'periode'            => 'required|integer',
-            'jenis_periode'      => 'required|string|max:20',
-            'penetapan_awal'     => 'nullable|date',
-            'penetapan_akhir'    => 'nullable|date',
-            'ed_awal'            => 'nullable|date',
-            'ed_akhir'           => 'nullable|date',
-            'ami_awal'           => 'nullable|date',
-            'ami_akhir'          => 'nullable|date',
-            'pengendalian_awal'  => 'nullable|date',
-            'pengendalian_akhir' => 'nullable|date',
-            'peningkatan_awal'   => 'nullable|date',
-            'peningkatan_akhir'  => 'nullable|date',
-        ]);
-
-        $periodeSpmi->update($data);
-
-        return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmis.index'));
+        try {
+            $this->periodeSpmiService->update($periodeSpmi, $request->validated());
+            return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmis.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui periode: ' . $e->getMessage());
+        }
     }
 
     public function destroy(PeriodeSpmi $periodeSpmi)
     {
-        $periodeSpmi->delete();
-        return jsonSuccess('Periode SPMI berhasil dihapus', route('pemutu.periode-spmis.index'));
+        try {
+            $this->periodeSpmiService->delete($periodeSpmi);
+            return jsonSuccess('Periode SPMI berhasil dihapus.', route('pemutu.periode-spmis.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus periode: ' . $e->getMessage());
+        }
     }
 }

@@ -2,21 +2,19 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\LaporanKerusakanRequest;
 use App\Models\Lab\Inventaris;
 use App\Models\Lab\Lab;
 use App\Models\Lab\LabInventaris;
+use App\Models\Lab\LaporanKerusakan;
 use App\Services\Lab\LaporanKerusakanService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class LaporanKerusakanController extends Controller
 {
-    protected $service;
-
-    public function __construct(LaporanKerusakanService $service)
-    {
-        $this->service = $service;
-    }
+    public function __construct(protected LaporanKerusakanService $laporanKerusakanService)
+    {}
 
     public function index()
     {
@@ -25,7 +23,7 @@ class LaporanKerusakanController extends Controller
 
     public function data(Request $request)
     {
-        $query = $this->service->getFilteredQuery($request->all());
+        $query = $this->laporanKerusakanService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -53,7 +51,7 @@ class LaporanKerusakanController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl' => route('lab.laporan-kerusakan.show', encryptId($row->laporan_kerusakan_id)),
+                    'viewUrl' => route('lab.laporan-kerusakan.show', $row->encrypted_laporan_kerusakan_id),
                 ])->render();
             })
             ->rawColumns(['status', 'action'])
@@ -62,8 +60,9 @@ class LaporanKerusakanController extends Controller
 
     public function create()
     {
-        $labs = Lab::all();
-        return view('pages.lab.laporan-kerusakan.create', compact('labs'));
+        $labs    = Lab::all();
+        $laporan = new LaporanKerusakan();
+        return view('pages.lab.laporan-kerusakan.create-edit-ajax', compact('labs', 'laporan'));
     }
 
     public function getInventaris(Request $request)
@@ -96,48 +95,33 @@ class LaporanKerusakanController extends Controller
                 ];
             })->filter()->values();
 
-            return response()->json(['data' => $results]);
+            return jsonSuccess('Data retrieved', null, ['data' => $results]);
         } catch (\Exception $e) {
             return response()->json(['data' => []]);
         }
     }
 
-    public function store(Request $request)
+    public function store(LaporanKerusakanRequest $request)
     {
-        $request->validate([
-            'lab_id'              => 'required',
-            'inventaris_id'       => 'required',
-            'deskripsi_kerusakan' => 'required|string',
-            'bukti_foto'          => 'nullable|image|max:2048',
-        ]);
-
         try {
-            $data = $request->except('bukti_foto');
-            // We don't pass lab_id to service as it is not in LaporanKerusakan model,
-            // but we needed it for the dropdown.
-            // $data['lab_id'] = decryptId($request->lab_id);
-
+            $data                  = $request->except('bukti_foto');
             $data['inventaris_id'] = decryptId($request->inventaris_id);
 
             if ($request->hasFile('bukti_foto')) {
-                $path               = $request->file('bukti_foto')->store('laporan-kerusakan', 'public');
-                $data['bukti_foto'] = $path;
+                $data['bukti_foto'] = $request->file('bukti_foto')->store('laporan-kerusakan', 'public');
             }
 
-            $this->service->createLaporan($data);
+            $this->laporanKerusakanService->createLaporan($data);
             return jsonSuccess('Laporan berhasil dikirim', route('lab.laporan-kerusakan.index'));
         } catch (\Exception $e) {
-            return jsonError('Gagal mengirim laporan: ' . $e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal mengirim laporan: ' . $e->getMessage());
         }
     }
 
-    public function show($id)
+    public function show(LaporanKerusakan $laporanKerusakan)
     {
-        $laporan = $this->service->getLaporanById(decryptId($id));
-        if (! $laporan) {
-            abort(404);
-        }
-
+        $laporan = $laporanKerusakan->load(['inventaris.lab', 'createdBy', 'teknisi']);
         return view('pages.lab.laporan-kerusakan.show', compact('laporan'));
     }
 }

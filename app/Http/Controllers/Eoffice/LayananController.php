@@ -10,18 +10,15 @@ use App\Services\Eoffice\LayananService;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class LayananController extends Controller
 {
-    protected $LayananService;
-
-    public function __construct(LayananService $LayananService)
-    {
-        $this->LayananService = $LayananService;
-    }
+    public function __construct(protected LayananService $LayananService)
+    {}
 
     /**
      * List of requests (For User or Admin/PIC)
@@ -64,9 +61,9 @@ class LayananController extends Controller
                 return '<span class="badge ' . $class . '">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                return '<a href="' . route('eoffice.layanan.show', $row->hashid) . '" class="btn btn-sm btn-outline-primary">
-                            <i class="ti ti-eye"></i> Detail
-                        </a>';
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl' => route('eoffice.layanan.show', $row->hashid),
+                ])->render();
             })
             ->rawColumns(['status_label', 'action'])
             ->make(true);
@@ -93,7 +90,7 @@ class LayananController extends Controller
     {
         $pageTitle = 'Pengajuan: ' . $jenisLayanan->nama_layanan;
 
-        return view('pages.eoffice.layanan.create', compact('pageTitle', 'jenisLayanan'));
+        return view('pages.eoffice.layanan.create-edit-ajax', compact('pageTitle', 'jenisLayanan'));
     }
 
     /**
@@ -130,7 +127,8 @@ class LayananController extends Controller
             $this->LayananService->createLayanan($data, $dynamicFields);
             return jsonSuccess('Pengajuan berhasil dikirim.', route('eoffice.layanan.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal mengirim pengajuan: ' . $e->getMessage());
         }
     }
 
@@ -210,10 +208,7 @@ class LayananController extends Controller
         return view('pages.eoffice.layanan.show', compact('pageTitle', 'layanan', 'dataIsian', 'canAction', 'nextDisposisi'));
     }
 
-    /**
-     * Update status (Disposition)
-     */
-    public function updateStatus(LayananStatusUpdateRequest $request, $id)
+    public function updateStatus(LayananStatusUpdateRequest $request, Layanan $layanan)
     {
         $data = $request->only(['status_layanan', 'keterangan']);
 
@@ -222,11 +217,11 @@ class LayananController extends Controller
         }
 
         try {
-            $realId = decryptId($id);
-            $this->LayananService->updateStatus($realId, $data);
+            $this->LayananService->updateStatus($layanan->layanan_id, $data);
             return jsonSuccess('Status berhasil dirubah.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal merubah status: ' . $e->getMessage());
         }
     }
 

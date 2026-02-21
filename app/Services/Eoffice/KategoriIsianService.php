@@ -28,10 +28,9 @@ class KategoriIsianService
      */
     public function createKategori($data)
     {
-        if (isset($data['type_value']) && is_array($data['type_value'])) {
-            // Handle array if needed, but model might handle it via casts
-        }
-        return KategoriIsian::create($data);
+        $kategori = KategoriIsian::create($data);
+        logActivity('eoffice', "Menambah kategori isian: {$kategori->nama_isian}");
+        return $kategori;
     }
 
     /**
@@ -41,6 +40,7 @@ class KategoriIsianService
     {
         $kategori = KategoriIsian::findOrFail($id);
         $kategori->update($data);
+        logActivity('eoffice', "Memperbarui kategori isian: {$kategori->nama_isian}");
         return $kategori;
     }
 
@@ -56,7 +56,10 @@ class KategoriIsianService
             throw new Exception('Kategori Isian tidak dapat dihapus karena sedang digunakan oleh jenis layanan.');
         }
 
-        return $kategori->delete();
+        $nama = $kategori->nama_isian;
+        $kategori->delete();
+        logActivity('eoffice', "Menghapus kategori isian: {$nama}");
+        return true;
     }
 
     /**

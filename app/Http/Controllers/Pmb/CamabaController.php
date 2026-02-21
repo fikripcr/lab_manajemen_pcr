@@ -5,54 +5,30 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pmb\ConfirmPaymentRequest;
 use App\Http\Requests\Pmb\FileUploadRequest;
 use App\Http\Requests\Pmb\StoreRegistrationRequest;
-use App\Models\Cbt\JadwalUjian;
-use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\Pendaftaran;
-use App\Models\Pmb\SyaratDokumenJalur;
-use App\Models\Shared\StrukturOrganisasi;
 use App\Services\Pmb\CamabaService;
 use App\Services\Pmb\PeriodeService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 // Use OrgUnit
 
 class CamabaController extends Controller
 {
-    protected $CamabaService;
-    protected $PeriodeService;
-
-    public function __construct(CamabaService $CamabaService, PeriodeService $PeriodeService)
-    {
-        $this->CamabaService  = $CamabaService;
-        $this->PeriodeService = $PeriodeService;
-    }
+    public function __construct(
+        protected CamabaService $camabaService,
+        protected PeriodeService $periodeService
+    ) {}
 
     /**
      * Camaba Dashboard
      */
     public function dashboard()
     {
-        $user        = Auth::user();
-        $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'orgUnitDiterima'])
-            ->where('user_id', $user->id)
-            ->latest()
-            ->first();
-
-        $periodeAktif = $this->PeriodeService->getActivePeriode();
-
-        $activeJadwal = null;
-        if ($pendaftaran && in_array($pendaftaran->status_terkini, ['Siap_Ujian', 'Sedang_Ujian'])) {
-            $activeJadwal = JadwalUjian::whereIn('id', function ($query) use ($user) {
-                $query->select('jadwal_id')->from('cbt_peserta_berhak')->where('user_id', $user->id);
-            })
-                ->where('waktu_mulai', '<=', now())
-                ->where('waktu_selesai', '>=', now())
-                ->first();
-        }
-
-        return view('pages.pmb.camaba.dashboard', compact('pendaftaran', 'periodeAktif', 'activeJadwal'));
+        $data = $this->camabaService->getDashboardData(Auth::user());
+        return view('pages.pmb.camaba.dashboard', $data);
     }
 
     /**
@@ -60,27 +36,17 @@ class CamabaController extends Controller
      */
     public function create()
     {
-        $user = Auth::user();
+        $data = $this->camabaService->getRegistrationFormData(Auth::user());
 
-        $periodeAktif = $this->PeriodeService->getActivePeriode();
-        if (! $periodeAktif) {
-            return redirect()->route('pmb.camaba.dashboard')->with('error', 'Tidak ada periode pendaftaran yang aktif saat ini.');
+        if (isset($data['error'])) {
+            return redirect()->route('pmb.camaba.dashboard')->with('error', $data['error']);
         }
 
-        $existing = Pendaftaran::where('user_id', $user->id)
-            ->where('periode_id', $periodeAktif->id)
-            ->first();
-
-        if ($existing) {
-            return redirect()->route('pmb.camaba.dashboard')->with('info', 'Anda sudah memiliki pendaftaran di periode ini.');
+        if (isset($data['info'])) {
+            return redirect()->route('pmb.camaba.dashboard')->with('info', $data['info']);
         }
 
-        $jalur = Jalur::where('is_aktif', true)->get();
-        // Fetch Prodi from StrukturOrganisasi
-        $prodi  = StrukturOrganisasi::where('type', 'Prodi')->orderBy('name')->get();
-        $profil = $user->profilPmb;
-
-        return view('pages.pmb.camaba.register', compact('periodeAktif', 'jalur', 'prodi', 'profil'));
+        return view('pages.pmb.camaba.register', $data);
     }
 
     /**
@@ -89,10 +55,11 @@ class CamabaController extends Controller
     public function store(StoreRegistrationRequest $request)
     {
         try {
-            $this->CamabaService->createRegistration($request->validated());
+            $this->camabaService->createRegistration($request->validated());
             return jsonSuccess('Pendaftaran berhasil dibuat. Silakan lengkapi langkah selanjutnya.', route('pmb.camaba.dashboard'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal membuat pendaftaran: ' . $e->getMessage());
         }
     }
 
@@ -101,27 +68,25 @@ class CamabaController extends Controller
      */
     public function payment()
     {
-        $user        = Auth::user();
-        $pendaftaran = Pendaftaran::with('jalur')
-            ->where('user_id', $user->id)
-            ->where('status_terkini', 'Draft')
-            ->latest()
-            ->firstOrFail();
-
-        return view('pages.pmb.camaba.payment', compact('pendaftaran'));
+        try {
+            $pendaftaran = $this->camabaService->getPendingPaymentRegistration(Auth::user());
+            return view('pages.pmb.camaba.payment', compact('pendaftaran'));
+        } catch (Exception $e) {
+            return redirect()->route('pmb.camaba.dashboard')->with('error', $e->getMessage());
+        }
     }
 
     /**
      * Confirm Payment
      */
-    public function confirmPayment(ConfirmPaymentRequest $request)
+    public function confirmPayment(ConfirmPaymentRequest $request, Pendaftaran $pendaftaran)
     {
         try {
-            $pendaftaran = Pendaftaran::findOrFail($request->pendaftaran_id);
-            $this->CamabaService->confirmPayment($pendaftaran, $request->validated(), $request->file('bukti_bayar'));
+            $this->camabaService->confirmPayment($pendaftaran, $request->validated(), $request->file('bukti_bayar'));
             return jsonSuccess('Konfirmasi pembayaran berhasil dikirim.', route('pmb.camaba.dashboard'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal mengirim konfirmasi pembayaran: ' . $e->getMessage());
         }
     }
 
@@ -130,18 +95,12 @@ class CamabaController extends Controller
      */
     public function upload()
     {
-        $user        = Auth::user();
-        $pendaftaran = Pendaftaran::with(['jalur', 'dokumenUpload.jenisDokumen'])
-            ->where('user_id', $user->id)
-            ->whereIn('status_terkini', ['Menunggu_Verifikasi_Berkas', 'Draft_Berkas', 'Revisi_Berkas'])
-            ->latest()
-            ->firstOrFail();
-
-        $syarat = SyaratDokumenJalur::with('jenisDokumen')
-            ->where('jalur_id', $pendaftaran->jalur_id)
-            ->get();
-
-        return view('pages.pmb.camaba.upload', compact('pendaftaran', 'syarat'));
+        try {
+            $data = $this->camabaService->getUploadData(Auth::user());
+            return view('pages.pmb.camaba.upload', $data);
+        } catch (Exception $e) {
+            return redirect()->route('pmb.camaba.dashboard')->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -149,9 +108,9 @@ class CamabaController extends Controller
      */
     public function uploadForm(Request $request)
     {
-        $pendaftaran_id   = $request->pendaftaran;
-        $jenis_dokumen_id = $request->jenis;
-        $jenis            = JenisDokumen::findOrFail(decryptId($jenis_dokumen_id));
+        $pendaftaran_id   = $request->input('pendaftaran');
+        $jenis_dokumen_id = $request->input('jenis');
+        $jenis            = JenisDokumen::findOrFail(decryptIdIfEncrypted($jenis_dokumen_id));
 
         return view('pages.pmb.camaba.upload_form', compact('pendaftaran_id', 'jenis_dokumen_id', 'jenis'));
     }
@@ -159,28 +118,28 @@ class CamabaController extends Controller
     /**
      * Do Upload
      */
-    public function doUpload(FileUploadRequest $request)
+    public function doUpload(FileUploadRequest $request, Pendaftaran $pendaftaran, JenisDokumen $jenis)
     {
         try {
-            $pendaftaran = Pendaftaran::findOrFail($request->pendaftaran_id);
-            $this->CamabaService->uploadFile($pendaftaran, $request->jenis_dokumen_id, $request->file('file'));
+            $this->camabaService->uploadFile($pendaftaran, $jenis->jenis_dokumen_id, $request->file('file'));
             return jsonSuccess('Dokumen berhasil diunggah.', route('pmb.camaba.upload'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal mengunggah dokumen: ' . $e->getMessage());
         }
     }
 
     /**
      * Finalize Upload
      */
-    public function finalizeFiles(Request $request)
+    public function finalizeFiles(Pendaftaran $pendaftaran)
     {
         try {
-            $pendaftaran = Pendaftaran::findOrFail(decryptId($request->pendaftaran_id));
-            $this->CamabaService->finalizeFiles($pendaftaran);
+            $this->camabaService->finalizeFiles($pendaftaran);
             return jsonSuccess('Berkas pendaftaran telah diajukan untuk verifikasi.', route('pmb.camaba.dashboard'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memfinalisasi berkas: ' . $e->getMessage());
         }
     }
 
@@ -189,12 +148,11 @@ class CamabaController extends Controller
      */
     public function examCard()
     {
-        $user        = Auth::user();
-        $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'pesertaUjian.sesiUjian'])
-            ->where('user_id', $user->id)
-            ->latest()
-            ->firstOrFail();
-
-        return view('pages.pmb.camaba.exam-card', compact('pendaftaran'));
+        try {
+            $pendaftaran = $this->camabaService->getExamCardData(Auth::user());
+            return view('pages.pmb.camaba.exam-card', compact('pendaftaran'));
+        } catch (Exception $e) {
+            return redirect()->route('pmb.camaba.dashboard')->with('error', $e->getMessage());
+        }
     }
 }

@@ -6,22 +6,17 @@ use App\Http\Requests\Lab\LabRequest;
 use App\Models\Lab\Lab; // Still needed for type hinting or specific direct queries if any (e.g., DataTables if not via Service)
 use App\Services\Lab\LabService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 
 class LabController extends Controller
 {
-    protected $LabService;
-
-    public function __construct(LabService $LabService)
-    {
-        $this->LabService = $LabService;
-    }
+    public function __construct(protected LabService $labService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.lab.labs.index');
     }
@@ -32,7 +27,7 @@ class LabController extends Controller
     public function paginate(Request $request)
     {
         // Use Service Query
-        $labs = $this->LabService->getFilteredQuery($request->all());
+        $labs = $this->labService->getFilteredQuery($request->all());
 
         return DataTables::of($labs)
             ->addIndexColumn()
@@ -57,7 +52,8 @@ class LabController extends Controller
      */
     public function create()
     {
-        return view('pages.lab.labs.create');
+        $lab = new Lab();
+        return view('pages.lab.labs.create-edit-ajax', compact('lab'));
     }
 
     /**
@@ -65,94 +61,73 @@ class LabController extends Controller
      */
     public function store(LabRequest $request)
     {
-        // Validated data
-        $data = $request->validated();
-
-        // Add files to data array for Service to handle
-        if ($request->hasFile('lab_images')) {
-            $data['lab_images'] = $request->file('lab_images');
-        }
-        if ($request->hasFile('lab_attachments')) {
-            $data['lab_attachments'] = $request->file('lab_attachments');
-        }
-
         try {
-            $this->LabService->createLab($data);
+            $data = $request->validated();
+            if ($request->hasFile('lab_images')) {
+                $data['lab_images'] = $request->file('lab_images');
+            }
+            if ($request->hasFile('lab_attachments')) {
+                $data['lab_attachments'] = $request->file('lab_attachments');
+            }
+
+            $this->labService->createLab($data);
             return jsonSuccess('Lab berhasil ditambahkan.', route('lab.labs.index'));
         } catch (\Exception $e) {
-            Log::error('Error creation lab: ' . $e->getMessage());
-            return jsonError('Gagal membuat lab: ' . $e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal membuat lab: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Lab $lab)
     {
-        $realId = decryptId($id);
-
-        $lab = $this->LabService->getLabById($realId); // Uses Service
-        if (! $lab) {
-            abort(404);
-        }
-
+        $lab->load(['labTeams.user', 'labInventaris.inventaris', 'media']);
         return view('pages.lab.labs.show', compact('lab'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Lab $lab)
     {
-        $realId = decryptId($id);
-
-        $lab = $this->LabService->getLabById($realId);
-        if (! $lab) {
-            abort(404);
-        }
-
-        return view('pages.lab.labs.edit', compact('lab'));
+        return view('pages.lab.labs.create-edit-ajax', compact('lab'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(LabRequest $request, $id)
+    public function update(LabRequest $request, Lab $lab)
     {
-        $realId = decryptId($id);
-        $data   = $request->validated();
-
-        // Add files to data array
-        if ($request->hasFile('lab_images')) {
-            $data['lab_images'] = $request->file('lab_images');
-        }
-        if ($request->hasFile('lab_attachments')) {
-            $data['lab_attachments'] = $request->file('lab_attachments');
-        }
-
         try {
-            $this->LabService->updateLab($realId, $data);
+            $data = $request->validated();
+            if ($request->hasFile('lab_images')) {
+                $data['lab_images'] = $request->file('lab_images');
+            }
+            if ($request->hasFile('lab_attachments')) {
+                $data['lab_attachments'] = $request->file('lab_attachments');
+            }
 
+            $this->labService->updateLab($lab, $data);
             return jsonSuccess('Lab berhasil diperbarui.', route('lab.labs.index'));
         } catch (\Exception $e) {
-            return jsonError('Gagal memperbarui lab: ' . $e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui lab: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Lab $lab)
     {
         try {
-            $realId = decryptId($id);
-            $this->LabService->deleteLab($realId);
-
+            $this->labService->deleteLab($lab);
             return jsonSuccess('Lab berhasil dihapus.', route('lab.labs.index'));
-
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus lab: ' . $e->getMessage());
         }
     }
 }

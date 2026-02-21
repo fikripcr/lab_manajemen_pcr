@@ -57,11 +57,10 @@ class PengumumanService
     /**
      * Update an existing Pengumuman
      */
-    public function updatePengumuman(string $id, array $data): bool
+    public function updatePengumuman(Pengumuman $pengumuman, array $data): bool
     {
-        return DB::transaction(function () use ($id, $data) {
-            $pengumuman = $this->findOrFail($id);
-            $oldTitle   = $pengumuman->judul;
+        return DB::transaction(function () use ($pengumuman, $data) {
+            $oldTitle = $pengumuman->judul;
 
             $isPublished = $data['is_published'] ?? false;
 
@@ -69,16 +68,6 @@ class PengumumanService
                 'judul'        => $data['judul'],
                 'isi'          => $data['isi'],
                 'is_published' => $isPublished,
-                // Update published_at only if status changes to published?
-                // Or if it was drafted? Existing logic: if published now, set now.
-                // If it was already published, should we keep original date?
-                // Existing controller: if published ? now() : $pengumuman->published_at.
-                // This means every update to a published item updates the date to NOW.
-                // Maybe better: use $data['published_at'] if provided, or verify logic.
-                // Controller logic was: 'published_at' => $isPublished ? now() : $pengumuman->published_at
-                // Wait, if $isPublished is true, it sets now(). If false, it keeps old date (which might be null or old date).
-                // If I unpublish, it keeps old date? That seems okay.
-                // If I republish, it updates to now.
                 'published_at' => $isPublished ? now() : $pengumuman->published_at,
             ]);
 
@@ -97,18 +86,17 @@ class PengumumanService
     /**
      * Delete a Pengumuman
      */
-    public function deletePengumuman(string $id): string
+    public function deletePengumuman(Pengumuman $pengumuman): bool
     {
-        return DB::transaction(function () use ($id) {
-            $pengumuman = $this->findOrFail($id);
-            $jenis      = $pengumuman->jenis;
-            $judul      = $pengumuman->judul;
+        return DB::transaction(function () use ($pengumuman) {
+            $jenis = $pengumuman->jenis;
+            $judul = $pengumuman->judul;
 
             $pengumuman->delete();
 
             logActivity('pengumuman_management', "Menghapus {$jenis}: {$judul}");
 
-            return $jenis;
+            return true;
         });
     }
 

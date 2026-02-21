@@ -10,24 +10,20 @@ use Yajra\DataTables\DataTables;
 
 class SemesterController extends Controller
 {
-    protected $SemesterService;
-
-    public function __construct(SemesterService $SemesterService)
-    {
-        $this->SemesterService = $SemesterService;
-    }
+    public function __construct(protected SemesterService $semesterService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.lab.semesters.index');
     }
 
     public function paginate(Request $request)
     {
-        $semesters = $this->SemesterService->getFilteredQuery($request->all());
+        $semesters = $this->semesterService->getFilteredQuery($request->all());
 
         return DataTables::of($semesters)
             ->addIndexColumn()
@@ -55,7 +51,7 @@ class SemesterController extends Controller
             })
             ->addColumn('action', function ($semester) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.semesters.edit-modal.show', $semester->encrypted_semester_id),
+                    'editUrl'   => route('lab.semesters.edit', $semester->encrypted_semester_id),
                     'editModal' => true,
                     'viewUrl'   => route('lab.semesters.show', $semester->encrypted_semester_id),
                     'deleteUrl' => route('lab.semesters.destroy', $semester->encrypted_semester_id),
@@ -70,7 +66,8 @@ class SemesterController extends Controller
      */
     public function create()
     {
-        return view('pages.lab.semesters.create');
+        $semester = new Semester();
+        return view('pages.lab.semesters.create-edit-ajax', compact('semester'));
     }
 
     /**
@@ -78,7 +75,8 @@ class SemesterController extends Controller
      */
     public function createModal()
     {
-        return view('pages.lab.semesters.create-ajax');
+        $semester = new Semester();
+        return view('pages.lab.semesters.create-edit-ajax', compact('semester'));
     }
 
     /**
@@ -87,88 +85,52 @@ class SemesterController extends Controller
     public function store(SemesterRequest $request)
     {
         try {
-            $this->SemesterService->createSemester($request->validated());
-
+            $this->semesterService->createSemester($request->validated());
             return jsonSuccess('Semester berhasil dibuat.', route('lab.semesters.index'));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal membuat semester: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Semester $semester)
     {
-        $realId   = decryptId($id);
-        $semester = $this->SemesterService->getSemesterById($realId);
-
-        if (! $semester) {
-            abort(404);
-        }
-
         return view('pages.lab.semesters.show', compact('semester'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Semester $semester)
     {
-        $realId   = decryptId($id);
-        $semester = $this->SemesterService->getSemesterById($realId);
-
-        if (! $semester) {
-            abort(404);
-        }
-
-        return view('pages.lab.semesters.edit', compact('semester'));
+        return view('pages.lab.semesters.create-edit-ajax', compact('semester'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(SemesterRequest $request, $id)
+    public function update(SemesterRequest $request, Semester $semester)
     {
-        $realId = decryptId($id);
-
         try {
-            $this->SemesterService->updateSemester($realId, $request->validated());
-
+            $this->semesterService->updateSemester($semester, $request->validated());
             return jsonSuccess('Semester berhasil diperbarui.', route('lab.semesters.index'));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui semester: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Show the form for editing the specified resource via modal.
-     */
-    public function editModal($id)
-    {
-        $realId   = decryptId($id);
-        $semester = $this->SemesterService->getSemesterById($realId);
-
-        if (! $semester) {
-            return jsonError('Semester not found', 404);
-        }
-
-        return view('pages.lab.semesters.edit-ajax', compact('semester'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy(Semester $semester)
     {
         try {
-            $realId = decryptId($id);
-            $this->SemesterService->deleteSemester($realId);
-
+            $this->semesterService->deleteSemester($semester);
             return jsonSuccess('Semester deleted successfully.', route('lab.semesters.index'));
-
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus semester: ' . $e->getMessage());
         }
     }
 }

@@ -1,22 +1,14 @@
 <?php
 namespace App\Http\Controllers\Lab;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\PcAssignmentRequest;
 use App\Models\Lab\JadwalKuliah;
-use App\Models\Lab\PcAssignment;
-use App\Models\User;
-use App\Services\Lab\PcAssignmentService;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class PcAssignmentController extends Controller
 {
-    protected $PcAssignmentService;
-
-    public function __construct(PcAssignmentService $PcAssignmentService)
-    {
-        $this->PcAssignmentService = $PcAssignmentService;
-    }
+    public function __construct(protected PcAssignmentService $pcAssignmentService)
+    {}
 
     /**
      * Display a listing of the resource.
@@ -36,7 +28,7 @@ class PcAssignmentController extends Controller
     {
         $realJadwalId = decryptId($jadwalId);
 
-        $assignments = $this->PcAssignmentService->getAssignmentsByJadwalQuery($realJadwalId);
+        $assignments = $this->pcAssignmentService->getAssignmentsByJadwalQuery($realJadwalId);
 
         return DataTables::of($assignments)
             ->addIndexColumn()
@@ -61,64 +53,48 @@ class PcAssignmentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($jadwalId)
+    public function create(JadwalKuliah $jadwal)
     {
-        $realJadwalId = decryptId($jadwalId);
-        $jadwal       = JadwalKuliah::with(['lab'])->findOrFail($realJadwalId);
-
-        // Ambil mahasiswa (User dengan role mahasiswa)
+        $jadwal->load(['lab']);
         $mahasiswas = User::whereHas('roles', function ($q) {
             $q->where('name', 'mahasiswa');
         })->orderBy('name')->get();
 
-        // Generate list nomor PC yang tersedia (1 s/d misal 40)
-        // Harusnya cek kapasitas Lab. Anggap default 40 check lab capacity nanti.
-        $totalPc = 40;
-
-        // Cek assignment yang sudah ada
-        $assignedPcs = PcAssignment::where('jadwal_id', $realJadwalId)
+        $totalPc     = 40;
+        $assignedPcs = PcAssignment::where('jadwal_id', $jadwal->jadwal_kuliah_id)
             ->where('is_active', true)
             ->pluck('nomor_pc')
             ->toArray();
 
-        return view('pages.lab.pc-assignments.create', compact('jadwal', 'mahasiswas', 'totalPc', 'assignedPcs'));
+        $assignment = new PcAssignment();
+        return view('pages.lab.pc-assignments.create-edit-ajax', compact('jadwal', 'mahasiswas', 'totalPc', 'assignedPcs', 'assignment'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, $jadwalId)
+    public function store(PcAssignmentRequest $request, JadwalKuliah $jadwal)
     {
-        $realJadwalId = decryptId($jadwalId);
-        $jadwal       = JadwalKuliah::findOrFail($realJadwalId);
-
-        $request->validate([
-            'user_id'     => 'required|exists:users,id',
-            'nomor_pc'    => 'required|integer|min:1',
-            'nomor_loker' => 'nullable|integer',
-        ]);
-
         try {
-            $this->PcAssignmentService->createAssignment($realJadwalId, $jadwal->lab_id, $request->all());
-
-            return jsonSuccess('Assignment berhasil dibuat.', route('lab.jadwal.assignments.index', $jadwalId));
+            $this->pcAssignmentService->createAssignment($jadwal, $request->validated());
+            return jsonSuccess('Assignment berhasil dibuat.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500); // 422 if validation error logic in service
+            logError($e);
+            return jsonError('Gagal membuat assignment: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($jadwalId, $id)
+    public function destroy(JadwalKuliah $jadwal, PcAssignment $assignment)
     {
         try {
-            $realId = decryptId($id);
-            $this->PcAssignmentService->deleteAssignment($realId);
-
-            return jsonSuccess('Assignment berhasil dihapus.', route('lab.jadwal.assignments.index', $jadwalId));
+            $this->pcAssignmentService->deleteAssignment($assignment);
+            return jsonSuccess('Assignment berhasil dihapus.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus assignment: ' . $e->getMessage());
         }
     }
 }

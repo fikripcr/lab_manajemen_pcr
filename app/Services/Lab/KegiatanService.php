@@ -78,13 +78,8 @@ class KegiatanService
         });
     }
 
-    public function updateStatus($id, $status, $catatan = null)
+    public function updateStatus(Kegiatan $kegiatan, $status, $catatan = null)
     {
-        $kegiatan = Kegiatan::find($id);
-        if (! $kegiatan) {
-            throw new Exception('Booking tidak ditemukan');
-        }
-
         return DB::transaction(function () use ($kegiatan, $status, $catatan) {
             // Create New Approval Record
             $approval = \App\Models\Lab\LabRiwayatApproval::create([
@@ -102,7 +97,7 @@ class KegiatanService
                 'latest_riwayatapproval_id' => $approval->riwayatapproval_id,
             ]);
 
-            logActivity('peminjaman_lab', "Update status booking ID {$id} menjadi {$status}");
+            logActivity('peminjaman_lab', "Update status booking ID {$kegiatan->kegiatan_id} menjadi {$status}");
             return $kegiatan;
         });
     }

@@ -12,7 +12,9 @@ class PeriodeService
      */
     public function store(array $data): PeriodeKpi
     {
-        return PeriodeKpi::create($data);
+        $periode = PeriodeKpi::create($data);
+        logActivity('pemutu', "Menambah periode KPI baru: {$periode->nama}");
+        return $periode;
     }
 
     /**
@@ -20,7 +22,12 @@ class PeriodeService
      */
     public function update(PeriodeKpi $periode, array $data): bool
     {
-        return $periode->update($data);
+        $oldNama = $periode->nama;
+        $updated = $periode->update($data);
+        if ($updated) {
+            logActivity('pemutu', "Memperbarui periode KPI: {$oldNama}" . ($oldNama !== $periode->nama ? " menjadi {$periode->nama}" : ""));
+        }
+        return $updated;
     }
 
     /**
@@ -31,7 +38,12 @@ class PeriodeService
         if ($periode->is_active) {
             throw new Exception('Tidak dapat menghapus periode yang sedang aktif.');
         }
-        return $periode->delete();
+        $nama    = $periode->nama;
+        $deleted = $periode->delete();
+        if ($deleted) {
+            logActivity('pemutu', "Menghapus periode KPI: {$nama}");
+        }
+        return $deleted;
     }
 
     /**
@@ -44,6 +56,7 @@ class PeriodeService
             PeriodeKpi::where('is_active', true)->update(['is_active' => false]);
             // Activate this period
             $periode->update(['is_active' => true]);
+            logActivity('pemutu', "Mengaktifkan periode KPI: {$periode->nama}");
         });
     }
 }

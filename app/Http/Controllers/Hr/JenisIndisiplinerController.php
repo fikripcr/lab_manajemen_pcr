@@ -33,7 +33,8 @@ class JenisIndisiplinerController extends Controller
 
     public function create()
     {
-        return view('pages.hr.jenis-indisipliner.create');
+        $jenisIndisipliner = new JenisIndisipliner();
+        return view('pages.hr.jenis-indisipliner.create-edit-ajax', compact('jenisIndisipliner'));
     }
 
     public function store(JenisIndisiplinerRequest $request)
@@ -51,7 +52,7 @@ class JenisIndisiplinerController extends Controller
     public function edit(JenisIndisipliner $jenis_indisipliner)
     {
         $jenisIndisipliner = $jenis_indisipliner;
-        return view('pages.hr.jenis-indisipliner.edit', compact('jenisIndisipliner'));
+        return view('pages.hr.jenis-indisipliner.create-edit-ajax', compact('jenisIndisipliner'));
     }
 
     public function update(JenisIndisiplinerRequest $request, JenisIndisipliner $jenis_indisipliner)

@@ -2,38 +2,41 @@
 namespace App\Services\Pmb;
 
 use App\Models\Pmb\Periode;
-use Illuminate\Http\Request;
 
 class PeriodeService
 {
-    public function getPaginateData(Request $request)
+    public function getPaginateData(array $filters = [])
     {
         $query = Periode::query();
 
-        if ($request->filled('search.value')) {
-            $search = $request->input('search.value');
+        if (! empty($filters['search']['value'])) {
+            $search = $filters['search']['value'];
             $query->where('nama_periode', 'like', "%{$search}%");
         }
 
         return $query->latest();
     }
 
-    public function createPeriode(array $data)
+    public function createPeriode(array $data): Periode
     {
-        return Periode::create($data);
-    }
-
-    public function updatePeriode($id, array $data)
-    {
-        $periode = Periode::findOrFail($id);
-        $periode->update($data);
+        $periode = Periode::create($data);
+        logActivity('pmb_periode', "Menambahkan periode baru: {$periode->nama_periode}", $periode);
         return $periode;
     }
 
-    public function deletePeriode($id)
+    public function updatePeriode(Periode $periode, array $data): bool
     {
-        $periode = Periode::findOrFail($id);
-        return $periode->delete();
+        $periode->update($data);
+        logActivity('pmb_periode', "Memperbarui periode: {$periode->nama_periode}", $periode);
+        return true;
+    }
+
+    public function deletePeriode(Periode $periode): bool
+    {
+        $nama = $periode->nama_periode;
+        $periode->delete();
+        logActivity('pmb_periode', "Menghapus periode: {$nama}");
+        return true;
     }
 
     public function getActivePeriode()

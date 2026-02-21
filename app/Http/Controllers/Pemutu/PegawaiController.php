@@ -11,12 +11,8 @@ use Yajra\DataTables\DataTables;
 
 class PegawaiController extends Controller
 {
-    protected $PegawaiService;
-
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
     public function index()
     {
@@ -25,7 +21,7 @@ class PegawaiController extends Controller
 
     public function paginate()
     {
-        $query = $this->PegawaiService->getFilteredQuery();
+        $query = $this->pegawaiService->getFilteredQuery();
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -37,9 +33,9 @@ class PegawaiController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.pegawai.edit', $row->pegawai_id),
+                    'editUrl'   => route('pemutu.pegawai.edit', $row->encrypted_pegawai_id),
                     'editModal' => true,
-                    'deleteUrl' => route('pemutu.pegawai.destroy', $row->pegawai_id),
+                    'deleteUrl' => route('pemutu.pegawai.destroy', $row->encrypted_pegawai_id),
                 ])->render();
             })
             ->rawColumns(['user_id', 'action'])
@@ -56,44 +52,49 @@ class PegawaiController extends Controller
     public function store(PegawaiRequest $request)
     {
         try {
-            $this->PegawaiService->createPegawai($request->validated());
+            $this->pegawaiService->createPegawai($request->validated());
+
+            logActivity('pemutu', "Menambah pegawai baru: " . ($request->nama ?? ''));
 
             return jsonSuccess('Pegawai created successfully.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan pegawai: ' . $e->getMessage());
         }
     }
 
-    public function edit($id)
+    public function edit(\App\Models\Shared\Pegawai $pegawai)
     {
-        $pegawai = $this->PegawaiService->getPegawaiById($id);
-        if (! $pegawai) {
-            abort(404);
-        }
-
         $units = OrgUnit::orderBy('name')->get();
         return view('pages.pemutu.pegawai.create-edit-ajax', compact('pegawai', 'units'));
     }
 
-    public function update(PegawaiRequest $request, $id)
+    public function update(PegawaiRequest $request, \App\Models\Shared\Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->updatePegawai($id, $request->validated());
+            $this->pegawaiService->updatePegawai($pegawai->pegawai_id, $request->validated());
+
+            logActivity('pemutu', "Memperbarui data pegawai: {$pegawai->nama}");
 
             return jsonSuccess('Pegawai updated successfully.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui pegawai: ' . $e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(\App\Models\Shared\Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->deletePegawai($id);
+            $pegawaiName = $pegawai->nama;
+            $this->pegawaiService->deletePegawai($pegawai->pegawai_id);
+
+            logActivity('pemutu', "Menghapus pegawai: {$pegawaiName}");
 
             return jsonSuccess('Pegawai deleted successfully.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus pegawai: ' . $e->getMessage());
         }
     }
 
@@ -104,11 +105,14 @@ class PegawaiController extends Controller
         }
 
         try {
-            $this->PegawaiService->importPegawai($request->file('file'));
+            $this->pegawaiService->importPegawai($request->file('file'));
+
+            logActivity('pemutu', "Mengimport data pegawai via Excel");
 
             return jsonSuccess('Pegawai imported successfully.', route('pemutu.pegawai.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal mengimport pegawai: ' . $e->getMessage());
         }
     }
 }

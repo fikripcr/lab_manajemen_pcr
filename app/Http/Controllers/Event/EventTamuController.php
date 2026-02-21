@@ -11,9 +11,8 @@ use Yajra\DataTables\DataTables;
 
 class EventTamuController extends Controller
 {
-    public function __construct(
-        protected EventTamuService $eventTamuService
-    ) {}
+    public function __construct(protected EventTamuService $eventTamuService)
+    {}
 
     public function index()
     {
@@ -56,7 +55,8 @@ class EventTamuController extends Controller
             $this->eventTamuService->store($request->validated());
             return jsonSuccess('Data tamu berhasil disimpan');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan data tamu: ' . $e->getMessage());
         }
     }
 
@@ -72,7 +72,8 @@ class EventTamuController extends Controller
             $this->eventTamuService->update($tamu, $request->validated());
             return jsonSuccess('Data tamu berhasil diperbarui');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui data tamu: ' . $e->getMessage());
         }
     }
 
@@ -82,7 +83,8 @@ class EventTamuController extends Controller
             $this->eventTamuService->destroy($tamu);
             return jsonSuccess('Data tamu berhasil dihapus');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus data tamu: ' . $e->getMessage());
         }
     }
 
@@ -104,7 +106,8 @@ class EventTamuController extends Controller
             $this->eventTamuService->storeFromPublic($validated);
             return jsonSuccess('Terima kasih, data Anda telah berhasil disimpan.');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menyimpan pendaftaran: ' . $e->getMessage());
         }
     }
 }

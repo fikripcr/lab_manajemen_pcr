@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\PegawaiRequest;
+use App\Http\Requests\Shared\SearchRequest;
 use App\Models\Hr\OrgUnit;
 use App\Models\Hr\StatusAktifitas;
 use App\Models\Hr\StatusPegawai;
@@ -14,19 +15,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PegawaiController extends Controller
 {
-    protected $PegawaiService;
-
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
     /**
      * Search pegawai for Select2 AJAX.
      */
-    public function select2Search(Request $request)
+    public function select2Search(SearchRequest $request)
     {
-        $search = $request->input('q', '');
+        $search = $request->validated('q', '');
         $query  = Pegawai::with('latestDataDiri')
             ->whereHas('latestDataDiri', function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
@@ -51,7 +48,7 @@ class PegawaiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->PegawaiService->getFilteredQuery($request);
+            $query = $this->pegawaiService->getFilteredQuery($request);
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -121,7 +118,7 @@ class PegawaiController extends Controller
     public function store(PegawaiRequest $request)
     {
         try {
-            $this->PegawaiService->createPegawai($request->validated());
+            $this->pegawaiService->createPegawai($request->validated());
             return jsonSuccess('Pegawai berhasil ditambahkan', route('hr.pegawai.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -189,7 +186,7 @@ class PegawaiController extends Controller
     {
         try {
             // Request Change Logic
-            $this->PegawaiService->requestDataDiriChange($pegawai, $request->validated());
+            $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
             return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -202,7 +199,7 @@ class PegawaiController extends Controller
     public function destroy(Pegawai $pegawai)
     {
         try {
-            $pegawai->delete();
+            $this->pegawaiService->delete($pegawai->pegawai_id);
             return jsonSuccess('Pegawai berhasil dihapus');
         } catch (Exception $e) {
             return jsonError($e->getMessage());

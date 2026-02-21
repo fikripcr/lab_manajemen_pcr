@@ -10,12 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StatusAktifitasController extends Controller
 {
-    protected $StatusAktifitasService;
-
-    public function __construct(StatusAktifitasService $StatusAktifitasService)
-    {
-        $this->StatusAktifitasService = $StatusAktifitasService;
-    }
+    public function __construct(protected StatusAktifitasService $statusAktifitasService)
+    {}
 
     public function index()
     {
@@ -50,15 +46,16 @@ class StatusAktifitasController extends Controller
 
     public function create()
     {
-        return view('pages.hr.status-aktifitas.create');
+        return view('pages.hr.status-aktifitas.create-edit-ajax');
     }
 
     public function store(StatusAktifitasRequest $request)
     {
         try {
-            $this->StatusAktifitasService->create($request->validated());
+            $this->statusAktifitasService->create($request->validated());
             return jsonSuccess('Status Aktifitas created successfully.');
         } catch (Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -66,15 +63,16 @@ class StatusAktifitasController extends Controller
     public function edit(StatusAktifitas $status_aktifita)
     {
         $statusAktifitas = $status_aktifita;
-        return view('pages.hr.status-aktifitas.edit', compact('statusAktifitas'));
+        return view('pages.hr.status-aktifitas.create-edit-ajax', compact('statusAktifitas'));
     }
 
     public function update(StatusAktifitasRequest $request, StatusAktifitas $status_aktifita)
     {
         try {
-            $this->StatusAktifitasService->update($status_aktifita, $request->validated());
+            $this->statusAktifitasService->update($status_aktifita, $request->validated());
             return jsonSuccess('Status Aktifitas updated successfully.');
         } catch (Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -85,6 +83,7 @@ class StatusAktifitasController extends Controller
             $status_aktifita->delete();
             return jsonSuccess('Status Aktifitas deleted successfully.');
         } catch (Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }

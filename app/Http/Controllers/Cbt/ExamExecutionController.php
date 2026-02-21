@@ -2,21 +2,22 @@
 namespace App\Http\Controllers\Cbt;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Cbt\LogViolationRequest;
 use App\Http\Requests\Cbt\SaveAnswerRequest;
+use App\Http\Requests\Cbt\StartExamRequest;
+use App\Http\Requests\Cbt\SubmitExamRequest;
+use App\Http\Requests\Cbt\ValidateTokenRequest;
 use App\Models\Cbt\JadwalUjian;
+use App\Models\Cbt\JawabanSiswa;
+use App\Models\Cbt\LogPelanggaran;
 use App\Models\Cbt\RiwayatUjianSiswa;
 use App\Services\Cbt\ExamExecutionService;
 use Exception;
-use Illuminate\Http\Request;
 
 class ExamExecutionController extends Controller
 {
-    protected $ExamExecutionService;
-
-    public function __construct(ExamExecutionService $ExamExecutionService)
-    {
-        $this->ExamExecutionService = $ExamExecutionService;
-    }
+    public function __construct(protected ExamExecutionService $examExecutionService)
+    {}
 
     /**
      * Unified Dashboard (Admin & Camaba)
@@ -29,7 +30,7 @@ class ExamExecutionController extends Controller
     /**
      * API: Save answer
      */
-    public function saveAnswerApi(Request $request)
+    public function saveAnswerApi(SaveAnswerRequest $request)
     {
         try {
             $user    = auth()->user();
@@ -37,7 +38,7 @@ class ExamExecutionController extends Controller
                 ->where('status', 'Sedang_Mengerjakan')
                 ->firstOrFail();
 
-            $this->ExamExecutionService->saveAnswer($riwayat, $request->all());
+            $this->examExecutionService->saveAnswer($riwayat, $request->validated());
 
             return response()->json(['success' => true]);
         } catch (Exception $e) {
@@ -48,7 +49,7 @@ class ExamExecutionController extends Controller
     /**
      * API: Submit exam
      */
-    public function submitExamApi(Request $request)
+    public function submitExamApi(SubmitExamRequest $request)
     {
         try {
             $user    = auth()->user();
@@ -56,7 +57,7 @@ class ExamExecutionController extends Controller
                 ->where('status', 'Sedang_Mengerjakan')
                 ->firstOrFail();
 
-            $this->ExamExecutionService->submitExam($riwayat);
+            $this->examExecutionService->submitExam($riwayat);
 
             return response()->json([
                 'success'  => true,
@@ -70,7 +71,7 @@ class ExamExecutionController extends Controller
     /**
      * API: Log violation
      */
-    public function logViolationApi(Request $request)
+    public function logViolationApi(LogViolationRequest $request)
     {
         try {
             $user    = auth()->user();
@@ -81,8 +82,8 @@ class ExamExecutionController extends Controller
             if ($riwayat) {
                 \App\Models\Cbt\LogPelanggaran::create([
                     'riwayat_id'        => $riwayat->id,
-                    'jenis_pelanggaran' => $request->type,
-                    'keterangan'        => $request->keterangan ?? null,
+                    'jenis_pelanggaran' => $request->validated('type'),
+                    'keterangan'        => $request->validated('keterangan'),
                     'waktu_kejadian'    => now(),
                 ]);
             }
@@ -121,10 +122,10 @@ class ExamExecutionController extends Controller
     /**
      * Validate token and redirect to exam
      */
-    public function validateToken(Request $request, JadwalUjian $jadwal)
+    public function validateToken(ValidateTokenRequest $request, JadwalUjian $jadwal)
     {
         try {
-            if ($jadwal->token_ujian !== strtoupper($request->token_ujian)) {
+            if ($jadwal->token_ujian !== strtoupper($request->validated('token_ujian'))) {
                 return jsonError('Token yang Anda masukkan salah.');
             }
 
@@ -144,7 +145,7 @@ class ExamExecutionController extends Controller
     /**
      * Start the exam session
      */
-    public function start(Request $request, JadwalUjian $jadwal)
+    public function start(StartExamRequest $request, JadwalUjian $jadwal)
     {
         try {
             $user = auth()->user();
@@ -158,7 +159,7 @@ class ExamExecutionController extends Controller
 
             $jadwal->load(['paket.komposisi.soal.opsiJawaban']);
 
-            $riwayat = $this->ExamExecutionService->startExam($jadwal, $user, [
+            $riwayat = $this->examExecutionService->startExam($jadwal, $user, [
                 'ip'         => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
@@ -184,7 +185,7 @@ class ExamExecutionController extends Controller
     public function saveAnswer(SaveAnswerRequest $request, RiwayatUjianSiswa $riwayat)
     {
         try {
-            $this->ExamExecutionService->saveAnswer($riwayat, $request->validated());
+            $this->examExecutionService->saveAnswer($riwayat, $request->validated());
             return response()->json(['status' => 'success', 'message' => 'Jawaban disimpan.']);
         } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
@@ -197,7 +198,7 @@ class ExamExecutionController extends Controller
     public function submit(RiwayatUjianSiswa $riwayat)
     {
         try {
-            $this->ExamExecutionService->submitExam($riwayat);
+            $this->examExecutionService->submitExam($riwayat);
 
             $redirect = auth()->user()->hasRole('admin') ? route('cbt.dashboard') : route('cbt.execute.finished', $riwayat->jadwal->hashid);
             return jsonSuccess('Ujian berhasil diserahkan. Terima kasih.', $redirect);
@@ -236,9 +237,9 @@ class ExamExecutionController extends Controller
 
             if ($riwayat) {
                 // Delete answers first
-                \App\Models\Cbt\JawabanSiswa::where('riwayat_id', $riwayat->id)->forceDelete();
+                JawabanSiswa::where('riwayat_id', $riwayat->id)->forceDelete();
                 // Delete violations
-                \App\Models\Cbt\LogPelanggaran::where('riwayat_id', $riwayat->id)->forceDelete();
+                LogPelanggaran::where('riwayat_id', $riwayat->id)->forceDelete();
                 // Force delete history
                 $riwayat->forceDelete();
             }
@@ -263,7 +264,7 @@ class ExamExecutionController extends Controller
      */
     public function violations()
     {
-        $violations = \App\Models\Cbt\LogPelanggaran::with(['riwayatUjianSiswa.user', 'riwayatUjianSiswa.jadwal'])
+        $violations = LogPelanggaran::with(['riwayatUjianSiswa.user', 'riwayatUjianSiswa.jadwal'])
             ->latest('waktu_kejadian')
             ->paginate(20);
 

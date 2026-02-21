@@ -10,7 +10,9 @@ class EventTeamService
     public function store(array $data): EventTeam
     {
         return DB::transaction(function () use ($data) {
-            return EventTeam::create($data);
+            $team = EventTeam::create($data);
+            logActivity('event', "Menambah panitia baru ke kegiatan: " . ($team->event->nama_event ?? 'Unknown'));
+            return $team;
         });
     }
 
@@ -18,6 +20,7 @@ class EventTeamService
     {
         return DB::transaction(function () use ($team, $data) {
             $team->update($data);
+            logActivity('event', "Memperbarui data panitia di kegiatan: " . ($team->event->nama_event ?? 'Unknown'));
             return $team;
         });
     }
@@ -25,7 +28,9 @@ class EventTeamService
     public function destroy(EventTeam $team): void
     {
         DB::transaction(function () use ($team) {
+            $nama = $team->event->nama_event ?? 'Unknown';
             $team->delete();
+            logActivity('event', "Menghapus panitia dari kegiatan: {$nama}");
         });
     }
 
@@ -39,6 +44,7 @@ class EventTeamService
             foreach ($members as $member) {
                 $event->teams()->create($member);
             }
+            logActivity('event', "Sinkronisasi panitia untuk kegiatan: {$event->nama_event}");
         });
     }
 }

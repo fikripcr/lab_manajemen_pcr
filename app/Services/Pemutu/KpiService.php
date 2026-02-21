@@ -67,6 +67,7 @@ class KpiService
             foreach ($assignments as $assign) {
                 $indikator->pegawai()->create($assign);
             }
+            logActivity('pemutu', "Menugaskan personil ke indikator: {$indikator->no_indikator}", $indikator);
         });
     }
 

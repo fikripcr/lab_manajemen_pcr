@@ -2,6 +2,7 @@
 namespace App\Models\Pemutu;
 
 use App\Models\Shared\Pegawai;
+use App\Models\Shared\StrukturOrganisasi;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -63,7 +64,7 @@ class TimMutu extends Model
 
     public function orgUnit()
     {
-        return $this->belongsTo(\App\Models\Shared\StrukturOrganisasi::class, 'org_unit_id', 'orgunit_id');
+        return $this->belongsTo(StrukturOrganisasi::class, 'org_unit_id', 'orgunit_id');
     }
 
     public function pegawai()

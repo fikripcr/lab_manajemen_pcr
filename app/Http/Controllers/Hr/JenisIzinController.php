@@ -4,18 +4,21 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JenisIzinStoreRequest;
 use App\Models\Hr\JenisIzin;
+use App\Services\Hr\JenisIzinService;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class JenisIzinController extends Controller
 {
+    public function __construct(protected JenisIzinService $jenisIzinService)
+    {}
+
     public function index()
     {
         return view('pages.hr.jenis-izin.index');
     }
 
-    public function data(Request $request)
+    public function data()
     {
         $query = JenisIzin::query();
 
@@ -35,45 +38,45 @@ class JenisIzinController extends Controller
 
     public function create()
     {
-        return view('pages.hr.jenis-izin.create');
+        $jenis_izin = new JenisIzin();
+        return view('pages.hr.jenis-izin.create-edit-ajax', compact('jenis_izin'));
     }
 
     public function store(JenisIzinStoreRequest $request)
     {
-        $validated = $request->validated();
-
         try {
-            JenisIzin::create($validated);
+            $this->jenisIzinService->store($request->validated());
             return jsonSuccess('Jenis izin berhasil dibuat.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal membuat jenis izin: ' . $e->getMessage());
         }
     }
 
     public function edit(JenisIzin $jenis_izin)
     {
-        return view('pages.hr.jenis-izin.edit', compact('jenis_izin'));
+        return view('pages.hr.jenis-izin.create-edit-ajax', compact('jenis_izin'));
     }
 
     public function update(JenisIzinStoreRequest $request, JenisIzin $jenis_izin)
     {
-        $validated = $request->validated();
-
-        $jenis_izin->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Jenis Izin berhasil diperbarui.',
-        ]);
+        try {
+            $this->jenisIzinService->update($jenis_izin, $request->validated());
+            return jsonSuccess('Jenis Izin berhasil diperbarui.');
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui jenis izin: ' . $e->getMessage());
+        }
     }
 
     public function destroy(JenisIzin $jenis_izin)
     {
-        $jenis_izin->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Jenis Izin berhasil dihapus.',
-        ]);
+        try {
+            $this->jenisIzinService->delete($jenis_izin);
+            return jsonSuccess('Jenis Izin berhasil dihapus.');
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus jenis izin: ' . $e->getMessage());
+        }
     }
 }

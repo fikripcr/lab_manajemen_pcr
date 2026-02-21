@@ -3,6 +3,7 @@ namespace App\Models\Hr;
 
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -60,8 +61,8 @@ class Lembur extends Model
 
         static::saving(function ($lembur) {
             if ($lembur->jam_mulai && $lembur->jam_selesai) {
-                $mulai                = \Carbon\Carbon::parse($lembur->jam_mulai);
-                $selesai              = \Carbon\Carbon::parse($lembur->jam_selesai);
+                $mulai                = Carbon::parse($lembur->jam_mulai);
+                $selesai              = Carbon::parse($lembur->jam_selesai);
                 $lembur->durasi_menit = $selesai->diffInMinutes($mulai);
             }
         });

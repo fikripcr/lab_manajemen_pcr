@@ -3,23 +3,21 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\MataKuliahRequest;
+use App\Models\Lab\MataKuliah;
 use App\Services\Lab\MataKuliahService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class MataKuliahController extends Controller
 {
-    protected $MataKuliahService;
-
-    public function __construct(MataKuliahService $MataKuliahService)
-    {
-        $this->MataKuliahService = $MataKuliahService;
-    }
+    public function __construct(protected MataKuliahService $mataKuliahService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.lab.mata-kuliah.index');
     }
@@ -29,7 +27,7 @@ class MataKuliahController extends Controller
      */
     public function paginate(Request $request)
     {
-        $mataKuliahs = $this->MataKuliahService->getFilteredQuery($request->all());
+        $mataKuliahs = $this->mataKuliahService->getFilteredQuery($request->all());
 
         return DataTables::of($mataKuliahs)
             ->addIndexColumn()
@@ -49,6 +47,7 @@ class MataKuliahController extends Controller
             ->addColumn('action', function ($mk) {
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('lab.mata-kuliah.edit', $mk->encrypted_mata_kuliah_id),
+                    'editModal' => true,
                     'viewUrl'   => route('lab.mata-kuliah.show', $mk->encrypted_mata_kuliah_id),
                     'deleteUrl' => route('lab.mata-kuliah.destroy', $mk->encrypted_mata_kuliah_id),
                 ])->render();
@@ -62,7 +61,8 @@ class MataKuliahController extends Controller
      */
     public function create()
     {
-        return view('pages.lab.mata-kuliah.create');
+        $mataKuliah = new MataKuliah();
+        return view('pages.lab.mata-kuliah.create-edit-ajax', compact('mataKuliah'));
     }
 
     /**
@@ -71,73 +71,55 @@ class MataKuliahController extends Controller
     public function store(MataKuliahRequest $request)
     {
         try {
-            $this->MataKuliahService->createMataKuliah($request->validated());
-
+            $this->mataKuliahService->createMataKuliah($request->validated());
             return jsonSuccess('Mata Kuliah berhasil dibuat.', route('lab.mata-kuliah.index'));
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal membuat mata kuliah: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(MataKuliah $mataKuliah)
     {
-        $realId     = decryptId($id);
-        $mataKuliah = $this->MataKuliahService->getMataKuliahById($realId);
-
-        if (! $mataKuliah) {
-            abort(404);
-        }
-
         return view('pages.lab.mata-kuliah.show', compact('mataKuliah'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(MataKuliah $mataKuliah)
     {
-        $realId     = decryptId($id);
-        $mataKuliah = $this->MataKuliahService->getMataKuliahById($realId);
-
-        if (! $mataKuliah) {
-            abort(404);
-        }
-
-        return view('pages.lab.mata-kuliah.edit', compact('mataKuliah'));
+        return view('pages.lab.mata-kuliah.create-edit-ajax', compact('mataKuliah'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(MataKuliahRequest $request, $id)
+    public function update(MataKuliahRequest $request, MataKuliah $mataKuliah)
     {
-        $realId = decryptId($id);
-
         try {
-            $this->MataKuliahService->updateMataKuliah($realId, $request->validated());
-
+            $this->mataKuliahService->updateMataKuliah($mataKuliah, $request->validated());
             return jsonSuccess('Mata Kuliah berhasil diperbarui.', route('lab.mata-kuliah.index'));
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui mata kuliah: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(MataKuliah $mataKuliah)
     {
         try {
-            $realId = decryptId($id);
-            $this->MataKuliahService->deleteMataKuliah($realId);
-
+            $this->mataKuliahService->deleteMataKuliah($mataKuliah);
             return jsonSuccess('Mata Kuliah berhasil dihapus.', route('lab.mata-kuliah.index'));
-
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus mata kuliah: ' . $e->getMessage());
         }
     }
 

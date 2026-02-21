@@ -2,20 +2,14 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\KegiatanRequest;
 use App\Models\Lab\Kegiatan;
-use App\Models\Lab\Lab;
-use App\Services\Lab\KegiatanService;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class KegiatanController extends Controller
 {
-    protected $service;
-
-    public function __construct(KegiatanService $service)
-    {
-        $this->service = $service;
-    }
+    public function __construct(protected KegiatanService $kegiatanService)
+    {}
 
     public function index()
     {
@@ -24,7 +18,7 @@ class KegiatanController extends Controller
 
     public function data(Request $request)
     {
-        $query = $this->service->getFilteredQuery($request->all());
+        $query = $this->kegiatanService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -47,7 +41,7 @@ class KegiatanController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl' => route('lab.kegiatan.show', encryptId($row->kegiatan_id)),
+                    'viewUrl' => route('lab.kegiatan.show', $row->encrypted_kegiatan_id),
                 ])->render();
             })
             ->rawColumns(['status', 'waktu', 'action'])
@@ -56,22 +50,13 @@ class KegiatanController extends Controller
 
     public function create()
     {
-        $labs = Lab::all();
-        return view('pages.lab.kegiatan.create', compact('labs'));
+        $labs     = Lab::all();
+        $kegiatan = new Kegiatan();
+        return view('pages.lab.kegiatan.create-edit-ajax', compact('labs', 'kegiatan'));
     }
 
-    public function store(Request $request)
+    public function store(KegiatanRequest $request)
     {
-        $request->validate([
-            'lab_id'           => 'required',
-            'nama_kegiatan'    => 'required|string',
-            'deskripsi'        => 'required|string',
-            'tanggal'          => 'required|date|after_or_equal:today',
-            'jam_mulai'        => 'required',
-            'jam_selesai'      => 'required|after:jam_mulai',
-            'dokumentasi_path' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Surat Permohonan
-        ]);
-
         try {
             $data           = $request->except('dokumentasi_path');
             $data['lab_id'] = decryptId($request->lab_id);
@@ -80,20 +65,21 @@ class KegiatanController extends Controller
                 $data['dokumentasi_path'] = $request->file('dokumentasi_path')->store('kegiatan-docs', 'public');
             }
 
-            $this->service->createBooking($data);
+            $this->kegiatanService->createBooking($data);
             return jsonSuccess('Booking berhasil diajukan', route('lab.kegiatan.index'));
         } catch (\Exception $e) {
-            return jsonError('Gagal: ' . $e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal melakukan booking: ' . $e->getMessage());
         }
     }
 
-    public function show($id)
+    public function show(Kegiatan $kegiatan)
     {
-        $kegiatan = Kegiatan::with(['lab', 'penyelenggara', 'approvals'])->findOrFail(decryptId($id));
+        $kegiatan->load(['lab', 'penyelenggara', 'approvals']);
         return view('pages.lab.kegiatan.show', compact('kegiatan'));
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, Kegiatan $kegiatan)
     {
         // Admin only functionality usually
         $request->validate([
@@ -102,10 +88,11 @@ class KegiatanController extends Controller
         ]);
 
         try {
-            $this->service->updateStatus(decryptId($id), $request->status, $request->catatan);
+            $this->kegiatanService->updateStatus($kegiatan, $request->status, $request->catatan);
             return jsonSuccess('Status updated');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
         }
     }
 }

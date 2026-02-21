@@ -3,27 +3,25 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\JadwalRequest;
+use App\Models\Lab\JadwalKuliah;
 use App\Models\Lab\Lab;
 use App\Models\Lab\MataKuliah;
 use App\Models\Lab\Semester;
 use App\Models\User;
 use App\Services\Lab\JadwalService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class JadwalController extends Controller
 {
-    protected $JadwalService;
-
-    public function __construct(JadwalService $JadwalService)
-    {
-        $this->JadwalService = $JadwalService;
-    }
+    public function __construct(protected JadwalService $jadwalService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.lab.jadwal.index');
     }
@@ -34,7 +32,7 @@ class JadwalController extends Controller
     public function paginate(Request $request)
     {
         // Use Service Query
-        $jadwals = $this->JadwalService->getFilteredQuery($request->all());
+        $jadwals = $this->jadwalService->getFilteredQuery($request->all());
 
         return DataTables::of($jadwals)
             ->addIndexColumn()
@@ -125,10 +123,11 @@ class JadwalController extends Controller
     public function store(JadwalRequest $request)
     {
         try {
-            $this->JadwalService->createJadwal($request->validated());
+            $this->jadwalService->createJadwal($request->validated());
 
             return jsonSuccess('Jadwal berhasil dibuat.', route('lab.jadwal.index'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -136,30 +135,18 @@ class JadwalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(JadwalKuliah $jadwal)
     {
-        $realId = decryptId($id);
-
-        $jadwal = $this->JadwalService->getJadwalById($realId);
-        if (! $jadwal) {
-            abort(404);
-        }
-
+        $jadwal->load(['semester', 'mataKuliah', 'dosen', 'lab']);
         return view('pages.lab.jadwal.show', compact('jadwal'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(JadwalKuliah $jadwal)
     {
-        $realId = decryptId($id);
-
-        $jadwal = $this->JadwalService->getJadwalById($realId); // Use Service
-        if (! $jadwal) {
-            abort(404);
-        }
-
+        $jadwal->load(['semester', 'mataKuliah', 'dosen', 'lab']);
         $semesters   = Semester::all();
         $mataKuliahs = MataKuliah::all();
         $dosens      = User::whereHas('roles', function ($query) {
@@ -173,32 +160,28 @@ class JadwalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(JadwalRequest $request, $id)
+    public function update(JadwalRequest $request, JadwalKuliah $jadwal)
     {
-        $realId = decryptId($id);
-
         try {
-            $this->JadwalService->updateJadwal($realId, $request->validated());
-
+            $this->jadwalService->updateJadwal($jadwal, $request->validated());
             return jsonSuccess('Jadwal berhasil diperbarui.', route('lab.jadwal.index'));
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui jadwal: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(JadwalKuliah $jadwal)
     {
         try {
-            $realId = decryptId($id);
-            $this->JadwalService->deleteJadwal($realId);
-
+            $this->jadwalService->deleteJadwal($jadwal);
             return jsonSuccess('Jadwal berhasil dihapus.', route('lab.jadwal.index'));
-
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus jadwal: ' . $e->getMessage());
         }
     }
 
@@ -219,11 +202,11 @@ class JadwalController extends Controller
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
         try {
-            $this->JadwalService->importJadwal($request->file('file'));
-
+            $this->jadwalService->importJadwal($request->file('file'));
             return jsonSuccess('Jadwal berhasil diimpor.', route('lab.jadwal.index'));
-        } catch (\Exception $e) {
-            return jsonError('Gagal mengimpor jadwal: ' . $e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal mengimpor jadwal: ' . $e->getMessage());
         }
     }
 }

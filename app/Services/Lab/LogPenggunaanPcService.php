@@ -95,28 +95,14 @@ class LogPenggunaanPcService
                 'user_id'          => $data['user_id'],
                 'jadwal_id'        => $data['jadwal_id'],
                 'lab_id'           => $data['lab_id'],
-                'pc_assignment_id' => $assignment ? $assignment->pc_assignments_id : null,
-                // Note: LogPenggunaanPc model fillable & migration check needed.
-                // Assuming `nomor_pc` column exists in log table?
-                // Let's check Model. Model `LogPenggunaanPc` doesn't have `nomor_pc` in fillable in previous `view_file`.
-                // It has `status_pc`, `kondisi`, `catatan_umum`.
-                // Wait, analysis step showed `LogPenggunaanLab` has `nomor_pc`.
-                // `LogPenggunaanPc` model showed `pc_assignment_id`.
-                // Does `LogPenggunaanPc` store the actual PC number if no assignment?
-                // Let's check `LogPenggunaanPc` model again in my memory or view it.
-                // Step 54: `LogPenggunaanPc` fillable: `pc_assignment_id`, `user_id`, `jadwal_id`, `lab_id`, `status_pc`, `kondisi`, ...
-                // It does NOT have `nomor_pc`. It relies on `pc_assignment_id`.
-                // ISSUE: If user sits on a PC without assignment, can they log?
-                // If table is strict, they MUST have assignment.
-                // Request says "Mahasiswa ... mengisi Log".
-                // If Assignment is Master Data required, then we must Assign first.
-                // Let's assume Valid Assignment is REQUIRED.
-
+                'pc_assignment_id' => $assignment ? $assignment->pc_assignment_id : null,
                 'status_pc'        => $data['status_pc'],       // Baik/Rusak
                 'kondisi'          => $data['kondisi'] ?? null, // Detail
                 'catatan_umum'     => $data['catatan_umum'] ?? null,
                 'waktu_isi'        => now(),
             ]);
+
+            logActivity('log_penggunaan_pc', "Mahasiswa ID {$data['user_id']} mengisi log PC untuk jadwal ID {$data['jadwal_id']}");
 
             return $log;
         });

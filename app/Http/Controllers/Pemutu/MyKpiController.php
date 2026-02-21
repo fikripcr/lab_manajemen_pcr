@@ -2,9 +2,8 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pemutu\IndikatorPersonil;
-use App\Models\Pemutu\Personil;
-use Illuminate\Http\Request;
+use App\Models\Pemutu\IndikatorPegawai;
+use App\Models\Shared\Personil;
 use Illuminate\Support\Facades\Auth;
 
 class MyKpiController extends Controller
@@ -21,7 +20,7 @@ class MyKpiController extends Controller
             return view('pages.pemutu.mykpi.index', ['kpis' => collect([]), 'error' => 'No Personil data found for your account.']);
         }
 
-        $kpis = IndikatorPersonil::where('personil_id', $personil->personil_id)
+        $kpis = IndikatorPegawai::where('pegawai_id', $personil->personil_id)
             ->with(['indikator'])
             ->orderBy('year', 'desc')
             ->orderBy('semester', 'desc')
@@ -30,51 +29,53 @@ class MyKpiController extends Controller
         return view('pages.pemutu.mykpi.index', compact('kpis', 'personil'));
     }
 
-    public function edit($id)
+    public function edit(IndikatorPegawai $kpi)
     {
-        // Hashid binding should handle decoding if set up, otherwise we might need to decode manually
-        // But IndikatorPersonil uses HashidBinding trait, so implicit binding might work if route key is set.
-        // If simply passing ID, we can find it.
+        try {
+            $user     = Auth::user();
+            $personil = Personil::find($user->pegawai_id);
 
-        // Let's assume ID is passed (we'll check Route logic later)
-        $kpi = IndikatorPersonil::with('indikator')->findOrFail($id);
+            if ($kpi->personil_id !== $personil?->personil_id) {
+                abort(403);
+            }
 
-        // Security check
-        $user     = Auth::user();
-        $personil = Personil::find($user->pegawai_id);
-        if ($kpi->personil_id !== $personil?->personil_id) {
-            abort(403);
+            return view('pages.pemutu.mykpi.edit', compact('kpi'));
+        } catch (Exception $e) {
+            abort(404);
         }
-
-        return view('pages.pemutu.mykpi.edit', compact('kpi'));
     }
 
-    public function update(Request $request, $id)
+    public function update(\App\Http\Requests\Pemutu\MyKpiRequest $request, IndikatorPegawai $kpi)
     {
-        $kpi = IndikatorPersonil::findOrFail($id);
+        try {
+            $user     = Auth::user();
+            $personil = \App\Models\Shared\Personil::find($user->pegawai_id);
 
-        // Security check
-        $user     = Auth::user();
-        $personil = Personil::find($user->pegawai_id);
-        if ($kpi->personil_id !== $personil?->personil_id) {
-            abort(403);
+            if ($kpi->personil_id !== $personil?->personil_id) {
+                abort(403);
+            }
+
+            $validated = $request->validated();
+
+            if ($request->hasFile('attachment')) {
+                // Delete old attachment if exists
+                if ($kpi->attachment && \Illuminate\Support\Facades\Storage::exists($kpi->attachment)) {
+                    \Illuminate\Support\Facades\Storage::delete($kpi->attachment);
+                }
+                $path                    = $request->file('attachment')->store('pemutu/kpi_evidence', 'public');
+                $validated['attachment'] = $path;
+            }
+
+            $validated['status'] = 'submitted'; // Auto-submit on save for now
+
+            $kpi->update($validated);
+
+            logActivity('pemutu', "Memperbarui KPI pribadi: " . ($kpi->indikator?->indikator ?? $kpi->id));
+
+            return jsonSuccess('KPI berhasil diperbarui', route('pemutu.mykpi.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui KPI: ' . $e->getMessage());
         }
-
-        $validated = $request->validate([
-            'realization' => 'nullable|string',
-            'score'       => 'nullable|numeric|min:0|max:100',
-            'attachment'  => 'nullable|file|mimes:pdf,jpg,png,doc,docx|max:2048',
-        ]);
-
-        if ($request->hasFile('attachment')) {
-            $path                    = $request->file('attachment')->store('pemutu/kpi_evidence', 'public');
-            $validated['attachment'] = $path;
-        }
-
-        $validated['status'] = 'submitted'; // Auto-submit on save for now
-
-        $kpi->update($validated);
-
-        return jsonSuccess('KPI berhasil diperbarui', route('pemutu.mykpi.index'));
     }
 }

@@ -14,12 +14,8 @@ use Illuminate\Http\Request;
 
 class PresensiController extends Controller
 {
-    protected $PresensiService;
-
-    public function __construct(PresensiService $PresensiService)
-    {
-        $this->PresensiService = $PresensiService;
-    }
+    public function __construct(protected \App\Services\Hr\PresensiService $presensiService)
+    {}
 
     public function index()
     {
@@ -31,7 +27,7 @@ class PresensiController extends Controller
         try {
             $data = $request->validated();
 
-            $result = $this->PresensiService->checkIn($data);
+            $result = $this->presensiService->checkIn($data);
 
             return response()->json([
                 'success' => true,
@@ -51,7 +47,7 @@ class PresensiController extends Controller
         try {
             $data = $request->validated();
 
-            $result = $this->PresensiService->checkOut($data);
+            $result = $this->presensiService->checkOut($data);
 
             return response()->json([
                 'success' => true,
@@ -71,7 +67,7 @@ class PresensiController extends Controller
         try {
             $data = $request->validated();
 
-            $location = $this->PresensiService->getLocationFromCoordinates($data['latitude'], $data['longitude']);
+            $location = $this->presensiService->getLocationFromCoordinates($data['latitude'], $data['longitude']);
 
             return response()->json([
                 'success' => true,
@@ -92,7 +88,7 @@ class PresensiController extends Controller
 
     public function getSettings()
     {
-        $settings = $this->PresensiService->getPresensiSettings();
+        $settings = $this->presensiService->getPresensiSettings();
         return response()->json([
             'success'  => true,
             'settings' => $settings,
@@ -107,7 +103,7 @@ class PresensiController extends Controller
             // Handle checkbox properly
             $data['is_active'] = $request->has('is_active');
 
-            $this->PresensiService->updateSettings($data);
+            $this->presensiService->updateSettings($data);
 
             return response()->json([
                 'success' => true,
@@ -134,7 +130,7 @@ class PresensiController extends Controller
 
     public function historyData(Request $request)
     {
-        $data = $this->PresensiService->getPresensiHistory($request->all());
+        $data = $this->presensiService->getPresensiHistory($request->all());
         return response()->json($data);
     }
 
@@ -231,7 +227,7 @@ class PresensiController extends Controller
     {
         try {
             $user     = auth()->user();
-            $faceData = $this->PresensiService->getEmployeeFaceData($user->id);
+            $faceData = $this->presensiService->getEmployeeFaceData($user->id);
 
             return response()->json([
                 'success'  => true,

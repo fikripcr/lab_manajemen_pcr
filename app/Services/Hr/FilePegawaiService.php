@@ -30,6 +30,8 @@ class FilePegawaiService
             $filePegawai->addMedia($fileRequest)
                 ->toMediaCollection('file_pegawai');
 
+            logActivity('hr', "Mengupload file baru untuk pegawai (ID: {$pegawaiId}): " . ($filePegawai->jenisfile->nama ?? 'File'), $filePegawai);
+
             return $filePegawai;
         });
     }
@@ -39,7 +41,10 @@ class FilePegawaiService
      */
     public function deleteFile($id)
     {
-        $filePegawai = FilePegawai::findOrFail($id);
-        return $filePegawai->delete();
+        return DB::transaction(function () use ($id) {
+            $filePegawai = FilePegawai::findOrFail($id);
+            logActivity('hr', "Menghapus file pegawai (ID: {$filePegawai->pegawai_id}): " . ($filePegawai->jenisfile->nama ?? 'File'), $filePegawai);
+            return $filePegawai->delete();
+        });
     }
 }

@@ -2,19 +2,21 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\MahasiswaRequest;
 use App\Models\Lab\Mahasiswa;
-use App\Services\Shared\StrukturOrganisasiService;
+use App\Services\Lab\MahasiswaService;
+use App\Services\Lab\StrukturOrganisasiService;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class MahasiswaController extends Controller
 {
-    protected $StrukturOrganisasiService;
+    public function __construct(
+        protected MahasiswaService $mahasiswaService,
+        protected StrukturOrganisasiService $strukturOrganisasiService
+    ) {}
 
-    public function __construct(StrukturOrganisasiService $StrukturOrganisasiService)
-    {
-        $this->StrukturOrganisasiService = $StrukturOrganisasiService;
-    }
     public function index()
     {
         return view('pages.lab.mahasiswa.index');
@@ -22,7 +24,7 @@ class MahasiswaController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = Mahasiswa::with(['user.roles', 'prodi']);
+        $query = $this->mahasiswaService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -40,12 +42,11 @@ class MahasiswaController extends Controller
                 return $row->prodi->name ?? '-';
             })
             ->addColumn('action', function ($row) {
-                $encryptedId = $row->hashid;
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.mahasiswa.edit-modal.show', $encryptedId),
+                    'editUrl'   => route('lab.mahasiswa.edit', $row->encrypted_mahasiswa_id),
                     'editModal' => true,
-                    'viewUrl'   => route('lab.mahasiswa.show', $encryptedId),
-                    'deleteUrl' => route('lab.mahasiswa.destroy', $encryptedId),
+                    'viewUrl'   => route('lab.mahasiswa.show', $row->encrypted_mahasiswa_id),
+                    'deleteUrl' => route('lab.mahasiswa.destroy', $row->encrypted_mahasiswa_id),
                 ])->render();
             })
             ->rawColumns(['action', 'user_info'])
@@ -59,73 +60,53 @@ class MahasiswaController extends Controller
 
     public function create()
     {
-        $prodiList = $this->StrukturOrganisasiService
+        $prodiList = $this->strukturOrganisasiService
             ->getFilteredQuery(['type' => 'Prodi'])
             ->orderBy('name')
             ->get();
-        return view('pages.lab.mahasiswa.create', compact('prodiList'));
+        $mahasiswa = new Mahasiswa();
+        return view('pages.lab.mahasiswa.create-edit-ajax', compact('prodiList', 'mahasiswa'));
+    }
+
+    public function store(MahasiswaRequest $request)
+    {
+        try {
+            $this->mahasiswaService->createMahasiswa($request->validated());
+            return jsonSuccess('Data Mahasiswa berhasil ditambahkan.', route('lab.mahasiswa.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menambahkan mahasiswa: ' . $e->getMessage());
+        }
     }
 
     public function edit(Mahasiswa $mahasiswa)
     {
-        $prodiList = $this->StrukturOrganisasiService
+        $prodiList = $this->strukturOrganisasiService
             ->getFilteredQuery(['type' => 'Prodi'])
             ->orderBy('name')
             ->get();
-        return view('pages.lab.mahasiswa.edit', compact('mahasiswa', 'prodiList'));
+        return view('pages.lab.mahasiswa.create-edit-ajax', compact('mahasiswa', 'prodiList'));
     }
 
-    public function editModal(Mahasiswa $mahasiswa)
+    public function update(MahasiswaRequest $request, Mahasiswa $mahasiswa)
     {
-        $prodiList = $this->StrukturOrganisasiService
-            ->getFilteredQuery(['type' => 'Prodi'])
-            ->orderBy('name')
-            ->get();
-        return view('pages.lab.mahasiswa.edit-ajax', compact('mahasiswa', 'prodiList'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nim'        => 'required|string|max:50|unique:mahasiswa,nim',
-            'nama'       => 'required|string|max:255',
-            'email'      => 'required|email|max:255|unique:mahasiswa,email',
-            'orgunit_id' => 'required|exists:struktur_organisasi,orgunit_id',
-        ]);
-
-        $data               = $request->all();
-        $data['created_by'] = auth()->id();
-        $data['updated_by'] = auth()->id();
-
-        Mahasiswa::create($data);
-
-        return jsonSuccess('Data Mahasiswa berhasil ditambahkan.', route('lab.mahasiswa.index'));
-    }
-
-    public function update(Request $request, Mahasiswa $mahasiswa)
-    {
-        $request->validate([
-            'nim'        => 'required|string|max:50|unique:mahasiswa,nim,' . $mahasiswa->mahasiswa_id . ',mahasiswa_id',
-            'nama'       => 'required|string|max:255',
-            'email'      => 'required|email|max:255|unique:mahasiswa,email,' . $mahasiswa->mahasiswa_id . ',mahasiswa_id',
-            'orgunit_id' => 'required|exists:struktur_organisasi,orgunit_id',
-        ]);
-
-        $data               = $request->all();
-        $data['updated_by'] = auth()->id();
-
-        $mahasiswa->update($data);
-
-        return jsonSuccess('Data Mahasiswa berhasil diperbarui.', route('lab.mahasiswa.index'));
+        try {
+            $this->mahasiswaService->updateMahasiswa($mahasiswa, $request->validated());
+            return jsonSuccess('Data Mahasiswa berhasil diperbarui.', route('lab.mahasiswa.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui mahasiswa: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Mahasiswa $mahasiswa)
     {
         try {
-            $mahasiswa->delete();
+            $this->mahasiswaService->deleteMahasiswa($mahasiswa);
             return jsonSuccess('Data Mahasiswa berhasil dihapus.', route('lab.mahasiswa.index'));
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menghapus mahasiswa: ' . $e->getMessage());
         }
     }
 }

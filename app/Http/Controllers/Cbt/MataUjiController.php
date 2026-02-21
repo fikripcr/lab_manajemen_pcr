@@ -11,12 +11,8 @@ use Illuminate\Http\Request;
 
 class MataUjiController extends Controller
 {
-    protected $MataUjiService;
-
-    public function __construct(MataUjiService $MataUjiService)
-    {
-        $this->MataUjiService = $MataUjiService;
-    }
+    public function __construct(protected MataUjiService $mataUjiService)
+    {}
 
     public function index()
     {
@@ -25,52 +21,62 @@ class MataUjiController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = MataUji::query();
+        $query = $this->mataUjiService->getFilteredQuery($request->all());
         return datatables()->of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($mu) {
-                return view('pages.cbt.mata-uji._actions', compact('mu'));
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl'   => route('cbt.mata-uji.show', $mu->encrypted_mata_uji_id),
+                    'editUrl'   => route('cbt.mata-uji.edit', $mu->encrypted_mata_uji_id),
+                    'editModal' => true,
+                    'editTitle' => 'Edit Mata Uji',
+                    'deleteUrl' => route('cbt.mata-uji.destroy', $mu->encrypted_mata_uji_id),
+                ])->render();
             })
+            ->rawColumns(['action'])
             ->make(true);
     }
 
     public function create()
     {
-        return view('pages.cbt.mata-uji.create');
+        return view('pages.cbt.mata-uji.create-edit-ajax');
     }
 
     public function store(StoreMataUjiRequest $request)
     {
         try {
-            $this->MataUjiService->store($request->validated());
+            $this->mataUjiService->store($request->validated());
             return jsonSuccess('Mata uji berhasil disimpan.', route('cbt.mata-uji.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menyimpan mata uji.');
         }
     }
 
     public function edit(MataUji $mu)
     {
-        return view('pages.cbt.mata-uji.edit', compact('mu'));
+        return view('pages.cbt.mata-uji.create-edit-ajax', compact('mu'));
     }
 
     public function update(UpdateMataUjiRequest $request, MataUji $mu)
     {
         try {
-            $this->MataUjiService->update($mu, $request->validated());
+            $this->mataUjiService->update($mu, $request->validated());
             return jsonSuccess('Mata uji berhasil diperbarui.', route('cbt.mata-uji.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memperbarui mata uji.');
         }
     }
 
     public function destroy(MataUji $mu)
     {
         try {
-            $this->MataUjiService->delete($mu);
+            $this->mataUjiService->delete($mu);
             return jsonSuccess('Mata uji berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menghapus mata uji.');
         }
     }
 }

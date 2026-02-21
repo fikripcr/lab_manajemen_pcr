@@ -2,6 +2,7 @@
 namespace App\Services\Sys;
 
 use App\Models\Sys\ErrorLog;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class ErrorLogService
@@ -19,7 +20,7 @@ class ErrorLogService
     {
         $model = $this->getErrorLogById($id);
         if (! $model) {
-            throw new \Exception("Data tidak ditemukan.");
+            throw new Exception("Data tidak ditemukan.");
         }
         return $model;
     }

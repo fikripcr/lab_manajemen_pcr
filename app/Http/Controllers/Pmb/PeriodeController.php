@@ -6,25 +6,20 @@ use App\Http\Requests\Pmb\StorePeriodeRequest;
 use App\Models\Pmb\Periode;
 use App\Services\Pmb\PeriodeService;
 use Exception;
-use Illuminate\Http\Request;
 
 class PeriodeController extends Controller
 {
-    protected $PeriodeService;
-
-    public function __construct(PeriodeService $PeriodeService)
-    {
-        $this->PeriodeService = $PeriodeService;
-    }
+    public function __construct(protected PeriodeService $periodeService)
+    {}
 
     public function index()
     {
         return view('pages.pmb.periode.index');
     }
 
-    public function paginate(Request $request)
+    public function paginate(\Illuminate\Http\Request $request)
     {
-        return datatables()->of($this->PeriodeService->getPaginateData($request))
+        return datatables()->of($this->periodeService->getPaginateData($request->all()))
             ->addIndexColumn()
             ->editColumn('tanggal_mulai', fn($p) => formatTanggalIndo($p->tanggal_mulai))
             ->editColumn('tanggal_selesai', fn($p) => formatTanggalIndo($p->tanggal_selesai))
@@ -34,7 +29,11 @@ class PeriodeController extends Controller
                     : '<span class="badge bg-danger text-white">Non-Aktif</span>';
             })
             ->addColumn('action', function ($p) {
-                return view('pages.pmb.periode._actions', compact('p'));
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('pmb.periode.edit', $p->encrypted_periode_id),
+                    'editModal' => true,
+                    'deleteUrl' => route('pmb.periode.destroy', $p->encrypted_periode_id),
+                ])->render();
             })
             ->rawColumns(['is_aktif', 'action'])
             ->make(true);
@@ -42,41 +41,44 @@ class PeriodeController extends Controller
 
     public function create()
     {
-        return view('pages.pmb.periode.create');
+        return view('pages.pmb.periode.create-edit-ajax', ['periode' => new Periode()]);
     }
 
     public function store(StorePeriodeRequest $request)
     {
         try {
-            $this->PeriodeService->createPeriode($request->validated());
+            $this->periodeService->createPeriode($request->validated());
             return jsonSuccess('Periode berhasil ditambahkan.', route('pmb.periode.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menambahkan periode: ' . $e->getMessage());
         }
     }
 
     public function edit(Periode $periode)
     {
-        return view('pages.pmb.periode.edit', compact('periode'));
+        return view('pages.pmb.periode.create-edit-ajax', compact('periode'));
     }
 
     public function update(StorePeriodeRequest $request, Periode $periode)
     {
         try {
-            $this->PeriodeService->updatePeriode($periode->id, $request->validated());
+            $this->periodeService->updatePeriode($periode, $request->validated());
             return jsonSuccess('Periode berhasil diperbarui.', route('pmb.periode.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memperbarui periode: ' . $e->getMessage());
         }
     }
 
     public function destroy(Periode $periode)
     {
         try {
-            $this->PeriodeService->deletePeriode($periode->id);
+            $this->periodeService->deletePeriode($periode);
             return jsonSuccess('Periode berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menghapus periode: ' . $e->getMessage());
         }
     }
 }

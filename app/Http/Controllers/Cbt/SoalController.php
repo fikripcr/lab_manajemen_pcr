@@ -12,14 +12,10 @@ use Illuminate\Http\Request;
 
 class SoalController extends Controller
 {
-    protected $SoalService;
+    public function __construct(protected SoalService $soalService)
+    {}
 
-    public function __construct(SoalService $SoalService)
-    {
-        $this->SoalService = $SoalService;
-    }
-
-    public function index(Request $request)
+    public function index()
     {
         $mataUji = MataUji::all();
         return view('pages.cbt.soal.index', compact('mataUji'));
@@ -27,61 +23,72 @@ class SoalController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = Soal::with(['mataUji', 'pembuat']);
-
-        if ($request->mata_uji_id) {
-            $query->where('mata_uji_id', decryptId($request->mata_uji_id));
-        }
+        $query = $this->soalService->getFilteredQuery($request->all());
 
         return datatables()->of($query)
             ->addIndexColumn()
             ->editColumn('konten_pertanyaan', fn($s) => strip_tags(substr($s->konten_pertanyaan, 0, 100)) . '...')
             ->addColumn('action', function ($s) {
-                return view('pages.cbt.soal._actions', compact('s'));
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'     => route('cbt.soal.edit', $s->encrypted_soal_id),
+                    'editModal'   => true,
+                    'editTitle'   => 'Edit Soal',
+                    'deleteUrl'   => route('cbt.soal.destroy', $s->encrypted_soal_id),
+                    'deleteTitle' => 'Hapus soal ini?',
+                ])->render();
             })
+            ->rawColumns(['action'])
             ->make(true);
     }
 
-    public function create()
+    public function create(MataUji $mata_uji)
     {
-        $mataUji = MataUji::all();
-        return view('pages.cbt.soal.create', compact('mataUji'));
+        // Build an empty Soal instance associated with MataUji for the view
+        $soal = new Soal([
+            'tipe_soal'   => 'Pilihan_Ganda',
+            'mata_uji_id' => $mata_uji->id,
+        ]);
+        $soal->setRelation('mataUji', $mata_uji);
+
+        return view('pages.cbt.soal.create-edit-ajax', compact('soal'));
     }
 
     public function store(StoreSoalRequest $request)
     {
         try {
-            $this->SoalService->store($request->validated());
+            $this->soalService->store($request->validated());
             return jsonSuccess('Soal berhasil disimpan.', route('cbt.soal.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menyimpan soal.');
         }
     }
 
     public function edit(Soal $soal)
     {
-        $soal->load('opsiJawaban');
-        $mataUji = MataUji::all();
-        return view('pages.cbt.soal.edit', compact('soal', 'mataUji'));
+        $soal->load(['opsiJawaban', 'mataUji']);
+        return view('pages.cbt.soal.create-edit-ajax', compact('soal'));
     }
 
     public function update(UpdateSoalRequest $request, Soal $soal)
     {
         try {
-            $this->SoalService->update($soal, $request->validated());
+            $this->soalService->update($soal, $request->validated());
             return jsonSuccess('Soal berhasil diperbarui.', route('cbt.soal.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal memperbarui soal.');
         }
     }
 
     public function destroy(Soal $soal)
     {
         try {
-            $this->SoalService->delete($soal);
+            $this->soalService->delete($soal);
             return jsonSuccess('Soal berhasil dihapus.');
         } catch (Exception $e) {
-            return jsonError($e->getMessage());
+            logError($e);
+            return jsonError('Gagal menghapus soal.');
         }
     }
 }

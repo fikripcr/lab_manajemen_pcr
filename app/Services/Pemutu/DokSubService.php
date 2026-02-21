@@ -34,7 +34,7 @@ class DokSubService
             $dokSub = DokSub::create($data);
 
             logActivity(
-                'doksub_management',
+                'pemutu',
                 "Membuat sub-dokumen baru: {$dokSub->judul}"
             );
 
@@ -51,7 +51,7 @@ class DokSubService
             $dokSub->update($data);
 
             logActivity(
-                'doksub_management',
+                'pemutu',
                 "Memperbarui sub-dokumen: {$oldJudul}" . ($oldJudul !== $dokSub->judul ? " menjadi {$dokSub->judul}" : "")
             );
 
@@ -68,7 +68,7 @@ class DokSubService
             $dokSub->delete();
 
             logActivity(
-                'doksub_management',
+                'pemutu',
                 "Menghapus sub-dokumen: {$judul}"
             );
 

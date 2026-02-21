@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\IndisiplinerRequest;
 use App\Models\Hr\Indisipliner;
-use App\Models\Hr\IndisiplinerPegawai;
 use App\Models\Hr\JenisIndisipliner;
+use App\Services\Hr\IndisiplinerService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class IndisiplinerController extends Controller
 {
+    public function __construct(
+        protected IndisiplinerService $indisiplinerService
+    ) {}
+
     public function index()
     {
         $jenisIndisipliner = JenisIndisipliner::orderBy('jenis_indisipliner')->get();
@@ -45,9 +48,9 @@ class IndisiplinerController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('hr.indisipliner.edit', ['indisipliner' => $row->hashid]),
+                    'editUrl'   => route('hr.indisipliner.edit', ['indisipliner' => $row->encrypted_indisipliner_id]),
                     'editModal' => true,
-                    'deleteUrl' => route('hr.indisipliner.destroy', ['indisipliner' => $row->hashid]),
+                    'deleteUrl' => route('hr.indisipliner.destroy', ['indisipliner' => $row->encrypted_indisipliner_id]),
                 ])->render();
             })
             ->rawColumns(['pegawai', 'action'])
@@ -57,111 +60,52 @@ class IndisiplinerController extends Controller
     public function create()
     {
         $jenisIndisipliner = JenisIndisipliner::orderBy('jenis_indisipliner')->get();
+        $indisipliner      = new Indisipliner();
 
-        return view('pages.hr.indisipliner.create', compact('jenisIndisipliner'));
+        return view('pages.hr.indisipliner.create-edit-ajax', compact('jenisIndisipliner', 'indisipliner'));
     }
 
     public function store(IndisiplinerRequest $request)
     {
-        $validated = $request->validated();
-
         try {
-            DB::beginTransaction();
+            $this->indisiplinerService->store($request->validated(), $request->file('bukti'));
 
-            // Create indisipliner record
-            $indisipliner = Indisipliner::create([
-                'jenisindisipliner_id' => $validated['jenisindisipliner_id'],
-                'tgl_indisipliner'     => $validated['tgl_indisipliner'],
-                'keterangan'           => $validated['keterangan'] ?? null,
-            ]);
-
-            // Handle file upload
-            if ($request->hasFile('bukti')) {
-                $file = $request->file('bukti');
-                $path = $file->store('hr/indisipliner', 'public');
-                $indisipliner->update(['bukti' => $path]);
-            }
-
-            // Attach pegawai
-            foreach ($validated['pegawai_id'] as $pegawaiId) {
-                IndisiplinerPegawai::create([
-                    'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id'      => $pegawaiId,
-                ]);
-            }
-
-            DB::commit();
             return jsonSuccess('Indisipliner berhasil dibuat.');
         } catch (Exception $e) {
-            DB::rollBack();
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal membuat indisipliner: ' . $e->getMessage());
         }
     }
 
     public function edit(Indisipliner $indisipliner)
     {
         $jenisIndisipliner = JenisIndisipliner::orderBy('jenis_indisipliner')->get();
-
-        // Load pegawai with their data diri for the select2
         $indisipliner->load('indisiplinerPegawai.pegawai.latestDataDiri');
 
-        return view('pages.hr.indisipliner.edit', compact('indisipliner', 'jenisIndisipliner'));
+        return view('pages.hr.indisipliner.create-edit-ajax', compact('indisipliner', 'jenisIndisipliner'));
     }
 
     public function update(IndisiplinerRequest $request, Indisipliner $indisipliner)
     {
-        $validated = $request->validated();
-
         try {
-            DB::beginTransaction();
+            $this->indisiplinerService->update($indisipliner, $request->validated(), $request->file('bukti'));
 
-            // Update indisipliner record
-            $indisipliner->update([
-                'jenisindisipliner_id' => $validated['jenisindisipliner_id'],
-                'tgl_indisipliner'     => $validated['tgl_indisipliner'],
-                'keterangan'           => $validated['keterangan'] ?? null,
-            ]);
-
-            // Handle file upload
-            if ($request->hasFile('bukti')) {
-                $file = $request->file('bukti');
-                $path = $file->store('hr/indisipliner', 'public');
-                $indisipliner->update(['bukti' => $path]);
-            }
-
-            // Sync pegawai
-            $indisipliner->indisiplinerPegawai()->delete();
-            foreach ($validated['pegawai_id'] as $pegawaiId) {
-                IndisiplinerPegawai::create([
-                    'indisipliner_id' => $indisipliner->indisipliner_id,
-                    'pegawai_id'      => $pegawaiId,
-                ]);
-            }
-
-            DB::commit();
             return jsonSuccess('Indisipliner berhasil diperbarui.');
         } catch (Exception $e) {
-            DB::rollBack();
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui indisipliner: ' . $e->getMessage());
         }
     }
 
     public function destroy(Indisipliner $indisipliner)
     {
         try {
-            DB::beginTransaction();
-
-            // Soft delete associated pegawai records
-            IndisiplinerPegawai::where('indisipliner_id', $indisipliner->indisipliner_id)->delete();
-
-            $indisipliner->delete();
-
-            DB::commit();
+            $this->indisiplinerService->delete($indisipliner);
 
             return jsonSuccess('Data indisipliner berhasil dihapus.');
         } catch (Exception $e) {
-            DB::rollBack();
-            return jsonError('Gagal menghapus data: ' . $e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus data: ' . $e->getMessage());
         }
     }
 }

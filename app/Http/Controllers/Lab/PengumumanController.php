@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\PengumumanRequest;
+use App\Models\Shared\Pengumuman;
 use App\Models\User;
 use App\Services\Lab\PengumumanService;
 use Exception;
@@ -11,12 +12,8 @@ use Yajra\DataTables\DataTables;
 
 class PengumumanController extends Controller
 {
-    protected $PengumumanService;
-
-    public function __construct(PengumumanService $PengumumanService)
-    {
-        $this->PengumumanService = $PengumumanService;
-    }
+    public function __construct(protected PengumumanService $pengumumanService)
+    {}
 
     /**
      * Display a listing of the resource.
@@ -41,42 +38,34 @@ class PengumumanController extends Controller
     {
         $penulisOptions = User::all();
         // Pass a new instance for the view to handle checks like $pengumuman->exists
-        $pengumuman = new \App\Models\Shared\Pengumuman();
+        $pengumuman = new Pengumuman();
         return view('pages.lab.pengumuman.create-edit', compact('type', 'penulisOptions', 'pengumuman'));
     }
 
     // ... store method remains the same ...
 
-    // ... show method remains the same ...
+    public function show(Pengumuman $pengumuman)
+    {
+        return view('pages.lab.pengumuman.show', compact('pengumuman'));
+    }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Pengumuman $pengumuman)
     {
-        $realId = decryptId($id);
-
-        $pengumuman = $this->PengumumanService->getPengumumanById($realId);
-        if (! $pengumuman) {
-            abort(404);
-        }
-
         $penulisOptions = User::all();
         $type           = $pengumuman->jenis;
-
-        return view('pages.lab.pengumuman.create-edit', compact('pengumuman', 'type', 'penulisOptions'));
+        return view('pages.lab.pengumuman.create-edit-ajax', compact('pengumuman', 'type', 'penulisOptions'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PengumumanRequest $request, $id)
+    public function update(PengumumanRequest $request, Pengumuman $pengumuman)
     {
-        $realId = decryptId($id);
-
         try {
             $data = $request->validated();
-
             if ($request->hasFile('cover')) {
                 $data['cover'] = $request->file('cover');
             }
@@ -84,40 +73,29 @@ class PengumumanController extends Controller
                 $data['attachments'] = $request->file('attachments');
             }
 
-            $this->PengumumanService->updatePengumuman($realId, $data);
-
-            // Fetch updated model to determine redirect route (or store type in hidden field, but fetch is safer)
-            $pengumuman    = $this->PengumumanService->getPengumumanById($realId);
+            $this->pengumumanService->updatePengumuman($pengumuman, $data);
             $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
 
             return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil diperbarui.');
         } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
+            logError($e);
+            return back()->with('error', 'Gagal memperbarui ' . $pengumuman->jenis . ': ' . $e->getMessage())->withInput();
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Pengumuman $pengumuman)
     {
         try {
-            $realId = decryptId($id);
-            // Get type before deleting for redirect
-            $pengumuman = $this->PengumumanService->getPengumumanById($realId);
-            if (! $pengumuman) {
-                abort(404);
-            }
-
             $jenis = $pengumuman->jenis;
-
-            $this->PengumumanService->deletePengumuman($realId);
-
+            $this->pengumumanService->deletePengumuman($pengumuman);
             $redirectRoute = $jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
             return jsonSuccess(ucfirst($jenis) . ' deleted successfully.', route($redirectRoute));
-
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus ' . $pengumuman->jenis . ': ' . $e->getMessage());
         }
     }
 
@@ -135,7 +113,7 @@ class PengumumanController extends Controller
         $type = (str_contains($routeName, 'berita.data') || $request->type === 'berita') ? 'berita' : 'pengumuman';
 
         // Use Service Query
-        $query = $this->PengumumanService->getFilteredQuery($type);
+        $query = $this->pengumumanService->getFilteredQuery($type);
 
         return DataTables::of($query)
             ->addIndexColumn()

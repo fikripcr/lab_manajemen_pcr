@@ -17,17 +17,13 @@ use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
-    protected $UserService;
-
-    public function __construct(UserService $UserService)
-    {
-        $this->UserService = $UserService;
-    }
+    public function __construct(protected UserService $userService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         return view('pages.lab.users.index');
     }
@@ -47,7 +43,7 @@ class UserController extends Controller
     public function paginate(Request $request)
     {
         // Reuse Service Query
-        $users = $this->UserService->getFilteredQuery($request->all());
+        $users = $this->userService->getFilteredQuery($request->all());
 
         return DataTables::of($users)
             ->addIndexColumn()
@@ -126,9 +122,10 @@ class UserController extends Controller
         }
 
         try {
-            $this->UserService->createUser($validated);
+            $this->userService->createUser($validated);
             return jsonSuccess('Pengguna berhasil dibuat.', route('lab.users.index'));
         } catch (\Exception $e) {
+            logError($e);
             return jsonError($e->getMessage(), 500);
         }
     }
@@ -136,30 +133,16 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $realId = decryptId($id);
-
-        $user = $this->UserService->getUserById($realId); // Uses Service
-        if (! $user) {
-            abort(404);
-        }
-
         return view('pages.lab.users.show', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        $realId = decryptId($id);
-
-        $user = $this->UserService->getUserById($realId);
-        if (! $user) {
-            abort(404);
-        }
-
         $roles = Role::all();
         return view('pages.lab.users.edit', compact('user', 'roles'));
     }
@@ -167,40 +150,34 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserRequest $request, $id)
+    public function update(UserRequest $request, User $user)
     {
-        $realId    = decryptId($id);
         $validated = $request->validated();
 
-        // Add avatar file to data if exists
         if ($request->hasFile('avatar')) {
             $validated['avatar'] = $request->file('avatar');
         }
-        // Transform 'role' to 'roles' for service consistency if needed,
-        // service handles both keys but let's be standardized.
-        // Controller validated 'role' (singular or array). Service checks both.
 
         try {
-            $this->UserService->updateUser($realId, $validated);
-
+            $this->userService->updateUser($user->id, $validated);
             return jsonSuccess('Pengguna berhasil diperbarui.');
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal memperbarui pengguna: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
         try {
-            $realId = decryptId($id);
-            $this->UserService->deleteUser($realId);
-
+            $this->userService->deleteUser($user->id);
             return jsonSuccess('Data berhasil dihapus.', route('lab.users.index'));
         } catch (\Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus pengguna: ' . $e->getMessage());
         }
     }
 
@@ -227,7 +204,7 @@ class UserController extends Controller
         if ($id) {
             // Detail report for specific user
             $realId = decryptId($id);
-            $user   = $this->UserService->getUserById($realId);
+            $user   = $this->userService->getUserById($realId);
 
             $data = [
                 'user'       => $user,
@@ -243,7 +220,7 @@ class UserController extends Controller
             $filters = $request->all(); // Pass all filters to Service
 
             // Use Service to get Query
-            $query = $this->UserService->getFilteredQuery($filters);
+            $query = $this->userService->getFilteredQuery($filters);
             $users = $query->get();
 
             $data = [
@@ -275,12 +252,6 @@ class UserController extends Controller
         try {
             $file = $request->file('file');
 
-            // Import using the UserImport class with parameters
-            // Service could wrap this, but UserImport class is self-contained.
-            // Let's keep it here for now unless I add 'importUsers' to service.
-            // Added 'importPersonils' to PersonilService, so consistencies...
-            // But UserImport takes parameters ($defaultRole) in Constructor.
-
             $defaultRole       = $request->input('role_default');
             $overwriteExisting = $request->input('overwrite_existing', false);
 
@@ -292,6 +263,7 @@ class UserController extends Controller
             return redirect()->route('lab.users.index')
                 ->with('success', "Import completed successfully. Users have been added to the database.");
         } catch (\Exception $e) {
+            logError($e);
             return redirect()->back()
                 ->with('error', 'Error importing users: ' . $e->getMessage())
                 ->withInput();
@@ -319,10 +291,10 @@ class UserController extends Controller
         // Decrypt the user ID
         try {
             $userId     = decryptId($user);
-            $targetUser = $this->UserService->getUserById($userId);
+            $targetUser = $this->userService->getUserById($userId);
         } catch (\Exception $e) {
             // Fallback if not encrypted (should not happen if consistent)
-            $targetUser = $this->UserService->getUserById($user);
+            $targetUser = $this->userService->getUserById($user);
         }
 
         if (! $targetUser) {

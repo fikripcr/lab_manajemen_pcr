@@ -11,12 +11,8 @@ use Yajra\DataTables\DataTables;
 
 class PermissionController extends Controller
 {
-    protected $PermissionService;
-
-    public function __construct(PermissionService $PermissionService)
-    {
-        $this->PermissionService = $PermissionService;
-    }
+    public function __construct(protected PermissionService $permissionService)
+    {}
 
     /**
      * Display a listing of the resource.
@@ -24,8 +20,8 @@ class PermissionController extends Controller
     public function index()
     {
         // Get unique categories for the filter
-        $categories    = $this->PermissionService->getUniqueCategories();
-        $subCategories = $this->PermissionService->getUniqueSubCategories();
+        $categories    = $this->permissionService->getUniqueCategories();
+        $subCategories = $this->permissionService->getUniqueSubCategories();
 
         return view('pages.sys.permissions.index', compact('categories', 'subCategories'));
     }
@@ -40,7 +36,7 @@ class PermissionController extends Controller
             $filters = $request->all();
 
             // Use the service to get the filtered query
-            $permissions = $this->PermissionService->getFilteredQuery($filters);
+            $permissions = $this->permissionService->getFilteredQuery($filters);
 
             return DataTables::of($permissions)
                 ->addIndexColumn()
@@ -74,7 +70,8 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('pages.sys.permissions.create');
+        $permission = new Permission();
+        return view('pages.sys.permissions.create-edit-ajax', compact('permission'));
     }
 
     /**
@@ -84,7 +81,7 @@ class PermissionController extends Controller
     {
         try {
             $data = $request->validated();
-            $this->PermissionService->createPermission($data);
+            $this->permissionService->createPermission($data);
 
             return jsonSuccess('Izin berhasildibuat . ');
         } catch (Exception $e) {
@@ -106,9 +103,9 @@ class PermissionController extends Controller
     public function edit($id)
     {
         $realId     = decryptId($id);
-        $permission = $this->PermissionService->getPermissionById($realId);
+        $permission = $this->permissionService->getPermissionById($realId);
 
-        return view('pages.sys.permissions.edit', compact('permission'));
+        return view('pages.sys.permissions.create-edit-ajax', compact('permission'));
     }
 
     /**
@@ -119,7 +116,7 @@ class PermissionController extends Controller
         try {
             $realId = decryptId($permissionId);
             $data   = $request->validated();
-            $this->PermissionService->updatePermission($realId, $data);
+            $this->permissionService->updatePermission($realId, $data);
 
             return jsonSuccess();
         } catch (Exception $e) {
@@ -134,7 +131,7 @@ class PermissionController extends Controller
     {
         try {
             $realId = decryptId($permissionId);
-            $this->PermissionService->deletePermission($realId);
+            $this->permissionService->deletePermission($realId);
 
             return jsonSuccess('Izin berhasildihapus . ');
 

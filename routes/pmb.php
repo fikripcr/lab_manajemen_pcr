@@ -58,13 +58,13 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
 
         // Payment
         Route::get('/payment', [App\Http\Controllers\Pmb\CamabaController::class, 'payment'])->name('payment');
-        Route::post('/payment/confirm', [App\Http\Controllers\Pmb\CamabaController::class, 'confirmPayment'])->name('confirm-payment');
+        Route::post('/payment/{pendaftaran}/confirm', [App\Http\Controllers\Pmb\CamabaController::class, 'confirmPayment'])->name('confirm-payment');
 
         // Document Upload
         Route::get('/upload', [App\Http\Controllers\Pmb\CamabaController::class, 'upload'])->name('upload');
         Route::get('/upload/form', [App\Http\Controllers\Pmb\CamabaController::class, 'uploadForm'])->name('upload-form');
-        Route::post('/upload/do', [App\Http\Controllers\Pmb\CamabaController::class, 'doUpload'])->name('do-upload');
-        Route::post('/upload/finalize', [App\Http\Controllers\Pmb\CamabaController::class, 'finalizeFiles'])->name('finalize-files');
+        Route::post('/upload/{pendaftaran}/{jenis}/do', [App\Http\Controllers\Pmb\CamabaController::class, 'doUpload'])->name('do-upload');
+        Route::post('/upload/{pendaftaran}/finalize', [App\Http\Controllers\Pmb\CamabaController::class, 'finalizeFiles'])->name('finalize-files');
 
         // Result
         Route::get('/exam-card', [App\Http\Controllers\Pmb\CamabaController::class, 'examCard'])->name('exam-card');

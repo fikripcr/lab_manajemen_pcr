@@ -13,12 +13,8 @@ use Illuminate\Http\Request;
 
 class PaketUjianController extends Controller
 {
-    protected $PaketUjianService;
-
-    public function __construct(PaketUjianService $PaketUjianService)
-    {
-        $this->PaketUjianService = $PaketUjianService;
-    }
+    public function __construct(protected PaketUjianService $paketUjianService)
+    {}
 
     public function index()
     {
@@ -27,12 +23,19 @@ class PaketUjianController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = PaketUjian::with('pembuat');
+        $query = $this->paketUjianService->getFilteredQuery($request->all());
         return datatables()->of($query)
             ->addIndexColumn()
             ->addColumn('action', function ($p) {
-                return view('pages.cbt.paket._actions', compact('p'));
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl'   => route('cbt.paket.show', $p->encrypted_paket_ujian_id),
+                    'editUrl'   => route('cbt.paket.edit', $p->encrypted_paket_ujian_id),
+                    'editModal' => true,
+                    'editTitle' => 'Edit Paket',
+                    'deleteUrl' => route('cbt.paket.destroy', $p->encrypted_paket_ujian_id),
+                ])->render();
             })
+            ->rawColumns(['action'])
             ->make(true);
     }
 
@@ -47,7 +50,7 @@ class PaketUjianController extends Controller
             $data                = $request->validated();
             $data['dibuat_oleh'] = auth()->id();
 
-            $this->PaketUjianService->store($data);
+            $this->paketUjianService->store($data);
             return jsonSuccess('Paket ujian berhasil dibuat.', route('cbt.paket.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -62,7 +65,7 @@ class PaketUjianController extends Controller
     public function update(UpdatePaketRequest $request, PaketUjian $paket)
     {
         try {
-            $this->PaketUjianService->update($paket, $request->validated());
+            $this->paketUjianService->update($paket, $request->validated());
             return jsonSuccess('Paket ujian berhasil diperbarui.', route('cbt.paket.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -79,10 +82,10 @@ class PaketUjianController extends Controller
         return view('pages.cbt.paket.show', compact('paket', 'soalTersedia'));
     }
 
-    public function addSoal(Request $request, PaketUjian $paket)
+    public function addSoal(\App\Http\Requests\Cbt\AddSoalRequest $request, PaketUjian $paket)
     {
         try {
-            $this->PaketUjianService->addSoal($paket, $request->input('soal_ids', []));
+            $this->paketUjianService->addSoal($paket, $request->input('soal_ids', []));
             return jsonSuccess('Soal berhasil ditambahkan ke paket.', route('cbt.paket.show', $paket->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -92,7 +95,7 @@ class PaketUjianController extends Controller
     public function removeSoal(PaketUjian $paket, KomposisiPaket $komposisi)
     {
         try {
-            $this->PaketUjianService->removeSoal($komposisi);
+            $this->paketUjianService->removeSoal($komposisi);
             return jsonSuccess('Soal berhasil dihapus dari paket.', route('cbt.paket.show', $paket->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -102,7 +105,7 @@ class PaketUjianController extends Controller
     public function destroy(PaketUjian $paket)
     {
         try {
-            $this->PaketUjianService->delete($paket);
+            $this->paketUjianService->delete($paket);
             return jsonSuccess('Paket ujian berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());

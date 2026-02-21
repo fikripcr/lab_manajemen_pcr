@@ -2,13 +2,18 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\PersonilRequest;
 use App\Models\Lab\Personil;
+use App\Services\Lab\PersonilService;
 use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class PersonilController extends Controller
 {
+    public function __construct(protected PersonilService $personilService)
+    {}
+
     public function index()
     {
         return view('pages.lab.personil.index');
@@ -16,7 +21,7 @@ class PersonilController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = Personil::with(['user.roles']);
+        $query = $this->personilService->getFilteredQuery($request->all());
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -31,12 +36,11 @@ class PersonilController extends Controller
                 return 'Belum terkoneksi';
             })
             ->addColumn('action', function ($row) {
-                $encryptedId = $row->hashid;
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.personil.edit-modal.show', $encryptedId),
+                    'editUrl'   => route('lab.personil.edit', $row->encrypted_personil_id),
                     'editModal' => true,
-                    'viewUrl'   => route('lab.personil.show', $encryptedId),
-                    'deleteUrl' => route('lab.personil.destroy', $encryptedId),
+                    'viewUrl'   => route('lab.personil.show', $row->encrypted_personil_id),
+                    'deleteUrl' => route('lab.personil.destroy', $row->encrypted_personil_id),
                 ])->render();
             })
             ->rawColumns(['action', 'user_info'])
@@ -50,61 +54,55 @@ class PersonilController extends Controller
 
     public function create()
     {
-        return view('pages.lab.personil.create');
+        $personil = new Personil();
+        return view('pages.lab.personil.create-edit-ajax', compact('personil'));
+    }
+
+    public function store(PersonilRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            if ($request->filled('user_id')) {
+                $data['user_id'] = decryptId($request->user_id);
+            }
+
+            $this->personilService->createPersonil($data);
+            return jsonSuccess('Data Personil berhasil ditambahkan.', route('lab.personil.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menambahkan personil: ' . $e->getMessage());
+        }
     }
 
     public function edit(Personil $personil)
     {
-        return view('pages.lab.personil.edit', compact('personil'));
+        return view('pages.lab.personil.create-edit-ajax', compact('personil'));
     }
 
-    public function editModal(Personil $personil)
+    public function update(PersonilRequest $request, Personil $personil)
     {
-        return view('pages.lab.personil.edit-ajax', compact('personil'));
-    }
+        try {
+            $data = $request->validated();
+            if ($request->filled('user_id')) {
+                $data['user_id'] = decryptId($request->user_id);
+            }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nip'    => 'required|string|max:50|unique:personil,nip',
-            'nama'   => 'required|string|max:255',
-            'email'  => 'required|email|max:255|unique:personil,email',
-            'posisi' => 'required|string|max:255',
-        ]);
-
-        $data               = $request->all();
-        $data['created_by'] = auth()->id();
-        $data['updated_by'] = auth()->id();
-
-        Personil::create($data);
-
-        return jsonSuccess('Data Personil berhasil ditambahkan.', route('lab.personil.index'));
-    }
-
-    public function update(Request $request, Personil $personil)
-    {
-        $request->validate([
-            'nip'    => 'required|string|max:50|unique:personil,nip,' . $personil->personil_id . ',personil_id',
-            'nama'   => 'required|string|max:255',
-            'email'  => 'required|email|max:255|unique:personil,email,' . $personil->personil_id . ',personil_id',
-            'posisi' => 'required|string|max:255',
-        ]);
-
-        $data               = $request->all();
-        $data['updated_by'] = auth()->id();
-
-        $personil->update($data);
-
-        return jsonSuccess('Data Personil berhasil diperbarui.', route('lab.personil.index'));
+            $this->personilService->updatePersonil($personil, $data);
+            return jsonSuccess('Data Personil berhasil diperbarui.', route('lab.personil.index'));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui personil: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Personil $personil)
     {
         try {
-            $personil->delete();
+            $this->personilService->deletePersonil($personil);
             return jsonSuccess('Data Personil berhasil dihapus.', route('lab.personil.index'));
         } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
+            logError($e);
+            return jsonError('Gagal menghapus personil: ' . $e->getMessage());
         }
     }
 }

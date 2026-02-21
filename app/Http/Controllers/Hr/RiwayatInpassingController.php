@@ -8,19 +8,14 @@ use App\Models\Hr\RiwayatInpassing;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Exception;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatInpassingController extends Controller
 {
-    protected $PegawaiService;
+    public function __construct(protected PegawaiService $pegawaiService)
+    {}
 
-    public function __construct(PegawaiService $PegawaiService)
-    {
-        $this->PegawaiService = $PegawaiService;
-    }
-
-    public function index(Request $request, Pegawai $pegawai = null)
+    public function index(Pegawai $pegawai = null)
     {
         if ($pegawai) {
             return view('pages.hr.data-diri.tabs.inpassing', compact('pegawai'));
@@ -30,14 +25,15 @@ class RiwayatInpassingController extends Controller
 
     public function create(Pegawai $pegawai)
     {
-        $golongan = GolonganInpassing::all();
-        return view('pages.hr.pegawai.inpassing.create', compact('pegawai', 'golongan'));
+        $golongan  = GolonganInpassing::all();
+        $inpassing = new RiwayatInpassing();
+        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('pegawai', 'golongan', 'inpassing'));
     }
 
     public function store(RiwayatInpassingRequest $request, Pegawai $pegawai)
     {
         try {
-            $this->PegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id');
+            $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id');
             return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -47,13 +43,13 @@ class RiwayatInpassingController extends Controller
     public function edit(Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
         $golongan = GolonganInpassing::all();
-        return view('pages.hr.pegawai.inpassing.edit', compact('pegawai', 'inpassing', 'golongan'));
+        return view('pages.hr.pegawai.inpassing.create-edit-ajax', compact('pegawai', 'inpassing', 'golongan'));
     }
 
     public function update(RiwayatInpassingRequest $request, Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
         try {
-            $this->PegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id', $inpassing);
+            $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id', $inpassing);
             return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -70,7 +66,7 @@ class RiwayatInpassingController extends Controller
         }
     }
 
-    public function data(Request $request)
+    public function data()
     {
         // Global data
         $query = RiwayatInpassing::with(['pegawai', 'golonganInpassing'])->select('hr_riwayat_inpassing.*');
