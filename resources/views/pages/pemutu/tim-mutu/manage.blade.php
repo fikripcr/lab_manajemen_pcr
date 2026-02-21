@@ -128,6 +128,10 @@
                         </div>
                     @endforelse
                 </div>
+                
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $orgUnits->links('pagination::bootstrap-5') }}
+                </div>
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -41,13 +41,14 @@ class TimMutuController extends Controller
     {
         try {
             $periodeId   = $periode->periodespmi_id;
-            $orgUnits    = $this->timMutuService->getOrgUnitsFlat();
+            $orgUnits    = $this->timMutuService->getOrgUnitsPaginated();
             $assignments = $this->timMutuService->getByPeriode($periodeId);
 
             // Pre-build assignment data keyed by orgunit_id
             $assignmentMap = [];
             foreach ($assignments as $unitId => $items) {
-                $assignmentMap[$unitId] = [
+                $encryptedId                 = encryptId($unitId);
+                $assignmentMap[$encryptedId] = [
                     'auditee'       => $items->where('role', 'auditee')->first(),
                     'ketua_auditor' => $items->where('role', 'ketua_auditor')->first(),
                     'auditor'       => $items->where('role', 'auditor')->values(),

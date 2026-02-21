@@ -194,13 +194,13 @@ class TimMutuService
     }
 
     /**
-     * Get OrgUnits as flat list for manage page.
+     * Get OrgUnits as paginated list for manage page.
      */
-    public function getOrgUnitsFlat()
+    public function getOrgUnitsPaginated($perPage = 12)
     {
         return OrgUnit::with('parent')
             ->orderBy('level')
             ->orderBy('seq')
-            ->get();
+            ->paginate($perPage);
     }
 }

@@ -35,6 +35,9 @@ class MainPemutuSeeder extends Seeder
         // 3. Periode KPI
         $this->seedPeriodeKpi();
 
+        // 3b. Periode SPMI
+        $this->seedPeriodeSpmi();
+
         // 4. Dokumen
         $this->seedDokumen();
 
@@ -59,6 +62,8 @@ class MainPemutuSeeder extends Seeder
             DokSub::truncate();
             Indikator::truncate();
             PeriodeKpi::truncate();
+            \App\Models\Pemutu\PeriodeSpmi::truncate();
+            \App\Models\Pemutu\TimMutu::truncate();
             DB::table('pemutu_indikator_label')->truncate();
             DB::table('pemutu_indikator_orgunit')->truncate();
             DB::table('pemutu_indikator_doksub')->truncate();
@@ -144,6 +149,29 @@ class MainPemutuSeeder extends Seeder
         $this->command->info('Seeding Periode KPI...');
         PeriodeKpi::updateOrCreate(['tahun_akademik' => '2024/2025', 'semester' => 'Ganjil'], ['nama' => 'Semester Ganjil 2024/2025', 'tahun' => 2024, 'tanggal_mulai' => Carbon::parse('2024-08-01'), 'tanggal_selesai' => Carbon::parse('2025-01-31'), 'is_active' => true]);
         PeriodeKpi::updateOrCreate(['tahun_akademik' => '2023/2024', 'semester' => 'Genap'], ['nama' => 'Semester Genap 2023/2024', 'tahun' => 2024, 'tanggal_mulai' => Carbon::parse('2024-02-01'), 'tanggal_selesai' => Carbon::parse('2024-07-31'), 'is_active' => false]);
+    }
+
+    private function seedPeriodeSpmi()
+    {
+        $this->command->info('Seeding Periode SPMI...');
+        $now = now();
+        \App\Models\Pemutu\PeriodeSpmi::create([
+            'periode'         => 2026,
+            'jenis_periode'   => 'Akademik',
+            'penetapan_awal'  => $now->copy()->startOfYear(),
+            'penetapan_akhir' => $now->copy()->addMonths(2),
+            'ed_awal'         => $now->copy()->addMonths(2),
+            'ed_akhir'        => $now->copy()->addMonths(4),
+            'ami_awal'        => $now->copy()->addMonths(4),
+            'ami_akhir'       => $now->copy()->addMonths(6),
+        ]);
+
+        \App\Models\Pemutu\PeriodeSpmi::create([
+            'periode'         => 2026,
+            'jenis_periode'   => 'Non Akademik',
+            'penetapan_awal'  => $now->copy()->startOfYear(),
+            'penetapan_akhir' => $now->copy()->addMonths(2),
+        ]);
     }
 
     private function seedDokumen()

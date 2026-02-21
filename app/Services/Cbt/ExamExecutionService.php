@@ -75,7 +75,7 @@ class ExamExecutionService
                 }
             } catch (\Exception $e) {
                 // PMB integration failure should not block exam submission
-                \Log::warning('CBT: PMB integration failed on submit', ['error' => $e->getMessage(), 'riwayat_id' => $riwayat->id]);
+                \Log::warning('CBT: PMB integration failed on submit', ['error' => $e->getMessage(), 'riwayat_id' => $riwayat->riwayat_ujian_id]);
             }
 
             return $riwayat;

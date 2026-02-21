@@ -31,9 +31,8 @@
                 label="Jenis Periode" 
                 required="true"
                 :options="[
-                    'Tahunan' => 'Tahunan',
-                    'Semester Ganjil' => 'Semester Ganjil',
-                    'Semester Genap' => 'Semester Genap'
+                    'Akademik' => 'Akademik',
+                    'Non Akademik' => 'Non Akademik'
                 ]"
                 :selected="$periodeSpmi->jenis_periode ?? ''"
             />

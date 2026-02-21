@@ -13,6 +13,7 @@ use App\Models\Cbt\LogPelanggaran;
 use App\Models\Cbt\RiwayatUjianSiswa;
 use App\Services\Cbt\ExamExecutionService;
 use Exception;
+use Log;
 
 class ExamExecutionController extends Controller
 {
@@ -74,22 +75,52 @@ class ExamExecutionController extends Controller
     public function logViolationApi(LogViolationRequest $request)
     {
         try {
-            $user    = auth()->user();
+            $user = auth()->user();
+
+            // Priority 1: Find active exam
             $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
                 ->where('status', 'Sedang_Mengerjakan')
                 ->first();
 
-            if ($riwayat) {
-                \App\Models\Cbt\LogPelanggaran::create([
-                    'riwayat_id'        => $riwayat->riwayat_id,
-                    'jenis_pelanggaran' => $request->validated('type'),
-                    'keterangan'        => $request->validated('keterangan'),
-                    'waktu_kejadian'    => now(),
-                ]);
+            // Priority 2: Try to find by jadwal_id from request
+            if (! $riwayat) {
+                $jadwalId = $request->input('jadwal_id');
+                if ($jadwalId) {
+                    $decryptedJadwalId = decryptIdIfEncrypted($jadwalId);
+                    $riwayat           = RiwayatUjianSiswa::where('user_id', $user->id)
+                        ->where('jadwal_id', $decryptedJadwalId)
+                        ->first();
+                }
             }
 
-            return response()->json(['success' => true]);
+            // Priority 3: Find any recent riwayat (within last 24 hours)
+            if (! $riwayat) {
+                $riwayat = RiwayatUjianSiswa::where('user_id', $user->id)
+                    ->where('waktu_mulai', '>=', now()->subHours(24))
+                    ->orderBy('waktu_mulai', 'desc')
+                    ->first();
+            }
+
+            if ($riwayat) {
+                LogPelanggaran::create([
+                    'riwayat_id'        => $riwayat->getKey(),
+                    'jenis_pelanggaran' => $request->validated('type'),
+                    'keterangan'        => $request->validated('keterangan') ?? $request->validated('type'),
+                    'waktu_kejadian'    => now(),
+                ]);
+
+                return response()->json(['success' => true]);
+            }
+
+            // No riwayat found - log error but return success to avoid client errors
+            Log::warning('Violation logged without valid riwayat', [
+                'user_id' => $user->id,
+                'type'    => $request->validated('type'),
+            ]);
+
+            return response()->json(['success' => true, 'warning' => 'No active exam found']);
         } catch (Exception $e) {
+            logError($e);
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }

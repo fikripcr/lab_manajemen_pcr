@@ -51,19 +51,26 @@
                 <div class="col-lg-8">
                     
                     {{-- Card 1: Question Text & Header --}}
-                    <div class="card border-0 shadow-sm mb-3 rounded-3" id="question-header-card">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <span class="badge bg-blue-lt px-3 py-2 fw-bold fs-4" id="mata-uji-label">Mata Uji</span>
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-3 transition-all" id="question-header-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+                        <div class="card-body p-4 position-relative">
+                            <!-- Premium decorative pattern -->
+                            <div class="position-absolute top-0 end-0 opacity-05 p-3">
+                                <i class="ti ti-quote fs-huge text-primary"></i>
+                            </div>
+                            
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <span class="badge bg-primary-lt px-3 py-2 rounded-pill fw-bold fs-5 shadow-sm border border-primary-subtle" id="mata-uji-label">
+                                    <i class="ti ti-book me-1"></i>Mata Uji
+                                </span>
                                 <div class="text-end">
-                                    <span class="text-muted small fw-bold text-uppercase">Pertanyaan</span>
-                                    <div class="d-flex align-items-baseline justify-content-end gap-1">
-                                        <span class="h1 mb-0 text-primary fw-black" id="qnum-current">1</span>
-                                        <span class="text-muted h3 mb-0">/ {{ count($paketSoal) }}</span>
+                                    <div class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Pertanyaan</div>
+                                    <div class="fs-h1 fw-black text-dark tracking-tighter">
+                                        <span class="text-primary" id="qnum-current">1</span> <span class="text-muted opacity-50 fs-2 fw-normal">/ {{ count($paketSoal) }}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-dark fs-3 lh-base" id="question-text">
+
+                            <div class="text-dark fs-2 fw-medium lh-base" id="question-text" style="font-family: 'Inter', sans-serif; letter-spacing: -0.01em;">
                                 {{-- Rendered via JS --}}
                             </div>
                         </div>
@@ -236,6 +243,7 @@ function renderQuestion(idx) {
     if (idx < 0 || idx >= SOAL.length) return;
     
     currentIdx = idx;
+    updateNavUI(); // Ensure active indicator updates immediately
     const soal = SOAL[idx];
     const soalId = soal.soal_id;
     const ans = answers[soalId] || {};
@@ -315,7 +323,7 @@ function renderQuestion(idx) {
 //  5. ACTION HANDLERS
 // ══════════════════════════════════════════
 function goPrev() { if (currentIdx > 0) renderQuestion(currentIdx - 1); }
-function goNext() { (currentIdx === SOAL.length - 1) ? finishExam() : renderQuestion(currentIdx + 1); }
+function goNext() { if (currentIdx < SOAL.length - 1) renderQuestion(currentIdx + 1); }
 
 window.pickOption = (soalId, opsiId, el) => {
     if (!answers[soalId]) answers[soalId] = {};
@@ -505,7 +513,11 @@ function logViolation(type, keterangan) {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({ type, keterangan })
+        body: JSON.stringify({ 
+            type, 
+            keterangan,
+            jadwal_id: '{{ $jadwal->encrypted_jadwal_kuliah_id ?? $jadwal->hashid }}'
+        })
     }).catch(e => console.warn('Violation logging failed.', e));
 
     showWarning(`PERINGATAN! Aktivitas mencurigakan terdeteksi: ${keterangan} Kejadian ini telah dicatat.`);
@@ -537,9 +549,7 @@ function initKeyboardShortcuts() {
         // Only trigger if not typing in essay
         if (document.activeElement.tagName === 'TEXTAREA') return;
 
-        // Navigation
-        if (e.key === 'ArrowLeft') goPrev();
-        if (e.key === 'ArrowRight') goNext();
+        // Navigation keys removed as per user request (Arrow keys)
 
         // Answer selection (A=65, B=66, C=67, etc.)
         const key = e.key.toUpperCase();
