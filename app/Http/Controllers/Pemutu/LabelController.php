@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelRequest;
 use App\Services\Pemutu\LabelService;
 use Exception;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class LabelController extends Controller

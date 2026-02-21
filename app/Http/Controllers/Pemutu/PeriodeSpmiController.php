@@ -6,6 +6,7 @@ use App\Http\Requests\Pemutu\PeriodeSpmiRequest;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Exception;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class PeriodeSpmiController extends Controller

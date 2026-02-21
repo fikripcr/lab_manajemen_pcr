@@ -44,9 +44,9 @@ class EventTamuController extends Controller
 
     public function create()
     {
-        $events = Event::orderBy('tanggal_mulai', 'desc')->get();
-        $tamu   = new EventTamu();
-        return view('pages.event.tamus.create-edit-ajax', compact('events', 'tamu'));
+        $Kegiatans = Event::orderBy('tanggal_mulai', 'desc')->get();
+        $tamu      = new EventTamu();
+        return view('pages.event.tamus.create-edit-ajax', compact('Kegiatans', 'tamu'));
     }
 
     public function store(EventTamuRequest $request)
@@ -62,8 +62,8 @@ class EventTamuController extends Controller
 
     public function edit(EventTamu $tamu)
     {
-        $events = Event::orderBy('tanggal_mulai', 'desc')->get();
-        return view('pages.event.tamus.create-edit-ajax', compact('events', 'tamu'));
+        $Kegiatans = Event::orderBy('tanggal_mulai', 'desc')->get();
+        return view('pages.event.tamus.create-edit-ajax', compact('Kegiatans', 'tamu'));
     }
 
     public function update(EventTamuRequest $request, EventTamu $tamu)

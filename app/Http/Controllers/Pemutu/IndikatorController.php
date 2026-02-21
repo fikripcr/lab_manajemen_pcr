@@ -7,7 +7,7 @@ use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
-use App\Models\Pemutu\Personil;
+use App\Models\Shared\Personil;
 use App\Services\Pemutu\IndikatorService;
 use Exception;
 use Illuminate\Http\Request;

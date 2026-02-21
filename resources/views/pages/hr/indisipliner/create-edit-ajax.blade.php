@@ -69,7 +69,7 @@
             $('.select2-pegawai').select2({
                 dropdownParent: $('#modalAction'),
                 ajax: {
-                    url: '{{ route("hr.pegawai.select2") }}',
+                    url: '{{ route("hr.pegawai.select2-search") }}',
                     dataType: 'json',
                     delay: 250,
                     data: function (params) {

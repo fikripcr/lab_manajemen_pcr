@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DokumenRequest;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
-use App\Models\Pemutu\Personil;
+use App\Models\Shared\Personil;
 use App\Services\Pemutu\DokumenService;
 use Exception;
 use Illuminate\Http\Request;
