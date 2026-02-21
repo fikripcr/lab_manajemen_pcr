@@ -9,9 +9,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-tight py-4" style="max-width: 720px;">
-
         @if(isset($isPreview) && $isPreview)
         <div class="mb-3 text-end">
             <x-tabler.button href="{{ route('survei.builder', $survei->id) }}" class="btn-secondary btn-sm" icon="ti ti-arrow-left" text="Kembali ke Builder" />
@@ -183,8 +180,6 @@
             </div>
             @endforeach
         </form>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

@@ -7,8 +7,6 @@
     @endsection
 @endif
 
-<div class="page-body">
-    <div class="container-xl">
         <form action="{{ route('hr.tanggal-libur.store') }}" method="POST" id="bulkForm" class="ajax-form">
             @csrf
             <div class="card">
@@ -47,14 +45,11 @@
 
                 </div>
                 <div class="card-footer text-end">
-                    <x-tabler.button href="{{ route('hr.tanggal-libur.index') }}" class="btn-link link-secondary" text="Batal" />
-                    <x-tabler.button type="submit" class="btn-primary" text="Save All Entries" />
+                    <x-tabler.button type="cancel" href="{{ route('hr.tanggal-libur.index') }}" />
+                    <x-tabler.button type="submit" text="Save All Entries" />
                 </div>
             </div>
         </form>
-    </div>
-</div>
-
 @push('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function () {

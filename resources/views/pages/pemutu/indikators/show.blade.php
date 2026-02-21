@@ -67,8 +67,8 @@
         @endif
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Tutup</button>
-        <x-tabler.button type="a" :href="route('pemutu.indikators.show', $indikator->encrypted_indikator_id)" class="btn-primary" text="Detail Lengkap" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+        <x-tabler.button :href="route('pemutu.indikators.show', $indikator->encrypted_indikator_id)" text="Detail Lengkap" />
     </div>
 @else
     @extends('layouts.tabler.app')

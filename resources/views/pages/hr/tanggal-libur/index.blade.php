@@ -20,8 +20,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <x-tabler.flash-message />
         
         @if($data->isEmpty())
@@ -59,6 +57,4 @@
                 @endforeach
             </div>
         @endif
-    </div>
-</div>
 @endsection

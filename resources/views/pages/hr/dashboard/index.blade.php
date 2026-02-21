@@ -19,8 +19,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-deck row-cards">
             <!-- KPI Cards -->
             <div class="col-sm-6 col-lg-3">
@@ -232,8 +230,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

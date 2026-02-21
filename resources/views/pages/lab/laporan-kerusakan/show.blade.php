@@ -3,14 +3,12 @@
 @section('title', 'Detail Laporan Kerusakan')
 
 @section('content')
-<div class="container-xl">
     <x-tabler.page-header title="Detail Laporan #{{ $laporan->laporan_kerusakan_id }}" pretitle="Berkas">
         <x-slot:actions>
             <x-tabler.button type="back" href="{{ route('lab.laporan-kerusakan.index') }}" />
         </x-slot:actions>
     </x-tabler.page-header>
 
-    <div class="page-body">
         <div class="row row-cards">
             <div class="col-md-8">
                 <div class="card">
@@ -100,6 +98,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

@@ -6,8 +6,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             @if(!$pendaftaran)
                 <div class="col-12">
@@ -77,6 +75,4 @@
                 </div>
             @endif
         </div>
-    </div>
-</div>
 @endsection

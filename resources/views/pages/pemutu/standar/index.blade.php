@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Indikator Standar & Performa" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.standar.create') }}" class="btn-primary" icon="ti ti-plus" text="Tambah Indikator" />
+        <x-tabler.button type="create" href="{{ route('pemutu.standar.create') }}" text="Tambah Indikator" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

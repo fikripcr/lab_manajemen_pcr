@@ -4,7 +4,7 @@
 <x-tabler.page-header title="Jadwal Kuliah" pretitle="Perkuliahan">
     <x-slot:actions>
         <x-tabler.button type="import" :href="route('lab.jadwal.import.form')" text="Import Jadwal" />
-        <x-tabler.button type="create" :href="route('lab.jadwal.create')" text="Tambah" />
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.jadwal.create')" modal-title="Tambah Jadwal Kuliah" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

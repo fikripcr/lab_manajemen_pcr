@@ -3,15 +3,13 @@
 @section('header')
 <x-tabler.page-header title="Formulir Pendaftaran" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pmb.camaba.dashboard') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button type="back" href="{{ route('pmb.camaba.dashboard') }}" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <div class="card-body">
                 <form action="{{ route('pmb.camaba.store') }}" method="POST" class="ajax-form" data-redirect="true">
@@ -77,11 +75,9 @@
                     </div>
 
                     <div class="card-footer text-end px-0">
-                        <x-tabler.button type="submit" class="btn-primary btn-lg" text="Kirim Pendaftaran" />
+                        <x-tabler.button type="submit" size="lg" text="Kirim Pendaftaran" />
                     </div>
                 </form>
             </div>
         </div>
-    </div>
-</div>
 @endsection

@@ -6,7 +6,7 @@
     <x-tabler.page-header :title="'Inventaris Lab: ' . $lab->name" pretitle="Laboratorium">
         <x-slot:actions>
             <x-tabler.button type="back" :href="route('lab.labs.index')" />
-            <x-tabler.button type="create" :href="route('lab.labs.inventaris.create', $lab->encrypted_lab_id)" text="Tambah" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.labs.inventaris.create', $lab->encrypted_lab_id)" modal-title="Tambah Inventaris ke Lab" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

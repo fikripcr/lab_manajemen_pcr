@@ -69,8 +69,8 @@
         @endif
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Close</button>
-        <x-tabler.button :href="route('sys.error-log.show', $errorLog->id)" class="btn-primary" icon="ti ti-external-link" text="View Full Page" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+        <x-tabler.button :href="route('sys.error-log.show', $errorLog->id)" icon="ti ti-external-link" text="View Full Page" />
     </div>
 @else
     @extends('layouts.tabler.app')

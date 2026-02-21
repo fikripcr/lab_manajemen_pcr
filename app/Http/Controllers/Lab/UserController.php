@@ -99,6 +99,7 @@ class UserController extends Controller
                 $encryptedId = encryptId($user->id);
                 return view('components.tabler.datatables-actions', [
                     'editUrl'     => route('lab.users.edit', $encryptedId),
+                    'editModal'   => true,
                     'viewUrl'     => route('lab.users.show', $encryptedId),
                     'loginAsUrl'  => route('lab.users.login.as', $encryptedId),
                     'loginAsName' => addslashes($user->name),

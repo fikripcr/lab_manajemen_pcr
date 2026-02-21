@@ -26,7 +26,7 @@
             $defaultText = 'Tambah';
             break;
         case 'back':
-            $colorClass = 'btn-secondary';
+            $colorClass = 'btn-outline-secondary';
             $defaultIcon = 'ti ti-arrow-left';
             $defaultText = 'Kembali';
             break;

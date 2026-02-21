@@ -3,14 +3,12 @@
 @section('title', 'Detail Peminjaman')
 
 @section('content')
-<div class="container-xl">
     <x-tabler.page-header title="Detail Peminjaman" :pretitle="'#' . $kegiatan->kegiatan_id">
         <x-slot:actions>
             <x-tabler.button type="back" href="{{ route('lab.kegiatan.index') }}" />
         </x-slot:actions>
     </x-tabler.page-header>
 
-    <div class="page-body">
         <div class="row row-cards">
             <div class="col-md-8">
                 <div class="card">
@@ -143,6 +141,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

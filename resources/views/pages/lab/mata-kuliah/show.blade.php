@@ -20,8 +20,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Tutup</button>
-        <x-tabler.button type="a" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" icon="ti ti-pencil" class="btn-warning" text="Edit" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+        <x-tabler.button type="edit" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" />
     </div>
 @else
     @extends('layouts.tabler.app')

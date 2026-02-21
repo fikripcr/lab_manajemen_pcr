@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Kelola Tim Mutu" pretitle="Periode {{ $periode->periode }} — {{ ucfirst($periode->jenis_periode) }}">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.tim-mutu.index') }}" style="secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button type="back" href="{{ route('pemutu.tim-mutu.index') }}" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

@@ -11,8 +11,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             <div class="col-12">
                 <div class="card">
@@ -53,8 +51,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

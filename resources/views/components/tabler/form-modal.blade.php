@@ -29,12 +29,8 @@
                     {{ $slot }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">
-                        Batal
-                    </button>
-                    <button type="submit" class="btn btn-primary ms-auto">
-                        @if($submitIcon) <i class="ti {{ $submitIcon }} me-2"></i> @endif {{ $submitText }}
-                    </button>
+                    <x-tabler.button type="cancel" data-bs-dismiss="modal" />
+                    <x-tabler.button type="submit" :icon="$submitIcon ? 'ti ' . $submitIcon : null" :text="$submitText" class="ms-auto" />
                 </div>
             </form>
 

@@ -34,7 +34,7 @@ class LabController extends Controller
             ->addColumn('action', function ($lab) {
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('lab.labs.edit', $lab->encrypted_lab_id),
-                    'editModal' => false,
+                    'editModal' => true,
                     'viewUrl'   => route('lab.labs.show', $lab->encrypted_lab_id),
                     'deleteUrl' => route('lab.labs.destroy', $lab->encrypted_lab_id),
                 ])->render();

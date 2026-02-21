@@ -1,10 +1,10 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Inventory Management" pretitle="Inventory">
+<x-tabler.page-header title="Inventaris Lab" pretitle="Aset & Peralatan">
     <x-slot:actions>
-        <x-tabler.button type="export" id="exportBtn" />
-        <x-tabler.button type="create" :href="route('lab.inventaris.create')" />
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.inventaris.create')" modal-title="Tambah Inventaris" />
+        <x-tabler.button type="button" icon="ti ti-download" text="Export" class="btn-outline-primary" id="btn-export" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

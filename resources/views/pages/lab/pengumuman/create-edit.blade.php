@@ -11,8 +11,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <form action="{{ $pengumuman->exists ? route('lab.pengumuman.update', $pengumuman->encrypted_pengumuman_id) : route('lab.pengumuman.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @if($pengumuman->exists)
@@ -107,6 +105,4 @@
                 </div>
             </div>
         </form>
-    </div>
-</div>
 @endsection

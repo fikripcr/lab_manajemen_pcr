@@ -3,15 +3,13 @@
 @section('header')
 <x-tabler.page-header title="Syarat Dokumen: {{ $jalur->nama_jalur }}" pretitle="Pengaturan Jalur">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pmb.jalur.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button type="back" href="{{ route('pmb.jalur.index') }}" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             <div class="col-md-4">
                 <div class="card">
@@ -34,7 +32,7 @@
                             <x-tabler.form-checkbox name="is_required" label="Wajib Diupload" checked="true" />
 
                             <div class="form-footer mt-3">
-                                <x-tabler.button type="submit" class="btn-primary w-100" text="Tambah Syarat" />
+                                <x-tabler.button type="submit" class="w-100" text="Tambah Syarat" />
                             </div>
                         </form>
                     </div>
@@ -86,6 +84,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

@@ -6,8 +6,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="row">
             {{-- Left Panel: OrgUnit Tree --}}
             <div class="col-lg-5">
@@ -35,8 +33,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

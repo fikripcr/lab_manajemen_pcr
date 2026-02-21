@@ -3,16 +3,13 @@
 @section('header')
 <x-tabler.page-header title="Master Periode PMB" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary d-none d-sm-inline-block ajax-modal-btn" icon="ti ti-plus" text="Tambah Periode" 
-            data-modal-target="#modalAction" data-modal-title="Tambah Periode" data-url="{{ route('pmb.periode.create') }}" />
+        <x-tabler.button type="create" class="d-none d-sm-inline-block" :modal-url="route('pmb.periode.create')" modal-title="Tambah Periode" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <div class="card-body">
                 <x-tabler.datatable 
@@ -29,7 +26,4 @@
                 />
             </div>
         </div>
-    </div>
-</div>
-
 @endsection

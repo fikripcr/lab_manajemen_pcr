@@ -3,14 +3,12 @@
 @section('title', 'Log Penggunaan PC')
 
 @section('content')
-<div class="container-xl">
     <x-tabler.page-header title="Log Penggunaan PC" pretitle="Monitoring">
         <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('lab.log-pc.create') }}" text="Isi Log Sekarang" icon="bx bx-plus" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.log-pc.create')" modal-title="Tambah Log Penggunaan PC" />
         </x-slot:actions>
     </x-tabler.page-header>
 
-    <div class="page-body">
         <div class="card">
             <div class="card-header">
                 <div class="d-flex flex-wrap gap-2">
@@ -37,8 +35,6 @@
                 />
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 

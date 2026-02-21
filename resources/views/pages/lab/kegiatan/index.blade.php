@@ -2,15 +2,15 @@
 
 @section('title', 'Peminjaman Lab')
 
-@section('content')
-<div class="container-xl">
-    <x-tabler.page-header title="Peminjaman Lab (Kegiatan)" pretitle="Perkuliahan">
-        <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('lab.kegiatan.create') }}" text="Ajukan Peminjaman" icon="bx bx-plus" />
-        </x-slot:actions>
-    </x-tabler.page-header>
+@section('header')
+<x-tabler.page-header title="Peminjaman Lab (Kegiatan)" pretitle="Perkuliahan">
+    <x-slot:actions>
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.kegiatan.create')" modal-title="Ajukan Peminjaman Lab" />
+    </x-slot:actions>
+</x-tabler.page-header>
+@endsection
 
-    <div class="page-body">
+@section('content')
         <div class="card">
             <div class="card-body">
                 <x-tabler.datatable
@@ -28,6 +28,5 @@
                 />
             </div>
         </div>
-    </div>
-</div>
+
 @endsection

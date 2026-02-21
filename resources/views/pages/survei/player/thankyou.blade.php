@@ -1,9 +1,7 @@
 @extends(auth()->check() ? 'layouts.tabler.app' : 'layouts.public.app')
 
 @section('content')
-<div class="page-body">
-    <div class="container-tight py-4">
-        <div class="empty">
+        <div class="empty py-4">
             <div class="empty-icon">
                 <i class="ti ti-circle-check text-success" style="font-size: 4rem;"></i>
             </div>
@@ -22,6 +20,4 @@
                 @endauth
             </div>
         </div>
-    </div>
-</div>
 @endsection

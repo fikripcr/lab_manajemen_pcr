@@ -5,8 +5,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             @if($slideshows->count() > 0)
             <div class="col-12">
@@ -140,6 +138,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

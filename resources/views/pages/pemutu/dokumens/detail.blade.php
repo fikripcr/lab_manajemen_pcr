@@ -90,18 +90,14 @@
         </div>
     @else
         {{-- Full Page Content --}}
-        <div class="page-body">
-            <div class="container-xl">
-                <ol class="breadcrumb" aria-label="breadcrumbs">
-                    <li class="breadcrumb-item"><a href="{{ route('pemutu.dokumens.index') }}">Dokumen SPMI</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Detail</li>
-                </ol>
+        <ol class="breadcrumb" aria-label="breadcrumbs">
+            <li class="breadcrumb-item"><a href="{{ route('pemutu.dokumens.index') }}">Dokumen SPMI</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Detail</li>
+        </ol>
 
-                <div class="card">
-                    <div class="card-body">
-                         @include('pages.pemutu.dokumens._detail_content')
-                    </div>
-                </div>
+        <div class="card">
+            <div class="card-body">
+                    @include('pages.pemutu.dokumens._detail_content')
             </div>
         </div>
     @endif

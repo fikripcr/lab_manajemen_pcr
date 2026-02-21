@@ -51,7 +51,7 @@ class SoftwareRequestController extends Controller
             $q->where('semester_id', $activePeriod->semester_id);
         })->get();
 
-        return view('pages.lab.software-requests.create', compact('mataKuliahs', 'activePeriod'));
+        return view('pages.lab.software-requests.create-edit-ajax', compact('mataKuliahs', 'activePeriod'));
     }
 
     /**
@@ -117,8 +117,9 @@ class SoftwareRequestController extends Controller
             })
             ->addColumn('action', function ($request) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl' => route('lab.software-requests.edit', $request->id),
-                    'viewUrl' => route('lab.software-requests.show', $request->id),
+                    'editUrl'   => route('lab.software-requests.edit', $request->id),
+                    'editModal' => true,
+                    'viewUrl'   => route('lab.software-requests.show', $request->id),
                 ])->render();
             })
             ->rawColumns(['status', 'action'])

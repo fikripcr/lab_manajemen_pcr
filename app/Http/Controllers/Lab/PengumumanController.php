@@ -39,7 +39,7 @@ class PengumumanController extends Controller
         $penulisOptions = User::all();
         // Pass a new instance for the view to handle checks like $pengumuman->exists
         $pengumuman = new Pengumuman();
-        return view('pages.lab.pengumuman.create-edit', compact('type', 'penulisOptions', 'pengumuman'));
+        return view('pages.lab.pengumuman.create-edit-ajax', compact('type', 'penulisOptions', 'pengumuman'));
     }
 
     // ... store method remains the same ...
@@ -148,7 +148,7 @@ class PengumumanController extends Controller
 
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route($routePrefix . '.edit', $encryptedId),
-                    'editModal' => false,
+                    'editModal' => true,
                     'viewUrl'   => route($routePrefix . '.show', $encryptedId),
                     'deleteUrl' => route($routePrefix . '.destroy', $encryptedId),
                 ])->render();

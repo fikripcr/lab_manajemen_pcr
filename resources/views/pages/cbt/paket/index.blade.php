@@ -9,10 +9,7 @@
 @endsection
 
 @section('content')
-
-<div class="page-body">
-    <div class="container-xl">
-        <div class="card">
+    <div class="card">
             <div class="card-body">
                 <x-tabler.datatable 
                     id="table-paket" 
@@ -29,7 +26,5 @@
                 />
             </div>
         </div>
-    </div>
-</div>
 @endsection
 

@@ -5,8 +5,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <div class="card-body">
                 <x-tabler.datatable
@@ -21,5 +19,6 @@
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
                     ]"
                 />
-</script>
-@endpush
+            </div>
+        </div>
+@endsection

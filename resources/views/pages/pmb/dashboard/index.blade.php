@@ -7,16 +7,12 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         {{-- LOAD DASHBOARD BASED ON ROLE --}}
         @if(auth()->user()->hasRole('camaba'))
             @include('pages.pmb.partials.camaba-dashboard')
         @else
             @include('pages.pmb.partials.admin-dashboard')
         @endif
-    </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -43,7 +39,7 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    const container = document.querySelector('.page-body .container-xl');
+    const container = document.querySelector('.page-body');
     container.insertAdjacentHTML('afterbegin', notification);
     
     // Auto remove setelah 5 detik

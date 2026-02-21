@@ -3,14 +3,12 @@
 @section('title', 'Surat Bebas Lab')
 
 @section('content')
-<div class="container-xl">
     <x-tabler.page-header title="Surat Bebas Lab" pretitle="Layanan">
         <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('lab.surat-bebas.create') }}" text="Ajukan Surat" icon="bx bx-plus" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.surat-bebas.create')" modal-title="Ajukan Surat Bebas Lab" />
         </x-slot:actions>
     </x-tabler.page-header>
 
-    <div class="page-body">
         <div class="card">
             <div class="card-body">
                 <x-tabler.datatable
@@ -26,6 +24,4 @@
                 />
             </div>
         </div>
-    </div>
-</div>
 @endsection

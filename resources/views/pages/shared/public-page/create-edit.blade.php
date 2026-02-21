@@ -11,8 +11,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <form action="{{ $page->exists ? route('shared.public-page.update', $page->encrypted_page_id) : route('shared.public-page.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @if($page->exists)
@@ -112,8 +110,6 @@
                 </div>
             </div>
         </form>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

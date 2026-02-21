@@ -86,6 +86,7 @@ class JadwalController extends Controller
                 $encryptedId = encryptId($jadwal->jadwal_kuliah_id);
                 return view('components.tabler.datatables-actions', [
                     'editUrl'     => route('lab.jadwal.edit', $encryptedId),
+                    'editModal'   => true,
                     'viewUrl'     => route('lab.jadwal.show', $encryptedId),
                     'deleteUrl'   => route('lab.jadwal.destroy', $encryptedId),
                     'customLinks' => [
@@ -114,7 +115,8 @@ class JadwalController extends Controller
         })->get();
         $labs = Lab::all();
 
-        return view('pages.lab.jadwal.create', compact('semesters', 'mataKuliahs', 'dosens', 'labs'));
+        $jadwal = new JadwalKuliah();
+        return view('pages.lab.jadwal.create-edit-ajax', compact('semesters', 'mataKuliahs', 'dosens', 'labs', 'jadwal'));
     }
 
     /**
@@ -154,7 +156,7 @@ class JadwalController extends Controller
         })->get();
         $labs = Lab::all();
 
-        return view('pages.lab.jadwal.edit', compact('jadwal', 'semesters', 'mataKuliahs', 'dosens', 'labs'));
+        return view('pages.lab.jadwal.create-edit-ajax', compact('jadwal', 'semesters', 'mataKuliahs', 'dosens', 'labs'));
     }
 
     /**

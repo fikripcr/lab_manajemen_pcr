@@ -38,8 +38,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Tutup</button>
-        <x-tabler.button :href="route('lab.semesters.edit', $semester->encrypted_semester_id)" class="btn-primary" icon="bx bx-edit" text="Edit" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+        <x-tabler.button type="edit" :href="route('lab.semesters.edit', $semester->encrypted_semester_id)" />
     </div>
 @else
     @extends('layouts.tabler.app')
@@ -48,8 +48,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
             <h4 class="fw-bold py-3 mb-0">Semester Details</h4>
             <div class="d-flex gap-2">
-                <x-tabler.button :href="route('lab.semesters.edit', $semester->encrypted_semester_id)" class="btn-primary" icon="bx bx-edit" text="Edit" />
-                <x-tabler.button :href="route('lab.semesters.index')" class="btn-secondary" icon="bx bx-arrow-back" text="Back to List" />
+                <x-tabler.button type="back" :href="route('lab.semesters.index')" />
             </div>
         </div>
 
@@ -96,7 +95,7 @@
                             <form method="POST" action="{{ route('lab.semesters.destroy', $semester->encrypted_semester_id) }}">
                                 @csrf
                                 @method('DELETE')
-                                <x-tabler.button type="submit" class="btn-danger" icon="bx bx-trash" text="Delete Semester" onclick="return confirm('Are you sure you want to delete this semester?')" />
+                                <x-tabler.button type="delete" text="Delete Semester" onclick="return confirm('Are you sure you want to delete this semester?')" />
                             </form>
                         </div>
                     </div>

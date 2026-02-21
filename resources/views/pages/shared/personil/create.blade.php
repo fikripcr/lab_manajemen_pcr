@@ -5,8 +5,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <form class="ajax-form" action="{{ route('shared.personil.store') }}" method="POST">
                 @csrf
@@ -77,6 +75,4 @@
                 </div>
             </form>
         </div>
-    </div>
-</div>
 @endsection

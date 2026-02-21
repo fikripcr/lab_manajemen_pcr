@@ -11,8 +11,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="card card-print">
             <div class="card-body">
                 <div class="row align-items-center mb-4 text-center">
@@ -71,14 +69,10 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
 <style type="text/css">
     @media print {
         .btn-list, .page-header, .navbar, .footer { display: none !important; }
         .card { border: 1px solid #000; box-shadow: none; }
-        .page-body { margin: 0; padding: 0; }
         body { background: #fff; }
     }
 </style>

@@ -3,8 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $pageTitle }}" pretitle="E-Office Master">
     <x-slot:actions>
-        <x-tabler.button type="create" class="btn-primary ajax-modal-btn" 
-            data-url="{{ route('eoffice.perusahaan.create') }}" modal-title="Tambah Perusahaan" />
+        <x-tabler.button type="create" :modal-url="route('eoffice.perusahaan.create')" modal-title="Tambah Perusahaan" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

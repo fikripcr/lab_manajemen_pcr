@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Laboratorium" pretitle="Laboratorium">
     <x-slot:actions>
-        <x-tabler.button type="create" :href="route('lab.labs.create')" />
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.labs.create')" modal-title="Tambah Laboratorium" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

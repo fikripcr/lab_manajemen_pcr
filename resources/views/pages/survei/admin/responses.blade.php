@@ -9,8 +9,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         {{-- Summary Cards --}}
         <div class="row row-cards mb-4">
             <div class="col-sm-4">
@@ -139,6 +137,4 @@
                 </div>
             </div>
         @endif
-    </div>
-</div>
 @endsection

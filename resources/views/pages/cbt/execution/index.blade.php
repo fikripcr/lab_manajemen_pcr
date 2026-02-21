@@ -192,8 +192,7 @@
     <strong>Koneksi Terputus!</strong> Jawaban Anda tetap aman di browser.
 </div>
 
-<div class="page-body">
-    <div class="container-xl exam-container">
+<div class="exam-container">
         <div class="row g-4">
             {{-- Main Content --}}
             <div class="col-lg-9">
@@ -340,7 +339,6 @@
                 @endif
             </div>
         </div>
-    </div>
 </div>
 @endsection
 

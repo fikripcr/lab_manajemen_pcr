@@ -1,9 +1,9 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Mata Kuliah" pretitle="Perkuliahan">
+<x-tabler.page-header title="Mata Kuliah" pretitle="Daftar MK">
     <x-slot:actions>
-        <x-tabler.button type="create" :href="route('lab.mata-kuliah.create')" />
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.mata-kuliah.create')" modal-title="Tambah Mata Kuliah" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

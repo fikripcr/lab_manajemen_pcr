@@ -16,8 +16,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             @if($faqs->isEmpty())
                 <div class="col-12">
@@ -88,8 +86,6 @@
                 @endforeach
             @endif
         </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

@@ -3,14 +3,12 @@
 @section('title', 'Detail Surat Bebas Lab')
 
 @section('content')
-<div class="container-xl">
     <x-tabler.page-header title="Detail Pengajuan" :pretitle="'#' . $surat->surat_bebas_lab_id">
         <x-slot:actions>
             <x-tabler.button type="back" href="{{ route('lab.surat-bebas.index') }}" />
         </x-slot:actions>
     </x-tabler.page-header>
 
-    <div class="page-body">
         <div class="row row-cards">
             <div class="col-md-8">
                 <div class="card">
@@ -137,6 +135,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

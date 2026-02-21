@@ -103,7 +103,7 @@
         @endif
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Tutup</button>
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
         <x-tabler.button type="edit" :href="route('lab.software-requests.edit', $softwareRequest->id)" />
     </div>
 @else

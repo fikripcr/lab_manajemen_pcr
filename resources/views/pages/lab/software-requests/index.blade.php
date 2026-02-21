@@ -3,14 +3,12 @@
 @section('title', 'Permintaan Software')
 
 @section('content')
-<div class="container-xl">
     <x-tabler.page-header title="Daftar Permintaan Software" pretitle="Berkas">
         <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('lab.software-requests.create') }}" text="Buat Request" icon="bx bx-plus" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.software-requests.create')" modal-title="Buat Request Software" />
         </x-slot:actions>
     </x-tabler.page-header>
 
-    <div class="page-body">
         <div class="card">
             <div class="card-header">
                 <div class="d-flex flex-wrap gap-2">
@@ -39,8 +37,6 @@
                 />
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 

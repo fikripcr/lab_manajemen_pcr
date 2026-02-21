@@ -9,8 +9,6 @@
     </x-slot:actions>
 </x-tabler.page-header>
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Daftar Pelanggaran Terbaru</h3>
@@ -71,6 +69,4 @@
                 </div>
             @endif
         </div>
-    </div>
-</div>
 @endsection

@@ -3,14 +3,12 @@
 @section('title', 'Log Penggunaan Lab (Guest)')
 
 @section('content')
-<div class="container-xl">
     <x-tabler.page-header title="Log Penggunaan Lab" pretitle="Buku Tamu">
         <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('lab.log-lab.create') }}" text="Isi Log Tamu" icon="bx bx-plus" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.log-lab.create')" modal-title="Tambah Log Penggunaan Lab" />
         </x-slot:actions>
     </x-tabler.page-header>
 
-    <div class="page-body">
         <div class="card">
             <div class="card-body">
                 <x-tabler.datatable
@@ -27,6 +25,4 @@
                 />
             </div>
         </div>
-    </div>
-</div>
 @endsection

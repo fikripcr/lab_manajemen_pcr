@@ -25,6 +25,7 @@ This document defines the technical standards for the `lab_manajemen_pcr` projec
 - **Controller**: Only handles HTTP concerns. Inject services via constructor: `public function __construct(protected RoleService $roleService) {}`.
 - **Service**: Contains all business logic and database transactions (`DB::transaction`).
 - **Eager Loading**: ALWAYS use `->with(['relation'])` in Service queries to prevent N+1 issues.
+- **Routing**: ALWAYS use Fully Qualified Class Name (FQCN) tuple notation for routes (e.g., `[DashboardController::class, 'index']`), NEVER the legacy string format.
 
 ## 3. Model, Database & Security
 
@@ -41,6 +42,9 @@ This document defines the technical standards for the `lab_manajemen_pcr` projec
 - **Dark Mode**: All custom background colors (body, sidebar, etc.) are DISABLED in Dark Mode to ensure readability.
 - **Header Overlap**: The only exception allowed in Dark Mode is the `header-overlap` background in condensed layouts to maintain visual depth.
 - **Live Preview**: Handled by `resources/assets/tabler/js/ThemeTabler.js`.
+
+### View Structure
+- **No Redundant Wrappers**: Views extending `layouts.tabler.app` MUST NOT wrap their content with `<div class="page-body"><div class="container-xl">` within `@section('content')` because this is already handled by the global layout.
 
 ## 5. Mandatory JS Libraries (sys Feature Testing)
 

@@ -10,8 +10,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="row g-3">
             <div class="col-md-4">
                 <div class="card">
@@ -161,6 +159,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

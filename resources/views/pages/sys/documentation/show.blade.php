@@ -12,10 +12,10 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Close</button>
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
         <div class="d-flex gap-2">
             <x-tabler.button :href="route('sys.documentation.edit', $fileName)" class="btn-outline-primary" icon="ti ti-pencil" text="Edit" />
-            <x-tabler.button :href="route('sys.documentation.show', $fileName)" class="btn-primary" icon="ti ti-external-link" text="View Full Page" />
+            <x-tabler.button :href="route('sys.documentation.show', $fileName)" icon="ti ti-external-link" text="View Full Page" />
         </div>
     </div>
 @else

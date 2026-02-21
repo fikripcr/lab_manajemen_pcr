@@ -11,8 +11,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="row g-4">
             <!-- Sidebar: Halaman -->
             <div class="col-md-3">
@@ -95,9 +93,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
 <!-- Modal Edit Halaman -->
 <x-tabler.form-modal
     id="modalEditHalaman"
@@ -110,8 +105,8 @@
     <x-tabler.form-textarea name="deskripsi_halaman" label="Keterangan" id="edit-halaman-deskripsi" rows="3" placeholder="Instruksi singkat untuk responden di halaman ini..." />
     
     <x-slot:footer>
-        <x-tabler.button type="button" class="btn-link link-secondary" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="button" class="btn-primary ms-auto" onclick="window.saveHalaman()" text="Simpan" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Batal" />
+        <x-tabler.button type="button" class="ms-auto" onclick="window.saveHalaman()" text="Simpan" />
     </x-slot:footer>
 </x-tabler.form-modal>
 

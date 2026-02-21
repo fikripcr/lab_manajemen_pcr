@@ -9,8 +9,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <div class="card-body">
                 <div class="datagrid">
@@ -37,6 +35,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header title="Periode Request Software" pretitle="Software Request">
         <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('lab.periode-request.create') }}" text="Tambah Periode" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.periode-request.create')" modal-title="Tambah Periode Request Software" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

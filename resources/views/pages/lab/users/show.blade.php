@@ -44,9 +44,9 @@
                                 <x-tabler.button type="button" class="btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal" icon="ti ti-key" text="Change Password" />
 
                                 @if(auth()->id() == $user->id)
-                                    <x-tabler.button :href="route('lab.users.edit', $user->encrypted_id)" class="btn-primary" icon="ti ti-edit" text="Edit Profile" />
+                                    <x-tabler.button type="edit" :href="route('lab.users.edit', $user->encrypted_id)" text="Edit Profile" />
                                 @else
-                                    <x-tabler.button :href="route('lab.users.edit', $user->encrypted_id)" class="btn-primary" icon="ti ti-edit" text="Edit User" />
+                                    <x-tabler.button type="edit" :href="route('lab.users.edit', $user->encrypted_id)" text="Edit User" />
                                 @endif
                             </div>
                         </div>

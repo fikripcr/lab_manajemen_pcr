@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Semester" pretitle="Perkuliahan">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-plus" text="Tambah" class="ajax-modal-btn" data-url="{{ route('lab.semesters.create-modal') }}" data-modal-title="Tambah Semester" />
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.semesters.create-modal')" modal-title="Tambah Semester" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

@@ -15,8 +15,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             {{-- Summary Stats --}}
             <div class="col-12">
@@ -151,8 +149,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

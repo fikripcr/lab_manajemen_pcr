@@ -57,8 +57,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Close</button>
-        <x-tabler.button :href="route('sys.roles.edit', $role->encrypted_id)" class="btn-primary" icon="ti ti-pencil" text="Edit Role" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+        <x-tabler.button type="edit" :href="route('sys.roles.edit', $role->encrypted_id)" text="Edit Role" />
     </div>
 @else
     @extends('layouts.tabler.app')

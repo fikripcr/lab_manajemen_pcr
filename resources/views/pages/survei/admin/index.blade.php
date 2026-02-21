@@ -8,8 +8,6 @@
 </x-tabler.page-header>
 @endsection
 @section('content')
-<<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
@@ -30,8 +28,6 @@
                 :url="route('survei.paginate')" />
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

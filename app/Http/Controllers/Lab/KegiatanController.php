@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Lab;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\KegiatanRequest;
 use App\Models\Lab\Kegiatan;
+use App\Models\Lab\Lab;
+use App\Services\Lab\KegiatanService;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class KegiatanController extends Controller

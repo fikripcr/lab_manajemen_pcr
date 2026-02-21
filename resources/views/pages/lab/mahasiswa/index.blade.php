@@ -1,19 +1,11 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-    <div class="row g-2 align-items-center">
-        <div class="col">
-            <h2 class="page-title">
-                Master Mahasiswa
-            </h2>
-            <div class="text-muted mt-1">Master Data / Mahasiswa</div>
-        </div>
-        <div class="col-auto ms-auto d-print-none">
-            <div class="btn-list">
-                <x-tabler.button type="create" href="{{ route('lab.mahasiswa.create') }}" text="Tambah Mahasiswa" />
-            </div>
-        </div>
-    </div>
+<x-tabler.page-header title="Master Mahasiswa" pretitle="Master Data">
+    <x-slot:actions>
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.mahasiswa.create')" modal-title="Tambah Mahasiswa" />
+    </x-slot:actions>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

@@ -1,9 +1,9 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header :title="ucfirst($type) . ' Management'" pretitle="Announcement">
+<x-tabler.page-header :title="ucfirst($type)" pretitle="Management">
     <x-slot:actions>
-        <x-tabler.button type="create" :href="route('lab.'.$type . '.create')" text="Tambah" />
+        <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.'.$type . '.create', ['type' => $type])" :modal-title="'Tambah ' . ucfirst($type)" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

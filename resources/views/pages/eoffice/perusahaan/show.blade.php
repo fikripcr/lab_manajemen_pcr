@@ -4,8 +4,7 @@
 <x-tabler.page-header title="{{ $perusahaan->nama_perusahaan }}" pretitle="Detail Perusahaan">
     <x-slot:actions>
         <x-tabler.button type="back" :onclick="'window.history.back()'" />
-        <x-tabler.button type="edit" class="ajax-modal-btn" 
-            data-url="{{ route('eoffice.perusahaan.edit', $perusahaan->perusahaan_id) }}" modal-title="Ubah Perusahaan" />
+        <x-tabler.button type="edit" :modal-url="route('eoffice.perusahaan.edit', $perusahaan->perusahaan_id)" modal-title="Ubah Perusahaan" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

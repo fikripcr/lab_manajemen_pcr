@@ -318,7 +318,7 @@
         </div>
     </div>
     <x-slot:footer>
-        <x-tabler.button type="button" class="btn-secondary" data-bs-dismiss="modal" text="Tutup" />
+        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
         <x-tabler.button type="button" class="btn-primary" id="btn-retest" text="Test Ulang" />
     </x-slot:footer>
 </x-tabler.form-modal>

@@ -6,7 +6,7 @@
     <x-tabler.page-header :title="'Team Lab: ' . $lab->name" pretitle="Laboratorium">
         <x-slot:actions>
             <x-tabler.button type="back" :href="route('lab.labs.index')" />
-            <x-tabler.button type="create" :href="route('lab.labs.teams.create', $lab->encrypted_lab_id)" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.labs.teams.create', $lab->encrypted_lab_id)" modal-title="Tambah Anggota Tim" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection
@@ -50,12 +50,8 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex justify-content-end gap-1">
-                                        <x-tabler.button type="edit" :href="route('lab.labs.teams.edit', [$lab->encrypted_lab_id, $team->encrypted_lab_team_id])" size="sm" />
-                                        <form action="{{ route('lab.labs.teams.destroy', [$lab->encrypted_lab_id, $team->encrypted_lab_team_id]) }}" method="POST" class="ajax-form-delete d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <x-tabler.button type="delete" size="sm" />
-                                        </form>
+                                        <x-tabler.button type="edit" class="ajax-modal-btn" :modal-url="route('lab.labs.teams.edit', [$lab->encrypted_lab_id, $team->encrypted_lab_team_id])" modal-title="Edit Anggota Tim" size="sm" />
+                                        <x-tabler.button type="button" class="btn-sm btn-icon btn-outline-danger ajax-delete" data-url="{{ route('lab.labs.teams.destroy', [$lab->encrypted_lab_id, $team->encrypted_lab_team_id]) }}" data-title="Hapus Anggota Tim" icon="bx bx-trash" />
                                     </div>
                                 </td>
                             </tr>

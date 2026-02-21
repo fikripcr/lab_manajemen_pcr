@@ -5,7 +5,7 @@
 <x-tabler.page-header title="{{ $layanan->no_layanan }}" pretitle="{{ $layanan->jenisLayanan->nama_layanan }}">
     <x-slot:actions>
         <div class="btn-list">
-            <x-tabler.button href="{{ route('eoffice.layanan.index') }}" class="btn-link link-secondary" icon="ti ti-arrow-left" text="Kembali" />
+            <x-tabler.button type="back" href="{{ route('eoffice.layanan.index') }}" />
             <div class="dropdown">
                 <x-tabler.button type="button" class="btn-ghost-secondary dropdown-toggle" data-bs-toggle="dropdown" text="Action" />
                 <div class="dropdown-menu dropdown-menu-end">
@@ -192,7 +192,7 @@
                     <div class="row g-2">
                         @if($layanan->latestStatus->status_layanan === 'Diajukan')
                             <div class="col-12">
-                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->encrypted_layanan_id, 'proses']) }}" class="btn-primary w-100" icon="ti ti-player-play" text="Terima & Proses" />
+                                <x-tabler.button type="submit" href="{{ route('eoffice.layanan.update-status', [$layanan->encrypted_layanan_id, 'proses']) }}" class="w-100" icon="ti ti-player-play" text="Terima & Proses" />
                             </div>
                         @else
                             {{-- Unified form for status updates --}}
@@ -260,14 +260,14 @@
                                 <x-tabler.form-input type="file" name="file_lampiran" label="File Output / Lampiran" />
 
                                 <div class="text-end">
-                                    <x-tabler.button type="submit" class="btn-primary w-100" text="Kirim Perubahan Status" />
+                                    <x-tabler.button type="submit" class="w-100" text="Kirim Perubahan Status" />
                                 </div>
                             </form>
                         @endif
 
                         @if($layanan->latestStatus->status_layanan !== 'Diajukan')
                             <div class="col-12 mt-2">
-                                <x-tabler.button href="{{ route('eoffice.layanan.update-status', [$layanan->encrypted_layanan_id, 'batal']) }}" class="btn-ghost-danger btn-sm w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan." icon="ti ti-history" text="Batal Proses" />
+                                <x-tabler.button type="cancel" href="{{ route('eoffice.layanan.update-status', [$layanan->encrypted_layanan_id, 'batal']) }}" class="btn-sm btn-ghost-danger w-100 ajax-confirm" data-title="Batal Proses?" data-text="Status akan kembali ke Antrian/Diajukan." icon="ti ti-history" text="Batal Proses" />
                             </div>
                         @endif
                     </div>

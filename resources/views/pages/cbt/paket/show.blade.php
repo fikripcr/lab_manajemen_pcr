@@ -10,8 +10,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             {{-- Soal yang sudah ada dalam paket --}}
             <div class="col-md-7">
@@ -83,8 +81,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-@endsection
-
 @endsection

@@ -14,8 +14,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             <div class="col-lg-8">
                 <div class="card">
@@ -83,6 +81,4 @@
                 @endif
             </div>
         </div>
-    </div>
-</div>
 @endsection

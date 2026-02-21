@@ -22,8 +22,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         @if(auth()->user()->hasRole('camaba'))
             {{-- CAMABA VIEW --}}
             @include('pages.cbt.partials.exam-interface')
@@ -31,8 +29,6 @@
             {{-- ADMIN VIEW --}}
             @include('pages.cbt.partials.monitoring-dashboard')
         @endif
-    </div>
-</div>
 @endsection
 
 @push('scripts')

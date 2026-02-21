@@ -11,8 +11,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             {{-- Profile Info --}}
             <div class="col-md-4">
@@ -96,7 +94,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
 @endsection

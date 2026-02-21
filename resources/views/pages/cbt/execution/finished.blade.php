@@ -4,8 +4,7 @@
 @section('title', 'Ujian Selesai')
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl d-flex flex-column justify-content-center" style="min-height: 80vh;">
+<div class="d-flex flex-column justify-content-center" style="min-height: 80vh;">
         <div class="text-center">
             <div class="mb-4">
                 <div class="avatar avatar-xl rounded-circle bg-success-lt shadow-sm mb-3" style="width: 100px; height: 100px;">
@@ -31,8 +30,6 @@
                 @endif
             </div>
         </div>
-    </div>
-</div>
 
 <style>
     .avatar-xl i {

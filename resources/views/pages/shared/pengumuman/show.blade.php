@@ -9,8 +9,6 @@
 @endsection
 
 @section('content')
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             @if($pengumuman->cover_url)
             <div class="card-img-top img-responsive img-responsive-21x9" style="background-image: url({{ $pengumuman->cover_url }})"></div>
@@ -25,6 +23,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

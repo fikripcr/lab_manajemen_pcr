@@ -6,8 +6,6 @@
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="card">
             <div class="card-body">
                 <x-tabler.datatable 
@@ -24,7 +22,4 @@
                 />
             </div>
         </div>
-    </div>
-</div>
-
 @endsection

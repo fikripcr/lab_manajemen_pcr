@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Data Status Aktifitas" pretitle="Master Data HR">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Data" class="ajax-modal-btn" data-url="{{ route('hr.status-aktifitas.create') }}" data-modal-title="Tambah Status Aktifitas" />
+        <x-tabler.button type="create" :modal-url="route('hr.status-aktifitas.create')" modal-title="Tambah Status Aktifitas" text="Tambah Data" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

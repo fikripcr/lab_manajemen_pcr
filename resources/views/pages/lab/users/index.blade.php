@@ -10,9 +10,9 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <x-tabler.button href="{{ route('lab.users.import.show') }}" icon="ti ti-file-import" text="Import" class="btn-secondary d-none d-sm-inline-block" />
-                <x-tabler.button href="{{ route('lab.users.export') }}" icon="ti ti-file-export" text="Export" class="btn-secondary d-none d-sm-inline-block" />
-                <x-tabler.button href="{{ route('lab.users.create') }}" icon="ti ti-plus" text="Create" class="btn-primary d-none d-sm-inline-block" />
+                <x-tabler.button :href="route('lab.users.import.show')" icon="ti ti-file-import" text="Import" class="btn-secondary d-none d-sm-inline-block" />
+                <x-tabler.button :href="route('lab.users.export')" icon="ti ti-file-export" text="Export" class="btn-secondary d-none d-sm-inline-block" />
+                <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.users.create')" modal-title="Create User" />
             </div>
         </div>
     </div>

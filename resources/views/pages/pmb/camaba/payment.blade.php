@@ -3,15 +3,13 @@
 @section('header')
 <x-tabler.page-header title="Pembayaran Pendaftaran" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pmb.camaba.dashboard') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button type="back" href="{{ route('pmb.camaba.dashboard') }}" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
 
-<div class="page-body">
-    <div class="container-xl">
         <div class="row row-cards">
             <div class="col-md-7">
                 <div class="card">
@@ -60,13 +58,11 @@
                             </div>
 
                             <div class="form-footer">
-                                <x-tabler.button type="submit" class="btn-success w-100" text="Kirim Konfirmasi" />
+                                <x-tabler.button type="success" class="w-100" text="Kirim Konfirmasi" />
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection
