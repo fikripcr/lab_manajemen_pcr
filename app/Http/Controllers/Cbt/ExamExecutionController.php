@@ -149,23 +149,15 @@ class ExamExecutionController extends Controller
     {
         try {
             $user = auth()->user();
-
-            // Security check for non-admin
-            if (! $user->hasRole('admin')) {
-                if (! session('cbt_token_validated_' . $jadwal->id)) {
-                    return redirect()->route('pmb.camaba.dashboard')->with('error', 'Silakan masukkan token untuk memulai ujian.');
-                }
-            }
-
             $jadwal->load(['paket.komposisi.soal.opsiJawaban']);
-
             $riwayat = $this->examExecutionService->startExam($jadwal, $user, [
                 'ip'         => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
-
-            if ($riwayat->status !== 'Sedang_Mengerjakan' && ! $user->hasRole('admin')) {
-                return redirect()->route('pmb.camaba.dashboard')->with('error', 'Ujian telah selesai atau tidak dapat diakses.');
+            dd($riwayat);
+            if ($riwayat->status === 'Selesai') {
+                return redirect()->route('cbt.execute.finished', $jadwal->hashid)
+                    ->with('info', 'Anda telah menyelesaikan ujian ini.');
             }
 
             $paketSoal = $jadwal->paket->komposisi->map(fn($komp) => $komp->soal);
@@ -175,6 +167,7 @@ class ExamExecutionController extends Controller
 
             return view('pages.cbt.execution.index', compact('jadwal', 'riwayat', 'paketSoal'));
         } catch (Exception $e) {
+            logError($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -247,6 +240,31 @@ class ExamExecutionController extends Controller
             return jsonSuccess('Data testing berhasil direset.', route('cbt.execute.start', $jadwal->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
+        }
+    }
+
+    /**
+     * Test exam for admin: reset history and bypass token, then redirect to exam
+     */
+    public function testExam(JadwalUjian $jadwal)
+    {
+        try {
+            $user    = auth()->user();
+            $riwayat = RiwayatUjianSiswa::where('jadwal_id', $jadwal->id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if ($riwayat) {
+                JawabanSiswa::where('riwayat_id', $riwayat->id)->forceDelete();
+                LogPelanggaran::where('riwayat_id', $riwayat->id)->forceDelete();
+                $riwayat->forceDelete();
+            }
+
+            return redirect()->route('cbt.execute.start', $jadwal->hashid)
+                ->with('info', 'Riwayat ujian sebelumnya telah direset. Silakan mulai ujian.');
+        } catch (Exception $e) {
+            logError($e);
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 

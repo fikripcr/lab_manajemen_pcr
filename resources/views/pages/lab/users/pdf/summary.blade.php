@@ -61,7 +61,7 @@
                 <th>ID</th>
                 <th>Nama</th>
                 <th>Email</th>
-                <th>Role</th>
+                <th>Peran</th>
                 <th>Tanggal Dibuat</th>
             </tr>
         </thead>

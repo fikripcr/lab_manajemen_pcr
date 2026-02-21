@@ -2,7 +2,7 @@
     $item = $label ?? new \stdClass();
     $method = isset($label) ? 'PUT' : 'POST';
     $route = isset($label) ? route('pemutu.labels.update', $label->label_id) : route('pemutu.labels.store');
-    $title = isset($label) ? 'Edit Label' : 'Create Label';
+    $title = isset($label) ? 'Ubah Label' : 'Tambah Label';
     $submitText = isset($label) ? 'Update' : 'Simpan';
 @endphp
 
@@ -13,8 +13,8 @@
     :submitText="$submitText"
 >
     <div class="mb-3">
-        <x-tabler.form-select id="type_id" name="type_id" label="Type" required="true">
-            <option value="">Select Type</option>
+        <x-tabler.form-select id="type_id" name="type_id" label="Tipe" required="true">
+            <option value="">Pilih Tipe</option>
             @foreach($types as $type)
                 <option value="{{ $type->labeltype_id }}" {{ (old('type_id', $item->type_id ?? '') == $type->labeltype_id) || (request('type_id') == $type->labeltype_id) ? 'selected' : '' }}>
                     {{ $type->name }}
@@ -25,10 +25,10 @@
     <div class="mb-3">
         <x-tabler.form-input 
             name="name" 
-            label="Name" 
+            label="Nama" 
             type="text" 
             value="{{ old('name', $item->name ?? '') }}"
-            placeholder="Label Name" 
+            placeholder="Nama Label" 
             required="true" 
         />
     </div>
@@ -38,13 +38,13 @@
             label="Slug" 
             type="text" 
             value="{{ old('slug', $item->slug ?? '') }}"
-            placeholder="Auto-generated if empty" 
+            placeholder="Otomatis jika kosong" 
         />
     </div>
     <div class="mb-3">
         <x-tabler.form-textarea 
             name="description" 
-            label="Description" 
+            label="Deskripsi" 
             value="{{ old('description', $item->description ?? '') }}"
             rows="3" 
         />

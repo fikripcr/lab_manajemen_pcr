@@ -35,7 +35,7 @@
         type="editor" 
         id="{{ $lab->exists ? 'description_edit_modal' : 'description_modal' }}" 
         name="description" 
-        label="Description" 
+        label="Deskripsi" 
         :value="old('description', $lab->description)" 
         height="300" 
     />

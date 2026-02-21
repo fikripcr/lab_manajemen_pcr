@@ -215,6 +215,37 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Inventaris Terbaru -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Inventaris Terbaru</h3>
+                        <div class="card-actions btn-group">
+                            <x-tabler.button type="create" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalInventarisAdd" icon="ti ti-plus" />
+                        </div>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @forelse ($lab->labInventaris()->with('inventaris')->orderBy('tanggal_penempatan', 'desc')->take(10)->get() as $item)
+                            <div class="list-group-item">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <span class="avatar avatar-sm bg-blue-lt">
+                                            <i class="ti ti-package"></i>
+                                        </span>
+                                    </div>
+                                    <div class="col text-truncate">
+                                        <a href="#" class="text-reset d-block">{{ $item->inventaris->nama_alat ?? 'Unknown' }}</a>
+                                        <div class="d-block text-muted text-truncate mt-n1 small">{{ $item->kode_inventaris }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="list-group-item text-center text-muted small py-3">
+                                Belum ada inventaris.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
 
             <!-- Sidebar Content (Right) -->
@@ -256,10 +287,9 @@
                 <!-- Team Widget -->
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h3 class="card-title">Tim Aktif</h3>
+                        <h3 class="card-title">Tim Lab</h3>
                         <div class="card-actions btn-group">
-                            <x-tabler.button type="button" class="btn-outline-primary btn-sm" href="{{ route('lab.labs.teams.index', $lab->encrypted_lab_id) }}" text="Manage" />
-                            <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTeamAdd" icon="ti ti-plus" />
+                            <x-tabler.button type="create" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTeamAdd" icon="ti ti-plus" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush">
@@ -288,37 +318,6 @@
                     </div>
                 </div>
 
-                <!-- Inventaris Widget -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Inventaris Terbaru</h3>
-                        <div class="card-actions btn-group">
-                            <x-tabler.button type="button" class="btn-outline-primary btn-sm" href="{{ route('lab.labs.inventaris.index', $lab->encrypted_lab_id) }}" text="Manage" />
-                            <x-tabler.button type="button" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalInventarisAdd" icon="ti ti-plus" />
-                        </div>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        @forelse ($lab->labInventaris()->with('inventaris')->orderBy('tanggal_penempatan', 'desc')->take(5)->get() as $item)
-                            <div class="list-group-item">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <span class="avatar avatar-sm bg-blue-lt">
-                                            <i class="ti ti-package"></i>
-                                        </span>
-                                    </div>
-                                    <div class="col text-truncate">
-                                        <a href="#" class="text-reset d-block">{{ $item->inventaris->nama_alat ?? 'Unknown' }}</a>
-                                        <div class="d-block text-muted text-truncate mt-n1 small">{{ $item->kode_inventaris }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="list-group-item text-center text-muted small">
-                                Belum ada inventaris.
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
             </div>
         </div>
 

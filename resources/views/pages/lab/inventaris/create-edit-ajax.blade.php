@@ -3,7 +3,7 @@
     title="{{ $inventaris->exists ? 'Edit Inventory' : 'Create New Inventory' }}"
     route="{{ $inventaris->exists ? route('lab.inventaris.update', $inventaris) : route('lab.inventaris.store') }}"
     method="{{ $inventaris->exists ? 'PUT' : 'POST' }}"
-    submitText="{{ $inventaris->exists ? 'Update Inventory' : 'Create Inventory' }}"
+    submitText="{{ $inventaris->exists ? 'Update' : 'Create' }}"
 >
     <x-tabler.flash-message />
 
@@ -27,7 +27,7 @@
 
     <x-tabler.form-input 
         name="jenis_alat" 
-        label="Type" 
+        label="Tipe" 
         value="{{ old('jenis_alat', $inventaris->jenis_alat) }}" 
         placeholder="e.g., Electronic, Chemical, Equipment" 
         required 

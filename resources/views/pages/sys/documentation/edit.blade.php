@@ -3,10 +3,10 @@
         title="Edit Documentation: {{ $page }}"
         route="{{ route('sys.documentation.update', $page) }}"
         method="PUT"
-        submitText="Save Changes"
+        submitText="Simpan Perubahan"
         submitIcon="ti-device-floppy"
     >
-        <x-tabler.form-textarea type="editor" id="content" name="content" label="Content" :value="old('content', $content)" height="500" />
+        <x-tabler.form-textarea type="editor" id="content" name="content" label="Konten" :value="old('content', $content)" height="500" />
     </x-tabler.form-modal>
 @else
     @extends('layouts.tabler.app')

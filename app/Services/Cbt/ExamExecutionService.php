@@ -63,14 +63,19 @@ class ExamExecutionService
                 'nilai_akhir'   => $totalNilai,
             ]);
 
-            // 3. Integration with PMB
-            $pendaftaran = Pendaftaran::where('user_id', $riwayat->user_id)->latest()->first();
-            if ($pendaftaran) {
-                $pendaftaran->update(['status_terkini' => 'Sudah_Ujian']);
-                $peserta = PesertaUjian::where('pendaftaran_id', $pendaftaran->id)->first();
-                if ($peserta) {
-                    $peserta->update(['nilai_akhir' => $totalNilai]);
+            // 3. Integration with PMB (optional — only if user has active registration)
+            try {
+                $pendaftaran = Pendaftaran::where('user_id', $riwayat->user_id)->latest()->first();
+                if ($pendaftaran) {
+                    $pendaftaran->update(['status_terkini' => 'Sudah_Ujian']);
+                    $peserta = PesertaUjian::where('pendaftaran_id', $pendaftaran->id)->first();
+                    if ($peserta) {
+                        $peserta->update(['nilai_akhir' => $totalNilai]);
+                    }
                 }
+            } catch (\Exception $e) {
+                // PMB integration failure should not block exam submission
+                \Log::warning('CBT: PMB integration failed on submit', ['error' => $e->getMessage(), 'riwayat_id' => $riwayat->id]);
             }
 
             return $riwayat;

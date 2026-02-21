@@ -20,7 +20,7 @@ class CamabaService
             ->latest()
             ->first();
 
-        $periodeAktif = $this->pendaftaranService->PeriodeService->getActivePeriode();
+        $periodeAktif = $this->PeriodeService->getActivePeriode();
 
         $activeJadwal = null;
         if ($pendaftaran && in_array($pendaftaran->status_terkini, ['Siap_Ujian', 'Sedang_Ujian'])) {
@@ -37,7 +37,7 @@ class CamabaService
 
     public function getRegistrationFormData($user)
     {
-        $periodeAktif = $this->pendaftaranService->PeriodeService->getActivePeriode();
+        $periodeAktif = $this->PeriodeService->getActivePeriode();
         if (! $periodeAktif) {
             return ['error' => 'Tidak ada periode pendaftaran yang aktif saat ini.'];
         }
@@ -57,9 +57,10 @@ class CamabaService
         return compact('periodeAktif', 'jalur', 'prodi', 'profil');
     }
 
-    public function __construct(protected PendaftaranService $pendaftaranService)
-    {
-    }
+    public function __construct(
+        protected PendaftaranService $pendaftaranService,
+        protected PeriodeService $PeriodeService
+    ) {}
 
     public function createRegistration(array $data)
     {
@@ -80,7 +81,6 @@ class CamabaService
                 'status_verifikasi' => 'Pending',
                 'waktu_bayar'       => now(),
             ]);
-            -
             $this->pendaftaranService->updateStatus($pendaftaran, 'Menunggu_Verifikasi_Bayar', 'Camaba telah mengunggah bukti pembayaran.');
 
             logActivity('pmb_pembayaran', "Camaba mengunggah bukti pembayaran untuk pendaftaran {$pendaftaran->no_pendaftaran}", $pembayaran);

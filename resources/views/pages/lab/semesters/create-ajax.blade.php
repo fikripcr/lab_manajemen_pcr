@@ -18,11 +18,11 @@
     </div>
 
     <div class="mb-3">
-        <x-tabler.form-input type="date" name="start_date" id="start_date" label="Start Date" :value="old('start_date')" required="true" />
+        <x-tabler.form-input type="date" name="start_date" id="start_date" label="Tanggal Mulai" :value="old('start_date')" required="true" />
     </div>
 
     <div class="mb-3">
-        <x-tabler.form-input type="date" name="end_date" id="end_date" label="End Date" :value="old('end_date')" required="true" />
+        <x-tabler.form-input type="date" name="end_date" id="end_date" label="Tanggal Selesai" :value="old('end_date')" required="true" />
     </div>
 
     <div class="mb-3">

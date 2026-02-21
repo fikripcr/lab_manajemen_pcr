@@ -172,13 +172,13 @@
                             </td>
                             <td>
                                 <div class="btn-list flex-nowrap">
-                                    <a href="{{ route('cbt.execute.test-exam', $exam->encrypted_jadwal_ujian_id) }}" class="btn btn-icon btn-sm btn-primary" title="Test Exam">
+                                    <a href="{{ route('cbt.execute.test-exam', $exam->hashid) }}" class="btn btn-icon btn-sm btn-primary" title="Tes Ujian">
                                         <i class="ti ti-player-play"></i>
                                     </a>
-                                    <button type="button" class="btn btn-icon btn-sm btn-info" onclick="monitorExam('{{ $exam->encrypted_jadwal_ujian_id }}')" title="Monitor">
+                                    <button type="button" class="btn btn-icon btn-sm btn-info" onclick="monitorExam('{{ $exam->hashid }}')" title="Monitor">
                                         <i class="ti ti-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-icon btn-sm btn-secondary" onclick="toggleToken('{{ $exam->encrypted_jadwal_ujian_id }}')" title="Toggle Token">
+                                    <button type="button" class="btn btn-icon btn-sm btn-secondary" onclick="toggleToken('{{ $exam->hashid }}')" title="Toggle Token">
                                         <i class="ti ti-key"></i>
                                     </button>
                                 </div>

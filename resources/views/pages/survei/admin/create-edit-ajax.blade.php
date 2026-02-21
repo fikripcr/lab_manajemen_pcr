@@ -12,7 +12,7 @@
     
     <div class="row">
         <div class="col-md-6">
-            <x-tabler.form-select name="target_role" label="Target Role" required="true"
+            <x-tabler.form-select name="target_role" label="Target Pengguna" required="true"
                 :options="['Mahasiswa' => 'Mahasiswa', 'Dosen' => 'Dosen', 'Tendik' => 'Tendik', 'Alumni' => 'Alumni', 'Umum' => 'Umum']"
                 :selected="old('target_role', $survei->target_role)" 
                 placeholder="Pilih Target" />
