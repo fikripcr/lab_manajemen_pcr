@@ -13,8 +13,8 @@ class SaveAnswerRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'soal_id' => decryptId($this->soal_id),
-            'opsi_id' => $this->opsi_id ? decryptId($this->opsi_id) : null,
+            'soal_id' => decryptIdIfEncrypted($this->soal_id),
+            'opsi_id' => $this->opsi_id ? decryptIdIfEncrypted($this->opsi_id) : null,
         ]);
     }
 

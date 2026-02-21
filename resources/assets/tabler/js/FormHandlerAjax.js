@@ -241,6 +241,9 @@ function initAjaxFormHandler() {
             .then(function (response) {
                 $modalContent.html(response.data);
 
+                // Move modal to body to prevent z-index issues
+                $modal.appendTo('body');
+
                 // Re-initialize components
                 if (typeof window.initOfflineSelect2 === 'function') {
                     window.initOfflineSelect2();

@@ -21,10 +21,15 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
     Route::resource('rapat/peserta', App\Http\Controllers\Event\RapatPesertaController::class)->only(['create', 'edit', 'store', 'update', 'destroy']);
 
     // Rapat Agenda (AJAX Modal support)
+    Route::get('rapat/{rapat}/agenda/create', [App\Http\Controllers\Event\RapatAgendaController::class, 'create'])->name('rapat.agenda.create');
     Route::resource('rapat/agenda', App\Http\Controllers\Event\RapatAgendaController::class)->only(['create', 'edit', 'store', 'update', 'destroy']);
 
-    // Rapat Entitas (AJAX Modal support)
-    Route::resource('rapat/entitas', App\Http\Controllers\Event\RapatEntitasController::class)->only(['create', 'edit', 'store', 'update', 'destroy']);
+    // Rapat Entitas (Nested Resource)
+    Route::resource('rapat/{rapat}/entitas', App\Http\Controllers\Event\RapatEntitasController::class)
+        ->names('rapat.entitas')
+        ->except(['index', 'show']);
+    Route::get('rapat/{rapat}/entitas', [App\Http\Controllers\Event\RapatEntitasController::class, 'index'])->name('rapat.entitas.index');
+    Route::get('rapat/{rapat}/entitas/data', [App\Http\Controllers\Event\RapatEntitasController::class, 'data'])->name('rapat.entitas.data');
 
     // --- New Kegiatan Module Features ---
 

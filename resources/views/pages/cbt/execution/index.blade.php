@@ -2,555 +2,147 @@
 
 @section('title', $jadwal->nama_kegiatan . ' — Ujian')
 
-@push('css')
-<style>
-    /* ============================================================
-       EXAM PAGE — Premium Full-Screen Design (Tabler-based)
-    ============================================================ */
-    :root {
-        --exam-primary:      var(--tblr-primary, #206bc4);
-        --exam-primary-dark: var(--tblr-primary-darker, #1a569d);
-        --exam-success:      var(--tblr-success, #2fb344);
-        --exam-warning:      var(--tblr-warning, #f76707);
-        --exam-danger:       var(--tblr-danger, #d63939);
-        --exam-bg:           var(--tblr-bg-surface-secondary, #f0f2f7);
-        --exam-card:         var(--tblr-bg-surface, #ffffff);
-        --exam-border:       var(--tblr-border-color, #e8ecf0);
-        --exam-text:         var(--tblr-body-color, #1e293b);
-        --exam-muted:        var(--tblr-secondary, #64748b);
-        --exam-header-h: 62px;
-    }
-
-    /* ── Offline Banner ── */
-    .offline-banner {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        z-index: 9999;
-        background: var(--exam-danger);
-        color: #fff;
-        text-align: center;
-        padding: 8px 16px;
-        font-weight: 600;
-        font-size: .875rem;
-        letter-spacing: .3px;
-    }
-
-    /* ── Sticky Exam Header ── */
-    .exam-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        height: var(--exam-header-h);
-        background: #fff;
-        border-bottom: 1px solid var(--exam-border);
-        box-shadow: 0 1px 8px rgba(0,0,0,.06);
-        display: flex;
-        align-items: center;
-        padding: 0 24px;
-        gap: 16px;
-    }
-    .exam-header-logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, var(--exam-primary), var(--exam-primary-dark));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 1rem;
-        flex-shrink: 0;
-    }
-    .exam-header-info { flex: 1; min-width: 0; }
-    .exam-header-pretitle {
-        font-size: .65rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        color: var(--exam-muted);
-        line-height: 1;
-    }
-    .exam-header-title {
-        font-size: .95rem;
-        font-weight: 700;
-        color: var(--exam-text);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.2;
-    }
-    .exam-header-right {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-shrink: 0;
-    }
-    .exam-user-badge {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 4px 10px 4px 6px;
-        background: var(--exam-bg);
-        border-radius: 50px;
-        font-size: .8rem;
-        font-weight: 600;
-        color: var(--exam-text);
-    }
-    .exam-user-avatar {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: var(--exam-primary);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .7rem;
-        font-weight: 700;
-    }
-
-    /* ── Timer ── */
-    .exam-timer {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 16px;
-        border-radius: 50px;
-        background: linear-gradient(135deg, var(--exam-primary), var(--exam-primary-dark));
-        color: #fff;
-        font-weight: 800;
-        font-size: 1.05rem;
-        font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
-        letter-spacing: 2px;
-        box-shadow: 0 4px 12px rgba(32, 107, 196, .25);
-        transition: background .4s;
-        white-space: nowrap;
-    }
-    .exam-timer.warn { background: linear-gradient(135deg, var(--exam-warning), #c75a00); }
-    .exam-timer.danger {
-        background: linear-gradient(135deg, var(--exam-danger), #a82c2c);
-        animation: pulse-danger 1s infinite;
-    }
-    @keyframes pulse-danger {
-        0%, 100% { transform: scale(1); }
-        50%       { transform: scale(1.04); }
-    }
-    .exam-progress-bar {
-        height: 3px;
-        background: #e2e8f0;
-        position: sticky;
-        top: var(--exam-header-h);
-        z-index: 99;
-    }
-    .exam-progress-bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--exam-primary), #4da3ff);
-        transition: width .4s ease;
-        border-radius: 0 3px 3px 0;
-    }
-
-    /* ── Main Layout ── */
-    .exam-body {
-        display: grid;
-        grid-template-columns: 1fr 280px;
-        gap: 20px;
-        padding: 24px 24px 80px;
-        max-width: 1280px;
-        margin: 0 auto;
-    }
-    @media (max-width: 900px) {
-        .exam-body { grid-template-columns: 1fr; }
-        .exam-sidebar { order: -1; }
-    }
-
-    /* ── Question Card ── */
-    .question-card {
-        background: #fff;
-        border-radius: 16px;
-        border: 1px solid var(--exam-border);
-        box-shadow: 0 4px 20px rgba(0,0,0,.05);
-        overflow: hidden;
-        animation: slide-up .3s ease-out;
-    }
-    @keyframes slide-up {
-        from { opacity: 0; transform: translateY(12px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .question-header {
-        padding: 20px 28px 16px;
-        border-bottom: 1px solid var(--exam-border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    .mata-uji-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 5px 14px;
-        background: #eff6ff;
-        color: var(--exam-primary);
-        border-radius: 50px;
-        font-size: .78rem;
-        font-weight: 700;
-        letter-spacing: .3px;
-    }
-    .question-number-display {
-        display: flex;
-        align-items: baseline;
-        gap: 4px;
-    }
-    .question-number-display .label { font-size: .75rem; color: var(--exam-muted); font-weight: 600; }
-    .question-number-display .current { font-size: 2rem; font-weight: 800; color: var(--exam-primary); line-height: 1; }
-    .question-number-display .total { font-size: .85rem; color: var(--exam-muted); }
-
-    .question-body {
-        padding: 28px 28px 20px;
-        font-size: 1.1rem;
-        line-height: 1.75;
-        color: var(--exam-text);
-        font-weight: 400;
-        min-height: 160px;
-    }
-
-    /* ── Options ── */
-    .options-list { padding: 0 28px 8px; display: flex; flex-direction: column; gap: 10px; }
-    .option-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 14px 18px;
-        border: 2px solid var(--exam-border);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all .18s ease;
-        background: #fff;
-    }
-    .option-item:hover { border-color: #93c5fd; background: #f8fbff; transform: translateX(3px); }
-    .option-item.selected {
-        border-color: var(--exam-primary);
-        background: #eff6ff;
-        box-shadow: 0 0 0 3px rgba(32,107,196,.1);
-    }
-    .option-letter {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        background: #f1f5f9;
-        color: var(--exam-muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: .85rem;
-        flex-shrink: 0;
-        transition: all .18s;
-    }
-    .option-item.selected .option-letter {
-        background: var(--exam-primary);
-        color: #fff;
-        box-shadow: 0 4px 10px rgba(32,107,196,.3);
-    }
-    .option-text { font-size: 1.02rem; color: var(--exam-text); flex: 1; }
-
-    /* ── Essay ── */
-    .essay-area {
-        padding: 0 28px 20px;
-    }
-    .essay-area textarea {
-        width: 100%;
-        border: 2px solid var(--exam-border);
-        border-radius: 12px;
-        padding: 16px 18px;
-        font-size: 1rem;
-        line-height: 1.6;
-        resize: vertical;
-        min-height: 180px;
-        transition: border .18s;
-        font-family: inherit;
-        color: var(--exam-text);
-    }
-    .essay-area textarea:focus {
-        outline: none;
-        border-color: var(--exam-primary);
-        box-shadow: 0 0 0 3px rgba(32,107,196,.1);
-    }
-
-    /* ── Question Footer / Navigation ── */
-    .question-footer {
-        padding: 16px 28px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-top: 1px solid var(--exam-border);
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-    .doubt-toggle {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 18px;
-        border: 2px solid #fdd9b5;
-        border-radius: 50px;
-        background: #fff8f3;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: .875rem;
-        color: var(--exam-warning);
-        transition: all .18s;
-        user-select: none;
-    }
-    .doubt-toggle.active, .doubt-toggle:hover {
-        background: var(--exam-warning);
-        border-color: var(--exam-warning);
-        color: #fff;
-    }
-    .doubt-toggle input { display: none; }
-    .nav-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 22px;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: .9rem;
-        border: 2px solid transparent;
-        cursor: pointer;
-        transition: all .18s;
-    }
-    .nav-btn-prev {
-        background: #fff;
-        border-color: var(--exam-border);
-        color: var(--exam-muted);
-    }
-    .nav-btn-prev:hover { border-color: #94a3b8; color: var(--exam-text); }
-    .nav-btn-next { background: var(--exam-primary); color: #fff; }
-    .nav-btn-next:hover { background: var(--exam-primary-dark); transform: translateX(2px); }
-    .nav-btn-next.last { background: var(--exam-success); }
-    .nav-btn-next.last:hover { background: #238a35; }
-    .nav-btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
-
-    /* ── Sidebar ── */
-    .exam-sidebar { display: flex; flex-direction: column; gap: 16px; }
-    .sidebar-card {
-        background: #fff;
-        border-radius: 14px;
-        border: 1px solid var(--exam-border);
-        box-shadow: 0 2px 10px rgba(0,0,0,.04);
-        overflow: hidden;
-    }
-    .sidebar-card-header {
-        padding: 12px 16px;
-        border-bottom: 1px solid var(--exam-border);
-        font-weight: 700;
-        font-size: .8rem;
-        text-transform: uppercase;
-        letter-spacing: .7px;
-        color: var(--exam-muted);
-    }
-    .sidebar-card-body {
-        padding: 14px;
-        max-height: calc(100vh - 320px);
-        overflow-y: auto;
-    }
-    .sidebar-card-body::-webkit-scrollbar { width: 4px; }
-    .sidebar-card-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
-    /* ── Navigator Grid ── */
-    .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-    .nav-cell {
-        aspect-ratio: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: .8rem;
-        cursor: pointer;
-        border: 2px solid var(--exam-border);
-        background: #fff;
-        color: var(--exam-muted);
-        transition: all .15s;
-    }
-    .nav-cell:hover { border-color: var(--exam-primary); color: var(--exam-primary); transform: scale(1.05); }
-    .nav-cell.answered { background: var(--exam-success); border-color: var(--exam-success); color: #fff; }
-    .nav-cell.doubt   { background: var(--exam-warning); border-color: var(--exam-warning); color: #fff; }
-    .nav-cell.active  { background: var(--exam-primary); border-color: var(--exam-primary); color: #fff; box-shadow: 0 4px 10px rgba(32,107,196,.3); }
-
-    /* ── Legend ── */
-    .legend-row { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 12px 16px; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: .75rem; color: var(--exam-muted); font-weight: 600; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-    /* ── Finish Button ── */
-    .finish-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        width: 100%;
-        padding: 12px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--exam-success), #238a35);
-        color: #fff;
-        font-weight: 700;
-        font-size: .95rem;
-        border: none;
-        cursor: pointer;
-        transition: all .2s;
-        box-shadow: 0 4px 14px rgba(47,179,68,.25);
-    }
-    .finish-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(47,179,68,.35); }
-
-    /* ── Reset/Admin ── */
-    .reset-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        width: 100%;
-        padding: 8px;
-        margin-top: 8px;
-        border-radius: 10px;
-        background: transparent;
-        color: var(--exam-danger);
-        font-weight: 600;
-        font-size: .8rem;
-        border: 1px dashed #fca5a5;
-        cursor: pointer;
-        transition: all .18s;
-    }
-    .reset-btn:hover { background: #fff5f5; border-color: var(--exam-danger); }
-</style>
-@endpush
-
-{{-- ===== STICKY EXAM HEADER ===== --}}
 @section('exam-header')
-<div class="offline-banner" id="offline-banner">
-    <i class="ti ti-wifi-off me-2"></i>
-    <strong>Koneksi Terputus!</strong> Jawaban tetap aman, akan dikirim ulang otomatis saat online.
-</div>
-
-<header class="exam-header">
-    <div class="exam-header-logo">
-        <i class="ti ti-school"></i>
-    </div>
-    <div class="exam-header-info">
-        <div class="exam-header-pretitle">Sesi Ujian Aktif</div>
-        <div class="exam-header-title">{{ $jadwal->nama_kegiatan }}</div>
-    </div>
-    <div class="exam-header-right">
-        <div class="exam-user-badge d-none d-sm-flex">
-            <div class="exam-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-            {{ auth()->user()->name }}
+<header class="navbar navbar-expand-md d-print-none border-bottom sticky-top bg-white py-2 shadow-sm">
+    <div class="container-xl">
+        {{-- Left: Event Info --}}
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar avatar-sm bg-primary-lt text-primary rounded">
+                <i class="ti ti-device-laptop fs-2"></i>
+            </div>
+            <div class="d-none d-md-block">
+                <div class="text-muted small text-uppercase fw-bold" style="letter-spacing: .5px; font-size: .65rem;">Sesi Ujian Aktif</div>
+                <div class="fw-bold text-dark">{{ $jadwal->nama_kegiatan }}</div>
+            </div>
         </div>
-        <div class="exam-timer" id="exam-timer">
-            <i class="ti ti-clock-hour-4" style="font-size:1rem"></i>
-            <span id="timer-display">--:--:--</span>
+
+        {{-- Center: Prominent Timer --}}
+        <div class="mx-auto">
+            <div class="bg-dark text-white px-4 py-2 rounded-pill shadow-lg d-flex align-items-center gap-3 border border-secondary" id="timer-wrapper" style="min-width: 200px; transition: all 0.5s ease;">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="ti ti-clock-filled fs-3 text-primary" id="timer-icon"></i>
+                    <span class="text-muted small text-uppercase fw-bold d-none d-lg-inline">Sisa Waktu</span>
+                </div>
+                <div class="h2 mb-0 font-monospace fw-bold text-center flex-fill" id="timer-display" style="letter-spacing: 1px;">--:--:--</div>
+            </div>
+        </div>
+
+        {{-- Right: User Info --}}
+        <div class="d-flex align-items-center gap-3">
+            <div class="text-end d-none d-sm-block">
+                <div class="fw-bold mb-0" style="line-height: 1.1;">{{ auth()->user()->name }}</div>
+                <div class="text-muted small">Peserta Ujian</div>
+            </div>
+            <span class="avatar avatar-md rounded shadow-sm bg-blue-lt">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            </span>
         </div>
     </div>
 </header>
-<div class="exam-progress-bar">
-    <div class="exam-progress-bar-fill" id="progress-fill" style="width: 0%"></div>
-</div>
 @endsection
 
-{{-- ===== MAIN CONTENT ===== --}}
 @section('content')
-<div class="exam-body">
+<div class="page-wrapper bg-light">
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row g-3 justify-content-center">
 
-    {{-- === QUESTION PANEL === --}}
-    <div class="exam-main">
-        <div class="question-card" id="question-card">
+                {{-- Left: Question Area --}}
+                <div class="col-lg-8">
+                    
+                    {{-- Card 1: Question Text & Header --}}
+                    <div class="card border-0 shadow-sm mb-3 rounded-3" id="question-header-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <span class="badge bg-blue-lt px-3 py-2 fw-bold fs-4" id="mata-uji-label">Mata Uji</span>
+                                <div class="text-end">
+                                    <span class="text-muted small fw-bold text-uppercase">Pertanyaan</span>
+                                    <div class="d-flex align-items-baseline justify-content-end gap-1">
+                                        <span class="h1 mb-0 text-primary fw-black" id="qnum-current">1</span>
+                                        <span class="text-muted h3 mb-0">/ {{ count($paketSoal) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-dark fs-3 lh-base" id="question-text">
+                                {{-- Rendered via JS --}}
+                            </div>
+                        </div>
+                    </div>
 
-            {{-- Header --}}
-            <div class="question-header">
-                <div class="mata-uji-badge">
-                    <i class="ti ti-list-details" style="font-size:.9rem"></i>
-                    <span id="mata-uji-label">Mata Uji</span>
+                    {{-- Card 2: Options / Essay Container --}}
+                    <div id="options-container" class="mb-3">
+                        {{-- Rendered via JS --}}
+                    </div>
+
+                    {{-- Card 3: Main Navigation Buttons --}}
+                    <div class="card border-0 shadow-sm rounded-3">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center justify-content-between gap-2">
+                                <button class="btn btn-white px-md-4 border shadow-sm" id="btn-prev" onclick="goPrev()">
+                                    <i class="ti ti-chevron-left me-1"></i><span class="d-none d-sm-inline">Sebelumnya</span>
+                                </button>
+
+                                <button type="button" id="doubt-btn" class="btn btn-outline-warning px-md-4 shadow-sm fw-bold border-2" onclick="toggleDoubt()">
+                                    <i class="ti ti-flag shadow-sm me-1"></i>Ragu-Ragu
+                                </button>
+
+                                <button class="btn btn-primary px-md-4 shadow-sm border-0" id="btn-next" onclick="goNext()">
+                                    <span class="d-none d-sm-inline">Selanjutnya</span><i class="ti ti-chevron-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="question-number-display">
-                    <span class="label">No.</span>
-                    <span class="current" id="qnum-current">1</span>
-                    <span class="total">/ {{ count($paketSoal) }}</span>
+
+                {{-- Right: Sidebar --}}
+                <div class="col-lg-4">
+                    
+                    {{-- Navigator Card with Scroll --}}
+                    <div class="card border-0 shadow-sm mb-3 rounded-3 sticky-top" style="top: 96px; z-index: 10;">
+                        <div class="card-header bg-transparent border-bottom-0 pb-0">
+                            <h3 class="card-title fw-bold">Navigasi Soal</h3>
+                            <div class="card-actions">
+                                <span class="badge bg-blue-lt" id="navigator-status">0 / {{ count($paketSoal) }} Terjawab</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-4" style="max-height: 400px; overflow-y: auto;">
+                            <div class="d-flex flex-wrap gap-2 justify-content-start" id="nav-grid">
+                                {{-- Rendered via JS --}}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light border-0 py-3">
+                            <div class="d-flex gap-3 justify-content-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success rounded-pill p-1"></span>
+                                    <span class="small text-muted">Dijawab</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-warning rounded-pill p-1"></span>
+                                    <span class="small text-muted">Ragu</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-secondary-lt border rounded-pill p-1"></span>
+                                    <span class="small text-muted">Belum</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Action Card --}}
+                    <div class="card border-0 shadow-sm rounded-3 sticky-top" style="top: 550px; z-index: 10;">
+                        <div class="card-body p-3">
+                            <button class="btn btn-success w-100 btn-lg py-3 fw-bold shadow-sm" onclick="finishExam()">
+                                <i class="ti ti-circle-check me-2"></i>Selesaikan Ujian
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
-
-            {{-- Question Text --}}
-            <div class="question-body" id="question-text">
-                {{-- Rendered via JS --}}
-            </div>
-
-            {{-- Options --}}
-            <div id="options-wrapper">
-                {{-- Rendered via JS --}}
-            </div>
-
-            {{-- Footer Navigation --}}
-            <div class="question-footer">
-                <button class="nav-btn nav-btn-prev" id="btn-prev" onclick="goPrev()">
-                    <i class="ti ti-arrow-left"></i> Sebelumnya
-                </button>
-
-                <label class="doubt-toggle" id="doubt-label">
-                    <input type="checkbox" id="doubt-check" onchange="toggleDoubt(this.checked)">
-                    <i class="ti ti-flag-3"></i>
-                    Ragu-Ragu
-                </label>
-
-                <button class="nav-btn nav-btn-next" id="btn-next" onclick="goNext()">
-                    Selanjutnya <i class="ti ti-arrow-right"></i>
-                </button>
             </div>
         </div>
-    </div>
-
-    {{-- === SIDEBAR === --}}
-    <div class="exam-sidebar">
-
-        {{-- Navigator --}}
-        <div class="sidebar-card">
-            <div class="sidebar-card-header">Navigasi Soal</div>
-            <div class="sidebar-card-body">
-                <div class="nav-grid" id="nav-grid">
-                    {{-- Rendered via JS --}}
-                </div>
-            </div>
-            <div class="legend-row">
-                <div class="legend-item">
-                    <div class="legend-dot" style="background:var(--exam-success)"></div> Dijawab
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background:var(--exam-warning)"></div> Ragu
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background:#e2e8f0; border:1px solid #cbd5e1;"></div> Belum
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background:var(--exam-primary)"></div> Aktif
-                </div>
-            </div>
-        </div>
-
-        {{-- Actions --}}
-        <div class="sidebar-card" style="padding:14px;">
-            <button class="finish-btn" onclick="finishExam()">
-                <i class="ti ti-check"></i> Selesaikan Ujian
-            </button>
-
-            @if(auth()->user()->hasRole('admin'))
-            <button class="reset-btn" onclick="resetAdminData()">
-                <i class="ti ti-refresh"></i> Reset Data Testing
-            </button>
-            @endif
-        </div>
-
     </div>
 </div>
+
 @endsection
 
 @push('scripts')
@@ -562,278 +154,419 @@ const SOAL       = {!! json_encode($paketSoal) !!};
 const RIWAYAT_ID = "{{ $riwayat->encrypted_riwayat_ujian_id }}";
 const SAVE_URL   = "{{ route('cbt.execute.save', $riwayat->encrypted_riwayat_ujian_id) }}";
 const SUBMIT_URL = "{{ route('cbt.execute.submit', $riwayat->encrypted_riwayat_ujian_id) }}";
+const VIOLATION_URL = "{{ route('cbt.api.log-violation') }}";
 const END_TIME   = new Date("{{ $jadwal->waktu_selesai->toIso8601String() }}").getTime();
 @if(auth()->user()->hasRole('admin'))
 const RESET_URL  = "{{ route('cbt.execute.reset-admin', $jadwal->encrypted_jadwal_ujian_id) }}";
 @endif
 
 let currentIdx = 0;
-let answers    = JSON.parse(localStorage.getItem('cbt_' + RIWAYAT_ID) || '{}');
+let answers = JSON.parse(localStorage.getItem('cbt_ans_' + RIWAYAT_ID) || '{}');
 
 // ══════════════════════════════════════════
-//  2. INIT
+//  2. INITIALIZATION
 // ══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
     if (!SOAL || SOAL.length === 0) {
-        document.getElementById('question-card').innerHTML = `
-            <div style="padding:60px 28px; text-align:center; color:var(--exam-muted);">
-                <i class="ti ti-file-off" style="font-size:3rem; display:block; margin-bottom:12px;"></i>
-                <strong>Tidak ada soal tersedia</strong><br>
-                <span style="font-size:.9rem;">Paket ujian ini belum memiliki soal. Hubungi pengawas.</span>
+        document.getElementById('question-header-card').innerHTML = `
+            <div class="card-body text-center py-6">
+                <div class="avatar avatar-xl bg-red-lt mb-4 rounded-circle">
+                    <i class="ti ti-circle-x fs-huge"></i>
+                </div>
+                <h3>Tidak Ada Soal Tersedia</h3>
             </div>`;
-        document.getElementById('question-card').style.opacity = '1';
         return;
     }
+
     renderNavigator();
     renderQuestion(0);
     startTimer();
-    initOffline();
+    initAntiCheat();
+    initKeyboardShortcuts();
+
+    window.addEventListener('offline', () => {
+        document.getElementById('timer-wrapper').classList.replace('bg-dark', 'bg-danger');
+    });
+    window.addEventListener('online', () => {
+        document.getElementById('timer-wrapper').classList.replace('bg-danger', 'bg-dark');
+    });
 });
 
 // ══════════════════════════════════════════
-//  3. RENDER
+//  3. NAVIGATOR RENDERING
 // ══════════════════════════════════════════
 function renderNavigator() {
     const grid = document.getElementById('nav-grid');
     grid.innerHTML = '';
+    
+    let completedCount = 0;
+    
     SOAL.forEach((soal, i) => {
-        const ans  = answers[soal.soal_id] || answers[soal.id] || {};
-        const done = ans.opsi_id || ans.jawaban_esai;
-        let cls    = '';
-        if (done)        cls = 'answered';
-        if (ans.is_ragu) cls = 'doubt';
-        if (i === currentIdx) cls += ' active';
-        const cell = document.createElement('div');
-        cell.className   = `nav-cell ${cls}`;
-        cell.textContent = i + 1;
-        cell.onclick     = () => renderQuestion(i);
-        grid.appendChild(cell);
+        const ans = answers[soal.soal_id] || {};
+        const isAnswered = ans.opsi_id || ans.jawaban_esai;
+        const isActive = (i === currentIdx);
+        
+        if (isAnswered) completedCount++;
+
+        let cls = 'btn btn-md ';
+        if (ans.is_ragu) cls += 'btn-warning';
+        else if (isAnswered) cls += 'btn-success';
+        else cls += 'btn-outline-secondary opacity-50';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.id = 'nav-cell-' + i;
+        btn.className = cls + ' fw-bold ' + (isActive ? 'border-primary border-4 shadow-sm' : '');
+        btn.style.width = '48px';
+        btn.style.height = '48px';
+        btn.style.borderRadius = '12px';
+        btn.textContent = i + 1;
+        btn.onclick = () => renderQuestion(i);
+        
+        grid.appendChild(btn);
     });
-    // Progress bar
-    const answered = SOAL.filter((s, i) => {
-        const ans = answers[s.soal_id] || answers[s.id] || {};
-        return ans.opsi_id || ans.jawaban_esai;
-    }).length;
-    document.getElementById('progress-fill').style.width = ((answered / SOAL.length) * 100) + '%';
+
+    document.getElementById('navigator-status').textContent = `${completedCount} / ${SOAL.length} Terjawab`;
 }
 
+// ══════════════════════════════════════════
+//  4. QUESTION RENDERING
+// ══════════════════════════════════════════
 function renderQuestion(idx) {
-    // Animate
-    const card = document.getElementById('question-card');
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(8px)';
+    if (idx < 0 || idx >= SOAL.length) return;
+    
+    currentIdx = idx;
+    const soal = SOAL[idx];
+    const soalId = soal.soal_id;
+    const ans = answers[soalId] || {};
 
+    // Header labels
+    document.getElementById('mata-uji-label').textContent = soal.mata_uji?.nama_mata_uji || 'MATA UJI';
+    document.getElementById('qnum-current').textContent = idx + 1;
+
+    // Transition effect
+    document.getElementById('question-header-card').classList.add('opacity-50');
+    
     setTimeout(() => {
-        currentIdx = idx;
-        const soal = SOAL[idx];
-        const ans  = answers[soal.soal_id] || answers[soal.id] || {};
-
-        // Mata uji label
-        document.getElementById('mata-uji-label').textContent =
-            soal.mata_uji ? soal.mata_uji.nama_mata_uji : 'UMUM';
-
-        // Number
-        document.getElementById('qnum-current').textContent = idx + 1;
-
-        // Text
         document.getElementById('question-text').innerHTML = soal.konten_pertanyaan || soal.pertanyaan || '';
 
-        // Doubt checkbox
-        const doubtCheck = document.getElementById('doubt-check');
-        const doubtLabel = document.getElementById('doubt-label');
-        doubtCheck.checked = !!ans.is_ragu;
-        doubtLabel.classList.toggle('active', !!ans.is_ragu);
-
-        // Options
-        const wrapper = document.getElementById('options-wrapper');
-        const soalId  = soal.soal_id || soal.id;
-
-        if (soal.tipe_soal === 'Pilihan_Ganda' || soal.tipe_soal === 'Benar_Salah') {
-            const opts = soal.tipe_soal === 'Benar_Salah'
-                ? [{ opsi_jawaban_id: 'benar', label: 'A', teks_jawaban: 'BENAR' }, { opsi_jawaban_id: 'salah', label: 'B', teks_jawaban: 'SALAH' }]
-                : (soal.opsi_jawaban || []);
-
-            wrapper.innerHTML = '<div class="options-list">' + opts.map(opt => {
-                const opsiId  = opt.opsi_jawaban_id || opt.id;
-                const selected = ans.opsi_id == opsiId ? 'selected' : '';
-                return `<div class="option-item ${selected}" onclick="pickOption(${soalId}, '${opsiId}', this)">
-                    <div class="option-letter">${opt.label}</div>
-                    <div class="option-text">${opt.teks_jawaban}</div>
-                </div>`;
-            }).join('') + '</div>';
-        } else {
-            // Essay
-            wrapper.innerHTML = `<div class="essay-area">
-                <textarea placeholder="Tuliskan jawaban lengkap Anda di sini..." 
-                    oninput="saveEssay(${soalId}, this.value)">${ans.jawaban_esai || ''}</textarea>
-            </div>`;
+        // Doubt State
+        const doubtBtn = document.getElementById('doubt-btn');
+        if (doubtBtn) {
+            doubtBtn.className = ans.is_ragu 
+                ? 'btn btn-warning px-md-4 shadow-sm fw-bold border-2' 
+                : 'btn btn-outline-warning px-md-4 shadow-sm fw-bold border-2';
         }
 
-        // Nav buttons
+        // Render Options
+        const wrapper = document.getElementById('options-container');
+        wrapper.innerHTML = '';
+
+        if (soal.tipe_soal === 'Pilihan_Ganda' || soal.tipe_soal === 'Benar_Salah') {
+            const listGroup = document.createElement('div');
+            listGroup.className = 'd-flex flex-column gap-2';
+            
+            const options = soal.opsi_jawaban || [];
+            options.forEach((opt, i) => {
+                const label = ['A', 'B', 'C', 'D', 'E'][i] || i + 1;
+                const active = ans.opsi_id == opt.opsi_jawaban_id;
+                
+                const optEl = document.createElement('div');
+                optEl.className = `card card-sm border-0 shadow-sm rounded-3 transition-all cursor-pointer mb-0 ${active ? 'bg-primary text-white scale-up' : 'bg-white text-dark hover-shadow'}`;
+                optEl.style.cursor = 'pointer';
+                optEl.onclick = () => pickOption(soalId, opt.opsi_jawaban_id, optEl);
+                
+                optEl.innerHTML = `
+                    <div class="card-body p-3 d-flex align-items-center gap-3">
+                        <div class="avatar avatar-sm ${active ? 'bg-white text-primary' : 'bg-light text-muted border'} fw-bold rounded-circle shadow-sm">
+                            ${label}
+                        </div>
+                        <div class="fs-3 ${active ? 'fw-bold text-white' : 'text-secondary'}">${opt.teks_jawaban}</div>
+                        ${active ? '<div class="ms-auto"><i class="ti ti-circle-check-filled text-white fs-2 animate-bounce"></i></div>' : ''}
+                    </div>
+                `;
+                listGroup.appendChild(optEl);
+            });
+            wrapper.appendChild(listGroup);
+        } else {
+            wrapper.innerHTML = `
+                <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+                    <textarea class="form-control border-0 p-4 fs-3 h-auto" placeholder="Tulis jawaban esai Anda di sini..." id="essay-input" rows="8"
+                        oninput="saveEssay(${soalId}, this.value)">${ans.jawaban_esai || ''}</textarea>
+                </div>`;
+        }
+
+        // Button States
         document.getElementById('btn-prev').disabled = (idx === 0);
         const btnNext = document.getElementById('btn-next');
         if (idx === SOAL.length - 1) {
-            btnNext.innerHTML = 'Selesai <i class="ti ti-check ms-1"></i>';
-            btnNext.classList.add('last');
-            btnNext.onclick = () => finishExam();
+            btnNext.innerHTML = '<i class="ti ti-check me-1"></i>Selesaikan';
+            btnNext.className = 'btn btn-success px-md-4 shadow-sm fw-bold';
         } else {
-            btnNext.innerHTML = 'Selanjutnya <i class="ti ti-arrow-right ms-1"></i>';
-            btnNext.classList.remove('last');
-            btnNext.onclick = () => goNext();
+            btnNext.innerHTML = '<span class="d-none d-sm-inline">Selanjutnya</span><i class="ti ti-chevron-right ms-1"></i>';
+            btnNext.className = 'btn btn-primary px-md-4 shadow-sm';
         }
 
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-        card.style.transition = 'opacity .25s ease, transform .25s ease';
-
-        renderNavigator();
+        document.getElementById('question-header-card').classList.remove('opacity-50');
     }, 100);
 }
 
 // ══════════════════════════════════════════
-//  4. NAVIGATION
+//  5. ACTION HANDLERS
 // ══════════════════════════════════════════
 function goPrev() { if (currentIdx > 0) renderQuestion(currentIdx - 1); }
-function goNext() { if (currentIdx < SOAL.length - 1) renderQuestion(currentIdx + 1); }
+function goNext() { (currentIdx === SOAL.length - 1) ? finishExam() : renderQuestion(currentIdx + 1); }
 
-// ══════════════════════════════════════════
-//  5. ANSWER HANDLING
-// ══════════════════════════════════════════
 window.pickOption = (soalId, opsiId, el) => {
-    document.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
-    el.classList.add('selected');
-    el.querySelector('.option-letter')?.classList.add('selected');
-    saveAnswer(soalId, { opsi_id: opsiId });
+    if (!answers[soalId]) answers[soalId] = {};
+    answers[soalId] = { ...answers[soalId], opsi_id: opsiId };
+    saveState(soalId, answers[soalId]);
+    renderQuestion(currentIdx); // Re-render to update UI consistency
 };
 
-window.saveEssay = (soalId, val) => saveAnswer(soalId, { jawaban_esai: val });
-
-window.toggleDoubt = (checked) => {
-    const soal   = SOAL[currentIdx];
-    const soalId = soal.soal_id || soal.id;
+window.saveEssay = (soalId, val) => {
     if (!answers[soalId]) answers[soalId] = {};
-    answers[soalId].is_ragu = checked;
-    document.getElementById('doubt-label').classList.toggle('active', checked);
-    saveAnswer(soalId, answers[soalId]);
+    answers[soalId] = { ...answers[soalId], jawaban_esai: val };
+    saveState(soalId, answers[soalId]);
 };
 
-function saveAnswer(soalId, partial) {
+window.toggleDoubt = () => {
+    const soalId = SOAL[currentIdx]?.soal_id;
+    if (!soalId) return;
     if (!answers[soalId]) answers[soalId] = {};
-    answers[soalId] = { ...answers[soalId], ...partial };
-    localStorage.setItem('cbt_' + RIWAYAT_ID, JSON.stringify(answers));
-    syncToServer(soalId, answers[soalId]);
-    renderNavigator();
+    answers[soalId].is_ragu = !answers[soalId].is_ragu;
+    saveState(soalId, answers[soalId]);
+    renderQuestion(currentIdx);
+};
+
+// ══════════════════════════════════════════
+//  6. DATA PERSISTENCE
+// ══════════════════════════════════════════
+function saveState(soalId, data) {
+    localStorage.setItem('cbt_ans_' + RIWAYAT_ID, JSON.stringify(answers));
+    updateNavUI();
+    
+    fetch(SAVE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        body: JSON.stringify({
+            soal_id: soalId,
+            opsi_id: data.opsi_id || null,
+            jawaban_esai: data.jawaban_esai || null,
+            is_ragu: !!data.is_ragu
+        })
+    }).catch(e => console.warn('Background sync failed.', e));
 }
 
-function syncToServer(soalId, data) {
-    fetch(SAVE_URL, {
+function updateNavUI() {
+    let completed = 0;
+    SOAL.forEach((s, i) => {
+        const a = answers[s.soal_id] || {};
+        const isAnswered = a.opsi_id || a.jawaban_esai;
+        const isActive = (i === currentIdx);
+        if (isAnswered) completed++;
+        
+        const cell = document.getElementById('nav-cell-' + i);
+        if (cell) {
+            cell.className = 'btn btn-md fw-bold ' + 
+                            (a.is_ragu ? 'btn-warning' : (isAnswered ? 'btn-success' : 'btn-outline-secondary opacity-50')) +
+                            (isActive ? ' border-primary border-4 shadow-sm scale-up' : '');
+        }
+    });
+    document.getElementById('navigator-status').textContent = `${completed} / ${SOAL.length} Terjawab`;
+}
+
+// ══════════════════════════════════════════
+//  7. SUBMIT & TIMER
+// ══════════════════════════════════════════
+window.finishExam = (isAuto = false) => {
+    const unanswered = SOAL.filter(s => { const a = answers[s.soal_id] || {}; return !a.opsi_id && !a.jawaban_esai; }).length;
+    
+    if (isAuto) {
+        performSubmit();
+    } else {
+        Swal.fire({
+            title: 'Selesaikan Ujian?',
+            text: unanswered > 0 
+                ? `Masih ada ${unanswered} soal yang belum dijawab. Apakah Anda yakin ingin mengakhiri sesi ujian ini?` 
+                : 'Apakah Anda yakin ingin menyelesaikan ujian ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#2fb344',
+            cancelButtonColor: '#d63939',
+            confirmButtonText: '<i class="ti ti-check me-1"></i>Ya, Selesaikan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                performSubmit();
+            }
+        });
+    }
+
+    function performSubmit() {
+        const btn = document.querySelector('.btn-success.btn-lg');
+        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+
+        fetch(SUBMIT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+            body: JSON.stringify({})
+        })
+        .then(r => r.json()).then(res => {
+            if (res.success || res.status === 'success') {
+                localStorage.removeItem('cbt_ans_' + RIWAYAT_ID);
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Jawaban Anda telah berhasil dikirim.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = res.redirect || res.url || '/cbt';
+                });
+            } else {
+                Swal.fire('Gagal!', res.message || 'Terjadi kesalahan saat mengirim jawaban.', 'error');
+            }
+        }).catch(err => {
+            Swal.fire('Terputus!', 'Koneksi gagal. Pastikan internet aktif dan coba lagi.', 'error');
+        });
+    }
+};
+
+function startTimer() {
+    const display = document.getElementById('timer-display');
+    const wrapper = document.getElementById('timer-wrapper');
+    const icon    = document.getElementById('timer-icon');
+    
+    setInterval(() => {
+        const diff = END_TIME - Date.now();
+        if (diff <= 0) { finishExam(true); return; }
+
+        const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+        const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        
+        if(display) display.textContent = `${h}:${m}:${s}`;
+
+        if (diff < 300000) { // < 5 min
+            wrapper.classList.replace('text-white', 'text-warning');
+            icon.classList.replace('text-primary', 'text-warning');
+        }
+        if (diff < 60000) { // < 1 min
+            wrapper.classList.replace('text-warning', 'text-danger');
+            icon.classList.replace('text-warning', 'text-danger');
+            wrapper.classList.add('animate-pulse');
+        }
+    }, 1000);
+}
+// ══════════════════════════════════════════
+//  10. ANTI-CHEAT LOGIC
+// ══════════════════════════════════════════
+function initAntiCheat() {
+    // 1. Block Context Menu & Clipboard
+    document.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        showWarning('Klik kanan dinonaktifkan demi keamanan ujian.');
+    });
+    document.addEventListener('copy', e => {
+        e.preventDefault();
+        showWarning('Dilarang menyalin teks soal/jawaban.');
+    });
+    document.addEventListener('cut', e => e.preventDefault());
+    document.addEventListener('paste', e => {
+        e.preventDefault();
+        showWarning('Dilarang menempelkan teks dari luar.');
+    });
+
+    // 2. Tab/Window Switch Detection
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            logViolation('PINDAH_TAB', 'Peserta meninggalkan tab ujian.');
+        }
+    });
+
+    window.addEventListener('blur', () => {
+        logViolation('PINDAH_WINDOW', 'Peserta berpindah jendela/aplikasi.');
+    });
+
+    window.onbeforeunload = function() {
+        return "Apakah Anda yakin ingin meninggalkan halaman? Perubahan yang belum tersimpan mungkin hilang.";
+    };
+}
+
+
+function logViolation(type, keterangan) {
+    if (typeof finishExamCalled !== 'undefined' && finishExamCalled) return;
+
+    fetch(VIOLATION_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({
-            soal_id:      soalId,
-            opsi_id:      data.opsi_id      ?? null,
-            jawaban_esai: data.jawaban_esai ?? null,
-            is_ragu:      data.is_ragu      ?? false,
-        })
-    }).catch(() => {/* will retry on reconnect */});
+        body: JSON.stringify({ type, keterangan })
+    }).catch(e => console.warn('Violation logging failed.', e));
+
+    showWarning(`PERINGATAN! Aktivitas mencurigakan terdeteksi: ${keterangan} Kejadian ini telah dicatat.`);
 }
 
-// ══════════════════════════════════════════
-//  6. FINISH & SUBMIT
-// ══════════════════════════════════════════
-window.finishExam = (isAuto = false) => {
-    const unanswered = SOAL.filter(s => {
-        const ans = answers[s.soal_id] || answers[s.id] || {};
-        return !ans.opsi_id && !ans.jawaban_esai;
-    }).length;
+function showWarning(msg) {
+    Swal.fire({
+        title: 'Anti-Cheat System',
+        text: msg,
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Saya Mengerti'
+    });
+}
 
-    let msg = isAuto
-        ? 'WAKTU HABIS! Jawaban Anda akan dikirim otomatis.'
-        : `Anda akan menyelesaikan ujian.${unanswered > 0 ? ` Masih ada ${unanswered} soal belum dijawab.` : ' Semua soal sudah dijawab.'} Lanjutkan?`;
-
-    if (isAuto || confirm(msg)) {
-        fetch(SUBMIT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({})
-        })
-        .then(r => r.json())
-        .then(res => {
-            if (res.success || res.status === 'success') {
-                localStorage.removeItem('cbt_' + RIWAYAT_ID);
-                window.location.href = res.redirect;
-            } else {
-                alert('Gagal mengirim jawaban: ' + (res.message || 'Coba lagi.'));
-            }
-        })
-        .catch(() => alert('Terjadi kesalahan jaringan. Coba lagi.'));
-    }
+// Global flag to prevent warning on normal submit
+let finishExamCalled = false;
+const originalFinishExam = window.finishExam;
+window.finishExam = function(isAuto) {
+    finishExamCalled = true;
+    window.onbeforeunload = null;
+    originalFinishExam(isAuto);
 };
-
 // ══════════════════════════════════════════
-//  7. TIMER
+//  11. KEYBOARD SHORTCUTS
 // ══════════════════════════════════════════
-function startTimer() {
-    const timerEl   = document.getElementById('exam-timer');
-    const displayEl = document.getElementById('timer-display');
+function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Only trigger if not typing in essay
+        if (document.activeElement.tagName === 'TEXTAREA') return;
 
-    const tick = () => {
-        const now  = Date.now();
-        const diff = END_TIME - now;
+        // Navigation
+        if (e.key === 'ArrowLeft') goPrev();
+        if (e.key === 'ArrowRight') goNext();
 
-        if (diff <= 0) {
-            displayEl.textContent = 'SELESAI';
-            timerEl.classList.add('danger');
-            finishExam(true);
-            return;
-        }
-
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        displayEl.textContent = [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
-
-        timerEl.classList.toggle('warn',   diff < 300000 && diff >= 60000);
-        timerEl.classList.toggle('danger', diff < 60000);
-    };
-
-    tick();
-    setInterval(tick, 1000);
-}
-
-// ══════════════════════════════════════════
-//  8. OFFLINE DETECTION
-// ══════════════════════════════════════════
-function initOffline() {
-    const banner = document.getElementById('offline-banner');
-    window.addEventListener('offline', () => banner.style.display = 'block');
-    window.addEventListener('online',  () => banner.style.display = 'none');
-}
-
-// ══════════════════════════════════════════
-//  9. ADMIN RESET
-// ══════════════════════════════════════════
-@if(auth()->user()->hasRole('admin'))
-window.resetAdminData = () => {
-    if (!confirm('Reset data testing? Semua jawaban dan log pelanggaran akan dihapus.')) return;
-    fetch(RESET_URL, {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-    })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success || res.status === 'success') {
-            localStorage.removeItem('cbt_' + RIWAYAT_ID);
-            window.location.href = res.redirect;
+        // Answer selection (A=65, B=66, C=67, etc.)
+        const key = e.key.toUpperCase();
+        if (['A', 'B', 'C', 'D', 'E'].includes(key)) {
+            const idx = ['A', 'B', 'C', 'D', 'E'].indexOf(key);
+            const soal = SOAL[currentIdx];
+            if (soal && soal.opsi_jawaban && soal.opsi_jawaban[idx]) {
+                pickOption(soal.soal_id, soal.opsi_jawaban[idx].opsi_jawaban_id);
+            }
         }
     });
-};
-@endif
+}
+
 </script>
+
+<style>
+body { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+body.modal-open, body.swal2-shown { overflow: hidden !important; }
+.transition-all { transition: all 0.25s ease; }
+.cursor-pointer { cursor: pointer; }
+.hover-shadow:hover { box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important; transform: translateY(-2px); }
+.scale-up { transform: scale(1.01); }
+.animate-pulse { animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+.animate-bounce { animation: bounce 0.5s; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+#nav-grid button { transition: all 0.2s ease; }
+#nav-grid button:hover { transform: scale(1.1); }
+</style>
 @endpush

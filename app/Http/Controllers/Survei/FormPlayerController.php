@@ -41,9 +41,27 @@ class FormPlayerController extends Controller
             ->firstOrFail();
 
         try {
-            $this->formPlayerService->submitSurvey($survei, $request->jawaban, $request->ip());
-            return redirect()->route('survei.public.thankyou', $survei->slug);
+            $jawaban = $request->input('jawaban', []);
+            $this->formPlayerService->submitSurvey($survei, $jawaban, $request->ip());
+            
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Jawaban berhasil disimpan',
+                    'redirect' => route('survei.public.thankyou', $survei->slug),
+                ]);
+            }
+            
+            return redirect()->route('survei.public.thankyou', $survei->slug)
+                ->with('success', 'Terima kasih! Jawaban Anda berhasil disimpan.');
         } catch (\Exception $e) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan jawaban: ' . $e->getMessage(),
+                ], 500);
+            }
+            
             return back()->with('error', 'Gagal menyimpan jawaban: ' . $e->getMessage());
         }
     }

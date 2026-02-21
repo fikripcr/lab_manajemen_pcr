@@ -1,14 +1,22 @@
 <?php
 namespace App\Models\Survei;
 
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pertanyaan extends Model
 {
-    use HasFactory;
+    use HasFactory, HashidBinding;
 
     protected $table = 'survei_pertanyaan';
+
+    protected $appends = ['encrypted_pertanyaan_id'];
+
+    public function getEncryptedPertanyaanIdAttribute()
+    {
+        return encryptId($this->pertanyaan_id ?? $this->id);
+    }
 
     protected $fillable = [
         'survei_id',

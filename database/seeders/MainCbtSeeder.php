@@ -3,11 +3,9 @@ namespace Database\Seeders;
 
 use App\Models\Cbt\JadwalUjian;
 use App\Models\Cbt\KomposisiPaket;
-use App\Models\Cbt\LogPelanggaran;
 use App\Models\Cbt\MataUji;
 use App\Models\Cbt\OpsiJawaban;
 use App\Models\Cbt\PaketUjian;
-use App\Models\Cbt\RiwayatUjianSiswa;
 use App\Models\Cbt\Soal;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,14 +16,15 @@ class MainCbtSeeder extends Seeder
     {
         // 1. Clean existing CBT data to avoid duplicates if re-running
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        KomposisiPaket::truncate();
-        OpsiJawaban::truncate();
-        Soal::truncate();
-        PaketUjian::truncate();
-        MataUji::truncate();
-        RiwayatUjianSiswa::truncate();
-        LogPelanggaran::truncate();
-        JadwalUjian::truncate();
+        DB::table('cbt_komposisi_paket')->delete();
+        DB::table('cbt_opsi_jawaban')->delete();
+        DB::table('cbt_jawaban_siswa')->delete();
+        DB::table('cbt_log_pelanggaran')->delete();
+        DB::table('cbt_riwayat_ujian_siswa')->delete();
+        DB::table('cbt_jadwal_ujian')->delete();
+        DB::table('cbt_paket_ujian')->delete();
+        DB::table('cbt_soal')->delete();
+        DB::table('cbt_mata_uji')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // 2. Mata Uji (Subjects)
@@ -73,7 +72,7 @@ class MainCbtSeeder extends Seeder
                 'Select the correct verb for: "They {verb} to the camp last week."',
                 'The opposite of the word "{word}" in this context is...',
                 'Choose the best preposition: "I am interested {prep} learning coding."',
-                'Which of these sentences uses "{word}" correctly?',
+                'Which of these words has the closest meaning to "{word}"?',
             ],
             'Penalaran Umum'   => [
                 'Jika SEMUA {word} adalah {word2}, dan SEBAGIAN {word} adalah {word3}, maka...',
@@ -124,12 +123,32 @@ class MainCbtSeeder extends Seeder
             // Create 5 options
             $correctIdx = rand(0, 4);
             $labels     = ['A', 'B', 'C', 'D', 'E'];
+
+            // Variational data for answers
+            $mathAnswers = [];
+            for ($j = 0; $j < 5; $j++) {
+                $mathAnswers[] = rand(1, 1000);
+            }
+
             foreach ($labels as $idx => $label) {
                 $isCorrect = ($idx === $correctIdx);
-                $ansText   = "Jawaban pilihan " . $label;
+                $ansText   = "";
 
-                if ($mu->nama_mata_uji === 'Matematika Dasar') {
-                    $ansText = rand(10, 500);
+                switch ($mu->nama_mata_uji) {
+                    case 'Matematika Dasar':
+                        $ansText = $mathAnswers[$idx];
+                        break;
+                    case 'Bahasa Inggris':
+                        $ansText = $words_en_list[array_rand($words_en_list)];
+                        break;
+                    case 'Bahasa Indonesia':
+                        $ansText = $words_id_list[array_rand($words_id_list)];
+                        break;
+                    case 'Penalaran Umum':
+                        $ansText = $logic_words[array_rand($logic_words)];
+                        break;
+                    default:
+                        $ansText = "Pilihan " . $label . " untuk " . $mu->nama_mata_uji;
                 }
 
                 OpsiJawaban::create([
@@ -162,19 +181,19 @@ class MainCbtSeeder extends Seeder
 
             foreach ($selectedIds as $index => $sid) {
                 KomposisiPaket::create([
-                    'paket_id'      => $paket->paket_id,
+                    'paket_id'      => $paket->paket_ujian_id,
                     'soal_id'       => $sid,
                     'urutan_tampil' => $index + 1,
                 ]);
             }
 
-            // 5. Create Jadwal Ujian for each package
-            $now = now();
+                                                // 5. Create Jadwal Ujian for each package (Shorter duration: 2 hours)
+            $startTime = now()->subMinutes(15); // Started 15 mins ago
             JadwalUjian::create([
-                'paket_id'       => $paket->paket_id,
+                'paket_id'       => $paket->paket_ujian_id,
                 'nama_kegiatan'  => "Ujian Saringan Masuk - " . $paket->nama_paket,
-                'waktu_mulai'    => $now->copy()->subHours(rand(1, 24)),
-                'waktu_selesai'  => $now->copy()->addDays(rand(1, 7)),
+                'waktu_mulai'    => $startTime,
+                'waktu_selesai'  => $startTime->copy()->addHours(2),
                 'token_ujian'    => strtoupper(substr(md5(uniqid()), 0, 6)),
                 'is_token_aktif' => true,
             ]);

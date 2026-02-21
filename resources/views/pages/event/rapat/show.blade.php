@@ -243,7 +243,7 @@
                         <h3 class="card-title mb-0">Agenda & Pembahasan</h3>
                         <p class="text-muted small mb-0">Ketikan isi agenda akan tersimpan secara otomatis.</p>
                     </div>
-                    <x-tabler.button type="button" class="btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-add-agenda" icon="ti ti-plus" text="Tambah Agenda" />
+                    <x-tabler.button type="button" class="btn-success btn-sm ajax-modal-btn" data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}" data-modal="modal-add-agenda" icon="ti ti-plus" text="Tambah Agenda" />
                 </div>
 
                 <form id="form-agenda" action="{{ route('Kegiatan.rapat.update-agenda', $rapat->encrypted_rapat_id) }}" method="POST">
@@ -297,14 +297,6 @@
         </div> {{-- Closing tab-content --}}
     </div> {{-- Closing card-body --}}
 </div> {{-- Closing main card --}}
-{{-- MODAL: Tambah Agenda --}}
-<x-tabler.form-modal 
-    id="modal-add-agenda"
-    title="Tambah Agenda Rapat" 
-    :route="route('Kegiatan.rapat.agenda.store', $rapat->encrypted_rapat_id) . '#tabs-agenda'"
->
-    <x-tabler.form-input name="judul_agenda" label="Judul Agenda" placeholder="Contoh: Pembahasan KPI 2024" required="true" />
-</x-tabler.form-modal>
 
 {{-- MODAL: Set Pejabat Rapat --}}
 <x-tabler.form-modal 
@@ -459,5 +451,17 @@
                 });
         }
     });
+
+    // Handle AJAX form success for adding agenda - reload page to show new agenda
+    document.addEventListener('ajax-form:success', function(e) {
+        // Check if the form was for adding agenda
+        if ($('#modal-add-agenda').is(':visible')) {
+            // Reload the page to show new agenda item
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
+    });
+});
 </script>
 @endpush

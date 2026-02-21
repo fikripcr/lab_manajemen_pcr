@@ -143,7 +143,31 @@ class ExamExecutionController extends Controller
     }
 
     /**
-     * Start the exam session
+     * Welcome / Info page before starting exam
+     */
+    public function welcome(JadwalUjian $jadwal)
+    {
+        $jadwal->load(['paket.komposisi']);
+        $user = auth()->user();
+
+        // Check if already finished
+        $existing = RiwayatUjianSiswa::where('jadwal_id', $jadwal->jadwal_ujian_id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($existing && $existing->status === 'Selesai') {
+            return redirect()->route('cbt.execute.finished', $jadwal->hashid)
+                ->with('info', 'Anda telah menyelesaikan ujian ini.');
+        }
+
+        $totalSoal = $jadwal->paket->komposisi->count();
+        $durasi    = $jadwal->waktu_mulai->diffInMinutes($jadwal->waktu_selesai);
+
+        return view('pages.cbt.execution.welcome', compact('jadwal', 'totalSoal', 'durasi', 'existing'));
+    }
+
+    /**
+     * Start the exam session (POST after welcome page)
      */
     public function start(StartExamRequest $request, JadwalUjian $jadwal)
     {
@@ -267,7 +291,7 @@ class ExamExecutionController extends Controller
                 $riwayat->forceDelete();
             }
 
-            return redirect()->route('cbt.execute.start', $jadwal->hashid)
+            return redirect()->route('cbt.execute.welcome', $jadwal->hashid)
                 ->with('info', 'Riwayat ujian sebelumnya telah direset. Silakan mulai ujian.');
         } catch (Exception $e) {
             logError($e);

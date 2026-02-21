@@ -40,6 +40,22 @@
     @yield('css')
     @vite(['resources/css/tabler.css'])
     
+    {{-- Custom Modal Z-Index Fix --}}
+    <style>
+        /* Ensure modal and backdrop have proper z-index */
+        .modal.modal-blur {
+            z-index: 99999 !important;
+        }
+        .modal-backdrop {
+            z-index: 99998 !important;
+        }
+        /* Ensure modal dialog is above backdrop */
+        .modal-dialog {
+            z-index: 100000 !important;
+            position: relative;
+        }
+    </style>
+    
     {{-- Theme Custom Styles --}}
     {{-- {!! $themeController->getFontLink('tabler') !!} --}}
     {!! $themeController->getStyleBlock('tabler') !!}
@@ -142,7 +158,7 @@
     <x-tabler.modal-global-search />
 
     {{-- Global Generic Modal --}}
-    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true">
+    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true" style="z-index: 99999;">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" id="modalContent">
                 <div class="modal-header">

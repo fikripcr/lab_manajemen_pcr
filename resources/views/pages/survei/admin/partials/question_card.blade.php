@@ -1,14 +1,14 @@
-<div class="card m-3 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->id }}" 
+<div class="card m-3 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->encrypted_pertanyaan_id }}"
      style="border-left: 4px solid var(--tblr-primary) !important;">
     <div class="card-body py-3">
         <div class="row align-items-start g-3">
             <div class="col-auto drag-handle cursor-move text-muted pt-1" title="Drag untuk mengatur urutan">
                 <i class="ti ti-grip-vertical"></i>
             </div>
-            
+
             <div class="col">
                 {{-- Static View (Label + Text) --}}
-                <div class="static-view-{{ $pertanyaan->id }}">
+                <div class="static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-primary-lt">Soal #{{ $pertanyaan->urutan }}</span>
@@ -17,9 +17,9 @@
                             </span>
                         </div>
                         <div class="btn-group">
-                            <x-tabler.button class="btn-icon btn-ghost-primary" 
-                                    onclick="$('.static-view-{{ $pertanyaan->id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->id }}').removeClass('d-none');" icon="ti ti-edit" />
-                            <x-tabler.button class="btn-icon btn-ghost-danger" onclick="deletePertanyaan({{ $pertanyaan->id }})" icon="ti ti-trash" />
+                            <x-tabler.button class="btn-icon btn-ghost-primary"
+                                    onclick="$('.static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').removeClass('d-none');" icon="ti ti-edit" />
+                            <x-tabler.button class="btn-icon btn-ghost-danger" onclick="deletePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')" icon="ti ti-trash" />
                         </div>
                     </div>
                     <div class="fw-bold text-dark fs-3 mb-1">{{ $pertanyaan->teks_pertanyaan }}</div>
@@ -38,10 +38,10 @@
                 </div>
 
                 {{-- Edit View (Inputs) - Hidden by default --}}
-                <div class="edit-view-{{ $pertanyaan->id }} d-none">
+                <div class="edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }} d-none">
                     <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
                          <div class="fw-bold text-primary">Edit Soal #{{ $pertanyaan->urutan }}</div>
-                         <x-tabler.button class="btn-primary" onclick="window.savePertanyaan({{ $pertanyaan->id }})" icon="ti ti-check" text="Selesai" />
+                         <x-tabler.button class="btn-primary" onclick="window.savePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')" icon="ti ti-check" text="Selesai" />
                     </div>
 
                     <div class="mb-3">
@@ -94,27 +94,27 @@
                     @if(in_array($pertanyaan->tipe, ['Pilihan_Ganda', 'Kotak_Centang', 'Dropdown']))
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted text-uppercase">Opsi Jawaban</label>
-                        <div class="option-list-{{ $pertanyaan->id }} mb-2">
+                        <div class="option-list-{{ $pertanyaan->encrypted_pertanyaan_id }} mb-2">
                             @foreach($pertanyaan->opsi as $opsi)
-                                <div class="input-group input-group-sm mb-1 opsi-item border-0" data-id="{{ $opsi->id }}">
+                                <div class="input-group input-group-sm mb-1 opsi-item border-0" data-id="{{ $opsi->encrypted_opsi_id }}">
                                     <span class="input-group-text bg-transparent border-end-0"><i class="ti ti-circle"></i></span>
-                                    <input type="text" class="form-control opsi-label shadow-none border-start-0" 
-                                           value="{{ $opsi->label }}" onchange="debounceSave({{ $pertanyaan->id }})">
+                                    <input type="text" class="form-control opsi-label shadow-none border-start-0"
+                                           value="{{ $opsi->label }}" onchange="debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
                                     @if($pertanyaan->survei->mode === 'Bercabang' && in_array($pertanyaan->tipe, ['Pilihan_Ganda', 'Dropdown']))
-                                        <select class="form-select flex-grow-0 opsi-next-select shadow-none" style="width: 130px;" onchange="debounceSave({{ $pertanyaan->id }})">
+                                        <select class="form-select flex-grow-0 opsi-next-select shadow-none" style="width: 130px;" onchange="debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
                                             <option value="">Lanjut...</option>
                                             @foreach($allPertanyaan->where('id', '!=', $pertanyaan->id) as $p)
-                                                <option value="{{ $p->id }}" {{ $opsi->next_pertanyaan_id == $p->id ? 'selected' : '' }}>
+                                                <option value="{{ $p->encrypted_pertanyaan_id }}" {{ $opsi->next_pertanyaan_id == $p->id ? 'selected' : '' }}>
                                                     Lompat: {{ $p->urutan }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     @endif
-                                    <x-tabler.button class="btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave({{ $pertanyaan->id }});" icon="ti ti-x" />
+                                    <x-tabler.button class="btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}');" icon="ti ti-x" />
                                 </div>
                             @endforeach
                         </div>
-                        <x-tabler.button class="btn-ghost-primary" onclick="addOpsi({{ $pertanyaan->id }})" icon="ti ti-plus" text="Tambah Opsi" />
+                        <x-tabler.button class="btn-ghost-primary" onclick="addOpsi('{{ $pertanyaan->encrypted_pertanyaan_id }}')" icon="ti ti-plus" text="Tambah Opsi" />
                     </div>
                     @endif
 

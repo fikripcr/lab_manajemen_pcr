@@ -4,7 +4,7 @@
 <x-tabler.page-header title="{{ $survei->judul }}" pretitle="Form Builder">
     <x-slot:actions>
         <x-tabler.button type="back" href="{{ route('survei.index') }}" />
-        <x-tabler.button type="submit" href="{{ route('survei.preview', $survei->id) }}" 
+        <x-tabler.button type="submit" href="{{ route('survei.preview', $survei->encrypted_id) }}"
             icon="ti ti-eye" text="Preview" class="btn-outline-primary" target="_blank" />
     </x-slot:actions>
 </x-tabler.page-header>
@@ -23,19 +23,19 @@
                     </div>
                     <div class="list-group list-group-flush" id="list-halaman">
                         @foreach($survei->halaman as $halaman)
-                        <div class="list-group-item list-group-item-action d-flex align-items-center {{ $loop->first ? 'active' : '' }}" 
-                             data-id="{{ $halaman->id }}" data-deskripsi="{{ e($halaman->deskripsi_halaman) }}">
+                        <div class="list-group-item list-group-item-action d-flex align-items-center {{ $loop->first ? 'active' : '' }}"
+                             data-id="{{ $halaman->encrypted_halaman_id }}" data-deskripsi="{{ e($halaman->deskripsi_halaman) }}">
                             <i class="ti ti-grip-vertical text-muted me-2" style="cursor: grab;"></i>
-                            <span class="halaman-title text-truncate flex-fill" style="cursor: pointer;" onclick="window.selectHalaman && window.selectHalaman({{ $halaman->id }})">{{ $halaman->judul_halaman }}</span>
+                            <span class="halaman-title text-truncate flex-fill" style="cursor: pointer;" onclick="window.selectHalaman && window.selectHalaman('{{ $halaman->encrypted_halaman_id }}')">{{ $halaman->judul_halaman }}</span>
                             <div class="d-flex align-items-center ms-2">
                                 <span class="badge bg-muted me-1">{{ $halaman->pertanyaan->count() }}</span>
                                 <div class="dropdown">
                                     <i class="ti ti-dots-vertical cursor-pointer" data-bs-toggle="dropdown"></i>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); window.editHalaman && window.editHalaman({{ $halaman->id }})">
+                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); window.editHalaman && window.editHalaman('{{ $halaman->encrypted_halaman_id }}')">
                                             <i class="ti ti-pencil me-2"></i>Edit Halaman
                                         </a>
-                                        <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); window.deleteHalaman && window.deleteHalaman({{ $halaman->id }})">
+                                        <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); window.deleteHalaman && window.deleteHalaman('{{ $halaman->encrypted_halaman_id }}')">
                                             <i class="ti ti-trash me-2"></i>Hapus
                                         </a>
                                     </div>
@@ -51,7 +51,7 @@
             <div class="col-md-9">
                 <div id="halaman-content-wrapper">
                     @foreach($survei->halaman as $halaman)
-                    <div class="halaman-pane {{ $loop->first ? '' : 'd-none' }}" id="halaman-{{ $halaman->id }}">
+                    <div class="halaman-pane {{ $loop->first ? '' : 'd-none' }}" id="halaman-{{ $halaman->encrypted_halaman_id }}">
                         <div class="card mb-3">
                             <div class="card-header">
                                 <div>
@@ -67,7 +67,7 @@
                                         <x-tabler.button class="btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" icon="ti ti-plus" text="Tambah" />
                                         <div class="dropdown-menu dropdown-menu-end">
                                             @foreach(['Teks_Singkat' => 'ti-text-size', 'Esai' => 'ti-align-left', 'Angka' => 'ti-123', 'Pilihan_Ganda' => 'ti-circle-dot', 'Kotak_Centang' => 'ti-checkbox', 'Dropdown' => 'ti-select', 'Skala_Linear' => 'ti-adjustments-horizontal', 'Tanggal' => 'ti-calendar', 'Upload_File' => 'ti-upload'] as $tipe => $icon)
-                                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); addPertanyaan({{ $halaman->id }}, '{{ $tipe }}')">
+                                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); addPertanyaan('{{ $halaman->encrypted_halaman_id }}', '{{ $tipe }}')">
                                                 <i class="ti {{ $icon }} me-2"></i>{{ str_replace('_', ' ', $tipe) }}
                                             </a>
                                             @endforeach
@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <div class="pertanyaan-list" data-halaman-id="{{ $halaman->id }}">
+                                <div class="pertanyaan-list" data-halaman-id="{{ $halaman->encrypted_halaman_id }}">
                                     @foreach($halaman->pertanyaan as $pertanyaan)
                                         @include('pages.survei.admin.partials.question_card', ['pertanyaan' => $pertanyaan])
                                     @endforeach
@@ -118,11 +118,11 @@
     // --- Config (safe without jQuery) ---
     const csrfToken = '{{ csrf_token() }}';
     const ROUTES = {
-        halamanStore:      '{{ route("survei.halaman.store", $survei->id) }}',
+        halamanStore:      '{{ route("survei.halaman.store", $survei->encrypted_id) }}',
         halamanUpdate:     '{{ route("survei.halaman.update", ":id") }}',
         halamanDestroy:    '{{ route("survei.halaman.destroy", ":id") }}',
         halamanReorder:    '{{ route("survei.halaman.reorder") }}',
-        pertanyaanStore:   '{{ route("survei.pertanyaan.store", $survei->id) }}',
+        pertanyaanStore:   '{{ route("survei.pertanyaan.store", $survei->encrypted_id) }}',
         pertanyaanUpdate:  '{{ route("survei.pertanyaan.update", ":id") }}',
         pertanyaanDestroy: '{{ route("survei.pertanyaan.destroy", ":id") }}',
         pertanyaanReorder: '{{ route("survei.pertanyaan.reorder") }}',
@@ -130,7 +130,7 @@
     function routeFor(key, id) {
         return ROUTES[key].replace(':id', id);
     }
-    let currentHalamanId = {{ $survei->halaman->first()->id ?? 0 }};
+    let currentHalamanId = {{ $survei->halaman->first()->encrypted_id ?? 'null' }};
 
     // --- Wait for jQuery to be ready (Vite defers module execution) ---
     function onReady(fn) {

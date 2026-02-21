@@ -1,14 +1,22 @@
 <?php
 namespace App\Models\Survei;
 
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Opsi extends Model
 {
-    use HasFactory;
+    use HasFactory, HashidBinding;
 
     protected $table = 'survei_opsi';
+
+    protected $appends = ['encrypted_opsi_id'];
+
+    public function getEncryptedOpsiIdAttribute()
+    {
+        return encryptId($this->opsi_id ?? $this->id);
+    }
 
     protected $fillable = [
         'pertanyaan_id',

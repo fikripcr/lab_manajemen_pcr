@@ -199,9 +199,18 @@ class RapatController extends Controller
                 'seq'          => $lastSeq + 1,
             ]);
 
+            if ($request->ajax() || $request->wantsJson()) {
+                return jsonSuccess('Agenda baru berhasil ditambahkan.');
+            }
+
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-agenda')->with('success', 'Agenda baru berhasil ditambahkan.');
         } catch (\Exception $e) {
             logError($e);
+            
+            if ($request->ajax() || $request->wantsJson()) {
+                return jsonError('Gagal menambah agenda: ' . $e->getMessage());
+            }
+            
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-agenda')->with('error', 'Gagal menambah agenda: ' . $e->getMessage());
         }
     }

@@ -76,7 +76,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
         Route::get('/token/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'tokenForm'])->name('token-form');
         Route::post('/validate/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'validateToken'])->name('validate-token');
 
-        Route::get('/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'start'])->name('start');
+        Route::get('/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'welcome'])->name('welcome');
+        Route::post('/{jadwal}/begin', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'start'])->name('start');
         Route::get('/test/{jadwal}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'testExam'])->name('test-exam');
         Route::get('/{jadwal}/finished', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'finished'])->name('finished');
         Route::post('/save/{riwayat}', [App\Http\Controllers\Cbt\ExamExecutionController::class, 'saveAnswer'])->name('save');

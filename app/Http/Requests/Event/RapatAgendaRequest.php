@@ -13,10 +13,10 @@ class RapatAgendaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rapat_id'     => 'required|exists:event_rapat,rapat_id',
+            'rapat_id'     => 'sometimes|exists:event_rapat,rapat_id',
             'judul_agenda' => 'required|string|max:250',
-            'isi'          => 'required|string',
-            'seq'          => 'required|integer',
+            'isi'          => 'nullable|string',
+            'seq'          => 'nullable|integer',
         ];
     }
 }
