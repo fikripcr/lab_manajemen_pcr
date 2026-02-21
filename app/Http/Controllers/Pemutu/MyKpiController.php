@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Shared\Personil;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class MyKpiController extends Controller

@@ -1,14 +1,13 @@
-@extends(auth()->check() ? 'layouts.tabler.app' : 'layouts.public.app')
-
-@section('header')
-@if(isset($isPreview) && $isPreview)
-<div class="bg-azure-lt text-center py-2">
-    <strong><i class="ti ti-eye me-1"></i> MODE PREVIEW</strong> — Tampilan ini hanya simulasi. Jawaban tidak akan disimpan.
-</div>
-@endif
-@endsection
+@extends('layouts.guest.app')
 
 @section('content')
+    @section('title', $survei->judul)
+    
+    @if(isset($isPreview) && $isPreview)
+    <div class="bg-azure-lt text-center py-2 mb-3 rounded shadow-sm">
+        <strong><i class="ti ti-eye me-1"></i> MODE PREVIEW</strong> — Tampilan ini hanya simulasi. Jawaban tidak akan disimpan.
+    </div>
+    @endif
         @if(isset($isPreview) && $isPreview)
         <div class="mb-3 text-end">
             <x-tabler.button href="{{ route('survei.builder', $survei->id) }}" class="btn-secondary btn-sm" icon="ti ti-arrow-left" text="Kembali ke Builder" />
@@ -37,7 +36,7 @@
         </div>
 
         {{-- Form --}}
-        <form action="{{ route('survei.public.store', $survei->slug) }}" method="POST" id="survei-form" enctype="multipart/form-data">
+        <form action="{{ route('survei.public.store', $survei->slug) }}" method="POST" id="survei-form" class="ajax-form" enctype="multipart/form-data">
             @csrf
             
             @foreach($survei->halaman as $index => $halaman)

@@ -1,8 +1,12 @@
 <?php
 namespace App\Http\Controllers\Lab;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\PcAssignmentRequest;
 use App\Models\Lab\JadwalKuliah;
+use App\Models\Lab\PcAssignment;
+use App\Models\User;
+use App\Services\Lab\PcAssignmentService;
 use Yajra\DataTables\DataTables;
 
 class PcAssignmentController extends Controller

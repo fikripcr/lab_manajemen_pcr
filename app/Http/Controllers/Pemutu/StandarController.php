@@ -10,6 +10,7 @@ use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\IndikatorService;
 use Exception;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class StandarController extends Controller

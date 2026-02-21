@@ -1,4 +1,4 @@
-@extends('layouts.tabler.app')
+@extends('layouts.guest.app')
 
 @push('css')
 <style>

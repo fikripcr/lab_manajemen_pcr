@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\MahasiswaRequest;
 use App\Models\Lab\Mahasiswa;
 use App\Services\Lab\MahasiswaService;
-use App\Services\Lab\StrukturOrganisasiService;
+use App\Services\Shared\StrukturOrganisasiService;
 use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;

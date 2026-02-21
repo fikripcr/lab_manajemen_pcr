@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
 use App\Http\Requests\Pemutu\KpiRequest;
+use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Services\Pemutu\IndikatorService;
 use App\Services\Pemutu\KpiService;
 use Exception;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class KpiController extends Controller
