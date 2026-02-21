@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Lab;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\LogPenggunaanPcRequest;
 use App\Models\Lab\LogPenggunaanPc;
 use App\Services\Lab\LogPenggunaanPcService;

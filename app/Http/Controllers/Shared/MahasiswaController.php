@@ -18,7 +18,7 @@ class MahasiswaController extends Controller
                     return $row->prodi->nama_prodi ?? '-';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('shared.mahasiswa.show', $row->mahasiswa_id) . '" class="edit btn btn-info btn-sm">View</a>';
+                    $btn = '<a href="' . route('mahasiswa.show', $row->encrypted_mahasiswa_id) . '" class="edit btn btn-info btn-sm">View</a>';
                     return $btn;
                 })
                 ->rawColumns(['action'])

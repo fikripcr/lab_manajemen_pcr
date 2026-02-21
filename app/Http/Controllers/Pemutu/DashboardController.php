@@ -8,6 +8,7 @@ use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Models\Shared\Pegawai;
 use App\Models\Shared\Personil;
 
 class DashboardController extends Controller
@@ -21,7 +22,7 @@ class DashboardController extends Controller
         $totalIndikator = Indikator::count();
         $totalKpi       = IndikatorPegawai::count();
         $totalPersonil  = Personil::count();
-
+        $totalPegawai   = Pegawai::count();
         // Dokumen by Type
         $dokumenByType = Dokumen::selectRaw('jenis, COUNT(*) as total')
             ->whereNotNull('jenis')
@@ -91,6 +92,7 @@ class DashboardController extends Controller
             'totalIndikator',
             'totalKpi',
             'totalPersonil',
+            'totalPegawai',
             'standarCount',
             'renopCount',
             'performaCount',
@@ -101,7 +103,6 @@ class DashboardController extends Controller
             'kpiAchievementRate',
             'kpiByStatus',
             'dokumenByType',
-            'dokumenKebijakan',
             'dokumenKebijakan',
             'dokumenStandar',
             'upcomingRapats'

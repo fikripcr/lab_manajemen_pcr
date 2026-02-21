@@ -22,7 +22,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 
         // Mahasiswa
         Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
-        Route::get('/mahasiswa/{id}', [MahasiswaController::class, 'show'])->name('mahasiswa.show');
+        Route::get('/mahasiswa/{mahasiswa}', [MahasiswaController::class, 'show'])->name('mahasiswa.show');
 
         // Pengumuman
         Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('pengumuman.index');

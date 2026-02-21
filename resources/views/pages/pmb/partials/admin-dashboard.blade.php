@@ -15,7 +15,7 @@
         ->limit(10)
         ->get();
 
-    $statsByJalur = App\Models\Pmb\Pendaftaran::join('pmb_jalur', 'pmb_pendaftaran.jalur_id', '=', 'pmb_jalur.id')
+    $statsByJalur = App\Models\Pmb\Pendaftaran::join('pmb_jalur', 'pmb_pendaftaran.jalur_id', '=', 'pmb_jalur.jalur_id')
         ->selectRaw('pmb_jalur.nama_jalur, COUNT(*) as total')
         ->groupBy('pmb_jalur.nama_jalur')
         ->get();
