@@ -24,7 +24,7 @@ class EvaluasiDiriController extends Controller
     public function show(PeriodeSpmi $periode)
     {
         try {
-            $user      = auth()->user();
+            $user = auth()->user();
 
             // Get User's Unit for this period
             $timMutu = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
@@ -47,7 +47,7 @@ class EvaluasiDiriController extends Controller
     public function data(PeriodeSpmi $periode)
     {
         try {
-            $user      = auth()->user();
+            $user = auth()->user();
 
             $timMutu = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
                 ->where('pegawai_id', $user->pegawai?->pegawai_id)
@@ -60,7 +60,9 @@ class EvaluasiDiriController extends Controller
                 $unitId = $unit->orgunit_id ?? 0;
             }
 
-            $query = Indikator::with(['orgUnits' => function ($q) use ($unitId) {
+            $query = Indikator::whereHas('dokSubs.dokumen', function ($q) use ($periode) {
+                $q->where('periode', $periode->periode);
+            })->with(['orgUnits' => function ($q) use ($unitId) {
                 $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
             }]);
 
@@ -104,7 +106,7 @@ class EvaluasiDiriController extends Controller
     public function edit(Indikator $indikator)
     {
         try {
-            $user        = auth()->user();
+            $user = auth()->user();
 
             $userUnitIds = [];
             if ($user->pegawai) {
@@ -131,7 +133,7 @@ class EvaluasiDiriController extends Controller
     public function update(\App\Http\Requests\Pemutu\EvaluasiDiriRequest $request, Indikator $indikator)
     {
         try {
-            $validated   = $request->validated();
+            $validated = $request->validated();
 
             if ($request->filled('target_unit_id')) {
                 $targetUnitId = $request->target_unit_id;

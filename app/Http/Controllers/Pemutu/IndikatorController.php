@@ -7,7 +7,7 @@ use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
-use App\Models\Shared\Personil;
+use App\Models\Shared\Pegawai;
 use App\Services\Pemutu\IndikatorService;
 use Exception;
 use Illuminate\Http\Request;
@@ -99,7 +99,7 @@ class IndikatorController extends Controller
 
         $parents = Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
 
-        $personils = Personil::with('latestDataDiri')->get()->sortBy('nama');
+        $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
 
         // Initialize selected doksubs as empty array
         $selectedDokSubs = [];
@@ -127,7 +127,7 @@ class IndikatorController extends Controller
         }
 
         $indikator = new Indikator(); // Empty for create
-        return view('pages.pemutu.indikators.create-edit-ajax', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils', 'parentDok', 'selectedDokSubs', 'indikator'));
+        return view('pages.pemutu.indikators.create-edit-ajax', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais', 'parentDok', 'selectedDokSubs', 'indikator'));
     }
 
     public function store(IndikatorRequest $request)
@@ -208,9 +208,9 @@ class IndikatorController extends Controller
             ->orderBy('no_indikator')
             ->get();
 
-        $personils = Personil::with('latestDataDiri')->get()->sortBy('nama');
+        $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
 
-        return view('pages.pemutu.indikators.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'personils'));
+        return view('pages.pemutu.indikators.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais'));
     }
 
     public function update(IndikatorRequest $request, Indikator $indikator)

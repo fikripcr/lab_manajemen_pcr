@@ -227,6 +227,13 @@
                     'can' => 'admin',
                 ],
                 [
+                    'title' => 'Indikator',
+                    'route' => 'pemutu.indikators.index',
+                    'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
+                    'icon' => 'ti ti-target',
+                    'can' => 'admin',
+                ],
+                [
                     'title' => 'Evaluasi Diri',
                     'route' => 'pemutu.evaluasi-diri.index',
                     'active_routes' => ['pemutu.evaluasi-diri.*'],
@@ -258,14 +265,6 @@
                     'route' => 'pemutu.tim-mutu.index',
                     'active_routes' => ['pemutu.tim-mutu.*'],
                     'icon' => 'ti ti-users-group',
-                    'can' => 'admin',
-                ],
-                
-                [
-                    'title' => 'Indikator',
-                    'route' => 'pemutu.indikators.index',
-                    'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
-                    'icon' => 'ti ti-target',
                     'can' => 'admin',
                 ],
                 [

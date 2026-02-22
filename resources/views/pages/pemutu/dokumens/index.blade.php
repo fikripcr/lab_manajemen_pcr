@@ -284,11 +284,11 @@
                         const selector = typeParam === 'doksub' ? `#tree-node-sub-${idParam}` : `#tree-node-dok-${idParam}`;
                         const targetNode = document.querySelector(selector);
                         if (targetNode) {
-                            const link = targetNode.querySelector('.tree-item-link');
-                            if (link) {
-                                link.classList.add('fw-bold', 'text-primary', 'bg-blue-lt');
-                                // Reload detail panel to reflect changes
-                                loadDetail(link.dataset.url, link.dataset.jenis, false);
+                            const row = targetNode.querySelector('.tree-node-row');
+                            if (row) {
+                                row.classList.add('fw-bold', 'text-primary', 'bg-blue-lt');
+                                const link = row.querySelector('.tree-item-link');
+                                if (link) loadDetail(link.dataset.url, link.dataset.jenis, false);
                             }
                         }
                     }
@@ -300,11 +300,11 @@
 
         // Global listeners for AJAX form/delete success
         $(document).off('ajax-form:success.refreshUI').on('ajax-form:success.refreshUI', '.ajax-form', function() {
-            // refreshUI(); // Disabled per user request to only reload datatables
+            refreshUI(); 
         });
         
         $(document).off('ajax-delete:success.refreshUI').on('ajax-delete:success.refreshUI', '.ajax-delete', function() {
-            // refreshUI(); // Disabled per user request to only reload datatables
+            refreshUI(); 
         });
 
         // Sub-Tab Change
@@ -319,11 +319,17 @@
         });
 
         // Tree Item Click
-        $(document).on('click', '.tree-item-link', function(e) {
+        $(document).on('click', '.tree-node-row', function(e) {
+            if ($(e.target).closest('.tree-toggle, .tree-toggle-custom').length) return;
+            
             e.preventDefault();
-            $('.tree-item-link').removeClass('fw-bold text-primary bg-blue-lt');
+            $('.tree-node-row').removeClass('fw-bold text-primary bg-blue-lt');
             $(this).addClass('fw-bold text-primary bg-blue-lt');
-            loadDetail($(this).data('url'), $(this).data('jenis'));
+            
+            const link = $(this).find('.tree-item-link');
+            if (link.length) {
+                loadDetail(link.data('url'), link.data('jenis'));
+            }
         });
 
         // Toggle children
@@ -434,8 +440,13 @@
     });
 </script>
 <style>
-    .tree-item-link { cursor: pointer; text-decoration: none; color: inherit; }
-    .tree-item-link:hover { color: var(--tblr-primary); font-weight: 500; }
+    .tree-node-row { cursor: pointer; padding: 2px 8px; border-radius: 4px; transition: background-color 0.1s; width: 100%; }
+    .tree-node-row:hover { background-color: rgba(var(--tblr-primary-rgb), 0.08); }
+    .tree-node-row:hover .tree-item-link, 
+    .tree-node-row:hover .tree-toggle, 
+    .tree-node-row:hover .tree-item-name { color: var(--tblr-primary) !important; }
+
+    .tree-item-link { text-decoration: none; color: inherit; display: block; }
 
     /* Tree Lines */
     ul#dokumen-tree, ul.nested-sortable { list-style: none; padding-left: 20px; }

@@ -131,7 +131,7 @@
             </div>
 
             {{-- Footer --}}
-            <footer class="footer footer-transparent d-print-none">
+            <footer class="footer footer-transparent py-2 d-print-none">
                 <div class="{{ $layoutData['containerClass'] ?? 'container-xl' }}">
                     <div class="row text-center align-items-center flex-row-reverse">
                         <div class="col-lg-auto ms-lg-auto">

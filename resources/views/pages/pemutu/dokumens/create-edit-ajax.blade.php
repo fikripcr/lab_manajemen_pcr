@@ -109,7 +109,7 @@
         @endif
 
         <div class="row">
-            <div class="{{ $isEdit ? 'col-md-8' : 'col-md-12' }}">
+            <div class="col-md-12">
                 <x-tabler.form-input 
                     name="judul" 
                     label="Judul" 
@@ -119,11 +119,6 @@
                     placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan' : 'Contoh: Misi 1' }}" 
                 />
             </div>
-            @if($isEdit)
-            <div class="col-md-4">
-                <x-tabler.form-input type="number" id="seq" name="seq" label="Urutan" :value="$dokSub->seq" />
-            </div>
-            @endif
         </div>
         
         @if($canProduceIndikator)

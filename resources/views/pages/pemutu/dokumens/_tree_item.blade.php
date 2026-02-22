@@ -1,5 +1,5 @@
 <li data-id="{{ $dok->encrypted_dok_id }}" data-jenis="{{ $dok->jenis }}" id="tree-node-dok-{{ $dok->encrypted_dok_id }}">
-    <div class="d-flex align-items-start mb-2" draggable="true">
+    <div class="d-flex align-items-start mb-2 tree-node-row" draggable="true">
         @php
             $hasChildDocs = $dok->children->count() > 0;
             $hasDokSubs = isset($dok->dokSubs) && $dok->dokSubs->count() > 0;
@@ -46,7 +46,7 @@
         @if($hasDokSubs)
             @foreach($dok->dokSubs as $sub)
                 <li data-id="{{ $sub->encrypted_doksub_id }}" data-type="doksub" id="tree-node-sub-{{ $sub->encrypted_doksub_id }}">
-                    <div class="d-flex align-items-start mb-2">
+                    <div class="d-flex align-items-start mb-2 tree-node-row">
                         @php
                             $hasSubChildren = isset($sub->childDokumens) && $sub->childDokumens->count() > 0;
                         @endphp
