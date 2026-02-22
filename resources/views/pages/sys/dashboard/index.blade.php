@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <!-- News Slider -->
+        <!-- News Timeline -->
         @if(isset($recentNews) && $recentNews->count() > 0)
         <div class="col-12 mb-4">
             <div class="card">
@@ -79,45 +79,41 @@
                     <h3 class="card-title">Pengumuman Terbaru</h3>
                 </div>
                 <div class="card-body">
-                    <div id="carousel-news" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            @foreach($recentNews as $news)
-                            <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                                <div class="row align-items-center">
-                                    <div class="col-md-{{ $news->cover_url ? '8' : '12' }}">
-                                        <h3 class="mb-1">{{ $news->judul }}</h3>
-                                        <div class="text-muted mb-2">
-                                            <small>
-                                                <i class="ti ti-calendar me-1"></i> {{ \Carbon\Carbon::parse($news->published_at)->translatedFormat('d F Y') }}
-                                                &nbsp;&bull;&nbsp;
-                                                <i class="ti ti-user me-1"></i> {{ $news->penulis ? $news->penulis->name : 'System' }}
-                                            </small>
+                    <ul class="timeline">
+                        @foreach($recentNews as $news)
+                        <li class="timeline-event">
+                            <div class="timeline-event-icon bg-primary-lt">
+                                <i class="ti ti-bell"></i>
+                            </div>
+                            <div class="card timeline-event-card shadow-sm">
+                                <div class="card-body">
+                                    <div class="text-muted float-end">{{ \Carbon\Carbon::parse($news->published_at)->diffForHumans() }}</div>
+                                    <h4 class="h3 mb-1">{{ $news->judul }}</h4>
+                                    <div class="text-muted mb-2">
+                                        <small>
+                                            <i class="ti ti-calendar me-1"></i> {{ \Carbon\Carbon::parse($news->published_at)->translatedFormat('d F Y') }}
+                                            &nbsp;&bull;&nbsp;
+                                            <i class="ti ti-user me-1"></i> {{ $news->penulis ? $news->penulis->name : 'System' }}
+                                        </small>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-{{ $news->cover_url ? '9' : '12' }}">
+                                            <p class="text-secondary">
+                                                {{ Str::limit(strip_tags($news->isi), 200) }}
+                                            </p>
+                                            <a href="{{ route('shared.pengumuman.show', $news->encrypted_pengumuman_id) }}" class="btn btn-sm btn-outline-primary">Baca Selengkapnya</a>
                                         </div>
-                                        <p class="text-secondary text-truncate" style="max-width: 800px;">
-                                            {{ Str::limit(strip_tags($news->isi), 150) }}
-                                        </p>
-                                        <a href="{{ route('shared.pengumuman.show', $news->encrypted_pengumuman_id) }}" class="btn btn-sm btn-outline-primary">Baca Selengkapnya</a>
+                                        @if($news->cover_url)
+                                        <div class="col-md-3">
+                                            <img src="{{ $news->cover_url }}" class="d-block w-100 rounded" alt="{{ $news->judul }}" style="max-height: 120px; object-fit: cover;">
+                                        </div>
+                                        @endif
                                     </div>
-                                    @if($news->cover_url)
-                                    <div class="col-md-4">
-                                        <img src="{{ $news->cover_url }}" class="d-block w-100 rounded" alt="{{ $news->judul }}" style="max-height: 200px; object-fit: cover;">
-                                    </div>
-                                    @endif
                                 </div>
                             </div>
-                            @endforeach
-                        </div>
-                        @if($recentNews->count() > 1)
-                        <a class="carousel-control-prev" href="#carousel-news" role="button" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon bg-primary rounded-circle" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-news" role="button" data-bs-slide="next">
-                            <span class="carousel-control-next-icon bg-primary rounded-circle" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        @endif
-                    </div>
+                        </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         </div>

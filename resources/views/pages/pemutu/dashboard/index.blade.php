@@ -72,14 +72,14 @@
                         <div class="text-muted small">Periode: {{ $activePeriodeSpmi->periode }}</div>
                     </div>
                     
-                    <ul class="steps steps-vertical">
+                    <ul class="timeline">
                         @php
                             $phases = [
-                                ['label' => 'Penetapan', 'date' => $activePeriodeSpmi->penetapan_awal, 'end' => $activePeriodeSpmi->penetapan_akhir],
-                                ['label' => 'Pelaksanaan', 'date' => $activePeriodeSpmi->penetapan_akhir, 'end' => $activePeriodeSpmi->ami_awal],
-                                ['label' => 'Evaluasi (AMI)', 'date' => $activePeriodeSpmi->ami_awal, 'end' => $activePeriodeSpmi->ami_akhir],
-                                ['label' => 'Pengendalian', 'date' => $activePeriodeSpmi->pengendalian_awal, 'end' => $activePeriodeSpmi->pengendalian_akhir],
-                                ['label' => 'Peningkatan', 'date' => $activePeriodeSpmi->peningkatan_awal, 'end' => $activePeriodeSpmi->peningkatan_akhir],
+                                ['label' => 'Penetapan', 'date' => $activePeriodeSpmi->penetapan_awal, 'end' => $activePeriodeSpmi->penetapan_akhir, 'icon' => 'ti ti-gavel', 'color' => 'primary'],
+                                ['label' => 'Pelaksanaan', 'date' => $activePeriodeSpmi->penetapan_akhir, 'end' => $activePeriodeSpmi->ami_awal, 'icon' => 'ti ti-player-play', 'color' => 'teal'],
+                                ['label' => 'Evaluasi (AMI)', 'date' => $activePeriodeSpmi->ami_awal, 'end' => $activePeriodeSpmi->ami_akhir, 'icon' => 'ti ti-clipboard-check', 'color' => 'warning'],
+                                ['label' => 'Pengendalian', 'date' => $activePeriodeSpmi->pengendalian_awal, 'end' => $activePeriodeSpmi->pengendalian_akhir, 'icon' => 'ti ti-settings-exclamation', 'color' => 'danger'],
+                                ['label' => 'Peningkatan', 'date' => $activePeriodeSpmi->peningkatan_awal, 'end' => $activePeriodeSpmi->peningkatan_akhir, 'icon' => 'ti ti-trending-up', 'color' => 'success'],
                             ];
                             $now = now();
                         @endphp
@@ -91,11 +91,18 @@
                                 $isActive = $now->between($start, $end ?? $start->copy()->addDay());
                                 $isPast = $now->gt($end ?? $start);
                             @endphp
-                            <li class="step-item {{ $isActive ? 'active' : '' }}">
-                                <div class="h4 m-0 {{ $isActive ? 'text-primary' : '' }}">{{ $phase['label'] }}</div>
-                                <div class="text-secondary small">
-                                    {{ $start->format('d M Y') }} 
-                                    @if($end) - {{ $end->format('d M Y') }} @endif
+                            <li class="timeline-event">
+                                <div class="timeline-event-icon bg-{{ $phase['color'] }}-lt">
+                                    <i class="{{ $phase['icon'] }}"></i>
+                                </div>
+                                <div class="card timeline-event-card {{ $isActive ? 'border-primary shadow-sm' : 'border-0 shadow-none' }}">
+                                    <div class="card-body p-2">
+                                        <div class="fw-bold {{ $isActive ? 'text-primary' : '' }}">{{ $phase['label'] }}</div>
+                                        <div class="text-secondary small">
+                                            {{ $start->translatedFormat('d M Y') }} 
+                                            @if($end) - {{ $end->translatedFormat('d M Y') }} @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </li>
                         @endforeach

@@ -288,11 +288,11 @@ class ThemeTabler {
             root.setAttribute('data-theme-icon-weight', state.iconWeight);
         }
 
-        // 4. Background Texture (data-theme-texture on body)
+        // 4. Background Texture (data-theme-texture on HTML for CSS selector to work)
         if (state.texture && state.texture !== 'none') {
-            body.setAttribute('data-theme-texture', state.texture);
+            root.setAttribute('data-theme-texture', state.texture);
         } else {
-            body.removeAttribute('data-theme-texture');
+            root.removeAttribute('data-theme-texture');
         }
     }
 
@@ -419,6 +419,8 @@ class ThemeTabler {
             const { name, value } = e.target;
             if (!name) return;
 
+            console.log('Theme change detected:', name, '=', value);
+
             // Special handling for Theme Mode toggle (Dark -> Light reset)
             if (name === 'theme') {
                 document.documentElement.setAttribute('data-bs-theme', value);
@@ -430,7 +432,9 @@ class ThemeTabler {
                 }
             }
 
+            console.log('Calling refresh()...');
             this.refresh();
+            console.log('Refresh complete. Current texture:', document.body.getAttribute('data-theme-texture'));
         });
 
         // Apply Button

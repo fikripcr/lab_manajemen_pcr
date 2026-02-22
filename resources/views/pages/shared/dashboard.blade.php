@@ -73,26 +73,30 @@
                 </div>
                 <div class="card shadow-sm border-0" style="border-radius: 12px;">
                     <div class="card-body">
-                        <ul class="steps steps-vertical">
+                        <ul class="timeline">
                             @forelse($recentAnnouncements as $announcement)
-                            <li class="step-item pb-3">
-                                <div class="h4 m-0 mb-2">
-                                    <a href="{{ route('shared.pengumuman.show', $announcement->pengumuman_id) }}" class="text-reset fw-bold text-decoration-none">{{ $announcement->judul }}</a>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="ti ti-clock me-1 text-muted" style="font-size: 0.875rem;"></i>
-                                    <span class="text-muted small">{{ $announcement->created_at->format('d M Y') }}</span>
-                                </div>
-                                <div class="text-secondary small lh-base" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                    {{ strip_tags($announcement->isi) }}
+                            <li class="timeline-event">
+                                <div class="timeline-event-icon bg-danger"></div>
+                                <div class="timeline-event-card shadow-none border-0 p-0">
+                                    <div class="fw-bold fs-3 text-dark mb-1">
+                                        <a href="{{ route('shared.pengumuman.show', $announcement->pengumuman_id) }}" class="text-reset text-decoration-none">{{ $announcement->judul }}</a>
+                                    </div>
+                                    <div class="text-muted small mb-1">
+                                        <i class="ti ti-clock me-1"></i> {{ $announcement->created_at->format('d M Y') }}
+                                    </div>
+                                    <div class="text-secondary small lh-base" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                        {{ strip_tags($announcement->isi) }}
+                                    </div>
                                 </div>
                             </li>
                             @empty
-                            <p class="text-secondary small">Tidak ada pengumuman terbaru.</p>
+                            <p class="text-secondary small text-center py-3">Tidak ada pengumuman terbaru.</p>
                             @endforelse
                         </ul>
-                        <div class="mt-3 border-top pt-3">
-                            <x-tabler.button href="{{ route('shared.pengumuman.index') }}" class="btn-ghost-primary btn-sm w-100" text="Lihat Semua" icon="ti ti-chevron-right" />
+                        <div class="mt-3 border-top pt-3 text-center">
+                            <a href="{{ route('shared.pengumuman.index') }}" class="text-danger fw-bold text-decoration-none small">
+                               <i class="ti ti-chevron-right me-1"></i> Lihat Semua
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -41,11 +41,7 @@
     <form class="offcanvas offcanvas-end offcanvas-narrow" tabindex="-1" id="offcanvasSettings">
         {{-- Hidden field for mode (required by controller) --}}
         <input type="hidden" name="mode" value="{{ $mode }}">
-        
-        <div class="offcanvas-header border-bottom">
-            <h2 class="offcanvas-title">Theme Settings</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
+
         <div class="offcanvas-body d-flex flex-column">
             <div class="settings-content" style="">
                 
@@ -112,7 +108,7 @@
                     </div>
 
                     {{-- Card Style --}}
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Card Style</label>
                         <select name="theme-card-style" class="form-select">
                             @foreach([
@@ -124,11 +120,6 @@
                             <option value="{{ $val }}" {{ ($themeData['themeCardStyle'] ?? 'flat') === $val ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach
                         </select>
-                    </div>
-
-                    {{-- Advanced Customization Section --}}
-                    <div class="col-12">
-                        <div class="divider-text my-2">Advanced Customization</div>
                     </div>
 
                     {{-- UI Density --}}
@@ -212,7 +203,6 @@
                             <option value="crosshatch" {{ ($themeData['themeTexture'] ?? 'none') === 'crosshatch' ? 'selected' : '' }}>Crosshatch</option>
                             <option value="circles" {{ ($themeData['themeTexture'] ?? 'none') === 'circles' ? 'selected' : '' }}>Circles</option>
                         </select>
-                        <small class="form-hint">Subtle background pattern (adapts to dark mode) - Opacity enhanced for better visibility</small>
                     </div>
 
                     @unless($isAuthMode)
