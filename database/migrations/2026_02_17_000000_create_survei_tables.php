@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // 1. DEFINISI SURVEI (MASTER DATA)
         Schema::create('survei_survei', function (Blueprint $table) {
-            $table->id('id'); // survei_id
+            $table->id('survei_id');
             $table->string('judul');
             $table->text('deskripsi')->nullable();
             $table->string('slug')->unique();
@@ -34,18 +34,19 @@ return new class extends Migration
         });
 
         Schema::create('survei_halaman', function (Blueprint $table) {
-            $table->id('id'); // halaman_id
-            $table->foreignId('survei_id')->constrained('survei_survei')->onDelete('cascade');
+            $table->id('halaman_id');
+            $table->foreignId('survei_id')->references('survei_id')->on('survei_survei')->onDelete('cascade');
             $table->string('judul_halaman')->nullable(); // Bagian 1: Identitas, dst
             $table->integer('urutan')->default(0);
             $table->text('deskripsi_halaman')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('survei_pertanyaan', function (Blueprint $table) {
-            $table->id('id'); // pertanyaan_id
-            $table->foreignId('survei_id')->constrained('survei_survei')->onDelete('cascade');
-            $table->foreignId('halaman_id')->constrained('survei_halaman')->onDelete('cascade');
+            $table->id('pertanyaan_id');
+            $table->foreignId('survei_id')->references('survei_id')->on('survei_survei')->onDelete('cascade');
+            $table->foreignId('halaman_id')->references('halaman_id')->on('survei_halaman')->onDelete('cascade');
 
             $table->text('teks_pertanyaan');
             $table->string('bantuan_teks')->nullable(); // Keterangan kecil di bawah soal
@@ -69,44 +70,44 @@ return new class extends Migration
 
             $table->boolean('wajib_diisi')->default(true);
             $table->integer('urutan')->default(0);
-            $table->foreignId('next_pertanyaan_id')->nullable()->constrained('survei_pertanyaan')->onDelete('set null');
+            $table->foreignId('next_pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('set null');
             $table->timestamps();
         });
 
         Schema::create('survei_opsi', function (Blueprint $table) {
-            $table->id('id'); // opsi_id
-            $table->foreignId('pertanyaan_id')->constrained('survei_pertanyaan')->onDelete('cascade');
+            $table->id('opsi_id');
+            $table->foreignId('pertanyaan_id')->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('cascade');
 
             $table->string('label');                       // Teks yang muncul di layar
             $table->string('nilai_tersimpan')->nullable(); // Value database
             $table->integer('bobot_skor')->default(0);     // Penting untuk SPMI/Kuis
 
             $table->integer('urutan')->default(0);
-            $table->foreignId('next_pertanyaan_id')->nullable()->constrained('survei_pertanyaan')->onDelete('set null');
+            $table->foreignId('next_pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('set null');
             $table->timestamps();
         });
 
         // 2. LOGIKA & KONTEKS
         Schema::create('survei_logika', function (Blueprint $table) {
-            $table->id('id'); // logika_id
-            $table->foreignId('survei_id')->constrained('survei_survei')->onDelete('cascade');
+            $table->id('logika_id');
+            $table->foreignId('survei_id')->references('survei_id')->on('survei_survei')->onDelete('cascade');
 
-            $table->foreignId('pertanyaan_pemicu_id')->constrained('survei_pertanyaan')->onDelete('cascade');
+            $table->foreignId('pertanyaan_pemicu_id')->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('cascade');
             $table->enum('operator', ['Sama_Dengan', 'Tidak_Sama', 'Lebih_Dari', 'Kurang_Dari', 'Termasuk']); // Added basics
             $table->string('nilai_pemicu');                                                                   // Jawaban user yang memicu logika
 
             $table->enum('aksi', ['Lompat_Ke_Halaman', 'Sembunyikan_Pertanyaan', 'Selesai_Survei']);
 
-            $table->foreignId('target_halaman_id')->nullable()->constrained('survei_halaman')->onDelete('set null');
-            $table->foreignId('target_pertanyaan_id')->nullable()->constrained('survei_pertanyaan')->onDelete('set null');
+            $table->foreignId('target_halaman_id')->nullable()->references('halaman_id')->on('survei_halaman')->onDelete('set null');
+            $table->foreignId('target_pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('set null');
 
             $table->timestamps();
         });
 
         Schema::create('survei_relasi_konteks', function (Blueprint $table) {
-            $table->id('id'); // relasi_id
-            $table->foreignId('survei_id')->constrained('survei_survei')->onDelete('cascade');
-            $table->foreignId('pertanyaan_id')->nullable()->constrained('survei_pertanyaan')->onDelete('cascade');
+            $table->id('relasi_id');
+            $table->foreignId('survei_id')->references('survei_id')->on('survei_survei')->onDelete('cascade');
+            $table->foreignId('pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('cascade');
 
                                           // Polymorphic Relation
             $table->string('model_type'); // Ex: 'App\Models\SpmiIndikator'
@@ -119,9 +120,9 @@ return new class extends Migration
 
         // 3. DATA PENGISIAN (TRANSAKSI)
         Schema::create('survei_pengisian', function (Blueprint $table) {
-            $table->id('id'); // pengisian_id
-            $table->foreignId('survei_id')->constrained('survei_survei')->onDelete('cascade');
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // Null jika anonim
+            $table->id('pengisian_id');
+            $table->foreignId('survei_id')->references('survei_id')->on('survei_survei')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('set null'); // Null jika anonim
 
                                                       // Konteks Runtime
             $table->nullableMorphs('entitas_target'); // Creates entitas_target_type & entitas_target_id
@@ -135,9 +136,9 @@ return new class extends Migration
         });
 
         Schema::create('survei_jawaban', function (Blueprint $table) {
-            $table->id('id'); // jawaban_id
-            $table->foreignId('pengisian_id')->constrained('survei_pengisian')->onDelete('cascade');
-            $table->foreignId('pertanyaan_id')->constrained('survei_pertanyaan')->onDelete('cascade');
+            $table->id('jawaban_id');
+            $table->foreignId('pengisian_id')->references('pengisian_id')->on('survei_pengisian')->onDelete('cascade');
+            $table->foreignId('pertanyaan_id')->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('cascade');
 
                                                         // Penyimpanan Data Fleksibel
             $table->text('nilai_teks')->nullable();     // Untuk Esai/Teks Singkat
@@ -145,7 +146,7 @@ return new class extends Migration
             $table->date('nilai_tanggal')->nullable();
             $table->json('nilai_json')->nullable(); // Untuk Checkbox (Multi Select) atau Path Upload
 
-            $table->foreignId('opsi_id')->nullable()->constrained('survei_opsi')->onDelete('set null');
+            $table->foreignId('opsi_id')->nullable()->references('opsi_id')->on('survei_opsi')->onDelete('set null');
 
             $table->timestamp('dibuat_pada')->useCurrent();
             $table->timestamps();

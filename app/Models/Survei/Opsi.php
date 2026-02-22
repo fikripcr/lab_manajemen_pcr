@@ -10,12 +10,17 @@ class Opsi extends Model
     use HasFactory, HashidBinding;
 
     protected $table = 'survei_opsi';
-
+    protected $primaryKey = 'opsi_id';
     protected $appends = ['encrypted_opsi_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'opsi_id';
+    }
 
     public function getEncryptedOpsiIdAttribute()
     {
-        return encryptId($this->opsi_id ?? $this->id);
+        return encryptId($this->opsi_id);
     }
 
     protected $fillable = [

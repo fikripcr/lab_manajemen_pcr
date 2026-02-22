@@ -20,19 +20,42 @@ class DokSubController extends Controller
 
     public function show(DokSub $dokSub)
     {
-        $parent = $dokSub->dokumen;
+        $parent      = $dokSub->dokumen;
+        $parentJenis = strtolower(trim($parent->jenis));
 
         // Determine Child Type based on Parent Dokumen Type
-        $parentJenis = strtolower(trim($parent->jenis));
-        $childType   = match ($parentJenis) {
-            'visi'    => 'Misi',
-            'misi'    => 'RPJP',
-            'rjp'     => 'Renstra',
-            'renstra' => 'Renop',
-            default   => ''
+        $childLabel = match ($parentJenis) {
+            'visi'    => 'Poin',
+            'misi'    => 'Poin',
+            'rjp'     => 'Poin',
+            'renstra' => 'Poin',
+            'renop'   => 'Butir Standar',
+            'standar' => 'Butir Standar',
+            default   => 'Turunan'
         };
 
-        return view('pages.pemutu.dok-subs.detail', compact('dokSub', 'parent', 'childType'));
+        // DokSub usually has markers/indicators if specified
+        $showIndikators = $dokSub->is_hasilkan_indikator;
+
+        $activeSubTab = \request()->get('subtab', 'overview');
+
+        // Prepare normalized data for unified component
+        $data = [
+            'item'           => $dokSub,
+            'isDokumen'      => false, // This is a DokSub
+            'parent'         => $parent,
+            'childLabel'     => $childLabel,
+            'showIndikators' => $showIndikators,
+            'activeSubTab'   => $activeSubTab,
+        ];
+
+        // Handle AJAX response
+        if (\request()->ajax() || \request()->has('ajax')) {
+            return \view('pages.pemutu.shared._detail_panel', $data);
+        }
+
+        // Handle Full Page Load
+        return \view('pages.pemutu.dok-subs.detail', $data);
     }
 
     public function create(Request $request)
@@ -41,13 +64,13 @@ class DokSubController extends Controller
             $dokId   = (int) decryptIdIfEncrypted($request->query('dok_id'));
             $dokumen = $this->dokumenService->getDokumenById($dokId);
             if (! $dokumen) {
-                abort(404);
+                \abort(404);
             }
 
             $dokSub = new DokSub(); // Empty model for create case
-            return view('pages.pemutu.dok-subs.create-edit-ajax', compact('dokumen', 'dokSub'));
+            return \view('pages.pemutu.dok-subs.create-edit-ajax', compact('dokumen', 'dokSub'));
         } catch (Exception $e) {
-            abort(404);
+            \abort(404);
         }
     }
 
@@ -60,7 +83,7 @@ class DokSubController extends Controller
 
             logActivity('pemutu', "Menambah sub-dokumen baru: {$dokSub->judul}");
 
-            return jsonSuccess('Sub-Document created successfully.', route('pemutu.dokumens.show', $dokSub->encrypted_dok_id));
+            return jsonSuccess('Sub-Document created successfully.');
         } catch (Exception $e) {
             logError($e);
             return jsonError('Gagal menyimpan sub-dokumen: ' . $e->getMessage());
@@ -81,7 +104,7 @@ class DokSubController extends Controller
 
             logActivity('pemutu', "Memperbarui sub-dokumen: {$dokSub->judul}");
 
-            return jsonSuccess('Sub-Document updated successfully.', route('pemutu.dokumens.show', $dokSub->encrypted_dok_id));
+            return jsonSuccess('Sub-Document updated successfully.');
         } catch (Exception $e) {
             logError($e);
             return jsonError('Gagal memperbarui sub-dokumen: ' . $e->getMessage());

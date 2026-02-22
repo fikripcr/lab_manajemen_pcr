@@ -624,13 +624,15 @@ body.layout-condensed .page-body {
 
 /* Default: 14px (Tabler default) */
 :root {
-    --tblr-font-size-base: 0.875rem; /* 14px */
+    --tblr-font-size-base: 0.875rem;
+    /* 14px */
     --tblr-body-font-size: 0.875rem;
 }
 
 /* Small: 13px */
 [data-theme-font-size="sm"] {
-    --tblr-font-size-base: 0.8125rem; /* 13px */
+    --tblr-font-size-base: 0.8125rem;
+    /* 13px */
     --tblr-body-font-size: 0.8125rem;
 }
 
@@ -644,13 +646,15 @@ body.layout-condensed .page-body {
 
 /* Medium: 14px (Default) */
 [data-theme-font-size="md"] {
-    --tblr-font-size-base: 0.875rem; /* 14px */
+    --tblr-font-size-base: 0.875rem;
+    /* 14px */
     --tblr-body-font-size: 0.875rem;
 }
 
 /* Large: 16px */
 [data-theme-font-size="lg"] {
-    --tblr-font-size-base: 1rem; /* 16px */
+    --tblr-font-size-base: 1rem;
+    /* 16px */
     --tblr-body-font-size: 1rem;
 }
 
@@ -766,7 +770,7 @@ body.layout-condensed .page-body {
 
 /* Grid Pattern - Subtle linear gradient grid */
 [data-theme-texture="grid"] {
-    --tblr-bg-texture: 
+    --tblr-bg-texture:
         linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
     --tblr-bg-texture-size: 20px 20px;
@@ -782,7 +786,7 @@ body.layout-condensed .page-body {
 
 /* Dark mode grid - lighter lines */
 [data-bs-theme="dark"][data-theme-texture="grid"] body {
-    --tblr-bg-texture: 
+    --tblr-bg-texture:
         linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
@@ -811,10 +815,214 @@ body[data-theme-texture]:not([data-theme-texture="none"]) .modal-backdrop {
 
 /* Print styles - disable textures for printing */
 @media print {
+
     [data-theme-texture] body,
     [data-theme-texture="dots"] body,
     [data-theme-texture="grid"] body,
     [data-theme-texture="topography"] body {
         background-image: none !important;
     }
+}
+
+/* ==========================================================================
+   8. HR EMPLOYEE DETAIL PAGE - TIMELINE & SIDEBAR COMPONENTS
+   ========================================================================== */
+
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding-left: 0;
+    list-style: none;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 60px;
+    padding-bottom: 2rem;
+}
+
+.timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    bottom: -2rem;
+    width: 2px;
+    background: var(--tblr-border-color);
+}
+
+.timeline-badge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    z-index: 1;
+    box-shadow: 0 0 0 4px var(--tblr-body-bg);
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-item-active .timeline-badge {
+    box-shadow: 0 0 0 4px var(--tblr-body-bg), 0 0 0 6px var(--tblr-primary);
+}
+
+/* Sidebar Navigation */
+.list-group-item-action {
+    transition: all 0.2s ease;
+}
+
+.list-group-item-action:hover {
+    background-color: var(--tblr-hover-bg);
+}
+
+.list-group-item-action.active {
+    background-color: var(--tblr-primary);
+    color: white;
+    border-color: var(--tblr-primary);
+}
+
+.list-group-item-action.active i {
+    color: white;
+}
+
+/* Content Sections */
+.content-section {
+    margin-bottom: 3rem;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Sidebar Sticky Positioning */
+.card.sticky-top {
+    z-index: 1020;
+    top: 5rem !important;
+    /* Account for navbar height */
+}
+
+/* Modal Z-Index Fix */
+.modal {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767px) {
+    .sticky-top {
+        position: relative !important;
+        top: 0 !important;
+        margin-bottom: 1rem;
+    }
+
+    .timeline-item {
+        padding-left: 50px;
+    }
+
+    .timeline-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+}
+
+/* Dark Mode Support */
+[data-bs-theme="dark"] .timeline-item:not(:last-child)::before {
+    background: var(--tblr-border-color-dark);
+}
+
+[data-bs-theme="dark"] .timeline-badge {
+    box-shadow: 0 0 0 4px var(--tblr-bg-surface-dark);
+}
+
+[data-bs-theme="dark"] .timeline-item-active .timeline-badge {
+    box-shadow: 0 0 0 4px var(--tblr-bg-surface-dark), 0 0 0 6px var(--tblr-primary);
+}
+
+/* Card Hover Effects */
+.card-sm:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+
+/* Empty State Styling */
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-state .empty-state-icon {
+    font-size: 3rem;
+    color: var(--tblr-muted);
+    margin-bottom: 1rem;
+}
+
+
+
+/* ==========================================================================
+   9. SURVEI FORM BUILDER - CLICKABILITY & Z-INDEX FIXES
+   ========================================================================== */
+
+/* Survei Form Builder - Card Dropdown Fix */
+.card-pertanyaan .dropdown-menu {
+    z-index: 1060 !important;
+}
+
+/* Ensure dropdowns in sticky sidebars work */
+.sticky-top .dropdown-menu {
+    z-index: 1060 !important;
+}
+
+/* Survei Form Builder - Question Card Interactive Elements */
+.card-pertanyaan {
+    position: relative;
+    z-index: 1;
+}
+
+.card-pertanyaan .btn-group {
+    position: relative;
+    z-index: 10;
+}
+
+.card-pertanyaan .edit-view {
+    position: relative;
+    z-index: 5;
+}
+
+/* Drag handle should be clickable */
+.drag-handle {
+    cursor: move;
+    z-index: 10;
+    position: relative;
+}
+
+/* Ensure all buttons in form builder are clickable */
+.card-pertanyaan .btn,
+.card-pertanyaan .btn-icon {
+    position: relative;
+    z-index: 10;
+}
+
+/* Fix dropdown in card headers */
+.card-header .dropdown-menu {
+    z-index: 1060 !important;
 }

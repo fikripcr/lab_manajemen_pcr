@@ -13,7 +13,7 @@
     :submitText="$submitText"
 >
     <div class="mb-3">
-        <x-tabler.form-select id="parent_id" name="parent_id" label="Parent Unit" class="select2-offline" data-dropdown-parent="#modalAction">
+        <x-tabler.form-select id="parent_id" name="parent_id" label="Parent Unit" type="select2" data-dropdown-parent="#modalAction">
             <option value="">No Parent (Root)</option>
             @foreach($parents as $u)
                 <option value="{{ $u->orgunit_id }}" {{ (old('parent_id', $item->parent_id ?? '') == $u->orgunit_id) ? 'selected' : '' }}>

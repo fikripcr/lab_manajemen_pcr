@@ -58,6 +58,11 @@ class RiwayatUjianSiswa extends Model
         return $this->hasMany(JawabanSiswa::class, 'riwayat_id');
     }
 
+    public function pelanggaran()
+    {
+        return $this->hasMany(LogPelanggaran::class, 'riwayat_id');
+    }
+
     public function logPelanggaran()
     {
         return $this->hasMany(LogPelanggaran::class, 'riwayat_id');

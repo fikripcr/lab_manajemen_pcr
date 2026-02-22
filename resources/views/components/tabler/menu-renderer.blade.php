@@ -319,6 +319,12 @@
             'active_routes' => ['hr.*'],
             'children'      => [
                 [
+                    'title'         => 'Pegawai',
+                    'route'         => 'hr.pegawai.index',
+                    'active_routes' => ['hr.pegawai.*'],
+                    'icon'          => 'ti ti-users',
+                ],
+                [
                     'title'         => 'Approval Data',
                     'route'         => 'hr.approval.index',
                     'active_routes' => ['hr.approval.*'],

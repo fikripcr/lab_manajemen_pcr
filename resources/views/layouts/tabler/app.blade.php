@@ -36,32 +36,18 @@
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+
     {{-- CSS Files --}}
     @yield('css')
     @vite(['resources/css/tabler.css'])
-    
-    {{-- Custom Modal Z-Index Fix --}}
-    <style>
-        /* Ensure modal and backdrop have proper z-index */
-        .modal.modal-blur {
-            z-index: 99999 !important;
-        }
-        .modal-backdrop {
-            z-index: 99998 !important;
-        }
-        /* Ensure modal dialog is above backdrop */
-        .modal-dialog {
-            z-index: 100000 !important;
-            position: relative;
-        }
-        /* Ensure TinyMCE and SweetAlert appear above the modal */
-        .tox-tinymce-aux, .tox-tinymce-aux * {
-            z-index: 100002 !important;
-        }
-        .swal2-container {
-            z-index: 100002 !important;
-        }
-    </style>
+
+
+    {{-- Custom Font CSS (if custom font selected) --}}
+    @if(!empty($themeData['themeFont']) && $themeData['themeFont'] !== 'inter')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family={{ ucfirst($themeData['themeFont']) }}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @endif
     
     {{-- Theme Custom Styles --}}
     {{-- {!! $themeController->getFontLink('tabler') !!} --}}
@@ -70,7 +56,20 @@
     @stack('styles')
 </head>
 
-<body class="{{ $layoutData['bodyClass'] ?? '' }}">
+<body class="{{ $layoutData['bodyClass'] ?? '' }}" 
+      data-theme-density="{{ $themeData['themeDensity'] ?? 'standard' }}"
+      data-theme-font-size="{{ $themeData['themeFontSize'] ?? '14px' }}"
+      data-theme-icon-weight="{{ $themeData['themeIconWeight'] ?? '1.5' }}"
+      data-theme-texture="{{ $themeData['themeTexture'] ?? 'none' }}">
+    {{-- Inline Font Load (Prevents FOUC for fonts) --}}
+    @if(!empty($themeData['themeFont']) && $themeData['themeFont'] !== 'inter')
+    <style>
+        body, .form-control, .btn, .nav-link, .dropdown-item, .table, h1, h2, h3, h4, h5, h6 {
+            font-family: '{{ ucfirst($themeData['themeFont']) }}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+        }
+    </style>
+    @endif
+    
     <div class="page">
         {{-- Sidebar --}}
         @if(!empty($layoutData['layoutSidebar']))

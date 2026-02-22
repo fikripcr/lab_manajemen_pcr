@@ -99,13 +99,19 @@ class TimMutuController extends Controller
             $periodeId = $periode->periodespmi_id;
             $unitId    = $unit->orgunit_id;
 
+            // Decrypt encrypted pegawai IDs from the form
+            $auditeeId      = $validated['auditee_id'] ? decryptId($validated['auditee_id']) : null;
+            $ketuaAuditorId = $validated['ketua_auditor_id'] ? decryptId($validated['ketua_auditor_id']) : null;
+            $auditorIds     = collect($validated['auditor_ids'] ?? [])->filter()->map(fn($id) => decryptId($id))->toArray();
+            $anggotaIds     = collect($validated['anggota_ids'] ?? [])->filter()->map(fn($id) => decryptId($id))->toArray();
+
             $this->timMutuService->updateUnitTimMutu(
                 $periodeId,
                 $unitId,
-                $validated['auditee_id'] ?? null,
-                $validated['ketua_auditor_id'] ?? null,
-                $validated['auditor_ids'] ?? [],
-                $validated['anggota_ids'] ?? []
+                $auditeeId,
+                $ketuaAuditorId,
+                $auditorIds,
+                $anggotaIds
             );
 
             logActivity('pemutu', "Memperbarui Tim Mutu untuk unit: {$unit->name} pada periode: {$periode->periode}");

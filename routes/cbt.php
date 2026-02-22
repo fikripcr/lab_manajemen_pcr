@@ -10,8 +10,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
     Route::get('/', [ExamExecutionController::class, 'dashboard'])->name('dashboard');
 
     // Monitoring & Reporting
-    Route::get('/monitor/{jadwal}', [ExamExecutionController::class, 'monitor'])->name('monitor');
+    Route::get('/monitor/{jadwal}', [ExamExecutionController::class, 'monitor'])->name('execute.monitor');
     Route::get('/violations', [ExamExecutionController::class, 'violations'])->name('laporan.pelanggaran');
+    Route::get('/api/violations/{riwayat}', [ExamExecutionController::class, 'getViolationsByRiwayat'])->name('api.violations-by-riwayat');
 
     // API Routes for Exam Execution
     Route::prefix('api')->name('api.')->group(function () {

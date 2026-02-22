@@ -12,17 +12,17 @@ class Survei extends Model
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table = 'survei_survei';
-
+    protected $primaryKey = 'survei_id';
     protected $appends = ['encrypted_survei_id'];
 
     public function getRouteKeyName()
     {
-        return 'id';
+        return 'survei_id';
     }
 
     public function getEncryptedSurveiIdAttribute()
     {
-        return encryptId($this->id);
+        return encryptId($this->survei_id);
     }
 
     protected $fillable = [

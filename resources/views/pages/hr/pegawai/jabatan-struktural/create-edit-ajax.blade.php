@@ -21,7 +21,7 @@
 
     <div class="row">
         <div class="col-md-6 mb-3">
-            <x-tabler.form-select class="select2-offline" name="org_unit_id" label="Jabatan Struktural Baru" required="true" data-dropdown-parent="#modalAction">
+            <x-tabler.form-select type="select2" name="org_unit_id" label="Jabatan Struktural Baru" required="true" data-dropdown-parent="#modalAction">
                 <option value="">Pilih Jabatan</option>
                 @foreach($jabatan as $item)
                     <option value="{{ $item->org_unit_id }}" {{ (isset($riwayat) && $riwayat->org_unit_id == $item->org_unit_id) || old('org_unit_id') == $item->org_unit_id ? 'selected' : '' }}>

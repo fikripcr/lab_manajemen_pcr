@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\DokumenRequest;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
-use App\Models\Shared\Personil;
 use App\Services\Pemutu\DokumenService;
 use Exception;
 use Illuminate\Http\Request;
@@ -50,16 +49,28 @@ class DokumenController extends Controller
 
         $parent       = null;
         $parentDokSub = null;
+        $fixedJenis   = null;
 
         if ($request->has('parent_id')) {
-            $parent = $this->dokumenService->getDokumenById($request->parent_id);
+            $parentId = decryptIdIfEncrypted($request->parent_id);
+            $parent   = $this->dokumenService->getDokumenById($parentId);
             if ($parent) {
                 $activeTab = $this->getTabByJenis($parent->jenis);
-            }
-        }
 
-        if ($request->has('parent_doksub_id')) {
-            $parentDokSub = DokSub::find($request->parent_doksub_id);
+                if ($request->has('parent_doksub_id')) {
+                    $doksubId     = decryptIdIfEncrypted($request->input('parent_doksub_id'));
+                    $parentDokSub = DokSub::find($doksubId);
+                    if ($parentDokSub) {
+                        $fixedJenis = match (strtolower(trim($parent->jenis))) {
+                            'visi'    => 'misi',
+                            'misi'    => 'rjp',
+                            'rjp'     => 'renstra',
+                            'renstra' => 'renop',
+                            default   => null,
+                        };
+                    }
+                }
+            }
         }
 
         if ($activeTab === 'standar') {
@@ -81,13 +92,34 @@ class DokumenController extends Controller
             $pageTitle = 'Tambah Dokumen Kebijakan';
         }
 
-        return view('pages.pemutu.dokumens.create', compact('dokumens', 'parent', 'allowedTypes', 'pageTitle', 'parentDokSub'));
+        return view('pages.pemutu.dokumens.create', compact('dokumens', 'parent', 'allowedTypes', 'pageTitle', 'parentDokSub', 'fixedJenis'));
     }
 
     public function createStandar()
     {
         $pageTitle = 'Tambah Dokumen Standar';
         return view('pages.pemutu.dokumens.create_standar', compact('pageTitle'));
+    }
+
+    public function createDokSubAjax(Request $request)
+    {
+        try {
+            $dokId   = (int) decryptIdIfEncrypted($request->query('dok_id'));
+            $dokumen = $this->dokumenService->getDokumenById($dokId);
+            if (! $dokumen) {
+                \abort(404);
+            }
+
+            $dokSub = new DokSub(); // Empty model for create case
+            return \view('pages.pemutu.dok-subs.create-edit-ajax', compact('dokumen', 'dokSub'));
+        } catch (Exception $e) {
+            \abort(404);
+        }
+    }
+
+    public function editDokSubAjax(DokSub $dokSub)
+    {
+        return \view('pages.pemutu.dok-subs.create-edit-ajax', compact('dokSub'));
     }
 
     public function store(DokumenRequest $request)
@@ -98,7 +130,12 @@ class DokumenController extends Controller
 
             $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
             if ($request->filled('parent_doksub_id')) {
-                $redirectUrl = route('pemutu.dok-subs.show', $request->parent_doksub_id);
+                $redirectUrl = \route('pemutu.dok-subs.show', $request->input('parent_doksub_id'));
+            }
+
+            // If AJAX, we might want to skip redirect to allow inline UI refresh
+            if ($request->ajax()) {
+                return jsonSuccess('Dokumen berhasil dibuat.');
             }
 
             return jsonSuccess('Dokumen berhasil dibuat.', $redirectUrl);
@@ -110,11 +147,42 @@ class DokumenController extends Controller
 
     public function show(Dokumen $dokumen)
     {
-        $pageTitle = 'Detail Dokumen: ' . $dokumen->judul;
-        $personils = Personil::orderBy('nama')->get();
-        $dokumen->load(['approvals.approver', 'approvals.statuses']);
+        // 1. Determine labels and types
+        $parentJenis = strtolower(trim($dokumen->jenis));
+        $childLabel  = match ($parentJenis) {
+            'visi'    => 'Poin',
+            'misi'    => 'Poin',
+            'rjp'     => 'Poin',
+            'renstra' => 'Poin',
+            'renop'   => 'Butir Standar',
+            'standar' => 'Butir Standar',
+            default   => 'Turunan'
+        };
 
-        return view('pages.pemutu.dokumens.detail', compact('dokumen', 'pageTitle', 'personils'));
+        $isDokSubBased  = in_array($parentJenis, ['visi', 'misi', 'rjp', 'renstra']);
+        $showIndikators = in_array($parentJenis, ['renop', 'standar']);
+
+        $activeSubTab = \request()->get('subtab', 'overview');
+
+        // 2. Prepare normalized data for unified component
+        $data = [
+            'item'           => $dokumen,
+            'isDokumen'      => true,
+            'childLabel'     => $childLabel,
+            'isDokSubBased'  => $isDokSubBased,
+            'showIndikators' => $showIndikators,
+            'activeSubTab'   => $activeSubTab,
+        ];
+
+        // 3. Handle AJAX response (Return only the panel fragment)
+        if (\request()->ajax() || \request()->has('ajax')) {
+            return \view('pages.pemutu.shared._detail_panel', $data);
+        }
+
+        // 4. Handle Full Page Load
+        return \view('pages.pemutu.dokumens.detail', array_merge($data, [
+            'dokumen' => $dokumen,
+        ]));
     }
 
     public function showRenopWithIndicators(Dokumen $dokumen)
@@ -162,8 +230,12 @@ class DokumenController extends Controller
     {
         try {
             $this->dokumenService->updateDokumen($dokumen->dok_id, $request->validated());
-            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
 
+            if ($request->ajax()) {
+                return jsonSuccess('Dokumen berhasil diperbarui.');
+            }
+
+            $redirectUrl = $this->getIndexUrlByJenis($dokumen->jenis) . '&id=' . $dokumen->dok_id . '&type=dokumen';
             return jsonSuccess('Dokumen berhasil diperbarui.', $redirectUrl);
         } catch (Exception $e) {
             logError($e);
@@ -195,13 +267,19 @@ class DokumenController extends Controller
         }
     }
 
-    public function childrenData(Request $request, Dokumen $dokumen)
+    public function childrenData(Dokumen $dokumen)
     {
         try {
-            $isDokSubBased = in_array(strtolower(trim($dokumen->jenis)), ['standar', 'formulir', 'manual_prosedur', 'renop']);
+            $isDokSubBased = in_array(strtolower(trim($dokumen->jenis)), [
+                'standar', 'formulir', 'manual_prosedur', 'renop',
+                'visi', 'misi', 'rjp', 'renstra',
+            ]);
 
             if ($isDokSubBased) {
-                $query = DokSub::where('dok_id', $dokumen->dok_id)->orderBy('seq');
+                $query = DokSub::withCount(['childDokumens', 'indikators'])
+                    ->where('dok_id', $dokumen->dok_id)
+                    ->orderBy('seq');
+
                 return DataTables::of($query)
                     ->addIndexColumn()
                     ->addColumn('judul', function ($row) use ($dokumen) {
@@ -212,11 +290,35 @@ class DokumenController extends Controller
                         }
                         return $title;
                     })
-                    ->addColumn('jumlah_turunan', function ($row) {
-                        return '<span class="text-muted">-</span>';
+                    ->addColumn('jumlah_turunan', function ($row) use ($dokumen) {
+                        $count    = $row->child_dokumens_count;
+                        $indCount = $row->indikators_count;
+
+                        if ($count <= 0 && $indCount <= 0) {
+                            return '<span class="text-muted">-</span>';
+                        }
+
+                        $html = '';
+                        if ($count > 0) {
+                            $childJenis = match (strtolower(trim($dokumen->jenis))) {
+                                'visi'    => 'Misi',
+                                'misi'    => 'RJP',
+                                'rjp'     => 'Renstra',
+                                'renstra' => 'Renop',
+                                default   => 'Dokumen'
+                            };
+                            $html .= '<span class="badge bg-blue-lt me-1" title="' . $count . ' ' . $childJenis . '"><i class="ti ti-files me-1"></i>' . $count . '</span>';
+                        }
+
+                        if ($indCount > 0) {
+                            $html .= '<span class="badge bg-green-lt mt-1" title="' . $indCount . ' Indikator"><i class="ti ti-chart-bar me-1"></i>' . $indCount . '</span>';
+                        }
+
+                        return $html;
                     })
                     ->addColumn('action', function ($row) {
                         return view('components.tabler.datatables-actions', [
+                            'viewUrl'   => route('pemutu.dok-subs.show', $row->encrypted_doksub_id),
                             'editUrl'   => route('pemutu.dok-subs.edit', $row->encrypted_doksub_id),
                             'editModal' => true,
                             'deleteUrl' => route('pemutu.dok-subs.destroy', $row->encrypted_doksub_id),

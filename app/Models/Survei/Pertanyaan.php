@@ -10,12 +10,17 @@ class Pertanyaan extends Model
     use HasFactory, HashidBinding;
 
     protected $table = 'survei_pertanyaan';
-
+    protected $primaryKey = 'pertanyaan_id';
     protected $appends = ['encrypted_pertanyaan_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'pertanyaan_id';
+    }
 
     public function getEncryptedPertanyaanIdAttribute()
     {
-        return encryptId($this->pertanyaan_id ?? $this->id);
+        return encryptId($this->pertanyaan_id);
     }
 
     protected $fillable = [

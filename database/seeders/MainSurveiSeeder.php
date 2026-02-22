@@ -69,7 +69,7 @@ class MainSurveiSeeder extends Seeder
 
             // Create 1-2 Halaman per Survey
             $halaman1 = Halaman::create([
-                'survei_id'         => $survei->id,
+                'survei_id'         => $survei->survei_id,
                 'judul_halaman'     => 'Bagian Utama',
                 'urutan'            => 1,
                 'deskripsi_halaman' => 'Silakan isi pertanyaan di bawah ini dengan sejujur-jujurnya.',
@@ -89,7 +89,7 @@ class MainSurveiSeeder extends Seeder
         // Prepare IDs for faster access
         $surveyData = [];
         foreach ($surveys as $s) {
-            $sid          = $s->id;
+            $sid          = $s->survei_id;
             $questions    = Pertanyaan::where('survei_id', $sid)->with('opsi')->get();
             $surveyData[] = [
                 'id'          => $sid,
@@ -130,14 +130,14 @@ class MainSurveiSeeder extends Seeder
                     $opts = $q->opsi;
                     if ($opts->isNotEmpty()) {
                         $opt       = $opts->random();
-                        $opsiId    = $opt->id;
+                        $opsiId    = $opt->opsi_id;
                         $nilaiTeks = $opt->label;
                     }
                 }
 
                 Jawaban::create([
-                    'pengisian_id'  => $pengisian->id,
-                    'pertanyaan_id' => $q->id,
+                    'pengisian_id'  => $pengisian->pengisian_id,
+                    'pertanyaan_id' => $q->pertanyaan_id,
                     'nilai_teks'    => $nilaiTeks,
                     'nilai_angka'   => $nilaiAngka,
                     'opsi_id'       => $opsiId,
@@ -154,8 +154,8 @@ class MainSurveiSeeder extends Seeder
 
     private function createQuestions($survei, $halaman)
     {
-        $sid = $survei->id;
-        $hid = $halaman->id;
+        $sid = $survei->survei_id;
+        $hid = $halaman->halaman_id;
 
         // 1. Skala Questions (Likert) - 3 questions
         for ($i = 1; $i <= 3; $i++) {
@@ -183,7 +183,7 @@ class MainSurveiSeeder extends Seeder
         $options = ['Website', 'Instagram', 'WhatsApp Group', 'E-mail', 'Lainnya'];
         foreach ($options as $idx => $label) {
             Opsi::create([
-                'pertanyaan_id'   => $qChoice->id,
+                'pertanyaan_id'   => $qChoice->pertanyaan_id,
                 'label'           => $label,
                 'nilai_tersimpan' => Str::slug($label),
                 'urutan'          => $idx + 1,

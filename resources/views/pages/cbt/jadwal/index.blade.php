@@ -10,22 +10,21 @@
 
 @section('content')
     <div class="card">
-            <div class="card-body">
-                <x-tabler.datatable 
-                    id="table-jadwal" 
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false],
-                        ['data' => 'nama_kegiatan', 'name' => 'nama_kegiatan', 'title' => 'Nama Kegiatan'],
-                        ['data' => 'paket.nama_paket', 'name' => 'paket.nama_paket', 'title' => 'Paket Ujian'],
-                        ['data' => 'waktu_mulai', 'name' => 'waktu_mulai', 'title' => 'Mulai'],
-                        ['data' => 'waktu_selesai', 'name' => 'waktu_selesai', 'title' => 'Selesai'],
-                        ['data' => 'token_ujian', 'name' => 'token_ujian', 'title' => 'Token', 'width' => '100px'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
-                    ]"
-                    :url="route('cbt.jadwal.paginate')"
-                />
-            </div>
+        <div class="card-body">
+            <x-tabler.datatable
+                id="table-jadwal"
+                :columns="[
+                    ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'kegiatan_paket', 'name' => 'nama_kegiatan', 'title' => 'Ujian & Paket', 'orderable' => false],
+                    ['data' => 'token_info', 'name' => 'token_ujian', 'title' => 'Token & Status', 'orderable' => false],
+                    ['data' => 'waktu_status', 'name' => 'waktu_mulai', 'title' => 'Waktu & Status', 'orderable' => false],
+                    ['data' => 'peserta', 'name' => 'peserta', 'title' => 'Peserta', 'orderable' => false, 'width' => '120px'],
+                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'width' => '150px']
+                ]"
+                :url="route('cbt.jadwal.paginate')"
+            />
         </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -33,17 +32,22 @@
     $(document).on('click', '.btn-jadwal-action', function() {
         const btn = $(this);
         const url = btn.data('url');
-        
+
         btn.prop('disabled', true);
         $.post(url, { _token: '{{ csrf_token() }}' }, function(res) {
-            if (res.status === 'success') {
-                toastr.success(res.message);
+            if (res.success || res.status === 'success') {
+                toastr.success(res.message || 'Berhasil');
                 $('#table-jadwal').DataTable().ajax.reload(null, false);
             } else {
-                toastr.error(res.message);
+                toastr.error(res.message || 'Terjadi kesalahan');
             }
+        }).fail(function(xhr) {
+            let errorMsg = 'Terjadi kesalahan';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            toastr.error(errorMsg);
         }).always(() => btn.prop('disabled', false));
     });
 </script>
 @endpush
-

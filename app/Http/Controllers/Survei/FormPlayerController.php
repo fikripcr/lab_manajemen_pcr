@@ -5,11 +5,67 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Survei\FormPlayerRequest;
 use App\Models\Survei\Survei;
 use App\Services\Survei\FormPlayerService;
+use Exception;
 
 class FormPlayerController extends Controller
 {
     public function __construct(protected FormPlayerService $formPlayerService)
     {}
+
+    /**
+     * Welcome page before starting survey
+     */
+    public function welcome($slug)
+    {
+        $survei = Survei::where('slug', $slug)
+            ->where('is_aktif', true)
+            ->firstOrFail();
+
+        try {
+            $this->formPlayerService->validateAccessibility($survei);
+        } catch (\Exception $e) {
+            if ($e->getMessage() == 'AUTH_REQUIRED') {
+                return redirect()->route('login')->with('error', 'Anda harus login untuk mengisi survei ini.');
+            }
+            if ($e->getMessage() == 'ALREADY_FILLED') {
+                return redirect()->route('dashboard')->with('error', 'Anda sudah mengisi survei ini.');
+            }
+            abort(403, $e->getMessage());
+        }
+
+        // Load survey structure
+        $survei = $this->formPlayerService->getSurveyForPlayer($survei);
+        
+        // Calculate stats
+        $totalPertanyaan = $survei->pertanyaan->count();
+        $estimatedTime = $totalPertanyaan * 2; // 2 minutes per question estimate
+        $tanggalMulai = $survei->tanggal_mulai;
+        $tanggalSelesai = $survei->tanggal_selesai;
+
+        return view('pages.survei.player.welcome', compact('survei', 'totalPertanyaan', 'estimatedTime', 'tanggalMulai', 'tanggalSelesai'));
+    }
+
+    /**
+     * Start survey session
+     */
+    public function start($slug)
+    {
+        $survei = Survei::where('slug', $slug)
+            ->where('is_aktif', true)
+            ->firstOrFail();
+
+        try {
+            $this->formPlayerService->validateAccessibility($survei);
+            
+            // Create session flag for survey in progress
+            session(['survei_in_progress_' . $survei->id => true]);
+            
+            return redirect()->route('survei.public.show', $survei->slug);
+        } catch (Exception $e) {
+            return redirect()->route('survei.public.welcome', $survei->slug)
+                ->with('error', $e->getMessage());
+        }
+    }
 
     public function show($slug)
     {
@@ -26,7 +82,8 @@ class FormPlayerController extends Controller
             if ($e->getMessage() == 'ALREADY_FILLED') {
                 return redirect()->route('dashboard')->with('error', 'Anda sudah mengisi survei ini.');
             }
-            abort(403, $e->getMessage());
+            // Redirect to welcome if not started
+            return redirect()->route('survei.public.welcome', $survei->slug);
         }
 
         $survei = $this->formPlayerService->getSurveyForPlayer($survei);

@@ -1,61 +1,79 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0">Data Keluarga</h3>
-    <x-tabler.button 
-        style="primary" 
-        class="ajax-modal-btn" 
-        data-url="{{ route('hr.pegawai.keluarga.create', $pegawai->encrypted_pegawai_id) }}" 
-        data-modal-title="Tambah Anggota Keluarga"
-        icon="ti ti-plus"
-        text="Tambah Anggota Keluarga" />
-</div>
-<div class="card">
-    <div class="card-table">
-        <x-tabler.datatable-client
-            id="table-keluarga-list"
-            :columns="[
-                ['name' => 'Nama'],
-                ['name' => 'Hubungan'],
-                ['name' => 'L/P'],
-                ['name' => 'Tgl Lahir'],
-                ['name' => 'Status'],
-                ['name' => 'Aksi', 'className' => 'text-end', 'sortable' => false]
-            ]"
-        >
-            @forelse($pegawai->keluarga as $kel)
-            <tr>
-                <td class="fw-bold">{{ $kel->nama }}</td>
-                <td>{{ $kel->hubungan }}</td>
-                <td>{{ $kel->jenis_kelamin }}</td>
-                <td>{{ $kel->tgl_lahir ? \Carbon\Carbon::parse($kel->tgl_lahir)->format('d F Y') : '-' }}</td>
-                <td>
-                    @if($kel->approval && $kel->approval->status == 'Pending')
-                        <span class="badge bg-warning text-warning-fg">Menunggu Approval</span>
-                    @else
-                        <span class="badge bg-success text-success-fg">Active</span>
-                    @endif
-                </td>
-                <td class="text-end">
-                    <div class="btn-list justify-content-end">
-                        <x-tabler.button 
-                            style="ghost-primary" 
-                            class="btn-icon ajax-modal-btn" 
-                            data-url="{{ route('hr.pegawai.keluarga.edit', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}" 
-                            data-modal-title="Edit Data Keluarga"
-                            icon="ti ti-edit"
-                            title="Edit" />
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">Data Keluarga</h3>
+        <div class="card-actions">
+            <x-tabler.button 
+                style="primary" 
+                class="ajax-modal-btn" 
+                data-url="{{ route('hr.pegawai.keluarga.create', $pegawai->encrypted_pegawai_id) }}" 
+                data-modal-title="Tambah Anggota Keluarga"
+                icon="ti ti-plus"
+                text="Tambah" />
+        </div>
+    </div>
+    <div class="card-body">
+        @forelse($pegawai->keluarga as $kel)
+        <div class="row row-cards">
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="avatar avatar-md me-3" 
+                                  style="background-image: url({{ asset('static/avatars/00' . ($kel->jenis_kelamin == 'L' ? '0m' : '0f') . '.jpg') }})">
+                            </span>
+                            <div class="flex-fill">
+                                <h4 class="card-title mb-0">{{ $kel->nama }}</h4>
+                                <div class="text-muted small">{{ $kel->hubungan }}</div>
+                            </div>
+                        </div>
                         
-                        <x-tabler.button 
-                            style="ghost-danger" 
-                            class="btn-icon ajax-delete" 
-                            data-url="{{ route('hr.pegawai.keluarga.destroy', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}"
-                            icon="ti ti-trash"
-                            title="Hapus" />
+                        <div class="datagrid">
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Jenis Kelamin</div>
+                                <div class="datagrid-content">{{ $kel->jenis_kelamin }}</div>
+                            </div>
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Tanggal Lahir</div>
+                                <div class="datagrid-content">
+                                    {{ $kel->tgl_lahir ? \Carbon\Carbon::parse($kel->tgl_lahir)->format('d F Y') : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        @if($kel->approval)
+                        <div class="mt-2">
+                            {!! getApprovalBadge($kel->approval->status) !!}
+                        </div>
+                        @endif
+                        
+                        <div class="mt-3">
+                            <div class="btn-list">
+                                <x-tabler.button 
+                                    style="ghost-primary" 
+                                    class="btn-sm ajax-modal-btn" 
+                                    data-url="{{ route('hr.pegawai.keluarga.edit', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}" 
+                                    data-modal-title="Edit Data Keluarga"
+                                    icon="ti ti-edit"
+                                    text="Edit" />
+                                
+                                <x-tabler.button 
+                                    style="ghost-danger" 
+                                    class="btn-sm ajax-delete" 
+                                    data-url="{{ route('hr.pegawai.keluarga.destroy', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}"
+                                    icon="ti ti-trash"
+                                    text="Hapus" />
+                            </div>
+                        </div>
                     </div>
-                </td>
-            </tr>
-            @empty
-                {{-- Empty handled by component --}}
-            @endforelse
-        </x-tabler.datatable-client>
+                </div>
+            </div>
+        </div>
+        @empty
+        <x-tabler.empty-state 
+            icon="ti ti-users-off"
+            title="Belum Ada Data Keluarga"
+            description="Klik tombol di atas untuk menambahkan data keluarga."
+        />
+        @endforelse
     </div>
 </div>

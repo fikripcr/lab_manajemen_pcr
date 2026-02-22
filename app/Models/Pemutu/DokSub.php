@@ -13,7 +13,7 @@ class DokSub extends Model
 
     protected $table      = 'pemutu_dok_sub';
     protected $primaryKey = 'doksub_id';
-    protected $appends    = ['encrypted_doksub_id'];
+    protected $appends    = ['encrypted_doksub_id', 'encrypted_dok_id'];
 
     public function getRouteKeyName()
     {
@@ -38,6 +38,11 @@ class DokSub extends Model
     public function getEncryptedDoksubIdAttribute()
     {
         return encryptId($this->doksub_id);
+    }
+
+    public function getEncryptedDokIdAttribute()
+    {
+        return encryptId($this->dok_id);
     }
 
     // Relationships

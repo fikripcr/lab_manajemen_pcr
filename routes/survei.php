@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 // --- Public Player Routes (no auth required for guest-accessible surveys) ---
 Route::prefix('survei')->name('survei.')->group(function () {
-    Route::get('/isi/{slug}', [FormPlayerController::class, 'show'])->name('public.show');
+    Route::get('/isi/{slug}', [FormPlayerController::class, 'welcome'])->name('public.welcome');
+    Route::post('/isi/{slug}/start', [FormPlayerController::class, 'start'])->name('public.start');
+    Route::get('/isi/{slug}/form', [FormPlayerController::class, 'show'])->name('public.show');
     Route::post('/isi/{slug}', [FormPlayerController::class, 'store'])->name('public.store');
     Route::get('/thankyou/{slug}', [FormPlayerController::class, 'thankyou'])->name('public.thankyou');
 });

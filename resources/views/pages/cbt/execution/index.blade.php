@@ -1,8 +1,8 @@
-@extends('layouts.exam.app')
+@extends('layouts.assessment.app')
 
 @section('title', $jadwal->nama_kegiatan . ' — Ujian')
 
-@section('exam-header')
+@section('assessment-header')
 <header class="navbar navbar-expand-md d-print-none border-bottom sticky-top bg-white py-2 shadow-sm">
     <div class="container-xl">
         {{-- Left: Event Info --}}
@@ -53,19 +53,15 @@
                     {{-- Card 1: Question Text & Header --}}
                     <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-3 transition-all" id="question-header-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
                         <div class="card-body p-4 position-relative">
-                            <!-- Premium decorative pattern -->
-                            <div class="position-absolute top-0 end-0 opacity-05 p-3">
-                                <i class="ti ti-quote fs-huge text-primary"></i>
-                            </div>
                             
                             <div class="d-flex align-items-center justify-content-between mb-4">
-                                <span class="badge bg-primary-lt px-3 py-2 rounded-pill fw-bold fs-5 shadow-sm border border-primary-subtle" id="mata-uji-label">
-                                    <i class="ti ti-book me-1"></i>Mata Uji
+                                <span class="badge bg-primary text-white px-4 py-2 rounded-pill fw-bold shadow-sm" id="mata-uji-label">
+                                    <i class="ti ti-book me-1"></i>{{ $jadwal->paket->mataUji->nama_mata_uji ?? 'Mata Uji' }}
                                 </span>
                                 <div class="text-end">
                                     <div class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Pertanyaan</div>
                                     <div class="fs-h1 fw-black text-dark tracking-tighter">
-                                        <span class="text-primary" id="qnum-current">1</span> <span class="text-muted opacity-50 fs-2 fw-normal">/ {{ count($paketSoal) }}</span>
+                                        <span class="text-primary" id="qnum-current">1</span> <span class="text-muted opacity-50 fs-1 fw-normal">/ {{ count($paketSoal) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -479,15 +475,70 @@ function initAntiCheat() {
     });
     document.addEventListener('copy', e => {
         e.preventDefault();
-        showWarning('Dilarang menyalin teks soal/jawaban.');
+        logViolation('CTRL_C', 'Peserta mencoba menyalin teks (Ctrl+C).');
     });
-    document.addEventListener('cut', e => e.preventDefault());
+    document.addEventListener('cut', e => {
+        e.preventDefault();
+        logViolation('CTRL_X', 'Peserta mencoba memotong teks (Ctrl+X).');
+    });
     document.addEventListener('paste', e => {
         e.preventDefault();
-        showWarning('Dilarang menempelkan teks dari luar.');
+        logViolation('CTRL_V', 'Peserta mencoba menempel teks (Ctrl+V).');
     });
 
-    // 2. Tab/Window Switch Detection
+    // 2. Block Keyboard Shortcuts (Ctrl combinations)
+    document.addEventListener('keydown', (e) => {
+        // Detect Ctrl key combinations
+        if (e.ctrlKey || e.metaKey) {
+            const key = e.key.toLowerCase();
+            
+            // Block common cheat shortcuts
+            const blockedKeys = {
+                'c': { type: 'CTRL_C', msg: 'Dilarang menyalin (Ctrl+C).' },
+                'v': { type: 'CTRL_V', msg: 'Dilarang menempel (Ctrl+V).' },
+                'x': { type: 'CTRL_X', msg: 'Dilarang memotong (Ctrl+X).' },
+                'a': { type: 'CTRL_A', msg: 'Dilarang select all (Ctrl+A).' },
+                'f': { type: 'CTRL_F', msg: 'Dilarang mencari (Ctrl+F).' },
+                's': { type: 'CTRL_S', msg: 'Dilarang save (Ctrl+S).' },
+                'p': { type: 'CTRL_P', msg: 'Dilarang print (Ctrl+P).' },
+                'u': { type: 'CTRL_U', msg: 'Dilarang view source (Ctrl+U).' },
+                'i': { type: 'CTRL_I', msg: 'Dilarang inspect element (Ctrl+I).' },
+                'j': { type: 'CTRL_J', msg: 'Dilarang open dev tools (Ctrl+J).' },
+                'k': { type: 'CTRL_K', msg: 'Dilarang open console (Ctrl+K).' },
+                'n': { type: 'CTRL_N', msg: 'Dilarang buka window baru (Ctrl+N).' },
+                't': { type: 'CTRL_T', msg: 'Dilarang buka tab baru (Ctrl+T).' },
+                'w': { type: 'CTRL_W', msg: 'Dilarang tutup tab (Ctrl+W).' },
+                'l': { type: 'CTRL_L', msg: 'Dilarang focus address bar (Ctrl+L).' },
+                'd': { type: 'CTRL_D', msg: 'Dilarang bookmark (Ctrl+D).' },
+                'h': { type: 'CTRL_H', msg: 'Dilarang open history (Ctrl+H).' },
+                'r': { type: 'CTRL_R', msg: 'Dilarang refresh paksa (Ctrl+R).' },
+                'f5': { type: 'F5_REFRESH', msg: 'Dilarang refresh halaman (F5).' },
+            };
+
+            if (blockedKeys[key]) {
+                e.preventDefault();
+                e.stopPropagation();
+                logViolation(blockedKeys[key].type, blockedKeys[key].msg);
+                return false;
+            }
+        }
+
+        // Block F12 (DevTools)
+        if (e.key === 'F12') {
+            e.preventDefault();
+            logViolation('F12_DEVTOOLS', 'Peserta mencoba membuka Developer Tools (F12).');
+            return false;
+        }
+
+        // Block F1 (Help)
+        if (e.key === 'F1') {
+            e.preventDefault();
+            logViolation('F1_HELP', 'Peserta mencoba membuka Help (F1).');
+            return false;
+        }
+    });
+
+    // 3. Tab/Window Switch Detection
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             logViolation('PINDAH_TAB', 'Peserta meninggalkan tab ujian.');

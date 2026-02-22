@@ -50,7 +50,7 @@ class FormBuilderService
     {
         return DB::transaction(function () use ($order) {
             foreach ($order as $index => $id) {
-                Halaman::where('id', $id)->update(['urutan' => $index + 1]);
+                Halaman::where('halaman_id', $id)->update(['urutan' => $index + 1]);
             }
         });
     }
@@ -64,7 +64,7 @@ class FormBuilderService
             $maxOrder = $halaman->pertanyaan()->max('urutan') ?? 0;
 
             $pertanyaan = $survei->pertanyaan()->create([
-                'halaman_id'      => $halaman->id,
+                'halaman_id'      => $halaman->halaman_id,
                 'teks_pertanyaan' => $data['teks_pertanyaan'],
                 'tipe'            => $data['tipe'],
                 'urutan'          => $maxOrder + 1,
@@ -137,13 +137,13 @@ class FormBuilderService
             // Handle Options Update
             if (isset($data['opsi']) && is_array($data['opsi'])) {
                 $incomingIds = collect($data['opsi'])->map(fn($o) => is_array($o) ? ($o['id'] ?? null) : null)->filter()->toArray();
-                $pertanyaan->opsi()->whereNotIn('id', $incomingIds)->delete();
+                $pertanyaan->opsi()->whereNotIn('opsi_id', $incomingIds)->delete();
 
                 foreach ($data['opsi'] as $index => $opsiData) {
                     $label = is_array($opsiData) ? ($opsiData['label'] ?? '') : $opsiData;
                     if (! empty($label) || $label === '0') {
                         $pertanyaan->opsi()->updateOrCreate(
-                            ['id' => is_array($opsiData) ? ($opsiData['id'] ?? null) : null],
+                            ['opsi_id' => is_array($opsiData) ? ($opsiData['id'] ?? null) : null],
                             [
                                 'label'              => $label,
                                 'urutan'             => $index + 1,
@@ -167,7 +167,7 @@ class FormBuilderService
     {
         return DB::transaction(function () use ($order) {
             foreach ($order as $index => $id) {
-                Pertanyaan::where('id', $id)->update(['urutan' => $index + 1]);
+                Pertanyaan::where('pertanyaan_id', $id)->update(['urutan' => $index + 1]);
             }
         });
     }

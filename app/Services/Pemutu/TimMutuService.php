@@ -178,7 +178,7 @@ class TimMutuService
             ->get()
             ->map(function ($p) {
                 return [
-                    'id'   => $p->pegawai_id,
+                    'id'   => encryptId($p->pegawai_id),
                     'text' => $p->nama . ' (' . ($p->nip ?? 'No NIP') . ')',
                 ];
             })

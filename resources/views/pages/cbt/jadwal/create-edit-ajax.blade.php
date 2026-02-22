@@ -9,7 +9,6 @@
     :title="$title"
     :route="$route"
     :method="$method"
-    data-redirect="true"
     :submitText="$isEdit ? 'Update' : 'Simpan'"
 >
     <x-tabler.form-input name="nama_kegiatan" label="Nama Kegiatan" placeholder="Contoh: Ujian Masuk Gelombang 1"
@@ -18,7 +17,7 @@
     <x-tabler.form-select name="paket_id" label="Paket Ujian" required="true">
         @foreach($paket as $p)
             <option value="{{ $p->encrypted_paket_ujian_id }}"
-                {{ ($isEdit && $jadwal->paket_id == $p->id) ? 'selected' : '' }}>
+                {{ ($isEdit && $jadwal->paket->encrypted_paket_ujian_id == $p->encrypted_paket_ujian_id) ? 'selected' : '' }}>
                 {{ $p->nama_paket }} ({{ $p->tipe_paket }})
             </option>
         @endforeach

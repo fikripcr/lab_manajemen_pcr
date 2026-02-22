@@ -95,10 +95,14 @@
                                 ['name' => 'Mulai Pada'],
                                 ['name' => 'Progress'],
                                 ['name' => 'Status'],
+                                ['name' => 'Pelanggaran', 'className' => 'text-center'],
                                 ['name' => 'Aksi', 'className' => 'w-1']
                             ]"
                         >
                             @forelse($jadwal->riwayatSiswa as $riwayat)
+                                @php
+                                    $pelanggaranCount = $riwayat->pelanggaran->count();
+                                @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
@@ -131,6 +135,19 @@
                                             <span class="status status-success">Selesai</span>
                                         @endif
                                     </td>
+                                    <td class="text-center">
+                                        @if($pelanggaranCount > 0)
+                                            <button class="btn btn-sm btn-{{ $pelanggaranCount >= 3 ? 'danger' : ($pelanggaranCount >= 2 ? 'warning' : 'azure') }}-lt" 
+                                                    onclick="showPelanggaranModal('{{ $riwayat->encrypted_riwayat_ujian_id }}', '{{ addslashes($riwayat->user->name) }}')">
+                                                <i class="ti ti-alert-triangle me-1"></i>
+                                                {{ $pelanggaranCount }}
+                                            </button>
+                                        @else
+                                            <span class="badge bg-secondary-lt text-secondary">
+                                                <i class="ti ti-check"></i>
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="btn-list flex-nowrap">
                                             <x-tabler.button class="btn-sm btn-icon" title="Reset Session" onclick="resetRiwayat('{{ $riwayat->encrypted_riwayat_ujian_id }}')" icon="ti ti-refresh text-warning" />
@@ -149,6 +166,33 @@
                 </div>
             </div>
         </div>
+
+        {{-- Modal Detail Pelanggaran --}}
+        <div class="modal modal-blur fade" id="modalPelanggaran" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="ti ti-alert-triangle text-danger me-2"></i>
+                            Detail Pelanggaran - <span id="peserta-nama"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="pelanggaran-content">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection
 
 @push('scripts')
@@ -159,6 +203,53 @@
             toastr.info('Fitur reset peserta sedang dalam pengembangan.');
         }
     }
+
+    // Show Pelanggaran Modal
+    window.showPelanggaranModal = function(riwayatId, pesertaNama) {
+        $('#peserta-nama').text(pesertaNama);
+        $('#modalPelanggaran').modal('show');
+        
+        // Load pelanggaran data via AJAX
+        $.get('{{ route('cbt.laporan.pelanggaran') }}/' + riwayatId, function(res) {
+            if (res.success && res.data) {
+                let html = '<div class="table-responsive">';
+                html += '<table class="table table-vcenter">';
+                html += '<thead>';
+                html += '<tr>';
+                html += '<th class="w-1">#</th>';
+                html += '<th>Jenis Pelanggaran</th>';
+                html += '<th>Keterangan</th>';
+                html += '<th class="text-nowrap">Waktu Kejadian</th>';
+                html += '</tr>';
+                html += '</thead>';
+                html += '<tbody>';
+                
+                if (res.data.length === 0) {
+                    html += '<tr><td colspan="4" class="text-center text-muted py-4">Tidak ada pelanggaran tercatat.</td></tr>';
+                } else {
+                    res.data.forEach((item, index) => {
+                        const badgeClass = item.jenis_pelanggaran.includes('PINDAH') ? 'bg-warning-lt' : 'bg-danger-lt';
+                        html += '<tr>';
+                        html += `<td><span class="badge ${badgeClass}">${index + 1}</span></td>`;
+                        html += `<td><strong>${item.jenis_pelanggaran.replace(/_/g, ' ')}</strong></td>`;
+                        html += `<td class="text-muted">${item.keterangan || '-'}</td>`;
+                        html += `<td class="text-nowrap">${new Date(item.waktu_kejadian).toLocaleString('id-ID')}</td>`;
+                        html += '</tr>';
+                    });
+                }
+                
+                html += '</tbody>';
+                html += '</table>';
+                html += '</div>';
+                
+                $('#pelanggaran-content').html(html);
+            } else {
+                $('#pelanggaran-content').html('<div class="text-center text-danger py-4"><i class="ti ti-alert-triangle fs-1"></i><p class="mt-2">Gagal memuat data pelanggaran.</p></div>');
+            }
+        }).fail(function() {
+            $('#pelanggaran-content').html('<div class="text-center text-danger py-4"><i class="ti ti-alert-triangle fs-1"></i><p class="mt-2">Terjadi kesalahan saat memuat data.</p></div>');
+        });
+    };
 
     // Auto refresh every 20 seconds
     setInterval(() => {

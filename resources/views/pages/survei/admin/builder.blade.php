@@ -4,7 +4,7 @@
 <x-tabler.page-header title="{{ $survei->judul }}" pretitle="Form Builder">
     <x-slot:actions>
         <x-tabler.button type="back" href="{{ route('survei.index') }}" />
-        <x-tabler.button type="submit" href="{{ route('survei.preview', $survei->encrypted_id) }}"
+        <x-tabler.button type="submit" href="{{ route('survei.preview', $survei->encrypted_survei_id) }}"
             icon="ti ti-eye" text="Preview" class="btn-outline-primary" target="_blank" />
     </x-slot:actions>
 </x-tabler.page-header>
@@ -14,7 +14,7 @@
         <div class="row g-4">
             <!-- Sidebar: Halaman -->
             <div class="col-md-3">
-                <div class="card sticky-top" style="top: 1rem;">
+                <div class="card sticky-top">
                     <div class="card-header">
                         <h3 class="card-title">Halaman</h3>
                         <div class="card-actions">
@@ -63,8 +63,10 @@
                                     @endif
                                 </div>
                                 <div class="card-actions">
-                                    <div class="dropdown me-2">
-                                        <x-tabler.button class="btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" icon="ti ti-plus" text="Tambah" />
+                                    <div class="dropdown">
+                                        <a href="#" class="badge bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ti ti-plus me-1"></i>Tambah
+                                        </a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             @foreach(['Teks_Singkat' => 'ti-text-size', 'Esai' => 'ti-align-left', 'Angka' => 'ti-123', 'Pilihan_Ganda' => 'ti-circle-dot', 'Kotak_Centang' => 'ti-checkbox', 'Dropdown' => 'ti-select', 'Skala_Linear' => 'ti-adjustments-horizontal', 'Tanggal' => 'ti-calendar', 'Upload_File' => 'ti-upload'] as $tipe => $icon)
                                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); addPertanyaan('{{ $halaman->encrypted_halaman_id }}', '{{ $tipe }}')">
@@ -118,11 +120,11 @@
     // --- Config (safe without jQuery) ---
     const csrfToken = '{{ csrf_token() }}';
     const ROUTES = {
-        halamanStore:      '{{ route("survei.halaman.store", $survei->encrypted_id) }}',
+        halamanStore:      '{{ route("survei.halaman.store", $survei->encrypted_survei_id) }}',
         halamanUpdate:     '{{ route("survei.halaman.update", ":id") }}',
         halamanDestroy:    '{{ route("survei.halaman.destroy", ":id") }}',
         halamanReorder:    '{{ route("survei.halaman.reorder") }}',
-        pertanyaanStore:   '{{ route("survei.pertanyaan.store", $survei->encrypted_id) }}',
+        pertanyaanStore:   '{{ route("survei.pertanyaan.store", $survei->encrypted_survei_id) }}',
         pertanyaanUpdate:  '{{ route("survei.pertanyaan.update", ":id") }}',
         pertanyaanDestroy: '{{ route("survei.pertanyaan.destroy", ":id") }}',
         pertanyaanReorder: '{{ route("survei.pertanyaan.reorder") }}',
@@ -130,21 +132,111 @@
     function routeFor(key, id) {
         return ROUTES[key].replace(':id', id);
     }
-    let currentHalamanId = {{ $survei->halaman->first()->encrypted_id ?? 'null' }};
+    let currentHalamanId = '{{ $survei->halaman->first()->encrypted_halaman_id ?? '' }}' || null;
+
+    // --- Global Functions (must be outside onReady for onclick handlers) ---
+    window.addPertanyaan = function(halamanId, tipe) {
+        tipe = tipe || 'Teks_Singkat';
+        
+        $.post(ROUTES.pertanyaanStore, {
+            _token: csrfToken,
+            halaman_id: halamanId,
+            tipe: tipe,
+            teks_pertanyaan: 'Pertanyaan Baru'
+        }, function(res) {
+            if (res.success) {
+                let $list = $(`#halaman-${halamanId} .pertanyaan-list`);
+                $list.append(res.data.html);
+                $(`#halaman-${halamanId} .empty-state`).addClass('d-none');
+                updateHalamanCount(halamanId);
+                showSuccessMessage('Pertanyaan berhasil ditambahkan.');
+                if (typeof window.initOfflineSelect2 === 'function') {
+                    window.initOfflineSelect2();
+                }
+            } else {
+                showErrorMessage('Error', res.message || 'Gagal menambahkan pertanyaan.');
+            }
+        }).fail(function(xhr) {
+            let errorMsg = 'Terjadi kesalahan saat menambahkan pertanyaan.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            showErrorMessage('Error', errorMsg);
+        });
+    };
+
+    window.updateHalamanCount = function(halamanId) {
+        const $listGroupItem = $(`#list-halaman .list-group-item[data-id="${halamanId}"]`);
+        const questionCount = $listGroupItem.closest('.halaman-pane').find('.card-pertanyaan').length;
+        $listGroupItem.find('.badge').text(questionCount);
+    };
+
+    window.deletePertanyaan = function(id) {
+        Swal.fire({
+            title: 'Hapus pertanyaan ini?',
+            text: 'Pertanyaan akan dihapus permanen.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d63939',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: routeFor('pertanyaanDestroy', id),
+                    type: 'DELETE',
+                    data: { _token: csrfToken },
+                    success: function(res) {
+                        if (res.success) {
+                            let $card = $(`.card-pertanyaan[data-id="${id}"]`);
+                            let $list = $card.closest('.pertanyaan-list');
+                            $card.remove();
+                            if ($list.children('.card-pertanyaan').length === 0) {
+                                $list.closest('.card').find('.empty-state').removeClass('d-none');
+                            }
+                            updateHalamanCount(currentHalamanId);
+                            showSuccessMessage('Pertanyaan dihapus.');
+                        } else {
+                            showErrorMessage('Error', res.message);
+                        }
+                    }
+                });
+            }
+        });
+    };
+
+    window.savePertanyaan = null; // will be defined inside onReady with full logic
+
+    // selectHalaman MUST be global before jQuery loads (used in inline onclick)
+    window.selectHalaman = function(id) {
+        currentHalamanId = id;
+        window.location.hash = 'halaman-' + id;
+        // Vanilla JS DOM operations (no jQuery dependency)
+        document.querySelectorAll('#list-halaman .list-group-item').forEach(function(el) {
+            el.classList.remove('active');
+        });
+        const activeItem = document.querySelector(`#list-halaman .list-group-item[data-id="${id}"]`);
+        if (activeItem) activeItem.classList.add('active');
+        document.querySelectorAll('.halaman-pane').forEach(function(el) {
+            el.classList.add('d-none');
+        });
+        const targetPane = document.getElementById('halaman-' + id);
+        if (targetPane) targetPane.classList.remove('d-none');
+    };
 
     // --- Wait for jQuery to be ready (Vite defers module execution) ---
     function onReady(fn) {
         if (typeof window.$ !== 'undefined') { fn(); }
         else { document.addEventListener('DOMContentLoaded', fn); }
     }
+    
     onReady(function() {
-
         // --- Hash Persistence (survive reload) ---
         let hash = window.location.hash;
         if (hash && hash.startsWith('#halaman-')) {
             let id = hash.replace('#halaman-', '');
             if ($('#halaman-' + id).length) {
-                window.selectHalaman(parseInt(id));
+                window.selectHalaman(id);
             }
         }
 
@@ -166,6 +258,14 @@
         }
 
         // --- Sortable Pertanyaan ---
+        function renumberPertanyaan(listEl) {
+            $(listEl).find('.card-pertanyaan').each(function(idx) {
+                const num = idx + 1;
+                $(this).find('.question-number-badge').text('Soal #' + num);
+                $(this).find('.edit-view-title').text('Edit Soal #' + num);
+            });
+        }
+
         function initSortable(el) {
             new Sortable(el, {
                 animation: 150,
@@ -177,6 +277,7 @@
                         order.push($(this).data('id'));
                     });
                     $.post(ROUTES.pertanyaanReorder, { _token: csrfToken, order: order });
+                    renumberPertanyaan(evt.to);
                 }
             });
         }
@@ -193,15 +294,7 @@
             });
         });
 
-        // --- Expose functions for inline onclick handlers ---
-        window.selectHalaman = function(id) {
-            currentHalamanId = id;
-            window.location.hash = 'halaman-' + id;
-            $('#list-halaman .list-group-item').removeClass('active');
-            $(`#list-halaman .list-group-item[data-id="${id}"]`).addClass('active');
-            $('.halaman-pane').addClass('d-none');
-            $('#halaman-' + id).removeClass('d-none');
-        };
+        // selectHalaman already declared globally above (no jQuery needed for it)
 
         window.editHalaman = function(id) {
             const $item = $(`#list-halaman .list-group-item[data-id="${id}"]`);
@@ -212,8 +305,11 @@
             $('#edit-halaman-judul').val(currentTitle);
             $('#edit-halaman-deskripsi').val(currentDesc);
 
-            let modal = bootstrap.Modal.getInstance('#modalEditHalaman');
-            if (!modal) modal = new bootstrap.Modal('#modalEditHalaman');
+            let modalEl = document.getElementById('modalEditHalaman');
+            let modal = bootstrap.Modal.getInstance(modalEl);
+            if (!modal) {
+                modal = new bootstrap.Modal(modalEl);
+            }
             modal.show();
         };
 
@@ -232,7 +328,13 @@
                         $(`#list-halaman .list-group-item[data-id="${id}"]`).data('deskripsi', deskripsi);
                         $(`#halaman-${id} .halaman-title-display`).text(judul);
                         $(`#halaman-${id} .halaman-deskripsi-display`).html(deskripsi);
-                        bootstrap.Modal.getInstance('#modalEditHalaman').hide();
+                        
+                        let modalEl = document.getElementById('modalEditHalaman');
+                        let modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) {
+                            modal.hide();
+                        }
+                        
                         showSuccessMessage('Halaman berhasil diperbarui.');
                     }
                 }
@@ -257,55 +359,6 @@
                         success: function(res) {
                             if (res.success) location.reload();
                             else showErrorMessage('Gagal', res.message);
-                        }
-                    });
-                }
-            });
-        };
-
-        window.addPertanyaan = function(halamanId, tipe) {
-            tipe = tipe || 'Teks_Singkat';
-            $.post(ROUTES.pertanyaanStore, {
-                _token: csrfToken,
-                halaman_id: halamanId,
-                tipe: tipe,
-                teks_pertanyaan: 'Pertanyaan Baru'
-            }, function(res) {
-                if (res.success) {
-                    let $list = $(`#halaman-${halamanId} .pertanyaan-list`);
-                    $list.append(res.data.html);
-                    $(`#halaman-${halamanId} .empty-state`).addClass('d-none');
-                }
-            });
-        };
-
-        window.deletePertanyaan = function(id) {
-            Swal.fire({
-                title: 'Hapus pertanyaan ini?',
-                text: 'Pertanyaan akan dihapus permanen.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d63939',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: routeFor('pertanyaanDestroy', id),
-                        type: 'DELETE',
-                        data: { _token: csrfToken },
-                        success: function(res) {
-                            if (res.success) {
-                                let $card = $(`.card-pertanyaan[data-id="${id}"]`);
-                                let $list = $card.closest('.pertanyaan-list');
-                                $card.slideUp(200, function() {
-                                    $(this).remove();
-                                    if ($list.children('.card-pertanyaan').length === 0) {
-                                        $list.siblings('.empty-state').removeClass('d-none');
-                                    }
-                                });
-                                showSuccessMessage('Pertanyaan berhasil dihapus.');
-                            }
                         }
                     });
                 }
@@ -368,10 +421,12 @@
             $.post(routeFor('pertanyaanUpdate', id), data, function(res) {
                 if (res.success && res.data && res.data.html) {
                     let $newCard = $(res.data.html);
-                    if (keepEdit || card.find(`.edit-view-${id}`).not('.d-none').length) {
+                    // Only keep edit open if explicitly requested (e.g. type change)
+                    if (keepEdit) {
                         $newCard.find(`.static-view-${id}`).addClass('d-none');
                         $newCard.find(`.edit-view-${id}`).removeClass('d-none');
                     }
+                    // Always swap the card with fresh HTML
                     card.replaceWith($newCard);
                 }
                 card.css('opacity', '1');

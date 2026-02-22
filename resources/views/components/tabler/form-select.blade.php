@@ -9,16 +9,17 @@
     'help' => null,
     'disabled' => false,
     'multiple' => false,
+    'class' => '',
     'type' => 'normal' // 'normal' | 'select2'
 ])
 
 @php
     $id = $id ?? $name;
-    $attributes = $attributes->merge(['class' => 'mb-3']);
+    // $attributes = $attributes->merge(['class' => 'mb-3']);
     $selectClasses = 'form-select ' . ($type === 'select2' ? 'select2-offline' : '') . ' ' . ($errors->has($name) ? 'is-invalid' : '');
 @endphp
 
-<div {{ $attributes->only('class') }}>
+<div {{ $attributes->only('class') }} {{ $class }}>
     @if($label)
         <label for="{{ $id }}" class="form-label">
             {{ $label }} @if($required)<span class="text-danger">*</span>@endif

@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Pemutu\DashboardController;
-use App\Http\Controllers\Pemutu\DokSubController;
 use App\Http\Controllers\Pemutu\DokumenApprovalController;
 use App\Http\Controllers\Pemutu\DokumenController;
+use App\Http\Controllers\Pemutu\DokumenSpmiController;
 use App\Http\Controllers\Pemutu\IndikatorController;
 use App\Http\Controllers\Pemutu\KpiController;
 use App\Http\Controllers\Pemutu\LabelController;
@@ -40,16 +40,20 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::match(['get', 'post'], 'pegawai/import', [PegawaiController::class, 'import'])->name('pegawai.import');
     Route::resource('pegawai', PegawaiController::class);
 
-    // Dokumen & Structure
+    // Dokumen & Structure (REFACTORED WORKSPACE)
     Route::post('dokumens/reorder', [DokumenController::class, 'reorder'])->name('dokumens.reorder');
-    Route::get('dokumens/create-standar', [DokumenController::class, 'createStandar'])->name('dokumens.create-standar');
-    Route::get('dokumens/{dokumen}/children-data', [DokumenController::class, 'childrenData'])->name('dokumens.children-data');
-    Route::get('dokumens/{dokumen}/renop-with-indicators', [DokumenController::class, 'showRenopWithIndicators'])->name('dokumens.show-renop-with-indicators');
-    Route::resource('dokumens', DokumenController::class);
+    Route::get('dokumen-spmi', [DokumenSpmiController::class, 'index'])->name('dokumens.index');
+    Route::get('dokumen-spmi/create', [DokumenSpmiController::class, 'create'])->name('dokumen-spmi.create');
+    Route::post('dokumen-spmi/store', [DokumenSpmiController::class, 'store'])->name('dokumen-spmi.store');
+    Route::get('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'show'])->name('dokumen-spmi.show');
+    Route::get('dokumen-spmi/{type}/{id}/edit', [DokumenSpmiController::class, 'edit'])->name('dokumen-spmi.edit');
+    Route::put('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'update'])->name('dokumen-spmi.update');
+    Route::delete('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'destroy'])->name('dokumen-spmi.destroy');
+    Route::get('dokumen-spmi/{type}/{id}/children', [DokumenSpmiController::class, 'childrenData'])->name('dokumen-spmi.children-data');
 
-    // Sub-Documents (DokSub)
-    Route::get('dok-subs/{dokumen}/data', [DokSubController::class, 'data'])->name('dok-subs.data');
-    Route::resource('dok-subs', DokSubController::class);
+    // Sub-Documents (DokSub) - Handled dynamically by DokumenSpmiController now
+    // Route::get('dok-subs/{dokumen}/data', [DokSubController::class, 'data'])->name('dok-subs.data');
+    // Route::resource('dok-subs', DokSubController::class);
 
     // Indikators
     Route::get('api/indikators', [IndikatorController::class, 'paginate'])->name('indikators.data');

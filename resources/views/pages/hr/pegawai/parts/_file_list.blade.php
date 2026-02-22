@@ -1,25 +1,76 @@
-<div class="card">
+<div class="card mb-4">
     <div class="card-header">
         <h3 class="card-title">Daftar File Pegawai</h3>
         <div class="card-actions">
-            <x-tabler.button style="primary" icon="ti ti-upload" data-bs-toggle="modal" data-bs-target="#modal-upload-file" text="Unggah File" />
+            <x-tabler.button 
+                style="primary" 
+                icon="ti ti-upload" 
+                data-bs-toggle="modal" 
+                data-bs-target="#modal-upload-file" 
+                text="Unggah File" />
         </div>
     </div>
-    <div class="card-body p-0">
-    <div class="card-table">
-        <x-tabler.datatable
-            id="table-files"
-            route="{{ route('hr.pegawai.files.data', $pegawai->encrypted_pegawai_id) }}"
-            :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '50', 'orderable' => false, 'searchable' => false],
-                ['data' => 'category', 'name' => 'jenisfile.jenisfile', 'title' => 'Kategori'],
-                ['data' => 'filename', 'name' => 'media.file_name', 'title' => 'Nama File'],
-                ['data' => 'size', 'name' => 'media.size', 'title' => 'Ukuran', 'searchable' => false],
-                ['data' => 'keterangan', 'name' => 'keterangan', 'title' => 'Keterangan'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '100', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
-            ]"
+    <div class="card-body">
+        @forelse($pegawai->files as $file)
+        <div class="row row-cards">
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="avatar avatar-md me-3" style="background-color: var(--tblr-blue-lt);">
+                                <i class="ti ti-file fs-2"></i>
+                            </span>
+                            <div class="flex-fill">
+                                <h4 class="card-title mb-0">{{ $file->media->file_name ?? 'File' }}</h4>
+                                <div class="text-muted small">{{ $file->jenisfile->jenisfile ?? 'Dokumen' }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="datagrid">
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Ukuran</div>
+                                <div class="datagrid-content">{{ $file->media ? number_format($file->media->size / 1024, 2) . ' KB' : '-' }}</div>
+                            </div>
+                            @if($file->keterangan)
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">Keterangan</div>
+                                <div class="datagrid-content">{{ $file->keterangan }}</div>
+                            </div>
+                            @endif
+                        </div>
+                        
+                        <div class="mt-3">
+                            <div class="btn-list">
+                                @if($file->media)
+                                <x-tabler.button 
+                                    href="{{ $file->media->getUrl() }}" 
+                                    style="ghost-info" 
+                                    class="btn-sm" 
+                                    icon="ti ti-download" 
+                                    target="_blank" 
+                                    text="Unduh" />
+                                @endif
+                                
+                                <x-tabler.button 
+                                    style="ghost-danger" 
+                                    class="btn-sm" 
+                                    icon="ti ti-trash"
+                                    text="Hapus"
+                                    onclick="deleteFile('{{ encryptId($file->filepegawai_id) }}')" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @empty
+        <x-tabler.empty-state 
+            icon="ti ti-folder-off"
+            title="Belum Ada File"
+            description="Klik tombol di atas untuk mengunggah file pegawai."
         />
-    </div>    </div>
+        @endforelse
+    </div>
 </div>
 
 <!-- Modal Upload -->
@@ -70,7 +121,7 @@
                     if (res.success) {
                         $('#modal-upload-file').modal('hide');
                         $('#form-upload-file')[0].reset();
-                        $('#table-files').DataTable().ajax.reload();
+                        location.reload(); // Reload to show new file
                         toastr.success(res.message);
                     } else {
                         toastr.error(res.message);
@@ -104,7 +155,7 @@
                         data: { _token: "{{ csrf_token() }}" },
                         success: function(res) {
                             if (res.success) {
-                                $('#table-files').DataTable().ajax.reload();
+                                location.reload(); // Reload to update list
                                 toastr.success(res.message);
                             } else {
                                 toastr.error(res.message);

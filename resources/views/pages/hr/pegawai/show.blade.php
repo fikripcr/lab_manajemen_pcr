@@ -29,78 +29,72 @@
 </div>
 @endif
 
-<div class="card">
-    <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
-            <li class="nav-item">
-                <a href="#tab-datadiri" class="nav-link active" data-bs-toggle="tab">
+<div class="row">
+    {{-- Sidebar Navigation --}}
+    <div class="col-md-3 col-lg-2">
+        <div class="card sticky-top">
+            <div class="list-group list-group-flush">
+                <a href="#section-datadiri" class="list-group-item list-group-item-action active" data-section="datadiri">
                     <i class="ti ti-user me-2"></i> Data Diri
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="#tab-kepegawaian" class="nav-link" data-bs-toggle="tab">
+                <a href="#section-kepegawaian" class="list-group-item list-group-item-action" data-section="kepegawaian">
                     <i class="ti ti-briefcase me-2"></i> Kepegawaian
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="#tab-pendidikan" class="nav-link" data-bs-toggle="tab">
+                <a href="#section-pendidikan" class="list-group-item list-group-item-action" data-section="pendidikan">
                     <i class="ti ti-school me-2"></i> Pendidikan
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="#tab-keluarga" class="nav-link" data-bs-toggle="tab">
+                <a href="#section-keluarga" class="list-group-item list-group-item-action" data-section="keluarga">
                     <i class="ti ti-users me-2"></i> Keluarga
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="#tab-pengembangan" class="nav-link" data-bs-toggle="tab">
+                <a href="#section-pengembangan" class="list-group-item list-group-item-action" data-section="pengembangan">
                     <i class="ti ti-certificate me-2"></i> Sertifikat/Pelatihan
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="#tab-files" class="nav-link" data-bs-toggle="tab">
+                <a href="#section-files" class="list-group-item list-group-item-action" data-section="files">
                     <i class="ti ti-file-text me-2"></i> File
                 </a>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <div class="tab-content">
-            
-            <!-- Tab Data Diri -->
-            <div class="tab-pane active show" id="tab-datadiri">
-                @if($pendingChange)
-                <div class="card mb-3 border-info">
-                    <div class="card-header">
-                        <h3 class="card-title text-info">Perbandingan Perubahan Data</h3>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
-                                <tr>
-                                    <th>Field</th>
-                                    <th>Data Saat Ini</th>
-                                    <th>Data Pengajuan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Nama Lengkap</td>
-                                    <td>{{ $pegawai->latestDataDiri->nama }}</td>
-                                    <td class="{{ $pegawai->latestDataDiri->nama !== $pendingChange->nama ? 'text-danger fw-bold' : '' }}">{{ $pendingChange->nama }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Alamat</td>
-                                    <td>{{ $pegawai->latestDataDiri->alamat }}</td>
-                                    <td class="{{ $pegawai->latestDataDiri->alamat !== $pendingChange->alamat ? 'text-danger fw-bold' : '' }}">{{ $pendingChange->alamat }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                @endif
 
-                <div class="row row-cards">
+    {{-- Main Content Area --}}
+    <div class="col-md-9 col-lg-10">
+        
+        {{-- Section: Data Diri --}}
+        <div id="section-datadiri" class="content-section">
+            <h2 class="mb-3">Data Diri</h2>
+            
+            @if($pendingChange)
+            <div class="card mb-3 border-info">
+                <div class="card-header">
+                    <h3 class="card-title text-info">Perbandingan Perubahan Data</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Data Saat Ini</th>
+                                <th>Data Pengajuan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nama Lengkap</td>
+                                <td>{{ $pegawai->latestDataDiri->nama }}</td>
+                                <td class="{{ $pegawai->latestDataDiri->nama !== $pendingChange->nama ? 'text-danger fw-bold' : '' }}">{{ $pendingChange->nama }}</td>
+                            </tr>
+                            <tr>
+                                <td>Alamat</td>
+                                <td>{{ $pegawai->latestDataDiri->alamat }}</td>
+                                <td class="{{ $pegawai->latestDataDiri->alamat !== $pendingChange->alamat ? 'text-danger fw-bold' : '' }}">{{ $pendingChange->alamat }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
+
+            <div class="row row-cards">
                     <div class="col-md-6">
                         <div class="card card-sm">
                             <div class="card-header">
@@ -181,37 +175,91 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Tab Kepegawaian -->
-             <div class="tab-pane" id="tab-kepegawaian">
-                @include('pages.hr.pegawai.parts._status_pegawai_list')
-                @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
-                @include('pages.hr.data-diri.penugasan')
-                @include('pages.hr.pegawai.parts._status_aktifitas_list')
-                @include('pages.hr.pegawai.parts._inpassing_list')
-            </div>
-
-            <!-- Tab Pendidikan -->
-            <div class="tab-pane" id="tab-pendidikan">
-                @include('pages.hr.pegawai.parts._pendidikan_list')
-            </div>
-
-            <!-- Tab Keluarga -->
-            <div class="tab-pane" id="tab-keluarga">
-                @include('pages.hr.pegawai.parts._keluarga_list')
-            </div>
-
-            <!-- Tab Pengembangan Diri -->
-            <div class="tab-pane" id="tab-pengembangan">
-                @include('pages.hr.pegawai.parts._pengembangan_list')
-            </div>
-
-            <!-- Tab File Pegawai -->
-            <div class="tab-pane" id="tab-files">
-                @include('pages.hr.pegawai.parts._file_list')
-            </div>
-
         </div>
+
+        {{-- Section: Kepegawaian --}}
+        <div id="section-kepegawaian" class="content-section">
+            <h2 class="mb-3">Kepegawaian</h2>
+            @include('pages.hr.pegawai.parts._status_pegawai_list')
+            @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
+            @include('pages.hr.data-diri.penugasan')
+            @include('pages.hr.pegawai.parts._status_aktifitas_list')
+            @include('pages.hr.pegawai.parts._inpassing_list')
+        </div>
+
+        {{-- Section: Pendidikan --}}
+        <div id="section-pendidikan" class="content-section">
+            <h2 class="mb-3">Pendidikan</h2>
+            @include('pages.hr.pegawai.parts._pendidikan_list')
+        </div>
+
+        {{-- Section: Keluarga --}}
+        <div id="section-keluarga" class="content-section">
+            <h2 class="mb-3">Keluarga</h2>
+            @include('pages.hr.pegawai.parts._keluarga_list')
+        </div>
+
+        {{-- Section: Pengembangan Diri --}}
+        <div id="section-pengembangan" class="content-section">
+            <h2 class="mb-3">Sertifikat/Pelatihan</h2>
+            @include('pages.hr.pegawai.parts._pengembangan_list')
+        </div>
+
+        {{-- Section: File Pegawai --}}
+        <div id="section-files" class="content-section">
+            <h2 class="mb-3">File</h2>
+            @include('pages.hr.pegawai.parts._file_list')
+        </div>
+
     </div>
 </div>
+
+@push('scripts')
+<script>
+// Tab-like behavior: Show/hide sections
+document.querySelectorAll('.list-group-item-action').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get target section
+        const targetId = this.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+        
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Show target section
+        if (targetSection) {
+            targetSection.style.display = 'block';
+            
+            // Scroll to top of content area smoothly
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Update active state in sidebar
+        document.querySelectorAll('.list-group-item-action').forEach(item => {
+            item.classList.remove('active');
+        });
+        this.classList.add('active');
+    });
+});
+
+// Initialize: Show only first section (Data Diri)
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide all sections except first
+    document.querySelectorAll('.content-section').forEach((section, index) => {
+        if (index === 0) {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+});
+</script>
+@endpush
 @endsection

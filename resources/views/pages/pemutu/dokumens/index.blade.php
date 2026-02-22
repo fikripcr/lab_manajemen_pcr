@@ -5,11 +5,25 @@
 @section('header')
 <x-tabler.page-header title="Dokumen SPMI" pretitle="Berkas">
     <x-slot:actions>
-        @if($activeTab === 'standar')
-            <x-tabler.button type="create" text="Tambah Standar" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create-standar') }}" data-modal-title="Tambah Dokumen Standar" />
-        @else
-            <x-tabler.button type="create"  text="Tambah Kebijakan" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumens.create', ['tabs' => $activeTab]) }}" data-modal-title="Tambah Dokumen Kebijakan" />
-        @endif
+        <div class="d-flex justify-content-between align-items-center gap-2">
+            <x-tabler.form-select name="periode" class="mb-0 filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index') }}">
+                <option value="">Semua Periode</option>
+                @foreach($periods as $p)
+                    <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
+                @endforeach
+            </x-tabler.form-select>
+            <div class="input-icon">
+                <span class="input-icon-addon">
+                    <i class="ti ti-search"></i>
+                </span>
+                <input type="text" id="tree-search" class="form-control" placeholder="Cari dokumen...">
+            </div>
+            @if($activeTab === 'standar')
+                <x-tabler.button type="create" text="Tambah Standar" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'standar']) }}" data-modal-title="Tambah Dokumen Standar" />
+            @else
+                <x-tabler.button type="create"  text="Tambah Kebijakan" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => $activeTab]) }}" data-modal-title="Tambah Dokumen Kebijakan" />
+            @endif
+        </div>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -38,17 +52,7 @@
                 <!-- PANEL KEBIJAKAN -->
                 <div class="tab-pane active show" id="main-kebijakan">
                     <!-- Filters & Sub-Tabs -->
-                    <div class="card-body border-bottom bg-light-lt py-3">
-                         <div class="d-flex gap-2 mb-3">
-                             <x-tabler.form-select name="periode" class="form-select-sm filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index') }}">
-                                <option value="">Semua Periode</option>
-                                @foreach($periods as $p)
-                                    <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
-                                @endforeach
-                            </x-tabler.form-select>
-                            <x-tabler.form-input type="text" id="tree-search" placeholder="Cari dokumen..." class="form-control-sm mb-0" />
-                        </div>
-
+                    <div class="card-body border-bottom bg-transparent py-3">
                         <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">
                              <li class="nav-item">
                                 <a href="#tab-visi-misi" class="nav-link py-1 {{ !request('jenis') || request('jenis') == 'visi-misi' ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="visi-misi">VISI & MISI</a>
@@ -60,7 +64,6 @@
                             @endforeach
                         </ul>
                     </div>
-
                     <!-- Content Trees -->
                     <div class="card-body p-0 overflow-auto" style="max-height: 55vh;">
                          <div class="tab-content p-3">
@@ -94,16 +97,7 @@
                 @else
                 <!-- PANEL STANDAR -->
                 <div class="tab-pane active show" id="main-standar">
-                     <div class="card-body border-bottom bg-light-lt py-3">
-                         <div class="d-flex gap-2 mb-3">
-                             <x-tabler.form-select name="periode" class="form-select-sm filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index') }}">
-                                <option value="">Semua Periode</option>
-                                @foreach($periods as $p)
-                                    <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
-                                @endforeach
-                            </x-tabler.form-select>
-                            <x-tabler.form-input id="tree-search" placeholder="Cari dokumen..." />
-                         </div>
+                     <div class="card-body border-bottom bg-transparent py-3">
                          <ul class="nav nav-pills nav-fill" data-bs-toggle="tabs">
                             <li class="nav-item"><a href="#std-standar" class="nav-link py-1 {{ (!request('jenis') && $activeTab === 'standar') || request('jenis') == 'standar' ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="standar">Standar</a></li>
                             <li class="nav-item"><a href="#std-formulir" class="nav-link py-1 {{ request('jenis') == 'formulir' ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="formulir">Formulir</a></li>
@@ -252,7 +246,66 @@
                 });
         }
 
-        // --- Event Handlers ---
+        // --- Event Handlers & Refresh Logic ---
+
+        function refreshUI() {
+            const url = new URL(window.location);
+            url.searchParams.set('ajax', '1');
+
+            // Show global progress indicator if needed? For now just silent refresh
+            axios.get(url.toString(), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).then(response => {
+                const $temp = $('<div>').html(response.data);
+                const $newTabContent = $temp.find('.tab-content').first();
+                if ($newTabContent.length) {
+                    $('.tab-content').first().html($newTabContent.html());
+                    
+                    // Re-init Sortable and Tree functionality
+                    initializeDragAndDrop();
+                    
+                    // Re-expand previously expanded nodes
+                    const expanded = getExpandedNodes();
+                    expanded.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            const ul = el.querySelector(':scope > ul');
+                            const icon = el.querySelector(':scope > .d-flex .tree-toggle i, :scope > .d-flex .tree-toggle-custom i');
+                            if (ul) ul.classList.remove('d-none');
+                            if (icon) icon.classList.replace('ti-chevron-right', 'ti-chevron-down');
+                        }
+                    });
+
+                    // Highlight selected item and reload its detail panel
+                    const params = new URLSearchParams(window.location.search);
+                    const idParam = params.get('id');
+                    const typeParam = params.get('type');
+                    if (idParam && typeParam) {
+                        const selector = typeParam === 'doksub' ? `#tree-node-sub-${idParam}` : `#tree-node-dok-${idParam}`;
+                        const targetNode = document.querySelector(selector);
+                        if (targetNode) {
+                            const link = targetNode.querySelector('.tree-item-link');
+                            if (link) {
+                                link.classList.add('fw-bold', 'text-primary', 'bg-blue-lt');
+                                // Reload detail panel to reflect changes
+                                loadDetail(link.dataset.url, link.dataset.jenis, false);
+                            }
+                        }
+                    }
+                }
+            }).catch(err => {
+                console.error('Failed to refresh UI', err);
+            });
+        }
+
+        // Global listeners for AJAX form/delete success
+        $(document).off('ajax-form:success.refreshUI').on('ajax-form:success.refreshUI', '.ajax-form', function() {
+            // refreshUI(); // Disabled per user request to only reload datatables
+        });
+        
+        $(document).off('ajax-delete:success.refreshUI').on('ajax-delete:success.refreshUI', '.ajax-delete', function() {
+            // refreshUI(); // Disabled per user request to only reload datatables
+        });
 
         // Sub-Tab Change
         $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {

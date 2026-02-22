@@ -1,485 +1,480 @@
-@extends('layouts.guest.app')
+@extends('layouts.assessment.app')
+
+@section('title', $survei->judul)
 
 @section('content')
-    @section('title', $survei->judul)
-
+<div class="container py-4" style="max-width: 720px;">
     @if(isset($isPreview) && $isPreview)
-    <div class="bg-azure-lt text-center py-2 mb-3 rounded shadow-sm">
+    <div class="alert alert-azure text-center mb-4">
         <strong><i class="ti ti-eye me-1"></i> MODE PREVIEW</strong> — Tampilan ini hanya simulasi. Jawaban tidak akan disimpan.
     </div>
-    @endif
-
-    @if(isset($isPreview) && $isPreview)
-    <div class="mb-3 text-end">
-        <x-tabler.button href="{{ route('survei.builder', $survei->id) }}" class="btn-secondary btn-sm" icon="ti ti-arrow-left" text="Kembali ke Builder" />
+    <div class="mb-4 text-end">
+        <x-tabler.button type="back" href="{{ route('survei.builder', $survei->encrypted_survei_id) }}" text="Kembali ke Builder" />
     </div>
     @endif
 
-    {{-- Survey Header Card --}}
+    {{-- Survey Header --}}
     <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-body text-center py-4">
-            <h2 class="mb-1">{{ $survei->judul }}</h2>
+        <div class="card-body py-3 px-4">
+            <h3 class="mb-1">{{ $survei->judul }}</h3>
             @if($survei->deskripsi)
-                <p class="text-secondary mb-0" style="max-width: 480px; margin: 0 auto;">{{ $survei->deskripsi }}</p>
+                <p class="text-muted mb-0 small">{{ $survei->deskripsi }}</p>
             @endif
         </div>
         {{-- Progress Bar --}}
-        @if($survei->halaman->count() > 1)
-        <div class="card-footer bg-transparent border-0 pt-0">
-            <div class="progress progress-sm">
-                <div class="progress-bar bg-primary" id="survei-progress" style="width: {{ round(1 / $survei->halaman->count() * 100) }}%"></div>
+        @php $totalHalaman = $survei->halaman->count(); @endphp
+        @if($totalHalaman > 1)
+        <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
+            <div class="progress progress-sm mb-1">
+                <div class="progress-bar bg-primary" id="survei-progress" style="width: {{ round(1 / $totalHalaman * 100) }}%"></div>
             </div>
-            <small class="text-muted d-block text-center mt-1">
-                Halaman <span id="current-page-num">1</span> dari {{ $survei->halaman->count() }}
-            </small>
+            <small class="text-muted">Halaman <span id="current-page-num">1</span> dari {{ $totalHalaman }}</small>
         </div>
         @endif
     </div>
 
-    {{-- Halaman Navigation --}}
-    @if($survei->halaman->count() > 1)
-    <div class="mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <button type="button" class="btn btn-outline-secondary btn-prev-halaman" disabled>
-                <i class="ti ti-chevron-left"></i> Sebelumnya
-            </button>
-            <span class="text-muted">Halaman <span id="page-indicator">1</span> / {{ $survei->halaman->count() }}</span>
-            <button type="button" class="btn btn-primary btn-next-halaman">
-                Lanjutkan <i class="ti ti-chevron-right"></i>
-            </button>
-        </div>
-    </div>
-    @endif
+    {{-- Form --}}
+    <form action="{{ route('survei.public.store', $survei->slug) }}" method="POST" id="survei-form">
+        @csrf
 
-    {{-- Daftar Pertanyaan per Halaman --}}
-    @foreach($survei->halaman as $index => $halaman)
-    <div class="survei-halaman {{ $loop->first ? '' : 'd-none' }}" id="halaman-{{ $halaman->id }}" data-urutan="{{ $loop->iteration }}">
-        @if($halaman->judul_halaman && $survei->halaman->count() > 1)
-            <h4 class="mb-3 text-primary">{{ $halaman->judul_halaman }}</h4>
-        @endif
+        @foreach($survei->halaman as $hIndex => $halaman)
+        <div class="survei-halaman {{ $hIndex > 0 ? 'd-none' : '' }}"
+             id="halaman-{{ $halaman->id }}"
+             data-index="{{ $hIndex }}"
+             data-halaman-id="{{ $halaman->id }}">
 
-        <div class="row g-3">
-            @foreach($halaman->pertanyaan as $pertanyaan)
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm question-card" 
-                     data-id="{{ $pertanyaan->id }}"
-                     data-tipe="{{ $pertanyaan->tipe }}"
+            @if($halaman->judul_halaman && $totalHalaman > 1)
+            <h5 class="text-primary mb-3 fw-semibold">{{ $halaman->judul_halaman }}</h5>
+            @endif
+            @if($halaman->deskripsi_halaman)
+            <p class="text-muted small mb-3">{!! $halaman->deskripsi_halaman !!}</p>
+            @endif
+
+            @foreach($halaman->pertanyaan as $qIndex => $pertanyaan)
+            @php $isLinear = ($survei->mode ?? 'Linear') !== 'Bercabang'; @endphp
+                <div class="card mb-1 border-0 shadow-sm pertanyaan-item"
                      data-wajib="{{ $pertanyaan->wajib_diisi ? '1' : '0' }}"
-                     data-opsi='@json($pertanyaan->opsi->map(fn($o) => ['id' => $o->id, 'label' => $o->label]))'
-                     data-config='@json($pertanyaan->config_json ?? [])'
-                     style="cursor: pointer; transition: all 0.2s;"
-                     onclick="openQuestionModal({{ $pertanyaan->id }})">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="badge bg-{{ $pertanyaan->tipe === 'Pilihan_Ganda' ? 'primary' : ($pertanyaan->tipe === 'Esai' ? 'success' : 'azure') }}-lt">
-                                {{ str_replace('_', ' ', $pertanyaan->tipe) }}
-                            </span>
-                            @if($pertanyaan->wajib_diisi)
-                                <span class="badge bg-red-lt">Wajib</span>
+                     @if(!$isLinear) data-next="{{ $pertanyaan->next_pertanyaan_id }}" @endif
+                     id="pertanyaan-{{ $pertanyaan->id }}">
+                    <div class="card-body px-3 py-2">
+                    <label class="form-label fw-semibold mb-1">
+                    <label class="form-label fw-semibold mb-1">
+                        <span class="text-muted small me-1">{{ $loop->iteration }}.</span>
+                        {{ $pertanyaan->teks_pertanyaan }}
+                        @if($pertanyaan->wajib_diisi)
+                            <span class="text-danger ms-1">*</span>
+                        @endif
+                    </label>
+                    </label>
+
+                    @if($pertanyaan->bantuan_teks)
+                        <p class="text-muted small mb-2">{{ $pertanyaan->bantuan_teks }}</p>
+                    @endif
+
+                    {{-- Render input by type --}}
+                    @if($pertanyaan->tipe === 'Teks_Singkat')
+                        <input type="text" name="jawaban[{{ $pertanyaan->id }}]"
+                               class="form-control pertanyaan-input"
+                               data-id="{{ $pertanyaan->id }}"
+                               placeholder="Jawaban singkat...">
+
+                    @elseif($pertanyaan->tipe === 'Esai')
+                        <textarea name="jawaban[{{ $pertanyaan->id }}]"
+                                  class="form-control pertanyaan-input"
+                                  data-id="{{ $pertanyaan->id }}"
+                                  rows="4" placeholder="Tulis jawaban..."></textarea>
+
+                    @elseif($pertanyaan->tipe === 'Angka')
+                        <input type="number" name="jawaban[{{ $pertanyaan->id }}]"
+                               class="form-control pertanyaan-input"
+                               data-id="{{ $pertanyaan->id }}"
+                               placeholder="0">
+
+                    @elseif($pertanyaan->tipe === 'Tanggal')
+                        <input type="date" name="jawaban[{{ $pertanyaan->id }}]"
+                               class="form-control pertanyaan-input"
+                               data-id="{{ $pertanyaan->id }}">
+
+                    @elseif($pertanyaan->tipe === 'Pilihan_Ganda')
+                        <div>
+                            @foreach($pertanyaan->opsi as $opsi)
+                            @php $radioId = 'q' . $pertanyaan->id . '_opsi_' . $opsi->id; @endphp
+                            <label for="{{ $radioId }}" class="form-check form-check-lg border rounded px-3 py-2 mb-2 d-flex align-items-center cursor-pointer hover-check">
+                                <input type="radio"
+                                       id="{{ $radioId }}"
+                                       class="form-check-input pertanyaan-input flex-shrink-0"
+                                       name="jawaban[{{ $pertanyaan->id }}]"
+                                       data-id="{{ $pertanyaan->id }}"
+                                       data-next-opsi="{{ $opsi->next_pertanyaan_id }}"
+                                       value="{{ $opsi->id }}">
+                                <span class="form-check-label ms-2">{{ $opsi->label }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+
+                    @elseif($pertanyaan->tipe === 'Kotak_Centang')
+                        <div>
+                            @foreach($pertanyaan->opsi as $opsi)
+                            @php $checkId = 'q' . $pertanyaan->id . '_check_' . $loop->index; @endphp
+                            <label for="{{ $checkId }}" class="form-check form-check-lg border rounded px-3 py-2 mb-2 d-flex align-items-center cursor-pointer hover-check">
+                                <input type="checkbox"
+                                       id="{{ $checkId }}"
+                                       class="form-check-input pertanyaan-checkbox flex-shrink-0"
+                                       name="jawaban[{{ $pertanyaan->id }}][]"
+                                       data-id="{{ $pertanyaan->id }}"
+                                       value="{{ $opsi->label }}">
+                                <span class="form-check-label ms-2">{{ $opsi->label }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+
+                    @elseif($pertanyaan->tipe === 'Dropdown')
+                        <select name="jawaban[{{ $pertanyaan->id }}]"
+                                class="form-select pertanyaan-input"
+                                data-id="{{ $pertanyaan->id }}">
+                            <option value="">Pilih jawaban...</option>
+                            @foreach($pertanyaan->opsi as $opsi)
+                            <option value="{{ $opsi->id }}">{{ $opsi->label }}</option>
+                            @endforeach
+                        </select>
+
+                    @elseif($pertanyaan->tipe === 'Skala_Linear')
+                        @php $config = $pertanyaan->config_json ?? ['min' => 1, 'max' => 5, 'label_min' => '', 'label_max' => '']; @endphp
+                        <div class="d-flex align-items-center gap-2 flex-wrap mt-2">
+                            @if($config['label_min'] ?? false)
+                                <small class="text-muted">{{ $config['label_min'] }}</small>
+                            @endif
+                            <div class="d-flex gap-2 flex-wrap">
+                                @for($i = ($config['min'] ?? 1); $i <= ($config['max'] ?? 5); $i++)
+                                @php $scaleId = 'q' . $pertanyaan->id . '_scale_' . $i; @endphp
+                                <label class="form-selectgroup-item mb-0" for="{{ $scaleId }}">
+                                    <input type="radio"
+                                           id="{{ $scaleId }}"
+                                           class="form-selectgroup-input pertanyaan-input"
+                                           name="jawaban[{{ $pertanyaan->id }}]"
+                                           data-id="{{ $pertanyaan->id }}"
+                                           value="{{ $i }}">
+                                    <span class="form-selectgroup-label">{{ $i }}</span>
+                                </label>
+                                @endfor
+                            </div>
+                            @if($config['label_max'] ?? false)
+                                <small class="text-muted">{{ $config['label_max'] }}</small>
                             @endif
                         </div>
-                        <h6 class="card-title mb-2">{{ Str::limit($pertanyaan->teks_pertanyaan, 80) }}</h6>
-                        <div class="d-flex align-items-center text-muted small">
-                            <i class="ti ti-click me-1"></i>
-                            <span>Klik untuk menjawab</span>
+
+                    @elseif($pertanyaan->tipe === 'Rating_Bintang')
+                        <div class="d-flex gap-2 mt-2" id="rating-{{ $pertanyaan->id }}">
+                            @for($i = 1; $i <= 5; $i++)
+                            <label class="cursor-pointer">
+                                <input type="radio" class="d-none pertanyaan-input" style="display:none"
+                                       name="jawaban[{{ $pertanyaan->id }}]"
+                                       data-id="{{ $pertanyaan->id }}" value="{{ $i }}">
+                                <i class="ti ti-star fs-2 text-muted rating-star" data-value="{{ $i }}"></i>
+                            </label>
+                            @endfor
                         </div>
-                        {{-- Preview jawaban --}}
-                        <div id="preview-jawaban-{{ $pertanyaan->id }}" class="mt-2 p-2 bg-light rounded small text-truncate" style="max-width: 100%;"></div>
-                    </div>
+
+                    @else
+                        <p class="text-muted small">Tipe pertanyaan belum didukung.</p>
+                    @endif
                 </div>
             </div>
             @endforeach
-        </div>
-    </div>
-    @endforeach
 
-    {{-- Submit Button --}}
-    <div class="mt-4 text-center">
-        <form action="{{ route('survei.public.store', $survei->slug) }}" method="POST" id="survei-form" enctype="multipart/form-data">
-            @csrf
-            <input type="hidden" name="jawaban" id="hidden-jawaban">
-            <x-tabler.button type="submit" class="btn-success btn-lg" icon="ti ti-send" text="Kirim Jawaban" />
-        </form>
-    </div>
+            {{-- Page Navigation --}}
+            <div class="d-flex justify-content-between mt-4 mb-2">
+                @if($hIndex > 0)
+                <button type="button" class="btn btn-outline-secondary btn-prev-halaman" data-current="{{ $hIndex }}">
+                    <i class="ti ti-chevron-left me-1"></i> Sebelumnya
+                </button>
+                @else
+                <div></div>
+                @endif
 
-    {{-- Global Question Modal --}}
-    <div class="modal modal-blur fade" id="questionModal" tabindex="-1" aria-hidden="true" style="z-index: 99999;">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalPertanyaanTitle">Pertanyaan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="modalPertanyaanBody">
-                    <!-- Form will be loaded here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="btn-save-jawaban" onclick="saveJawaban()">Simpan Jawaban</button>
-                </div>
+                @if($hIndex < $totalHalaman - 1)
+                <button type="button" class="btn btn-primary btn-next-halaman" data-current="{{ $hIndex }}">
+                    Lanjutkan <i class="ti ti-chevron-right ms-1"></i>
+                </button>
+                @else
+                {{-- Last page: submit button --}}
+                @if(!isset($isPreview) || !$isPreview)
+                <button type="submit" class="btn btn-success" id="btn-submit">
+                    <i class="ti ti-send me-1"></i> Kirim Jawaban
+                </button>
+                @else
+                <button type="button" class="btn btn-success" disabled>
+                    <i class="ti ti-send me-1"></i> Kirim Jawaban (Preview)
+                </button>
+                @endif
+                @endif
             </div>
         </div>
-    </div>
+        @endforeach
+    </form>
+</div>
+
+<style>
+    .cursor-pointer { cursor: pointer; }
+    .hover-check { transition: background 0.15s; }
+    .hover-check:hover { background: var(--tblr-primary-lt); }
+    .form-check-lg { font-size: 1rem; }
+    .pertanyaan-item { transition: box-shadow 0.2s; }
+    .pertanyaan-item.answered { border-left: 3px solid var(--tblr-green) !important; }
+    .pertanyaan-item.unanswered-required { border-left: 3px solid var(--tblr-red) !important; }
+    .rating-star { cursor: pointer; transition: color 0.15s; }
+    .rating-star.active { color: var(--tblr-yellow) !important; }
+</style>
+
 @endsection
 
 @push('scripts')
 <script>
-    let currentQuestionId = null;
-    let allJawaban = {};
+const SURVEY_SLUG = '{{ $survei->slug }}';
+const LS_KEY = 'survei_draft_' + SURVEY_SLUG;
+const TOTAL_HALAMAN = {{ $survei->halaman->count() }};
+const SURVEY_MODE = '{{ $survei->mode ?? "Linear" }}';
 
-    // Modal instance
-    let questionModal = null;
+let allJawaban = {};
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Bootstrap modal
-        if (typeof window.bootstrap !== 'undefined') {
-            questionModal = new window.bootstrap.Modal(document.getElementById('questionModal'));
+// ---- LocalStorage Save/Restore ----
+function saveDraft() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(allJawaban)); } catch(e) {}
+}
+
+function loadDraft() {
+    try {
+        const saved = localStorage.getItem(LS_KEY);
+        if (saved) { allJawaban = JSON.parse(saved); }
+    } catch(e) {}
+}
+
+function applyDraftToInputs() {
+    Object.entries(allJawaban).forEach(([id, val]) => {
+        const inputs = document.querySelectorAll(`[name="jawaban[${id}]"], [name="jawaban[${id}][]"]`);
+        if (!inputs.length) return;
+        const tipe = document.querySelector(`.pertanyaan-item[data-id="${id}"]`)?.dataset.tipe;
+
+        if (tipe === 'Kotak_Centang') {
+            const vals = Array.isArray(val) ? val : [val];
+            inputs.forEach(cb => { cb.checked = vals.includes(cb.value); });
+        } else if (tipe === 'Pilihan_Ganda' || tipe === 'Skala_Linear') {
+            inputs.forEach(r => { r.checked = (r.value == val); });
+        } else if (tipe === 'Rating_Bintang') {
+            inputs.forEach(r => { r.checked = (r.value == val); });
+            updateStars(id, val);
+        } else {
+            if (inputs[0]) inputs[0].value = val;
         }
 
-        // Initialize Select2 for dropdown in modal (if jQuery is available)
-        if (typeof window.jQuery !== 'undefined') {
-            $(document).on('select2:open', function (e) { 
-                document.querySelector('.select2-container--open .select2-search__field').focus(); 
-            });
-        }
+        markAnswered(id);
+    });
+}
 
-        // Navigation between halaman
-        document.querySelectorAll('.btn-next-halaman').forEach(btn => {
-            btn.addEventListener('click', function() {
-                let currentHalaman = document.querySelector('.survei-halaman:not(.d-none)');
-                let nextHalaman = currentHalaman.nextElementSibling;
-                if (nextHalaman && nextHalaman.classList.contains('survei-halaman')) {
-                    currentHalaman.classList.add('d-none');
-                    nextHalaman.classList.remove('d-none');
-                    updatePageIndicator(nextHalaman.dataset.urutan);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            });
+function markAnswered(id) {
+    const card = document.querySelector(`.pertanyaan-item[data-id="${id}"]`);
+    if (card) {
+        card.classList.add('answered');
+        card.classList.remove('unanswered-required');
+    }
+}
+
+// ---- Track inputs on change ----
+function attachInputListeners() {
+    document.querySelectorAll('.pertanyaan-input').forEach(el => {
+        el.addEventListener('change', function() {
+            const id = this.dataset.id;
+            const tipe = document.querySelector(`.pertanyaan-item[data-id="${id}"]`)?.dataset.tipe;
+
+            if (tipe === 'Kotak_Centang') {
+                const checked = [...document.querySelectorAll(`[name="jawaban[${id}][]"]:checked`)].map(c => c.value);
+                allJawaban[id] = checked;
+            } else {
+                allJawaban[id] = this.value;
+            }
+
+            markAnswered(id);
+            saveDraft();
         });
-
-        document.querySelectorAll('.btn-prev-halaman').forEach(btn => {
-            btn.addEventListener('click', function() {
-                let currentHalaman = document.querySelector('.survei-halaman:not(.d-none)');
-                let prevHalaman = currentHalaman.previousElementSibling;
-                if (prevHalaman && prevHalaman.classList.contains('survei-halaman')) {
-                    currentHalaman.classList.add('d-none');
-                    prevHalaman.classList.remove('d-none');
-                    updatePageIndicator(prevHalaman.dataset.urutan);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            });
-        });
-
-        // Form submission with Axios
-        const form = document.getElementById('survei-form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Validate all required questions
-                let isValid = validateAllQuestions();
-                if (!isValid) {
-                    return;
-                }
-
-                // Convert allJawaban object to form data
-                const formData = new FormData();
-                formData.append('_token', form.querySelector('input[name="_token"]').value);
-                
-                // Append each jawaban
-                Object.keys(allJawaban).forEach(key => {
-                    formData.append(`jawaban[${key}]`, allJawaban[key]);
-                });
-
-                // Submit via Axios
-                axios.post(form.action, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(function(response) {
-                    if (response.data.success || response.data.redirect) {
-                        window.location.href = response.data.redirect || '{{ route('survei.public.thankyou', $survei->slug) }}';
-                    } else {
-                        alert('Terima kasih! Jawaban Anda berhasil disimpan.');
-                        window.location.href = '{{ route('survei.public.thankyou', $survei->slug) }}';
-                    }
-                })
-                .catch(function(error) {
-                    let errorMsg = 'Terjadi kesalahan. Silakan coba lagi.';
-                    if (error.response && error.response.data && error.response.data.message) {
-                        errorMsg = error.response.data.message;
-                    }
-                    alert('Error: ' + errorMsg);
-                });
-            });
-        }
     });
 
-    function updatePageIndicator(pageNum) {
-        const pageIndicator = document.getElementById('page-indicator');
-        const currentPageNum = document.getElementById('current-page-num');
-        if (pageIndicator) pageIndicator.textContent = pageNum;
-        if (currentPageNum) currentPageNum.textContent = pageNum;
-        
-        let totalPages = {{ $survei->halaman->count() }};
-        let pct = Math.round(pageNum / totalPages * 100);
-        const progress = document.getElementById('survei-progress');
-        if (progress) progress.style.width = pct + '%';
+    // Checkbox separately
+    document.querySelectorAll('.pertanyaan-checkbox').forEach(el => {
+        el.addEventListener('change', function() {
+            const id = this.dataset.id;
+            const checked = [...document.querySelectorAll(`[name="jawaban[${id}][]"]:checked`)].map(c => c.value);
+            allJawaban[id] = checked;
+            markAnswered(id);
+            saveDraft();
+        });
+    });
 
-        // Update button states
-        let currentHalaman = document.querySelector('.survei-halaman:not(.d-none)');
-        let prevBtn = document.querySelector('.btn-prev-halaman');
-        let nextBtn = document.querySelector('.btn-next-halaman');
+    // Text/textarea live
+    document.querySelectorAll('input[type="text"].pertanyaan-input, textarea.pertanyaan-input, input[type="number"].pertanyaan-input, input[type="date"].pertanyaan-input').forEach(el => {
+        el.addEventListener('input', function() {
+            const id = this.dataset.id;
+            allJawaban[id] = this.value;
+            if (this.value) markAnswered(id);
+            saveDraft();
+        });
+    });
+}
 
-        if (prevBtn) prevBtn.disabled = !currentHalaman.previousElementSibling || !currentHalaman.previousElementSibling.classList.contains('survei-halaman');
-        if (nextBtn) nextBtn.disabled = !currentHalaman.nextElementSibling || !currentHalaman.nextElementSibling.classList.contains('survei-halaman');
-    }
+// ---- Rating Stars ----
+function initRating() {
+    document.querySelectorAll('.rating-star').forEach(star => {
+        star.addEventListener('click', function() {
+            const val = this.dataset.value;
+            const container = this.closest('[id^="rating-"]');
+            const id = container.id.replace('rating-', '');
 
-    function openQuestionModal(pertanyaanId) {
-        currentQuestionId = pertanyaanId;
-        const card = document.querySelector(`.question-card[data-id="${pertanyaanId}"]`);
-        if (!card) return;
-        
-        const tipe = card.dataset.tipe;
+            // Mark radio
+            const radio = document.querySelector(`input[name="jawaban[${id}]"][value="${val}"]`);
+            if (radio) radio.checked = true;
+
+            allJawaban[id] = val;
+            updateStars(id, val);
+            markAnswered(id);
+            saveDraft();
+        });
+    });
+}
+
+function updateStars(id, val) {
+    document.querySelectorAll(`#rating-${id} .rating-star`).forEach(s => {
+        s.classList.toggle('active', parseInt(s.dataset.value) <= parseInt(val));
+    });
+}
+
+// ---- Validate current halaman ----
+function validateHalaman(index) {
+    const halaman = document.querySelector(`.survei-halaman[data-index="${index}"]`);
+    if (!halaman) return true;
+
+    let valid = true;
+    let firstInvalid = null;
+
+    halaman.querySelectorAll('.pertanyaan-item').forEach(card => {
+        const id = card.dataset.id;
         const wajib = card.dataset.wajib;
-        const label = card.querySelector('h6').textContent;
-        const existingJawaban = allJawaban[pertanyaanId] || '';
 
-        const modalTitle = document.getElementById('modalPertanyaanTitle');
-        modalTitle.innerHTML = label + (wajib === '1' ? ' <span class="badge bg-red-lt ms-2">Wajib Diisi</span>' : '');
+        if (wajib !== '1') return;
 
-        // Get opsi data from data attribute
-        let opsiData = [];
-        try {
-            opsiData = JSON.parse(card.dataset.opsi || '[]');
-        } catch(e) { console.error('Error parsing opsi data', e); }
-
-        let formHtml = '';
-
-        switch(tipe) {
-            case 'Teks_Singkat':
-                formHtml = `<input type="text" id="modal-jawaban-input" class="form-control form-control-lg" placeholder="Masukkan jawaban singkat…" value="${existingJawaban}">`;
-                break;
-
-            case 'Esai':
-                formHtml = `<textarea id="modal-jawaban-input" class="form-control form-control-lg" rows="5" placeholder="Tulis jawaban lengkap…">${existingJawaban}</textarea>`;
-                break;
-
-            case 'Angka':
-                formHtml = `<input type="number" id="modal-jawaban-input" class="form-control form-control-lg" placeholder="0" value="${existingJawaban}">`;
-                break;
-
-            case 'Pilihan_Ganda':
-                formHtml = `<div class="space-y-2">`;
-                opsiData.forEach(opsi => {
-                    formHtml += `
-                        <label class="form-check form-check-lg p-3 border rounded mb-2 cursor-pointer hover-azure">
-                            <input type="radio" class="form-check-input" name="modal-jawaban-radio" value="${opsi.id}" ${existingJawaban == opsi.id ? 'checked' : ''}>
-                            <span class="form-check-label ms-2">${opsi.label}</span>
-                        </label>
-                    `;
-                });
-                formHtml += `</div>`;
-                break;
-
-            case 'Kotak_Centang':
-                formHtml = `<div class="space-y-2">`;
-                const checkedValues = existingJawaban ? existingJawaban.split(', ').map(s => s.trim()) : [];
-                opsiData.forEach(opsi => {
-                    const isChecked = checkedValues.includes(opsi.label) ? 'checked' : '';
-                    formHtml += `
-                        <label class="form-check form-check-lg p-3 border rounded mb-2 cursor-pointer hover-azure">
-                            <input type="checkbox" class="form-check-input" name="modal-jawaban-checkbox" value="${opsi.label}" ${isChecked}>
-                            <span class="form-check-label ms-2">${opsi.label}</span>
-                        </label>
-                    `;
-                });
-                formHtml += `</div>`;
-                break;
-
-            case 'Dropdown':
-                formHtml = `<select id="modal-jawaban-input" class="form-select form-select-lg">`;
-                formHtml += `<option value="">Pilih jawaban…</option>`;
-                opsiData.forEach(opsi => {
-                    const isSelected = existingJawaban == opsi.id ? 'selected' : '';
-                    formHtml += `<option value="${opsi.id}" ${isSelected}>${opsi.label}</option>`;
-                });
-                formHtml += `</select>`;
-                break;
-
-            case 'Skala_Linear':
-                let config = { min: 1, max: 5 };
-                try {
-                    config = JSON.parse(card.dataset.config || '{}');
-                } catch(e) { console.error('Error parsing config', e); }
-                
-                formHtml = `<div class="d-flex justify-content-center gap-2 flex-wrap">`;
-                for(let i = config.min; i <= config.max; i++) {
-                    const isChecked = existingJawaban == i.toString() ? 'checked' : '';
-                    formHtml += `
-                        <label class="form-selectgroup-item">
-                            <input type="radio" class="form-selectgroup-input" name="modal-jawaban-radio" value="${i}" ${isChecked}>
-                            <span class="form-selectgroup-label btn btn-outline-primary btn-lg">${i}</span>
-                        </label>
-                    `;
-                }
-                formHtml += `</div>`;
-                break;
-
-            case 'Tanggal':
-                formHtml = `<input type="date" id="modal-jawaban-input" class="form-control form-control-lg" value="${existingJawaban}">`;
-                break;
-
-            case 'Upload_File':
-                formHtml = `<input type="file" id="modal-jawaban-input" class="form-control form-control-lg" accept=".pdf,.jpg,.jpeg,.png">`;
-                formHtml += `<small class="text-muted">Maks 2MB. Format: PDF, JPG, PNG</small>`;
-                break;
-
-            default:
-                formHtml = `<p class="text-danger">Tipe pertanyaan tidak didukung.</p>`;
-        }
-
-        document.getElementById('modalPertanyaanBody').innerHTML = formHtml;
-
-        // Initialize Select2 for dropdown in modal
-        // Use the same pattern as the rest of the project
-        setTimeout(function() {
-            if (typeof window.initOfflineSelect2 === 'function') {
-                window.initOfflineSelect2('#modal-jawaban-input');
-            } else if (typeof window.jQuery !== 'undefined' && typeof $.fn.select2 !== 'undefined') {
-                const $select = window.jQuery('#modal-jawaban-input');
-                if ($select.hasClass('form-select')) {
-                    $select.select2({
-                        theme: 'bootstrap-5',
-                        width: '100%',
-                        dropdownParent: window.jQuery('#questionModal'),
-                        placeholder: $select.attr('placeholder') || 'Pilih jawaban…',
-                        allowClear: true
-                    });
-                }
-            }
-        }, 100);
-
-        // Show modal
-        if (questionModal) {
-            questionModal.show();
-        }
-    }
-
-    function saveJawaban() {
-        if (!currentQuestionId) return;
-
-        let jawaban = '';
-        const card = document.querySelector(`.question-card[data-id="${currentQuestionId}"]`);
-        if (!card) return;
-        
         const tipe = card.dataset.tipe;
+        let hasValue = false;
 
-        // Get jawaban based on tipe
-        if (tipe === 'Pilihan_Ganda' || tipe === 'Skala_Linear') {
-            const checked = document.querySelector('input[name="modal-jawaban-radio"]:checked');
-            jawaban = checked ? checked.value : '';
-        } else if (tipe === 'Kotak_Centang') {
-            let checked = [];
-            document.querySelectorAll('input[name="modal-jawaban-checkbox"]:checked').forEach(cb => {
-                checked.push(cb.value);
-            });
-            jawaban = checked.join(', ');
+        if (tipe === 'Kotak_Centang') {
+            hasValue = card.querySelectorAll('input:checked').length > 0;
+        } else if (['Pilihan_Ganda', 'Skala_Linear', 'Rating_Bintang'].includes(tipe)) {
+            hasValue = card.querySelector('input:checked') !== null;
         } else {
-            const input = document.getElementById('modal-jawaban-input');
-            jawaban = input ? input.value : '';
+            const inp = card.querySelector('input, textarea, select');
+            hasValue = inp && inp.value.trim() !== '';
         }
 
-        // Validate required
-        if (card.dataset.wajib === '1' && !jawaban) {
-            alert('Pertanyaan ini wajib diisi!');
-            return;
-        }
-
-        // Save to global object
-        allJawaban[currentQuestionId] = jawaban;
-
-        // Update preview
-        const preview = document.getElementById(`preview-jawaban-${currentQuestionId}`);
-        if (preview) preview.textContent = jawaban || 'Belum dijawab';
-
-        // Update card style
-        if (jawaban) {
-            card.classList.add('border-primary');
-            const badge = card.querySelector('.badge');
-            if (badge) badge.classList.remove('bg-azure-lt');
-            if (badge) badge.classList.add('bg-green-lt');
+        if (!hasValue) {
+            card.classList.add('unanswered-required');
+            valid = false;
+            if (!firstInvalid) firstInvalid = card;
         } else {
-            card.classList.remove('border-primary');
+            card.classList.remove('unanswered-required');
         }
+    });
 
-        // Close modal
-        if (questionModal) {
-            questionModal.hide();
-        }
+    if (!valid && firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    function validateAllQuestions() {
-        let isValid = true;
-        let missingQuestions = [];
+    return valid;
+}
 
-        document.querySelectorAll('.question-card').forEach(card => {
-            const id = card.dataset.id;
-            const wajib = card.dataset.wajib;
-            const jawaban = allJawaban[id] || '';
+// ---- Page Navigation ----
+function goToPage(index) {
+    document.querySelectorAll('.survei-halaman').forEach(p => p.classList.add('d-none'));
+    const target = document.querySelector(`.survei-halaman[data-index="${index}"]`);
+    if (target) {
+        target.classList.remove('d-none');
+        updateProgress(index + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
 
-            if (wajib === '1' && !jawaban) {
-                isValid = false;
-                const title = card.querySelector('h6');
-                if (title) missingQuestions.push(title.textContent);
+function updateProgress(pageNum) {
+    const prog = document.getElementById('survei-progress');
+    const num = document.getElementById('current-page-num');
+    if (prog) prog.style.width = Math.round(pageNum / TOTAL_HALAMAN * 100) + '%';
+    if (num) num.textContent = pageNum;
+}
+
+// ---- Submit ----
+function handleSubmit(e) {
+    e.preventDefault();
+
+    const lastIndex = TOTAL_HALAMAN - 1;
+    if (!validateHalaman(lastIndex)) return;
+
+    const form = document.getElementById('survei-form');
+    const submitBtn = document.getElementById('btn-submit');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Mengirim...';
+    }
+
+    const formData = new FormData(form);
+
+    axios.post(form.action, formData, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => {
+        if (res.data.redirect || res.data.success) {
+            localStorage.removeItem(LS_KEY); // clear draft on success
+            window.location.href = res.data.redirect || '{{ route('survei.public.thankyou', $survei->slug) }}';
+        }
+    })
+    .catch(err => {
+        const msg = err.response?.data?.message || 'Terjadi kesalahan. Silakan coba lagi.';
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('Gagal', msg, 'error');
+        } else {
+            alert('Error: ' + msg);
+        }
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="ti ti-send me-1"></i> Kirim Jawaban';
+        }
+    });
+}
+
+// ---- Init ----
+document.addEventListener('DOMContentLoaded', function() {
+    loadDraft();
+    attachInputListeners();
+    initRating();
+    applyDraftToInputs();
+
+    // Next page buttons
+    document.querySelectorAll('.btn-next-halaman').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const current = parseInt(this.dataset.current);
+            if (validateHalaman(current)) {
+                goToPage(current + 1);
             }
-        });
-
-        if (!isValid) {
-            alert('Masih ada ' + missingQuestions.length + ' pertanyaan wajib yang belum dijawab:\n\n- ' + missingQuestions.slice(0, 5).join('\n- ') + (missingQuestions.length > 5 ? '\n...dan ' + (missingQuestions.length - 5) + ' lainnya' : '') + '\n\nSilakan lengkapi terlebih dahulu.');
-        }
-
-        return isValid;
-    }
-</script>
-
-<script>
-    // Add hover effect for question cards (vanilla JS)
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.question-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.classList.add('shadow');
-                this.style.transform = 'translateY(-2px)';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.classList.remove('shadow');
-                this.style.transform = 'translateY(0)';
-            });
         });
     });
-</script>
 
-<style>
-    .cursor-pointer {
-        cursor: pointer;
+    // Prev page buttons
+    document.querySelectorAll('.btn-prev-halaman').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const current = parseInt(this.dataset.current);
+            goToPage(current - 1);
+        });
+    });
+
+    // Form submit
+    const form = document.getElementById('survei-form');
+    if (form && !('{{ isset($isPreview) && $isPreview ? "true" : "" }}')) {
+        form.addEventListener('submit', handleSubmit);
     }
-    .hover-azure:hover {
-        background-color: var(--tblr-azure-lt) !important;
-    }
-    .question-card:hover {
-        border-color: var(--tblr-primary) !important;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
-    .question-card.answered {
-        border-color: var(--tblr-green) !important;
-    }
-    .form-check-lg {
-        transition: all 0.2s;
-    }
-    .form-check-lg:hover {
-        background-color: var(--tblr-azure-lt);
-    }
-</style>
+});
+</script>
 @endpush

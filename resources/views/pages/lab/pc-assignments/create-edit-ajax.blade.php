@@ -11,7 +11,7 @@
             :options="$mahasiswas->mapWithKeys(fn($m) => [$m->id => $m->name . ' (' . $m->username . ')'])->toArray()" 
             selected="{{ $assignment->user_id }}"
             placeholder="-- Pilih Mahasiswa --" 
-            class="select2-offline"
+            type="select2"
             required 
         />
     </div>

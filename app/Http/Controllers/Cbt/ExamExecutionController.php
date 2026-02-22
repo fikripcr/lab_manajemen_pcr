@@ -350,4 +350,24 @@ class ExamExecutionController extends Controller
 
         return view('pages.cbt.execution.violations', compact('violations'));
     }
+
+    /**
+     * API: Get violations for specific student (riwayat)
+     */
+    public function getViolationsByRiwayat(RiwayatUjianSiswa $riwayat)
+    {
+        try {
+            $violations = $riwayat->pelanggaran()->latest('waktu_kejadian')->get();
+            
+            return response()->json([
+                'success' => true,
+                'data'    => $violations,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

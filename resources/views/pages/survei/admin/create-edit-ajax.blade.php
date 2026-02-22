@@ -1,6 +1,6 @@
 <x-tabler.form-modal 
     :title="$survei->exists ? 'Edit Pengaturan Survei' : 'Buat Survei Baru'" 
-    :route="$survei->exists ? route('survei.update', $survei->id) : route('survei.store')" 
+    :route="$survei->exists ? route('survei.update', $survei->encrypted_survei_id) : route('survei.store')" 
     :method="$survei->exists ? 'PUT' : 'POST'" 
     :submitText="$survei->exists ? 'Simpan Perubahan' : 'Simpan & Lanjut ke Builder'" 
     :submitIcon="$survei->exists ? 'ti ti-device-floppy' : 'ti ti-arrow-right'" 

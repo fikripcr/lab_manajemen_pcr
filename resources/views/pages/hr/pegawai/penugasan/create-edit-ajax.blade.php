@@ -13,7 +13,7 @@
         @endif
     @endif
 
-    <x-tabler.form-select class="select2-offline" name="org_unit_id" label="Unit / Jabatan" required="true" data-dropdown-parent="#modalAction">
+    <x-tabler.form-select type="select2" name="org_unit_id" label="Unit / Jabatan" required="true" data-dropdown-parent="#modalAction">
         <option value="">Pilih Unit / Jabatan</option>
         @foreach($units as $unit)
             <option value="{{ $unit->org_unit_id }}" {{ (isset($penugasan) && $penugasan->org_unit_id == $unit->org_unit_id) ? 'selected' : '' }}>

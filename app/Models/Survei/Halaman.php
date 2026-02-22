@@ -10,12 +10,17 @@ class Halaman extends Model
     use HasFactory, HashidBinding;
 
     protected $table = 'survei_halaman';
-
+    protected $primaryKey = 'halaman_id';
     protected $appends = ['encrypted_halaman_id'];
+
+    public function getRouteKeyName()
+    {
+        return 'halaman_id';
+    }
 
     public function getEncryptedHalamanIdAttribute()
     {
-        return encryptId($this->halaman_id ?? $this->id);
+        return encryptId($this->halaman_id);
     }
 
     protected $fillable = [

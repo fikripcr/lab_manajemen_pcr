@@ -1,7 +1,7 @@
-<div class="card m-3 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->encrypted_pertanyaan_id }}"
+<div class="card m-0 mb-1 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->encrypted_pertanyaan_id }}"
      style="border-left: 4px solid var(--tblr-primary) !important;">
-    <div class="card-body py-3">
-        <div class="row align-items-start g-3">
+    <div class="card-body py-1 px-3">
+        <div class="row align-items-start g-2">
             <div class="col-auto drag-handle cursor-move text-muted pt-1" title="Drag untuk mengatur urutan">
                 <i class="ti ti-grip-vertical"></i>
             </div>
@@ -11,15 +11,19 @@
                 <div class="static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-primary-lt">Soal #{{ $pertanyaan->urutan }}</span>
+                            <span class="badge bg-primary-lt question-number-badge">Soal #{{ $pertanyaan->urutan }}</span>
                             <span class="badge bg-secondary-lt text-uppercase" style="font-size: 0.65rem;">
                                 {{ str_replace('_', ' ', $pertanyaan->tipe) }}
                             </span>
                         </div>
                         <div class="btn-group">
-                            <x-tabler.button class="btn-icon btn-ghost-primary"
-                                    onclick="$('.static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').removeClass('d-none');" icon="ti ti-edit" />
-                            <x-tabler.button class="btn-icon btn-ghost-danger" onclick="deletePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')" icon="ti ti-trash" />
+                            <button type="button" class="btn btn-sm btn-icon btn-ghost-primary" title="Edit"
+                                    onclick="$('.static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').removeClass('d-none');">
+                                <i class="ti ti-edit icon"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-icon btn-ghost-danger" title="Hapus" onclick="deletePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
+                                <i class="ti ti-trash icon"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="fw-bold text-dark fs-3 mb-1">{{ $pertanyaan->teks_pertanyaan }}</div>
@@ -39,8 +43,8 @@
 
                 {{-- Edit View (Inputs) - Hidden by default --}}
                 <div class="edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }} d-none">
-                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                         <div class="fw-bold text-primary">Edit Soal #{{ $pertanyaan->urutan }}</div>
+                    <div class="d-flex align-items-center justify-content-between mb-2 pb-1 border-bottom">
+                         <div class="fw-bold text-primary edit-view-title">Edit Soal #{{ $pertanyaan->urutan }}</div>
                          <x-tabler.button class="btn-primary" onclick="window.savePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')" icon="ti ti-check" text="Selesai" />
                     </div>
 
@@ -48,7 +52,7 @@
                         <label class="form-label small fw-bold text-muted text-uppercase">Teks Pertanyaan</label>
                         <input type="text" class="form-control pertanyaan-teks-input shadow-none" 
                                value="{{ $pertanyaan->teks_pertanyaan }}" 
-                               onchange="debounceSave({{ $pertanyaan->id }})"
+                               onchange="debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}')"
                                placeholder="Tulis Pertanyaan Disini">
                     </div>
                     
@@ -56,7 +60,7 @@
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-muted text-uppercase">Tipe Soal</label>
                             <select class="form-select pertanyaan-tipe-select shadow-none" 
-                                    onchange="onTypeChange({{ $pertanyaan->id }}, this)">
+                                    onchange="onTypeChange('{{ $pertanyaan->encrypted_pertanyaan_id }}', this)">
                                 @foreach(['Teks_Singkat', 'Esai', 'Angka', 'Pilihan_Ganda', 'Kotak_Centang', 'Dropdown', 'Skala_Linear', 'Tanggal', 'Upload_File'] as $tipe)
                                     <option value="{{ $tipe }}" {{ $pertanyaan->tipe == $tipe ? 'selected' : '' }}>
                                         {{ str_replace('_', ' ', $tipe) }}
@@ -69,7 +73,7 @@
                             <label class="form-check form-switch m-0 py-1">
                                 <input class="form-check-input pertanyaan-wajib-check" type="checkbox" 
                                        {{ $pertanyaan->wajib_diisi ? 'checked' : '' }}
-                                       onchange="debounceSave({{ $pertanyaan->id }})">
+                                       onchange="debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
                                 <span class="form-check-label text-muted">Wajib Diisi</span>
                             </label>
                         </div>
@@ -79,7 +83,7 @@
                     @if($pertanyaan->survei->mode === 'Bercabang')
                     <div class="mb-3 bg-light p-2 rounded">
                         <label class="form-label small fw-bold text-muted text-uppercase mb-1">Setelah soal ini selesai, lanjut ke:</label>
-                        <select class="form-select form-select-sm pertanyaan-next-select shadow-none" onchange="debounceSave({{ $pertanyaan->id }})">
+                        <select class="form-select form-select-sm pertanyaan-next-select shadow-none" onchange="debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
                             <option value="">(Ikuti Urutan / Selesai)</option>
                             @foreach($allPertanyaan->where('id', '!=', $pertanyaan->id) as $p)
                                 <option value="{{ $p->id }}" {{ $pertanyaan->next_pertanyaan_id == $p->id ? 'selected' : '' }}>
@@ -110,7 +114,10 @@
                                             @endforeach
                                         </select>
                                     @endif
-                                    <x-tabler.button class="btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}');" icon="ti ti-x" />
+                                    <button type="button" class="btn btn-sm btn-icon btn-ghost-danger" title="Hapus Opsi"
+                                            onclick="$(this).closest('.opsi-item').remove(); debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}');">
+                                        <i class="ti ti-x icon"></i>
+                                    </button>
                                 </div>
                             @endforeach
                         </div>

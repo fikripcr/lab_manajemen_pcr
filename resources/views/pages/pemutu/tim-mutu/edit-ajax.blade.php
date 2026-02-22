@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     :title="'Set Tim Mutu: ' . $unit->name"
-    :route="route('pemutu.tim-mutu.store-unit', [$periode->periodespmi_id, $unit->orgunit_id])"
+    :route="route('pemutu.tim-mutu.store-unit', [$periode->encrypted_periodespmi_id, $unit->encrypted_org_unit_id])"
     method="POST"
 >
     {{-- Auditee --}}
@@ -8,7 +8,7 @@
         <label class="form-label">Auditee</label>
         <select name="auditee_id" id="auditee_id" class="form-select">
             @if($auditee && $auditee->pegawai)
-                <option value="{{ $auditee->pegawai_id }}" selected>
+                <option value="{{ encryptId($auditee->pegawai_id) }}" selected>
                     {{ $auditee->pegawai->nama }} ({{ $auditee->pegawai->nip ?? '-' }})
                 </option>
             @endif
@@ -16,12 +16,27 @@
         <div class="form-text">Cari pegawai untuk dijadikan Auditee.</div>
     </div>
 
+    {{-- Anggota --}}
+    <div class="mb-3">
+        <label class="form-label">Anggota Tim Mutu</label>
+        <select name="anggota_ids[]" id="anggota_ids" class="form-select" multiple>
+            @foreach($anggota as $member)
+                @if($member->pegawai)
+                    <option value="{{ encryptId($member->pegawai_id) }}" selected>
+                        {{ $member->pegawai->nama }} ({{ $member->pegawai->nip ?? '-' }})
+                    </option>
+                @endif
+            @endforeach
+        </select>
+        <div class="form-text">Anda dapat memilih lebih dari satu anggota.</div>
+    </div>
+
     {{-- Ketua Auditor --}}
     <div class="mb-3">
         <label class="form-label">Ketua Auditor</label>
         <select name="ketua_auditor_id" id="ketua_auditor_id" class="form-select">
             @if($ketuaAuditor && $ketuaAuditor->pegawai)
-                <option value="{{ $ketuaAuditor->pegawai_id }}" selected>
+                <option value="{{ encryptId($ketuaAuditor->pegawai_id) }}" selected>
                     {{ $ketuaAuditor->pegawai->nama }} ({{ $ketuaAuditor->pegawai->nip ?? '-' }})
                 </option>
             @endif
@@ -35,7 +50,7 @@
         <select name="auditor_ids[]" id="auditor_ids" class="form-select" multiple>
             @foreach($auditor as $member)
                 @if($member->pegawai)
-                    <option value="{{ $member->pegawai_id }}" selected>
+                    <option value="{{ encryptId($member->pegawai_id) }}" selected>
                         {{ $member->pegawai->nama }} ({{ $member->pegawai->nip ?? '-' }})
                     </option>
                 @endif
@@ -44,20 +59,7 @@
         <div class="form-text">Pilih satu atau lebih Auditor.</div>
     </div>
 
-    {{-- Anggota --}}
-    <div class="mb-3">
-        <label class="form-label">Anggota Tim Mutu</label>
-        <select name="anggota_ids[]" id="anggota_ids" class="form-select" multiple>
-            @foreach($anggota as $member)
-                @if($member->pegawai)
-                    <option value="{{ $member->pegawai_id }}" selected>
-                        {{ $member->pegawai->nama }} ({{ $member->pegawai->nip ?? '-' }})
-                    </option>
-                @endif
-            @endforeach
-        </select>
-        <div class="form-text">Anda dapat memilih lebih dari satu anggota.</div>
-    </div>
+
 
 </x-tabler.form-modal>
 
