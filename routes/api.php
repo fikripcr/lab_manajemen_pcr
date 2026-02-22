@@ -3,6 +3,9 @@
 use App\Http\Controllers\Api\Sys\ActivityLogController;
 use App\Http\Controllers\Api\Sys\AuthController;
 use App\Http\Controllers\Api\Sys\NotificationController;
+use App\Http\Controllers\Api\Sys\PermissionController;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,13 +45,13 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
     // Permission API routes
     Route::prefix('permissions')->name('api.permissions.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Api\Sys\PermissionController::class, 'index'])->name('index');
-        Route::get('/search', [\App\Http\Controllers\Api\Sys\PermissionController::class, 'search'])->name('search');
+        Route::get('/', [PermissionController::class, 'index'])->name('index');
+        Route::get('/search', [PermissionController::class, 'search'])->name('search');
     });
 
     // Users API routes
-    Route::get('/users/search', function (\Illuminate\Http\Request $request) {
-        $query = \App\Models\User::query();
+    Route::get('/users/search', function (Request $request) {
+        $query = User::query();
         if ($request->filled('q')) {
             $query->where('name', 'like', '%' . $request->q . '%');
         }

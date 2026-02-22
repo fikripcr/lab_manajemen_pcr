@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between align-items-center m-3">
-    <h3 class="mb-0">Riwayat Penugasan (Struktural & Unit)</h3>
+    <h3 class="mb-0">Penugasan (Struktural & Unit)</h3>
     @if(auth()->user()->can('hr.penugasan.create'))
     <x-tabler.button 
         style="primary" 
@@ -43,7 +43,7 @@
                     <x-tabler.button 
                         style="ghost-primary" 
                         class="btn-icon ajax-modal-btn" 
-                        data-url="{{ route('hr.pegawai.penugasan.edit', [$pegawai->encrypted_pegawai_id, $item->riwayatpenugasan_id]) }}" 
+                        data-url="{{ route('hr.pegawai.penugasan.edit', [$pegawai->encrypted_pegawai_id, $item->encrypted_riwayatpenugasan_id]) }}" 
                         data-modal-title="Edit Penugasan"
                         icon="ti ti-edit"
                         title="Edit" />
@@ -51,7 +51,7 @@
                     <x-tabler.button 
                         style="ghost-danger" 
                         class="btn-icon ajax-delete" 
-                        data-url="{{ route('hr.pegawai.penugasan.destroy', [$pegawai->encrypted_pegawai_id, $item->riwayatpenugasan_id]) }}"
+                        data-url="{{ route('hr.pegawai.penugasan.destroy', [$pegawai->encrypted_pegawai_id, $item->encrypted_riwayatpenugasan_id]) }}"
                         icon="ti ti-trash"
                         title="Hapus" />
 

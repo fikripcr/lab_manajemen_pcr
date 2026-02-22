@@ -13,6 +13,7 @@
     </div>
     <div class="card-body">
         @forelse($pegawai->pengembanganDiri as $dev)
+
         <div class="card card-sm mb-3">
             <div class="card-body">
                 <div class="row align-items-center">
@@ -47,7 +48,7 @@
                             <x-tabler.button 
                                 style="ghost-primary" 
                                 class="btn-icon ajax-modal-btn" 
-                                data-url="{{ route('hr.pegawai.pengembangan.edit', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}" 
+                                data-url="{{ route('hr.pegawai.pengembangan.edit', [$pegawai->encrypted_pegawai_id, $dev->encrypted_pengembangandiri_id]) }}" 
                                 data-modal-title="Edit Pengembangan Diri"
                                 icon="ti ti-edit"
                                 title="Edit" />
@@ -55,7 +56,7 @@
                             <x-tabler.button 
                                 style="ghost-danger" 
                                 class="btn-icon ajax-delete" 
-                                data-url="{{ route('hr.pegawai.pengembangan.destroy', [$pegawai->encrypted_pegawai_id, $dev->pengembangandiri_id]) }}"
+                                data-url="{{ route('hr.pegawai.pengembangan.destroy', [$pegawai->encrypted_pegawai_id, $dev->encrypted_pengembangandiri_id]) }}"
                                 icon="ti ti-trash"
                                 title="Hapus" />
                         </div>

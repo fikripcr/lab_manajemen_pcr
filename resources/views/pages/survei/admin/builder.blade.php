@@ -18,7 +18,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Halaman</h3>
                         <div class="card-actions">
-                            <x-tabler.button type="button" class="btn-icon btn-primary" id="btn-add-halaman" title="Tambah Halaman" icon="ti ti-plus" />
+                            <x-tabler.button type="button" class="btn-icon py-1 px-1 bg-primary-lt" id="btn-add-halaman" title="Tambah Halaman" icon="ti ti-plus" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush" id="list-halaman">
@@ -28,7 +28,7 @@
                             <i class="ti ti-grip-vertical text-muted me-2" style="cursor: grab;"></i>
                             <span class="halaman-title text-truncate flex-fill" style="cursor: pointer;" onclick="window.selectHalaman && window.selectHalaman('{{ $halaman->encrypted_halaman_id }}')">{{ $halaman->judul_halaman }}</span>
                             <div class="d-flex align-items-center ms-2">
-                                <span class="badge bg-muted me-1">{{ $halaman->pertanyaan->count() }}</span>
+                                <span class="badge bg-primary-lt me-1">{{ $halaman->pertanyaan->count() }}</span>
                                 <div class="dropdown">
                                     <i class="ti ti-dots-vertical cursor-pointer" data-bs-toggle="dropdown"></i>
                                     <div class="dropdown-menu dropdown-menu-end">
@@ -52,7 +52,7 @@
                 <div id="halaman-content-wrapper">
                     @foreach($survei->halaman as $halaman)
                     <div class="halaman-pane {{ $loop->first ? '' : 'd-none' }}" id="halaman-{{ $halaman->encrypted_halaman_id }}">
-                        <div class="card mb-3">
+                        <div class="card">
                             <div class="card-header">
                                 <div>
                                     <h3 class="card-title mb-0">Pertanyaan di <span class="fw-bold halaman-title-display">{{ $halaman->judul_halaman }}</span></h3>
@@ -64,9 +64,9 @@
                                 </div>
                                 <div class="card-actions">
                                     <div class="dropdown">
-                                        <a href="#" class="badge bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button type="button" class="btn bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="ti ti-plus me-1"></i>Tambah
-                                        </a>
+                                        </button>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             @foreach(['Teks_Singkat' => 'ti-text-size', 'Esai' => 'ti-align-left', 'Angka' => 'ti-123', 'Pilihan_Ganda' => 'ti-circle-dot', 'Kotak_Centang' => 'ti-checkbox', 'Dropdown' => 'ti-select', 'Skala_Linear' => 'ti-adjustments-horizontal', 'Tanggal' => 'ti-calendar', 'Upload_File' => 'ti-upload'] as $tipe => $icon)
                                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); addPertanyaan('{{ $halaman->encrypted_halaman_id }}', '{{ $tipe }}')">
@@ -77,7 +77,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-body p-0">
+                            <div class="card-body">
                                 <div class="pertanyaan-list" data-halaman-id="{{ $halaman->encrypted_halaman_id }}">
                                     @foreach($halaman->pertanyaan as $pertanyaan)
                                         @include('pages.survei.admin.partials.question_card', ['pertanyaan' => $pertanyaan])
@@ -167,9 +167,10 @@
 
     window.updateHalamanCount = function(halamanId) {
         const $listGroupItem = $(`#list-halaman .list-group-item[data-id="${halamanId}"]`);
-        const questionCount = $listGroupItem.closest('.halaman-pane').find('.card-pertanyaan').length;
+        const questionCount = $(`#halaman-${halamanId} .card-pertanyaan`).length;
         $listGroupItem.find('.badge').text(questionCount);
     };
+
 
     window.deletePertanyaan = function(id) {
         Swal.fire({
@@ -194,8 +195,10 @@
                             if ($list.children('.card-pertanyaan').length === 0) {
                                 $list.closest('.card').find('.empty-state').removeClass('d-none');
                             }
+                            renumberPertanyaan($list[0]);
                             updateHalamanCount(currentHalamanId);
                             showSuccessMessage('Pertanyaan dihapus.');
+
                         } else {
                             showErrorMessage('Error', res.message);
                         }
@@ -380,14 +383,15 @@
             const html = `
                 <div class="input-group input-group-sm mb-1 opsi-item border-0">
                     <span class="input-group-text bg-transparent border-end-0"><i class="ti ti-circle"></i></span>
-                    <input type="text" class="form-control opsi-label shadow-none border-start-0" value="Opsi Baru" onchange="debounceSave(${pertanyaanId})">
-                    <button class="btn btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave(${pertanyaanId});">
+                    <input type="text" class="form-control opsi-label shadow-none border-start-0" value="Opsi Baru" onchange="debounceSave('${pertanyaanId}')">
+                    <button class="btn btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave('${pertanyaanId}');">
                         <i class="ti ti-x"></i>
                     </button>
                 </div>`;
             wrapper.append(html);
             window.debounceSave(pertanyaanId);
         };
+
 
         window.savePertanyaan = function(id, keepEdit = false) {
             const card = $(`.card-pertanyaan[data-id="${id}"]`);

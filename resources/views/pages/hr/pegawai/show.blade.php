@@ -30,38 +30,42 @@
 @endif
 
 <div class="row">
-    {{-- Sidebar Navigation --}}
-    <div class="col-md-3 col-lg-2">
-        <div class="card sticky-top">
-            <div class="list-group list-group-flush">
-                <a href="#section-datadiri" class="list-group-item list-group-item-action active" data-section="datadiri">
-                    <i class="ti ti-user me-2"></i> Data Diri
-                </a>
-                <a href="#section-kepegawaian" class="list-group-item list-group-item-action" data-section="kepegawaian">
-                    <i class="ti ti-briefcase me-2"></i> Kepegawaian
-                </a>
-                <a href="#section-pendidikan" class="list-group-item list-group-item-action" data-section="pendidikan">
-                    <i class="ti ti-school me-2"></i> Pendidikan
-                </a>
-                <a href="#section-keluarga" class="list-group-item list-group-item-action" data-section="keluarga">
-                    <i class="ti ti-users me-2"></i> Keluarga
-                </a>
-                <a href="#section-pengembangan" class="list-group-item list-group-item-action" data-section="pengembangan">
-                    <i class="ti ti-certificate me-2"></i> Sertifikat/Pelatihan
-                </a>
-                <a href="#section-files" class="list-group-item list-group-item-action" data-section="files">
-                    <i class="ti ti-file-text me-2"></i> File
-                </a>
+    {{-- Top Navigation (Segmented Control) --}}
+    <div class="col-12 mb-3">
+        <div class="card">
+            <div class="card-body p-2">
+                <div class="nav nav-pills">
+                    <a href="#section-datadiri" class="nav-link active" data-section="datadiri">
+                        <i class="ti ti-user me-2"></i> Data Diri
+                    </a>
+                    <a href="#section-kepegawaian" class="nav-link" data-section="kepegawaian">
+                        <i class="ti ti-briefcase me-2"></i> Kepegawaian
+                    </a>
+                    <a href="#section-pendidikan" class="nav-link" data-section="pendidikan">
+                        <i class="ti ti-school me-2"></i> Pendidikan
+                    </a>
+                    <a href="#section-keluarga" class="nav-link" data-section="keluarga">
+                        <i class="ti ti-users me-2"></i> Keluarga
+                    </a>
+                    <a href="#section-pengembangan" class="nav-link" data-section="pengembangan">
+                        <i class="ti ti-certificate me-2"></i> Sertifikat
+                    </a>
+                    <a href="#section-files" class="nav-link" data-section="files">
+                        <i class="ti ti-file-text me-2"></i> File
+                    </a>
+                    <a href="#section-approval" class="nav-link" data-section="approval">
+                        <i class="ti ti-history me-2"></i> Approval
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
     {{-- Main Content Area --}}
-    <div class="col-md-9 col-lg-10">
+    <div class="col-12">
         
         {{-- Section: Data Diri --}}
         <div id="section-datadiri" class="content-section">
-            <h2 class="mb-3">Data Diri</h2>
             
             @if($pendingChange)
             <div class="card mb-3 border-info">
@@ -179,7 +183,6 @@
 
         {{-- Section: Kepegawaian --}}
         <div id="section-kepegawaian" class="content-section">
-            <h2 class="mb-3">Kepegawaian</h2>
             @include('pages.hr.pegawai.parts._status_pegawai_list')
             @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
             @include('pages.hr.data-diri.penugasan')
@@ -189,26 +192,27 @@
 
         {{-- Section: Pendidikan --}}
         <div id="section-pendidikan" class="content-section">
-            <h2 class="mb-3">Pendidikan</h2>
             @include('pages.hr.pegawai.parts._pendidikan_list')
         </div>
 
         {{-- Section: Keluarga --}}
         <div id="section-keluarga" class="content-section">
-            <h2 class="mb-3">Keluarga</h2>
             @include('pages.hr.pegawai.parts._keluarga_list')
         </div>
 
         {{-- Section: Pengembangan Diri --}}
         <div id="section-pengembangan" class="content-section">
-            <h2 class="mb-3">Sertifikat/Pelatihan</h2>
             @include('pages.hr.pegawai.parts._pengembangan_list')
         </div>
 
         {{-- Section: File Pegawai --}}
         <div id="section-files" class="content-section">
-            <h2 class="mb-3">File</h2>
             @include('pages.hr.pegawai.parts._file_list')
+        </div>
+
+        {{-- Section: Approval History --}}
+        <div id="section-approval" class="content-section">
+            @include('pages.hr.pegawai.parts._approval_list')
         </div>
 
     </div>
@@ -217,49 +221,59 @@
 @push('scripts')
 <script>
 // Tab-like behavior: Show/hide sections
-document.querySelectorAll('.list-group-item-action').forEach(link => {
+document.querySelectorAll('.nav-pills .nav-link').forEach(link => {
     link.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Get target section
-        const targetId = this.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        // Hide all sections
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.style.display = 'none';
-        });
-        
-        // Show target section
-        if (targetSection) {
-            targetSection.style.display = 'block';
+        // Only prevent default if it's a section hash
+        if (this.getAttribute('href').startsWith('#section-')) {
+            e.preventDefault();
             
-            // Scroll to top of content area smoothly
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            // Get target section
+            const targetId = this.getAttribute('href');
+            switchSection(targetId);
+            
+            // Update hash without scrolling
+            history.pushState(null, null, targetId);
         }
-        
-        // Update active state in sidebar
-        document.querySelectorAll('.list-group-item-action').forEach(item => {
-            item.classList.remove('active');
-        });
-        this.classList.add('active');
     });
 });
 
-// Initialize: Show only first section (Data Diri)
-document.addEventListener('DOMContentLoaded', function() {
-    // Hide all sections except first
-    document.querySelectorAll('.content-section').forEach((section, index) => {
-        if (index === 0) {
-            section.style.display = 'block';
+function switchSection(targetId) {
+    const targetSection = document.querySelector(targetId);
+    
+    // Hide all sections
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show target section
+    if (targetSection) {
+        targetSection.style.display = 'block';
+    }
+    
+    // Update active state in nav
+    document.querySelectorAll('.nav-pills .nav-link').forEach(item => {
+        if (item.getAttribute('href') === targetId) {
+            item.classList.add('active');
         } else {
-            section.style.display = 'none';
+            item.classList.remove('active');
         }
     });
+}
+
+// Initialize: Show section based on hash or first section
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#section-') && document.querySelector(hash)) {
+        switchSection(hash);
+    } else {
+        // Show first section by default
+        const firstSectionLink = document.querySelector('.nav-pills .nav-link');
+        if (firstSectionLink) {
+            switchSection(firstSectionLink.getAttribute('href'));
+        }
+    }
 });
+
 </script>
 @endpush
 @endsection

@@ -13,6 +13,7 @@
     </div>
     <div class="card-body">
         @forelse($pegawai->riwayatPendidikan as $edu)
+
         <div class="card card-sm mb-3">
             <div class="card-body">
                 <div class="row align-items-center">
@@ -47,7 +48,7 @@
                             <x-tabler.button 
                                 style="ghost-primary" 
                                 class="btn-icon ajax-modal-btn" 
-                                data-url="{{ route('hr.pegawai.pendidikan.edit', [$pegawai->encrypted_pegawai_id, $edu->riwayatpendidikan_id]) }}" 
+                                data-url="{{ route('hr.pegawai.pendidikan.edit', [$pegawai->encrypted_pegawai_id, $edu->encrypted_riwayatpendidikan_id]) }}" 
                                 data-modal-title="Edit Pendidikan"
                                 icon="ti ti-edit"
                                 title="Edit" />
@@ -55,7 +56,7 @@
                             <x-tabler.button 
                                 style="ghost-danger" 
                                 class="btn-icon ajax-delete" 
-                                data-url="{{ route('hr.pegawai.pendidikan.destroy', [$pegawai->encrypted_pegawai_id, $edu->riwayatpendidikan_id]) }}"
+                                data-url="{{ route('hr.pegawai.pendidikan.destroy', [$pegawai->encrypted_pegawai_id, $edu->encrypted_riwayatpendidikan_id]) }}"
                                 icon="ti ti-trash"
                                 title="Hapus" />
                         </div>

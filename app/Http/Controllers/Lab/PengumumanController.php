@@ -31,32 +31,48 @@ class PengumumanController extends Controller
         return view('pages.lab.pengumuman.index', ['type' => 'berita']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create($type = 'pengumuman')
     {
         $penulisOptions = User::all();
         // Pass a new instance for the view to handle checks like $pengumuman->exists
         $pengumuman = new Pengumuman();
-        return view('pages.lab.pengumuman.create-edit-ajax', compact('type', 'penulisOptions', 'pengumuman'));
+        return view('pages.lab.pengumuman.create-edit', compact('type', 'penulisOptions', 'pengumuman'));
     }
 
-    // ... store method remains the same ...
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(PengumumanRequest $request)
+    {
+        try {
+            $data = $request->validated();
+            if ($request->hasFile('cover')) {
+                $data['cover'] = $request->file('cover');
+            }
+            if ($request->hasFile('attachments')) {
+                $data['attachments'] = $request->file('attachments');
+            }
+
+            $pengumuman    = $this->pengumumanService->createPengumuman($data);
+            $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
+
+            return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil ditambahkan.');
+        } catch (Exception $e) {
+            logError($e);
+            return back()->with('error', 'Gagal menambahkan ' . $request->jenis . ': ' . $e->getMessage())->withInput();
+        }
+    }
 
     public function show(Pengumuman $pengumuman)
     {
         return view('pages.lab.pengumuman.show', compact('pengumuman'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Pengumuman $pengumuman)
     {
         $penulisOptions = User::all();
         $type           = $pengumuman->jenis;
-        return view('pages.lab.pengumuman.create-edit-ajax', compact('pengumuman', 'type', 'penulisOptions'));
+        return view('pages.lab.pengumuman.create-edit', compact('pengumuman', 'type', 'penulisOptions'));
     }
 
     /**
@@ -120,7 +136,7 @@ class PengumumanController extends Controller
             ->editColumn('judul', function ($item) {
                 $encryptedId = encryptId($item->pengumuman_id);
                 $routePrefix = $item->jenis === 'berita' ? 'lab.berita' : 'lab.pengumuman';
-                return '<a href="' . route($routePrefix . '.show', $encryptedId) . '" class="fw-medium">' . e($item->judul) . '</a>';
+                return $item->judul;
             })
             ->addColumn('cover', function ($item) {
                 // Use accessor if available, or empty check
@@ -148,7 +164,6 @@ class PengumumanController extends Controller
 
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route($routePrefix . '.edit', $encryptedId),
-                    'editModal' => true,
                     'viewUrl'   => route($routePrefix . '.show', $encryptedId),
                     'deleteUrl' => route($routePrefix . '.destroy', $encryptedId),
                 ])->render();

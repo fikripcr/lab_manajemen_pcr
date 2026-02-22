@@ -1,4 +1,4 @@
-<div class="card m-0 mb-1 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->encrypted_pertanyaan_id }}"
+<div class="card mb-1 py-2 px-2 m-2 card-pertanyaan border-0 shadow-sm" data-id="{{ $pertanyaan->encrypted_pertanyaan_id }}"
      style="border-left: 4px solid var(--tblr-primary) !important;">
     <div class="card-body py-1 px-3">
         <div class="row align-items-start g-2">
@@ -16,15 +16,16 @@
                                 {{ str_replace('_', ' ', $pertanyaan->tipe) }}
                             </span>
                         </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-icon btn-ghost-primary" title="Edit"
+                        <div class="d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-sm btn-icon btn-ghost-primary border-0" title="Edit"
                                     onclick="$('.static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').removeClass('d-none');">
-                                <i class="ti ti-edit icon"></i>
+                                <i class="ti ti-pencil icon"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-icon btn-ghost-danger" title="Hapus" onclick="deletePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
+                            <button type="button" class="btn btn-sm btn-icon btn-ghost-danger border-0" title="Hapus" onclick="deletePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
                                 <i class="ti ti-trash icon"></i>
                             </button>
                         </div>
+
                     </div>
                     <div class="fw-bold text-dark fs-3 mb-1">{{ $pertanyaan->teks_pertanyaan }}</div>
                     @if($pertanyaan->bantuan_teks)
@@ -85,14 +86,15 @@
                         <label class="form-label small fw-bold text-muted text-uppercase mb-1">Setelah soal ini selesai, lanjut ke:</label>
                         <select class="form-select form-select-sm pertanyaan-next-select shadow-none" onchange="debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
                             <option value="">(Ikuti Urutan / Selesai)</option>
-                            @foreach($allPertanyaan->where('id', '!=', $pertanyaan->id) as $p)
-                                <option value="{{ $p->id }}" {{ $pertanyaan->next_pertanyaan_id == $p->id ? 'selected' : '' }}>
+                            @foreach($allPertanyaan->where('pertanyaan_id', '!=', $pertanyaan->pertanyaan_id) as $p)
+                                <option value="{{ $p->pertanyaan_id }}" {{ $pertanyaan->next_pertanyaan_id == $p->pertanyaan_id ? 'selected' : '' }}>
                                     Soal {{ $p->urutan }}: {{ Str::limit($p->teks_pertanyaan, 40) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                     @endif
+
 
                     <!-- Option Area (Rendered conditionally based on type) -->
                     @if(in_array($pertanyaan->tipe, ['Pilihan_Ganda', 'Kotak_Centang', 'Dropdown']))
@@ -107,13 +109,14 @@
                                     @if($pertanyaan->survei->mode === 'Bercabang' && in_array($pertanyaan->tipe, ['Pilihan_Ganda', 'Dropdown']))
                                         <select class="form-select flex-grow-0 opsi-next-select shadow-none" style="width: 130px;" onchange="debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
                                             <option value="">Lanjut...</option>
-                                            @foreach($allPertanyaan->where('id', '!=', $pertanyaan->id) as $p)
-                                                <option value="{{ $p->encrypted_pertanyaan_id }}" {{ $opsi->next_pertanyaan_id == $p->id ? 'selected' : '' }}>
+                                            @foreach($allPertanyaan->where('pertanyaan_id', '!=', $pertanyaan->pertanyaan_id) as $p)
+                                                <option value="{{ $p->encrypted_pertanyaan_id }}" {{ $opsi->next_pertanyaan_id == $p->pertanyaan_id ? 'selected' : '' }}>
                                                     Lompat: {{ $p->urutan }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     @endif
+
                                     <button type="button" class="btn btn-sm btn-icon btn-ghost-danger" title="Hapus Opsi"
                                             onclick="$(this).closest('.opsi-item').remove(); debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}');">
                                         <i class="ti ti-x icon"></i>

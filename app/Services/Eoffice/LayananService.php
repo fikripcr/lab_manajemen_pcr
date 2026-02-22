@@ -144,7 +144,7 @@ class LayananService
         $user = Auth::user();
 
         // Try to get from Pegawai or Mahasiswa tables
-        $pegawai = Pegawai::where('user_id', $user->id)->first();
+        $pegawai = $user->pegawai;
         if ($pegawai) {
             $layanan->pengusul_nama    = $pegawai->nama;
             $layanan->pengusul_nim     = $pegawai->nip;

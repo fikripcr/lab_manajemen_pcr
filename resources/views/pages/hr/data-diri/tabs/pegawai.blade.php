@@ -6,7 +6,8 @@
 
 @section('content')
 <div class="card">
-    @include('pages.hr.data-diri.tab-nav')
+    @include('pages.hr.data-diri.global-tab-nav')
+
     <div class="card-body p-0">
         <div class="tab-content">
             <div class="tab-pane active show" id="tabs-pegawai">

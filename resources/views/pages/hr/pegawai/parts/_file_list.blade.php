@@ -56,7 +56,7 @@
                                     class="btn-sm" 
                                     icon="ti ti-trash"
                                     text="Hapus"
-                                    onclick="deleteFile('{{ encryptId($file->filepegawai_id) }}')" />
+                                    onclick="deleteFile('{{ $file->encrypted_filepegawai_id }}')" />
                             </div>
                         </div>
                     </div>

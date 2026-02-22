@@ -38,7 +38,7 @@ class FormPlayerService
             ]);
 
             // 2. Prepare Answers
-            $validPertanyaan = $survei->pertanyaan()->pluck('tipe', 'id');
+            $validPertanyaan = $survei->pertanyaan()->pluck('tipe', 'pertanyaan_id');
             $answerRows      = [];
             $now             = now();
 

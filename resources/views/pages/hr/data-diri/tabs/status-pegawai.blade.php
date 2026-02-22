@@ -4,7 +4,7 @@
 @if(isset($pegawai))
     @include('components.hr.profile-header')
 @else
-    <x-tabler.page-header title="Riwayat Status Pegawai" pretitle="HR Management" />
+    <x-tabler.page-header title="Status Pegawai" pretitle="HR Management" />
 @endif
 @endsection
 

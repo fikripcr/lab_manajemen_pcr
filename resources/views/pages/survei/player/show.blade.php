@@ -52,12 +52,11 @@
 
             @foreach($halaman->pertanyaan as $qIndex => $pertanyaan)
             @php $isLinear = ($survei->mode ?? 'Linear') !== 'Bercabang'; @endphp
-                <div class="card mb-1 border-0 shadow-sm pertanyaan-item"
+                <div class="card mb-1 p-2 my-3 border-0 shadow-sm pertanyaan-item"
                      data-wajib="{{ $pertanyaan->wajib_diisi ? '1' : '0' }}"
                      @if(!$isLinear) data-next="{{ $pertanyaan->next_pertanyaan_id }}" @endif
                      id="pertanyaan-{{ $pertanyaan->id }}">
-                    <div class="card-body px-3 py-2">
-                    <label class="form-label fw-semibold mb-1">
+                     <div class="card-body px-3 py-2">
                     <label class="form-label fw-semibold mb-1">
                         <span class="text-muted small me-1">{{ $loop->iteration }}.</span>
                         {{ $pertanyaan->teks_pertanyaan }}
@@ -65,7 +64,7 @@
                             <span class="text-danger ms-1">*</span>
                         @endif
                     </label>
-                    </label>
+
 
                     @if($pertanyaan->bantuan_teks)
                         <p class="text-muted small mb-2">{{ $pertanyaan->bantuan_teks }}</p>
@@ -73,72 +72,73 @@
 
                     {{-- Render input by type --}}
                     @if($pertanyaan->tipe === 'Teks_Singkat')
-                        <input type="text" name="jawaban[{{ $pertanyaan->id }}]"
+                        <input type="text" id="jawaban-{{ $pertanyaan->pertanyaan_id }}" name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
                                class="form-control pertanyaan-input"
-                               data-id="{{ $pertanyaan->id }}"
+                               data-id="{{ $pertanyaan->pertanyaan_id }}"
                                placeholder="Jawaban singkat...">
 
                     @elseif($pertanyaan->tipe === 'Esai')
-                        <textarea name="jawaban[{{ $pertanyaan->id }}]"
+                        <textarea id="jawaban-{{ $pertanyaan->pertanyaan_id }}" name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
                                   class="form-control pertanyaan-input"
-                                  data-id="{{ $pertanyaan->id }}"
+                                  data-id="{{ $pertanyaan->pertanyaan_id }}"
                                   rows="4" placeholder="Tulis jawaban..."></textarea>
 
                     @elseif($pertanyaan->tipe === 'Angka')
-                        <input type="number" name="jawaban[{{ $pertanyaan->id }}]"
+                        <input type="number" id="jawaban-{{ $pertanyaan->pertanyaan_id }}" name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
                                class="form-control pertanyaan-input"
-                               data-id="{{ $pertanyaan->id }}"
+                               data-id="{{ $pertanyaan->pertanyaan_id }}"
                                placeholder="0">
 
                     @elseif($pertanyaan->tipe === 'Tanggal')
-                        <input type="date" name="jawaban[{{ $pertanyaan->id }}]"
+                        <input type="date" id="jawaban-{{ $pertanyaan->pertanyaan_id }}" name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
                                class="form-control pertanyaan-input"
-                               data-id="{{ $pertanyaan->id }}">
+                               data-id="{{ $pertanyaan->pertanyaan_id }}">
 
                     @elseif($pertanyaan->tipe === 'Pilihan_Ganda')
                         <div>
                             @foreach($pertanyaan->opsi as $opsi)
-                            @php $radioId = 'q' . $pertanyaan->id . '_opsi_' . $opsi->id; @endphp
-                            <label for="{{ $radioId }}" class="form-check form-check-lg border rounded px-3 py-2 mb-2 d-flex align-items-center cursor-pointer hover-check">
+                            @php $radioId = 'q' . $pertanyaan->pertanyaan_id . '_opsi_' . $opsi->opsi_id; @endphp
+                            <label for="{{ $radioId }}" class="form-check form-check-lg border rounded px-3 py-2 mb-2 ms-3 d-flex align-items-center cursor-pointer hover-check">
                                 <input type="radio"
                                        id="{{ $radioId }}"
                                        class="form-check-input pertanyaan-input flex-shrink-0"
-                                       name="jawaban[{{ $pertanyaan->id }}]"
-                                       data-id="{{ $pertanyaan->id }}"
+                                       name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
+                                       data-id="{{ $pertanyaan->pertanyaan_id }}"
                                        data-next-opsi="{{ $opsi->next_pertanyaan_id }}"
-                                       value="{{ $opsi->id }}">
+                                       value="{{ $opsi->opsi_id }}">
                                 <span class="form-check-label ms-2">{{ $opsi->label }}</span>
                             </label>
                             @endforeach
                         </div>
 
                     @elseif($pertanyaan->tipe === 'Kotak_Centang')
+                    <small>(Silahkan pilih minimal 1 opsi)</small>
                         <div>
                             @foreach($pertanyaan->opsi as $opsi)
-                            @php $checkId = 'q' . $pertanyaan->id . '_check_' . $loop->index; @endphp
-                            <label for="{{ $checkId }}" class="form-check form-check-lg border rounded px-3 py-2 mb-2 d-flex align-items-center cursor-pointer hover-check">
+                            @php $checkId = 'q' . $pertanyaan->pertanyaan_id . '_check_' . $loop->index; @endphp
+                            <label for="{{ $checkId }}" class="form-check form-check-lg border rounded px-3 py-2 mb-2 ms-3 d-flex align-items-center cursor-pointer hover-check">
                                 <input type="checkbox"
                                        id="{{ $checkId }}"
                                        class="form-check-input pertanyaan-checkbox flex-shrink-0"
-                                       name="jawaban[{{ $pertanyaan->id }}][]"
-                                       data-id="{{ $pertanyaan->id }}"
-                                       value="{{ $opsi->label }}">
+                                       name="jawaban[{{ $pertanyaan->pertanyaan_id }}][]"
+                                       data-id="{{ $pertanyaan->pertanyaan_id }}"
+                                       value="{{ $opsi->opsi_id }}">
                                 <span class="form-check-label ms-2">{{ $opsi->label }}</span>
                             </label>
                             @endforeach
                         </div>
 
                     @elseif($pertanyaan->tipe === 'Dropdown')
-                        <select name="jawaban[{{ $pertanyaan->id }}]"
+                        <select name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
                                 class="form-select pertanyaan-input"
-                                data-id="{{ $pertanyaan->id }}">
+                                data-id="{{ $pertanyaan->pertanyaan_id }}">
                             <option value="">Pilih jawaban...</option>
                             @foreach($pertanyaan->opsi as $opsi)
-                            <option value="{{ $opsi->id }}">{{ $opsi->label }}</option>
+                            <option value="{{ $opsi->opsi_id }}">{{ $opsi->label }}</option>
                             @endforeach
                         </select>
-
                     @elseif($pertanyaan->tipe === 'Skala_Linear')
+
                         @php $config = $pertanyaan->config_json ?? ['min' => 1, 'max' => 5, 'label_min' => '', 'label_max' => '']; @endphp
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-2">
                             @if($config['label_min'] ?? false)
@@ -146,13 +146,13 @@
                             @endif
                             <div class="d-flex gap-2 flex-wrap">
                                 @for($i = ($config['min'] ?? 1); $i <= ($config['max'] ?? 5); $i++)
-                                @php $scaleId = 'q' . $pertanyaan->id . '_scale_' . $i; @endphp
+                                @php $scaleId = 'q' . $pertanyaan->pertanyaan_id . '_scale_' . $i; @endphp
                                 <label class="form-selectgroup-item mb-0" for="{{ $scaleId }}">
                                     <input type="radio"
                                            id="{{ $scaleId }}"
                                            class="form-selectgroup-input pertanyaan-input"
-                                           name="jawaban[{{ $pertanyaan->id }}]"
-                                           data-id="{{ $pertanyaan->id }}"
+                                           name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
+                                           data-id="{{ $pertanyaan->pertanyaan_id }}"
                                            value="{{ $i }}">
                                     <span class="form-selectgroup-label">{{ $i }}</span>
                                 </label>
@@ -164,18 +164,18 @@
                         </div>
 
                     @elseif($pertanyaan->tipe === 'Rating_Bintang')
-                        <div class="d-flex gap-2 mt-2" id="rating-{{ $pertanyaan->id }}">
+                        <div class="d-flex gap-2 mt-2" id="rating-{{ $pertanyaan->pertanyaan_id }}">
                             @for($i = 1; $i <= 5; $i++)
                             <label class="cursor-pointer">
                                 <input type="radio" class="d-none pertanyaan-input" style="display:none"
-                                       name="jawaban[{{ $pertanyaan->id }}]"
-                                       data-id="{{ $pertanyaan->id }}" value="{{ $i }}">
+                                       name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
+                                       data-id="{{ $pertanyaan->pertanyaan_id }}" value="{{ $i }}">
                                 <i class="ti ti-star fs-2 text-muted rating-star" data-value="{{ $i }}"></i>
                             </label>
                             @endfor
                         </div>
-
                     @else
+
                         <p class="text-muted small">Tipe pertanyaan belum didukung.</p>
                     @endif
                 </div>

@@ -4,6 +4,7 @@ namespace App\Models\Shared;
 use App\Models\Hr\FilePegawai;
 use App\Models\Hr\Keluarga;
 use App\Models\Hr\PengembanganDiri;
+use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
 use App\Models\Hr\RiwayatInpassing;
 use App\Models\Hr\RiwayatJabFungsional;
@@ -158,6 +159,47 @@ class Pegawai extends Model
     public function pengembanganDiri()
     {
         return $this->hasMany(PengembanganDiri::class, 'pegawai_id', 'pegawai_id')->orderBy('tgl_mulai', 'desc');
+    }
+
+    public function approvedPendidikan()
+    {
+        return $this->hasMany(RiwayatPendidikan::class, 'pegawai_id', 'pegawai_id')
+            ->whereHas('approval', function ($q) {
+                $q->where('status', 'Approved');
+            })->orderBy('tgl_ijazah', 'desc');
+    }
+
+    public function approvedKeluarga()
+    {
+        return $this->hasMany(Keluarga::class, 'pegawai_id', 'pegawai_id')
+            ->whereHas('approval', function ($q) {
+                $q->where('status', 'Approved');
+            });
+    }
+
+    public function approvedPengembangan()
+    {
+        return $this->hasMany(PengembanganDiri::class, 'pegawai_id', 'pegawai_id')
+            ->whereHas('approval', function ($q) {
+                $q->where('status', 'Approved');
+            })->orderBy('tgl_mulai', 'desc');
+    }
+
+    public function allApprovals()
+    {
+        return RiwayatApproval::whereHasMorph('subject', [
+            RiwayatDataDiri::class,
+            RiwayatPendidikan::class,
+            Keluarga::class,
+            PengembanganDiri::class,
+            RiwayatStatPegawai::class,
+            RiwayatStatAktifitas::class,
+            RiwayatJabFungsional::class,
+            RiwayatJabStruktural::class,
+            RiwayatInpassing::class,
+        ], function ($q) {
+            $q->where('pegawai_id', $this->pegawai_id);
+        })->latest();
     }
 
     public function historyStatPegawai()

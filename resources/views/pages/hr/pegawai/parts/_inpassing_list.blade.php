@@ -86,7 +86,7 @@
                                     <x-tabler.button 
                                         style="ghost-primary" 
                                         class="btn-sm ajax-modal-btn" 
-                                        data-url="{{ route('hr.pegawai.inpassing.edit', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->riwayatinpassing_id]) }}" 
+                                        data-url="{{ route('hr.pegawai.inpassing.edit', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->encrypted_riwayatinpassing_id]) }}" 
                                         data-modal-title="Edit Inpassing"
                                         icon="ti ti-edit"
                                         text="Edit" />
@@ -94,7 +94,7 @@
                                     <x-tabler.button 
                                         style="ghost-danger" 
                                         class="btn-sm ajax-delete" 
-                                        data-url="{{ route('hr.pegawai.inpassing.destroy', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->riwayatinpassing_id]) }}" 
+                                        data-url="{{ route('hr.pegawai.inpassing.destroy', ['pegawai' => $pegawai->encrypted_pegawai_id, 'inpassing' => $item->encrypted_riwayatinpassing_id]) }}" 
                                         icon="ti ti-trash"
                                         text="Hapus" />
                                 </div>

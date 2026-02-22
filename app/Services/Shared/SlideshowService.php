@@ -14,7 +14,8 @@ class SlideshowService
     public function createSlideshow(array $data): Slideshow
     {
         return DB::transaction(function () use ($data) {
-            $slideshow = Slideshow::create($data);
+            $data['image_url'] = $data['image_url'] ?? 'slideshow_image'; // Default value to satisfy DB constraint
+            $slideshow         = Slideshow::create($data);
 
             if (isset($data['slideshow_image'])) {
                 $slideshow->addMedia($data['slideshow_image'])

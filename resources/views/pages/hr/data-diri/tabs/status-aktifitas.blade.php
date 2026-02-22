@@ -4,7 +4,7 @@
 @if(isset($pegawai))
     @include('components.hr.profile-header')
 @else
-    <x-tabler.page-header title="Riwayat Status Aktifitas" pretitle="HR Management" />
+    <x-tabler.page-header title="Status Aktifitas" pretitle="HR Management" />
 @endif
 @endsection
 

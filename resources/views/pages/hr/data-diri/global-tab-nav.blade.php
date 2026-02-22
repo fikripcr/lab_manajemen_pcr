@@ -25,14 +25,14 @@
             <a href="{{ isset($pegawai) ? route('hr.pegawai.status-pegawai.index', $pegawai->encrypted_pegawai_id) : route('hr.status-pegawai.index') }}" 
                class="nav-link {{ Route::is('hr.pegawai.status-pegawai.*') || Route::is('hr.status-pegawai.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-id-badge-2 me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 12h3v4h-3z" /><path d="M10 6h-6a1 1 0 0 0 -1 1v12a1 1 0 0 0 1 1h16a1 1 0 0 0 1 -1v-12a1 1 0 0 0 -1 -1h-6" /><path d="M10 3m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v3a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" /><path d="M14 16h2" /><path d="M14 12h2" /></svg>
-                Riwayat Status Pegawai
+                Status Pegawai
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ isset($pegawai) ? route('hr.pegawai.status-aktifitas.index', $pegawai->encrypted_pegawai_id) : route('hr.status-aktifitas.index') }}" 
                class="nav-link {{ Route::is('hr.pegawai.status-aktifitas.*') || Route::is('hr.status-aktifitas.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-activity me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12h4l3 8l4 -16l3 8h4" /></svg>
-                Riwayat Status Aktifitas
+                Status Aktifitas
             </a>
         </li>
         <li class="nav-item">
@@ -50,11 +50,11 @@
             </a>
         </li>
         <li class="nav-item">
-            {{-- User requested Struktural -> Riwayat Penugasan --}}
+            {{-- User requested Struktural -> Penugasan --}}
             <a href="{{ isset($pegawai) ? route('hr.pegawai.penugasan.index', $pegawai->encrypted_pegawai_id) : route('hr.penugasan.index') }}" 
                class="nav-link {{ Route::is('hr.pegawai.penugasan.*') || Route::is('hr.penugasan.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-building-skyscraper me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M5 21v-14l8 -4l8 4v14" /><path d="M19 21v-8l-6 -6l-6 6v8" /></svg>
-                Riwayat Penugasan & Struktural
+                Penugasan & Struktural
             </a>
         </li>
         <li class="nav-item">
@@ -64,5 +64,15 @@
                 Pengembangan Diri
             </a>
         </li>
+        @if(isset($pegawai))
+        <li class="nav-item">
+            <a href="{{ route('hr.pegawai.pengajuan.index', $pegawai->encrypted_pegawai_id) }}" 
+               class="nav-link {{ Route::is('hr.pegawai.pengajuan.*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-history me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                Riwayat Pengajuan
+            </a>
+        </li>
+        @endif
     </ul>
 </div>
+

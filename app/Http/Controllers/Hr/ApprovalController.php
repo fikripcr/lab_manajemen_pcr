@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hr\RiwayatApproval;
+use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,7 +18,8 @@ class ApprovalController extends Controller
     {
         if ($request->ajax()) {
             // Fetch pending approvals
-            $query = RiwayatApproval::with(['pegawai'])
+            $query = RiwayatApproval::with(['subject'])
+
                 ->where('status', 'Pending')
                 ->latest();
 
@@ -67,5 +69,11 @@ class ApprovalController extends Controller
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
+    }
+
+    public function employeeHistory(Pegawai $pegawai)
+    {
+        $approvals = $pegawai->allApprovals()->paginate(10);
+        return view('pages.hr.data-diri.tabs.pengajuan', compact('pegawai', 'approvals'));
     }
 }

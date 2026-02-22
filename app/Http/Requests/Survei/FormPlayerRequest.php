@@ -27,7 +27,7 @@ class FormPlayerRequest extends FormRequest
             ->firstOrFail();
 
         $rules         = ['jawaban' => 'required|array'];
-        $pertanyaanMap = $survei->pertanyaan()->pluck('tipe', 'id');
+        $pertanyaanMap = $survei->pertanyaan()->pluck('tipe', 'pertanyaan_id');
 
         foreach ($pertanyaanMap as $id => $tipe) {
             $pertanyaan = $survei->pertanyaan()->find($id);

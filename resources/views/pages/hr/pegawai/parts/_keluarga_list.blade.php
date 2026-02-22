@@ -13,6 +13,7 @@
     </div>
     <div class="card-body">
         @forelse($pegawai->keluarga as $kel)
+
         <div class="row row-cards">
             <div class="col-md-6 col-lg-4">
                 <div class="card card-sm">
@@ -51,7 +52,7 @@
                                 <x-tabler.button 
                                     style="ghost-primary" 
                                     class="btn-sm ajax-modal-btn" 
-                                    data-url="{{ route('hr.pegawai.keluarga.edit', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}" 
+                                    data-url="{{ route('hr.pegawai.keluarga.edit', [$pegawai->encrypted_pegawai_id, $kel->encrypted_keluarga_id]) }}" 
                                     data-modal-title="Edit Data Keluarga"
                                     icon="ti ti-edit"
                                     text="Edit" />
@@ -59,7 +60,7 @@
                                 <x-tabler.button 
                                     style="ghost-danger" 
                                     class="btn-sm ajax-delete" 
-                                    data-url="{{ route('hr.pegawai.keluarga.destroy', [$pegawai->encrypted_pegawai_id, $kel->keluarga_id]) }}"
+                                    data-url="{{ route('hr.pegawai.keluarga.destroy', [$pegawai->encrypted_pegawai_id, $kel->encrypted_keluarga_id]) }}"
                                     icon="ti ti-trash"
                                     text="Hapus" />
                             </div>

@@ -3,7 +3,6 @@
 use App\Http\Controllers\Hr\ApprovalController;
 use App\Http\Controllers\Hr\AttDeviceController;
 use App\Http\Controllers\Hr\DashboardController;
-use App\Http\Controllers\Hr\FilePegawaiController;
 use App\Http\Controllers\Hr\IndisiplinerController;
 use App\Http\Controllers\Hr\JabatanFungsionalController;
 use App\Http\Controllers\Hr\JenisIndisiplinerController;
@@ -113,6 +112,9 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::put('penugasan/{penugasan}', [RiwayatPenugasanController::class, 'update'])->name('penugasan.update');
         Route::delete('penugasan/{penugasan}', [RiwayatPenugasanController::class, 'destroy'])->name('penugasan.destroy');
         Route::post('penugasan/{penugasan}/end', [RiwayatPenugasanController::class, 'endAssignment'])->name('penugasan.end');
+
+        // Riwayat Pengajuan (Approval History)
+        Route::get('pengajuan', [ApprovalController::class, 'employeeHistory'])->name('pengajuan.index');
 
         // File Pegawai
         Route::get('files/data', [FilePegawaiController::class, 'index'])->name('files.data');
