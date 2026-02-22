@@ -31,24 +31,14 @@
         @if($isEdit) @method('PUT') @endif
         <input type="hidden" name="redirect_to" value="{{ old('redirect_to', request('redirect_to', url()->previous())) }}">
         
-        <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
-                    <li class="nav-item">
-                        <a href="#tabs-info" class="nav-link active" data-bs-toggle="tab"><i class="ti ti-info-circle me-2"></i>Informasi Umum</a>
-                    </li>
-                    <li class="nav-item" id="nav-performa" style="{{ $indikator->type === 'performa' && $isEdit ? '' : 'display: none;' }}">
-                        <a href="#tabs-performa" class="nav-link" data-bs-toggle="tab"><i class="ti ti-users me-2"></i>Penugasan KPI (Performa)</a>
-                    </li>
-                    <li class="nav-item" id="nav-target" style="{{ $indikator->type === 'standar' && $isEdit ? '' : 'display: none;' }}">
-                        <a href="#tabs-target" class="nav-link" data-bs-toggle="tab"><i class="ti ti-target me-2"></i>Target & Unit Kerja</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body">
-                <div class="tab-content">
-                    <!-- TAB 1: INFORMASI UMUM -->
-                    <div class="tab-pane active show" id="tabs-info">
+        <div class="row row-cards">
+            <!-- INFORMASI UMUM (KIRI) -->
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="ti ti-info-circle me-2"></i>Informasi Umum</h3>
+                    </div>
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
@@ -131,10 +121,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- TAB: HIRARKI -->
-                    <!-- TAB: KPI ASSIGN -->
-                    <div class="tab-pane" id="tabs-performa">
+            <!-- ASSIGNMENTS (KANAN) -->
+            <div class="col-lg-5">
+                <!-- CARD: KPI ASSIGN -->
+                <div class="card" id="card-performa" style="{{ $indikator->type === 'performa' && $isEdit ? '' : 'display: none;' }}">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="ti ti-users me-2"></i>Penugasan KPI (Performa)</h3>
+                    </div>
+                    <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-12">
                                 <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Standar Terkait (Induk)" type="select2">
@@ -153,7 +150,7 @@
                             <div class="col-md-12">
                                 <label class="form-label required">Daftar Sasaran Kinerja Pegawai</label>
                                 <div class="table-responsive border rounded mb-3">
-                                    <table class="table table-vcenter table-bordered" id="kpi-repeater-table">
+                                    <table class="table table-vcenter border-bottom" id="kpi-repeater-table">
                                         <thead>
                                             <tr>
                                                 <th width="50%">Penanggung Jawab <span class="text-danger">*</span></th>
@@ -191,15 +188,20 @@
                                     </table>
                                 </div>
                                 
-                                <button type="button" class="btn btn-outline-danger btn-sm" id="btn-add-kpi">
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100" id="btn-add-kpi">
                                     <i class="ti ti-plus me-1"></i> Tambah Sasaran
                                 </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- TAB 2: TARGET & UNIT -->
-                    <div class="tab-pane" id="tabs-target">
+                <!-- CARD: TARGET & UNIT -->
+                <div class="card" id="card-target" style="{{ $indikator->type === 'standar' && $isEdit ? '' : 'display: none;' }}">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="ti ti-target me-2"></i>Target & Unit Kerja</h3>
+                    </div>
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label required">Unit Kerja Penanggung Jawab & Target</label>
@@ -256,9 +258,13 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-footer text-end">
-                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" />
+
+                <!-- Submit Button moved to bottom of right col or as a separate card -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-device-floppy" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" />
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -266,8 +272,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const typeSelector = document.getElementById('type-selector');
-            const navPerforma = document.getElementById('nav-performa');
-            const navTarget = document.getElementById('nav-target');
+            const cardPerforma = document.getElementById('card-performa');
+            const cardTarget = document.getElementById('card-target');
             const parentIdSelector = document.getElementById('parent-id-selector');
 
             function getCurrentType() {
@@ -279,21 +285,19 @@
 
             function toggleTabs() {
                 const type = getCurrentType();
-                if (!navPerforma || !navTarget || !parentIdSelector) return;
+                if (!cardPerforma || !cardTarget || !parentIdSelector) return;
+                
                 if (type === 'performa') {
-                    // Performa: show performa repeater, hide target
-                    navPerforma.style.display = 'block';
-                    navTarget.style.display = 'none';
+                    cardPerforma.style.display = 'block';
+                    cardTarget.style.display = 'none';
                     parentIdSelector.setAttribute('required', 'required');
                 } else if (type === 'standar') {
-                    // Standar: show target & unit, hide performa repeater
-                    navPerforma.style.display = 'none';
-                    navTarget.style.display = 'block';
+                    cardPerforma.style.display = 'none';
+                    cardTarget.style.display = 'block';
                     parentIdSelector.removeAttribute('required');
                 } else {
-                    // Renop (and any other): hide both tabs
-                    navPerforma.style.display = 'none';
-                    navTarget.style.display = 'none';
+                    cardPerforma.style.display = 'none';
+                    cardTarget.style.display = 'none';
                     parentIdSelector.removeAttribute('required');
                 }
             }
