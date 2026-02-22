@@ -42,7 +42,7 @@
                 <div class="row row-cards mb-3">
                     <div class="col-md-6">
                         {{-- INFORMASI RAPAT --}}
-                        <div class="card h-100">
+                        <div class="card card-border h-100">
                             <div class="card-header">
                                 <h3 class="card-title">Informasi Meeting</h3>
                                 <div class="card-actions">
@@ -462,6 +462,5 @@
             }, 500);
         }
     });
-});
 </script>
 @endpush

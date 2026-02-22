@@ -62,18 +62,18 @@ class EventController extends Controller
         }
     }
 
-    public function show(Event $Kegiatan)
+    public function show(Event $event)
     {
         $pageTitle = 'Detail Kegiatan';
-        $Kegiatan->load(['pic', 'tamus', 'teams.memberable']);
-        return view('pages.event.kegiatans.show', compact('pageTitle', 'Kegiatan'));
+        $event->load(['pic', 'tamus', 'teams.memberable']);
+        return view('pages.event.kegiatans.show', compact('pageTitle', 'event'));
     }
 
-    public function edit(Event $Kegiatan)
+    public function edit(Event $event)
     {
         $pageTitle = 'Edit Kegiatan';
         $users     = User::all();
-        return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'Kegiatan'));
+        return view('pages.event.kegiatans.create-edit', compact('pageTitle', 'users', 'event'));
     }
 
     public function update(EventRequest $request, Event $event)

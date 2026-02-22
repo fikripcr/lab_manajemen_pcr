@@ -1,3 +1,8 @@
+@php
+    $isRenopPoint = $type === 'poin' && strtolower(trim($item->dokumen->jenis)) === 'renop';
+    $showIndikatorSection = $type === 'poin' && ($item->is_hasilkan_indikator || $isRenopPoint);
+@endphp
+
 <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -18,13 +23,20 @@
                 <x-tabler.button class="ajax-modal-btn" text="Edit" icon="ti ti-edit" data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}" data-modal-title="Ubah Dokumen" />
                 <x-tabler.button text="Hapus" color="danger" icon="ti ti-trash" class="ajax-delete" data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}" data-title="Hapus Dokumen ini?" />
             @elseif($type === 'poin')
-                <x-tabler.button class="btn-primary ajax-modal-btn" href="#"
-                    data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->dok_id]) }}"
-                    data-modal-title="Tambah Dokumen Turunan" icon="ti ti-plus" text="Tambah Turunan Dokumen" />
-                @if($item->is_hasilkan_indikator)
-                    <x-tabler.button class="btn-success ajax-modal-btn" href="#"
-                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id]) }}"
-                        data-modal-title="Tambah Indikator" icon="ti ti-plus" text="Tambah Indikator" />
+                @if(!$isRenopPoint)
+                    <x-tabler.button class="btn-primary ajax-modal-btn" href="#"
+                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->dok_id]) }}"
+                        data-modal-title="Tambah Dokumen Turunan" icon="ti ti-plus" text="Tambah Turunan Dokumen" />
+                @endif
+                @if($showIndikatorSection)
+                    @if($isRenopPoint)
+                        <x-tabler.button class="btn-success" href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
+                            icon="ti ti-plus" text="Tambah Indikator" />
+                    @else
+                        <x-tabler.button class="btn-success ajax-modal-btn" href="#"
+                            data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id, 'is_renop_context' => 0]) }}"
+                            data-modal-title="Tambah Indikator" icon="ti ti-plus" text="Tambah Indikator" />
+                    @endif
                 @endif
             @endif
         </div>
@@ -67,11 +79,19 @@
     @elseif($type === 'poin')
         <div class="hr-text">Komponen Terkait Poin Ini</div>
 
-        @if($item->is_hasilkan_indikator)
+        @if($showIndikatorSection)
             <div class="card bg-transparent shadow-none border mb-3">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">Indikator Terlampir</h3>
-                    <x-tabler.button class="ajax-modal-btn" text="Tambah Indikator" icon="ti ti-plus" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id]) }}" data-modal-title="Tambah Indikator" size="sm" />
+                    <h3 class="card-title">
+                        {{ $isRenopPoint ? 'Daftar Indikator Renop' : 'Indikator Terlampir' }} 
+                        <span class="badge bg-muted-lt ms-2">{{ $item->indikators->count() }}</span>
+                    </h3>
+                    @if($isRenopPoint)
+                        <x-tabler.button class="btn-danger" href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
+                            icon="ti ti-plus" text="Tambah Indikator" size="sm" />
+                    @else
+                        <x-tabler.button class="ajax-modal-btn" text="Tambah Indikator" icon="ti ti-plus" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id, 'is_renop_context' => 0]) }}" data-modal-title="Tambah Indikator" size="sm" />
+                    @endif
                 </div>
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped dataTable" id="indikators-table" data-url="{{ route('pemutu.dokumen-spmi.children-data', ['type' => 'poin_indikator', 'id' => $item->encrypted_doksub_id]) }}">
@@ -79,7 +99,7 @@
                             <tr>
                                 <th width="50">No</th>
                                 <th>Nama Indikator</th>
-                                <th>Target</th>
+                                <th>Unit & Target</th>
                                 <th width="100">Aksi</th>
                             </tr>
                         </thead>
@@ -89,6 +109,7 @@
             </div>
         @endif
 
+        @if(!$isRenopPoint)
         {{-- Always show child dokumens relation if exist or to add them --}}
         <div class="card bg-transparent shadow-none border">
             <div class="card-header border-0 d-flex justify-content-between align-items-center">
@@ -109,6 +130,7 @@
                 </table>
             </div>
         </div>
+        @endif
     @endif
 </div>
 
@@ -137,7 +159,7 @@
                     columns: [
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
                         { data: 'indikator', name: 'indikator' },
-                        { data: 'keterangan', name: 'keterangan' },
+                        { data: 'unit_target', name: 'unit_target', orderable: false, searchable: false },
                         { data: 'action', name: 'action', orderable: false, searchable: false }
                     ]
                 });

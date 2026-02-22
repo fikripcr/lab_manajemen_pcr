@@ -53,9 +53,9 @@ class DokumenSpmiController extends Controller
                 $item        = Dokumen::findOrFail(decryptIdIfEncrypted($id));
                 $parentJenis = strtolower(trim($item->jenis));
                 $childLabel  = match ($parentJenis) {
-                    'visi', 'misi', 'rjp', 'renstra' => 'Poin',
-                    'renop', 'standar' => 'Butir Standar',
-                    default => 'Turunan'
+                    'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin',
+                    'standar' => 'Butir Standar',
+                    default   => 'Turunan'
                 };
                 $isDokSubBased = in_array($parentJenis, ['visi', 'misi', 'rjp', 'renstra', 'renop', 'standar', 'formulir', 'manual_prosedur']);
                 return view('pages.pemutu.dokumens._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased'));
@@ -299,13 +299,21 @@ class DokumenSpmiController extends Controller
                     ->make(true);
             } elseif ($type === 'poin_indikator') {
                 // Get indikator items for this doksub
-                $query = Indikator::whereHas('dokSubs', function ($q) use ($decryptedId) {
+                $query = Indikator::with('orgUnits')->whereHas('dokSubs', function ($q) use ($decryptedId) {
                     $q->where('pemutu_dok_sub.doksub_id', $decryptedId);
                 });
                 return DataTables::of($query)
                     ->addIndexColumn()
-                    ->addColumn('indikator', function ($row) {return '<div class="fw-bold">' . $row->indikator . '</div><small class="text-muted">' . $row->no_indikator . '</small>';})
-                    ->addColumn('keterangan', function ($row) {return strip_tags($row->keterangan ?: '-');})
+                    ->addColumn('indikator', function ($row) {return '<div class="fw-bold">' . e($row->indikator) . '</div><small class="text-muted">' . e($row->no_indikator) . '</small>';})
+                    ->addColumn('unit_target', function ($row) {
+                        if ($row->orgUnits->isEmpty()) {
+                            return '<span class="text-muted">-</span>';
+                        }
+                        return $row->orgUnits->map(function ($unit) {
+                            $target = $unit->pivot->target ?? '-';
+                            return '<div class="d-flex justify-content-between gap-2"><span class="text-muted small">' . e($unit->name) . '</span><span class="badge bg-blue-lt">' . e($target) . '</span></div>';
+                        })->implode('');
+                    })
                     ->addColumn('action', function ($row) {
                         return view('components.tabler.datatables-actions', [
                             'editUrl'   => route('pemutu.dokumen-spmi.edit', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]),
@@ -313,7 +321,7 @@ class DokumenSpmiController extends Controller
                             'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]),
                         ])->render();
                     })
-                    ->rawColumns(['indikator', 'keterangan', 'action'])
+                    ->rawColumns(['indikator', 'unit_target', 'action'])
                     ->make(true);
             }
 

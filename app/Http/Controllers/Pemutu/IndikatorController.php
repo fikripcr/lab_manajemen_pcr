@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\IndikatorRequest;
+use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
@@ -101,33 +102,51 @@ class IndikatorController extends Controller
 
         $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
 
-        // Initialize selected doksubs as empty array
+        $isRenopContext  = $request->get('is_renop_context') == 1;
+        $parentDok       = null;
         $selectedDokSubs = [];
 
-        // Handle Contextual Pre-selection
-        $parentDok = null;
-        if ($request->has('parent_dok_id')) {
-            $parentDok = Dokumen::with('dokSubs')->find($request->parent_dok_id);
-            if ($parentDok) {
-                // Determine suggested type
-                $suggestedType = match ($parentDok->jenis) {
-                    'renop'   => 'renop',
-                    'standar' => 'standar',
-                    default   => 'renop'
-                };
+        if ($request->has('parent_dok_id') || $request->has('parent_doksub_id')) {
+            $parentDokId = $request->get('parent_dok_id') ? decryptIdIfEncrypted($request->get('parent_dok_id')) : null;
+            $parentDok   = $parentDokId ? Dokumen::with('dokSubs')->find($parentDokId) : null;
 
-                // Pre-select doksubs from parent document
-                $selectedDokSubs = $parentDok->dokSubs->pluck('doksub_id')->toArray();
+            if ($request->has('parent_doksub_id')) {
+                $selectedDokSubs = [$request->get('parent_doksub_id')];
+                $doksubId        = decryptIdIfEncrypted($request->get('parent_doksub_id'));
+
+                if (! $parentDok) {
+                    $ds        = DokSub::find($doksubId);
+                    $parentDok = $ds ? $ds->dokumen : null;
+                }
+            } elseif ($parentDok) {
+                // For standar dokumens, auto-select all their dokSubs.
+                // For renop, dokSubs are NOT auto-selected at document level —
+                // the user must enter from a specific Poin (which passes parent_doksub_id).
+                if (strtolower(trim($parentDok->jenis)) !== 'renop') {
+                    $selectedDokSubs = $parentDok->dokSubs->map(fn($ds) => $ds->encrypted_doksub_id)->toArray();
+                }
+            }
+
+            if ($parentDok || ! empty($selectedDokSubs)) {
+                $suggestedType = ($parentDok && strtolower(trim($parentDok->jenis)) === 'standar') ? 'standar' : 'renop';
 
                 $request->merge([
                     'type'       => $request->get('type', $suggestedType),
                     'doksub_ids' => $request->get('doksub_ids', $selectedDokSubs),
                 ]);
+
+                // Ensure is_renop_context is set if the parent is renop
+                if ($parentDok && strtolower(trim($parentDok->jenis)) === 'renop') {
+                    $isRenopContext = true;
+                }
             }
         }
 
         $indikator = new Indikator(); // Empty for create
-        return view('pages.pemutu.indikators.create-edit-ajax', compact('labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais', 'parentDok', 'selectedDokSubs', 'indikator'));
+        return view('pages.pemutu.indikators.create-edit-ajax', compact(
+            'labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais',
+            'parentDok', 'selectedDokSubs', 'indikator', 'isRenopContext'
+        ));
     }
 
     public function store(IndikatorRequest $request)
@@ -173,8 +192,8 @@ class IndikatorController extends Controller
 
             logActivity('pemutu', "Menambah indikator baru: {$indikator->no_indikator}");
 
-            $redirectUrl = route('pemutu.indikators.index');
-            if ($request->has('parent_dok_id')) {
+            $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.index'));
+            if (! $request->has('redirect_to') && $request->has('parent_dok_id')) {
                 $redirectUrl = route('pemutu.dokumens.show-renop-with-indicators', $request->parent_dok_id);
             }
 
@@ -255,7 +274,7 @@ class IndikatorController extends Controller
 
             logActivity('pemutu', "Memperbarui indikator: {$indikator->no_indikator}");
 
-            $redirectUrl = route('pemutu.indikators.show', $indikator->encrypted_indikator_id);
+            $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.show', $indikator->encrypted_indikator_id));
 
             return jsonSuccess('Indikator updated successfully.', $redirectUrl);
         } catch (Exception $e) {

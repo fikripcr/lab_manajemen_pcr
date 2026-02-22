@@ -150,11 +150,7 @@ class DokumenController extends Controller
         // 1. Determine labels and types
         $parentJenis = strtolower(trim($dokumen->jenis));
         $childLabel  = match ($parentJenis) {
-            'visi'    => 'Poin',
-            'misi'    => 'Poin',
-            'rjp'     => 'Poin',
-            'renstra' => 'Poin',
-            'renop'   => 'Butir Standar',
+            'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin',
             'standar' => 'Butir Standar',
             default   => 'Turunan'
         };

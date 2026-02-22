@@ -25,11 +25,7 @@ class DokSubController extends Controller
 
         // Determine Child Type based on Parent Dokumen Type
         $childLabel = match ($parentJenis) {
-            'visi'    => 'Poin',
-            'misi'    => 'Poin',
-            'rjp'     => 'Poin',
-            'renstra' => 'Poin',
-            'renop'   => 'Butir Standar',
+            'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin',
             'standar' => 'Butir Standar',
             default   => 'Turunan'
         };

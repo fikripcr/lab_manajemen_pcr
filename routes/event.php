@@ -31,18 +31,39 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
     Route::get('rapat/{rapat}/entitas', [App\Http\Controllers\Event\RapatEntitasController::class, 'index'])->name('rapat.entitas.index');
     Route::get('rapat/{rapat}/entitas/data', [App\Http\Controllers\Event\RapatEntitasController::class, 'data'])->name('rapat.entitas.data');
 
+    // --- Global Buku Tamu (All Events) ---
+    Route::get('tamus', [App\Http\Controllers\Event\EventTamuController::class, 'index'])->name('tamus.index');
+    Route::get('tamus/data', [App\Http\Controllers\Event\EventTamuController::class, 'paginate'])->name('tamus.data');
+    Route::get('tamus/create', [App\Http\Controllers\Event\EventTamuController::class, 'create'])->name('tamus.create');
+    Route::post('tamus', [App\Http\Controllers\Event\EventTamuController::class, 'store'])->name('tamus.store');
+    Route::get('tamus/{tamu}/edit', [App\Http\Controllers\Event\EventTamuController::class, 'edit'])->name('tamus.edit');
+    Route::put('tamus/{tamu}', [App\Http\Controllers\Event\EventTamuController::class, 'update'])->name('tamus.update');
+    Route::delete('tamus/{tamu}', [App\Http\Controllers\Event\EventTamuController::class, 'destroy'])->name('tamus.destroy');
+
     // --- New Kegiatan Module Features ---
 
     // Kegiatan (Event)
     Route::get('events/data', [App\Http\Controllers\Event\EventController::class, 'paginate'])->name('Kegiatans.data');
     Route::resource('events', App\Http\Controllers\Event\EventController::class)->names('Kegiatans');
 
-    // Event Team (AJAX Only)
-    Route::resource('teams', App\Http\Controllers\Event\EventTeamController::class)->only(['create', 'edit', 'store', 'update', 'destroy']);
+    // Event Team (AJAX Only) - Nested under events
+    Route::prefix('events/{event}')->name('Kegiatans.')->group(function () {
+        Route::get('teams/create', [App\Http\Controllers\Event\EventTeamController::class, 'create'])->name('teams.create');
+        Route::post('teams', [App\Http\Controllers\Event\EventTeamController::class, 'store'])->name('teams.store');
+        Route::get('teams/{team}/edit', [App\Http\Controllers\Event\EventTeamController::class, 'edit'])->name('teams.edit');
+        Route::put('teams/{team}', [App\Http\Controllers\Event\EventTeamController::class, 'update'])->name('teams.update');
+        Route::delete('teams/{team}', [App\Http\Controllers\Event\EventTeamController::class, 'destroy'])->name('teams.destroy');
+    });
 
-    // Buku Tamu / Guest
-    Route::get('tamus/data', [App\Http\Controllers\Event\EventTamuController::class, 'paginate'])->name('tamus.data');
-    Route::resource('tamus', App\Http\Controllers\Event\EventTamuController::class)->only(['index', 'create', 'edit', 'store', 'update', 'destroy']);
+    // Buku Tamu / Guest - Nested under events
+    Route::prefix('events/{event}')->name('Kegiatans.')->group(function () {
+        Route::get('tamus', [App\Http\Controllers\Event\EventTamuController::class, 'index'])->name('tamus.index');
+        Route::get('tamus/create', [App\Http\Controllers\Event\EventTamuController::class, 'create'])->name('tamus.create');
+        Route::post('tamus', [App\Http\Controllers\Event\EventTamuController::class, 'store'])->name('tamus.store');
+        Route::get('tamus/{tamu}/edit', [App\Http\Controllers\Event\EventTamuController::class, 'edit'])->name('tamus.edit');
+        Route::put('tamus/{tamu}', [App\Http\Controllers\Event\EventTamuController::class, 'update'])->name('tamus.update');
+        Route::delete('tamus/{tamu}', [App\Http\Controllers\Event\EventTamuController::class, 'destroy'])->name('tamus.destroy');
+    });
 });
 
 // Registration Routes (Public)

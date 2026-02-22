@@ -3,6 +3,7 @@
 use App\Http\Controllers\Hr\ApprovalController;
 use App\Http\Controllers\Hr\AttDeviceController;
 use App\Http\Controllers\Hr\DashboardController;
+use App\Http\Controllers\Hr\FilePegawaiController;
 use App\Http\Controllers\Hr\IndisiplinerController;
 use App\Http\Controllers\Hr\JabatanFungsionalController;
 use App\Http\Controllers\Hr\JenisIndisiplinerController;

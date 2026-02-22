@@ -1,50 +1,86 @@
 <?php
+
 namespace App\Services\Event;
 
-use App\Models\Event\Event;
 use App\Models\Event\EventTeam;
 use Illuminate\Support\Facades\DB;
 
 class EventTeamService
 {
+    /**
+     * Store new team member
+     */
     public function store(array $data): EventTeam
     {
         return DB::transaction(function () use ($data) {
-            $team = EventTeam::create($data);
-            logActivity('event', "Menambah panitia baru ke kegiatan: " . ($team->event->nama_event ?? 'Unknown'));
-            return $team;
-        });
-    }
+            // If this is PIC, unset other PICs
+            if (!empty($data['is_pic'])) {
+                EventTeam::where('event_id', $data['event_id'])
+                    ->update(['is_pic' => false]);
+            }
 
-    public function update(EventTeam $team, array $data): EventTeam
-    {
-        return DB::transaction(function () use ($team, $data) {
-            $team->update($data);
-            logActivity('event', "Memperbarui data panitia di kegiatan: " . ($team->event->nama_event ?? 'Unknown'));
-            return $team;
-        });
-    }
+            $team = EventTeam::create([
+                'event_id' => $data['event_id'],
+                'pegawai_id' => $data['pegawai_id'],
+                'role' => $data['role'] ?? null,
+                'jabatan_dalam_tim' => $data['jabatan_dalam_tim'] ?? null,
+                'is_pic' => $data['is_pic'] ?? false,
+                'created_by' => auth()->id(),
+            ]);
 
-    public function destroy(EventTeam $team): void
-    {
-        DB::transaction(function () use ($team) {
-            $nama = $team->event->nama_event ?? 'Unknown';
-            $team->delete();
-            logActivity('event', "Menghapus panitia dari kegiatan: {$nama}");
+            logActivity(
+                'event_team',
+                "Added team member: {$team->memberable->nama_pegawai ?? 'N/A'} to event",
+                $team
+            );
+
+            return $team;
         });
     }
 
     /**
-     * Bulk sync team members for an event
+     * Update team member
      */
-    public function sync(Event $event, array $members): void
+    public function update(EventTeam $team, array $data): EventTeam
     {
-        DB::transaction(function () use ($event, $members) {
-            $event->teams()->delete();
-            foreach ($members as $member) {
-                $event->teams()->create($member);
+        return DB::transaction(function () use ($team, $data) {
+            // If this is PIC, unset other PICs in same event
+            if (!empty($data['is_pic']) && !$team->is_pic) {
+                EventTeam::where('event_id', $team->event_id)
+                    ->where('eventteam_id', '!=', $team->eventteam_id)
+                    ->update(['is_pic' => false]);
             }
-            logActivity('event', "Sinkronisasi panitia untuk kegiatan: {$event->nama_event}");
+
+            $team->update([
+                'pegawai_id' => $data['pegawai_id'],
+                'role' => $data['role'] ?? null,
+                'jabatan_dalam_tim' => $data['jabatan_dalam_tim'] ?? null,
+                'is_pic' => $data['is_pic'] ?? false,
+            ]);
+
+            logActivity(
+                'event_team',
+                "Updated team member: {$team->memberable->nama_pegawai ?? 'N/A'}",
+                $team
+            );
+
+            return $team->fresh();
+        });
+    }
+
+    /**
+     * Delete team member
+     */
+    public function destroy(EventTeam $team): bool
+    {
+        return DB::transaction(function () use ($team) {
+            logActivity(
+                'event_team',
+                "Removed team member: {$team->memberable->nama_pegawai ?? 'N/A'} from event",
+                $team
+            );
+
+            return $team->delete();
         });
     }
 }

@@ -4,9 +4,9 @@
     <div class="row g-2 align-items-center">
         <div class="col">
             <h2 class="page-title">
-                {{ $rapat->exists ? 'Ubah Rapat' : 'Jadwalkan Meeting' }}
+                {{ $rapat->exists ? 'Ubah Rapat' : 'Jadwalkan Rapat' }}
             </h2>
-            <div class="text-muted mt-1">Kegiatan / Meeting / {{ $rapat->exists ? 'Edit' : 'Jadwalkan' }}</div>
+            <div class="text-muted mt-1">Kegiatan / Rapat / {{ $rapat->exists ? 'Edit' : 'Jadwalkan' }}</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
@@ -21,7 +21,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ $rapat->exists ? 'Ubah Data Rapat' : 'Form Jadwalkan Meeting' }}</h3>
+                    <h3 class="card-title">{{ $rapat->exists ? 'Ubah Data Rapat' : 'Form Jadwalkan Rapat' }}</h3>
                 </div>
                 <div class="card-body">
                     <x-tabler.flash-message />

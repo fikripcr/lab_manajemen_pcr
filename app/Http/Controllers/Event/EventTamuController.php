@@ -31,11 +31,11 @@ class EventTamuController extends Controller
                 }
                 return '<span class="avatar avatar-sm bg-secondary text-white">?</span>';
             })
-            ->addColumn('action', function ($row) {
+            ->​addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('Kegiatan.tamus.edit', $row->hashid),
+                    'editUrl'   => route('Kegiatan.tamus.edit', $row->encrypted_eventtamu_id),
                     'editModal' => true,
-                    'deleteUrl' => route('Kegiatan.tamus.destroy', $row->hashid),
+                    'deleteUrl' => route('Kegiatan.tamus.destroy', $row->encrypted_eventtamu_id),
                 ])->render();
             })
             ->rawColumns(['foto_preview', 'action'])

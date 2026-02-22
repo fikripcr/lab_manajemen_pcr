@@ -168,16 +168,25 @@
         </div>
 
         <div class="row">
+            @php
+                $isRenopContext = request('is_renop_context') == 1 || (isset($parentDokSub) && strtolower(trim($parentDokSub->dokumen->jenis)) === 'renop');
+            @endphp
             <div class="col-md-6 mb-3">
-                <x-tabler.form-select 
-                    id="type"
-                    name="type" 
-                    label="Tipe Indikator" 
-                    :options="['standar' => 'Indikator Standar', 'renop' => 'Indikator Renop']"
-                    :selected="$isEdit ? $indikator->type : 'standar'" 
-                    required="true"
-                    data-dropdown-parent="#modalAction"
-                />
+                @if($isRenopContext && !$isEdit)
+                    <input type="hidden" name="type" value="renop">
+                    <label class="form-label">Tipe Indikator</label>
+                    <div class="form-control-plaintext fw-bold text-success"><i class="ti ti-lock me-1"></i>Indikator Renop</div>
+                @else
+                    <x-tabler.form-select 
+                        id="type"
+                        name="type" 
+                        label="Tipe Indikator" 
+                        :options="['standar' => 'Indikator Standar', 'renop' => 'Indikator Renop']"
+                        :selected="$isEdit ? $indikator->type : 'standar'" 
+                        required="true"
+                        data-dropdown-parent="#modalAction"
+                    />
+                @endif
             </div>
             @if($isEdit)
             <div class="col-md-6">

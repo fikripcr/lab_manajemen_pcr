@@ -29,6 +29,7 @@
     <form action="{{ $route }}" method="POST" class="ajax-form">
         @csrf
         @if($isEdit) @method('PUT') @endif
+        <input type="hidden" name="redirect_to" value="{{ old('redirect_to', request('redirect_to', url()->previous())) }}">
         
         <div class="card">
             <div class="card-header">
@@ -36,10 +37,10 @@
                     <li class="nav-item">
                         <a href="#tabs-info" class="nav-link active" data-bs-toggle="tab"><i class="ti ti-info-circle me-2"></i>Informasi Umum</a>
                     </li>
-                    <li class="nav-item" id="nav-hierarchy" style="{{ $indikator->type != 'performa' && $isEdit ? 'display: none;' : ($isEdit ? '' : 'display: none;') }}">
+                    <li class="nav-item" id="nav-hierarchy" style="{{ $indikator->type === 'performa' && $isEdit ? '' : 'display: none;' }}">
                         <a href="#tabs-hierarchy" class="nav-link" data-bs-toggle="tab"><i class="ti ti-hierarchy-2 me-2"></i>Struktur Hirarkis</a>
                     </li>
-                    <li class="nav-item" id="nav-target" style="{{ $indikator->type == 'performa' && $isEdit ? 'display: none;' : '' }}">
+                    <li class="nav-item" id="nav-target" style="{{ $indikator->type === 'standar' && $isEdit ? '' : 'display: none;' }}">
                         <a href="#tabs-target" class="nav-link" data-bs-toggle="tab"><i class="ti ti-target me-2"></i>Target & Unit Kerja</a>
                     </li>
                 </ul>
@@ -56,22 +57,30 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <x-tabler.form-select 
-                                    id="type-selector"
-                                    name="type" 
-                                    label="Tipe Indikator" 
-                                    :options="[
-                                        'renop' => 'Indikator Renop',
-                                        'standar' => 'Indikator Standar',
-                                        'performa' => 'Indikator Performa (KPI)'
-                                    ]"
-                                    :selected="old('type', $indikator->type ?? request('type'))" 
-                                    required="true" 
-                                    :readonly="isset($parentDok) && !$isEdit"
-                                />
-                                @if(isset($parentDok) && !$isEdit)
-                                    <input type="hidden" name="type" value="{{ request('type') }}">
-                                    <div class="form-hint text-success small">Tipe dikunci karena menambah dari context dokumen.</div>
+                                {{-- Tipe Indikator Field --}}
+                                @if(isset($parentDok) && !$isEdit && ($isRenopContext ?? false))
+                                    <input type="hidden" name="type" value="renop">
+                                    <label class="form-label">Tipe Indikator</label>
+                                    <div class="form-control-plaintext fw-bold text-primary"><i class="ti ti-lock me-2"></i>Indikator Renop</div>
+                                    <div class="form-hint text-muted small">Tipe dikunci karena menambah dari context Poin Renop.</div>
+                                @else
+                                    <x-tabler.form-select 
+                                        id="type-selector"
+                                        name="type" 
+                                        label="Tipe Indikator" 
+                                        :options="[
+                                            'renop' => 'Indikator Renop',
+                                            'standar' => 'Indikator Standar',
+                                            'performa' => 'Indikator Performa (KPI)'
+                                        ]"
+                                        :selected="old('type', $indikator->type ?? request('type'))" 
+                                        required="true" 
+                                        :readonly="isset($parentDok) && !$isEdit"
+                                      />
+                                    @if(isset($parentDok) && !$isEdit)
+                                        <input type="hidden" name="type" value="{{ request('type') }}">
+                                        <div class="form-hint text-success small">Tipe dikunci karena menambah dari context dokumen.</div>
+                                    @endif
                                 @endif
                             </div>
                             <div class="col-md-6">
@@ -128,7 +137,7 @@
                     <div class="tab-pane" id="tabs-hierarchy">
                         <div class="row">
                             <div class="col-md-12">
-                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" required="true" type="select2">
+                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" type="select2">
                                     <option value="">-- Pilih Indikator Standar --</option>
                                     @foreach($parents as $p)
                                         <option value="{{ $p->encrypted_indikator_id }}" {{ $p->indikator_id == $indikator->parent_id ? 'selected' : '' }}>
@@ -224,24 +233,38 @@
             const navTarget = document.getElementById('nav-target');
             const parentIdSelector = document.getElementById('parent-id-selector');
 
+            function getCurrentType() {
+                if (typeSelector) return typeSelector.value;
+                // Fallback: read from hidden input (renop context)
+                const hidden = document.querySelector('input[type="hidden"][name="type"]');
+                return hidden ? hidden.value : '';
+            }
+
             function toggleTabs() {
-                if(!typeSelector) return;
-                const type = typeSelector.value;
+                const type = getCurrentType();
+                if (!navHierarchy || !navTarget || !parentIdSelector) return;
                 if (type === 'performa') {
+                    // Performa: show hierarchy, hide target
                     navHierarchy.style.display = 'block';
                     navTarget.style.display = 'none';
                     parentIdSelector.setAttribute('required', 'required');
-                } else {
+                } else if (type === 'standar') {
+                    // Standar: show target & unit, hide hierarchy
                     navHierarchy.style.display = 'none';
                     navTarget.style.display = 'block';
+                    parentIdSelector.removeAttribute('required');
+                } else {
+                    // Renop (and any other): hide both tabs
+                    navHierarchy.style.display = 'none';
+                    navTarget.style.display = 'none';
                     parentIdSelector.removeAttribute('required');
                 }
             }
 
-            if(typeSelector) {
+            if (typeSelector) {
                 typeSelector.addEventListener('change', toggleTabs);
-                toggleTabs();
             }
+            toggleTabs();
 
             const checkboxes = document.querySelectorAll('.unit-checkbox');
             checkboxes.forEach(function(checkbox) {

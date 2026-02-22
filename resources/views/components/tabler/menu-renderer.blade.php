@@ -318,6 +318,12 @@
             'active_routes' => ['hr.*'],
             'children'      => [
                 [
+                    'title'         => 'Master Data',
+                    'route'         => 'hr.status-pegawai.index',
+                    'active_routes' => ['hr.status-pegawai.*', 'hr.status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
+                    'icon'          => 'ti ti-database',
+                ],
+                [
                     'title'         => 'Pegawai',
                     'route'         => 'hr.pegawai.index',
                     'active_routes' => ['hr.pegawai.*'],
@@ -347,12 +353,7 @@
                     'active_routes' => ['hr.indisipliner.*'],
                     'icon'          => 'ti ti-alert-circle',
                 ],
-                [
-                    'title'         => 'Master Data HR',
-                    'route'         => 'hr.status-pegawai.index',
-                    'active_routes' => ['hr.status-pegawai.*', 'hr.status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
-                    'icon'          => 'ti ti-database',
-                ],
+
                 [
                     'title'         => 'Tanggal Libur',
                     'route'         => 'hr.tanggal-libur.index',
@@ -383,24 +384,7 @@
             'icon'          => 'ti ti-mail-opened',
             'active_routes' => ['eoffice.*'],
             'children'      => [
-                [
-                    'title'         => 'Layanan Saya',
-                    'route'         => 'eoffice.layanan.index',
-                    'active_routes' => ['eoffice.layanan.*'],
-                    'icon'          => 'ti ti-user-check',
-                ],
-                [
-                    'title'         => 'Buat Pengajuan',
-                    'route'         => 'eoffice.layanan.services',
-                    'icon'          => 'ti ti-plus',
-                ],
-                [
-                    'title'         => 'Feedback',
-                    'route'         => 'eoffice.feedback.index',
-                    'active_routes' => ['eoffice.feedback.*'],
-                    'icon'          => 'ti ti-message',
-                ],
-                [
+                                [
                     'title'         => 'Master Data',
                     'id'            => 'navbar-eoffice-master',
                     'icon'          => 'ti ti-database',
@@ -432,6 +416,24 @@
                         ],
                     ],
                 ],
+                [
+                    'title'         => 'Layanan Saya',
+                    'route'         => 'eoffice.layanan.index',
+                    'active_routes' => ['eoffice.layanan.*'],
+                    'icon'          => 'ti ti-user-check',
+                ],
+                [
+                    'title'         => 'Buat Pengajuan',
+                    'route'         => 'eoffice.layanan.services',
+                    'icon'          => 'ti ti-plus',
+                ],
+                [
+                    'title'         => 'Feedback',
+                    'route'         => 'eoffice.feedback.index',
+                    'active_routes' => ['eoffice.feedback.*'],
+                    'icon'          => 'ti ti-message',
+                ],
+
             ],
         ],
         [

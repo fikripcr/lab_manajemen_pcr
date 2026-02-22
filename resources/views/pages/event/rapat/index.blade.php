@@ -6,11 +6,11 @@
             <h2 class="page-title">
                 Manajemen Rapat
             </h2>
-            <div class="text-muted mt-1">Kegiatan / Meeting</div>
+            <div class="text-muted mt-1">Kegiatan / Rapat</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
-                <x-tabler.button type="create" href="{{ route('Kegiatan.rapat.create') }}" text="Jadwalkan Meeting" />
+                <x-tabler.button type="create" href="{{ route('Kegiatan.rapat.create') }}" text="Jadwalkan" />
             </div>
         </div>
     </div>
