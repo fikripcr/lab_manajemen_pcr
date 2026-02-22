@@ -39,4 +39,14 @@ class IndikatorRequest extends FormRequest
             'kpi_assignments' => 'nullable|array',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'type.required'       => 'Tipe Indikator harus dipilih.',
+            'type.in'             => 'Tipe Indikator tidak valid.',
+            'indikator.required'  => 'Nama Indikator wajib diisi.',
+            'doksub_ids.required' => 'Dokumen Penjaminan Mutu wajib dipilih (jika wajib).',
+        ];
+    }
 }

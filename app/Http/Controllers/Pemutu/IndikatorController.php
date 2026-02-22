@@ -169,10 +169,17 @@ class IndikatorController extends Controller
             if ($request->has('kpi_assign')) {
                 $kpiData = [];
                 foreach ($request->kpi_assign as $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1) {
+                    if (isset($val['selected']) && $val['selected'] == 1 && ! empty($val['pegawai_id'])) {
+                        $pegawaiIds = is_array($val['pegawai_id']) ? $val['pegawai_id'] : [$val['pegawai_id']];
                         unset($val['selected']);
-                        $val['pegawai_id'] = decryptIdIfEncrypted($val['pegawai_id']);
-                        $kpiData[]         = $val;
+                        unset($val['sasaran']);
+                        unset($val['keterangan']);
+
+                        foreach ($pegawaiIds as $pId) {
+                            $newVal               = $val;
+                            $newVal['pegawai_id'] = decryptIdIfEncrypted($pId);
+                            $kpiData[]            = $newVal;
+                        }
                     }
                 }
                 $data['kpi_assignments'] = $kpiData;
@@ -251,10 +258,17 @@ class IndikatorController extends Controller
             if ($request->has('kpi_assign')) {
                 $kpiData = [];
                 foreach ($request->kpi_assign as $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1) {
+                    if (isset($val['selected']) && $val['selected'] == 1 && ! empty($val['pegawai_id'])) {
+                        $pegawaiIds = is_array($val['pegawai_id']) ? $val['pegawai_id'] : [$val['pegawai_id']];
                         unset($val['selected']);
-                        $val['pegawai_id'] = decryptIdIfEncrypted($val['pegawai_id']);
-                        $kpiData[]         = $val;
+                        unset($val['sasaran']);
+                        unset($val['keterangan']);
+
+                        foreach ($pegawaiIds as $pId) {
+                            $newVal               = $val;
+                            $newVal['pegawai_id'] = decryptIdIfEncrypted($pId);
+                            $kpiData[]            = $newVal;
+                        }
                     }
                 }
                 $data['kpi_assignments'] = $kpiData;

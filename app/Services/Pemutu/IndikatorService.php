@@ -2,6 +2,7 @@
 namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\PeriodeKpi;
 use Illuminate\Support\Facades\DB;
 
 class IndikatorService
@@ -54,6 +55,11 @@ class IndikatorService
 
             // Handle KPI Assignments (only for type performa)
             if ($data['type'] === 'performa' && isset($data['kpi_assignments'])) {
+                $periodeData = $this->getKpiPeriodeData($indikator);
+                foreach ($data['kpi_assignments'] as &$assign) {
+                    $assign['periode_kpi_id'] = $periodeData['periode_kpi_id'];
+                    $assign['year']           = $periodeData['year'];
+                }
                 foreach ($data['kpi_assignments'] as $assign) {
                     $indikator->pegawai()->create($assign);
                 }
@@ -90,6 +96,13 @@ class IndikatorService
             if ($data['type'] === 'performa') {
                 $indikator->pegawai()->delete();
                 if (isset($data['kpi_assignments'])) {
+                    $periodeData = $this->getKpiPeriodeData($indikator);
+
+                    foreach ($data['kpi_assignments'] as &$assign) {
+                        $assign['periode_kpi_id'] = $periodeData['periode_kpi_id'];
+                        $assign['year']           = $periodeData['year'];
+                    }
+
                     foreach ($data['kpi_assignments'] as $assign) {
                         $indikator->pegawai()->create($assign);
                     }
@@ -120,5 +133,36 @@ class IndikatorService
 
             return $indikator->delete();
         });
+    }
+
+    private function getKpiPeriodeData(Indikator $indikator)
+    {
+        $activePeriode = PeriodeKpi::where('is_active', 1)->first();
+        $kpiYear       = $activePeriode ? $activePeriode->tahun : null;
+        $periodeId     = $activePeriode ? $activePeriode->periode_kpi_id : null;
+
+        if (! $kpiYear) {
+            try {
+                // Determine year from Standar's Dokumen Periode (for 'performa' indicators, the parent should be 'standar')
+                $parentStandar = $indikator->parent;
+                if ($parentStandar) {
+                    $firstDokSub = $parentStandar->dokSubs()->first();
+                    if ($firstDokSub && $firstDokSub->dokumen) {
+                        $periodeStr = $firstDokSub->dokumen->periode;
+                        // Extract a year-like format (e.g. 2024 from '2024-2029')
+                        if (preg_match('/\b(20\d{2})\b/', $periodeStr, $matches)) {
+                            $kpiYear = $matches[1];
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // Ignore exception, fallback downstream
+            }
+        }
+
+        return [
+            'periode_kpi_id' => $periodeId,
+            'year'           => $kpiYear ?: date('Y'),
+        ];
     }
 }

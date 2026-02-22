@@ -76,7 +76,6 @@ class IndikatorStandarController extends Controller
                     'indikator_id' => $indikator->indikator_id,
                     'personil_id'  => $request->personil_id,
                     'year'         => $request->year,
-                    'semester'     => $request->semester,
                 ],
                 [
                     'target_value' => $request->target_value ?? $indikator->target,

@@ -37,8 +37,8 @@
                     <li class="nav-item">
                         <a href="#tabs-info" class="nav-link active" data-bs-toggle="tab"><i class="ti ti-info-circle me-2"></i>Informasi Umum</a>
                     </li>
-                    <li class="nav-item" id="nav-hierarchy" style="{{ $indikator->type === 'performa' && $isEdit ? '' : 'display: none;' }}">
-                        <a href="#tabs-hierarchy" class="nav-link" data-bs-toggle="tab"><i class="ti ti-hierarchy-2 me-2"></i>Struktur Hirarkis</a>
+                    <li class="nav-item" id="nav-performa" style="{{ $indikator->type === 'performa' && $isEdit ? '' : 'display: none;' }}">
+                        <a href="#tabs-performa" class="nav-link" data-bs-toggle="tab"><i class="ti ti-users me-2"></i>Penugasan KPI (Performa)</a>
                     </li>
                     <li class="nav-item" id="nav-target" style="{{ $indikator->type === 'standar' && $isEdit ? '' : 'display: none;' }}">
                         <a href="#tabs-target" class="nav-link" data-bs-toggle="tab"><i class="ti ti-target me-2"></i>Target & Unit Kerja</a>
@@ -51,7 +51,7 @@
                     <div class="tab-pane active show" id="tabs-info">
                         <div class="row">
                             <div class="col-md-12">
-                                <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." required="true" value="{{ old('indikator', $indikator->indikator) }}" />
+                                <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
                             </div>
                         </div>
 
@@ -74,7 +74,6 @@
                                             'performa' => 'Indikator Performa (KPI)'
                                         ]"
                                         :selected="old('type', $indikator->type ?? request('type'))" 
-                                        required="true" 
                                         :readonly="isset($parentDok) && !$isEdit"
                                       />
                                     @if(isset($parentDok) && !$isEdit)
@@ -96,7 +95,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <x-tabler.form-select name="doksub_ids" label="Dokumen Penjaminan Mutu Terkait" required="true" type="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
+                                <x-tabler.form-select name="doksub_ids" label="Dokumen Penjaminan Mutu Terkait" type="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
                                     @foreach($dokumens as $doc)
                                         @if($doc->dokSubs->count() > 0)
                                             <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
@@ -134,10 +133,11 @@
                     </div>
 
                     <!-- TAB: HIRARKI -->
-                    <div class="tab-pane" id="tabs-hierarchy">
-                        <div class="row">
+                    <!-- TAB: KPI ASSIGN -->
+                    <div class="tab-pane" id="tabs-performa">
+                        <div class="row mb-4">
                             <div class="col-md-12">
-                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Induk" type="select2">
+                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Standar Terkait (Induk)" type="select2">
                                     <option value="">-- Pilih Indikator Standar --</option>
                                     @foreach($parents as $p)
                                         <option value="{{ $p->encrypted_indikator_id }}" {{ $p->indikator_id == $indikator->parent_id ? 'selected' : '' }}>
@@ -148,17 +148,54 @@
                                 <div class="form-hint">Indikator Performa HARUS merujuk pada satu Indikator Standar.</div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- TAB 3: KPI ASSIGNMENTS (for performa) -->
-                    <div class="tab-pane" id="tabs-kpi-assign">
-                        <x-tabler.form-select name="kpi_assign[]" label="Tugaskan Ke Pegawai" type="select2" multiple="true" data-placeholder="Pilih pegawai...">
-                            @foreach($pegawais as $p)
-                                <option value="{{ $p->encrypted_pegawai_id }}" {{ in_array($p->pegawai_id, $indikator->pegawai->pluck('pegawai_id')->toArray()) ? 'selected' : '' }}>
-                                    {{ $p->nama }}
-                                </option>
-                            @endforeach
-                        </x-tabler.form-select>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label required">Daftar Sasaran Kinerja Pegawai</label>
+                                <div class="table-responsive border rounded mb-3">
+                                    <table class="table table-vcenter table-bordered" id="kpi-repeater-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="50%">Penanggung Jawab <span class="text-danger">*</span></th>
+                                                <th width="45%">Target & Satuan</th>
+                                                <th width="5%" class="text-center"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="kpi-repeater-body">
+                                            @php
+                                                $pegawaiAssigned = $isEdit ? $indikator->pegawai : collect([]);
+                                            @endphp
+                                            @if($pegawaiAssigned->count() > 0)
+                                                @foreach($pegawaiAssigned as $index => $kpi)
+                                                    <tr class="kpi-row">
+                                                        <td>
+                                                            <input type="hidden" name="kpi_assign[{{$index}}][selected]" value="1">
+                                                            <select class="form-select select2-kpi" name="kpi_assign[{{$index}}][pegawai_id]" required data-placeholder="Pilih pegawai...">
+                                                                <option value="">Pilih pegawai...</option>
+                                                                @foreach($pegawais as $p)
+                                                                    <option value="{{ $p->encrypted_pegawai_id }}" {{ $p->pegawai_id == $kpi->pegawai_id ? 'selected' : '' }}>{{ $p->nama }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control mb-2" name="kpi_assign[{{$index}}][target_value]" placeholder="Nilai Target" value="{{ $kpi->target_value }}">
+                                                            <input type="text" class="form-control" name="kpi_assign[{{$index}}][unit_ukuran]" placeholder="%, org, dll (Satuan)" value="{{ $kpi->unit_ukuran ?? '' }}">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button type="button" class="btn btn-icon btn-danger btn-sm btn-remove-row" title="Hapus"><i class="ti ti-trash"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="btn-add-kpi">
+                                    <i class="ti ti-plus me-1"></i> Tambah Sasaran
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- TAB 2: TARGET & UNIT -->
@@ -229,7 +266,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const typeSelector = document.getElementById('type-selector');
-            const navHierarchy = document.getElementById('nav-hierarchy');
+            const navPerforma = document.getElementById('nav-performa');
             const navTarget = document.getElementById('nav-target');
             const parentIdSelector = document.getElementById('parent-id-selector');
 
@@ -242,20 +279,20 @@
 
             function toggleTabs() {
                 const type = getCurrentType();
-                if (!navHierarchy || !navTarget || !parentIdSelector) return;
+                if (!navPerforma || !navTarget || !parentIdSelector) return;
                 if (type === 'performa') {
-                    // Performa: show hierarchy, hide target
-                    navHierarchy.style.display = 'block';
+                    // Performa: show performa repeater, hide target
+                    navPerforma.style.display = 'block';
                     navTarget.style.display = 'none';
                     parentIdSelector.setAttribute('required', 'required');
                 } else if (type === 'standar') {
-                    // Standar: show target & unit, hide hierarchy
-                    navHierarchy.style.display = 'none';
+                    // Standar: show target & unit, hide performa repeater
+                    navPerforma.style.display = 'none';
                     navTarget.style.display = 'block';
                     parentIdSelector.removeAttribute('required');
                 } else {
                     // Renop (and any other): hide both tabs
-                    navHierarchy.style.display = 'none';
+                    navPerforma.style.display = 'none';
                     navTarget.style.display = 'none';
                     parentIdSelector.removeAttribute('required');
                 }
@@ -265,6 +302,54 @@
                 typeSelector.addEventListener('change', toggleTabs);
             }
             toggleTabs();
+
+            // KPI Assignments Repeater Logic
+            const kpiBody = document.getElementById('kpi-repeater-body');
+            const btnAddKpi = document.getElementById('btn-add-kpi');
+            let kpiIndex = {{ isset($indikator) && $indikator->pegawai ? $indikator->pegawai->count() : 0 }};
+
+            // Options for Select2
+            const pegawaiOptions = `
+                @foreach($pegawais as $p)
+                    <option value="{{ $p->encrypted_pegawai_id }}">{{ $p->nama }}</option>
+                @endforeach
+            `;
+
+            if (btnAddKpi && kpiBody) {
+                btnAddKpi.addEventListener('click', function () {
+                    const tr = document.createElement('tr');
+                    tr.className = 'kpi-row';
+                    tr.innerHTML = `
+                        <td>
+                            <input type="hidden" name="kpi_assign[${kpiIndex}][selected]" value="1">
+                            <select class="form-select select2-kpi" name="kpi_assign[${kpiIndex}][pegawai_id]" required data-placeholder="Pilih pegawai...">
+                                ${pegawaiOptions}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control mb-2" name="kpi_assign[${kpiIndex}][target_value]" placeholder="Nilai Target">
+                            <input type="text" class="form-control" name="kpi_assign[${kpiIndex}][unit_ukuran]" placeholder="%, org, dll (Satuan)">
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-icon btn-danger btn-sm btn-remove-row" title="Hapus"><i class="ti ti-trash"></i></button>
+                        </td>
+                    `;
+                    kpiBody.appendChild(tr);
+
+                    // Re-init select2 for the new row if function exists globally
+                    if (typeof window.initOfflineSelect2 === 'function') {
+                        window.initOfflineSelect2();
+                    }
+
+                    kpiIndex++;
+                });
+
+                kpiBody.addEventListener('click', function (e) {
+                    if (e.target.closest('.btn-remove-row')) {
+                        e.target.closest('tr').remove();
+                    }
+                });
+            }
 
             const checkboxes = document.querySelectorAll('.unit-checkbox');
             checkboxes.forEach(function(checkbox) {

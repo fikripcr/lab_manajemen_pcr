@@ -24,7 +24,6 @@ class MyKpiController extends Controller
         $kpis = IndikatorPegawai::where('pegawai_id', $personil->personil_id)
             ->with(['indikator'])
             ->orderBy('year', 'desc')
-            ->orderBy('semester', 'desc')
             ->get();
 
         return view('pages.pemutu.mykpi.index', compact('kpis', 'personil'));

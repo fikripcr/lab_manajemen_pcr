@@ -5,7 +5,6 @@ use App\Http\Controllers\Pemutu\DokumenApprovalController;
 use App\Http\Controllers\Pemutu\DokumenController;
 use App\Http\Controllers\Pemutu\DokumenSpmiController;
 use App\Http\Controllers\Pemutu\IndikatorController;
-use App\Http\Controllers\Pemutu\KpiController;
 use App\Http\Controllers\Pemutu\LabelController;
 use App\Http\Controllers\Pemutu\LabelTypeController;
 use App\Http\Controllers\Pemutu\MyKpiController;
@@ -65,12 +64,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'assign'])->name('standar.assign');
     Route::post('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'storeAssignment'])->name('standar.assign.store');
     Route::resource('standar', App\Http\Controllers\Pemutu\StandarController::class);
-
-    // KPI (Sasaran Kinerja)
-    Route::get('api/kpi', [KpiController::class, 'paginate'])->name('kpi.data');
-    Route::get('kpi/{kpi}/assign', [KpiController::class, 'assign'])->name('kpi.assign');
-    Route::post('kpi/{kpi}/assign', [KpiController::class, 'storeAssignment'])->name('kpi.assign.store');
-    Route::resource('kpi', KpiController::class);
 
     // Document Approvals
     Route::get('dokumens/{dokumen}/approve', [DokumenApprovalController::class, 'create'])->name('dokumens.approve.create');

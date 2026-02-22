@@ -16,13 +16,13 @@ class PeriodeKpiController extends Controller
     public function index()
     {
         $pageTitle = 'Periode KPI';
-        $periodes  = PeriodeKpi::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
+        $periodes  = PeriodeKpi::orderBy('tahun', 'desc')->get();
         return view('pages.pemutu.periode_kpis.index', compact('pageTitle', 'periodes'));
     }
 
     public function data()
     {
-        $query = PeriodeKpi::query()->orderBy('tahun', 'desc')->orderBy('semester', 'desc');
+        $query = PeriodeKpi::query()->orderBy('tahun', 'desc');
         return DataTables::of($query)
             ->addIndexColumn()
             ->make(true);

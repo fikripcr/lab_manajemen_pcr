@@ -267,13 +267,7 @@
                     'icon' => 'ti ti-users-group',
                     'can' => 'admin',
                 ],
-                [
-                    'title' => 'Sasaran Kinerja (KPI)',
-                    'route' => 'pemutu.kpi.index',
-                    'active_routes' => ['pemutu.kpi.*'],
-                    'icon' => 'ti ti-chart-arrows',
-                    'can' => 'admin',
-                ],
+
                 [
                     'title' => 'Sasaran Kinerja Saya',
                     'route' => 'pemutu.mykpi.index',
