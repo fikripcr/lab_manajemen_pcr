@@ -1,8 +1,6 @@
 <?php
 namespace App\Services\Hr;
 
-use App\Events\Hr\ApprovalProcessed;
-use App\Events\Hr\ApprovalRequested;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Hr\RiwayatDataDiri;
 use App\Models\Hr\RiwayatInpassing;
@@ -83,9 +81,6 @@ class PegawaiService
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $riwayat->riwayatdatadiri_id]);
 
-            // 5. Dispatch Event for Notification
-            ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
-
             logActivity('hr', "Mengajukan perubahan data diri untuk pegawai: {$pegawai->nama}", $pegawai);
 
             return $riwayat;
@@ -147,9 +142,6 @@ class PegawaiService
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $model->getKey()]);
 
-            // 5. Dispatch Event for Notification
-            ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
-
             $modelName = (new ReflectionClass($modelClass))->getShortName();
             logActivity('hr', "Mengajukan perubahan {$modelName} untuk pegawai: {$pegawai->nama}", $pegawai);
 
@@ -184,9 +176,6 @@ class PegawaiService
 
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $model->getKey()]);
-
-            // 5. Dispatch Event for Notification
-            ApprovalRequested::dispatch($approval, $pegawai, Auth::user());
 
             $shortName = (new \ReflectionClass($modelClass))->getShortName();
             logActivity('hr', "Mengajukan penambahan {$shortName} untuk pegawai: {$pegawai->nama}", $pegawai);
@@ -235,9 +224,6 @@ class PegawaiService
                 $pegawai->update([$col => $model->getKey()]);
             }
 
-            // Dispatch Event for Notification
-            ApprovalProcessed::dispatch($approval, $pegawai, Auth::user(), 'approved');
-
             $modelShortName = (new \ReflectionClass($modelClass))->getShortName();
             logActivity('hr', "Menyetujui pengajuan {$modelShortName} untuk pegawai: {$pegawai->nama}", $pegawai);
 
@@ -268,9 +254,6 @@ class PegawaiService
             $modelClass = $approval->model;
             $model      = $modelClass::findOrFail($approval->model_id);
             $pegawai    = Pegawai::findOrFail($model->pegawai_id);
-
-            // Dispatch Event for Notification
-            ApprovalProcessed::dispatch($approval, $pegawai, Auth::user(), 'rejected');
 
             $modelShortName = (new \ReflectionClass($modelClass))->getShortName();
             logActivity('hr', "Menolak pengajuan {$modelShortName} untuk pegawai: {$pegawai->nama} (Alasan: $reason)", $pegawai);

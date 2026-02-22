@@ -30,17 +30,17 @@ class RiwayatPendidikan extends Model
     protected $fillable = [
         'pegawai_id',
         'before_id',
-        'tingkat_pendidikan',
-        'nama_sekolah',
-        'jurusan',
-        'tahun_lulus',
-        'no_ijazah',
+        'jenjang_pendidikan',
+        'nama_pt',
+        'thn_lulus',
+        'bidang_ilmu',
         'tgl_ijazah',
-        'ipk',
-        'keterangan',
+        'kotaasal_pt',
+        'kodenegara_pt',
+        'latest_riwayatapproval_id',
         'created_by',
-        'updated_by', 'deleted_by',
-
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [

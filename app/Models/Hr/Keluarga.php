@@ -31,15 +31,14 @@ class Keluarga extends Model
         'pegawai_id',
         'hubungan',
         'nama',
-        'tempat_lahir',
         'tgl_lahir',
         'jenis_kelamin',
-        'pendidikan',
-        'pekerjaan',
-        'keterangan',
+        'alamat',
+        'telp',
+        'latest_riwayatapproval_id',
         'created_by',
-        'updated_by', 'deleted_by',
-
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [
@@ -48,7 +47,7 @@ class Keluarga extends Model
 
     public function approval()
     {
-        return $this->belongsTo(RiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
+        return $this->morphOne(RiwayatApproval::class, 'subject', 'model', 'model_id');
     }
 
     public function pegawai()

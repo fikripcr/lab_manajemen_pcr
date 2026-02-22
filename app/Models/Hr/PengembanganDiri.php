@@ -29,19 +29,19 @@ class PengembanganDiri extends Model
 
     protected $fillable = [
         'pegawai_id',
-        'jenis_pengembangan',
+        'jenis_kegiatan',
         'nama_kegiatan',
-        'penyelenggara',
-        'tempat',
+        'nama_penyelenggara',
+        'peran',
         'tgl_mulai',
         'tgl_selesai',
         'berlaku_hingga',
-        'no_sertifikat',
-        'file_sertifikat',
+        'tahun',
         'keterangan',
+        'latest_riwayatapproval_id',
         'created_by',
-        'updated_by', 'deleted_by',
-
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [
@@ -52,7 +52,7 @@ class PengembanganDiri extends Model
 
     public function approval()
     {
-        return $this->belongsTo(RiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
+        return $this->morphOne(RiwayatApproval::class, 'subject', 'model', 'model_id');
     }
 
     public function pegawai()
