@@ -91,6 +91,7 @@ window.loadHugeRTE = function (selector, config = {}) {
                 selector: selector,
                 skin: false,
                 content_css: false,
+                sandbox_iframes: false,
                 content_style: window.hugerteContentCss + (config.content_style || ''),
                 ...config
             };

@@ -29,6 +29,11 @@ class ThemeTablerController extends Controller
             'themeHeaderSticky'    => $config['header_sticky'] ?? 'false',
             'themeCardStyle'       => $config['card_style'] ?? 'flat',
             'themeBoxedBg'         => $config['bg_boxed'] ?? '',
+            // Advanced customization options
+            'themeDensity'         => $config['density'] ?? 'standard',
+            'themeFontSize'        => $config['font_size'] ?? '14px',
+            'themeIconWeight'      => $config['icon_weight'] ?? '1.5',
+            'themeTexture'         => $config['bg_texture'] ?? 'none',
             'layout'               => $config['layout'] ?? 'vertical',
             'containerWidth'       => $config['container_width'] ?? 'standard',
             'authLayout'           => $config['auth_layout'] ?? 'basic',
@@ -119,6 +124,36 @@ class ThemeTablerController extends Controller
             $css[]  = "--tblr-border-radius-sm: " . ($radius * 0.75) . "rem;";
             $css[]  = "--tblr-border-radius-lg: " . ($radius * 1.25) . "rem;";
             $css[]  = "--tblr-border-radius-pill: 100rem;";
+        }
+
+        // Advanced: Font Size
+        if (! empty($config['font_size'])) {
+            $fontSizeMap = [
+                '12px' => '0.75rem',
+                '13px' => '0.8125rem',
+                '14px' => '0.875rem',
+                '15px' => '0.9375rem',
+                '16px' => '1rem',
+                '17px' => '1.0625rem',
+                '18px' => '1.125rem',
+            ];
+            $fontSize = $fontSizeMap[$config['font_size']] ?? '0.875rem';
+            $css[]    = "--tblr-font-size-base: {$fontSize};";
+            $css[]    = "--tblr-body-font-size: {$fontSize};";
+        }
+
+        // Advanced: Icon Weight
+        if (! empty($config['icon_weight'])) {
+            $iconWeightMap = [
+                '1'    => '1.0',
+                '1.25' => '1.25',
+                '1.5'  => '1.5',
+                '1.75' => '1.75',
+                '2'    => '2',
+                '2.5'  => '2.5',
+            ];
+            $iconWeight = $iconWeightMap[$config['icon_weight']] ?? '1.5';
+            $css[]      = "--tblr-icon-stroke-width: {$iconWeight};";
         }
 
         // Background Colors (only if not empty and NOT in dark mode)
@@ -222,6 +257,19 @@ class ThemeTablerController extends Controller
             $attributes[] = "data-bs-card-style=\"{$config['card_style']}\"";
         }
 
+        // Advanced customization attributes
+        if (! empty($config['font_size'])) {
+            $attributes[] = "data-theme-font-size=\"{$config['font_size']}\"";
+        }
+
+        if (! empty($config['icon_weight'])) {
+            $attributes[] = "data-theme-icon-weight=\"{$config['icon_weight']}\"";
+        }
+
+        if (! empty($config['bg_texture']) && $config['bg_texture'] !== 'none') {
+            $attributes[] = "data-theme-texture=\"{$config['bg_texture']}\"";
+        }
+
         // Background indicators
         if ($theme !== 'dark') {
             if (! empty($config['bg_body'])) {
@@ -256,6 +304,11 @@ class ThemeTablerController extends Controller
         // Container width
         if (! empty($config['container_width'])) {
             $attributes[] = "data-container-width=\"{$config['container_width']}\"";
+        }
+
+        // Advanced: UI Density
+        if (! empty($config['density'])) {
+            $attributes[] = "data-theme-density=\"{$config['density']}\"";
         }
 
         // Layout classes
@@ -337,6 +390,11 @@ class ThemeTablerController extends Controller
             'bg_header_top'      => '',
             'bg_header_overlap'  => '',
             'bg_boxed'           => '',
+            // Advanced customization defaults
+            'density'            => 'standard',
+            'font_size'          => '14px',
+            'icon_weight'        => '1.5',
+            'bg_texture'         => 'none',
             'auth_layout'        => 'basic',
             'auth_form_position' => 'left',
         ];
@@ -364,6 +422,11 @@ class ThemeTablerController extends Controller
             'layout'                  => 'layout',
             'auth-layout'             => 'auth_layout',
             'auth-form-position'      => 'auth_form_position',
+            // Advanced customization mappings
+            'theme-density'           => 'density',
+            'theme-font-size'         => 'font_size',
+            'theme-icon-weight'       => 'icon_weight',
+            'theme-texture'           => 'bg_texture',
         ];
 
         $result = [];

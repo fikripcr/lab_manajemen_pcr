@@ -78,7 +78,7 @@
                     </div>
                     @endif
 
-                    {{-- Color Mode & Font Family --}}
+                    {{-- Color Mode --}}
                     <div class="col-6">
                         <label class="form-label">Color Mode</label>
                         <div class="form-selectgroup">
@@ -86,27 +86,11 @@
                             <label class="form-selectgroup-item">
                                 <input type="radio" name="theme" value="{{ $themeMode }}" class="form-selectgroup-input" {{ ($themeData['theme'] ?? 'light') === $themeMode ? 'checked' : '' }}>
                                 <span class="form-selectgroup-label">
-                                    {{-- Icons optional, text is fine --}}
                                     {{ ucfirst($themeMode) }}
                                 </span>
                             </label>
                             @endforeach
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label">Font Family</label>
-                        <select name="theme-font" class="form-select">
-                            @foreach([
-                                'inter' => 'Inter', 
-                                'roboto' => 'Roboto', 
-                                'poppins' => 'Poppins', 
-                                'public-sans' => 'Public Sans', 
-                                'nunito' => 'Nunito',
-                                'sans-serif' => 'Sans Serif', 
-                            ] as $val => $label)
-                            <option value="{{ $val }}" {{ ($themeData['themeFont'] ?? 'inter') === $val ? 'selected' : '' }}>{{ $label }}</option>
-                            @endforeach
-                        </select>
                     </div>
 
                     {{-- Theme Base & Radius --}}
@@ -140,6 +124,95 @@
                             <option value="{{ $val }}" {{ ($themeData['themeCardStyle'] ?? 'flat') === $val ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach
                         </select>
+                    </div>
+
+                    {{-- Advanced Customization Section --}}
+                    <div class="col-12">
+                        <div class="divider-text my-2">Advanced Customization</div>
+                    </div>
+
+                    {{-- UI Density --}}
+                    <div class="col-12">
+                        <label class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-layout-grid me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4h6v6h-6z" /><path d="M14 4h6v6h-6z" /><path d="M4 14h6v6h-6z" /><path d="M14 14h6v6h-6z" /></svg>
+                            UI Density
+                        </label>
+                        <select name="theme-density" class="form-select">
+                            <option value="compact" {{ ($themeData['themeDensity'] ?? 'standard') === 'compact' ? 'selected' : '' }}>Compact (High Density)</option>
+                            <option value="standard" {{ ($themeData['themeDensity'] ?? 'standard') === 'standard' ? 'selected' : '' }}>Standard (Default)</option>
+                            <option value="spacious" {{ ($themeData['themeDensity'] ?? 'standard') === 'spacious' ? 'selected' : '' }}>Spacious (Low Density)</option>
+                            <option value="ultra-spacious" {{ ($themeData['themeDensity'] ?? 'standard') === 'ultra-spacious' ? 'selected' : '' }}>Ultra Spacious</option>
+                        </select>
+                        <small class="form-hint">Controls spacing and padding throughout the UI</small>
+                    </div>
+
+                    {{-- Base Font Size --}}
+                    <div class="col-12">
+                        <label class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-letter-a me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 20v-12a4 4 0 0 1 4 -4h2a4 4 0 0 1 4 4v12" /><path d="M7 13l10 0" /></svg>
+                            Font Family & Size
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <select name="theme-font" class="form-select">
+                                    <option value="inter" {{ ($themeData['themeFont'] ?? 'inter') === 'inter' ? 'selected' : '' }}>Inter</option>
+                                    <option value="roboto" {{ ($themeData['themeFont'] ?? 'inter') === 'roboto' ? 'selected' : '' }}>Roboto</option>
+                                    <option value="poppins" {{ ($themeData['themeFont'] ?? 'inter') === 'poppins' ? 'selected' : '' }}>Poppins</option>
+                                    <option value="public-sans" {{ ($themeData['themeFont'] ?? 'inter') === 'public-sans' ? 'selected' : '' }}>Public Sans</option>
+                                    <option value="nunito" {{ ($themeData['themeFont'] ?? 'inter') === 'nunito' ? 'selected' : '' }}>Nunito</option>
+                                    <option value="sarabun" {{ ($themeData['themeFont'] ?? 'inter') === 'sarabun' ? 'selected' : '' }}>Sarabun</option>
+                                </select>
+                                <small class="form-hint text-muted">Font Family</small>
+                            </div>
+                            <div class="col-6">
+                                <select name="theme-font-size" class="form-select">
+                                    <option value="13px" {{ ($themeData['themeFontSize'] ?? '14px') === '13px' ? 'selected' : '' }}>13px</option>
+                                    <option value="14px" {{ ($themeData['themeFontSize'] ?? '14px') === '14px' ? 'selected' : '' }}>14px (Default)</option>
+                                    <option value="15px" {{ ($themeData['themeFontSize'] ?? '14px') === '15px' ? 'selected' : '' }}>15px</option>
+                                    <option value="16px" {{ ($themeData['themeFontSize'] ?? '14px') === '16px' ? 'selected' : '' }}>16px</option>
+                                </select>
+                                <small class="form-hint text-muted">Font Size</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Icon Stroke Weight --}}
+                    <div class="col-12">
+                        <label class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h6z" /><path d="M12 9m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M9 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M15 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg>
+                            Icon Weight
+                        </label>
+                        <select name="theme-icon-weight" class="form-select">
+                            <option value="1" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1' ? 'selected' : '' }}>Light (1.0)</option>
+                            <option value="1.25" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.25' ? 'selected' : '' }}>Medium Light (1.25)</option>
+                            <option value="1.5" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.5' ? 'selected' : '' }}>Regular (1.5 - Default)</option>
+                            <option value="1.75" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.75' ? 'selected' : '' }}>Medium Bold (1.75)</option>
+                            <option value="2" {{ ($themeData['themeIconWeight'] ?? '1.5') === '2' ? 'selected' : '' }}>Bold (2.0)</option>
+                        </select>
+                        <small class="form-hint">Stroke width for all icons</small>
+                    </div>
+
+                    {{-- Background Texture --}}
+                    <div class="col-12">
+                        <label class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-background me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 15l3 3l3 -3l-3 -3z" /><path d="M6 6l3 3l-3 3l-3 -3z" /><path d="M15 6l3 3l-3 3l-3 -3z" /><path d="M6 15l3 3l-3 3l-3 -3z" /><path d="M9 9l6 6" /><path d="M15 9l-6 6" /></svg>
+                            Background Texture
+                        </label>
+                        <select name="theme-texture" class="form-select">
+                            <option value="none" {{ ($themeData['themeTexture'] ?? 'none') === 'none' ? 'selected' : '' }}>None (Plain)</option>
+                            <option value="dots-light" {{ ($themeData['themeTexture'] ?? 'none') === 'dots-light' ? 'selected' : '' }}>Dots Light (8px)</option>
+                            <option value="dots-dense" {{ ($themeData['themeTexture'] ?? 'none') === 'dots-dense' ? 'selected' : '' }}>Dots Dense (5px)</option>
+                            <option value="grid-fine" {{ ($themeData['themeTexture'] ?? 'none') === 'grid-fine' ? 'selected' : '' }}>Grid Fine (10px)</option>
+                            <option value="grid-medium" {{ ($themeData['themeTexture'] ?? 'none') === 'grid-medium' ? 'selected' : '' }}>Grid Medium (20px)</option>
+                            <option value="grid-large" {{ ($themeData['themeTexture'] ?? 'none') === 'grid-large' ? 'selected' : '' }}>Grid Large (40px)</option>
+                            <option value="diagonal" {{ ($themeData['themeTexture'] ?? 'none') === 'diagonal' ? 'selected' : '' }}>Diagonal Lines</option>
+                            <option value="honeycomb" {{ ($themeData['themeTexture'] ?? 'none') === 'honeycomb' ? 'selected' : '' }}>Honeycomb</option>
+                            <option value="topography" {{ ($themeData['themeTexture'] ?? 'none') === 'topography' ? 'selected' : '' }}>Topography</option>
+                            <option value="waves" {{ ($themeData['themeTexture'] ?? 'none') === 'waves' ? 'selected' : '' }}>Waves</option>
+                            <option value="crosshatch" {{ ($themeData['themeTexture'] ?? 'none') === 'crosshatch' ? 'selected' : '' }}>Crosshatch</option>
+                            <option value="circles" {{ ($themeData['themeTexture'] ?? 'none') === 'circles' ? 'selected' : '' }}>Circles</option>
+                        </select>
+                        <small class="form-hint">Subtle background pattern (adapts to dark mode) - Opacity enhanced for better visibility</small>
                     </div>
 
                     @unless($isAuthMode)

@@ -2,6 +2,7 @@
     'editUrl' => null,
     'editTitle' => 'Edit',
     'editModal' => true,
+    'editModalSize' => null,
     'viewUrl' => null,
     'loginAsUrl' => null,
     'loginAsName' => null,
@@ -19,6 +20,7 @@
                class="btn btn-action text-primary btn-animate-icon ajax-modal-btn" 
                data-url="{{ $editUrl }}" 
                data-modal-title="{{ $editTitle }}" 
+               @if($editModalSize) data-modal-size="{{ $editModalSize }}" @endif
                title="Edit">
                 <i class="ti ti-edit fs-2"></i>
             </a>

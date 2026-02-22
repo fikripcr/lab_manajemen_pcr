@@ -68,7 +68,12 @@ class ThemeTabler {
             theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
             font: getVal('theme-font'),
             base: getVal('theme-base'),
-            sticky: getVal('theme-header-sticky')
+            sticky: getVal('theme-header-sticky'),
+            // Advanced customization settings
+            density: getVal('theme-density') || 'standard',
+            fontSize: getVal('theme-font-size') || 'md',
+            iconWeight: getVal('theme-icon-weight') || 'regular',
+            texture: getVal('theme-texture') || 'none'
         };
 
         // 2. Update Structural Classes (Body & Header)
@@ -79,6 +84,9 @@ class ThemeTabler {
 
         // 4. Update CSS Variables & Attributes (Live Preview)
         this._updateStyles(state);
+
+        // 5. Update Advanced Theme Attributes
+        this._updateAdvancedAttributes(state);
     }
 
     _updateStructure(state) {
@@ -242,17 +250,49 @@ class ThemeTabler {
             }
         }
 
-        // Font Family
+        // Font Family - Apply via data attribute (CSS handles the rest)
         if (state.font) {
             root.setAttribute('data-bs-theme-font', state.font);
-            if (this.fontStacks[state.font]) {
-                root.style.setProperty('--tblr-font-sans-serif', this.fontStacks[state.font]);
-            }
         }
 
         // Theme Base
         if (state.base) {
             root.setAttribute('data-bs-theme-base', state.base);
+        }
+    }
+
+    // ==========================================
+    // Advanced Theme Attributes (New Features)
+    // ==========================================
+
+    /**
+     * Update advanced theme attributes for live preview
+     * Handles: Density, Font Size, Icon Weight, Background Texture
+     */
+    _updateAdvancedAttributes(state) {
+        const root = document.documentElement;
+        const body = document.body;
+
+        // 1. UI Density (data-theme-density on body)
+        if (state.density) {
+            body.setAttribute('data-theme-density', state.density);
+        }
+
+        // 2. Base Font Size (data-theme-font-size on html)
+        if (state.fontSize) {
+            root.setAttribute('data-theme-font-size', state.fontSize);
+        }
+
+        // 3. Icon Weight (data-theme-icon-weight on html)
+        if (state.iconWeight) {
+            root.setAttribute('data-theme-icon-weight', state.iconWeight);
+        }
+
+        // 4. Background Texture (data-theme-texture on body)
+        if (state.texture && state.texture !== 'none') {
+            body.setAttribute('data-theme-texture', state.texture);
+        } else {
+            body.removeAttribute('data-theme-texture');
         }
     }
 

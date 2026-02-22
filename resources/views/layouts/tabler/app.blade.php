@@ -54,6 +54,13 @@
             z-index: 100000 !important;
             position: relative;
         }
+        /* Ensure TinyMCE and SweetAlert appear above the modal */
+        .tox-tinymce-aux, .tox-tinymce-aux * {
+            z-index: 100002 !important;
+        }
+        .swal2-container {
+            z-index: 100002 !important;
+        }
     </style>
     
     {{-- Theme Custom Styles --}}
@@ -158,7 +165,7 @@
     <x-tabler.modal-global-search />
 
     {{-- Global Generic Modal --}}
-    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true" style="z-index: 99999;">
+    <div class="modal modal-blur fade" id="modalAction" tabindex="-1" aria-hidden="true" data-bs-focus="false" style="z-index: 99999;">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" id="modalContent">
                 <div class="modal-header">

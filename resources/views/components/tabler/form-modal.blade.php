@@ -10,7 +10,7 @@
 ])
 
 @if($id)
-<div class="modal modal-blur fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal modal-blur fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="true" data-bs-focus="false">
     <div class="modal-dialog modal-dialog-centered {{ $size }}" role="document">
         <div class="modal-content">
 @endif

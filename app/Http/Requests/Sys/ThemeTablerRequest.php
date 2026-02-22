@@ -24,7 +24,7 @@ class ThemeTablerRequest extends FormRequest
             'mode'                    => 'required|in:sys,auth,tabler',
             'theme'                   => 'nullable|in:light,dark',
             'theme-primary'           => 'nullable|string',
-            'theme-font'              => 'nullable|string',
+            'theme-font'              => 'nullable|in:inter,roboto,poppins,public-sans,nunito,sarabun',
             'theme-base'              => 'nullable|string',
             'theme-radius'            => 'nullable|string',
             'theme-card-style'        => 'nullable|string',
@@ -38,6 +38,11 @@ class ThemeTablerRequest extends FormRequest
             'container-width'         => 'nullable|string',
             'auth-layout'             => 'nullable|string',
             'auth-form-position'      => 'nullable|string',
+            // Advanced customization validation rules
+            'theme-density'           => 'nullable|in:compact,standard,spacious,ultra-spacious',
+            'theme-font-size'         => 'nullable|in:13px,14px,15px,16px',
+            'theme-icon-weight'       => 'nullable|in:1,1.25,1.5,1.75,2',
+            'theme-texture'           => 'nullable|in:none,dots-light,dots-dense,grid-fine,grid-medium,grid-large,diagonal,honeycomb,topography,waves,crosshatch,circles',
         ];
     }
 

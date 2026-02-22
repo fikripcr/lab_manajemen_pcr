@@ -521,3 +521,300 @@ body.layout-condensed .page-body {
 .card .dropdown-menu {
     z-index: 1060 !important;
 }
+
+/* ==========================================================================
+   7. ADVANCED THEME CUSTOMIZATION
+   Features: UI Density, Base Font Size, Icon Weight, Background Texture
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   7.1 UI DENSITY (Compact, Standard, Spacious)
+   Controls: spacers, paddings, input heights, table cell paddings
+   -------------------------------------------------------------------------- */
+
+/* Default: Standard Density (Tabler defaults) */
+:root {
+    --tblr-density-multiplier: 1;
+}
+
+/* Compact Density: Reduce all spacing by 25% */
+[data-theme-density="compact"] {
+    --tblr-density-multiplier: 0.75;
+    --tblr-spacer: 0.75rem;
+    --tblr-spacer-x: 0.75rem;
+    --tblr-spacer-y: 0.75rem;
+    --tblr-line-height: 1.4;
+}
+
+[data-theme-density="compact"] .card-body {
+    padding: 0.75rem !important;
+}
+
+[data-theme-density="compact"] .table th,
+[data-theme-density="compact"] .table td {
+    padding: 0.5rem 0.75rem !important;
+}
+
+[data-theme-density="compact"] .form-control,
+[data-theme-density="compact"] .form-select {
+    min-height: 2.125rem;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+}
+
+[data-theme-density="compact"] .btn {
+    padding: 0.3125rem 0.625rem;
+    min-height: 2.125rem;
+}
+
+[data-theme-density="compact"] .navbar {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+[data-theme-density="compact"] .page-header {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* Spacious Density: Increase all spacing by 25% */
+[data-theme-density="spacious"] {
+    --tblr-density-multiplier: 1.25;
+    --tblr-spacer: 1.5rem;
+    --tblr-spacer-x: 1.5rem;
+    --tblr-spacer-y: 1.5rem;
+    --tblr-line-height: 1.7;
+}
+
+[data-theme-density="spacious"] .card-body {
+    padding: 1.5rem !important;
+}
+
+[data-theme-density="spacious"] .table th,
+[data-theme-density="spacious"] .table td {
+    padding: 1rem 1.25rem !important;
+}
+
+[data-theme-density="spacious"] .form-control,
+[data-theme-density="spacious"] .form-select {
+    min-height: 2.75rem;
+    padding-top: 0.5625rem;
+    padding-bottom: 0.5625rem;
+}
+
+[data-theme-density="spacious"] .btn {
+    padding: 0.5625rem 1rem;
+    min-height: 2.75rem;
+}
+
+[data-theme-density="spacious"] .navbar {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+[data-theme-density="spacious"] .page-header {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   7.2 BASE FONT SIZE (13px, 14px, 16px)
+   Overrides: --tblr-body-font-size, --tblr-font-size-base
+   -------------------------------------------------------------------------- */
+
+/* Default: 14px (Tabler default) */
+:root {
+    --tblr-font-size-base: 0.875rem; /* 14px */
+    --tblr-body-font-size: 0.875rem;
+}
+
+/* Small: 13px */
+[data-theme-font-size="sm"] {
+    --tblr-font-size-base: 0.8125rem; /* 13px */
+    --tblr-body-font-size: 0.8125rem;
+}
+
+[data-theme-font-size="sm"] body,
+[data-theme-font-size="sm"] .form-control,
+[data-theme-font-size="sm"] .btn,
+[data-theme-font-size="sm"] .nav-link,
+[data-theme-font-size="sm"] .dropdown-item {
+    font-size: 0.8125rem !important;
+}
+
+/* Medium: 14px (Default) */
+[data-theme-font-size="md"] {
+    --tblr-font-size-base: 0.875rem; /* 14px */
+    --tblr-body-font-size: 0.875rem;
+}
+
+/* Large: 16px */
+[data-theme-font-size="lg"] {
+    --tblr-font-size-base: 1rem; /* 16px */
+    --tblr-body-font-size: 1rem;
+}
+
+[data-theme-font-size="lg"] body,
+[data-theme-font-size="lg"] .form-control,
+[data-theme-font-size="lg"] .btn,
+[data-theme-font-size="lg"] .nav-link,
+[data-theme-font-size="lg"] .dropdown-item {
+    font-size: 1rem !important;
+}
+
+[data-theme-font-size="lg"] h1,
+[data-theme-font-size="lg"] .h1 {
+    font-size: 2rem;
+}
+
+[data-theme-font-size="lg"] h2,
+[data-theme-font-size="lg"] .h2 {
+    font-size: 1.75rem;
+}
+
+[data-theme-font-size="lg"] h3,
+[data-theme-font-size="lg"] .h3 {
+    font-size: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   7.3 ICON STROKE WEIGHT (Light, Regular, Bold)
+   Targets: Tabler icons (.icon, svg.icon, i.ti)
+   -------------------------------------------------------------------------- */
+
+/* Default: Regular (1.5) */
+:root {
+    --tblr-icon-stroke-width: 1.5;
+}
+
+/* Light: 1.25 */
+[data-theme-icon-weight="light"] {
+    --tblr-icon-stroke-width: 1.25;
+}
+
+[data-theme-icon-weight="light"] .icon,
+[data-theme-icon-weight="light"] svg.icon,
+[data-theme-icon-weight="light"] i.ti,
+[data-theme-icon-weight="light"] i.tabler {
+    stroke-width: 1.25 !important;
+}
+
+/* Regular: 1.5 (Default) */
+[data-theme-icon-weight="regular"] {
+    --tblr-icon-stroke-width: 1.5;
+}
+
+[data-theme-icon-weight="regular"] .icon,
+[data-theme-icon-weight="regular"] svg.icon,
+[data-theme-icon-weight="regular"] i.ti,
+[data-theme-icon-weight="regular"] i.tabler {
+    stroke-width: 1.5 !important;
+}
+
+/* Bold: 2.0 */
+[data-theme-icon-weight="bold"] {
+    --tblr-icon-stroke-width: 2;
+}
+
+[data-theme-icon-weight="bold"] .icon,
+[data-theme-icon-weight="bold"] svg.icon,
+[data-theme-icon-weight="bold"] i.ti,
+[data-theme-icon-weight="bold"] i.tabler {
+    stroke-width: 2 !important;
+}
+
+/* Also target Tabler Icons font */
+[data-theme-icon-weight="light"] .ti {
+    font-variation-settings: 'wght' 300;
+}
+
+[data-theme-icon-weight="regular"] .ti {
+    font-variation-settings: 'wght' 400;
+}
+
+[data-theme-icon-weight="bold"] .ti {
+    font-variation-settings: 'wght' 600;
+}
+
+/* --------------------------------------------------------------------------
+   7.4 BACKGROUND TEXTURE (None, Dots, Grid, Topography)
+   Applies subtle SVG patterns to body background
+   Adapts to both Light and Dark modes
+   -------------------------------------------------------------------------- */
+
+/* Default: None */
+:root {
+    --tblr-bg-texture: none;
+}
+
+/* Dots Pattern - Subtle radial gradient dots */
+[data-theme-texture="dots"] {
+    --tblr-bg-texture: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+[data-theme-texture="dots"] body {
+    background-image: var(--tblr-bg-texture);
+    background-repeat: repeat;
+    background-position: top left;
+    background-attachment: fixed;
+}
+
+/* Dark mode dots - lighter opacity for contrast */
+[data-bs-theme="dark"][data-theme-texture="dots"] body {
+    --tblr-bg-texture: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Grid Pattern - Subtle linear gradient grid */
+[data-theme-texture="grid"] {
+    --tblr-bg-texture: 
+        linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+    --tblr-bg-texture-size: 20px 20px;
+}
+
+[data-theme-texture="grid"] body {
+    background-image: var(--tblr-bg-texture);
+    background-size: var(--tblr-bg-texture-size);
+    background-repeat: repeat;
+    background-position: top left;
+    background-attachment: fixed;
+}
+
+/* Dark mode grid - lighter lines */
+[data-bs-theme="dark"][data-theme-texture="grid"] body {
+    --tblr-bg-texture: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Topography Pattern - Subtle contour lines */
+[data-theme-texture="topography"] {
+    --tblr-bg-texture: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 33c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM57 54c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm12 25c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%239C92AC' fill-opacity='0.06' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+[data-theme-texture="topography"] body {
+    background-image: var(--tblr-bg-texture);
+    background-repeat: repeat;
+    background-position: top left;
+    background-attachment: fixed;
+}
+
+/* Dark mode topography - lighter contrast */
+[data-bs-theme="dark"][data-theme-texture="topography"] body {
+    --tblr-bg-texture: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 33c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM57 54c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm12 25c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.04' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* Ensure textures don't interfere with modal backdrops and overlays */
+body[data-theme-texture]:not([data-theme-texture="none"]) .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Print styles - disable textures for printing */
+@media print {
+    [data-theme-texture] body,
+    [data-theme-texture="dots"] body,
+    [data-theme-texture="grid"] body,
+    [data-theme-texture="topography"] body {
+        background-image: none !important;
+    }
+}
