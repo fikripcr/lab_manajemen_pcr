@@ -34,6 +34,8 @@ class IndikatorPegawai extends Model
         'weight',
         'target_value',
         'realization',
+        'kpi_analisis',
+        'kpi_links',
         'score',
         'attachment',
         'status',

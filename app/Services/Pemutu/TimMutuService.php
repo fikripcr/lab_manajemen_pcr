@@ -196,7 +196,7 @@ class TimMutuService
     /**
      * Get OrgUnits as paginated list for manage page.
      */
-    public function getOrgUnitsPaginated($perPage = 12)
+    public function getOrgUnitsPaginated($perPage = 9)
     {
         return OrgUnit::with('parent')
             ->orderBy('level')

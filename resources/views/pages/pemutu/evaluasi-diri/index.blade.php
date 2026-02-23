@@ -33,6 +33,10 @@
                                 @else
                                     <span class="badge bg-secondary-lt">Jadwal Belum Diatur</span>
                                 @endif
+                                @php $edPct = $edTotal > 0 ? round(($edFilled / $edTotal) * 100) : 0; @endphp
+                                <span class="badge ms-2 {{ $edPct == 100 ? 'bg-green' : ($edPct > 0 ? 'bg-yellow' : 'bg-secondary-lt') }}">
+                                    <i class="ti ti-checklist me-1"></i>{{ $edFilled }}/{{ $edTotal }} Terisi
+                                </span>
                                 <i class="ti ti-chevron-right ms-3 text-muted"></i>
                             </div>
                         </div>

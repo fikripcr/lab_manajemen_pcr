@@ -19,7 +19,11 @@ class EvaluasiDiriController extends Controller
         $pageTitle = 'Evaluasi Diri';
         $periodes  = PeriodeSpmi::orderBy('periode', 'desc')->paginate(12);
 
-        return view('pages.pemutu.evaluasi-diri.index', compact('pageTitle', 'periodes'));
+        // Global counts (not per-period, as orgunit pivot has no period FK)
+        $edTotal  = DB::table('pemutu_indikator_orgunit')->count();
+        $edFilled = DB::table('pemutu_indikator_orgunit')->whereNotNull('ed_capaian')->where('ed_capaian', '!=', '')->count();
+
+        return view('pages.pemutu.evaluasi-diri.index', compact('pageTitle', 'periodes', 'edTotal', 'edFilled'));
     }
 
     public function show(PeriodeSpmi $periode)

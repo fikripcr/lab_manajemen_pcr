@@ -17,12 +17,13 @@ class Event extends Model
     protected $fillable = [
         'judul_event',
         'jenis_event',
-        'judul_Kegiatan', // Map to judul_event
-        'jenis_Kegiatan', // Map to jenis_event
+        'judul_Kegiatan',
+        'jenis_Kegiatan',
         'tanggal_mulai',
         'tanggal_selesai',
         'lokasi',
         'deskripsi',
+        'buku_tamu_token',
         'pic_user_id',
         'created_by',
         'updated_by',

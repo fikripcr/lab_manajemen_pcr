@@ -269,10 +269,10 @@
                 ],
 
                 [
-                    'title' => 'Sasaran Kinerja Saya',
-                    'route' => 'pemutu.mykpi.index',
-                    'active_routes' => ['pemutu.mykpi.*'],
-                    'icon' => 'ti ti-user-check',
+                    'title' => 'Evaluasi KPI',
+                    'route' => 'pemutu.evaluasi-kpi.index',
+                    'active_routes' => ['pemutu.evaluasi-kpi.*'],
+                    'icon' => 'ti ti-clipboard-data',
                 ],
 
             ],
@@ -297,7 +297,7 @@
                     'icon'          => 'ti ti-book',
                 ],
                 [
-                    'title'         => 'Notulen Rapat',
+                    'title'         => 'Manajemen Rapat',
                     'route'         => 'Kegiatan.rapat.index',
                     'active_routes' => ['Kegiatan.rapat.*'],
                     'icon'          => 'ti ti-notes',

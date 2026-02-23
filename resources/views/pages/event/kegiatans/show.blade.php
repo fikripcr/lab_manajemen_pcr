@@ -104,44 +104,6 @@
                 Dibuat {{ $event->created_at ? $event->created_at->diffForHumans() : '-' }}
             </div>
         </div>
-        
-        {{-- Quick Stats --}}
-        <div class="row g-3 mt-3">
-            <div class="col-6">
-                <div class="card card-sm shadow-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <span class="bg-blue-lt text-blue avatar avatar-lg">
-                                    <i class="ti ti-users"></i>
-                                </span>
-                            </div>
-                            <div class="col">
-                                <div class="font-weight-medium">{{ $event->teams->count() }}</div>
-                                <div class="text-muted">Anggota Tim</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card card-sm shadow-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <span class="bg-green-lt text-green avatar avatar-lg">
-                                    <i class="ti ti-book"></i>
-                                </span>
-                            </div>
-                            <div class="col">
-                                <div class="font-weight-medium">{{ $event->tamus->count() }}</div>
-                                <div class="text-muted">Tamu Undangan</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     {{-- Right Column - Tabs --}}
@@ -281,16 +243,50 @@
 
                     {{-- Tab: Buku Tamu --}}
                     <div class="tab-pane" id="tabs-tamu">
+                        {{-- Buku Tamu Digital Card — Permanent Link --}}
+                        @php $attendanceUrl = route('attendance.form', $event->encrypted_event_id) @endphp
+                        <div class="card mb-4 border-2 border-success-subtle">
+                            <div class="card-body">
+                                <div class="row align-items-center g-3">
+                                    <div class="col-auto">
+                                        <span class="avatar avatar-lg bg-success text-white">
+                                            <i class="ti ti-qrcode fs-2"></i>
+                                        </span>
+                                    </div>
+                                    <div class="col">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <h4 class="mb-0">Buku Tamu Digital</h4>
+                                            <span class="badge bg-success-lt text-success">Aktif</span>
+                                        </div>
+                                        <div class="input-group input-group-sm" style="max-width:500px">
+                                            <input type="text" class="form-control font-monospace text-muted"
+                                                value="{{ $attendanceUrl }}" readonly id="attendance-url">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="navigator.clipboard.writeText('{{ $attendanceUrl }}').then(()=>{
+                                                    this.innerHTML='<i class=\'ti ti-check\'></i> Tersalin';
+                                                    setTimeout(()=>this.innerHTML='<i class=\'ti ti-copy\'></i> Salin',2000)
+                                                })">
+                                                <i class="ti ti-copy"></i> Salin
+                                            </button>
+                                            <a href="{{ $attendanceUrl }}" target="_blank" class="btn btn-outline-primary">
+                                                <i class="ti ti-external-link"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="m-0">
-                                <i class="ti ti-book me-2 text-success"></i>Buku Tamu Kegiatan
+                                <i class="ti ti-book me-2 text-success"></i>Daftar Tamu
                             </h4>
-                            <x-tabler.button 
-                                class="btn-sm btn-success ajax-modal-btn" 
-                                data-modal-title="Tambah Tamu" 
-                                data-url="{{ route('Kegiatan.Kegiatans.tamus.create', $event->encrypted_event_id) }}" 
-                                icon="ti ti-user-plus" 
-                                text="Tambah Tamu" 
+                            <x-tabler.button
+                                class="btn-sm btn-success ajax-modal-btn"
+                                data-modal-title="Tambah Tamu"
+                                data-url="{{ route('Kegiatan.Kegiatans.tamus.create', $event->encrypted_event_id) }}"
+                                icon="ti ti-user-plus"
+                                text="Tambah Manual"
                             />
                         </div>
                         <div class="card-table">
@@ -300,6 +296,7 @@
                                     ['name' => 'Foto', 'className' => 'w-1', 'sortable' => false],
                                     ['name' => 'Nama'],
                                     ['name' => 'Instansi'],
+                                    ['name' => 'No. HP'],
                                     ['name' => 'Waktu Datang'],
                                     ['name' => '', 'className' => 'w-1', 'sortable' => false]
                                 ]"
@@ -315,13 +312,20 @@
                                         </td>
                                         <td>{{ $tamu->nama_tamu }}</td>
                                         <td class="text-muted">{{ $tamu->instansi ?: '-' }}</td>
-                                        <td class="text-muted">{{ $tamu->waktu_datang.format('H:i') ?: '-' }}</td>
+                                        <td class="text-muted">
+                                            @if($tamu->kontak)
+                                                <i class="ti ti-device-mobile me-1"></i>{{ $tamu->kontak }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td class="text-muted">{{ $tamu->waktu_datang ? \Carbon\Carbon::parse($tamu->waktu_datang)->format('H:i') : '-' }}</td>
                                         <td>
                                             <div class="btn-list flex-nowrap">
                                                 <x-tabler.button 
-                                                    class="btn-icon btn-sm ajax-modal-btn" 
+                                                    class=" ajax-modal-btn" 
                                                     data-modal-title="Edit Tamu" 
-                                                    data-url="{{ route('Kegiatan.Kegiatans.tamus.edit', $tamu->encrypted_eventtamu_id) }}" 
+                                                    data-url="{{ route('Kegiatan.Kegiatans.tamus.edit', ['event' => $event->encrypted_event_id, 'tamu' => $tamu->encrypted_eventtamu_id]) }}" 
                                                     icon="ti ti-edit" 
                                                 />
                                             </div>

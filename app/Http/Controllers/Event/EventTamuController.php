@@ -2,16 +2,18 @@
 namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Event\EventTamuRegistrationRequest;
 use App\Http\Requests\Event\EventTamuRequest;
 use App\Models\Event\Event;
 use App\Models\Event\EventTamu;
 use App\Services\Event\EventTamuService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class EventTamuController extends Controller
 {
-    public function __construct(protected EventTamuService $eventTamuService)
+    public function __construct(protected EventTamuService $EventTamuService)
     {}
 
     public function index()
@@ -31,7 +33,7 @@ class EventTamuController extends Controller
                 }
                 return '<span class="avatar avatar-sm bg-secondary text-white">?</span>';
             })
-            ->​addColumn('action', function ($row) {
+            ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('Kegiatan.tamus.edit', $row->encrypted_eventtamu_id),
                     'editModal' => true,
@@ -52,7 +54,7 @@ class EventTamuController extends Controller
     public function store(EventTamuRequest $request)
     {
         try {
-            $this->eventTamuService->store($request->validated());
+            $this->EventTamuService->store($request->validated());
             return jsonSuccess('Data tamu berhasil disimpan');
         } catch (\Exception $e) {
             logError($e);
@@ -69,7 +71,7 @@ class EventTamuController extends Controller
     public function update(EventTamuRequest $request, EventTamu $tamu)
     {
         try {
-            $this->eventTamuService->update($tamu, $request->validated());
+            $this->EventTamuService->update($tamu, $request->validated());
             return jsonSuccess('Data tamu berhasil diperbarui');
         } catch (\Exception $e) {
             logError($e);
@@ -80,7 +82,7 @@ class EventTamuController extends Controller
     public function destroy(EventTamu $tamu)
     {
         try {
-            $this->eventTamuService->destroy($tamu);
+            $this->EventTamuService->destroy($tamu);
             return jsonSuccess('Data tamu berhasil dihapus');
         } catch (\Exception $e) {
             logError($e);
@@ -88,6 +90,38 @@ class EventTamuController extends Controller
         }
     }
 
+    // ─── Public Buku Tamu — Permanent hashid URL ─────────────────
+
+    public function attendanceForm(string $hashid)
+    {
+        $eventId = decryptId($hashid, false);
+        $event   = Event::findOrFail($eventId);
+
+        $sukses = session('attendance_sukses');
+        return view('pages.event.tamus.registration', compact('event', 'hashid', 'sukses'));
+    }
+
+    public function attendanceStore(EventTamuRegistrationRequest $request, string $hashid)
+    {
+        $eventId = decryptId($hashid, false);
+        $event   = Event::findOrFail($eventId);
+
+        try {
+            $data                 = $request->validated();
+            $data['event_id']     = $event->event_id;
+            $data['waktu_datang'] = now();
+
+            $this->EventTamuService->storeFromPublic($data);
+
+            return redirect()->route('attendance.form', $hashid)
+                ->with('attendance_sukses', true);
+        } catch (\Exception $e) {
+            logError($e);
+            return back()->withInput()->withErrors(['error' => 'Gagal menyimpan: ' . $e->getMessage()]);
+        }
+    }
+
+    // ─── Legacy ──────────────────────────────────────────────────
     public function registration($hashid)
     {
         $kegiatan = Event::findOrFailByHashid($hashid);
@@ -103,11 +137,35 @@ class EventTamuController extends Controller
         $validated['waktu_datang'] = now();
 
         try {
-            $this->eventTamuService->storeFromPublic($validated);
+            $this->EventTamuService->storeFromPublic($validated);
             return jsonSuccess('Terima kasih, data Anda telah berhasil disimpan.');
         } catch (\Exception $e) {
             logError($e);
             return jsonError('Gagal menyimpan pendaftaran: ' . $e->getMessage());
         }
+    }
+
+    // ─── Helper ──────────────────────────────────────────────────
+
+    private function getRegistrationStatus(Event $event): string
+    {
+        // Check session sukses
+        if (session('sukses')) {
+            return 'sukses';
+        }
+
+        $now     = Carbon::now();
+        $mulai   = $event->tanggal_mulai ? Carbon::parse($event->tanggal_mulai)->startOfDay() : null;
+        $selesai = $event->tanggal_selesai ? Carbon::parse($event->tanggal_selesai)->endOfDay()->addDay() : null;
+
+        if ($mulai && $now->lt($mulai)) {
+            return 'belum';
+        }
+
+        if ($selesai && $now->gt($selesai)) {
+            return 'tutup';
+        }
+
+        return 'aktif';
     }
 }

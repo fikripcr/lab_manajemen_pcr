@@ -15,7 +15,9 @@ class EventTamuRegistrationRequest extends FormRequest
         return [
             'nama_tamu' => 'required|string|max:255',
             'instansi'  => 'nullable|string|max:255',
-            'keperluan' => 'nullable|string',
+            'jabatan'   => 'nullable|string|max:255',
+            'kontak'    => 'nullable|string|max:255',
+            'tujuan'    => 'nullable|string',
             'foto'      => 'nullable|string', // Base64
             'ttd'       => 'nullable|string', // Base64
         ];
@@ -26,7 +28,9 @@ class EventTamuRegistrationRequest extends FormRequest
         return [
             'nama_tamu' => 'Nama Lengkap',
             'instansi'  => 'Instansi / Organisasi',
-            'keperluan' => 'Keperluan',
+            'jabatan'   => 'Jabatan',
+            'kontak'    => 'Kontak',
+            'tujuan'    => 'Tujuan / Keperluan',
             'foto'      => 'Foto',
             'ttd'       => 'Tanda Tangan',
         ];

@@ -14,7 +14,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
     Route::post('rapat/{rapat}/agenda/store', [App\Http\Controllers\Event\RapatController::class, 'storeAgenda'])->name('rapat.agenda.store');
     Route::post('rapat/{rapat}/officials', [App\Http\Controllers\Event\RapatController::class, 'updateOfficials'])->name('rapat.update-officials');
     Route::post('rapat/{rapat}/participants', [App\Http\Controllers\Event\RapatController::class, 'storeParticipants'])->name('rapat.participants.store');
+    Route::post('rapat/peserta/{peserta}/resend-invite', [App\Http\Controllers\Event\RapatController::class, 'resendInvitation'])->name('rapat.peserta.resend-invite');
     Route::get('rapat/{rapat}/pdf', [App\Http\Controllers\Event\RapatController::class, 'generatePdf'])->name('rapat.generate-pdf');
+    Route::patch('rapat/peserta/{peserta}/toggle-attendance', [App\Http\Controllers\Event\RapatController::class, 'toggleAttendance'])->name('rapat.peserta.toggle-attendance');
     Route::resource('rapat', App\Http\Controllers\Event\RapatController::class);
 
     // Rapat Peserta (AJAX Modal support)
@@ -41,6 +43,10 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
     Route::delete('tamus/{tamu}', [App\Http\Controllers\Event\EventTamuController::class, 'destroy'])->name('tamus.destroy');
 
     // --- New Kegiatan Module Features ---
+
+    // Buku Tamu Token Generate/Revoke (auth)
+    Route::post('events/{event}/buku-tamu/generate', [App\Http\Controllers\Event\EventTamuController::class, 'generateToken'])->name('Kegiatans.buku-tamu.generate');
+    Route::delete('events/{event}/buku-tamu/revoke', [App\Http\Controllers\Event\EventTamuController::class, 'revokeToken'])->name('Kegiatans.buku-tamu.revoke');
 
     // Kegiatan (Event)
     Route::get('events/data', [App\Http\Controllers\Event\EventController::class, 'paginate'])->name('Kegiatans.data');
@@ -71,3 +77,7 @@ Route::prefix('event')->name('Kegiatan.')->group(function () {
     Route::get('events/{event}/registrasi', [App\Http\Controllers\Event\EventTamuController::class, 'registration'])->name('Kegiatans.registration');
     Route::post('events/{event}/registrasi', [App\Http\Controllers\Event\EventTamuController::class, 'storeRegistration'])->name('Kegiatans.registration.store');
 });
+
+// Buku Tamu Public - Permanent link using encrypted event ID (no auth required)
+Route::get('attendance/{hashid}', [App\Http\Controllers\Event\EventTamuController::class, 'attendanceForm'])->name('attendance.form');
+Route::post('attendance/{hashid}', [App\Http\Controllers\Event\EventTamuController::class, 'attendanceStore'])->name('attendance.store');

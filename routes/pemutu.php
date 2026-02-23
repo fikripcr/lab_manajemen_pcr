@@ -7,7 +7,6 @@ use App\Http\Controllers\Pemutu\DokumenSpmiController;
 use App\Http\Controllers\Pemutu\IndikatorController;
 use App\Http\Controllers\Pemutu\LabelController;
 use App\Http\Controllers\Pemutu\LabelTypeController;
-use App\Http\Controllers\Pemutu\MyKpiController;
 use App\Http\Controllers\Pemutu\PegawaiController;
 use App\Http\Controllers\Pemutu\PeriodeKpiController;
 use App\Http\Controllers\Pemutu\PeriodeSpmiController;
@@ -87,11 +86,6 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('renop', [RenopController::class, 'store'])->name('renop.store');
     Route::get('renop', [RenopController::class, 'index'])->name('renop.index');
 
-    // My KPI
-    Route::get('mykpi', [MyKpiController::class, 'index'])->name('mykpi.index');
-    Route::get('mykpi/{kpi}/edit', [MyKpiController::class, 'edit'])->name('mykpi.edit');
-    Route::put('mykpi/{kpi}', [MyKpiController::class, 'update'])->name('mykpi.update');
-
     // Evaluasi Diri
     Route::get('evaluasi-diri', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'index'])->name('evaluasi-diri.index');
     Route::get('evaluasi-diri/{periode}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'show'])->name('evaluasi-diri.show');
@@ -99,4 +93,12 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('evaluasi-diri/download/{id}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'downloadAttachment'])->name('evaluasi-diri.download');
     Route::get('evaluasi-diri/{indikator}/edit', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'edit'])->name('evaluasi-diri.edit');
     Route::post('evaluasi-diri/{indikator}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'update'])->name('evaluasi-diri.update');
+
+    // Evaluasi KPI
+    Route::get('evaluasi-kpi', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'index'])->name('evaluasi-kpi.index');
+    Route::get('evaluasi-kpi/download/{indikatorPegawai}', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'downloadAttachment'])->name('evaluasi-kpi.download');
+    Route::get('evaluasi-kpi/{periode}', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'show'])->name('evaluasi-kpi.show');
+    Route::get('evaluasi-kpi/{periode}/data', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'data'])->name('evaluasi-kpi.data');
+    Route::get('evaluasi-kpi/{indikatorPegawai}/edit', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'edit'])->name('evaluasi-kpi.edit');
+    Route::post('evaluasi-kpi/{indikatorPegawai}', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'update'])->name('evaluasi-kpi.update');
 });

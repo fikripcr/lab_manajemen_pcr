@@ -2,19 +2,22 @@
 namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Event\RapatAttendanceRequest;
+use App\Http\Requests\Event\RapatBulkPesertaRequest;
+use App\Http\Requests\Event\RapatOfficialsRequest;
 use App\Http\Requests\Event\RapatRequest;
 use App\Models\Event\Rapat;
+use App\Models\Event\RapatPeserta;
 use App\Models\User;
 use App\Services\Event\RapatService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
 class RapatController extends Controller
 {
-    public function __construct(protected RapatService $rapatService)
+    public function __construct(protected RapatService $RapatService)
     {}
 
     public function index()
@@ -34,10 +37,9 @@ class RapatController extends Controller
                 return $html;
             })
             ->addColumn('waktu_info', function ($row) {
-                $tgl     = formatTanggalIndo($row->tgl_rapat);
-                $mulai   = $row->waktu_mulai?->format('H:i') ?? '--:--';
-                $selesai = $row->waktu_selesai?->format('H:i') ?? '--:--';
-
+                $tgl      = formatTanggalIndo($row->tgl_rapat);
+                $mulai    = $row->waktu_mulai?->format('H:i') ?? '--:--';
+                $selesai  = $row->waktu_selesai?->format('H:i') ?? '--:--';
                 $duration = '';
                 if ($row->waktu_mulai && $row->waktu_selesai) {
                     $diff     = $row->waktu_mulai->diffInMinutes($row->waktu_selesai);
@@ -54,7 +56,6 @@ class RapatController extends Controller
 
                     $duration .= ')';
                 }
-
                 return '<div>' . $tgl . '</div>
                         <div class="text-muted small">' . $mulai . ' - ' . $selesai . '<span class="text-purple">' . $duration . '</span></div>';
             })
@@ -77,21 +78,44 @@ class RapatController extends Controller
 
     public function create()
     {
-        $pageTitle = 'Tambah Rapat';
-        $rapat     = new Rapat();
-        $users     = User::with('roles')->get();
-        return view('pages.event.rapat.create-edit-ajax', compact('pageTitle', 'users', 'rapat'));
+        $pageTitle        = 'Jadwalkan Rapat';
+        $rapat            = new Rapat();
+        $users            = User::with('pegawai.latestDataDiri')->get();
+        $defaultDate      = now()->format('Y-m-d');
+        $defaultStartTime = now()->format('H:i');
+        $defaultEndTime   = now()->addHours(2)->format('H:i');
+
+        return view('pages.event.rapat.create-edit-ajax', compact('pageTitle', 'users', 'rapat', 'defaultDate', 'defaultStartTime', 'defaultEndTime'));
     }
 
     public function store(RapatRequest $request)
     {
         try {
-            $data                  = $request->validated();
-            $date                  = $data['tgl_rapat'];
-            $data['waktu_mulai']   = \Carbon\Carbon::parse("$date " . $data['waktu_mulai']);
-            $data['waktu_selesai'] = \Carbon\Carbon::parse("$date " . $data['waktu_selesai']);
+            $data                   = $request->validated();
+            $data['author_user_id'] = auth()->id();
 
-            $this->rapatService->store($data);
+            $rapat = $this->RapatService->store($data);
+
+            if ($request->has('agendas') && is_array($request->agendas)) {
+                foreach ($request->agendas as $index => $agendaItem) {
+                    if (! empty($agendaItem['judul_agenda'])) {
+                        $this->RapatService->addAgenda($rapat, [
+                            'judul_agenda' => $agendaItem['judul_agenda'],
+                            'isi'          => $agendaItem['isi'] ?? '',
+                            'seq'          => $index,
+                        ]);
+                    }
+                }
+            }
+
+            if ($request->has('participants') && is_array($request->participants)) {
+                $this->RapatService->inviteParticipants(
+                    $rapat,
+                    $request->participants,
+                    $request->input('jabatan_peserta', 'Peserta')
+                );
+            }
+
             return jsonSuccess('Data berhasil disimpan', route('Kegiatan.rapat.index'));
         } catch (\Exception $e) {
             logError($e);
@@ -109,19 +133,16 @@ class RapatController extends Controller
     public function edit(Rapat $rapat)
     {
         $pageTitle = 'Edit Rapat';
-        $users     = User::with('roles')->get();
+        $users     = User::with('pegawai.latestDataDiri')->get();
+        $rapat->load(['agendas', 'pesertas.user']);
         return view('pages.event.rapat.create-edit-ajax', compact('rapat', 'pageTitle', 'users'));
     }
 
     public function update(RapatRequest $request, Rapat $rapat)
     {
         try {
-            $data                  = $request->validated();
-            $date                  = $data['tgl_rapat'];
-            $data['waktu_mulai']   = \Carbon\Carbon::parse("$date " . $data['waktu_mulai']);
-            $data['waktu_selesai'] = \Carbon\Carbon::parse("$date " . $data['waktu_selesai']);
+            $this->RapatService->update($rapat, $request->validated());
 
-            $this->rapatService->update($rapat, $data);
             return jsonSuccess('Data berhasil diperbarui', route('Kegiatan.rapat.index'));
         } catch (\Exception $e) {
             logError($e);
@@ -132,7 +153,7 @@ class RapatController extends Controller
     public function destroy(Rapat $rapat)
     {
         try {
-            $this->rapatService->destroy($rapat);
+            $this->RapatService->destroy($rapat);
             return jsonSuccess('Data berhasil dihapus');
         } catch (\Exception $e) {
             logError($e);
@@ -140,20 +161,42 @@ class RapatController extends Controller
         }
     }
 
-    public function updateAttendance(Request $request, Rapat $rapat)
+    public function resendInvitation(RapatPeserta $peserta)
     {
-        $request->validate([
-            'attendance'               => 'required|array',
-            'attendance.*.status'      => 'nullable|in:hadir,izin,sakit,alpa',
-            'attendance.*.waktu_hadir' => 'nullable',
-        ]);
-
         try {
-            $this->rapatService->updateAttendance($rapat, $request->attendance);
+            $success = $this->RapatService->resendInvitation($peserta);
+            return $success
+                ? jsonSuccess('Undangan email berhasil dikirim ulang.')
+                : jsonError('Gagal mengirim ulang undangan email.');
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Error: ' . $e->getMessage());
+        }
+    }
+
+    public function toggleAttendance(RapatPeserta $peserta)
+    {
+        try {
+            $updated = $this->RapatService->toggleAttendance($peserta);
+            return response()->json([
+                'success'     => true,
+                'status'      => $updated->status,
+                'waktu_hadir' => $updated->waktu_hadir?->format('H:i'),
+                'updated_at'  => $updated->updated_at?->format('H:i d/m'),
+            ]);
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Gagal memperbarui absensi: ' . $e->getMessage());
+        }
+    }
+
+    public function updateAttendance(RapatAttendanceRequest $request, Rapat $rapat)
+    {
+        try {
+            $this->RapatService->updateAttendance($rapat, $request->validated()['attendance']);
 
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-info')->with('success', 'Absensi berhasil diperbarui.');
         } catch (\Exception $e) {
-            DB::rollBack();
             logError($e);
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-info')->with('error', 'Gagal memperbarui absensi: ' . $e->getMessage());
         }
@@ -167,15 +210,13 @@ class RapatController extends Controller
         ]);
 
         try {
-            $this->rapatService->updateAgendas($rapat, $request->agendas);
+            $this->RapatService->updateAgendas($rapat, $request->agendas);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return jsonSuccess('Agenda berhasil diperbarui secara otomatis.');
             }
-
             return back()->with('success', 'Agenda berhasil diperbarui.');
         } catch (\Exception $e) {
-            DB::rollBack();
             logError($e);
             if ($request->ajax() || $request->wantsJson()) {
                 return jsonError('Gagal memperbarui agenda: ' . $e->getMessage());
@@ -186,14 +227,11 @@ class RapatController extends Controller
 
     public function storeAgenda(Request $request, Rapat $rapat)
     {
-        $request->validate([
-            'judul_agenda' => 'required|string|max:255',
-        ]);
+        $request->validate(['judul_agenda' => 'required|string|max:255']);
 
         try {
             $lastSeq = $rapat->agendas()->max('seq') ?? 0;
-
-            $this->rapatService->addAgenda($rapat, [
+            $this->RapatService->addAgenda($rapat, [
                 'judul_agenda' => $request->judul_agenda,
                 'isi'          => '',
                 'seq'          => $lastSeq + 1,
@@ -202,15 +240,12 @@ class RapatController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return jsonSuccess('Agenda baru berhasil ditambahkan.');
             }
-
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-agenda')->with('success', 'Agenda baru berhasil ditambahkan.');
         } catch (\Exception $e) {
             logError($e);
-            
             if ($request->ajax() || $request->wantsJson()) {
                 return jsonError('Gagal menambah agenda: ' . $e->getMessage());
             }
-            
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-agenda')->with('error', 'Gagal menambah agenda: ' . $e->getMessage());
         }
     }
@@ -218,23 +253,14 @@ class RapatController extends Controller
     public function generatePdf(Rapat $rapat)
     {
         $rapat->load(['pesertas.user', 'agendas', 'ketua_user', 'notulen_user', 'entitas']);
-
         $pdf = Pdf::loadView('pages.event.rapat.pdf', compact('rapat'));
         return $pdf->download('Hasil_Rapat_' . $rapat->judul_kegiatan . '.pdf');
     }
 
-    public function updateOfficials(Request $request, Rapat $rapat)
+    public function updateOfficials(RapatOfficialsRequest $request, Rapat $rapat)
     {
-        $request->validate([
-            'ketua_user_id'   => 'required|exists:users,id',
-            'notulen_user_id' => 'required|required|exists:users,id',
-        ]);
-
         try {
-            $rapat->update([
-                'ketua_user_id'   => $request->ketua_user_id,
-                'notulen_user_id' => $request->notulen_user_id,
-            ]);
+            $rapat->update($request->validated());
 
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-info')->with('success', 'Pejabat rapat berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -242,30 +268,14 @@ class RapatController extends Controller
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-info')->with('error', 'Gagal memperbarui pejabat rapat: ' . $e->getMessage());
         }
     }
-    public function storeParticipants(Request $request, Rapat $rapat)
-    {
-        $request->validate([
-            'user_ids'   => 'required|array',
-            'user_ids.*' => 'exists:users,id',
-            'jabatan'    => 'nullable|string|max:255',
-        ]);
 
+    public function storeParticipants(RapatBulkPesertaRequest $request, Rapat $rapat)
+    {
         try {
-            DB::beginTransaction();
-            foreach ($request->user_ids as $userId) {
-                $exists = $rapat->pesertas()->where('user_id', $userId)->exists();
-                if (! $exists) {
-                    $this->rapatService->addPeserta($rapat, [
-                        'user_id' => $userId,
-                        'jabatan' => $request->jabatan ?? 'Peserta',
-                    ]);
-                }
-            }
-            DB::commit();
+            $this->RapatService->bulkAddPeserta($rapat, $request->validated());
 
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-info')->with('success', 'Peserta berhasil ditambahkan.');
         } catch (\Exception $e) {
-            DB::rollBack();
             logError($e);
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-info')->with('error', 'Gagal menambah peserta: ' . $e->getMessage());
         }

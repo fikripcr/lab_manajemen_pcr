@@ -30,13 +30,31 @@ class RapatPeserta extends Model
         'rapat_id',
         'user_id',
         'jabatan',
+        'nama_luar',
+        'email_luar',
         'status',
         'waktu_hadir',
         'notes',
+        'is_invited',
+        'invitation_sent_at',
     ];
 
+    /** Nama yang tampil (user internal atau peserta luar) */
+    public function getNamaDisplayAttribute(): string
+    {
+        return $this->user?->name ?? $this->nama_luar ?? 'N/A';
+    }
+
+    /** Email yang tampil */
+    public function getEmailDisplayAttribute(): ?string
+    {
+        return $this->user?->email ?? $this->email_luar;
+    }
+
     protected $casts = [
-        'waktu_hadir' => 'datetime',
+        'waktu_hadir'        => 'datetime',
+        'is_invited'         => 'boolean',
+        'invitation_sent_at' => 'datetime',
     ];
 
     /**

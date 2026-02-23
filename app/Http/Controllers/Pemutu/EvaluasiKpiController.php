@@ -1,0 +1,136 @@
+<?php
+namespace App\Http\Controllers\Pemutu;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\EvaluasiKpiRequest;
+use App\Models\Pemutu\IndikatorPegawai;
+use App\Models\Pemutu\PeriodeKpi;
+use App\Services\Pemutu\EvaluasiKpiService;
+use Exception;
+use Yajra\DataTables\Facades\DataTables;
+
+class EvaluasiKpiController extends Controller
+{
+    public function __construct(protected EvaluasiKpiService $EvaluasiKpiService)
+    {}
+
+    public function index()
+    {
+        $pageTitle = 'Evaluasi KPI';
+        $data      = $this->EvaluasiKpiService->getPeriodes();
+
+        return view('pages.pemutu.evaluasi-kpi.index', array_merge(compact('pageTitle'), $data));
+    }
+
+    public function show(PeriodeKpi $periode)
+    {
+        try {
+            $user = auth()->user();
+            return view('pages.pemutu.evaluasi-kpi.show', compact('periode', 'user'));
+        } catch (Exception $e) {
+            abort(404);
+        }
+    }
+
+    public function data(PeriodeKpi $periode)
+    {
+        try {
+            $user = auth()->user();
+
+            $query = IndikatorPegawai::with('indikator')
+                ->where('periode_kpi_id', $periode->periode_kpi_id)
+                ->where('pegawai_id', $user->pegawai?->pegawai_id);
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('indikator_full', function ($row) {
+                    return '<strong>' . ($row->indikator->no_indikator ?? '-') . '</strong><br>' . $row->indikator->indikator;
+                })
+                ->addColumn('target', function ($row) {
+                    return $row->target_value ?? '<span class="text-muted">-</span>';
+                })
+                ->addColumn('capaian', function ($row) {
+                    return $row->realization ?? '<span class="text-muted fst-italic">Belum diisi</span>';
+                })
+                ->addColumn('analisis', function ($row) {
+                    return $row->kpi_analisis ?? '-';
+                })
+                ->addColumn('file', function ($row) {
+                    $html = '';
+                    if ($row->attachment) {
+                        $url   = route('pemutu.evaluasi-kpi.download', $row->encrypted_indikator_pegawai_id);
+                        $html .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary m-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+                    }
+                    if (! empty($row->kpi_links)) {
+                        $links = json_decode($row->kpi_links, true) ?? [];
+                        foreach ($links as $link) {
+                            $name  = htmlspecialchars($link['name'] ?? 'Tautan');
+                            $url   = htmlspecialchars($link['url'] ?? '#');
+                            $html .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info m-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
+                        }
+                    }
+                    return $html ?: '-';
+                })
+                ->addColumn('action', function ($row) {
+                    return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"
+                        data-url="' . route('pemutu.evaluasi-kpi.edit', $row->encrypted_indikator_pegawai_id) . '"
+                        data-modal-title="Isi Evaluasi KPI">
+                        Isi KPI
+                        </button>';
+                })
+                ->rawColumns(['indikator_full', 'target', 'capaian', 'file', 'action'])
+                ->make(true);
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal memuat data: ' . $e->getMessage());
+        }
+    }
+
+    public function edit(IndikatorPegawai $indikatorPegawai)
+    {
+        try {
+            return view('pages.pemutu.evaluasi-kpi.edit-ajax', $this->EvaluasiKpiService->getEditData($indikatorPegawai));
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan: ' . $e->getMessage()], 404);
+        }
+    }
+
+    public function update(EvaluasiKpiRequest $request, IndikatorPegawai $indikatorPegawai)
+    {
+        try {
+            $this->EvaluasiKpiService->update(
+                $indikatorPegawai,
+                $request->validated(),
+                $request->hasFile('attachment') ? $request->file('attachment') : null
+            );
+
+            return jsonSuccess('Evaluasi KPI berhasil disimpan.', route('pemutu.evaluasi-kpi.show', $indikatorPegawai->periodeKpi->encrypted_periode_kpi_id));
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal menyimpan Evaluasi KPI: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadAttachment(IndikatorPegawai $indikatorPegawai)
+    {
+        try {
+            if (empty($indikatorPegawai->attachment)) {
+                abort(404, 'File lampiran tidak ditemukan di database.');
+            }
+
+            $path = storage_path('app/' . $indikatorPegawai->attachment);
+
+            if (! file_exists($path)) {
+                abort(404, 'File lampiran fisik tidak ditemukan di server.');
+            }
+
+            $ext         = pathinfo($path, PATHINFO_EXTENSION);
+            $newFilename = 'KPI_' . str_replace('/', '_', $indikatorPegawai->indikator->no_indikator) . '_' . date('Ymd_His') . '.' . $ext;
+
+            return response()->download($path, $newFilename);
+        } catch (Exception $e) {
+            logError($e);
+            abort(404, 'Terjadi kesalahan saat mengunduh file.');
+        }
+    }
+}
