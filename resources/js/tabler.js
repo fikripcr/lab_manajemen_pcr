@@ -4,6 +4,7 @@ window.$ = window.jQuery = $;
 
 // --- Axios (Modern AJAX)
 import axios from 'axios';
+// Only expose axios globally if truly needed by legacy code
 window.axios = axios;
 window.axios.defaults.withCredentials = true;
 window.axios.defaults.withXSRFToken = true;
@@ -34,6 +35,12 @@ import '../assets/tabler/js/CustomSweetAlerts.js';
 import '../assets/tabler/js/Notification.js';
 import '../assets/tabler/js/FormHandlerAjax.js';
 
+/**
+ * Load HugeRTE Editor with error handling and dynamic skin loading
+ * @param {string} selector - CSS selector for the textarea
+ * @param {object} config - Additional configuration options
+ * @returns {Promise} - Resolves with hugerte instance
+ */
 window.loadHugeRTE = function (selector, config = {}) {
     return import('hugerte').then((module) => {
         const hugerte = module.default;
@@ -121,83 +128,160 @@ window.loadHugeRTE = function (selector, config = {}) {
 
             return hugerte;
         });
+    }).catch((error) => {
+        console.error('Failed to load HugeRTE editor:', error);
+        // Fallback: Show user-friendly error message
+        if (selector) {
+            const el = document.querySelector(selector);
+            if (el) {
+                el.style.border = '2px solid #d63939';
+                el.style.padding = '1rem';
+                el.innerHTML = '<p style="color: #d63939;">Editor failed to load. Please refresh the page or contact support.</p>';
+            }
+        }
+        throw error;
     });
 };
 
+/**
+ * Load DataTables with error handling
+ * @returns {Promise} - Resolves with CustomDataTables instance
+ */
 window.loadDataTables = function () {
     if (window.DataTablesLoaded) return Promise.resolve(window.CustomDataTables);
 
-    return import('datatables.net-bs5').then(() => {
-        return import('../assets/tabler/js/CustomDataTables.js').then(({ default: CustomDataTables }) => {
+    return import('datatables.net-bs5')
+        .then(() => import('../assets/tabler/js/CustomDataTables.js'))
+        .then(({ default: CustomDataTables }) => {
             window.CustomDataTables = CustomDataTables;
             window.DataTablesLoaded = true;
             return CustomDataTables;
+        })
+        .catch((error) => {
+            console.error('Failed to load DataTables:', error);
+            // Provide fallback error message
+            console.warn('DataTables features will be unavailable. Please check your network connection.');
+            throw error;
         });
-    });
 };
 
+/**
+ * Load ApexCharts with error handling
+ * @returns {Promise} - Resolves with ApexCharts instance
+ */
 window.loadApexCharts = function () {
     if (window.ApexCharts) return Promise.resolve(window.ApexCharts);
 
-    return import('apexcharts').then(({ default: ApexCharts }) => {
-        window.ApexCharts = ApexCharts;
-        return ApexCharts;
-    });
+    return import('apexcharts')
+        .then(({ default: ApexCharts }) => {
+            window.ApexCharts = ApexCharts;
+            return ApexCharts;
+        })
+        .catch((error) => {
+            console.error('Failed to load ApexCharts:', error);
+            console.warn('Chart features will be unavailable. Please check your network connection.');
+            throw error;
+        });
 };
 
+/**
+ * Load Global Search module with error handling
+ * @returns {Promise} - Resolves with GlobalSearch class
+ */
 window.loadGlobalSearch = function () {
-    return import('../assets/tabler/js/GlobalSearch.js').then(({ GlobalSearch }) => {
-        if (!window.GlobalSearch) {
-            window.GlobalSearch = GlobalSearch;
-        }
-        return GlobalSearch;
-    });
+    return import('../assets/tabler/js/GlobalSearch.js')
+        .then(({ GlobalSearch }) => {
+            if (!window.GlobalSearch) {
+                window.GlobalSearch = GlobalSearch;
+            }
+            return GlobalSearch;
+        })
+        .catch((error) => {
+            console.error('Failed to load GlobalSearch:', error);
+            throw error;
+        });
 };
 
+/**
+ * Load Flatpickr with error handling
+ * @returns {Promise} - Resolves with flatpickr instance
+ */
 window.loadFlatpickr = async function () {
     if (window.flatpickr) return window.flatpickr;
 
-    const flatpickr = (await import('flatpickr')).default;
-    await import('flatpickr/dist/flatpickr.min.css');
-    window.flatpickr = flatpickr;
-    return flatpickr;
+    try {
+        const flatpickr = (await import('flatpickr')).default;
+        await import('flatpickr/dist/flatpickr.min.css');
+        window.flatpickr = flatpickr;
+        return flatpickr;
+    } catch (error) {
+        console.error('Failed to load Flatpickr:', error);
+        throw error;
+    }
 };
 
+/**
+ * Load Select2 with Bootstrap 5 theme and error handling
+ * @returns {Promise} - Resolves with Select2 jQuery plugin
+ */
 window.loadSelect2 = async function () {
     if (window.jQuery.fn.select2) return window.jQuery.fn.select2;
 
-    // Load Select2 library and CSS with Bootstrap 5 theme
-    await import('select2/dist/css/select2.min.css');
-    await import('select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css');
-    const select2 = (await import('select2')).default;
+    try {
+        // Load Select2 library and CSS with Bootstrap 5 theme
+        await import('select2/dist/css/select2.min.css');
+        await import('select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css');
+        const select2 = (await import('select2')).default;
 
-    // Initialize Select2 on jQuery
-    select2($);
+        // Initialize Select2 on jQuery
+        select2($);
 
-    return window.jQuery.fn.select2;
+        return window.jQuery.fn.select2;
+    } catch (error) {
+        console.error('Failed to load Select2:', error);
+        throw error;
+    }
 };
 
+/**
+ * Load FilePond with plugins and error handling
+ * @returns {Promise} - Resolves with FilePond instance
+ */
 window.loadFilePond = async function () {
     if (window.FilePond) return window.FilePond;
 
-    const FilePond = await import('filepond');
-    await import('filepond/dist/filepond.min.css');
+    try {
+        const FilePond = await import('filepond');
+        await import('filepond/dist/filepond.min.css');
 
-    const FilePondPluginImagePreview = (await import('filepond-plugin-image-preview')).default;
-    await import('filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css');
+        const FilePondPluginImagePreview = (await import('filepond-plugin-image-preview')).default;
+        await import('filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css');
 
-    FilePond.registerPlugin(FilePondPluginImagePreview);
-    window.FilePond = FilePond;
-    return FilePond;
+        FilePond.registerPlugin(FilePondPluginImagePreview);
+        window.FilePond = FilePond;
+        return FilePond;
+    } catch (error) {
+        console.error('Failed to load FilePond:', error);
+        throw error;
+    }
 };
 
+/**
+ * Initialize Toast UI Editor
+ * @param {string} selector - CSS selector for the editor container
+ * @param {object} config - Additional configuration options
+ */
 window.initToastEditor = function (selector, config = {}) {
-    import('@toast-ui/editor').then(({ Editor }) => {
-        new Editor({
-            el: document.querySelector(selector),
-            ...config
+    import('@toast-ui/editor')
+        .then(({ Editor }) => {
+            new Editor({
+                el: document.querySelector(selector),
+                ...config
+            });
+        })
+        .catch((error) => {
+            console.error('Failed to load Toast Editor:', error);
         });
-    });
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -224,6 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.dispatchEvent(new Event('change', { bubbles: true }));
                     });
                 });
+            }).catch((error) => {
+                console.error('Failed to initialize Select2:', error);
             });
         }
     };
@@ -263,6 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     fp(el, config);
                 });
+            }).catch((error) => {
+                console.error('Failed to initialize Flatpickr:', error);
             });
         }
     };
@@ -286,6 +374,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     FilePond.create(el, config);
                 });
+            }).catch((error) => {
+                console.error('Failed to initialize FilePond:', error);
             });
         }
     };
@@ -297,28 +387,64 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('#global-search-input') || document.getElementById('globalSearchModal')) {
         window.loadGlobalSearch().then((GlobalSearch) => {
             window.globalSearch = new GlobalSearch();
+        }).catch((error) => {
+            console.error('Failed to initialize GlobalSearch:', error);
         });
     }
 });
 
-// --- Dark Mode Toggle (Global) ---
+/**
+ * Toggle theme with server-first approach
+ * Sends request to server first, then updates UI only on success
+ * @param {string} mode - 'light' or 'dark'
+ */
 window.toggleTheme = function (mode) {
-    // 1. Set Attribute
+    const previousMode = document.documentElement.getAttribute('data-bs-theme');
+    
+    // Optimistic UI update (for better UX, but we'll rollback if server fails)
     document.documentElement.setAttribute('data-bs-theme', mode);
-
-    // 2. Save to LocalStorage
-    localStorage.setItem('tabler-theme', mode);
-
-    // 3. Sync with ThemeTabler if available
+    
+    // Sync with ThemeTabler if available
     if (window.themeTabler) {
         window.themeTabler.refresh();
     }
 
-    // 4. Persist to Server
+    // Persist to Server FIRST (server is source of truth)
     if (window.axios) {
         axios.post('/theme/save', {
             mode: 'tabler',
             theme: mode
-        }).catch(err => console.error('Failed to save theme preference', err));
+        })
+        .then(() => {
+            // Server confirmed - save to localStorage
+            localStorage.setItem('tabler-theme', mode);
+        })
+        .catch((error) => {
+            console.error('Failed to save theme preference, rolling back...', error);
+            // Rollback: Restore previous theme
+            document.documentElement.setAttribute('data-bs-theme', previousMode);
+            localStorage.setItem('tabler-theme', previousMode);
+            
+            if (window.themeTabler) {
+                window.themeTabler.refresh();
+            }
+            
+            // Notify user of the failure
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Theme Sync Failed',
+                    text: 'Unable to save theme preference. Your local view has been restored.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        });
+    } else {
+        // No axios available - just update locally
+        localStorage.setItem('tabler-theme', mode);
+        console.warn('Axios not available, theme preference not saved to server');
     }
 };

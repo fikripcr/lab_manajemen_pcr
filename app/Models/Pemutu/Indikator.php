@@ -22,6 +22,7 @@ class Indikator extends Model
     }
     protected $fillable = [
         'type',
+        'kelompok_indikator',
         'parent_id',
         'no_indikator',
         'indikator',
@@ -67,7 +68,7 @@ class Indikator extends Model
     public function orgUnits()
     {
         return $this->belongsToMany(StrukturOrganisasi::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
-            ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'created_at');
+            ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'ed_links', 'created_at');
     }
 
     public function parent()

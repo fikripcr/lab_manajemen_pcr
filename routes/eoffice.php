@@ -10,6 +10,7 @@ use App\Http\Controllers\Eoffice\KategoriPerusahaanController;
 use App\Http\Controllers\Eoffice\LayananController;
 use App\Http\Controllers\Eoffice\LayananDiskusiController;
 use App\Http\Controllers\Eoffice\LayananStatusController;
+use App\Http\Controllers\Eoffice\MasterDataController;
 use App\Http\Controllers\Eoffice\PerusahaanController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,11 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // 🔹 Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('/refresh', [DashboardController::class, 'refresh'])->name('dashboard.refresh');
+
+        // 🔹 Master Data (Unified)
+        Route::prefix('master-data')->name('master-data.')->group(function () {
+            Route::get('/', [MasterDataController::class, 'index'])->name('index');
+        });
 
         // Redirect root /eoffice to /eoffice/dashboard
         Route::get('/', function () {

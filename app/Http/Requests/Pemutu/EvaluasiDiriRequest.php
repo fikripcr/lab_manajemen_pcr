@@ -21,10 +21,14 @@ class EvaluasiDiriRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ed_capaian'     => 'required|string',
-            'ed_analisis'    => 'required|string',
-            'ed_attachment'  => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
-            'target_unit_id' => 'nullable|integer',
+            'ed_capaian'      => 'required|string',
+            'ed_analisis'     => 'required|string',
+            'ed_attachment'   => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'target_unit_id'  => 'nullable|integer',
+            'ed_links_name'   => 'nullable|array',
+            'ed_links_name.*' => 'nullable|string',
+            'ed_links_url'    => 'nullable|array',
+            'ed_links_url.*'  => 'nullable|url',
         ];
     }
 }

@@ -220,6 +220,34 @@
             // Removed parent 'can' => 'admin' to allow Auditees to see My KPI / Evaluasi Diri
             'children'      => [
                 [
+                    'title' => 'Label & Kategori',
+                    'route' => 'pemutu.labels.index',
+                    'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
+                    'icon' => 'ti ti-tags',
+                    'can' => 'admin',
+                ],
+                [
+                    'title' => 'Periode SPMI',
+                    'route' => 'pemutu.periode-spmis.index',
+                    'active_routes' => ['pemutu.periode-spmis.*'],
+                    'icon' => 'ti ti-refresh',
+                    'can' => 'admin',
+                ],
+                [
+                    'title' => 'Periode KPI',
+                    'route' => 'pemutu.periode-kpis.index',
+                    'active_routes' => ['pemutu.periode-kpis.*'],
+                    'icon' => 'ti ti-calendar-event',
+                    'can' => 'admin',
+                ],
+                [
+                    'title' => 'Tim Mutu',
+                    'route' => 'pemutu.tim-mutu.index',
+                    'active_routes' => ['pemutu.tim-mutu.*'],
+                    'icon' => 'ti ti-users-group',
+                    'can' => 'admin',
+                ],
+                [
                     'title' => 'Penetapan',
                     'route' => 'pemutu.dokumens.index',
                     'active_routes' => ['pemutu.dokumens.*'],
@@ -238,34 +266,6 @@
                     'route' => 'pemutu.evaluasi-diri.index',
                     'active_routes' => ['pemutu.evaluasi-diri.*'],
                     'icon' => 'ti ti-clipboard-check',
-                ],
-                [
-                    'title' => 'Label & Kategori',
-                    'route' => 'pemutu.labels.index',
-                    'active_routes' => ['pemutu.labels.*', 'pemutu.label-types.*'],
-                    'icon' => 'ti ti-tags',
-                    'can' => 'admin',
-                ],
-                [
-                    'title' => 'Periode KPI',
-                    'route' => 'pemutu.periode-kpis.index',
-                    'active_routes' => ['pemutu.periode-kpis.*'],
-                    'icon' => 'ti ti-calendar-event',
-                    'can' => 'admin',
-                ],
-                [
-                    'title' => 'Periode SPMI',
-                    'route' => 'pemutu.periode-spmis.index',
-                    'active_routes' => ['pemutu.periode-spmis.*'],
-                    'icon' => 'ti ti-refresh',
-                    'can' => 'admin',
-                ],
-                [
-                    'title' => 'Tim Mutu',
-                    'route' => 'pemutu.tim-mutu.index',
-                    'active_routes' => ['pemutu.tim-mutu.*'],
-                    'icon' => 'ti ti-users-group',
-                    'can' => 'admin',
                 ],
 
                 [
@@ -382,8 +382,14 @@
                     'title'         => 'Master Data',
                     'id'            => 'navbar-eoffice-master',
                     'icon'          => 'ti ti-database',
-                    'active_routes' => ['eoffice.jenis-layanan.*', 'eoffice.kategori-isian.*', 'eoffice.perusahaan.*', 'eoffice.kategori-perusahaan.*'],
+                    'active_routes' => ['eoffice.master-data.*', 'eoffice.jenis-layanan.*', 'eoffice.kategori-isian.*', 'eoffice.perusahaan.*', 'eoffice.kategori-perusahaan.*'],
                     'children'      => [
+                        [
+                            'title'         => 'Semua Master Data',
+                            'route'         => 'eoffice.master-data.index',
+                            'active_routes' => ['eoffice.master-data.*'],
+                            'icon'          => 'ti ti-list',
+                        ],
                         [
                             'title'         => 'Jenis Layanan',
                             'route'         => 'eoffice.jenis-layanan.index',

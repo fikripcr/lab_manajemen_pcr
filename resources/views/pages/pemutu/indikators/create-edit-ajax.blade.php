@@ -72,6 +72,20 @@
                                     @endif
                                 @endif
                             </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Kelompok Indikator</label>
+                                <div>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="kelompok_indikator" value="Akademik" @checked(old('kelompok_indikator', $indikator->kelompok_indikator) == 'Akademik')>
+                                        <span class="form-check-label">Akademik</span>
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="kelompok_indikator" value="Non Akademik" @checked(old('kelompok_indikator', $indikator->kelompok_indikator) == 'Non Akademik')>
+                                        <span class="form-check-label">Non Akademik</span>
+                                    </label>
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <x-tabler.form-input 
                                     name="no_indikator" 

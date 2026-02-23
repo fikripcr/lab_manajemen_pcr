@@ -75,7 +75,12 @@ class LayananController extends Controller
     public function services()
     {
         $pageTitle = 'Pilih Jenis Layanan';
-        $services  = JenisLayanan::where('is_active', true)->get();
+        $services  = JenisLayanan::withCount(['layanans', 'isians', 'pics'])
+            ->with(['pics.user'])
+            ->where('is_active', true)
+            ->orderBy('kategori')
+            ->orderBy('nama_layanan')
+            ->get();
 
         // Group by category
         $grouped = $services->groupBy('kategori');
@@ -98,32 +103,48 @@ class LayananController extends Controller
      */
     public function store(LayananStoreRequest $request)
     {
-        $validated    = $request->validated();
-        $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')->findOrFail($validated['jenislayanan_id']);
-
-        $data          = $request->only(['jenislayanan_id', 'keterangan']);
-        $dynamicFields = [];
-
-        // Handle dynamic fields from the request
-        foreach ($jenisLayanan->isians as $item) {
-            $field     = $item->kategoriIsian;
-            $fieldName = 'field_' . $field->kategoriisian_id;
-
-            if ($request->has($fieldName)) {
-                $value = $request->input($fieldName);
-
-                // Handle file upload
-                if ($field->type === 'file' && $request->hasFile($fieldName)) {
-                    $file  = $request->file($fieldName);
-                    $path  = $file->store('eoffice/requests/' . date('Y/m'), 'public');
-                    $value = $path;
-                }
-
-                $dynamicFields[$field->nama_isian] = $value;
-            }
-        }
-
         try {
+            $validated    = $request->validated();
+            $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')->findOrFail($validated['jenislayanan_id']);
+
+            $data          = $request->only(['jenislayanan_id', 'keterangan']);
+            $dynamicFields = [];
+
+            // Handle dynamic fields from the request
+            foreach ($jenisLayanan->isians as $item) {
+                $field     = $item->kategoriIsian;
+                
+                // Skip if kategoriIsian is not loaded (defensive programming)
+                if (!$field) {
+                    \Log::warning("Kategori Isian not found for JL Isian ID: {$item->jlisian_id}");
+                    continue;
+                }
+                
+                $fieldName = 'field_' . $field->kategoriisian_id;
+
+                if ($request->has($fieldName)) {
+                    $value = $request->input($fieldName);
+
+                    // Handle file upload
+                    if ($field->type === 'file' && $request->hasFile($fieldName)) {
+                        $file = $request->file($fieldName);
+                        
+                        // Validate file size (max 2MB)
+                        if ($file->getSize() > 2 * 1024 * 1024) {
+                            return jsonError('File ' . $field->nama_isian . ' terlalu besar (maks 2MB)');
+                        }
+                        
+                        $path  = $file->store('eoffice/requests/' . date('Y/m'), 'public');
+                        $value = $path;
+                    }
+
+                    $dynamicFields[$field->nama_isian] = $value;
+                } elseif ($item->is_required) {
+                    // Required field is missing
+                    return jsonError('Field "' . $field->nama_isian . '" wajib diisi.');
+                }
+            }
+
             $this->LayananService->createLayanan($data, $dynamicFields);
             return jsonSuccess('Pengajuan berhasil dikirim.', route('eoffice.layanan.index'));
         } catch (Exception $e) {
@@ -163,19 +184,26 @@ class LayananController extends Controller
         ];
 
         foreach ($definitions as $def) {
-            $fillBy = $def->fill_by;
+            // Safe access to fill_by with default fallback
+            $fillBy = $def->fill_by ?? 'Pemohon';
             if (! isset($dataIsian[$fillBy])) {
                 $fillBy = 'Pemohon';
             }
-            // Default fallback
 
-            $ans = $answers->get($def->kategoriIsian->nama_isian);
+            // Safe access to kategoriIsian
+            $kategoriIsian = $def->kategoriIsian;
+            if (!$kategoriIsian) {
+                \Log::warning("Kategori Isian not found for JL Isian ID: {$def->jlisian_id}");
+                continue;
+            }
+
+            $ans = $answers->get($kategoriIsian->nama_isian);
 
             // Construct object for view
             $obj = (object) [
-                'nama_isian' => $def->kategoriIsian->nama_isian,
+                'nama_isian' => $kategoriIsian->nama_isian,
                 'isi'        => $ans ? $ans->isi : '-',
-                'type'       => $def->kategoriIsian->type,
+                'type'       => $kategoriIsian->type ?? 'text',
             ];
 
             $dataIsian[$fillBy]->push($obj);
@@ -198,12 +226,9 @@ class LayananController extends Controller
         }
 
         // Determine next disposition from the chain
-        $currentSeq     = $layanan->latestStatus->seq ?? 0;
+        $currentSeq     = $layanan->latestStatus?->seq ?? 0;
         $disposisiChain = $layanan->jenisLayanan->disposisis->sortBy('seq');
         $nextDisposisi  = $disposisiChain->where('seq', '>', $currentSeq)->first();
-
-        // Check if current user is the target of current disposition
-        // (This would require more complex logic matching position/jabatan)
 
         return view('pages.eoffice.layanan.show', compact('pageTitle', 'layanan', 'dataIsian', 'canAction', 'nextDisposisi'));
     }

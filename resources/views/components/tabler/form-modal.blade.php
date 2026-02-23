@@ -5,13 +5,14 @@
     'id' => null,
     'id_form' => null,
     'size' => '', // modal-lg, modal-sm, etc.
+    'dialogStyle' => '',
     'submitText' => 'Simpan',
     'submitIcon' => 'ti-device-floppy'
 ])
 
 @if($id)
 <div class="modal modal-blur fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="true" data-bs-focus="true">
-    <div class="modal-dialog modal-dialog-centered {{ $size }}" role="document">
+    <div class="modal-dialog modal-dialog-centered {{ $size }}" role="document" style="{{ $dialogStyle }}">
         <div class="modal-content">
 @endif
 

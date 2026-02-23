@@ -456,11 +456,19 @@ class ThemeTabler {
     }
 
     async handleApply() {
-        if (!window.axios) return console.error('Axios missing');
+        if (!window.axios) {
+            console.error('Axios is not available');
+            return;
+        }
 
         const btn = this.form.querySelector('.btn-primary');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = 'Saving...';
+        if (!btn) return;
+
+        // Store original text for restoration
+        const originalText = btn.textContent;
+        
+        // SECURITY FIX: Use textContent instead of innerHTML to prevent XSS
+        btn.textContent = 'Saving...';
         btn.disabled = true;
 
         try {
@@ -490,7 +498,8 @@ class ThemeTabler {
             console.error('Save failed:', error);
             Swal.fire('Error', 'Failed to save settings', 'error');
         } finally {
-            btn.innerHTML = originalText;
+            // SECURITY FIX: Use textContent instead of innerHTML
+            btn.textContent = originalText;
             btn.disabled = false;
         }
     }

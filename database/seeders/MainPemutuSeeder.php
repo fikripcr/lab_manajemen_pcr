@@ -341,18 +341,24 @@ class MainPemutuSeeder extends Seeder
         $pegawais   = Pegawai::limit(10)->get();
         $periodeKpi = PeriodeKpi::where('is_active', true)->first();
 
+        $standarIds = [];
+
         // 1. Seed 30 Standard Indicators
         // Attached to random DokSub, assigned to random Units
         for ($i = 1; $i <= 30; $i++) {
             $dokSub    = $dokSubs->random();
+            $kelompok  = rand(0, 1) ? 'Akademik' : 'Non Akademik';
             $indikator = Indikator::create([
-                'type'            => 'standar',
-                'no_indikator'    => 'STD-' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'indikator'       => "Indikator Standar $i: " . $this->generateRandomIndikatorText('Standar'),
-                'target'          => rand(70, 100) . '%',
-                'jenis_indikator' => 'Utama',
-                'seq'             => $i,
+                'type'               => 'standar',
+                'kelompok_indikator' => $kelompok,
+                'no_indikator'       => 'STD-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'indikator'          => "Indikator Standar $i: " . $this->generateRandomIndikatorText('Standar'),
+                'target'             => rand(70, 100) . '%',
+                'jenis_indikator'    => 'Utama',
+                'seq'                => $i,
             ]);
+
+            $standarIds[] = $indikator->indikator_id;
 
             if ($dokSub) {
                 $indikator->dokSubs()->syncWithoutDetaching([$dokSub->doksub_id => ['is_hasilkan_indikator' => false]]);
@@ -370,34 +376,32 @@ class MainPemutuSeeder extends Seeder
         }
 
         // 2. Seed 30 KPI Indicators (IKU)
-        // Attached to potentially different DokSub (Renstra?), assigned to Units AND Personils
+        // Attached to potentially different DokSub (Renstra?), assigned to Personils ONLY, referencing Standar as Parent
         for ($i = 1; $i <= 30; $i++) {
+            if (empty($standarIds)) {
+                break;
+            }
+
+            $parentId     = $standarIds[array_rand($standarIds)];
             $dokSub       = $dokSubs->random();
             $targetNum    = rand(1, 10);
             $targetString = $targetNum . ' Artikel';
+            $kelompok     = rand(0, 1) ? 'Akademik' : 'Non Akademik';
 
             // Changed type from 'iku' to 'performa' to match ENUM
             $indikator = Indikator::create([
-                'type'            => 'performa',
-                'no_indikator'    => 'IKU-' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'indikator'       => "Indikator Kinerja $i: " . $this->generateRandomIndikatorText('KPI'),
-                'target'          => $targetString,
-                'jenis_indikator' => 'IKU',
-                'seq'             => $i,
+                'type'               => 'performa',
+                'kelompok_indikator' => $kelompok,
+                'parent_id'          => $parentId,
+                'no_indikator'       => 'IKU-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'indikator'          => "Indikator Kinerja $i: " . $this->generateRandomIndikatorText('KPI'),
+                'target'             => $targetString,
+                'jenis_indikator'    => 'IKU',
+                'seq'                => $i,
             ]);
 
             if ($dokSub) {
                 $indikator->dokSubs()->syncWithoutDetaching([$dokSub->doksub_id => ['is_hasilkan_indikator' => false]]);
-            }
-
-            // Map to 1-3 Random Units
-            $targetUnits = $units->random(min(3, $units->count()));
-            foreach ($targetUnits as $unit) {
-                $indikator->orgUnits()->attach($unit->orgunit_id, [
-                    'target'     => $indikator->target,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
             }
 
             // Map to 1-2 Random Personils (Dosen/Tendik)
@@ -409,7 +413,6 @@ class MainPemutuSeeder extends Seeder
                         'indikator_id'   => $indikator->indikator_id,
                         'periode_kpi_id' => $periodeKpi->periode_kpi_id,
                         'year'           => $periodeKpi->tahun,
-                        'semester'       => $periodeKpi->semester == 'Ganjil' ? 1 : 2,
                         'weight'         => rand(1, 5),
                         'target_value'   => $targetNum, // Use numeric value
                         'created_by'     => 1,
