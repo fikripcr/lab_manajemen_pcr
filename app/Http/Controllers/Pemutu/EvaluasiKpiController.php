@@ -53,23 +53,30 @@ class EvaluasiKpiController extends Controller
                     return $row->realization ?? '<span class="text-muted fst-italic">Belum diisi</span>';
                 })
                 ->addColumn('analisis', function ($row) {
-                    return $row->kpi_analisis ?? '-';
-                })
-                ->addColumn('file', function ($row) {
-                    $html = '';
+                    $text = $row->kpi_analisis ?? '-';
+                    $html = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . nl2br(e($text)) . '</div>';
+
+                    // Evidence items
+                    $evidenceHtml = '';
                     if ($row->attachment) {
-                        $url   = route('pemutu.evaluasi-kpi.download', $row->encrypted_indikator_pegawai_id);
-                        $html .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary m-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+                        $url           = route('pemutu.evaluasi-kpi.download', $row->encrypted_indikator_pegawai_id);
+                        $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                     }
+
                     if (! empty($row->kpi_links)) {
                         $links = json_decode($row->kpi_links, true) ?? [];
                         foreach ($links as $link) {
-                            $name  = htmlspecialchars($link['name'] ?? 'Tautan');
-                            $url   = htmlspecialchars($link['url'] ?? '#');
-                            $html .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info m-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
+                            $name          = htmlspecialchars($link['name'] ?? 'Tautan');
+                            $url           = htmlspecialchars($link['url'] ?? '#');
+                            $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info me-1 mb-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
                         }
                     }
-                    return $html ?: '-';
+
+                    if ($evidenceHtml) {
+                        $html .= '<div class="d-flex flex-wrap border-top pt-2">' . $evidenceHtml . '</div>';
+                    }
+
+                    return $html;
                 })
                 ->addColumn('action', function ($row) {
                     return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"

@@ -41,7 +41,7 @@
                     <div class="card card-sm">
                         <div class="d-block">
                             @if($slide->hasMedia('slideshow_image'))
-                                <img src="{{ $slide->image_url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ $slide->title }}">
+                                <img src="{{ $slide->thumb_url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ $slide->title }}">
                             @else
                                 <x-tabler.empty-state
                                     title=""
@@ -119,8 +119,6 @@
             order.push(el.getAttribute('data-id'));
         });
 
-        // Use global showLoadingMessage if available, or fallback
-        if(typeof showLoadingMessage === 'function') showLoadingMessage('Menyimpan urutan...');
 
         axios.post('{{ route('shared.slideshow.reorder') }}', {
             order: order,

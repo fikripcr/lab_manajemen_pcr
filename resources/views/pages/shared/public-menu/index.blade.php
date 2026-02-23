@@ -58,13 +58,6 @@
 
                     {{-- TAB 2: MANAJEMEN MENU --}}
                     <div class="tab-pane" id="tabs-menu">
-                        <div class="d-flex justify-content-between mb-3 align-items-center">
-                            <div>
-                                <h3 class="card-title">Struktur Menu Website</h3>
-                                <p class="text-muted small">Atur susunan menu yang tampil di header/footer. Geser (Drag & Drop) untuk mengubah urutan.</p>
-                            </div>
-                        </div>
-
                         @if($orgUnits->isEmpty())
                             <x-tabler.empty-state
                                 title="Belum ada Menu"

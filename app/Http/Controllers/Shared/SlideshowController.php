@@ -42,7 +42,7 @@ class SlideshowController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('image_url', function ($row) {
-                return '<img src="' . $row->image_url . '" class="img-fluid rounded shadow-sm" style="max-height: 50px;" />';
+                return '<img src="' . $row->thumb_url . '" class="img-fluid rounded shadow-sm" style="max-height: 50px;" />';
             })
             ->editColumn('is_active', function ($row) {
                 return $row->is_active

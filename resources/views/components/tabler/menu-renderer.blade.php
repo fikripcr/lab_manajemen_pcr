@@ -285,16 +285,10 @@
             'active_routes' => ['Kegiatan.*'],
             'children'      => [
                 [
-                    'title'         => 'Kegiatan',
+                    'title'         => 'List Kegiatan',
                     'route'         => 'Kegiatan.Kegiatans.index',
                     'active_routes' => ['Kegiatan.Kegiatans.*'],
                     'icon'          => 'ti ti-calendar-event',
-                ],
-                [
-                    'title'         => 'Buku Tamu',
-                    'route'         => 'Kegiatan.tamus.index',
-                    'active_routes' => ['Kegiatan.tamus.*'],
-                    'icon'          => 'ti ti-book',
                 ],
                 [
                     'title'         => 'Manajemen Rapat',
@@ -302,6 +296,13 @@
                     'active_routes' => ['Kegiatan.rapat.*'],
                     'icon'          => 'ti ti-notes',
                 ],
+                [
+                    'title'         => 'Buku Tamu',
+                    'route'         => 'Kegiatan.tamus.index',
+                    'active_routes' => ['Kegiatan.tamus.*'],
+                    'icon'          => 'ti ti-book',
+                ],
+
             ],
         ],
         [

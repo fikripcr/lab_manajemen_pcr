@@ -47,11 +47,11 @@ class Slideshow extends Model implements HasMedia
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->fit(Fit::Crop, 150, 150)
+            ->fit(Fit::Crop, 400, 400)
             ->nonQueued();
 
         $this->addMediaConversion('large')
-            ->fit(Fit::Max, 1200, 600)
+            ->fit(Fit::Crop, 1200, 600)
             ->nonQueued();
     }
 
@@ -59,5 +59,17 @@ class Slideshow extends Model implements HasMedia
     {
         $media = $this->getFirstMedia('slideshow_image');
         return $media ? $media->getUrl() : asset('static/img/default-slideshow.jpg');
+    }
+
+    public function getThumbUrlAttribute()
+    {
+        $media = $this->getFirstMedia('slideshow_image');
+        return $media ? $media->getUrl('thumb') : asset('static/img/default-slideshow.jpg');
+    }
+
+    public function getLargeUrlAttribute()
+    {
+        $media = $this->getFirstMedia('slideshow_image');
+        return $media ? $media->getUrl('large') : asset('static/img/default-slideshow.jpg');
     }
 }

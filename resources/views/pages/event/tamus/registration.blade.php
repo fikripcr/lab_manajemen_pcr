@@ -54,8 +54,8 @@
 
             @else
             {{-- ── Form ── --}}
-            <h4 class="fw-bold mb-0">Isi Data Kedatangan</h4>
-            <p class="text-muted small mb-4">Hanya butuh 30 detik. Nama wajib diisi, sisanya opsional.</p>
+            <h4 class="fw-bold mb-0">Terima kasih telah hadir berpartisipasi</h4>
+            <p class="text-muted small mb-4">Silakan isi data diri untuk keperluan pendataan acara.</p>
 
             @if($errors->has('error'))
             <div class="alert alert-danger alert-dismissible mb-3">

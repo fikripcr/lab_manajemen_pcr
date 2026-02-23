@@ -93,32 +93,36 @@ class EvaluasiDiriController extends Controller
                     return $row->orgUnits->first()->pivot->ed_capaian ?? '<span class="text-muted fst-italic">Belum diisi</span>';
                 })
                 ->addColumn('analisis', function ($row) {
-                    return $row->orgUnits->first()->pivot->ed_analisis ?? '-';
-                })
-                ->addColumn('file', function ($row) {
                     $pivot = $row->orgUnits->first()->pivot ?? null;
-                    $html  = '';
+                    $text  = $pivot->ed_analisis ?? '-';
+                    $html  = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . nl2br(e($text)) . '</div>';
 
+                    // Evidence items
+                    $evidenceHtml = '';
                     if ($pivot) {
                         $file = $pivot->ed_attachment;
                         if ($file) {
-                            $url   = route('pemutu.evaluasi-diri.download', $pivot->indikorgunit_id);
-                            $html .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary m-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
+                            $url           = route('pemutu.evaluasi-diri.download', $pivot->indikorgunit_id);
+                            $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                         }
 
                         if (! empty($pivot->ed_links)) {
                             $links = json_decode($pivot->ed_links, true) ?? [];
                             if (is_array($links)) {
                                 foreach ($links as $link) {
-                                    $name  = htmlspecialchars($link['name'] ?? 'Tautan');
-                                    $url   = htmlspecialchars($link['url'] ?? '#');
-                                    $html .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info m-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
+                                    $name          = htmlspecialchars($link['name'] ?? 'Tautan');
+                                    $url           = htmlspecialchars($link['url'] ?? '#');
+                                    $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-info me-1 mb-1" title="' . $name . '" data-bs-toggle="tooltip"><i class="ti ti-link fs-3"></i></a>';
                                 }
                             }
                         }
                     }
 
-                    return $html ?: '-';
+                    if ($evidenceHtml) {
+                        $html .= '<div class="d-flex flex-wrap border-top pt-2">' . $evidenceHtml . '</div>';
+                    }
+
+                    return $html;
                 })
                 ->addColumn('action', function ($row) {
                     return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"

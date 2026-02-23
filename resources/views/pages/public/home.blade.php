@@ -14,7 +14,7 @@
             <div class="carousel-inner">
                 @foreach($slideshows as $index => $slide)
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}" style="height: 85vh; min-height: 500px;">
-                        <img src="{{ $slide->image_url }}" class="d-block w-100 h-100" style="object-fit: cover; filter: brightness(0.6);" alt="{{ $slide->title }}">
+                        <img src="{{ $slide->large_url }}" class="d-block w-100 h-100" style="object-fit: cover; filter: brightness(0.6);" alt="{{ $slide->title }}">
                         <div class="carousel-caption d-none d-md-block text-start mb-5 pb-5">
                             <div class="container">
                                 <div class="row">

@@ -15,10 +15,10 @@
                         <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                             @if($slide->link)
                                 <a href="{{ $slide->link }}" target="_blank">
-                                    <img src="{{ $slide->getFirstMediaUrl('slideshow_image') ?: (Str::startsWith($slide->image_url, 'http') ? $slide->image_url : asset('storage/' . $slide->image_url)) }}" class="d-block w-100" style="height: 400px; object-fit: cover; cursor: pointer;" alt="{{ $slide->title }}">
+                                    <img src="{{ $slide->large_url }}" class="d-block w-100" style="height: 400px; object-fit: cover; cursor: pointer;" alt="{{ $slide->title }}">
                                 </a>
                             @else
-                                <img src="{{ $slide->getFirstMediaUrl('slideshow_image') ?: (Str::startsWith($slide->image_url, 'http') ? $slide->image_url : asset('storage/' . $slide->image_url)) }}" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="{{ $slide->title }}">
+                                <img src="{{ $slide->large_url }}" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="{{ $slide->title }}">
                             @endif
                         </div>
                         @endforeach

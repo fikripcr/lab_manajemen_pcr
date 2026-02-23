@@ -24,15 +24,23 @@ class EventTamuController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = EventTamu::query()->with(['event']);
+        $query = EventTamu::query()
+            ->with(['event'])
+            ->join('events', 'event_tamus.event_id', '=', 'events.event_id')
+            ->select('event_tamus.*', 'events.judul_event as judul_kegiatan');
+
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('foto_preview', function ($row) {
                 if ($row->photo_url) {
-                    return '<img src="' . $row->photo_url . '" class="avatar avatar-sm" />';
+                    return '<img src="' . $row->photo_url . '" class="avatar avatar-sm rounded-circle" />';
                 }
-                return '<span class="avatar avatar-sm bg-secondary text-white">?</span>';
+                return '<span class="avatar avatar-sm bg-primary-lt text-primary rounded-circle"><i class="ti ti-user"></i></span>';
             })
+            ->addColumn('judul_kegiatan', fn($row) => $row->judul_kegiatan ?? '-')
+            ->addColumn('kontak', fn($row) => $row->kontak
+                    ? '<i class="ti ti-device-mobile me-1 text-muted"></i>' . e($row->kontak)
+                    : '<span class="text-muted">-</span>')
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
                     'editUrl'   => route('Kegiatan.tamus.edit', $row->encrypted_eventtamu_id),
@@ -40,7 +48,10 @@ class EventTamuController extends Controller
                     'deleteUrl' => route('Kegiatan.tamus.destroy', $row->encrypted_eventtamu_id),
                 ])->render();
             })
-            ->rawColumns(['foto_preview', 'action'])
+            ->filterColumn('judul_kegiatan', function ($query, $keyword) {
+                $query->where('events.judul_event', 'like', "%{$keyword}%");
+            })
+            ->rawColumns(['foto_preview', 'kontak', 'action'])
             ->make(true);
     }
 
