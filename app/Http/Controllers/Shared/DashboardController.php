@@ -14,6 +14,11 @@ class DashboardController extends Controller
             ->orderBy('seq', 'asc')
             ->get();
 
+        // Slideshow
+        $slideshows = Slideshow::where('is_active', true)
+            ->orderBy('seq', 'asc')
+            ->get();
+
         // 4 Latest News
         $recentNews = Pengumuman::where('is_published', true)
             ->where('jenis', 'artikel_berita')

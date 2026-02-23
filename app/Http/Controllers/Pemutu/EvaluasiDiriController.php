@@ -98,7 +98,7 @@ class EvaluasiDiriController extends Controller
                     if ($pivot) {
                         $file = $pivot->ed_attachment;
                         if ($file) {
-                            $url   = asset(str_replace('public/', 'storage/', $file));
+                            $url   = route('pemutu.evaluasi-diri.download', $pivot->indikorgunit_id);
                             $html .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary m-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                         }
 
@@ -269,6 +269,32 @@ class EvaluasiDiriController extends Controller
         } catch (Exception $e) {
             logError($e);
             return jsonError('Gagal menyimpan Evaluasi Diri: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadAttachment($id)
+    {
+        try {
+            $pivot = DB::table('pemutu_indikator_orgunit')
+                ->where('indikorgunit_id', $id)
+                ->first();
+
+            if (! $pivot || empty($pivot->ed_attachment)) {
+                abort(404, 'File lampiran tidak ditemukan.');
+            }
+
+            $path = storage_path('app/' . $pivot->ed_attachment);
+
+            if (! file_exists($path)) {
+                abort(404, 'File fisik tidak ditemukan di server.');
+            }
+
+            logActivity('pemutu', "Mengunduh file lampiran Evaluasi Diri untuk pivot ID: {$id}");
+
+            return response()->download($path);
+        } catch (Exception $e) {
+            logError($e);
+            abort(500, 'Terjadi kesalahan saat memproses unduhan: ' . $e->getMessage());
         }
     }
 }

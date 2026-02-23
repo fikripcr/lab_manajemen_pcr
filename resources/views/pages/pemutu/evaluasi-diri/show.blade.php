@@ -5,13 +5,9 @@
 <x-tabler.page-header title="Isi Evaluasi Diri" pretitle="Periode {{ $periode->periode }}">
     <x-slot:actions>
         <div class="d-flex align-items-center gap-2">
-            @if(count($userUnits) > 1)
-                <div style="min-width: 250px;">
-                    <x-tabler.form-select name="unit_filter" id="unit-filter" :options="$userUnits->pluck('name', 'orgunit_id')" :selected="$selectedUnitId" />
-                </div>
-            @elseif($unit)
-                 <span class="badge bg-blue-lt fs-3">{{ $unit->name }}</span>
-            @endif
+            <div style="min-width: 250px;">
+                <x-tabler.form-select name="unit_filter" id="unit-filter" :options="$userUnits->pluck('name', 'orgunit_id')" :selected="$selectedUnitId" />
+            </div>
             <a href="{{ route('pemutu.evaluasi-diri.index') }}" class="btn btn-outline-secondary">
                 <i class="ti ti-arrow-left me-2"></i> Kembali
             </a>

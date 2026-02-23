@@ -1,12 +1,8 @@
 @extends('layouts.tabler.app')
 
-@section('header')
-<x-tabler.page-header title="Beranda" pretitle="Overview" />
-@endsection
-
 @section('content')
         <div class="row row-cards">
-            @if($slideshows->count() > 0)
+            @if(isset($slideshows) && $slideshows->count() > 0)
             <div class="col-12">
                 <div id="carousel-slideshow" class="carousel slide card shadow-sm border-0" data-bs-ride="carousel" style="border-radius: 12px; overflow: hidden;">
                     <div class="carousel-indicators">
@@ -17,15 +13,12 @@
                     <div class="carousel-inner">
                         @foreach($slideshows as $index => $slide)
                         <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                            <img src="{{ asset('storage/' . $slide->image_url) }}" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="{{ $slide->title }}">
-                            @if($slide->title || $slide->caption)
-                            <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border-radius: 8px; padding: 1rem; bottom: 2rem;">
-                                @if($slide->title) <h3 class="fw-bold">{{ $slide->title }}</h3> @endif
-                                @if($slide->caption) <p>{{ $slide->caption }}</p> @endif
-                                @if($slide->link)
-                                <x-tabler.button href="{{ $slide->link }}" class="btn-primary btn-sm mt-2" text="Selengkapnya" />
-                                @endif
-                            </div>
+                            @if($slide->link)
+                                <a href="{{ $slide->link }}" target="_blank">
+                                    <img src="{{ $slide->getFirstMediaUrl('slideshow_image') ?: (Str::startsWith($slide->image_url, 'http') ? $slide->image_url : asset('storage/' . $slide->image_url)) }}" class="d-block w-100" style="height: 400px; object-fit: cover; cursor: pointer;" alt="{{ $slide->title }}">
+                                </a>
+                            @else
+                                <img src="{{ $slide->getFirstMediaUrl('slideshow_image') ?: (Str::startsWith($slide->image_url, 'http') ? $slide->image_url : asset('storage/' . $slide->image_url)) }}" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="{{ $slide->title }}">
                             @endif
                         </div>
                         @endforeach

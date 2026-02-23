@@ -195,9 +195,7 @@
             @endif
         </div>
 
-        <div class="mb-3">
-            <x-tabler.form-textarea type="editor" id="keterangan" name="keterangan" label="Target / Keterangan" height="200" :value="$isEdit ? $indikator->keterangan : ''" />
-        </div>
+
     @endif
 </x-tabler.form-modal>
 

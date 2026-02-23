@@ -30,7 +30,6 @@ class IndikatorRequest extends FormRequest
             'periode_jenis'   => 'nullable|string|max:30',
             'periode_mulai'   => 'nullable|date',
             'periode_selesai' => 'nullable|date',
-            'keterangan'      => 'nullable|string',
             'seq'             => 'nullable|integer',
             'level_risk'      => 'nullable|string|max:20',
             'origin_from'     => 'nullable|string|max:30',

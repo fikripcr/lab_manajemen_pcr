@@ -33,7 +33,6 @@ class Indikator extends Model
         'periode_jenis',
         'periode_mulai',
         'periode_selesai',
-        'keterangan',
         'seq',
         'level_risk',
         'origin_from',
@@ -68,7 +67,7 @@ class Indikator extends Model
     public function orgUnits()
     {
         return $this->belongsToMany(StrukturOrganisasi::class, 'pemutu_indikator_orgunit', 'indikator_id', 'org_unit_id')
-            ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'ed_links', 'created_at');
+            ->withPivot('indikorgunit_id', 'target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'ed_links', 'created_at');
     }
 
     public function parent()

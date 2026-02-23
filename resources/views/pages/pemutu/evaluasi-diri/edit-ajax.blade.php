@@ -18,11 +18,6 @@
             <div class="mb-3">
                 <span class="text-muted text-uppercase fw-bold fs-5">Pernyataan Standar / Indikator</span>
                 <p class="mt-1 mb-0 fs-3">{{ $indikator->indikator }}</p>
-                @if($indikator->keterangan)
-                    <div class="text-muted fst-italic mt-2">
-                        <small>Keterangan: {{ $indikator->keterangan }}</small>
-                    </div>
-                @endif
             </div>
 
             <div class="mb-3 bg-blue-lt p-3 rounded">
@@ -111,9 +106,8 @@
                         <div>
                             <span class="text-muted small d-block">File Pendukung saat ini:</span>
                             <span class="fw-bold fs-5"><i class="ti ti-file-check text-success me-1"></i> File Tersedia</span>
-                        </div>
-                        <a href="{{ asset(str_replace('public/', 'storage/', $pivot->ed_attachment)) }}" target="_blank" class="btn btn-primary btn-sm">
-                            <i class="ti ti-download me-1"></i> Unduh
+                          <a href="{{ route('pemutu.evaluasi-diri.download', $pivot->indikorgunit_id) }}" target="_blank" class="btn btn-primary btn-sm">
+                            <i class="ti ti-download fs-3 me-2"></i> Unduh File Saat Ini
                         </a>
                     </div>
                 @endif
