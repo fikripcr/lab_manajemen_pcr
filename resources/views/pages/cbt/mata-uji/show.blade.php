@@ -9,9 +9,9 @@
                 <i class="ti ti-plus me-2"></i> Tambah Soal
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', ['mata_uji' => $mu->encrypted_mata_uji_id, 'tipe_soal' => 'Pilihan_Ganda']) }}" data-modal-size="modal-lg">Pilihan Ganda</a></li>
-                <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', ['mata_uji' => $mu->encrypted_mata_uji_id, 'tipe_soal' => 'Esai']) }}" data-modal-size="modal-lg">Esai</a></li>
-                <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', ['mata_uji' => $mu->encrypted_mata_uji_id, 'tipe_soal' => 'Benar_Salah']) }}" data-modal-size="modal-lg">Benar / Salah</a></li>
+                <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', $mu->encrypted_mata_uji_id) }}?tipe_soal=Pilihan_Ganda" data-modal-size="modal-lg"><i class="ti ti-list-check me-2"></i> Pilihan Ganda</a></li>
+                <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', $mu->encrypted_mata_uji_id) }}?tipe_soal=Esai" data-modal-size="modal-lg"><i class="ti ti-file-description me-2"></i> Esai</a></li>
+                <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', $mu->encrypted_mata_uji_id) }}?tipe_soal=Benar_Salah" data-modal-size="modal-lg"><i class="ti ti-circle-check me-2"></i> Benar / Salah</a></li>
             </ul>
         </div>
     </x-slot:actions>
@@ -33,10 +33,6 @@
                         <div class="mb-3">
                             <label class="form-label text-muted">Tipe</label>
                             <div><span class="badge bg-blue-lt">{{ $mu->tipe }}</span></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Durasi</label>
-                            <div class="fw-bold">{{ $mu->durasi_menit }} Menit</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-muted">Deskripsi</label>
@@ -84,11 +80,11 @@
                                     <span class="badge bg-{{ $badgeColor }}-lt">{{ $soal->tingkat_kesulitan }}</span>
                                 </td>
                                 <td>
-                                    <div class="btn-list flex-nowrap">
-                                        <a href="{{ route('cbt.soal.edit', $soal->encrypted_soal_id) }}" class="btn btn-icon btn-sm btn-primary ajax-modal-btn" data-modal-size="modal-lg" title="Edit">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ route('cbt.soal.edit', $soal->encrypted_soal_id) }}" class="btn btn-primary ajax-modal-btn" data-modal-size="modal-lg" title="Edit">
                                             <i class="ti ti-pencil"></i>
                                         </a>
-                                        <button type="button" class="btn btn-icon btn-sm btn-danger ajax-delete" data-url="{{ route('cbt.soal.destroy', $soal->encrypted_soal_id) }}" title="Hapus">
+                                        <button type="button" class="btn btn-danger ajax-delete" data-url="{{ route('cbt.soal.destroy', $soal->encrypted_soal_id) }}" title="Hapus">
                                             <i class="ti ti-trash"></i>
                                         </button>
                                     </div>

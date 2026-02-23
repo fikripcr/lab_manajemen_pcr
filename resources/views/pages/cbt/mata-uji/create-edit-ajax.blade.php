@@ -20,8 +20,6 @@
         :selected="$isEdit ? $mu->tipe : old('tipe')"
         placeholder="Pilih Tipe" />
 
-    <x-tabler.form-input name="durasi_menit" label="Durasi (Menit)" type="number" placeholder="Contoh: 60"
-        :value="$isEdit ? $mu->durasi_menit : old('durasi_menit')" required="true" />
 
     <x-tabler.form-textarea name="deskripsi" label="Deskripsi"
         :value="$isEdit ? $mu->deskripsi : old('deskripsi')" />

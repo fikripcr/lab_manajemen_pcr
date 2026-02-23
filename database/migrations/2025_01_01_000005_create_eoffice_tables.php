@@ -142,33 +142,6 @@ return new class extends Migration
             $table->foreign('layanan_id')->references('layanan_id')->on('eoffice_layanan')->onDelete('cascade');
         });
 
-        // 5. Internship & Partners
-        Schema::create('eoffice_kategori_perusahaan', function (Blueprint $table) {
-            $table->id('kategoriperusahaan_id');
-            $table->string('nama_kategori');
-            $table->timestamps();
-            $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-        });
-
-        Schema::create('eoffice_perusahaan', function (Blueprint $table) {
-            $table->id('perusahaan_id');
-            $table->unsignedBigInteger('kategoriperusahaan_id');
-            $table->string('nama_perusahaan');
-            $table->string('alamat')->nullable();
-            $table->string('kota')->nullable();
-            $table->string('telp')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-
-            $table->foreign('kategoriperusahaan_id')->references('kategoriperusahaan_id')->on('eoffice_kategori_perusahaan')->onDelete('cascade');
-        });
-
         // 6. Discussion & Engagement
         Schema::create('eoffice_layanan_diskusi', function (Blueprint $table) {
             $table->id('layanandiskusi_id');
@@ -304,8 +277,6 @@ return new class extends Migration
         Schema::dropIfExists('eoffice_jenis_layanan_disposisi');
         Schema::dropIfExists('eoffice_layanan_keterlibatan');
         Schema::dropIfExists('eoffice_layanan_diskusi');
-        Schema::dropIfExists('eoffice_perusahaan');
-        Schema::dropIfExists('eoffice_kategori_perusahaan');
         Schema::dropIfExists('eoffice_layanan_isian');
         Schema::dropIfExists('eoffice_layanan_status');
         Schema::dropIfExists('eoffice_layanan');

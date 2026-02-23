@@ -9,7 +9,7 @@
 @endsection
 @section('content')
         <div class="card">
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div class="d-flex align-items-center mb-3">
                     <div class="btn-group" id="bulk-actions" style="display: none;">
                         <x-tabler.button type="button" class="btn-outline-secondary btn-duplicate-bulk" icon="ti ti-copy" text="Duplikasi Terpilih" />

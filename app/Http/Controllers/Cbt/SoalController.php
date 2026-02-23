@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class SoalController extends Controller
 {
-    public function __construct(protected SoalService $soalService)
+    public function __construct(protected SoalService $SoalService)
     {}
 
     public function index()
@@ -23,7 +23,7 @@ class SoalController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->soalService->getFilteredQuery($request->all());
+        $query = $this->SoalService->getFilteredQuery($request->all());
 
         return datatables()->of($query)
             ->addIndexColumn()
@@ -56,7 +56,7 @@ class SoalController extends Controller
     public function store(StoreSoalRequest $request)
     {
         try {
-            $this->soalService->store($request->validated());
+            $this->SoalService->store($request->validated());
             return jsonSuccess('Soal berhasil disimpan.', route('cbt.soal.index'));
         } catch (Exception $e) {
             logError($e);
@@ -73,7 +73,7 @@ class SoalController extends Controller
     public function update(UpdateSoalRequest $request, Soal $soal)
     {
         try {
-            $this->soalService->update($soal, $request->validated());
+            $this->SoalService->update($soal, $request->validated());
             return jsonSuccess('Soal berhasil diperbarui.', route('cbt.soal.index'));
         } catch (Exception $e) {
             logError($e);
@@ -84,7 +84,7 @@ class SoalController extends Controller
     public function destroy(Soal $soal)
     {
         try {
-            $this->soalService->delete($soal);
+            $this->SoalService->delete($soal);
             return jsonSuccess('Soal berhasil dihapus.');
         } catch (Exception $e) {
             logError($e);

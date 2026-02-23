@@ -8,7 +8,13 @@ class JadwalUjianService
 {
     public function getFilteredQuery(array $filters = [])
     {
-        return JadwalUjian::with('paket')->latest();
+        return JadwalUjian::with([
+            'paket',
+            'pesertaBerhak',
+            'riwayatSiswa' => function ($q) {
+                $q->withCount('pelanggaran');
+            },
+        ])->latest();
     }
 
     public function store(array $data)

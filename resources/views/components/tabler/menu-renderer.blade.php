@@ -129,34 +129,42 @@
             ],
             'children'      => [
                 [
-                    'title'         => 'Data Lab',
-                    'route'         => 'lab.labs.index',
-                    'active_routes' => ['lab.labs.*'],
-                    'icon'          => 'ti ti-flask',
-                ],
-                [
-                    'title'         => 'Data Inventaris',
-                    'route'         => 'lab.inventaris.index',
-                    'active_routes' => ['lab.inventaris.*'],
-                    'icon'          => 'ti ti-package',
-                ],
-                [
-                    'title'         => 'Data Semester',
-                    'route'         => 'lab.semesters.index',
-                    'active_routes' => ['lab.semesters.*'],
-                    'icon'          => 'ti ti-calendar-stats',
-                ],
-                [
-                    'title'         => 'Data Mata Kuliah',
-                    'route'         => 'lab.mata-kuliah.index',
-                    'active_routes' => ['lab.mata-kuliah.*'],
-                    'icon'          => 'ti ti-book',
-                ],
-                [
-                    'title'         => 'Jadwal Perkuliahan',
-                    'route'         => 'lab.jadwal.index',
-                    'active_routes' => ['lab.jadwal.*'],
-                    'icon'          => 'ti ti-calendar-event',
+                    'title'         => 'Master Data',
+                    'id'            => 'navbar-lab-master',
+                    'icon'          => 'ti ti-database',
+                    'active_routes' => ['lab.labs.*', 'lab.inventaris.*', 'lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Data Lab',
+                            'route'         => 'lab.labs.index',
+                            'active_routes' => ['lab.labs.*'],
+                            'icon'          => 'ti ti-flask',
+                        ],
+                        [
+                            'title'         => 'Data Inventaris',
+                            'route'         => 'lab.inventaris.index',
+                            'active_routes' => ['lab.inventaris.*'],
+                            'icon'          => 'ti ti-package',
+                        ],
+                        [
+                            'title'         => 'Data Semester',
+                            'route'         => 'lab.semesters.index',
+                            'active_routes' => ['lab.semesters.*'],
+                            'icon'          => 'ti ti-calendar-stats',
+                        ],
+                        [
+                            'title'         => 'Data Mata Kuliah',
+                            'route'         => 'lab.mata-kuliah.index',
+                            'active_routes' => ['lab.mata-kuliah.*'],
+                            'icon'          => 'ti ti-book',
+                        ],
+                        [
+                            'title'         => 'Jadwal Perkuliahan',
+                            'route'         => 'lab.jadwal.index',
+                            'active_routes' => ['lab.jadwal.*'],
+                            'icon'          => 'ti ti-calendar-event',
+                        ],
+                    ],
                 ],
                 [
                     'title'         => 'Peminjaman Lab',
@@ -383,7 +391,7 @@
                     'title'         => 'Master Data',
                     'id'            => 'navbar-eoffice-master',
                     'icon'          => 'ti ti-database',
-                    'active_routes' => ['eoffice.master-data.*', 'eoffice.jenis-layanan.*', 'eoffice.kategori-isian.*', 'eoffice.perusahaan.*', 'eoffice.kategori-perusahaan.*'],
+                    'active_routes' => ['eoffice.master-data.*', 'eoffice.jenis-layanan.*', 'eoffice.kategori-isian.*'],
                     'children'      => [
                         [
                             'title'         => 'Semua Master Data',
@@ -402,18 +410,6 @@
                             'route'         => 'eoffice.kategori-isian.index',
                             'active_routes' => ['eoffice.kategori-isian.*'],
                             'icon'          => 'ti ti-forms',
-                        ],
-                        [
-                            'title'         => 'Daftar Perusahaan',
-                            'route'         => 'eoffice.perusahaan.index',
-                            'active_routes' => ['eoffice.perusahaan.*'],
-                            'icon'          => 'ti ti-building',
-                        ],
-                        [
-                            'title'         => 'Kategori Perusahaan',
-                            'route'         => 'eoffice.kategori-perusahaan.index',
-                            'active_routes' => ['eoffice.kategori-perusahaan.*'],
-                            'icon'          => 'ti ti-building-arch',
                         ],
                     ],
                 ],
@@ -767,6 +763,32 @@
                                 @foreach($item['children'] ?? [] as $child)
                                     @if(($child['type'] ?? 'item') === 'header')
                                          <h6 class="dropdown-header">{{ $child['title'] ?? '' }}</h6>
+                                    @elseif(isset($child['children']) && count($child['children']) > 0)
+                                        @php $isChildActive = $isActive($child['active_routes'] ?? []); @endphp
+                                        <div class="dropend">
+                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}" 
+                                               href="javascript:void(0)" 
+                                               data-bs-toggle="dropdown" 
+                                               data-bs-auto-close="outside" 
+                                               role="button" 
+                                               aria-expanded="{{ $isChildActive ? 'true' : 'false' }}">
+                                                @if(!empty($child['icon']))
+                                                   {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
+                                                @endif
+                                                {{ $child['title'] ?? '' }}
+                                            </a>
+                                            <div class="dropdown-menu{{ $isChildActive ? ' show' : '' }}">
+                                                @foreach($child['children'] as $subchild)
+                                                    <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}" 
+                                                       href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
+                                                        @if(!empty($subchild['icon']))
+                                                            {!! $renderIcon($subchild['icon'], 'icon-inline me-1') !!}
+                                                        @endif
+                                                        {{ $subchild['title'] ?? '' }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
                                     @else
                                         <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" 
                                            href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">

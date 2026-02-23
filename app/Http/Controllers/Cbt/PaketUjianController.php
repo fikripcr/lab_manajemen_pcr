@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 
 class PaketUjianController extends Controller
 {
-    public function __construct(protected PaketUjianService $paketUjianService)
+    public function __construct(protected PaketUjianService $PaketUjianService)
     {}
 
     public function index()
@@ -23,9 +23,24 @@ class PaketUjianController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->paketUjianService->getFilteredQuery($request->all());
+        $query = $this->PaketUjianService->getFilteredQuery($request->all())
+            ->with(['komposisi.soal.mataUji', 'pembuat']);
+
         return datatables()->of($query)
             ->addIndexColumn()
+            ->editColumn('total_soal', function ($p) {
+                $subjects = $p->komposisi->map(function ($k) {
+                    return $k->soal->mataUji->nama_mata_uji ?? 'Unknown';
+                })->countBy();
+
+                if ($subjects->isEmpty()) {
+                    return '-';
+                }
+
+                return $subjects->map(function ($count, $name) {
+                    return '<span class="badge bg-blue-lt me-1 mb-1">' . $name . ': ' . $count . '</span>';
+                })->implode('');
+            })
             ->addColumn('action', function ($p) {
                 return view('components.tabler.datatables-actions', [
                     'viewUrl'   => route('cbt.paket.show', $p->encrypted_paket_ujian_id),
@@ -35,7 +50,7 @@ class PaketUjianController extends Controller
                     'deleteUrl' => route('cbt.paket.destroy', $p->encrypted_paket_ujian_id),
                 ])->render();
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['total_soal', 'action'])
             ->make(true);
     }
 
@@ -50,7 +65,7 @@ class PaketUjianController extends Controller
             $data                = $request->validated();
             $data['dibuat_oleh'] = auth()->id();
 
-            $this->paketUjianService->store($data);
+            $this->PaketUjianService->store($data);
             return jsonSuccess('Paket ujian berhasil dibuat.', route('cbt.paket.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -65,7 +80,7 @@ class PaketUjianController extends Controller
     public function update(UpdatePaketRequest $request, PaketUjian $paket)
     {
         try {
-            $this->paketUjianService->update($paket, $request->validated());
+            $this->PaketUjianService->update($paket, $request->validated());
             return jsonSuccess('Paket ujian berhasil diperbarui.', route('cbt.paket.index'));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -87,7 +102,7 @@ class PaketUjianController extends Controller
     public function addSoal(\App\Http\Requests\Cbt\AddSoalRequest $request, PaketUjian $paket)
     {
         try {
-            $this->paketUjianService->addSoal($paket, $request->input('soal_ids', []));
+            $this->PaketUjianService->addSoal($paket, $request->input('soal_ids', []));
             return jsonSuccess('Soal berhasil ditambahkan ke paket.', route('cbt.paket.show', $paket->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -97,7 +112,7 @@ class PaketUjianController extends Controller
     public function removeSoal(PaketUjian $paket, KomposisiPaket $komposisi)
     {
         try {
-            $this->paketUjianService->removeSoal($komposisi);
+            $this->PaketUjianService->removeSoal($komposisi);
             return jsonSuccess('Soal berhasil dihapus dari paket.', route('cbt.paket.show', $paket->hashid));
         } catch (Exception $e) {
             return jsonError($e->getMessage());
@@ -107,7 +122,7 @@ class PaketUjianController extends Controller
     public function destroy(PaketUjian $paket)
     {
         try {
-            $this->paketUjianService->delete($paket);
+            $this->PaketUjianService->delete($paket);
             return jsonSuccess('Paket ujian berhasil dihapus.');
         } catch (Exception $e) {
             return jsonError($e->getMessage());

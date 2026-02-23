@@ -17,7 +17,8 @@
     <div class="row">
         <div class="col-md-12 mb-2">
             <label class="form-label required mb-1">Konten Pertanyaan</label>
-            <x-tabler.form-textarea name="konten_pertanyaan" type="editor" :value="$soal->konten_pertanyaan" required="true" />
+            <x-tabler.form-textarea name="konten_pertanyaan" type="editor" :value="$soal->konten_pertanyaan" required="true" 
+                toolbar="bold italic table forecolor | alignleft aligncenter alignright alignjustify | bullist numlist | fullscreen" />
         </div>
     </div>
 

@@ -6,11 +6,9 @@ use App\Models\Eoffice\JenisLayananDisposisi;
 use App\Models\Eoffice\JenisLayananIsian;
 use App\Models\Eoffice\JenisLayananPic;
 use App\Models\Eoffice\KategoriIsian;
-use App\Models\Eoffice\KategoriPerusahaan;
 use App\Models\Eoffice\Layanan;
 use App\Models\Eoffice\LayananDiskusi;
 use App\Models\Eoffice\LayananStatus;
-use App\Models\Eoffice\Perusahaan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -41,27 +39,6 @@ class MainEofficeSeeder extends Seeder
 
         // NOTE: eoffice_pegawai and eoffice_mahasiswa tables removed — now shared entities
         // Pegawai and mahasiswa data is managed by HR and shared seeders
-
-        // 3. Kategori Perusahaan & Perusahaan
-        $catTekno      = KategoriPerusahaan::create(['nama_kategori' => 'Teknologi & Informasi']);
-        $catManuf      = KategoriPerusahaan::create(['nama_kategori' => 'Manufaktur']);
-        $catPemerintah = KategoriPerusahaan::create(['nama_kategori' => 'Instansi Pemerintah']);
-
-        Perusahaan::create([
-            'kategoriperusahaan_id' => $catTekno->kategoriperusahaan_id,
-            'nama_perusahaan'       => 'PT. Global Inovasi',
-            'alamat'                => 'Jl. Teknologi No. 1, Jakarta',
-            'kota'                  => 'Jakarta',
-            'telp'                  => '021-123456',
-        ]);
-
-        Perusahaan::create([
-            'kategoriperusahaan_id' => $catPemerintah->kategoriperusahaan_id,
-            'nama_perusahaan'       => 'Dinas Kominfo Provinsi Riau',
-            'alamat'                => 'Jl. Jend. Sudirman, Pekanbaru',
-            'kota'                  => 'Pekanbaru',
-            'telp'                  => '0761-98765',
-        ]);
 
         // 4. Kategori Isian (Fields)
         $fieldNik = KategoriIsian::create([
@@ -220,8 +197,6 @@ class MainEofficeSeeder extends Seeder
             'eoffice_layanan',
             'eoffice_layanan_status',
             'eoffice_layanan_isian',
-            'eoffice_kategori_perusahaan',
-            'eoffice_perusahaan',
             'eoffice_layanan_diskusi',
             'eoffice_layanan_keterlibatan',
             'eoffice_jenis_layanan_disposisi',

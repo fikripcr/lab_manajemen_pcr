@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class JadwalUjianController extends Controller
 {
-    public function __construct(protected JadwalUjianService $jadwalUjianService)
+    public function __construct(protected JadwalUjianService $JadwalUjianService)
     {}
 
     public function index()
@@ -21,51 +21,47 @@ class JadwalUjianController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->jadwalUjianService->getFilteredQuery($request->all());
+        $query = $this->JadwalUjianService->getFilteredQuery($request->all());
         return datatables()->of($query)
             ->addIndexColumn()
-            ->addColumn('kegiatan_paket', function($j) {
+            ->addColumn('kegiatan_paket', function ($j) {
                 return '<div class="d-flex flex-column gap-1">
                     <div class="fw-bold text-primary">' . e($j->nama_kegiatan) . '</div>
                     <div class="text-muted small"><i class="ti ti-package me-1"></i>' . e($j->paket->nama_paket ?? '-') . '</div>
                 </div>';
             })
-            ->addColumn('token_info', function($j) {
-                $badgeClass = $j->is_token_aktif ? 'bg-success-lt text-success' : 'bg-secondary-lt text-secondary';
-                $icon = $j->is_token_aktif ? 'ti-check' : 'ti-x';
-                $statusText = $j->is_token_aktif ? 'Aktif' : 'Nonaktif';
-                return '<div class="d-flex flex-column gap-2">
-                    <div class="fw-bold font-monospace">' . e($j->token_ujian ?? '-') . '</div>
-                    <span class="badge ' . $badgeClass . ' badge-sm w-fit">
-                        <i class="' . $icon . ' me-1"></i>' . $statusText . '
-                    </span>
+            ->addColumn('token_info', function ($j) {
+                $statusColor = $j->is_token_aktif ? 'success' : 'secondary';
+                $icon        = $j->is_token_aktif ? 'ti-circle-check' : 'ti-circle-x';
+                return '<div class="d-flex flex-column gap-1">
+                    <div class="fw-bold font-monospace fs-3">' . e($j->token_ujian ?? '-') . '</div>
+                    <div><i class="ti ' . $icon . ' text-' . $statusColor . ' fs-2" title="' . ($j->is_token_aktif ? 'Aktif' : 'Nonaktif') . '"></i></div>
                 </div>';
             })
-            ->addColumn('waktu_status', function($j) {
-                $now = now();
+            ->addColumn('waktu_status', function ($j) {
+                $now       = now();
                 $isStarted = $now->gte($j->waktu_mulai);
-                $isEnded = $now->gte($j->waktu_selesai);
-                
+                $isEnded   = $now->gte($j->waktu_selesai);
+
                 if ($isEnded) {
-                    $statusBadge = '<span class="badge bg-secondary-lt text-secondary badge-sm"><i class="ti ti-check me-1"></i>Selesai</span>';
+                    $statusBadge = '<span class="badge bg-secondary-lt text-secondary badge-sm">Selesai</span>';
                 } elseif ($isStarted) {
-                    $statusBadge = '<span class="badge bg-success-lt text-success badge-sm"><i class="ti ti-player-play me-1"></i>Berlangsung</span>';
+                    $statusBadge = '<span class="badge bg-success-lt text-success badge-sm">Berlangsung</span>';
                 } else {
-                    $statusBadge = '<span class="badge bg-azure-lt text-azure badge-sm"><i class="ti ti-calendar me-1"></i>Akan Datang</span>';
+                    $statusBadge = '<span class="badge bg-azure-lt text-azure badge-sm">Akan Datang</span>';
                 }
-                
-                return '<div class="d-flex flex-column gap-2">
-                    <div class="small"><i class="ti ti-calendar-event me-1"></i>' . $j->waktu_mulai->format('d M Y') . '</div>
-                    <div class="small"><i class="ti ti-clock me-1"></i>' . $j->waktu_mulai->format('H:i') . ' - ' . $j->waktu_selesai->format('H:i') . ' WIB</div>
-                    <div>' . $statusBadge . '</div>
+
+                return '<div class="d-flex flex-column">
+                    <div class="small fw-bold">' . $j->waktu_mulai->format('d M Y') . ' (' . $j->waktu_mulai->format('H:i') . ' - ' . $j->waktu_selesai->format('H:i') . ')</div>
+                    <div class="mt-1">' . $statusBadge . '</div>
                 </div>';
             })
-            ->addColumn('peserta', function($j) {
-                $jumlahPeserta = $j->pesertaBerhak->count();
-                $jumlahPelanggaran = $j->riwayatSiswa->sum(function($r) {
-                    return $r->pelanggaran->count();
+            ->addColumn('peserta', function ($j) {
+                $jumlahPeserta     = $j->pesertaBerhak->count();
+                $jumlahPelanggaran = $j->riwayatSiswa->sum(function ($r) {
+                    return $r->pelanggaran_count;
                 });
-                
+
                 return '<div class="d-flex flex-column gap-1">
                     <div class="fw-bold"><i class="ti ti-users me-1"></i>' . $jumlahPeserta . '</div>
                     ' . ($jumlahPelanggaran > 0 ? '<div class="text-danger small"><i class="ti ti-alert-triangle me-1"></i>' . $jumlahPelanggaran . ' pelanggaran</div>' : '') . '
@@ -128,7 +124,7 @@ class JadwalUjianController extends Controller
     public function store(StoreJadwalRequest $request)
     {
         try {
-            $this->jadwalUjianService->store($request->validated());
+            $this->JadwalUjianService->store($request->validated());
             return jsonSuccess('Jadwal ujian berhasil dibuat.');
         } catch (Exception $e) {
             logError($e);
@@ -157,7 +153,7 @@ class JadwalUjianController extends Controller
     public function generateToken(JadwalUjian $jadwal)
     {
         try {
-            $this->jadwalUjianService->generateToken($jadwal);
+            $this->JadwalUjianService->generateToken($jadwal);
             return jsonSuccess('Token baru berhasil digenerate: ' . $jadwal->token_ujian);
         } catch (Exception $e) {
             logError($e);
@@ -168,7 +164,7 @@ class JadwalUjianController extends Controller
     public function toggleToken(JadwalUjian $jadwal)
     {
         try {
-            $this->jadwalUjianService->toggleToken($jadwal);
+            $this->JadwalUjianService->toggleToken($jadwal);
             return jsonSuccess('Status token berhasil diubah.');
         } catch (Exception $e) {
             logError($e);
@@ -179,7 +175,7 @@ class JadwalUjianController extends Controller
     public function destroy(JadwalUjian $jadwal)
     {
         try {
-            $this->jadwalUjianService->delete($jadwal);
+            $this->JadwalUjianService->delete($jadwal);
             return jsonSuccess('Jadwal ujian berhasil dihapus.');
         } catch (Exception $e) {
             logError($e);

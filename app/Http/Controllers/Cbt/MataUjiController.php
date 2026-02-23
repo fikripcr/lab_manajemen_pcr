@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class MataUjiController extends Controller
 {
-    public function __construct(protected MataUjiService $mataUjiService)
+    public function __construct(protected MataUjiService $MataUjiService)
     {}
 
     public function index()
@@ -21,9 +21,26 @@ class MataUjiController extends Controller
 
     public function paginate(Request $request)
     {
-        $query = $this->mataUjiService->getFilteredQuery($request->all());
+        $query = $this->MataUjiService->getFilteredQuery($request->all())
+            ->withCount([
+                'soal',
+                'soal as mudah_count'  => fn($q)  => $q->where('tingkat_kesulitan', 'Mudah'),
+                'soal as sedang_count' => fn($q) => $q->where('tingkat_kesulitan', 'Sedang'),
+                'soal as sulit_count'  => fn($q)  => $q->where('tingkat_kesulitan', 'Sulit'),
+            ]);
+
         return datatables()->of($query)
             ->addIndexColumn()
+            ->addColumn('jumlah_soal', function ($mu) {
+                return '<span class="badge bg-blue-lt">' . $mu->soal_count . ' Soal</span>';
+            })
+            ->addColumn('kesulitan', function ($mu) {
+                return '<div class="d-flex flex-wrap gap-1">
+                    <span class="badge bg-success-lt">Mudah: ' . $mu->mudah_count . '</span>
+                    <span class="badge bg-warning-lt">Sedang: ' . $mu->sedang_count . '</span>
+                    <span class="badge bg-danger-lt">Sulit: ' . $mu->sulit_count . '</span>
+                </div>';
+            })
             ->addColumn('action', function ($mu) {
                 return view('components.tabler.datatables-actions', [
                     'viewUrl'   => route('cbt.mata-uji.show', $mu->encrypted_mata_uji_id),
@@ -33,7 +50,7 @@ class MataUjiController extends Controller
                     'deleteUrl' => route('cbt.mata-uji.destroy', $mu->encrypted_mata_uji_id),
                 ])->render();
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['jumlah_soal', 'kesulitan', 'action'])
             ->make(true);
     }
 
@@ -42,11 +59,11 @@ class MataUjiController extends Controller
         return view('pages.cbt.mata-uji.create-edit-ajax');
     }
 
-    public function show(MataUji $mu)
+    public function show(MataUji $mata_uji)
     {
         try {
-            $mu->load(['soal']);
-            return view('pages.cbt.mata-uji.show', compact('mu'));
+            $mata_uji->load(['soal']);
+            return view('pages.cbt.mata-uji.show', ['mu' => $mata_uji]);
         } catch (Exception $e) {
             logError($e);
             return redirect()->back()->with('error', 'Gagal memuat detail mata uji: ' . $e->getMessage());
@@ -56,7 +73,7 @@ class MataUjiController extends Controller
     public function store(StoreMataUjiRequest $request)
     {
         try {
-            $this->mataUjiService->store($request->validated());
+            $this->MataUjiService->store($request->validated());
             return jsonSuccess('Mata uji berhasil disimpan.', route('cbt.mata-uji.index'));
         } catch (Exception $e) {
             logError($e);
@@ -64,15 +81,15 @@ class MataUjiController extends Controller
         }
     }
 
-    public function edit(MataUji $mu)
+    public function edit(MataUji $mata_uji)
     {
-        return view('pages.cbt.mata-uji.create-edit-ajax', compact('mu'));
+        return view('pages.cbt.mata-uji.create-edit-ajax', ['mu' => $mata_uji]);
     }
 
-    public function update(UpdateMataUjiRequest $request, MataUji $mu)
+    public function update(UpdateMataUjiRequest $request, MataUji $mata_uji)
     {
         try {
-            $this->mataUjiService->update($mu, $request->validated());
+            $this->MataUjiService->update($mata_uji, $request->validated());
             return jsonSuccess('Mata uji berhasil diperbarui.', route('cbt.mata-uji.index'));
         } catch (Exception $e) {
             logError($e);
@@ -80,10 +97,10 @@ class MataUjiController extends Controller
         }
     }
 
-    public function destroy(MataUji $mu)
+    public function destroy(MataUji $mata_uji)
     {
         try {
-            $this->mataUjiService->delete($mu);
+            $this->MataUjiService->delete($mata_uji);
             return jsonSuccess('Mata uji berhasil dihapus.');
         } catch (Exception $e) {
             logError($e);

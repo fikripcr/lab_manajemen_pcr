@@ -6,12 +6,10 @@ use App\Http\Controllers\Eoffice\JenisLayananController;
 use App\Http\Controllers\Eoffice\JenisLayananDisposisiController;
 use App\Http\Controllers\Eoffice\JenisLayananPeriodeController;
 use App\Http\Controllers\Eoffice\KategoriIsianController;
-use App\Http\Controllers\Eoffice\KategoriPerusahaanController;
 use App\Http\Controllers\Eoffice\LayananController;
 use App\Http\Controllers\Eoffice\LayananDiskusiController;
 use App\Http\Controllers\Eoffice\LayananStatusController;
 use App\Http\Controllers\Eoffice\MasterDataController;
-use App\Http\Controllers\Eoffice\PerusahaanController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'check.expired'])->group(function () {
@@ -81,29 +79,6 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/{kategori_isian}/edit', [KategoriIsianController::class, 'edit'])->name('edit');
             Route::put('/{kategori_isian}', [KategoriIsianController::class, 'update'])->name('update');
             Route::delete('/{kategori_isian}', [KategoriIsianController::class, 'destroy'])->name('destroy');
-        });
-
-        // 🔹 Kategori Perusahaan Master
-        Route::prefix('kategori-perusahaan')->name('kategori-perusahaan.')->group(function () {
-            Route::get('/', [KategoriPerusahaanController::class, 'index'])->name('index');
-            Route::get('/data', [KategoriPerusahaanController::class, 'paginate'])->name('data');
-            Route::get('/create', [KategoriPerusahaanController::class, 'create'])->name('create');
-            Route::post('/', [KategoriPerusahaanController::class, 'store'])->name('store');
-            Route::get('/{kategori_perusahaan}/edit', [KategoriPerusahaanController::class, 'edit'])->name('edit');
-            Route::put('/{kategori_perusahaan}', [KategoriPerusahaanController::class, 'update'])->name('update');
-            Route::delete('/{kategori_perusahaan}', [KategoriPerusahaanController::class, 'destroy'])->name('destroy');
-        });
-
-        // 🔹 Perusahaan Master
-        Route::prefix('perusahaan')->name('perusahaan.')->group(function () {
-            Route::get('/', [PerusahaanController::class, 'index'])->name('index');
-            Route::get('/data', [PerusahaanController::class, 'paginate'])->name('data');
-            Route::get('/create', [PerusahaanController::class, 'create'])->name('create');
-            Route::post('/', [PerusahaanController::class, 'store'])->name('store');
-            Route::get('/{perusahaan}/edit', [PerusahaanController::class, 'edit'])->name('edit');
-            Route::put('/{perusahaan}', [PerusahaanController::class, 'update'])->name('update');
-            Route::delete('/{perusahaan}', [PerusahaanController::class, 'destroy'])->name('destroy');
-            Route::get('/{perusahaan}', [PerusahaanController::class, 'show'])->name('show');
         });
 
         // 🔹 Feedback
