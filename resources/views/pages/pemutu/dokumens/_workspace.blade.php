@@ -1,7 +1,6 @@
 @php
     $isRenopPoint = $type === 'poin' && strtolower(trim($item->dokumen->jenis ?? '')) === 'renop';
     $showIndikatorSection = $type === 'poin' && ($item->is_hasilkan_indikator || $isRenopPoint);
-@endphp
 
     $childrenColumns = [
         ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
