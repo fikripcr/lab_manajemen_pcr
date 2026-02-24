@@ -84,7 +84,7 @@ class RequestSoftware extends Model
      */
     public function latestApproval()
     {
-        return $this->belongsTo(LabRiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
+        return $this->belongsTo(RiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
     }
 
     /**
@@ -92,6 +92,6 @@ class RequestSoftware extends Model
      */
     public function approvals()
     {
-        return $this->morphMany(LabRiwayatApproval::class, 'approvalable', 'model', 'model_id')->orderBy('created_at', 'desc');
+        return $this->morphMany(RiwayatApproval::class, 'approvalable', 'model', 'model_id')->orderBy('created_at', 'desc');
     }
 }

@@ -21,7 +21,7 @@ class SoftwareRequestController extends Controller
      */
     public function index()
     {
-        return view('pages.lab.software-requests.index');
+        return \view('pages.lab.software-requests.index');
     }
 
     /**
@@ -30,8 +30,8 @@ class SoftwareRequestController extends Controller
     public function create()
     {
         $activePeriod = PeriodSoftRequest::where('is_active', true)
-            ->whereDate('start_date', '<=', now())
-            ->whereDate('end_date', '>=', now())
+            ->whereDate('start_date', '<=', \now())
+            ->whereDate('end_date', '>=', \now())
             ->first();
 
         if (! $activePeriod) {
@@ -39,8 +39,8 @@ class SoftwareRequestController extends Controller
             // User request suggests it should be scheduled.
             // For now, let's get courses from the latest active semester if no specific software period found,
             // or just notify that no active period is open.
-            return view('pages.lab.software-requests.create', [
-                'mataKuliahs'  => collect(),
+            return \view('pages.lab.software-requests.create', [
+                'mataKuliahs'  => \collect(),
                 'activePeriod' => null,
                 'error'        => 'Tidak ada periode pengajuan software yang aktif saat ini.',
             ]);
@@ -51,7 +51,7 @@ class SoftwareRequestController extends Controller
             $q->where('semester_id', $activePeriod->semester_id);
         })->get();
 
-        return view('pages.lab.software-requests.create-edit-ajax', compact('mataKuliahs', 'activePeriod'));
+        return \view('pages.lab.software-requests.create-edit-ajax', compact('mataKuliahs', 'activePeriod'));
     }
 
     /**
@@ -62,7 +62,7 @@ class SoftwareRequestController extends Controller
         try {
             $this->softwareRequestService->createRequest($request->validated());
 
-            return jsonSuccess('Permintaan software berhasil dibuat.', route('lab.software-requests.index'));
+            return jsonSuccess('Permintaan software berhasil dibuat.', \route('lab.software-requests.index'));
         } catch (\Exception $e) {
             logError($e);
             return jsonError('Gagal membuat permintaan software: ' . $e->getMessage());
@@ -116,10 +116,10 @@ class SoftwareRequestController extends Controller
                 return formatTanggalIndo($request->created_at);
             })
             ->addColumn('action', function ($request) {
-                return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.software-requests.edit', $request->id),
+                return \view('components.tabler.datatables-actions', [
+                    'editUrl'   => \route('lab.software-requests.edit', $request->id),
                     'editModal' => true,
-                    'viewUrl'   => route('lab.software-requests.show', $request->id),
+                    'viewUrl'   => \route('lab.software-requests.show', $request->id),
                 ])->render();
             })
             ->rawColumns(['status', 'action'])
@@ -150,10 +150,13 @@ class SoftwareRequestController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RequestSoftware $requestSoftware)
+    public function show(RequestSoftware $id)
     {
-        $requestSoftware->load(['latestApproval', 'approvals', 'dosen', 'mataKuliahs']);
-        return view('pages.lab.software-requests.show', compact('requestSoftware'));
+        $id->load(['latestApproval', 'dosen', 'mataKuliahs', 'approvals' => function ($q) {
+            $q->orderBy('created_at', 'desc');
+        }]);
+        $requestSoftware = $id;
+        return \view('pages.lab.software-requests.show', compact('requestSoftware'));
     }
 
     /**
@@ -171,7 +174,7 @@ class SoftwareRequestController extends Controller
             $mataKuliahs = MataKuliah::all();
         }
 
-        return view('pages.lab.software-requests.create-edit-ajax', [
+        return \view('pages.lab.software-requests.create-edit-ajax', [
             'softwareRequest' => $requestSoftware,
             'mataKuliahs'     => $mataKuliahs,
             'activePeriod'    => $activePeriod,
@@ -186,7 +189,7 @@ class SoftwareRequestController extends Controller
         try {
             $this->softwareRequestService->updateRequest($requestSoftware, $request->validated());
 
-            return jsonSuccess('Status permintaan software berhasil diperbarui.', route('lab.software-requests.index'));
+            return jsonSuccess('Status permintaan software berhasil diperbarui.', \route('lab.software-requests.index'));
         } catch (\Exception $e) {
             logError($e);
             return jsonError('Gagal memperbarui permintaan software: ' . $e->getMessage());

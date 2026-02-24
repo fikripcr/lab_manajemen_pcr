@@ -62,12 +62,11 @@ class KegiatanService
             ]);
 
             // Create Initial Approval (Pending)
-            $approval = \App\Models\Lab\LabRiwayatApproval::create([
-                'model'      => Kegiatan::class,
-                'model_id'   => $kegiatan->kegiatan_id,
-                'status'     => 'pending',
-                'keterangan' => 'Menunggu persetujuan',
-                'created_by' => auth()->id(),
+            $approval = \App\Models\Lab\RiwayatApproval::create([
+                'model'    => Kegiatan::class,
+                'model_id' => $kegiatan->kegiatan_id,
+                'status'   => 'pending',
+                'catatan'  => 'Menunggu persetujuan',
             ]);
 
             $kegiatan->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
@@ -82,13 +81,12 @@ class KegiatanService
     {
         return DB::transaction(function () use ($kegiatan, $status, $catatan) {
             // Create New Approval Record
-            $approval = \App\Models\Lab\LabRiwayatApproval::create([
-                'model'      => Kegiatan::class,
-                'model_id'   => $kegiatan->kegiatan_id,
-                'status'     => $status,
-                'pejabat'    => auth()->user()->name,
-                'keterangan' => $catatan,
-                'created_by' => auth()->id(),
+            $approval = \App\Models\Lab\RiwayatApproval::create([
+                'model'    => Kegiatan::class,
+                'model_id' => $kegiatan->kegiatan_id,
+                'status'   => $status,
+                'pejabat'  => auth()->user()->name,
+                'catatan'  => $catatan,
             ]);
 
             $kegiatan->update([

@@ -9,8 +9,11 @@ if (! function_exists('getApprovalBadge')) {
         $badges = [
             'Pending'  => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
             'Approved' => '<span class="badge bg-success text-white">Disetujui</span>',
-            'Rejected' => '<span class="badge bg-danger">Ditolak</span>',
+            'Rejected' => '<span class="badge bg-danger text-white">Ditolak</span>',
             'Draft'    => '<span class="badge bg-secondary text-white">Draft</span>',
+            'pending'  => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
+            'approved' => '<span class="badge bg-success text-white">Disetujui</span>',
+            'rejected' => '<span class="badge bg-danger text-white">Ditolak</span>',
         ];
 
         return $badges[$status] ?? '<span class="badge bg-secondary text-white">' . ($text ?? $status) . '</span>';

@@ -74,7 +74,10 @@
                     </div>
                 </div>
 
-                {{-- History --}}
+                {{-- Verification History --}}
+                <x-tabler.approval-history :approvals="$pendaftaran->approvals" title="Riwayat Verifikasi" />
+
+                {{-- History Status (Legacy timeline) --}}
                 <div class="card mt-3">
                     <div class="card-header"><h3 class="card-title">Riwayat Status</h3></div>
                     <div class="card-body">

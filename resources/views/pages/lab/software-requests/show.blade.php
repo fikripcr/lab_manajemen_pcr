@@ -50,40 +50,8 @@
             </div>
         </div>
 
-        <h4 class="card-title mt-4 mb-2">Riwayat Approval</h4>
-        <div class="table-responsive">
-            <table class="table table-vcenter table-mobile-md card-table">
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Status</th>
-                        <th>Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($softwareRequest->approvals as $approval)
-                        <tr>
-                            <td>{{ $approval->created_at->format('d/m/Y') }}</td>
-                            <td>
-                                @php
-                                    $aStatus = $approval->status;
-                                    $aBadge = 'bg-secondary';
-                                    if(in_array($aStatus, ['approved', 'disetujui'])) $aBadge = 'bg-success';
-                                    elseif(in_array($aStatus, ['rejected', 'ditolak'])) $aBadge = 'bg-danger';
-                                    elseif(in_array($aStatus, ['pending', 'menunggu_approval'])) $aBadge = 'bg-warning';
-                                @endphp
-                                <span class="badge {{ $aBadge }}">{{ ucfirst($aStatus) }}</span>
-                            </td>
-                            <td>{{ $approval->keterangan ?? '-' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center text-muted">Belum ada riwayat.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        {{-- Approval History --}}
+        <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
 
         @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval']))
             <div class="mt-4 p-3 border rounded bg-light">
@@ -205,47 +173,8 @@
                     </div>
                 </div>
 
-                {{-- Approval History --}}
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h3 class="card-title">Riwayat Approval</h3>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>Pejabat</th>
-                                    <th>Status</th>
-                                    <th>Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($softwareRequest->approvals as $approval)
-                                    <tr>
-                                        <td>{{ $approval->created_at->format('d/m/Y H:i') }}</td>
-                                        <td>{{ $approval->pejabat }}</td>
-                                        <td>
-                                            @php
-                                                $aStatus = $approval->status;
-                                                $aBadge = 'bg-secondary';
-                                                if(in_array($aStatus, ['approved', 'disetujui'])) $aBadge = 'bg-success';
-                                                elseif(in_array($aStatus, ['rejected', 'ditolak'])) $aBadge = 'bg-danger';
-                                                elseif(in_array($aStatus, ['pending', 'menunggu_approval'])) $aBadge = 'bg-warning';
-                                            @endphp
-                                            <span class="badge {{ $aBadge }}">{{ ucfirst($aStatus) }}</span>
-                                        </td>
-                                        <td>{{ $approval->keterangan ?? '-' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted">Belum ada riwayat approval.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        {{-- Approval History --}}
+        <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
 
                 {{-- Approval Form --}}
                 @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval']))

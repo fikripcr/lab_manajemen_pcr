@@ -1,16 +1,17 @@
 <?php
-namespace App\Models\Lab;
+namespace App\Models\Pmb;
 
-use App\Traits\Blameable;
+use App\Traits\BlameableName;
+use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class LabRiwayatApproval extends Model
+class RiwayatApproval extends Model
 {
-    use HasFactory, SoftDeletes, Blameable;
+    use HasFactory, SoftDeletes, BlameableName, HashidBinding;
 
-    protected $table      = 'lab_riwayat_approval';
+    protected $table      = 'pmb_riwayat_approval';
     protected $primaryKey = 'riwayatapproval_id';
 
     protected $appends = ['encrypted_riwayatapproval_id'];
@@ -28,20 +29,21 @@ class LabRiwayatApproval extends Model
     protected $fillable = [
         'model',
         'model_id',
-        'status',
+        'status', // Draft, Pending, Approved, Rejected
         'pejabat',
-        'jenis_jabatan', // Optional
-        'keterangan',
+        'jabatan',
+        'catatan',
+        'lampiran_url',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
 
     /**
-     * Get the parent approvalable model (RequestSoftware, Kegiatan, etc).
+     * Get the parent approvalable model.
      */
-    public function approvalable()
+    public function subject()
     {
-        return $this->morphTo(__FUNCTION__, 'model', 'model_id');
+        return $this->morphTo('subject', 'model', 'model_id');
     }
 }

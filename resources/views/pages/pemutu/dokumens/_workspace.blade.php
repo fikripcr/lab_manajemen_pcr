@@ -20,6 +20,7 @@
         </div>
         <div class="d-flex gap-2">
             @if($type === 'dokumen')
+                <x-tabler.button class="ajax-modal-btn" text="Approve" icon="ti ti-check" color="success" data-url="{{ route('pemutu.dokumens.approve.create', $item->encrypted_dok_id) }}" data-modal-title="Form Approval Dokumen" />
                 <x-tabler.button class="ajax-modal-btn" text="Edit" icon="ti ti-edit" data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}" data-modal-title="Ubah Dokumen" />
                 <x-tabler.button text="Hapus" color="danger" icon="ti ti-trash" class="ajax-delete" data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}" data-title="Hapus Dokumen ini?" />
             @elseif($type === 'poin')
@@ -131,6 +132,11 @@
             </div>
         </div>
         @endif
+    @endif
+
+    {{-- Approval History --}}
+    @if($type === 'dokumen')
+        <x-tabler.approval-history :approvals="$item->approvals" />
     @endif
 </div>
 

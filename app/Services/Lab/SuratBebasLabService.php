@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Lab;
 
-use App\Models\Lab\LabRiwayatApproval;
+use App\Models\Lab\RiwayatApproval;
 use App\Models\Lab\SuratBebasLab;
 use Illuminate\Support\Facades\DB;
 
@@ -37,12 +37,11 @@ class SuratBebasLabService
             ]);
 
             // Create Initial Approval (Pending)
-            $approval = LabRiwayatApproval::create([
-                'model'      => SuratBebasLab::class,
-                'model_id'   => $surat->surat_bebas_lab_id,
-                'status'     => 'pending',
-                'keterangan' => 'Pengajuan baru',
-                'created_by' => auth()->id(),
+            $approval = RiwayatApproval::create([
+                'model'    => SuratBebasLab::class,
+                'model_id' => $surat->surat_bebas_lab_id,
+                'status'   => 'pending',
+                'catatan'  => 'Pengajuan baru',
             ]);
 
             $surat->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
@@ -70,13 +69,12 @@ class SuratBebasLabService
             ];
 
             // Create New Approval Record
-            $approval = LabRiwayatApproval::create([
-                'model'      => SuratBebasLab::class,
-                'model_id'   => $surat->surat_bebas_lab_id,
-                'status'     => $status,
-                'pejabat'    => auth()->user()->name,
-                'keterangan' => $remarks,
-                'created_by' => auth()->id(),
+            $approval = RiwayatApproval::create([
+                'model'    => SuratBebasLab::class,
+                'model_id' => $surat->surat_bebas_lab_id,
+                'status'   => $status,
+                'pejabat'  => auth()->user()->name,
+                'catatan'  => $remarks,
             ]);
 
             $updateData['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;

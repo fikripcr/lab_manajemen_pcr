@@ -15,7 +15,7 @@ class SuratBebasLabController extends Controller
 
     public function index()
     {
-        return view('pages.lab.surat-bebas.index');
+        return \view('pages.lab.surat-bebas.index');
     }
 
     public function data(Request $request)
@@ -40,8 +40,8 @@ class SuratBebasLabController extends Controller
                 return $row->created_at->format('d M Y');
             })
             ->addColumn('action', function ($row) {
-                return view('components.tabler.datatables-actions', [
-                    'viewUrl' => route('lab.surat-bebas.show', $row->encrypted_surat_bebas_lab_id),
+                return \view('components.tabler.datatables-actions', [
+                    'viewUrl' => \route('lab.surat-bebas.show', $row->encrypted_surat_bebas_lab_id),
                 ])->render();
             })
             ->rawColumns(['mahasiswa', 'status', 'action'])
@@ -51,7 +51,7 @@ class SuratBebasLabController extends Controller
     public function create()
     {
         // Check if user already has pending request
-        $existing = SuratBebasLab::where('student_id', auth()->id())
+        $existing = SuratBebasLab::where('student_id', \auth()->id())
             ->whereIn('status', ['pending'])
             ->first();
 
@@ -61,28 +61,31 @@ class SuratBebasLabController extends Controller
         }
 
         $surat = new SuratBebasLab();
-        return view('pages.lab.surat-bebas.create-edit-ajax', compact('surat'));
+        return \view('pages.lab.surat-bebas.create-edit-ajax', compact('surat'));
     }
 
     public function store(SuratBebasLabRequest $request)
     {
         try {
             $this->suratBebasLabService->createRequest($request->validated() ?: $request->all());
-            return jsonSuccess('Pengajuan berhasil dikirim.', route('lab.surat-bebas.index'));
+            return jsonSuccess('Pengajuan berhasil dikirim.', \route('lab.surat-bebas.index'));
         } catch (\Exception $e) {
             logError($e);
             return jsonError('Gagal mengirim pengajuan: ' . $e->getMessage());
         }
     }
 
-    public function show(SuratBebasLab $suratBeba)
+    public function show(SuratBebasLab $id)
     {
-        $surat = $suratBeba->load(['student', 'approver', 'approvals']);
-        return view('pages.lab.surat-bebas.show', compact('surat'));
+        $surat = $id->load(['student', 'approver', 'approvals' => function ($q) {
+            $q->orderBy('created_at', 'desc');
+        }]);
+        return \view('pages.lab.surat-bebas.show', compact('surat'));
     }
 
-    public function updateStatus(SuratBebasLabRequest $request, SuratBebasLab $suratBeba)
+    public function updateStatus(SuratBebasLabRequest $request, SuratBebasLab $id)
     {
+        $suratBeba = $id;
         try {
             $this->suratBebasLabService->updateStatus($suratBeba, $request->validated());
             return jsonSuccess('Status berhasil diperbarui.');

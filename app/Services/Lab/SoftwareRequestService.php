@@ -82,12 +82,11 @@ class SoftwareRequestService
             }
 
             // Create Initial Approval (Pending)
-            $approval = \App\Models\Lab\LabRiwayatApproval::create([
-                'model'      => RequestSoftware::class,
-                'model_id'   => $request->request_software_id,
-                'status'     => 'pending',
-                'keterangan' => 'Menunggu persetujuan',
-                'created_by' => auth()->id(),
+            $approval = \App\Models\Lab\RiwayatApproval::create([
+                'model'    => RequestSoftware::class,
+                'model_id' => $request->request_software_id,
+                'status'   => 'pending',
+                'catatan'  => 'Menunggu persetujuan',
             ]);
 
             $request->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
@@ -105,13 +104,12 @@ class SoftwareRequestService
     {
         DB::transaction(function () use ($request, $data) {
             // Create new approval record
-            $approval = \App\Models\Lab\LabRiwayatApproval::create([
-                'model'      => RequestSoftware::class,
-                'model_id'   => $request->request_software_id,
-                'status'     => $data['status'],
-                'pejabat'    => $data['pejabat'] ?? auth()->user()->name,
-                'keterangan' => $data['keterangan'] ?? null,
-                'created_by' => auth()->id(),
+            $approval = \App\Models\Lab\RiwayatApproval::create([
+                'model'    => RequestSoftware::class,
+                'model_id' => $request->request_software_id,
+                'status'   => $data['status'],
+                'pejabat'  => $data['pejabat'] ?? auth()->user()->name,
+                'catatan'  => $data['keterangan'] ?? null,
             ]);
 
             // Update latest approval pointer and sync status

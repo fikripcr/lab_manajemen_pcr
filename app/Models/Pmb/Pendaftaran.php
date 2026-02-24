@@ -70,6 +70,19 @@ class Pendaftaran extends Model
         return $this->hasMany(RiwayatPendaftaran::class, 'pendaftaran_id', 'pendaftaran_id');
     }
 
+    public function approvals()
+    {
+        return $this->hasMany(RiwayatApproval::class, 'model_id', 'pendaftaran_id')
+            ->where('model', static::class)
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function latestApproval()
+    {
+        return $this->morphOne(RiwayatApproval::class, 'subject', 'model', 'model_id')
+            ->orderBy('created_at', 'desc');
+    }
+
     public function pilihanProdi()
     {
         return $this->hasMany(PilihanProdi::class, 'pendaftaran_id');
@@ -88,5 +101,10 @@ class Pendaftaran extends Model
     public function pesertaUjian()
     {
         return $this->hasOne(PesertaUjian::class, 'pendaftaran_id');
+    }
+
+    public function profil()
+    {
+        return $this->hasOne(ProfilMahasiswa::class, 'user_id', 'user_id');
     }
 }

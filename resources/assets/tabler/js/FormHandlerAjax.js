@@ -46,6 +46,12 @@ function initAjaxFormHandler() {
         const method = $form.attr('method') || 'POST';
         const url = $form.attr('action');
 
+        // Capture clicked button name/value (since FormData constructor won't catch it)
+        const $clickedBtn = $(document.activeElement);
+        if ($clickedBtn.is('button[type="submit"]') && $clickedBtn.attr('name')) {
+            formData.append($clickedBtn.attr('name'), $clickedBtn.val());
+        }
+
         // Disable submit button
         $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
 

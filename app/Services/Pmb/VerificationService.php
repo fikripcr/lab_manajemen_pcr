@@ -3,11 +3,12 @@ namespace App\Services\Pmb;
 
 use App\Models\Pmb\Pembayaran;
 use App\Models\Pmb\Pendaftaran;
+use App\Models\Shared\RiwayatApproval;
 use Illuminate\Support\Facades\DB;
 
 class VerificationService
 {
-    public function __construct(protected PendaftaranService $PendaftaranService)
+    public function __construct(protected PendaftaranService $pendaftaranService)
     {}
 
     public function verifyPayment(Pembayaran $pembayaran, array $data): Pembayaran
@@ -22,10 +23,21 @@ class VerificationService
                 'waktu_bayar'       => now(),
             ]);
 
+            $stdStatus = ($status == 'Verified' ? 'Approved' : 'Rejected');
+
+            // Record Standardized Approval
+            RiwayatApproval::create([
+                'model'    => Pendaftaran::class,
+                'model_id' => $pembayaran->pendaftaran_id,
+                'status'   => $stdStatus,
+                'pejabat'  => auth()->user()->name,
+                'catatan'  => 'Verifikasi Pembayaran: ' . $keterangan,
+            ]);
+
             if ($status == 'Verified') {
-                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran, 'Menunggu_Verifikasi_Berkas', 'Pembayaran terverifikasi.');
+                $this->pendaftaranService->updateStatus($pembayaran->pendaftaran, 'Menunggu_Verifikasi_Berkas', 'Pembayaran terverifikasi.');
             } else {
-                $this->PendaftaranService->updateStatus($pembayaran->pendaftaran, 'Draft', 'Pembayaran ditolak: ' . $keterangan);
+                $this->pendaftaranService->updateStatus($pembayaran->pendaftaran, 'Draft', 'Pembayaran ditolak: ' . $keterangan);
             }
 
             logActivity('pmb_verifikasi', "Verifikasi pembayaran untuk pendaftaran {$pembayaran->pendaftaran->no_pendaftaran}: {$status}", $pembayaran);
@@ -40,21 +52,53 @@ class VerificationService
             $status     = $data['status'];
             $keterangan = $data['keterangan'] ?? null;
 
+            $stdStatus = ($status == 'Verified' ? 'Approved' : 'Rejected');
+
+            // Record Standardized Approval
+            RiwayatApproval::create([
+                'model'    => Pendaftaran::class,
+                'model_id' => $pendaftaran->pendaftaran_id,
+                'status'   => $stdStatus,
+                'pejabat'  => auth()->user()->name,
+                'catatan'  => 'Verifikasi Berkas: ' . $keterangan,
+            ]);
+
             if ($status == 'Verified') {
                 $nextStatus = 'Menunggu_Jadwal_Ujian';
-                // Logic to check if this jalur needs exam or direct pass
                 if ($pendaftaran->jalur->needs_exam ?? true) {
                     $nextStatus = 'Menunggu_Jadwal_Ujian';
                 } else {
                     $nextStatus = 'Lulus_Administrasi';
                 }
 
-                $this->PendaftaranService->updateStatus($pendaftaran, $nextStatus, 'Berkas terverifikasi.');
+                $this->pendaftaranService->updateStatus($pendaftaran, $nextStatus, 'Berkas terverifikasi.');
             } else {
-                $this->PendaftaranService->updateStatus($pendaftaran, 'Draft', 'Berkas ditolak: ' . $keterangan);
+                $this->pendaftaranService->updateStatus($pendaftaran, 'Draft', 'Berkas ditolak: ' . $keterangan);
             }
 
             logActivity('pmb_verifikasi', "Verifikasi berkas untuk pendaftaran {$pendaftaran->no_pendaftaran}: {$status}", $pendaftaran);
+
+            return $pendaftaran;
+        });
+    }
+
+    public function updatePendaftaranStatus(Pendaftaran $pendaftaran, string $status, ?string $keterangan): Pendaftaran
+    {
+        return DB::transaction(function () use ($pendaftaran, $status, $keterangan) {
+            $this->pendaftaranService->updateStatus($pendaftaran, $status, $keterangan);
+
+            $stdStatus = 'Approved';
+            if (str_contains(strtolower($status), 'tolak') || str_contains(strtolower($status), 'gagal')) {
+                $stdStatus = 'Rejected';
+            }
+
+            RiwayatApproval::create([
+                'model'    => Pendaftaran::class,
+                'model_id' => $pendaftaran->pendaftaran_id,
+                'status'   => $stdStatus,
+                'pejabat'  => auth()->user()?->name ?? 'System',
+                'catatan'  => "Update Status Ke {$status}: " . $keterangan,
+            ]);
 
             return $pendaftaran;
         });

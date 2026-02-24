@@ -61,7 +61,7 @@ class KegiatanController extends Controller
     public function store(KegiatanRequest $request)
     {
         try {
-            $data           = $request->except('dokumentasi_path');
+            $data = $request->except('dokumentasi_path');
 
             if ($request->hasFile('dokumentasi_path')) {
                 $data['dokumentasi_path'] = $request->file('dokumentasi_path')->store('kegiatan-docs', 'public');
@@ -75,14 +75,18 @@ class KegiatanController extends Controller
         }
     }
 
-    public function show(Kegiatan $kegiatan)
+    public function show(Kegiatan $id)
     {
-        $kegiatan->load(['lab', 'penyelenggara', 'approvals']);
+        $id->load(['lab', 'penyelenggara', 'approvals' => function ($q) {
+            $q->orderBy('created_at', 'desc');
+        }]);
+        $kegiatan = $id;
         return view('pages.lab.kegiatan.show', compact('kegiatan'));
     }
 
-    public function updateStatus(Request $request, Kegiatan $kegiatan)
+    public function updateStatus(Request $request, Kegiatan $id)
     {
+        $kegiatan = $id;
         // Admin only functionality usually
         $request->validate([
             'status'  => 'required|in:approved,rejected',

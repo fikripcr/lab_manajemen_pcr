@@ -38,6 +38,19 @@ if (! function_exists('formatTanggalIndo')) {
     }
 }
 
+if (! function_exists('formatTanggalWaktuIndo')) {
+    /**
+     * Alias for formatTanggalIndo to support unified components
+     *
+     * @param mixed $tanggal
+     * @return string
+     */
+    function formatTanggalWaktuIndo($tanggal)
+    {
+        return formatTanggalIndo($tanggal);
+    }
+}
+
 if (! function_exists('formatWaktuSaja')) {
     /**
      * Format hanya waktu ke format HH:ii (tanpa tanggal)

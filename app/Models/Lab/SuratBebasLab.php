@@ -48,12 +48,12 @@ class SuratBebasLab extends Model
 
     public function latestApproval()
     {
-        return $this->belongsTo(\App\Models\Lab\LabRiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
+        return $this->belongsTo(\App\Models\Lab\RiwayatApproval::class, 'latest_riwayatapproval_id', 'riwayatapproval_id');
     }
 
     public function approvals()
     {
-        return $this->morphMany(\App\Models\Lab\LabRiwayatApproval::class, 'approvalable', 'model', 'model_id')->orderBy('created_at', 'desc');
+        return $this->morphMany(\App\Models\Lab\RiwayatApproval::class, 'approvalable', 'model', 'model_id')->orderBy('created_at', 'desc');
     }
 
     public function getEncryptedSuratBebasLabIdAttribute()

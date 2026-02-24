@@ -21,7 +21,7 @@ class DokumenApprovalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'approver_id' => 'required|exists:pegawai,pegawai_id',
+            'personil_id' => 'required|exists:personil,personil_id',
             'status'      => 'required|in:terima,tolak,tangguhkan',
             'komentar'    => 'nullable|string',
         ];
