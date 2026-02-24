@@ -33,6 +33,7 @@ class DokumenUpload extends Model
         'jenis_dokumen_id',
         'path_file',
         'status_verifikasi',
+        'catatan_verifikasi',
         'catatan_revisi',
         'verifikator_id',
         'waktu_upload',

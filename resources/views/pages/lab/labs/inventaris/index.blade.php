@@ -21,7 +21,7 @@
                 id="inventaris-table"
                 route="{{ route('lab.labs.inventaris.paginate', $lab->encrypted_lab_id) }}"
                 :columns="[
-                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ['title' => 'Kode Inventaris', 'data' => 'kode_inventaris', 'name' => 'kode_inventaris'],
                     ['title' => 'Nama Alat', 'data' => 'nama_alat', 'name' => 'inventaris.nama_alat'],
                     ['title' => 'Jenis Alat', 'data' => 'jenis_alat', 'name' => 'inventaris.jenis_alat'],
@@ -29,7 +29,7 @@
                     ['title' => 'Tanggal Penempatan', 'data' => 'tanggal_penempatan', 'name' => 'tanggal_penempatan'],
                     ['title' => 'Tanggal Penghapusan', 'data' => 'tanggal_penghapusan', 'name' => 'tanggal_penghapusan'],
                     ['title' => 'Status', 'data' => 'status', 'name' => 'status'],
-                    ['title' => 'Aksi', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
+                    ['title' => 'Aksi', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                 ]"
             />
         </div>

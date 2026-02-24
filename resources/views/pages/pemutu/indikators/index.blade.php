@@ -36,14 +36,14 @@
             id="indikator-table"
             route="{{ route('pemutu.indikators.data') }}"
             :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
                 ['data' => 'tipe', 'name' => 'type', 'title' => 'Tipe', 'width' => '10%'],
                 ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
                 ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
                 ['data' => 'dokumen_judul', 'name' => 'dokSub.dokumen.judul', 'title' => 'Dokumen Induk'],
                 ['data' => 'doksub_judul', 'name' => 'dokSub.judul', 'title' => 'Poin / Sub-Dok'],
                 ['data' => 'labels', 'name' => 'labels', 'title' => 'Labels', 'orderable' => false, 'searchable' => false],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '10%']
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
             ]"
         />
     </div>

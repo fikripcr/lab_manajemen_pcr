@@ -39,10 +39,13 @@ class PerizinanController extends Controller
         $year   = $request->input('year', date('Y'));
         $status = $request->input('status');
 
-        $query = Perizinan::with(['jenisIzin', 'pengusulPegawai.latestDataDiri', 'latestApproval'])
-            ->whereYear('tgl_awal', $year);
+        $query = Perizinan::with(['jenisIzin', 'pengusulPegawai.latestDataDiri', 'latestApproval']);
 
-        if ($status) {
+        if ($year && $year !== 'all') {
+            $query->whereYear('tgl_awal', $year);
+        }
+
+        if ($status && $status !== 'all') {
             $query->whereHas('latestApproval', function ($q) use ($status) {
                 $q->where('status', $status);
             });
@@ -66,15 +69,24 @@ class PerizinanController extends Controller
                 $status = $row->status;
                 $badges = [
                     'Draft'    => 'bg-secondary-lt',
+                    'Diajukan' => 'bg-warning',
                     'Pending'  => 'bg-warning-lt',
                     'Approved' => 'bg-success-lt',
                     'Rejected' => 'bg-danger-lt',
                 ];
                 $badge = $badges[$status] ?? 'bg-secondary-lt';
-                return '<span class="badge ' . $badge . '">' . $status . '</span>';
+                return '<span class="badge ' . $badge . ' text-white">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                return view('pages.hr.perizinan._action', compact('row'))->render();
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl'       => route('hr.perizinan.show', $row->encrypted_perizinan_id),
+                    'viewModal'     => false,
+                    'viewTitle'     => 'Detail Perizinan',
+                    'editUrl'       => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.edit', $row->encrypted_perizinan_id) : null,
+                    'editModal' => true,
+                    'editTitle' => 'Edit Perizinan',
+                    'deleteUrl' => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.destroy', $row->encrypted_perizinan_id) : null,
+                ])->render();
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
@@ -116,7 +128,7 @@ class PerizinanController extends Controller
 
     public function update(PerizinanRequest $request, Perizinan $perizinan)
     {
-        if ($perizinan->status !== 'Draft') {
+        if (!in_array($perizinan->status, ['Draft', 'Diajukan'])) {
             return jsonError('Perizinan tidak dapat diubah karena sudah diproses.');
         }
 
@@ -132,7 +144,7 @@ class PerizinanController extends Controller
 
     public function destroy(Perizinan $perizinan)
     {
-        if ($perizinan->status !== 'Draft') {
+        if (!in_array($perizinan->status, ['Draft', 'Diajukan'])) {
             return jsonError('Perizinan tidak dapat dihapus karena sudah diproses.');
         }
 
@@ -143,6 +155,34 @@ class PerizinanController extends Controller
         } catch (\Exception $e) {
             logError($e);
             return jsonError('Gagal menghapus perizinan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Approve perizinan
+     */
+    public function approve(Request $request, Perizinan $perizinan)
+    {
+        try {
+            $validated = $request->validate([
+                'status'        => 'required|in:Approved,Rejected,Pending',
+                'pejabat'       => 'required|string|max:255',
+                'jenis_jabatan' => 'required|string|max:255',
+                'keterangan'    => 'nullable|string',
+            ]);
+
+            $this->perizinanService->approve($perizinan, $validated);
+
+            $statusText = [
+                'Approved' => 'disetujui',
+                'Rejected' => 'ditolak',
+                'Pending'  => 'ditangguhkan',
+            ];
+
+            return jsonSuccess('Perizinan berhasil di-' . ($statusText[$validated['status']] ?? 'proses'));
+        } catch (\Exception $e) {
+            logError($e);
+            return jsonError('Gagal memproses approval: ' . $e->getMessage());
         }
     }
 }

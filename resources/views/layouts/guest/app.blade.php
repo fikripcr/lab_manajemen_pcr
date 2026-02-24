@@ -1,6 +1,6 @@
 @php
     use App\Http\Controllers\Sys\ThemeTablerController;
-    
+
     // Load theme controller
     $themeController = app(ThemeTablerController::class);
     $themeData = $themeController->getThemeData('tabler');
@@ -30,28 +30,13 @@
     {{-- CSS Files --}}
     @yield('css')
     @vite(['resources/css/tabler.css'])
-    
-    {{-- Custom Modal Z-Index Fix --}}
-    <style>
-        /* Ensure modal and backdrop have proper z-index */
-        .modal.modal-blur {
-            z-index: 99999 !important;
-        }
-        .modal-backdrop {
-            z-index: 99998 !important;
-        }
-        /* Ensure modal dialog is above backdrop */
-        .modal-dialog {
-            z-index: 100000 !important;
-            position: relative;
-        }
-    </style>
-    
+
+
     {{-- Theme Custom Styles --}}
     {!! $themeController->getStyleBlock('tabler') !!}
-    
+
     @stack('styles')
-    
+
     <style>
         body {
             background-color: var(--tblr-bg-surface-secondary);
@@ -94,6 +79,6 @@
     ])
 
     @stack('scripts')
-    
+
 </body>
 </html>

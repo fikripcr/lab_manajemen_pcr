@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,9 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pemutu_indikator', function (Blueprint $table) {
-            $table->enum('kelompok_indikator', ['Akademik', 'Non Akademik'])->nullable()->after('type');
-        });
+        // Rename column while keeping auto_increment and key
+        DB::statement('ALTER TABLE pmb_camaba CHANGE profilmahasiswa_id camaba_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
     }
 
     /**
@@ -21,8 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pemutu_indikator', function (Blueprint $table) {
-            $table->dropColumn('kelompok_indikator');
-        });
+        DB::statement('ALTER TABLE pmb_camaba CHANGE camaba_id profilmahasiswa_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
     }
 };

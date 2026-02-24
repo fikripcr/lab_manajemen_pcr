@@ -3,22 +3,22 @@
 @section('title', 'Detail Kegiatan: ' . $event->judul_Kegiatan)
 
 @section('header')
-<x-tabler.page-header 
-    title="{{ $event->judul_Kegiatan }}" 
+<x-tabler.page-header
+    title="{{ $event->judul_Kegiatan }}"
     pretitle="Detail Kegiatan"
 >
     <x-slot:actions>
-        <x-tabler.button 
-            href="{{ route('Kegiatan.Kegiatans.index') }}" 
-            class="btn-secondary" 
-            icon="ti ti-arrow-left" 
-            text="Kembali" 
+        <x-tabler.button
+            href="{{ route('Kegiatan.Kegiatans.index') }}"
+            class="btn-secondary"
+            icon="ti ti-arrow-left"
+            text="Kembali"
         />
-        <x-tabler.button 
-            href="{{ route('Kegiatan.Kegiatans.edit', $event->encrypted_event_id) }}" 
-            class="btn-primary" 
-            icon="ti ti-edit" 
-            text="Edit Kegiatan" 
+        <x-tabler.button
+            href="{{ route('Kegiatan.Kegiatans.edit', $event->encrypted_event_id) }}"
+            class="btn-primary"
+            icon="ti ti-edit"
+            text="Edit Kegiatan"
         />
     </x-slot:actions>
 </x-tabler.page-header>
@@ -42,7 +42,7 @@
                     </label>
                     <div class="fs-5 fw-semibold">{{ $event->jenis_Kegiatan ?: '-' }}</div>
                 </div>
-                
+
                 <div class="mb-4">
                     <label class="form-label text-muted small text-uppercase fw-bold">
                         <i class="ti ti-calendar me-1"></i>Tanggal
@@ -59,14 +59,14 @@
                         @endif
                     </div>
                 </div>
-                
+
                 <div class="mb-4">
                     <label class="form-label text-muted small text-uppercase fw-bold">
                         <i class="ti ti-map-pin me-1"></i>Lokasi
                     </label>
                     <div class="fs-5">{{ $event->lokasi ?: '-' }}</div>
                 </div>
-                
+
                 <div class="mb-4">
                     <label class="form-label text-muted small text-uppercase fw-bold">
                         <i class="ti ti-user-check me-1"></i>PIC Kegiatan
@@ -78,7 +78,7 @@
                         <div class="fs-5">{{ $event->pic->name ?? '-' }}</div>
                     </div>
                 </div>
-                
+
                 @php
                     $picLapangan = $event->teams->where('is_pic', true)->first();
                 @endphp
@@ -142,11 +142,11 @@
                                 {!! nl2br(e($event->deskripsi)) ?: '<span class="text-muted fst-italic">Tidak ada deskripsi kegiatan</span>' !!}
                             </div>
                         </div>
-                        
+
                         @if($event->teams->where('is_pic', true)->first())
                         <div class="alert alert-warning">
                             <i class="ti ti-alert-triangle me-2"></i>
-                            <strong>PIC Utama:</strong> {{ $event->teams->where('is_pic', true)->first().memberable.nama_pegawai }} 
+                            <strong>PIC Utama:</strong> {{ $event->teams->where('is_pic', true)->first().memberable.nama_pegawai }}
                             bertanggung jawab sebagai koordinator lapangan untuk kegiatan ini.
                         </div>
                         @endif
@@ -158,15 +158,15 @@
                             <h4 class="m-0">
                                 <i class="ti ti-users me-2 text-primary"></i>Anggota Tim Pelaksana
                             </h4>
-                            <x-tabler.button 
-                                class="btn-sm btn-primary ajax-modal-btn" 
-                                data-modal-title="Tambah Anggota Tim" 
-                                data-url="{{ route('Kegiatan.Kegiatans.teams.create', $event->encrypted_event_id) }}" 
-                                icon="ti ti-user-plus" 
-                                text="Tambah Anggota" 
+                            <x-tabler.button
+                                class="btn-sm btn-primary ajax-modal-btn"
+                                data-modal-title="Tambah Anggota Tim"
+                                data-url="{{ route('Kegiatan.Kegiatans.teams.create', $event->encrypted_event_id) }}"
+                                icon="ti ti-user-plus"
+                                text="Tambah Anggota"
                             />
                         </div>
-                        
+
                         <div class="card-table">
                             <x-tabler.datatable-client
                                 id="table-tim"
@@ -175,7 +175,7 @@
                                     ['name' => 'Nama Pegawai'],
                                     ['name' => 'Jabatan/Peran'],
                                     ['name' => 'Status'],
-                                    ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                                    ['name' => '', 'class' => 'w-1', 'sortable' => false]
                                 ]"
                             >
                                 @forelse($event->teams->load('memberable') as $team)
@@ -210,18 +210,18 @@
                                         </td>
                                         <td>
                                             <div class="btn-list flex-nowrap">
-                                                <x-tabler.button 
-                                                    class="btn-icon btn-sm ajax-modal-btn" 
-                                                    data-modal-title="Edit Anggota" 
-                                                    data-url="{{ route('Kegiatan.Kegiatans.teams.edit', ['event' => $event->encrypted_event_id, 'team' => $team->encrypted_eventteam_id]) }}" 
-                                                    icon="ti ti-edit" 
+                                                <x-tabler.button
+                                                    class="btn-icon btn-sm ajax-modal-btn"
+                                                    data-modal-title="Edit Anggota"
+                                                    data-url="{{ route('Kegiatan.Kegiatans.teams.edit', ['event' => $event->encrypted_event_id, 'team' => $team->encrypted_eventteam_id]) }}"
+                                                    icon="ti ti-edit"
                                                 />
-                                                <x-tabler.button 
-                                                    class="btn-icon btn-sm btn-danger ajax-delete" 
-                                                    data-url="{{ route('Kegiatan.Kegiatans.teams.destroy', ['event' => $event->encrypted_event_id, 'team' => $team->encrypted_eventteam_id]) }}" 
-                                                    data-title="Hapus Anggota?" 
-                                                    data-text="Anggota akan dihapus dari tim kegiatan ini" 
-                                                    icon="ti ti-trash" 
+                                                <x-tabler.button
+                                                    class="btn-icon btn-sm btn-danger ajax-delete"
+                                                    data-url="{{ route('Kegiatan.Kegiatans.teams.destroy', ['event' => $event->encrypted_event_id, 'team' => $team->encrypted_eventteam_id]) }}"
+                                                    data-title="Hapus Anggota?"
+                                                    data-text="Anggota akan dihapus dari tim kegiatan ini"
+                                                    icon="ti ti-trash"
                                                 />
                                             </div>
                                         </td>
@@ -293,12 +293,12 @@
                             <x-tabler.datatable-client
                                 id="table-tamu"
                                 :columns="[
-                                    ['name' => 'Foto', 'className' => 'w-1', 'sortable' => false],
+                                    ['name' => 'Foto', 'class' => 'w-1', 'sortable' => false],
                                     ['name' => 'Nama'],
                                     ['name' => 'Instansi'],
                                     ['name' => 'No. HP'],
                                     ['name' => 'Waktu Datang'],
-                                    ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                                    ['name' => '', 'class' => 'w-1', 'sortable' => false]
                                 ]"
                             >
                                 @forelse($event->tamus as $tamu)
@@ -322,11 +322,11 @@
                                         <td class="text-muted">{{ $tamu->waktu_datang ? \Carbon\Carbon::parse($tamu->waktu_datang)->format('H:i') : '-' }}</td>
                                         <td>
                                             <div class="btn-list flex-nowrap">
-                                                <x-tabler.button 
-                                                    class=" ajax-modal-btn" 
-                                                    data-modal-title="Edit Tamu" 
-                                                    data-url="{{ route('Kegiatan.Kegiatans.tamus.edit', ['event' => $event->encrypted_event_id, 'tamu' => $tamu->encrypted_eventtamu_id]) }}" 
-                                                    icon="ti ti-edit" 
+                                                <x-tabler.button
+                                                    class=" ajax-modal-btn"
+                                                    data-modal-title="Edit Tamu"
+                                                    data-url="{{ route('Kegiatan.Kegiatans.tamus.edit', ['event' => $event->encrypted_event_id, 'tamu' => $tamu->encrypted_eventtamu_id]) }}"
+                                                    icon="ti ti-edit"
                                                 />
                                             </div>
                                         </td>

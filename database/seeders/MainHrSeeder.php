@@ -292,9 +292,24 @@ class MainHrSeeder extends Seeder
 
         DB::transaction(function () use ($faker, $sysUserId, $depts, $posisis, $statusPegawais, $statusAktifs, $jabFungsionals, $orgUnits, $strUnits) {
             for ($i = 0; $i < 30; $i++) {
-                $pegawai     = Pegawai::create(['created_by' => $sysUserId]);
                 $gender      = $faker->randomElement(['L', 'P']);
                 $pegawaiName = $faker->name($gender == 'L' ? 'male' : 'female');
+                $email = $faker->unique()->safeEmail;
+
+                // Create User first
+                $user = \App\Models\User::create([
+                    'name'              => $pegawaiName,
+                    'email'             => $email,
+                    'password'          => \Illuminate\Support\Facades\Hash::make('password'),
+                    'email_verified_at' => now(),
+                    'created_by'        => $sysUserId,
+                ]);
+
+                // Create Pegawai with user_id
+                $pegawai     = Pegawai::create([
+                    'user_id'     => $user->id,
+                    'created_by'  => $sysUserId,
+                ]);
 
                 $deptUnits = $orgUnits->whereIn('type', ['Bagian', 'Prodi']);
                 $posUnits  = $orgUnits->where('type', 'posisi');
@@ -303,7 +318,7 @@ class MainHrSeeder extends Seeder
                     $riwayatDataDiriData = [
                         'pegawai_id'            => $pegawai->pegawai_id,
                         'nama'                  => $pegawaiName,
-                        'email'                 => $faker->unique()->safeEmail,
+                        'email'                 => $email,
                         'nip'                   => $faker->unique()->numerify('19###### ###### # ###'),
                         'nidn'                  => $faker->optional(0.3)->numerify('##########'),
                         'jenis_kelamin'         => $gender,

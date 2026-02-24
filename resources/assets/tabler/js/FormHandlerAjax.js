@@ -306,7 +306,19 @@ function initAjaxFormHandler() {
      * Handle modal form reset when modal is hidden
      */
     $(document).on('hidden.bs.modal', '.modal', function () {
-        const $form = $(this).find('.ajax-form');
+        const $modal = $(this);
+        const $form = $modal.find('.ajax-form');
+        
+        // Clean up HugeRTE/TinyMCE instances to prevent initialization issues on reopen
+        if (typeof window.hugerte !== 'undefined') {
+            $modal.find('textarea.form-control').each(function () {
+                const id = $(this).attr('id');
+                if (id && window.hugerte.get(id)) {
+                    window.hugerte.remove('#' + id);
+                }
+            });
+        }
+        
         if ($form.length) {
             $form[0].reset();
             $form.find('.is-invalid').removeClass('is-invalid');

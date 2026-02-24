@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         $user = $request->user();
         logActivity('auth', 'User logged in', $user);
 
-        return redirect()->intended(route('lab.dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

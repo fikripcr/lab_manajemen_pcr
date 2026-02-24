@@ -104,6 +104,7 @@
                     'name' => 'action',
                     'orderable' => false,
                     'searchable' => false,
+                    'class' => 'text-center',
                 ],
             ]" :order="[[3, 'desc']]" />
         </div>

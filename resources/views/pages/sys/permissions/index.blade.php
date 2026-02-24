@@ -44,6 +44,7 @@
                 'name' => 'DT_RowIndex',
                 'orderable' => false,
                 'searchable' => false,
+                'class' => 'text-center',
             ],
             [
                 'title' => 'Name',

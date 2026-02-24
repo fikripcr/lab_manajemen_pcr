@@ -3,7 +3,7 @@
  * ==========================================================================
  * This file contains ALL custom CSS overrides for the application.
  * Uses CSS Cascade Layers for proper specificity management.
- * 
+ *
  * Layer Order (lowest to highest priority):
  * 1. tabler-base - Base Tabler framework styles
  * 2. tabler-custom - Our custom theme overrides
@@ -66,10 +66,10 @@
        ========================================================================== */
 
     /* Navbar Brand Image Sizing */
-    .navbar-brand-image {
+    /* .navbar-brand-image {
         height: 2rem;
         width: auto;
-    }
+    } */
 
     /* DataTable Processing Indicator */
     div.dt-processing>div:last-child>div {
@@ -524,4 +524,7 @@
         z-index: 1060 !important;
     }
 
+    /* .modal-backdrop {
+        --tblr-backdrop-zindex: 1 !important;
+    } */
 }

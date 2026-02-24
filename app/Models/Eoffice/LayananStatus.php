@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\Eoffice;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,10 +48,5 @@ class LayananStatus extends Model
     public function layanan()
     {
         return $this->belongsTo(Layanan::class, 'layanan_id', 'layanan_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 }

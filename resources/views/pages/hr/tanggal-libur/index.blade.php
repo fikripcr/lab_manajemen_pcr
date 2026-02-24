@@ -1,19 +1,24 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Tanggal Libur" pretitle="Daftar hari libur nasional dan cuti bersama">
+<x-tabler.page-header title="Tanggal Libur" pretitle="HR">
     <x-slot:actions>
         <form action="{{ route('hr.tanggal-libur.index') }}" method="GET" class="d-inline-block me-2 text-start">
-            <x-tabler.form-select name="tahun" label="Pilih Tahun" class="mb-0" onchange="this.form.submit()">
+            <x-tabler.form-select name="tahun" class="mb-0" onchange="this.form.submit()">
                 @foreach($years as $y)
                     <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
                 @endforeach
             </x-tabler.form-select>
         </form>
-        <a href="{{ route('hr.tanggal-libur.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-            Tambah Tanggal
-        </a>
+        <x-tabler.button 
+            type="button" 
+            class="ajax-modal-btn btn-primary d-none d-sm-inline-block" 
+            data-url="{{ route('hr.tanggal-libur.create') }}" 
+            data-modal-title="Tambah Tanggal Libur"
+            data-modal-size="modal-lg" 
+            icon="ti ti-plus" 
+            text="Tambah Tanggal" 
+        />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -21,7 +26,7 @@
 @section('content')
 
         <x-tabler.flash-message />
-        
+
         @if($data->isEmpty())
             <div class="empty">
                 <div class="empty-icon">

@@ -39,7 +39,8 @@ class SoftwareRequestController extends Controller
             // User request suggests it should be scheduled.
             // For now, let's get courses from the latest active semester if no specific software period found,
             // or just notify that no active period is open.
-            return \view('pages.lab.software-requests.create', [
+            return \view('pages.lab.software-requests.create-edit-ajax', [
+                'softwareRequest' => new RequestSoftware(),
                 'mataKuliahs'  => \collect(),
                 'activePeriod' => null,
                 'error'        => 'Tidak ada periode pengajuan software yang aktif saat ini.',
@@ -51,7 +52,9 @@ class SoftwareRequestController extends Controller
             $q->where('semester_id', $activePeriod->semester_id);
         })->get();
 
-        return \view('pages.lab.software-requests.create-edit-ajax', compact('mataKuliahs', 'activePeriod'));
+        $softwareRequest = new RequestSoftware();
+
+        return \view('pages.lab.software-requests.create-edit-ajax', compact('mataKuliahs', 'activePeriod', 'softwareRequest'));
     }
 
     /**
@@ -85,6 +88,10 @@ class SoftwareRequestController extends Controller
                     case 'pending':
                         $badgeClass = 'bg-label-warning';
                         $statusText = 'Pending';
+                        break;
+                    case 'tangguhkan':
+                        $badgeClass = 'bg-label-info';
+                        $statusText = 'Tangguhkan';
                         break;
                     case 'disetujui':
                     case 'approved':
@@ -132,7 +139,7 @@ class SoftwareRequestController extends Controller
     public function approve(Request $request, RequestSoftware $requestSoftware)
     {
         $validated = $request->validate([
-            'status'     => 'required|in:approved,rejected,pending',
+            'status'     => 'required|in:approved,rejected,tangguhkan',
             'pejabat'    => 'required|string|max:191',
             'keterangan' => 'nullable|string',
         ]);

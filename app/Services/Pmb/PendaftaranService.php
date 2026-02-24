@@ -4,7 +4,7 @@ namespace App\Services\Pmb;
 use App\Models\Pmb\DokumenUpload;
 use App\Models\Pmb\Pendaftaran;
 use App\Models\Pmb\PilihanProdi;
-use App\Models\Pmb\ProfilMahasiswa;
+use App\Models\Pmb\Camaba;
 use App\Models\Pmb\RiwayatPendaftaran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +30,7 @@ class PendaftaranService
             $user = Auth::user();
 
             // 1. Create or Update Profile
-            $profil = ProfilMahasiswa::updateOrCreate(
+            $profil = Camaba::updateOrCreate(
                 ['user_id' => $user->id],
                 [
                     'nik'              => $data['nik'],

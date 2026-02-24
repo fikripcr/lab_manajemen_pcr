@@ -6,24 +6,26 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProfilMahasiswa extends Model
+class Camaba extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table      = 'pmb_profil_mahasiswa';
-    protected $primaryKey = 'profilmahasiswa_id';
-    protected $appends    = ['encrypted_profilmahasiswa_id'];
+    protected $table      = 'pmb_camaba';
+    protected $primaryKey = 'camaba_id';
+    protected $appends    = ['encrypted_camaba_id'];
 
     public function getRouteKeyName()
     {
-        return 'profilmahasiswa_id';
+        return 'camaba_id';
     }
 
-    public function getEncryptedProfilmahasiswaIdAttribute()
+    public function getEncryptedCamabaIdAttribute()
     {
-        return encryptId($this->profilmahasiswa_id);
+        return encryptId($this->camaba_id);
     }
 
     protected $fillable = [
@@ -39,8 +41,17 @@ class ProfilMahasiswa extends Model
         'nama_ibu_kandung',
     ];
 
-    public function user()
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function pendaftaran(): HasOne
+    {
+        return $this->hasOne(Pendaftaran::class, 'user_id', 'user_id');
     }
 }

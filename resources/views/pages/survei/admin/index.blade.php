@@ -2,7 +2,7 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Survei" pretitle="Feedback Module">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Buat Survei" 
+        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Buat Survei"
             data-modal-target="#modalAction" data-modal-title="Buat Survei Baru" data-url="{{ route('survei.create') }}" />
     </x-slot:actions>
 </x-tabler.page-header>
@@ -15,16 +15,16 @@
                         <x-tabler.button type="button" class="btn-outline-secondary btn-duplicate-bulk" icon="ti ti-copy" text="Duplikasi Terpilih" />
                     </div>
                 </div>
-                <x-tabler.datatable 
-                id="table-survei" 
+                <x-tabler.datatable
+                id="table-survei"
                 checkbox="true"
                 :columns="[
                     ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul Survei'],
                     ['data' => 'periode', 'name' => 'periode', 'title' => 'Periode'],
                     ['data' => 'pelaksanaan', 'name' => 'pelaksanaan', 'title' => 'Pelaksanaan', 'orderable' => false],
                     ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
-                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
-                ]" 
+                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+                ]"
                 :url="route('survei.paginate')" />
             </div>
         </div>
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 showLoadingMessage('Menduplikasi...', 'Harap tunggu');
-                
+
                 const promises = ids.map(id => {
                     const url = "{{ route('survei.duplicate', ':id') }}".replace(':id', id);
                     return axios.post(url);
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     $(document).on('click', '.btn-duplicate-single', function(e) {
         e.preventDefault();
         const url = $(this).data('url');
-        
+
         Swal.fire({
             title: 'Duplikasi survei ini?',
             icon: 'question',

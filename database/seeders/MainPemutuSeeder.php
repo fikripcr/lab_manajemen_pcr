@@ -235,12 +235,27 @@ class MainPemutuSeeder extends Seeder
         // 1. Check existing Data Diri
         $existingData = RiwayatDataDiri::where('email', $email)->latest()->first();
         $pegawaiId    = null;
+        $user         = User::where('email', $email)->first();
 
         if ($existingData) {
             $pegawaiId = $existingData->pegawai_id;
         } else {
-            // Create Pegawai
-            $pegawai   = Pegawai::create(['created_by' => 1]);
+            // Create User first if not exists
+            if (!$user) {
+                $user = User::create([
+                    'name'              => $nama,
+                    'email'             => $email,
+                    'password'          => \Illuminate\Support\Facades\Hash::make('password'),
+                    'email_verified_at' => now(),
+                    'created_by'        => 1,
+                ]);
+            }
+
+            // Create Pegawai with user_id
+            $pegawai   = Pegawai::create([
+                'user_id'     => $user->id,
+                'created_by'  => 1,
+            ]);
             $pegawaiId = $pegawai->pegawai_id;
 
             // Create Data Diri
@@ -272,12 +287,6 @@ class MainPemutuSeeder extends Seeder
             ]);
             $pegawai->update(['latest_riwayatpenugasan_id' => $penugasan->riwayatpenugasan_id]);
         }
-
-        // Link User if exists and not linked
-        $user = User::where('email', $email)->first();
-        if ($user && ! $user->pegawai_id) {
-            $user->update(['pegawai_id' => $pegawaiId]);
-        }
     }
 
     private function seedIndikator()
@@ -302,7 +311,6 @@ class MainPemutuSeeder extends Seeder
                 'indikator'       => $data['indikator'],
                 'target'          => $data['target'],
                 'jenis_indikator' => 'IKU',
-                'seq'             => $seq++,
             ]);
             $indikator->dokSubs()->attach($dokSubs->first()->doksub_id, ['is_hasilkan_indikator' => false]);
         }
@@ -316,7 +324,7 @@ class MainPemutuSeeder extends Seeder
         // Golden Path
         $stdDok = Dokumen::where('kode', 'STD-DIK-001')->first();
         if ($stdDok) {
-            $indStandar = Indikator::create(['type' => 'standar', 'no_indikator' => 'IND-STD-GOLD-01', 'indikator' => 'Minimal 80% Mata Kuliah memiliki RPS', 'target' => '80%', 'jenis_indikator' => 'Utama', 'seq' => 999]);
+            $indStandar = Indikator::create(['type' => 'standar', 'no_indikator' => 'IND-STD-GOLD-01', 'indikator' => 'Minimal 80% Mata Kuliah memiliki RPS', 'target' => '80%', 'jenis_indikator' => 'Utama']);
             $indStandar->dokSubs()->attach($stdDok->dokSubs->first()->doksub_id ?? 1, ['is_hasilkan_indikator' => false]);
             // Attach to PCR
             $pcr = OrgUnit::where('code', 'PCR')->first();

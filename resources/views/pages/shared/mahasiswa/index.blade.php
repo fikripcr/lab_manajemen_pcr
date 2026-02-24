@@ -11,12 +11,12 @@
                     id="table-mahasiswa"
                     route="{{ route('shared.mahasiswa.index') }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'mahasiswa_id', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'DT_RowIndex', 'name' => 'mahasiswa_id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                         ['data' => 'nim', 'name' => 'nim', 'title' => 'NIM'],
                         ['data' => 'nama', 'name' => 'nama', 'title' => 'Nama'],
                         ['data' => 'email', 'name' => 'email', 'title' => 'Email'],
                         ['data' => 'prodi_nama', 'name' => 'prodi_nama', 'title' => 'Prodi'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
+                            ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
                 />
             </div>

@@ -19,12 +19,13 @@ return new class extends Migration
             $table->string('status', 50)->nullable();
             $table->string('pejabat', 191)->nullable();
             $table->string('jenis_jabatan', 191)->nullable();
-            $table->text('keterangan')->nullable();
+            $table->text('catatan')->nullable();
+            $table->string('lampiran_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 1. Labs (Renamed to lab_labs)
@@ -38,9 +39,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 2. Semesters (Renamed to lab_semesters)
@@ -55,9 +56,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 3. Mata Kuliahs (Renamed to lab_mata_kuliahs)
@@ -70,9 +71,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 4. Jadwal Kuliah (Renamed to lab_jadwal_kuliah)
@@ -89,9 +90,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('semester_id')->references('semester_id')->on('lab_semesters');
             $table->foreign('mata_kuliah_id')->references('mata_kuliah_id')->on('lab_mata_kuliahs');
@@ -113,9 +114,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('jadwal_id')->references('jadwal_kuliah_id')->on('lab_jadwal_kuliah');
@@ -136,9 +137,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('pc_assignment_id')->references('pc_assignment_id')->on('lab_pc_assignments');
             $table->foreign('user_id')->references('id')->on('users');
@@ -152,7 +153,7 @@ return new class extends Migration
             $table->id('kegiatan_id');
             $table->unsignedBigInteger('lab_id');
             $table->unsignedBigInteger('penyelenggara_id');
-            $table->string('nama_kegiatan', 191);
+            $table->string('nama_kegiatan');
             $table->text('deskripsi');
             $table->date('tanggal');
             $table->time('jam_mulai');
@@ -164,9 +165,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
             $table->foreign('penyelenggara_id')->references('id')->on('users');
@@ -195,9 +196,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('kegiatan_id')->references('kegiatan_id')->on('lab_kegiatans');
             $table->foreign('lab_id')->references('lab_id')->on('lab_labs');
@@ -216,9 +217,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('semester_id')->references('semester_id')->on('lab_semesters')->onDelete('cascade');
         });
@@ -245,9 +246,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('dosen_id')->references('id')->on('users');
             $table->foreign('periodsoftreq_id')->references('periodsoftreq_id')->on('lab_periode_softrequest')->onDelete('set null');
@@ -281,9 +282,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 11. Laporan Kerusakan (Renamed to lab_laporan_kerusakan)
@@ -298,9 +299,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventaris');
             $table->foreign('teknisi_id')->references('id')->on('users');
@@ -324,9 +325,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('inventaris_id')->references('inventaris_id')->on('lab_inventaris')->onDelete('cascade');
             $table->foreign('lab_id')->references('lab_id')->on('lab_labs')->onDelete('cascade');
@@ -344,9 +345,9 @@ return new class extends Migration
             $table->timestamp('tanggal_selesai')->nullable();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -363,21 +364,17 @@ return new class extends Migration
             $table->string('status', 20)->default('pending'); // pending, approved, rejected
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->string('file_path')->nullable(); // Path to generated PDF
-            $table->text('remarks')->nullable();     // Catatan penolakan/approval
-            $table->unsignedBigInteger('approved_by')->nullable();
-            $table->timestamp('approved_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
             // Blameable columns
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('student_id')->references('id')->on('users');
-            $table->foreign('approved_by')->references('id')->on('users');
-            // $table->foreign('latest_riwayatapproval_id')->references('riwayatapproval_id')->on('lab_riwayat_approval')->onDelete('set null');
+            // approved_by, approved_at, and remarks removed - use latest_riwayatapproval_id instead
         });
 
         // NOTE: lab_mahasiswa moved to shared migration as 'mahasiswa'

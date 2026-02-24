@@ -44,6 +44,18 @@ class Inventaris extends Model
     }
 
     /**
+     * Get the active lab for this inventory (HasOneThrough or custom)
+     * For LaporanKerusakan, it calls `$row->inventaris->lab->name`.
+     */
+    public function lab()
+    {
+        // Many-to-many relationship where we only want the active one
+        return $this->belongsToMany(Lab::class, 'lab_inventaris_penempatan', 'inventaris_id', 'lab_id')
+                    ->wherePivot('status', 'active')
+                    ->withPivot(['kode_inventaris']);
+    }
+
+    /**
      * Relationship: Inventory has many lab_inventaris entries
      */
     public function labInventaris()

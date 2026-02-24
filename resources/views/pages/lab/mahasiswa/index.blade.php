@@ -29,6 +29,7 @@
                     'title' => 'NIM',
                     'data' => 'nim',
                     'name' => 'nim',
+                    'class' => 'text-center',
                 ],
                 [
                     'title' => 'Nama Mahasiswa',
@@ -47,6 +48,7 @@
                 ],
                 [
                     'title' => 'Actions',
+                    'class' => 'text-center',
                     'data' => 'action',
                     'name' => 'action',
                     'orderable' => false,
@@ -56,3 +58,58 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    window.jQuery(document).on('click', '.generate-user', function(e) {
+        e.preventDefault();
+        
+        const $button = window.jQuery(this);
+        const url = $button.data('url');
+        
+        if (!confirm('Apakah Anda yakin ingin membuat user untuk mahasiswa ini?\n\nDefault password: password123')) {
+            return;
+        }
+        
+        window.jQuery.ajax({
+            url: url,
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        html: response.message
+                    });
+                    
+                    // Reload datatable
+                    window.jQuery('#mahasiswa-table').DataTable().ajax.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        html: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                let message = 'Terjadi kesalahan saat membuat user.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: message
+                });
+            }
+        });
+    });
+});
+</script>
+@endpush

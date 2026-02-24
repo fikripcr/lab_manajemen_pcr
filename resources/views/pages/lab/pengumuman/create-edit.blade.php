@@ -25,7 +25,7 @@
                             <x-tabler.form-input
                                 name="judul"
                                 label="Judul"
-                                :value="$pengumuman->judul"
+                                :value="old('judul', $pengumuman->judul ?? '')"
                                 placeholder="Masukkan judul..."
                                 required
                             />
@@ -36,13 +36,13 @@
                                     label="Konten"
                                     type="editor"
                                     rows="20"
-                                    :value="$pengumuman->isi"
+                                    :value="old('isi', $pengumuman->isi ?? '')"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4">
                     <div class="card">
                         <div class="card-body">
@@ -73,7 +73,7 @@
                                     help="Maksimal 5MB. Format: JPG, PNG, WEBP."
                                 />
                                 @if($pengumuman->cover_url)
-                                    <div class="mt-2">
+                                    <div class="mt-2 text-center">
                                         <img src="{{ $pengumuman->cover_url }}" class="rounded" style="max-height: 100px;">
                                     </div>
                                 @endif

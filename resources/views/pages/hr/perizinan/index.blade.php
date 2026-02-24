@@ -6,11 +6,15 @@
 <x-tabler.page-header title="Data Perizinan" pretitle="HR & Kepegawaian">
     <x-slot:actions>
         <div class="d-flex gap-2">
-            <x-tabler.form-select id="filter-year" label="Tahun" class="form-select-sm mb-0" style="width: 100px;">
-                @foreach ($years as $year)
-                    <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
-                @endforeach
-            </x-tabler.form-select>
+            <x-tabler.datatable-filter dataTableId="table-perizinan" :useCollapse="true">
+                <div class="col-12">
+                    <x-tabler.form-select name="year" label="Filter Tahun" class="mb-0">
+                        @foreach ($years as $year)
+                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endforeach
+                    </x-tabler.form-select>
+                </div>
+            </x-tabler.datatable-filter>
             <x-tabler.button type="button" icon="ti ti-plus" text="Ajukan Izin" class="ajax-modal-btn" data-url="{{ route('hr.perizinan.create') }}" data-modal-title="Form Pengajuan Izin" />
         </div>
     </x-slot:actions>
@@ -39,12 +43,7 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        $('#filter-year').on('change', function() {
-            var year = $(this).val();
-            var table = $('#table-perizinan').DataTable();
-            var url = '{{ route("hr.perizinan.data") }}?year=' + year;
-            table.ajax.url(url).load();
-        });
+        // x-tabler.datatable-filter handles the reloading automatically
     });
 </script>
 @endpush

@@ -30,7 +30,7 @@
                         ['data' => 'pelapor', 'name' => 'createdBy.name', 'title' => 'Pelapor'],
                         ['data' => 'status', 'name' => 'status', 'title' => 'Status', 'class' => 'text-center'],
                         ['data' => 'tanggal', 'name' => 'created_at', 'title' => 'Tanggal', 'class' => 'text-center'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '10%']
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
                     ]"
                 />
             </div>

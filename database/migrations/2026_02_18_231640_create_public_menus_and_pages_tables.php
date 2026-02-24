@@ -21,9 +21,9 @@ return new class extends Migration
             $table->boolean('is_published')->default(false);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('public_menus', function (Blueprint $table) {
@@ -41,9 +41,9 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('parent_id')->references('menu_id')->on('public_menus')->onDelete('cascade');
             $table->foreign('page_id')->references('page_id')->on('public_pages')->onDelete('set null');

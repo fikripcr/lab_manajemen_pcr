@@ -20,11 +20,12 @@ return new class extends Migration
             $table->date('tanggal_selesai')->nullable();
             $table->string('lokasi', 200)->nullable();
             $table->text('deskripsi')->nullable();
+            $table->string('buku_tamu_token', 64)->nullable()->unique();
             $table->unsignedBigInteger('pic_user_id')->nullable();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -43,9 +44,9 @@ return new class extends Migration
             $table->string('ttd_url', 255)->nullable();
             $table->text('keterangan')->nullable();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -61,9 +62,9 @@ return new class extends Migration
             $table->string('role')->nullable();
             $table->boolean('is_pic')->default(false);
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -88,9 +89,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 4.2 Child Table: event_rapat_agenda
@@ -102,9 +103,9 @@ return new class extends Migration
             $table->integer('seq');
             $table->timestamps();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 4.3 Child Table: event_rapat_peserta
@@ -113,14 +114,18 @@ return new class extends Migration
             $table->foreignId('rapat_id')->constrained('event_rapat', 'rapat_id')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('jabatan', 100);
+            $table->string('nama_luar')->nullable();
+            $table->string('email_luar')->nullable();
             $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa'])->nullable();
+            $table->boolean('is_invited')->default(false);
+            $table->timestamp('invitation_sent_at')->nullable();
             $table->timestamp('waktu_hadir')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 4.4 Child Table: event_rapat_entitas
@@ -132,9 +137,9 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->timestamps();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
     }
 

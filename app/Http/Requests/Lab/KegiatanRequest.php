@@ -24,7 +24,7 @@ class KegiatanRequest extends FormRequest
             'lab_id'           => 'required',
             'nama_kegiatan'    => 'required|string',
             'deskripsi'        => 'required|string',
-            'tanggal'          => 'required|date|after_or_equal:today',
+            'tanggal'          => 'required|date',
             'jam_mulai'        => 'required',
             'jam_selesai'      => 'required|after:jam_mulai',
             'dokumentasi_path' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',

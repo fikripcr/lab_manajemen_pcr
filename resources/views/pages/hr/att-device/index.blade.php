@@ -29,17 +29,17 @@
     </div>
     <div class="">
          <x-tabler.flash-message />
-        <x-tabler.datatable 
+        <x-tabler.datatable
             id="att-device-table"
             route="{{ route('hr.att-device.data') }}"
             :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                 ['data' => 'name', 'name' => 'name', 'title' => 'Nama Mesin'],
                 ['data' => 'sn', 'name' => 'sn', 'title' => 'Serial Number'],
                 ['data' => 'ip', 'name' => 'ip', 'title' => 'IP Address'],
                 ['data' => 'port', 'name' => 'port', 'title' => 'Port'],
-                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
         />
     </div>

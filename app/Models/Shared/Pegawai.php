@@ -18,6 +18,7 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pegawai extends Model
@@ -35,6 +36,7 @@ class Pegawai extends Model
     }
 
     protected $fillable = [
+        'user_id',
         'latest_riwayatdatadiri_id',
         'latest_riwayatpendidikan_id',
         'latest_riwayatstatpegawai_id',
@@ -51,6 +53,14 @@ class Pegawai extends Model
         'updated_by',
         'deleted_by',
     ];
+
+    /**
+     * Get the user associated with this pegawai.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function getEncryptedPegawaiIdAttribute()
     {
@@ -117,10 +127,7 @@ class Pegawai extends Model
     // Core Relationships
     // ----------------------------------------------------------------
 
-    public function user()
-    {
-        return $this->hasOne(User::class, 'pegawai_id', 'pegawai_id');
-    }
+    // user() relationship defined above
 
     public function atasanSatu()
     {

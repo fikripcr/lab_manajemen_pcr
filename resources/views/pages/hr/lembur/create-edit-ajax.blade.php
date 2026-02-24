@@ -58,7 +58,7 @@
             <x-tabler.form-input type="time" name="jam_selesai" label="Jam Selesai" :value="old('jam_selesai', $jamSelesai)" required />
         </div>
         <div class="col-md-12 mb-3">
-            <x-tabler.form-select name="pegawai_ids[]" label="Pegawai yang Lembur" multiple="true" required="true">
+            <x-tabler.form-select name="pegawai_ids" id="pegawai_ids" label="Pegawai yang Lembur" :multiple="true" required="true" type="select2" data-placeholder="Cari Pegawai...">
                 @foreach($pegawais as $pegawai)
                     <option value="{{ $pegawai->pegawai_id }}" 
                         {{ (collect(old('pegawai_ids', $lembur->pegawais->pluck('pegawai_id')->toArray()))->contains($pegawai->pegawai_id)) ? 'selected' : '' }}>
@@ -66,22 +66,6 @@
                     </option>
                 @endforeach
             </x-tabler.form-select>
-        </div>
-        <div class="col-md-4 mb-3">
-            <x-tabler.form-select name="is_dibayar" label="Dibayar?">
-                <option value="1" {{ old('is_dibayar', $lembur->is_dibayar) == 1 ? 'selected' : '' }}>Ya</option>
-                <option value="0" {{ old('is_dibayar', $lembur->is_dibayar) == 0 ? 'selected' : '' }}>Tidak</option>
-            </x-tabler.form-select>
-        </div>
-        <div class="col-md-4 mb-3">
-            <x-tabler.form-select name="metode_bayar" label="Metode Bayar" :options="[
-                'uang' => 'Uang',
-                'cuti_pengganti' => 'Cuti Pengganti',
-                'tidak_dibayar' => 'Tidak Dibayar'
-            ]" :selected="old('metode_bayar', $lembur->metode_bayar)" />
-        </div>
-        <div class="col-md-4 mb-3">
-            <x-tabler.form-input type="number" name="nominal_per_jam" label="Nominal per Jam" step="1000" :value="old('nominal_per_jam', $lembur->nominal_per_jam)" />
         </div>
     </div>
 </x-tabler.form-modal>

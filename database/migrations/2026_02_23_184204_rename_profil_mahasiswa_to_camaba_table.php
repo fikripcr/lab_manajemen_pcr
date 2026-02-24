@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pemutu_indikator_pegawai', function (Blueprint $table) {
-            $table->dropColumn('semester');
-        });
+        // Table already renamed manually, skip
     }
 
     /**
@@ -21,8 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pemutu_indikator_pegawai', function (Blueprint $table) {
-            $table->string('semester', 2)->nullable()->after('year');
-        });
+        // Skip
     }
 };

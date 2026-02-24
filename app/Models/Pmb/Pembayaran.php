@@ -32,6 +32,7 @@ class Pembayaran extends Model
         'jenis_bayar',
         'jumlah_bayar',
         'bukti_bayar_path',
+        'bank_asal',
         'status_verifikasi',
         'verifikator_id',
         'waktu_bayar',
@@ -45,5 +46,10 @@ class Pembayaran extends Model
     public function verifikator()
     {
         return $this->belongsTo(User::class, 'verifikator_id');
+    }
+
+    public function camaba()
+    {
+        return $this->hasOneThrough(Camaba::class, Pendaftaran::class, 'pendaftaran_id', 'user_id', 'pendaftaran_id', 'user_id');
     }
 }

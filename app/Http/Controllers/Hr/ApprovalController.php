@@ -17,10 +17,13 @@ class ApprovalController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            $status = $request->input('status', 'Pending'); // Default showing pending
+
             // Fetch pending approvals
             $query = RiwayatApproval::with(['subject'])
-
-                ->where('status', 'Pending')
+                ->when($status !== 'all', function ($q) use ($status) {
+                    return $q->where('status', $status);
+                })
                 ->latest();
 
             return DataTables::of($query)

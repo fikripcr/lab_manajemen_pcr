@@ -7,6 +7,7 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Mahasiswa extends Model
@@ -47,6 +48,14 @@ class Mahasiswa extends Model
         'mahasiswa_id' => 'string',
     ];
 
+    /**
+     * Get the user associated with this mahasiswa.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function getEncryptedMahasiswaIdAttribute()
     {
         return encryptId($this->mahasiswa_id);
@@ -55,10 +64,5 @@ class Mahasiswa extends Model
     public function prodi()
     {
         return $this->belongsTo(StrukturOrganisasi::class, 'orgunit_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 }

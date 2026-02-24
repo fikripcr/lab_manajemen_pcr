@@ -53,13 +53,13 @@
     {{-- DOKUMEN: Show Poins (DokSubs) or Child Dokumens --}}
     @if($type === 'dokumen')
         <div class="hr-text">Komponen Terkait</div>
-        
+
         <div class="card bg-transparent shadow-none border">
             <div class="card-header border-0 d-flex justify-content-between align-items-center">
                 <h3 class="card-title">Daftar {{ $childLabel ?? 'Turunan' }}</h3>
                 <x-tabler.button class="ajax-modal-btn" text="Tambah {{ $childLabel ?? 'Turunan' }}" icon="ti ti-plus" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}" data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}" size="sm" />
             </div>
-            
+
             {{-- Unified DataTable placeholder for children --}}
             <div class="table-responsive">
                 <table class="table table-vcenter table-striped dataTable" id="children-table" data-url="{{ route('pemutu.dokumen-spmi.children-data', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}">
@@ -84,7 +84,7 @@
             <div class="card bg-transparent shadow-none border mb-3">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
                     <h3 class="card-title">
-                        {{ $isRenopPoint ? 'Daftar Indikator Renop' : 'Indikator Terlampir' }} 
+                        {{ $isRenopPoint ? 'Daftar Indikator Renop' : 'Indikator Terlampir' }}
                         <span class="badge bg-muted-lt ms-2">{{ $item->indikators->count() }}</span>
                     </h3>
                     @if($isRenopPoint)
@@ -149,7 +149,7 @@
                     processing: true, serverSide: true,
                     ajax: $('#children-table').data('url'),
                     columns: [
-                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
                         { data: 'judul', name: 'judul' },
                         { data: 'jumlah_turunan', name: 'jumlah_turunan' },
                         { data: 'action', name: 'action', orderable: false, searchable: false }
@@ -163,7 +163,7 @@
                     processing: true, serverSide: true,
                     ajax: $('#indikators-table').data('url'),
                     columns: [
-                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
                         { data: 'indikator', name: 'indikator' },
                         { data: 'unit_target', name: 'unit_target', orderable: false, searchable: false },
                         { data: 'action', name: 'action', orderable: false, searchable: false }
@@ -177,7 +177,7 @@
                     processing: true, serverSide: true,
                     ajax: $('#poin-children-table').data('url'),
                     columns: [
-                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
                         { data: 'judul', name: 'judul' },
                         { data: 'jenis', name: 'jenis' },
                         { data: 'action', name: 'action', orderable: false, searchable: false }

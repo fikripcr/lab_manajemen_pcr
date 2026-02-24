@@ -1,10 +1,10 @@
 <div class="d-flex justify-content-between align-items-center m-3">
     <h3 class="mb-0">Penugasan (Struktural & Unit)</h3>
     @if(auth()->user()->can('hr.penugasan.create'))
-    <x-tabler.button 
-        style="primary" 
-        class="ajax-modal-btn" 
-        data-url="{{ route('hr.pegawai.penugasan.create', $pegawai->encrypted_pegawai_id) }}" 
+    <x-tabler.button
+        style="primary"
+        class="ajax-modal-btn"
+        data-url="{{ route('hr.pegawai.penugasan.create', $pegawai->encrypted_pegawai_id) }}"
         data-modal-title="Tambah Penugasan"
         icon="ti ti-plus"
         text="Tambah Penugasan" />
@@ -19,7 +19,7 @@
             ['name' => 'Tgl Selesai'],
             ['name' => 'No. SK'],
             ['name' => 'Status'],
-            ['name' => 'Aksi', 'className' => 'text-end', 'sortable' => false]
+            ['name' => 'Aksi', 'class' => 'text-center', 'sortable' => false]
         ]"
     >
         @forelse($pegawai->historyPenugasan ?? [] as $item)
@@ -38,27 +38,27 @@
                     <span class="badge bg-secondary text-secondary-fg">Selesai</span>
                 @endif
             </td>
-            <td class="text-end">
-                <div class="btn-list justify-content-end">
-                    <x-tabler.button 
-                        style="ghost-primary" 
-                        class="btn-icon ajax-modal-btn" 
-                        data-url="{{ route('hr.pegawai.penugasan.edit', [$pegawai->encrypted_pegawai_id, $item->encrypted_riwayatpenugasan_id]) }}" 
+            <td class="text-center">
+                <div class="btn-list justify-content-center">
+                    <x-tabler.button
+                        style="ghost-primary"
+                        class="btn-icon ajax-modal-btn"
+                        data-url="{{ route('hr.pegawai.penugasan.edit', [$pegawai->encrypted_pegawai_id, $item->encrypted_riwayatpenugasan_id]) }}"
                         data-modal-title="Edit Penugasan"
                         icon="ti ti-edit"
                         title="Edit" />
-                    
-                    <x-tabler.button 
-                        style="ghost-danger" 
-                        class="btn-icon ajax-delete" 
+
+                    <x-tabler.button
+                        style="ghost-danger"
+                        class="btn-icon ajax-delete"
                         data-url="{{ route('hr.pegawai.penugasan.destroy', [$pegawai->encrypted_pegawai_id, $item->encrypted_riwayatpenugasan_id]) }}"
                         icon="ti ti-trash"
                         title="Hapus" />
 
                     @if($item->is_active)
-                    <x-tabler.button 
-                        style="ghost-warning" 
-                        class="btn-icon" 
+                    <x-tabler.button
+                        style="ghost-warning"
+                        class="btn-icon"
                         onclick="alert('Fitur End Assignment dilakukan melalui Edit.')"
                         icon="ti ti-calendar-off"
                         title="End Assignment" />

@@ -22,15 +22,15 @@
     </div>
     <div class="card-body p-0">
          <x-tabler.flash-message />
-        <x-tabler.datatable 
+        <x-tabler.datatable
             id="jabatan-struktural-table"
             route="{{ route('hr.jabatan-struktural.data') }}"
             :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                 ['data' => 'nama', 'name' => 'nama', 'title' => 'Nama Jabatan'],
                 ['data' => 'parent', 'name' => 'parent', 'title' => 'Parent'],
-                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end'],
+                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
         />
     </div>

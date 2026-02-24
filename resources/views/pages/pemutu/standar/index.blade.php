@@ -10,15 +10,15 @@
 
 @section('content')
 <div class="card">
-    <x-tabler.datatable-client 
-        id="table-standar" 
+    <x-tabler.datatable-client
+        id="table-standar"
         route="{{ route('pemutu.standar.data') }}"
         :columns="[
-            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
             ['data' => 'doksub_judul', 'name' => 'doksub_judul', 'title' => 'Dokumen / Sub'],
             ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
             ['data' => 'target_info', 'name' => 'target_info', 'title' => 'Target'],
-            ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
+            ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
         ]"
     />
 

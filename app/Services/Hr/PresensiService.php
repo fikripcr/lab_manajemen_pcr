@@ -224,25 +224,66 @@ class PresensiService
      */
     public function getPresensiHistory(array $filters): array
     {
-        // Mock data for demonstration
-        return [
-            'data'     => [
-                [
-                    'date'      => '2026-02-10',
-                    'check_in'  => '08:15:00',
-                    'check_out' => '17:30:00',
-                    'status'    => 'on_time',
-                    'address'   => 'Jakarta, Indonesia',
-                ],
-                [
-                    'date'      => '2026-02-09',
-                    'check_in'  => '08:05:00',
-                    'check_out' => '17:45:00',
-                    'status'    => 'on_time',
-                    'address'   => 'Jakarta, Indonesia',
-                ],
+        // Mock data for demonstration - in real app this would query the DB
+        $data = [
+            [
+                'date'      => '2026-02-10',
+                'check_in'  => '08:15:00',
+                'check_out' => '17:30:00',
+                'status'    => 'on_time',
+                'address'   => 'Jakarta, Indonesia',
             ],
-            'total'    => 2,
+            [
+                'date'      => '2026-02-09',
+                'check_in'  => '08:05:00',
+                'check_out' => '17:45:00',
+                'status'    => 'on_time',
+                'address'   => 'Jakarta, Indonesia',
+            ],
+            [
+                'date'      => '2026-01-15',
+                'check_in'  => '08:30:00',
+                'check_out' => '17:00:00',
+                'status'    => 'late',
+                'address'   => 'Jakarta, Indonesia',
+            ],
+            [
+                'date'      => '2025-12-20',
+                'check_in'  => '--:--',
+                'check_out' => '--:--',
+                'status'    => 'absent',
+                'address'   => '-',
+            ],
+        ];
+
+        // Apply filters
+        $filtered = array_filter($data, function ($item) use ($filters) {
+            $date = Carbon::parse($item['date']);
+            
+            // Filter by month
+            if (isset($filters['month']) && $filters['month'] !== 'all') {
+                if ($date->format('m') !== $filters['month']) return false;
+            }
+            
+            // Filter by year
+            if (isset($filters['year']) && $filters['year'] !== 'all') {
+                if ($date->format('Y') !== $filters['year']) return false;
+            }
+            
+            // Filter by status
+            if (isset($filters['status']) && $filters['status'] !== 'all') {
+                if ($item['status'] !== $filters['status']) return false;
+            }
+            
+            return true;
+        });
+
+        // Reset array keys
+        $filtered = array_values($filtered);
+
+        return [
+            'data'     => $filtered,
+            'total'    => count($filtered),
             'page'     => 1,
             'per_page' => 10,
         ];

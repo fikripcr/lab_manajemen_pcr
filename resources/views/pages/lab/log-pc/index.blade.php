@@ -2,12 +2,15 @@
 
 @section('title', 'Log Penggunaan PC')
 
-@section('content')
+@section('header')
     <x-tabler.page-header title="Log Penggunaan PC" pretitle="Monitoring">
         <x-slot:actions>
             <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.log-pc.create')" modal-title="Tambah Log Penggunaan PC" />
         </x-slot:actions>
     </x-tabler.page-header>
+@endsection
+
+@section('content')
 
         <div class="card">
             <div class="card-header">

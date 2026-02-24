@@ -9,14 +9,14 @@
     </div>
 </div>
 <div class="table-responsive">
-    <x-tabler.datatable 
+    <x-tabler.datatable
         id="fungsional-table"
         route="{{ route('hr.jabatan-fungsional-history.data') }}"
         :columns="[
-            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ['data' => 'pegawai_nama', 'name' => 'pegawai.nama', 'title' => 'Pegawai'],
             ['data' => 'jabatan_nama', 'name' => 'jabatanFungsional.nama', 'title' => 'Jabatan Fungsional'],
-            ['data' => 'tmt', 'name' => 'tmt', 'title' => 'TMT', 'className' => 'text-center'],
+            ['data' => 'tmt', 'name' => 'tmt', 'title' => 'TMT', 'class' => 'text-center'],
             ['data' => 'no_sk', 'name' => 'no_sk', 'title' => 'No SK'],
         ]"
     />

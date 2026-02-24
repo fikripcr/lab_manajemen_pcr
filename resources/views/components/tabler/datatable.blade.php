@@ -10,11 +10,8 @@
     <table id="{{ $id }}" class="table table-sm table-striped table-vcenter card-table mb-0 dataTable">
         <thead>
             <tr>
-                @if ($checkbox)
-                    <th><input type="checkbox" id="selectAll-{{ $id }}" class="form-check-input dt-checkboxes"></th>
-                @endif
                 @foreach ($columns as $column)
-                    <th>{{ $column['title'] ?? $column['name'] }}</th>
+                    <th>{{ ($column['title'] ?? $column['name']) === 'No' ? '#' : ($column['title'] ?? $column['name']) }}</th>
                 @endforeach
             </tr>
         </thead>

@@ -20,14 +20,14 @@
         <x-tabler.datatable
             id="table-tamus"
             :columns="[
-                ['data' => 'DT_RowIndex',           'name' => 'eventtamu_id',           'title' => 'No',           'orderable' => false, 'searchable' => false],
+                ['data' => 'DT_RowIndex',           'name' => 'eventtamu_id',           'title' => 'No',           'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                 ['data' => 'foto_preview',           'name' => 'foto_preview',           'title' => 'Foto',         'orderable' => false, 'searchable' => false],
                 ['data' => 'nama_tamu',              'name' => 'nama_tamu',              'title' => 'Nama Tamu'],
                 ['data' => 'instansi',               'name' => 'instansi',               'title' => 'Instansi'],
                 ['data' => 'kontak',                 'name' => 'kontak',                 'title' => 'No. HP',       'searchable' => false],
                 ['data' => 'judul_kegiatan',         'name' => 'events.judul_event',     'title' => 'Kegiatan'],
                 ['data' => 'waktu_datang',           'name' => 'waktu_datang',           'title' => 'Waktu Datang', 'searchable' => false],
-                ['data' => 'action',                 'name' => 'action',                 'title' => 'Aksi',         'orderable' => false, 'searchable' => false],
+                ['data' => 'action',                 'name' => 'action',                 'title' => 'Aksi',         'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
             :route="route('Kegiatan.tamus.data')"
         />

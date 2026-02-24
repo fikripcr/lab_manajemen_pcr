@@ -8,10 +8,12 @@ if (! function_exists('getApprovalBadge')) {
     {
         $badges = [
             'Pending'  => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
+            'Tangguhkan' => '<span class="badge bg-info text-white">Ditangguhkan</span>',
             'Approved' => '<span class="badge bg-success text-white">Disetujui</span>',
             'Rejected' => '<span class="badge bg-danger text-white">Ditolak</span>',
             'Draft'    => '<span class="badge bg-secondary text-white">Draft</span>',
             'pending'  => '<span class="badge bg-warning text-white">Menunggu Approval</span>',
+            'tangguhkan' => '<span class="badge bg-info text-white">Ditangguhkan</span>',
             'approved' => '<span class="badge bg-success text-white">Disetujui</span>',
             'rejected' => '<span class="badge bg-danger text-white">Ditolak</span>',
         ];
@@ -28,9 +30,14 @@ if (! function_exists('getApprovalStatusText')) {
     {
         $texts = [
             'Pending'  => 'Menunggu Approval',
+            'Tangguhkan' => 'Ditangguhkan',
             'Approved' => 'Disetujui',
             'Rejected' => 'Ditolak',
             'Draft'    => 'Draft',
+            'pending'  => 'Menunggu Approval',
+            'tangguhkan' => 'Ditangguhkan',
+            'approved' => 'Disetujui',
+            'rejected' => 'Ditolak',
         ];
 
         return $texts[$status] ?? $status;
@@ -45,9 +52,14 @@ if (! function_exists('getApprovalIcon')) {
     {
         $icons = [
             'Pending'  => 'ti ti-clock',
+            'Tangguhkan' => 'ti ti-clock-pause',
             'Approved' => 'ti ti-check',
             'Rejected' => 'ti ti-x',
             'Draft'    => 'ti ti-file-description',
+            'pending'  => 'ti ti-clock',
+            'tangguhkan' => 'ti ti-clock-pause',
+            'approved' => 'ti ti-check',
+            'rejected' => 'ti ti-x',
         ];
 
         return $icons[$status] ?? 'ti ti-help';

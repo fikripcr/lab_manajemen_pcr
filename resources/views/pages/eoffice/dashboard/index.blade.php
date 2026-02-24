@@ -134,7 +134,7 @@
                                 ['name' => 'Layanan'],
                                 ['name' => 'Status'],
                                 ['name' => 'Waktu'],
-                                ['name' => '', 'className' => 'w-1', 'sortable' => false]
+                                ['name' => '', 'class' => 'w-1', 'sortable' => false]
                             ]"
                         >
                             @forelse($recentActivities as $activity)
@@ -176,7 +176,7 @@
                                 {{-- Handled by component --}}
                             @endforelse
                         </x-tabler.datatable-client>
-                        
+
                         @if($recentActivities->isEmpty())
                             <div class="text-center py-4 text-muted">Tidak ada aktivitas terbaru.</div>
                         @endif

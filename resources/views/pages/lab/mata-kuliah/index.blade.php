@@ -22,17 +22,17 @@
         </div>
         <div class="card-body p-0">
             <x-tabler.flash-message />
-            <x-tabler.datatable 
-                id="mata-kuliah-table" 
-                :route="route('lab.mata-kuliah.data')" 
+            <x-tabler.datatable
+                id="mata-kuliah-table"
+                :route="route('lab.mata-kuliah.data')"
                 :columns="[
-                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ['title' => 'Kode MK', 'data' => 'kode_mk', 'name' => 'kode_mk'],
                     ['title' => 'Nama MK', 'data' => 'nama_mk', 'name' => 'nama_mk'],
-                    ['title' => 'SKS', 'data' => 'sks', 'name' => 'sks', 'className' => 'text-center'],
-                    ['title' => 'Actions', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
-                ]" 
-                :order="[[0, 'desc']]" 
+                    ['title' => 'SKS', 'data' => 'sks', 'name' => 'sks', 'class' => 'text-center'],
+                    ['title' => 'Actions', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+                ]"
+                :order="[[0, 'desc']]"
             />
         </div>
     </div>

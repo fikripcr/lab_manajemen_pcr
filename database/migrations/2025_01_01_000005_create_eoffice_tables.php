@@ -28,9 +28,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('eoffice_jenis_layanan_pic', function (Blueprint $table) {
@@ -40,9 +40,9 @@ return new class extends Migration
             $table->date('expired')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('jenislayanan_id')->references('jenislayanan_id')->on('eoffice_jenis_layanan')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -58,9 +58,9 @@ return new class extends Migration
             $table->string('alias_on_document')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('eoffice_jenis_layanan_isian', function (Blueprint $table) {
@@ -75,9 +75,9 @@ return new class extends Migration
             $table->text('info_tambahan')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('jenislayanan_id')->references('jenislayanan_id')->on('eoffice_jenis_layanan')->onDelete('cascade');
             $table->foreign('kategoriisian_id')->references('kategoriisian_id')->on('eoffice_kategori_isian')->onDelete('cascade');
@@ -102,9 +102,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_layananstatus_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('jenislayanan_id')->references('jenislayanan_id')->on('eoffice_jenis_layanan')->onDelete('cascade');
         });
@@ -121,9 +121,9 @@ return new class extends Migration
             $table->string('done_by_email')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('layanan_id')->references('layanan_id')->on('eoffice_layanan')->onDelete('cascade');
         });
@@ -135,9 +135,9 @@ return new class extends Migration
             $table->text('isi')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('layanan_id')->references('layanan_id')->on('eoffice_layanan')->onDelete('cascade');
         });
@@ -153,9 +153,9 @@ return new class extends Migration
             $table->string('created_by_email')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('layanan_id')->references('layanan_id')->on('eoffice_layanan')->onDelete('cascade');
         });
@@ -167,9 +167,9 @@ return new class extends Migration
             $table->string('peran')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('layanan_id')->references('layanan_id')->on('eoffice_layanan')->onDelete('cascade');
         });
@@ -187,9 +187,9 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('jenislayanan_id')->references('jenislayanan_id')->on('eoffice_jenis_layanan')->onDelete('cascade');
         });
@@ -204,9 +204,9 @@ return new class extends Migration
             $table->string('semester')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('jenislayanan_id')->references('jenislayanan_id')->on('eoffice_jenis_layanan')->onDelete('cascade');
         });
@@ -222,9 +222,9 @@ return new class extends Migration
             $table->string('semester')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('layanan_id')->references('layanan_id')->on('eoffice_layanan')->onDelete('cascade');
             $table->foreign('jlperiode_id')->references('jlperiode_id')->on('eoffice_jenis_layanan_periode')->onDelete('cascade');
@@ -244,9 +244,9 @@ return new class extends Migration
             $table->unsignedBigInteger('model_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 11. Feedback
@@ -257,9 +257,9 @@ return new class extends Migration
             $table->text('feedback')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('layanan_id')->references('layanan_id')->on('eoffice_layanan')->onDelete('cascade');
         });

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pemutu_indikator_pegawai', function (Blueprint $table) {
-            //
+        Schema::table('pemutu_indikator', function (Blueprint $table) {
+            $table->integer('seq')->default(1)->after('jenis_indikator');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pemutu_indikator_pegawai', function (Blueprint $table) {
-            //
+        Schema::table('pemutu_indikator', function (Blueprint $table) {
+            $table->dropColumn('seq');
         });
     }
 };

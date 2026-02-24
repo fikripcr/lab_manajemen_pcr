@@ -39,17 +39,30 @@
         </div>
 
         <div class="col-md-6 mb-3">
-            <x-tabler.form-input type="date" name="tgl_awal" label="Tanggal Mulai" :value="old('tgl_awal', $perizinan->tgl_awal?->format('Y-m-d'))" required />
+            @php
+                $waktuAwal = null;
+                if ($perizinan->tgl_awal) {
+                    $waktuAwal = $perizinan->tgl_awal->format('Y-m-d');
+                    if ($perizinan->jam_awal) {
+                        $jam = $perizinan->jam_awal instanceof \DateTimeInterface ? $perizinan->jam_awal->format('H:i') : substr($perizinan->jam_awal, 0, 5);
+                        $waktuAwal .= ' ' . $jam;
+                    }
+                }
+            @endphp
+            <x-tabler.form-input type="datetime" name="waktu_awal" label="Waktu Mulai" :value="old('waktu_awal', $waktuAwal)" required />
         </div>
         <div class="col-md-6 mb-3">
-            <x-tabler.form-input type="date" name="tgl_akhir" label="Tanggal Selesai" :value="old('tgl_akhir', $perizinan->tgl_akhir?->format('Y-m-d'))" required />
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <x-tabler.form-input type="time" name="jam_awal" label="Jam Mulai" :value="old('jam_awal', $perizinan->jam_awal)" />
-        </div>
-        <div class="col-md-6 mb-3">
-            <x-tabler.form-input type="time" name="jam_akhir" label="Jam Selesai" :value="old('jam_akhir', $perizinan->jam_akhir)" />
+            @php
+                $waktuAkhir = null;
+                if ($perizinan->tgl_akhir) {
+                    $waktuAkhir = $perizinan->tgl_akhir->format('Y-m-d');
+                    if ($perizinan->jam_akhir) {
+                        $jam = $perizinan->jam_akhir instanceof \DateTimeInterface ? $perizinan->jam_akhir->format('H:i') : substr($perizinan->jam_akhir, 0, 5);
+                        $waktuAkhir .= ' ' . $jam;
+                    }
+                }
+            @endphp
+            <x-tabler.form-input type="datetime" name="waktu_akhir" label="Waktu Selesai" :value="old('waktu_akhir', $waktuAkhir)" required />
         </div>
 
         <div class="col-md-12 mb-3">

@@ -9,11 +9,11 @@
     </div>
 </div>
 <div class="table-responsive">
-    <x-tabler.datatable 
+    <x-tabler.datatable
         id="pendidikan-table"
         route="{{ route('hr.pendidikan.data') }}"
         :columns="[
-            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ['data' => 'pegawai_nama', 'name' => 'pegawai.nama', 'title' => 'Pegawai'],
             ['data' => 'jenjang_pendidikan', 'name' => 'jenjang_pendidikan', 'title' => 'Jenjang'],
             ['data' => 'nama_pt', 'name' => 'nama_pt', 'title' => 'Nama Perguruan Tinggi'],

@@ -22,16 +22,16 @@
     </div>
     <div class="card-body p-0">
          <x-tabler.flash-message />
-        <x-tabler.datatable 
+        <x-tabler.datatable
             id="jenis-shift-table"
             route="{{ route('hr.jenis-shift.data') }}"
             :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                 ['data' => 'jenis_shift', 'name' => 'jenis_shift', 'title' => 'Nama Shift'],
                 ['data' => 'jam_masuk', 'name' => 'jam_masuk', 'title' => 'Jam Masuk'],
                 ['data' => 'jam_pulang', 'name' => 'jam_pulang', 'title' => 'Jam Pulang'],
-                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end'],
+                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
         />
     </div>

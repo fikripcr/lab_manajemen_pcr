@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id('mata_uji_id');
             $table->string('nama_mata_uji');
             $table->enum('tipe', ['PMB', 'Akademik'])->comment('Pemisah konteks penggunaan');
+            $table->integer('durasi_menit')->nullable();
             $table->text('deskripsi')->nullable();
             $table->timestamps();
             $table->softDeletes();

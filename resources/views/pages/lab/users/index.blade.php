@@ -72,6 +72,7 @@
                     'name' => 'action',
                     'orderable' => false,
                     'searchable' => false,
+                    'class' => 'text-center',
                 ],
             ]" with-checkbox="true" checkbox-key="id"/>
         </div>

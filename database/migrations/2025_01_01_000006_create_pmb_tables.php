@@ -187,6 +187,26 @@ return new class extends Migration
             $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
             $table->foreign('sesi_id')->references('sesiujian_id')->on('pmb_sesi_ujian')->onDelete('cascade');
         });
+
+        // Riwayat Approval for PMB
+        Schema::create('pmb_riwayat_approval', function (Blueprint $table) {
+            $table->id('riwayatapproval_id');
+            $table->string('model');
+            $table->unsignedBigInteger('model_id');
+            $table->enum('status', ['Draft', 'Pending', 'Approved', 'Rejected'])->default('Draft');
+            $table->string('pejabat')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->text('catatan')->nullable();
+            $table->string('lampiran_url')->nullable();
+
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['model', 'model_id']);
+        });
     }
 
     /**
@@ -194,6 +214,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('pmb_riwayat_approval');
         Schema::dropIfExists('pmb_peserta_ujian');
         Schema::dropIfExists('pmb_sesi_ujian');
         Schema::dropIfExists('pmb_pembayaran');

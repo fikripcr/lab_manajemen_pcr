@@ -10,7 +10,7 @@ class KegiatanService
     public function getFilteredQuery(array $filters)
     {
         $query = Kegiatan::with(['lab', 'penyelenggara'])
-            ->latest('tanggal');
+            ->latest('created_at');
 
         if (filled($filters['search']['value'] ?? null)) {
             $search = $filters['search']['value'];

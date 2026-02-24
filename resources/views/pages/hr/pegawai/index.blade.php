@@ -21,18 +21,18 @@
             </div>
         </div>
     </div>
-    
+
     <div class="card-body p-0">
         <x-tabler.flash-message />
-        <x-tabler.datatable 
+        <x-tabler.datatable
             id="pegawai-table"
             route="{{ route('hr.pegawai.index') }}"
             :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                 ['data' => 'nama_lengkap', 'name' => 'nama', 'title' => 'Nama Lengkap'],
                 ['data' => 'posisi', 'name' => 'posisi', 'title' => 'Posisi'],
                 ['data' => 'unit', 'name' => 'unit', 'title' => 'Unit (Dept/Prodi)'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end'],
+                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
         />
     </div>

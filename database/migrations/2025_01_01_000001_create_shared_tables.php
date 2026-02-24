@@ -32,15 +32,13 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('parent_id')->references('orgunit_id')->on('struktur_organisasi')->onDelete('set null');
             $table->foreign('successor_id')->references('orgunit_id')->on('struktur_organisasi')->nullOnDelete();
-            $table->foreign('auditee_user_id')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+            // Removed FK constraint on auditee_user_id - it's a snapshot field, not a relational FK
         });
 
         // =====================================================================
@@ -48,6 +46,7 @@ return new class extends Migration
         // =====================================================================
         Schema::create('pegawai', function (Blueprint $table) {
             $table->id('pegawai_id');
+            $table->unsignedBigInteger('user_id')->nullable()->comment('Foreign key to users table');
             $table->unsignedBigInteger('latest_riwayatdatadiri_id')->nullable();
             $table->unsignedBigInteger('latest_riwayatstatpegawai_id')->nullable();
             $table->unsignedBigInteger('latest_riwayatstataktifitas_id')->nullable();
@@ -64,14 +63,11 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-        });
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
-        // Add foreign key to users table referencing pegawai
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
 
         // =====================================================================
@@ -79,7 +75,7 @@ return new class extends Migration
         // =====================================================================
         Schema::create('mahasiswa', function (Blueprint $table) {
             $table->id('mahasiswa_id');
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable()->comment('Foreign key to users table');
             $table->string('nim')->unique();
             $table->string('nama');
             $table->string('email')->unique();
@@ -96,16 +92,15 @@ return new class extends Migration
             $table->string('angkatan', 4)->nullable();
             $table->string('foto')->nullable();
 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('orgunit_id')->references('orgunit_id')->on('struktur_organisasi')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // =====================================================================
@@ -123,9 +118,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('penulis_id')->references('id')->on('users');
             $table->index(['jenis', 'is_published', 'published_at'], 'idx_pengumuman_main');
@@ -136,11 +131,10 @@ return new class extends Migration
         // =====================================================================
         Schema::create('personil', function (Blueprint $table) {
             $table->id('personil_id');
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable()->comment('Foreign key to users table');
             $table->unsignedBigInteger('org_unit_id')->nullable();
-            $table->string('nama', 100);
-            $table->string('email', 100)->nullable();
-            $table->string('nip')->unique()->nullable();
+            $table->string('nama');
+            $table->string('nip', 50)->unique()->nullable();
             $table->string('posisi')->nullable();
             $table->string('tipe', 30)->nullable()->comment('outsource, vendor_staff, etc.');
             $table->string('vendor')->nullable()->comment('Nama perusahaan vendor/penyedia');
@@ -150,14 +144,12 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('org_unit_id')->references('orgunit_id')->on('struktur_organisasi')->nullOnDelete();
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         // =====================================================================
@@ -173,9 +165,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -193,9 +185,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

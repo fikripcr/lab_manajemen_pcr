@@ -297,12 +297,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     const $el = $(this);
                     if ($el.data('select2')) return;
 
-                    $el.select2({
+                    const $modal = $el.closest('.modal');
+                    const config = {
                         theme: 'bootstrap-5',
                         width: '100%',
                         placeholder: $el.data('placeholder') || 'Select option',
                         allowClear: true
-                    });
+                    };
+
+                    if ($modal.length) {
+                        config.dropdownParent = $modal;
+                    }
+
+                    $el.select2(config);
 
                     $el.on('select2:select select2:unselect', function (e) {
                         this.dispatchEvent(new Event('change', { bubbles: true }));

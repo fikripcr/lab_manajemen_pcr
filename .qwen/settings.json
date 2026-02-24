@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "toon": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "git+https://github.com/kweinmeister/toon-mcp.git"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+        "args": [
+            "-y",
+            "@upstash/context7-mcp@latest"
+        ],
+      "env": {
+        "CONTEXT7_API_KEY": "ctx7sk-acdc6599-6b93-4908-a896-3f0eac9efd49"
+      }
+    }
+  },
+  "$version": 3
+}

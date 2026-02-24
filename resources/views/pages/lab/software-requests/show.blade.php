@@ -24,6 +24,9 @@
                     if (in_array($status, ['menunggu_approval', 'pending'])) {
                         $badgeClass = 'bg-warning';
                         $statusText = 'Pending';
+                    } elseif (in_array($status, ['tangguhkan'])) {
+                        $badgeClass = 'bg-info';
+                        $statusText = 'Tangguhkan';
                     } elseif (in_array($status, ['disetujui', 'approved'])) {
                         $badgeClass = 'bg-success';
                         $statusText = 'Approved';
@@ -53,7 +56,7 @@
         {{-- Approval History --}}
         <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
 
-        @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval']))
+        @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval', 'tangguhkan']))
             <div class="mt-4 p-3 border rounded bg-light">
                 <h4 class="card-title">Proses Approval</h4>
                 <form class="ajax-form" action="{{ route('lab.software-requests.approve', $softwareRequest->id) }}" method="POST">
@@ -64,6 +67,7 @@
                     <x-tabler.form-textarea name="keterangan" label="Keterangan / Komentar" rows="2" />
                     <div class="btn-list mt-3">
                         <x-tabler.button type="submit" name="status" value="approved" class="btn-success btn-sm" icon="ti ti-check" text="Setujui" />
+                        <x-tabler.button type="submit" name="status" value="tangguhkan" class="btn-warning btn-sm" icon="ti ti-clock" text="Tangguhkan" />
                         <x-tabler.button type="submit" name="status" value="rejected" class="btn-danger btn-sm" icon="ti ti-x" text="Tolak" />
                     </div>
                 </form>
@@ -87,9 +91,9 @@
     @endsection
 
     @section('content')
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
+        <div class="row row-cards">
+            <div class="col-lg-8">
+                <div class="card">
                     <div class="card-body">
                         <x-tabler.flash-message />
 
@@ -113,6 +117,9 @@
                                     if (in_array($status, ['menunggu_approval', 'pending'])) {
                                         $badgeClass = 'bg-warning';
                                         $statusText = 'Pending';
+                                    } elseif (in_array($status, ['tangguhkan'])) {
+                                        $badgeClass = 'bg-info';
+                                        $statusText = 'Tangguhkan';
                                     } elseif (in_array($status, ['disetujui', 'approved'])) {
                                         $badgeClass = 'bg-success';
                                         $statusText = 'Approved';
@@ -172,38 +179,40 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-        {{-- Approval History --}}
-        <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
-
-                {{-- Approval Form --}}
-                @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval']))
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Proses Approval</h4>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Approval Action</h3>
+                    </div>
+                    <div class="card-body">
+                        @if(in_array($softwareRequest->status, ['pending', 'menunggu_approval', 'tangguhkan']))
                             <form class="ajax-form" action="{{ route('lab.software-requests.approve', $softwareRequest->id) }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
                                     <x-tabler.form-input name="pejabat" label="Nama Pejabat" value="{{ Auth::check() ? Auth::user()->name : '' }}" required="true" placeholder="Nama Pejabat" />
                                 </div>
-                                    <x-tabler.form-textarea name="keterangan" label="Keterangan / Komentar" rows="3" placeholder="Tambahkan catatan jika ada..." />
-                                <div class="btn-list">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <x-tabler.button type="submit" name="status" value="approved" class="btn-success w-100" icon="ti ti-check" text="Setujui" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <x-tabler.button type="submit" name="status" value="pending" class="btn-warning w-100" icon="ti ti-clock" text="Tangguhkan" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <x-tabler.button type="submit" name="status" value="rejected" class="btn-danger w-100" icon="ti ti-x" text="Tolak" />
-                                    </div>
-                                </div>
+                                <x-tabler.form-textarea name="keterangan" label="Keterangan / Komentar" rows="3" placeholder="Tambahkan catatan jika ada..." />
+                                <div class="mt-3 d-flex gap-2">
+                                    <x-tabler.button type="submit" name="status" value="approved" class="btn-success w-100" icon="ti ti-check" text="Setujui" />
+                                    <x-tabler.button type="submit" name="status" value="tangguhkan" class="btn-warning w-100" icon="ti ti-clock" text="Tangguhkan" />
+                                    <x-tabler.button type="submit" name="status" value="rejected" class="btn-danger w-100" icon="ti ti-x" text="Tolak" />
                                 </div>
                             </form>
-                        </div>
+                        @else
+                            <div class="text-center py-4">
+                                <p class="text-muted">Status sudah diproses: <strong>{{ $statusText ?? ucfirst(str_replace('_', ' ', $softwareRequest->status)) }}</strong></p>
+                            </div>
+                        @endif
                     </div>
-                @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cards mt-1">
+            <div class="col-12">
+                <x-tabler.approval-history :approvals="$softwareRequest->approvals" />
             </div>
         </div>
     @endsection

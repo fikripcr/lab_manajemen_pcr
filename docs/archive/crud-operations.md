@@ -179,7 +179,7 @@ public function paginate(Request $request)
     ['data' => 'description', 'title' => 'Description'],
     ['data' => 'price', 'title' => 'Price', 'render' => 'formatRupiah(data)'],
     ['data' => 'created_at', 'title' => 'Created'],
-    ['data' => 'action', 'title' => 'Action', 'orderable' => false, 'searchable' => false]
+    ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
 ]">
     {{ route('admin.products.paginate') }}
 </x-datatable.datatable>

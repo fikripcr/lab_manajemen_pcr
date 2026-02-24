@@ -36,12 +36,8 @@ class LemburRequest extends FormRequest
             'tgl_pelaksanaan'  => 'required|date',
             'jam_mulai'        => 'required',
             'jam_selesai'      => 'required',
-            'is_dibayar'       => 'boolean',
-            'metode_bayar'     => 'nullable|in:uang,cuti_pengganti,tidak_dibayar',
-            'nominal_per_jam'  => 'nullable|numeric|min:0',
             'pegawai_ids'      => 'required|array|min:1',
             'pegawai_ids.*'    => 'exists:pegawai,pegawai_id',
-            'override_nominal' => 'nullable|array',
             'catatan_pegawai'  => 'nullable|array',
         ];
     }

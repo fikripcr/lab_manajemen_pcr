@@ -31,10 +31,11 @@ class Kegiatan extends Model
         'jam_mulai',
         'jam_selesai',
         'status',
-        'catatan_pic',
-        'qr_code_path',
-        'berita_acara_path', 'created_by', 'updated_by', 'deleted_by',
-
+        'latest_riwayatapproval_id',
+        'dokumentasi_path',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [

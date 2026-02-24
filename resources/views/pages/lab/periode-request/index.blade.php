@@ -51,6 +51,7 @@
                     'name' => 'action',
                     'orderable' => false,
                     'searchable' => false,
+                    'class' => 'text-center',
                 ],
             ]" />
         </div>

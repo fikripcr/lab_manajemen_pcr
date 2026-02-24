@@ -34,9 +34,9 @@ class MahasiswaController extends Controller
             ->addColumn('user_info', function ($row) {
                 if ($row->user) {
                     $roles = $row->user->roles->pluck('name')->implode(', ');
-                    return "{$row->user->name} ({$roles})";
+                    return "<span title=\"{$roles}\">{$row->user->name}</span>";
                 }
-                return 'Belum terkoneksi';
+                return '<span class="text-muted fst-italic">Belum terkoneksi</span>';
             })
             ->addColumn('prodi_nama', function ($row) {
                 return $row->prodi->name ?? '-';
@@ -47,6 +47,14 @@ class MahasiswaController extends Controller
                     'editModal' => true,
                     'viewUrl'   => route('lab.mahasiswa.show', $row->encrypted_mahasiswa_id),
                     'deleteUrl' => route('lab.mahasiswa.destroy', $row->encrypted_mahasiswa_id),
+                    'extraActions' => !$row->user_id ? [
+                        [
+                            'icon' => 'ti ti-user-plus',
+                            'text' => 'Generate Data User',
+                            'class' => 'dropdown-item generate-user',
+                            'dataUrl' => route('lab.mahasiswa.generate-user', $row->encrypted_mahasiswa_id),
+                        ],
+                    ] : [],
                 ])->render();
             })
             ->rawColumns(['action', 'user_info'])
@@ -107,6 +115,44 @@ class MahasiswaController extends Controller
         } catch (Exception $e) {
             logError($e);
             return jsonError('Gagal menghapus mahasiswa: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Generate user account for mahasiswa without user.
+     */
+    public function generateUser(Mahasiswa $mahasiswa)
+    {
+        try {
+            if ($mahasiswa->user) {
+                return jsonError('Mahasiswa ini sudah memiliki user.');
+            }
+
+            // Generate password default
+            $password = 'password123';
+            
+            // Create user
+            $user = \App\Models\User::create([
+                'name'              => $mahasiswa->nama,
+                'email'             => $mahasiswa->email,
+                'password'          => \Illuminate\Support\Facades\Hash::make($password),
+                'email_verified_at' => now(),
+                'created_by'        => auth()->id() ?? 'system',
+            ]);
+
+            // Link mahasiswa to user
+            $mahasiswa->update(['user_id' => $user->id]);
+
+            // Assign default role
+            $user->assignRole('mahasiswa');
+
+            return jsonSuccess(
+                "User berhasil dibuat untuk {$mahasiswa->nama}.<br>Email: {$mahasiswa->email}<br>Password: {$password}",
+                route('lab.mahasiswa.index')
+            );
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal membuat user: ' . $e->getMessage());
         }
     }
 }

@@ -22,16 +22,12 @@ class LemburService
                 'tgl_pelaksanaan'  => $data['tgl_pelaksanaan'],
                 'jam_mulai'        => $data['jam_mulai'],
                 'jam_selesai'      => $data['jam_selesai'],
-                'is_dibayar'       => $data['is_dibayar'] ?? true,
-                'metode_bayar'     => $data['metode_bayar'] ?? 'uang',
-                'nominal_per_jam'  => $data['nominal_per_jam'] ?? 0,
             ]);
 
             // 2. Attach pegawai
             if (! empty($data['pegawai_ids'])) {
                 foreach ($data['pegawai_ids'] as $pegawaiId) {
                     $lembur->pegawais()->attach($pegawaiId, [
-                        'override_nominal' => $data['override_nominal'][$pegawaiId] ?? null,
                         'catatan'          => $data['catatan_pegawai'][$pegawaiId] ?? null,
                     ]);
                 }
@@ -41,7 +37,7 @@ class LemburService
             $approval = RiwayatApproval::create([
                 'model'         => Lembur::class,
                 'model_id'      => $lembur->lembur_id,
-                'status'        => 'pending',
+                'status'        => 'Diajukan',
                 'jenis_jabatan' => 'Kepala Bagian',
                 'keterangan'    => 'Menunggu persetujuan',
             ]);
@@ -69,9 +65,6 @@ class LemburService
                 'tgl_pelaksanaan'  => $data['tgl_pelaksanaan'],
                 'jam_mulai'        => $data['jam_mulai'],
                 'jam_selesai'      => $data['jam_selesai'],
-                'is_dibayar'       => $data['is_dibayar'] ?? true,
-                'metode_bayar'     => $data['metode_bayar'] ?? 'uang',
-                'nominal_per_jam'  => $data['nominal_per_jam'] ?? 0,
             ]);
 
             // 2. Sync pegawai
@@ -79,7 +72,6 @@ class LemburService
             if (! empty($data['pegawai_ids'])) {
                 foreach ($data['pegawai_ids'] as $pegawaiId) {
                     $syncData[$pegawaiId] = [
-                        'override_nominal' => $data['override_nominal'][$pegawaiId] ?? null,
                         'catatan'          => $data['catatan_pegawai'][$pegawaiId] ?? null,
                     ];
                 }

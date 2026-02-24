@@ -30,6 +30,7 @@ class SuratBebasLabController extends Controller
             ->addColumn('status', function ($row) {
                 $badges = [
                     'pending'  => 'warning',
+                    'tangguhkan' => 'info',
                     'approved' => 'success',
                     'rejected' => 'danger',
                 ];
@@ -68,7 +69,7 @@ class SuratBebasLabController extends Controller
     {
         try {
             $this->suratBebasLabService->createRequest($request->validated() ?: $request->all());
-            return jsonSuccess('Pengajuan berhasil dikirim.', \route('lab.surat-bebas.index'));
+            return jsonSuccess('Pengajuan berhasil dikirim.');
         } catch (\Exception $e) {
             logError($e);
             return jsonError('Gagal mengirim pengajuan: ' . $e->getMessage());

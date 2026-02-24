@@ -32,6 +32,8 @@
                 'data' => 'DT_RowIndex',
                 'name' => 'id',
                 'orderable' => false,
+                'searchable' => false,
+                'class' => 'text-center',
             ],
             [
                 'title' => 'Message',

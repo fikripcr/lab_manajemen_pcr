@@ -63,11 +63,16 @@ class MainLabSeeder extends Seeder
             return;
         }
 
-        // 1b. Seed Mahasiswa & Personil Profiles
+        // 1b. Seed Mahasiswa & Personil Profiles with user_id relationship
         $this->command->info('Seeding Student and Personnel Profiles...');
         foreach ($users as $user) {
             $roleNames = $user->getRoleNames();
-            if ($roleNames->contains('mahasiswa')) {
+            
+            // Check if already has profile
+            $existingMahasiswa = Mahasiswa::where('user_id', $user->id)->first();
+            $existingPersonil = Personil::where('user_id', $user->id)->first();
+            
+            if ($roleNames->contains('mahasiswa') && !$existingMahasiswa) {
                 // Get valid Prodi OrgUnits
                 $prodiIds = OrgUnit::where('type', 'Prodi')->pluck('orgunit_id')->toArray();
 
@@ -79,15 +84,18 @@ class MainLabSeeder extends Seeder
                     'orgunit_id' => ! empty($prodiIds) ? $prodiIds[array_rand($prodiIds)] : null,
                     'created_by' => $users->first()->id,
                 ]);
-            } else {
+                
+                $this->command->info("    ✓ Created Mahasiswa: {$user->name}");
+            } elseif (!$roleNames->contains('mahasiswa') && !$existingPersonil) {
                 Personil::create([
                     'user_id'    => $user->id,
                     'nama'       => $user->name,
-                    'email'      => $user->email,
                     'nip'        => fake()->unique()->numerify('19##########'),
                     'posisi'     => $roleNames->first() ?? 'Staff',
                     'created_by' => $users->first()->id,
                 ]);
+                
+                $this->command->info("    ✓ Created Personil: {$user->name}");
             }
         }
 
@@ -134,9 +142,6 @@ class MainLabSeeder extends Seeder
                 'student_id'  => $users->random()->id,
                 'status'      => fake()->randomElement(['pending', 'approved', 'rejected']),
                 'file_path'   => null,
-                'remarks'     => fake()->sentence(),
-                'approved_by' => fake()->boolean(70) ? $users->random()->id : null,
-                'approved_at' => fake()->boolean(70) ? fake()->dateTimeBetween('-1 month', 'now') : null,
                 'created_by'  => $users->random()->id,
             ]);
         }

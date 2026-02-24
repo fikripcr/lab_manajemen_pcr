@@ -8,7 +8,7 @@ class LaporanKerusakanService
 {
     public function getFilteredQuery(array $filters)
     {
-        $query = LaporanKerusakan::with(['inventaris.lab', 'createdBy'])
+        $query = LaporanKerusakan::with(['inventaris.lab'])
             ->latest('created_at'); // Using created_at as tanggal_lapor
 
         if (filled($filters['search']['value'] ?? null)) {
@@ -29,7 +29,7 @@ class LaporanKerusakanService
 
     public function getLaporanById($id)
     {
-        return LaporanKerusakan::with(['inventaris.lab', 'createdBy', 'teknisi'])->find($id);
+        return LaporanKerusakan::with(['inventaris.lab', 'teknisi'])->find($id);
     }
 
     public function createLaporan(array $data): LaporanKerusakan

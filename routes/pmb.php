@@ -8,15 +8,29 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
     // Dashboard (Unified for Admin & Camaba)
     Route::get('/', [PendaftaranController::class, 'dashboard'])->name('dashboard');
 
-    // Pendaftaran Management (Admin focus for now)
+    // Pendaftar List with Verification
+    Route::prefix('pendaftar')->name('pendaftar.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Pmb\PendaftarController::class, 'index'])->name('index');
+        Route::get('/paginate', [App\Http\Controllers\Pmb\PendaftarController::class, 'paginate'])->name('paginate');
+        Route::get('/load-berkas', [App\Http\Controllers\Pmb\PendaftarController::class, 'loadBerkas'])->name('load-berkas');
+        Route::post('/verify-document', [App\Http\Controllers\Pmb\PendaftarController::class, 'verifyDocument'])->name('verify-document');
+    });
+
+    // Pendaftaran Management
     Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
-        Route::get('/', [PendaftaranController::class, 'index'])->name('index');
-        Route::get('/paginate', [PendaftaranController::class, 'paginate'])->name('paginate');
-        Route::get('/{pendaftaran}', [PendaftaranController::class, 'show'])->name('show');
-        Route::get('/{pendaftaran}/update-status', [PendaftaranController::class, 'updateStatusForm'])->name('update-status-form');
-        Route::post('/{pendaftaran}/update-status', [PendaftaranController::class, 'updateStatus'])->name('update-status');
-        Route::get('/verify-document/{document}/form', [PendaftaranController::class, 'verifyDocumentForm'])->name('verify-document-form');
-        Route::post('/verify-document/{document}', [PendaftaranController::class, 'verifyDocument'])->name('verify-document');
+        Route::get('/', [App\Http\Controllers\Pmb\PendaftaranController::class, 'index'])->name('index');
+        Route::get('/paginate', [App\Http\Controllers\Pmb\PendaftaranController::class, 'paginate'])->name('paginate');
+
+        // Admin: update status (form + action)
+        Route::get('/{pendaftaran}/update-status', [App\Http\Controllers\Pmb\PendaftaranController::class, 'updateStatusForm'])->name('update-status-form');
+        Route::post('/{pendaftaran}/update-status', [App\Http\Controllers\Pmb\PendaftaranController::class, 'updateStatus'])->name('update-status');
+
+        // Document verification form + action (per-document)
+        Route::get('/verify-document/{document}/form', [App\Http\Controllers\Pmb\PendaftaranController::class, 'verifyDocumentForm'])->name('verify-document-form');
+        Route::post('/verify-document/{document}', [App\Http\Controllers\Pmb\PendaftaranController::class, 'verifyDocument'])->name('verify-document');
+
+        // Show must be last to avoid capturing more specific routes
+        Route::get('/{pendaftaran}', [App\Http\Controllers\Pmb\PendaftaranController::class, 'show'])->name('show');
     });
 
     // Master Data: Periode
@@ -54,7 +68,21 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
     Route::prefix('camaba')->name('camaba.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Pmb\CamabaController::class, 'dashboard'])->name('dashboard');
         Route::get('/register', [App\Http\Controllers\Pmb\CamabaController::class, 'create'])->name('register');
+        // Legacy/alternate route name used by some views: keep /create -> create() for compatibility
+        Route::get('/create', [App\Http\Controllers\Pmb\CamabaController::class, 'create'])->name('create');
         Route::post('/register', [App\Http\Controllers\Pmb\CamabaController::class, 'store'])->name('store');
+
+        // Admin: List of Camaba
+        Route::get('/', [App\Http\Controllers\Pmb\CamabaController::class, 'index'])->name('index');
+        Route::get('/paginate', [App\Http\Controllers\Pmb\CamabaController::class, 'paginate'])->name('paginate');
+        Route::get('/{camaba}', [App\Http\Controllers\Pmb\CamabaController::class, 'show'])->name('show');
+        Route::get('/{camaba}/edit', [App\Http\Controllers\Pmb\CamabaController::class, 'edit'])->name('edit');
+        Route::put('/{camaba}', [App\Http\Controllers\Pmb\CamabaController::class, 'update'])->name('update');
+        Route::delete('/{camaba}', [App\Http\Controllers\Pmb\CamabaController::class, 'destroy'])->name('destroy');
+
+        // Daftar Ulang
+        Route::get('/{camaba}/daftar-ulang', [App\Http\Controllers\Pmb\CamabaController::class, 'daftarUlang'])->name('daftar-ulang');
+        Route::post('/{camaba}/daftar-ulang', [App\Http\Controllers\Pmb\CamabaController::class, 'processDaftarUlang'])->name('process-daftar-ulang');
 
         // Payment
         Route::get('/payment', [App\Http\Controllers\Pmb\CamabaController::class, 'payment'])->name('payment');
@@ -76,9 +104,6 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
         Route::get('/payments/paginate', [App\Http\Controllers\Pmb\VerificationController::class, 'paginatePayments'])->name('paginate-payments');
         Route::get('/payments/{pembayaran}/form', [App\Http\Controllers\Pmb\VerificationController::class, 'paymentForm'])->name('payment-form');
         Route::post('/payments/{pembayaran}/verify', [App\Http\Controllers\Pmb\VerificationController::class, 'verifyPayment'])->name('verify-payment');
-
-        Route::get('/documents', [App\Http\Controllers\Pmb\VerificationController::class, 'documents'])->name('documents');
-        Route::get('/documents/paginate', [App\Http\Controllers\Pmb\VerificationController::class, 'paginateDocuments'])->name('paginate-documents');
     });
 
     // CBT Session Management

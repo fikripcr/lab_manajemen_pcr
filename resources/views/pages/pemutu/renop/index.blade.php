@@ -10,12 +10,12 @@
 
 @section('content')
 <div class="card">
-    <x-tabler.datatable-client 
-        id="table-renop" 
+    <x-tabler.datatable-client
+        id="table-renop"
         :columns="[
             ['name' => 'Indikator'],
             ['name' => 'Target'],
-            ['name' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
+            ['name' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
         ]"
     >
         @foreach($renops as $renop)
@@ -34,7 +34,7 @@
                 @endif
             </td>
             <td>{{ $renop->target }}</td>
-            <td class="text-end">
+            <td class="text-center">
                 <div class="btn-list justify-content-end">
                     <x-tabler.button href="{{ route('pemutu.renop.edit', $renop->encrypted_indikator_id) }}" class="btn-ghost-primary ajax-modal-btn" size="sm" icon="ti ti-edit" text="Edit" />
                     <x-tabler.button href="#" class="btn-ghost-danger ajax-delete" size="sm" icon="ti ti-trash" text="Hapus" data-url="{{ route('pemutu.renop.destroy', $renop->encrypted_indikator_id) }}" data-title="Hapus Renop?" />

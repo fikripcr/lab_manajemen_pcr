@@ -3,7 +3,6 @@ namespace App\Models\Shared;
 
 use App\Models\Hr\RiwayatPenugasan;
 use App\Models\Pemutu\Indikator;
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -104,14 +103,14 @@ class StrukturOrganisasi extends Model
         return $this->hasOne(StrukturOrganisasi::class, 'successor_id', 'orgunit_id');
     }
 
-    public function auditee()
-    {
-        return $this->belongsTo(User::class, 'auditee_user_id', 'id');
-    }
-
     public function indikators()
     {
         return $this->belongsToMany(Indikator::class, 'pemutu_indikator_orgunit', 'org_unit_id', 'indikator_id')
             ->withPivot('target', 'ed_capaian', 'ed_analisis', 'ed_attachment', 'created_at');
+    }
+
+    public function auditee()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'auditee_user_id', 'id');
     }
 }

@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $layanan->nama_layanan }}" pretitle="Manage Konfigurasi Layanan">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-arrow-left" text="Kembali" class="btn-link" 
+        <x-tabler.button type="button" icon="ti ti-arrow-left" text="Kembali" class="btn-link"
             onclick="window.location.href='{{ route('eoffice.jenis-layanan.index') }}'" />
     </x-slot:actions>
 </x-tabler.page-header>
@@ -25,7 +25,7 @@
                     id="table-pic"
                     :columns="[
                         ['name' => 'Nama Pegawai'],
-                        ['name' => 'Aksi', 'className' => 'w-10']
+                        ['name' => 'Aksi', 'class' => 'w-10']
                     ]"
                 >
                     @forelse($layanan->pics as $pic)
@@ -40,8 +40,8 @@
                                 </div>
                             </td>
                             <td>
-                                <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
-                                    data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->encrypted_jlpic_id) }}" 
+                                <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
+                                    data-url="{{ route('eoffice.jenis-layanan.destroy-pic', $pic->encrypted_jlpic_id) }}"
                                     data-title="Hapus PIC?" data-text="Pegawai ini tidak lagi menjadi PIC untuk layanan ini." icon="ti ti-trash" />
                             </td>
                         </tr>
@@ -49,7 +49,7 @@
                         {{-- Handled by component --}}
                     @endforelse
                 </x-tabler.datatable-client>
-                
+
                 @if($layanan->pics->isEmpty())
                     <div class="text-center text-muted p-3">Belum ada PIC yang ditugaskan.</div>
                 @endif
@@ -108,8 +108,8 @@
                                     <div class="btn-group btn-group-sm">
                                         <x-tabler.button type="button" class="btn-icon btn-ghost-primary edit-rule" title="Set Rule Validasi" icon="ti ti-shield-check" />
                                         <x-tabler.button type="button" class="btn-icon btn-ghost-info edit-info" title="Set Info Tambahan" icon="ti ti-info-circle" />
-                                        <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete" 
-                                            data-url="{{ route('eoffice.jenis-layanan.destroy-isian', $isian->encrypted_jlisian_id) }}" 
+                                        <x-tabler.button type="button" class="btn-icon btn-ghost-danger ajax-delete"
+                                            data-url="{{ route('eoffice.jenis-layanan.destroy-isian', $isian->encrypted_jlisian_id) }}"
                                             data-title="Hapus Field?" data-text="Field ini akan dihapus dari form layanan." icon="ti ti-trash" />
                                     </div>
                                     <input type="hidden" class="isian-rule" value="{{ $isian->rule }}">
@@ -201,7 +201,7 @@
                         ['name' => 'Tahun Ajaran'],
                         ['name' => 'Semester'],
                         ['name' => 'Status'],
-                        ['name' => 'Aksi', 'className' => 'w-10']
+                        ['name' => 'Aksi', 'class' => 'w-10']
                     ]"
                 >
                     @forelse($layanan->periodes as $p)
@@ -418,7 +418,7 @@
                 let tr = $(this).closest('tr');
                 let id = tr.data('id');
                 let val = $(this).is(':checked') ? 1 : 0;
-    
+
                 axios.put(`{{ url('eoffice/jenis-layanan/' . $layanan->encrypted_jenislayanan_id . '/disposisi') }}/${id}/notify`, { is_notify_email: val })
                 .then(res => {
                     toastr.success(res.data.message);
@@ -453,7 +453,7 @@
             $('.edit-disposisi').on('click', function() {
                 let tr = $(this).closest('tr');
                 let id = tr.data('id');
-    
+
                 axios.get(`{{ url('eoffice/jenis-layanan/' . $layanan->encrypted_jenislayanan_id . '/disposisi') }}/${id}/data`)
                 .then(res => {
                     let d = res.data;

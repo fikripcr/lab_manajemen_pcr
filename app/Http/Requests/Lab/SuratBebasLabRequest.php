@@ -22,13 +22,13 @@ class SuratBebasLabRequest extends FormRequest
     {
         if ($this->isMethod('POST')) {
             return [
-                // Add store rules if needed, currently empty/standard
+                'catatan' => 'nullable|string|max:1000',
             ];
         }
 
         return [
-            'status'  => 'required|in:approved,rejected',
-            'remarks' => 'nullable|string',
+            'status'  => 'required|in:approved,rejected,tangguhkan',
+            'catatan' => 'nullable|string|max:1000',
         ];
     }
 }

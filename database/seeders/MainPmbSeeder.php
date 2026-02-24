@@ -140,11 +140,30 @@ class MainPmbSeeder extends Seeder
             );
             $user->assignRole('mahasiswa'); // Assuming 'mahasiswa' role implies student/candidate
 
-            // Create Profil
-            \App\Models\Pmb\ProfilMahasiswa::updateOrCreate(
+            // Create Camaba with user_id relationship
+            $existingCamaba = \App\Models\Pmb\Camaba::where('user_id', $user->id)->first();
+            
+            if (!$existingCamaba) {
+                \App\Models\Pmb\Camaba::create([
+                    'user_id'          => $user->id,
+                    'nik'              => $faker->unique()->numerify('14##############'),
+                    'nama'             => $user->name,
+                    'email'            => $email,
+                    'no_hp'            => $faker->phoneNumber,
+                    'tempat_lahir'     => $faker->city,
+                    'tanggal_lahir'    => $faker->date('Y-m-d', '2006-01-01'),
+                    'jenis_kelamin'    => $faker->randomElement(['L', 'P']),
+                    'alamat'           => $faker->address,
+                    'angkatan'         => date('Y'),
+                    'created_by'       => 'system',
+                ]);
+            }
+
+            // Create Pendaftaran using the user
+            \App\Models\Pmb\Camaba::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'nik'              => $faker->unique()->numerify('14##############'),
+                    'nik'              => $existingCamaba?->nik ?? $faker->unique()->numerify('14##############'),
                     'no_hp'            => $faker->phoneNumber,
                     'tempat_lahir'     => $faker->city,
                     'tanggal_lahir'    => $faker->date('Y-m-d', '2006-01-01'),

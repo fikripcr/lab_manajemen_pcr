@@ -68,16 +68,16 @@
                             <div><x-tabler.datatable-search :dataTableId="'status-pegawai-table'" /></div>
                         </div>
                         <x-tabler.flash-message />
-                        <x-tabler.datatable 
+                        <x-tabler.datatable
                             id="status-pegawai-table"
                             route="{{ route('hr.status-pegawai.data') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '50px'],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '50px'],
                                 ['data' => 'kode_status', 'name' => 'kode_status', 'title' => 'Kode'],
                                 ['data' => 'nama_status', 'name' => 'nama_status', 'title' => 'Nama Status'],
                                 ['data' => 'organisasi', 'name' => 'organisasi', 'title' => 'Organisasi'],
-                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center', 'width' => '100px'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end', 'width' => '100px'],
+                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center', 'width' => '100px'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '100px'],
                             ]"
                         />
                     </div>
@@ -91,15 +91,15 @@
                             <div><x-tabler.datatable-search :dataTableId="'status-aktifitas-table'" /></div>
                         </div>
                         <x-tabler.flash-message />
-                        <x-tabler.datatable 
+                        <x-tabler.datatable
                             id="status-aktifitas-table"
                             route="{{ route('hr.status-aktifitas.data') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '50px'],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '50px'],
                                 ['data' => 'kode_status', 'name' => 'kode_status', 'title' => 'Kode'],
                                 ['data' => 'nama_status', 'name' => 'nama_status', 'title' => 'Nama Status'],
-                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center', 'width' => '100px'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end', 'width' => '100px'],
+                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center', 'width' => '100px'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '100px'],
                             ]"
                         />
                     </div>
@@ -113,16 +113,16 @@
                             <div><x-tabler.datatable-search :dataTableId="'jabatan-fungsional-table'" /></div>
                         </div>
                         <x-tabler.flash-message />
-                        <x-tabler.datatable 
+                        <x-tabler.datatable
                             id="jabatan-fungsional-table"
                             route="{{ route('hr.jabatan-fungsional.data') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '50px'],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '50px'],
                                 ['data' => 'kode_jabatan', 'name' => 'kode_jabatan', 'title' => 'Kode'],
                                 ['data' => 'jabfungsional', 'name' => 'jabfungsional', 'title' => 'Nama Jabatan'],
-                                ['data' => 'tunjangan', 'name' => 'tunjangan', 'title' => 'Tunjangan', 'className' => 'text-end'],
-                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center', 'width' => '100px'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end', 'width' => '100px'],
+                                ['data' => 'tunjangan', 'name' => 'tunjangan', 'title' => 'Tunjangan', 'class' => 'text-end'],
+                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center', 'width' => '100px'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '100px'],
                             ]"
                         />
                     </div>
@@ -159,13 +159,13 @@
                             <div><x-tabler.datatable-search :dataTableId="'jenis-indisipliner-table'" /></div>
                         </div>
                         <x-tabler.flash-message />
-                        <x-tabler.datatable 
+                        <x-tabler.datatable
                             id="jenis-indisipliner-table"
                             route="{{ route('hr.jenis-indisipliner.data') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '50px'],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '50px'],
                                 ['data' => 'jenis_indisipliner', 'name' => 'jenis_indisipliner', 'title' => 'Jenis Indisipliner'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '100px'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '100px'],
                             ]"
                         />
                     </div>
@@ -179,16 +179,16 @@
                             <div><x-tabler.datatable-search :dataTableId="'jenis-shift-table'" /></div>
                         </div>
                         <x-tabler.flash-message />
-                        <x-tabler.datatable 
+                        <x-tabler.datatable
                             id="jenis-shift-table"
                             route="{{ route('hr.jenis-shift.data') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                                 ['data' => 'jenis_shift', 'name' => 'jenis_shift', 'title' => 'Nama Shift'],
                                 ['data' => 'jam_masuk', 'name' => 'jam_masuk', 'title' => 'Jam Masuk'],
                                 ['data' => 'jam_pulang', 'name' => 'jam_pulang', 'title' => 'Jam Pulang'],
-                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end'],
+                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                             ]"
                         />
                     </div>

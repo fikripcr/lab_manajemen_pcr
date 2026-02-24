@@ -81,7 +81,7 @@ class Indisipliner extends Model
      */
     public function scopeFilterByYear($query, $year)
     {
-        if ($year) {
+        if ($year && $year !== 'all') {
             return $query->whereYear('tgl_indisipliner', $year);
         }
         return $query;

@@ -6,6 +6,7 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Personil extends Model
@@ -26,8 +27,8 @@ class Personil extends Model
         'user_id',
         'org_unit_id',
         'nama',
-        'email',
         'nip',
+        'email',
         'posisi',
         'tipe',
         'vendor',
@@ -42,6 +43,14 @@ class Personil extends Model
         'status_aktif' => 'boolean',
     ];
 
+    /**
+     * Get the user associated with this personil.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function getEncryptedPersonilIdAttribute()
     {
         return encryptId($this->personil_id);
@@ -54,11 +63,6 @@ class Personil extends Model
     }
 
     // Relationships
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
     public function orgUnit()
     {
         return $this->belongsTo(StrukturOrganisasi::class, 'org_unit_id', 'orgunit_id');

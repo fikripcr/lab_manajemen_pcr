@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::get('pegawai/select2-search', [PegawaiController::class, 'select2Search'])->name('pegawai.select2-search');
     Route::get('pegawai/upload-photo', [PresensiController::class, 'showUploadPhoto'])->name('pegawai.upload-photo');
     Route::post('pegawai/upload-photo', [PresensiController::class, 'storeUploadPhoto'])->name('pegawai.upload-photo.store');
+    Route::post('pegawai/{pegawai}/generate-user', [PegawaiController::class, 'generateUser'])->name('pegawai.generate-user');
     Route::resource('pegawai', PegawaiController::class);
 
     // OrgUnit Routes (Struktur Organisasi) - Moved to Shared
@@ -165,6 +166,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
 
     // Perizinan
     Route::get('perizinan/data', [PerizinanController::class, 'data'])->name('perizinan.data');
+    Route::post('perizinan/{perizinan}/approve', [PerizinanController::class, 'approve'])->name('perizinan.approve');
     Route::resource('perizinan', PerizinanController::class);
 
     // Lembur (Overtime)

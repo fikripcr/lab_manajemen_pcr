@@ -30,7 +30,7 @@
                         'name' => 'DT_RowIndex',
                         'orderable' => false,
                         'searchable' => false,
-                        'className' => 'text-center'
+                        'class' => 'text-center'
                     ],
                     [
                         'title' => 'Nama',
@@ -46,7 +46,7 @@
                         'title' => 'Kapasitas',
                         'data' => 'capacity',
                         'name' => 'capacity',
-                        'className' => 'text-center'
+                        'class' => 'text-center'
                     ],
                     [
                         'title' => 'Deskripsi',
@@ -59,7 +59,7 @@
                         'name' => 'action',
                         'orderable' => false,
                         'searchable' => false,
-                        'className' => 'text-end'
+                        'class' => 'text-center'
                     ]
                 ];
             @endphp

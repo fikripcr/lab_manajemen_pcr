@@ -15,11 +15,11 @@
                     id="table-surat-bebas"
                     route="{{ route('lab.surat-bebas.data') }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                         ['data' => 'mahasiswa', 'name' => 'student.name', 'title' => 'Mahasiswa'],
                         ['data' => 'tanggal', 'name' => 'created_at', 'title' => 'Tanggal Pengajuan'],
                         ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Action', 'orderable' => false, 'searchable' => false]
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
                 />
             </div>

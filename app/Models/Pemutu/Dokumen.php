@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\Pemutu;
 
-use App\Models\Pemutu\RiwayatApproval;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -75,8 +74,8 @@ class Dokumen extends Model
 
     public function approvals()
     {
-        return $this->hasMany(RiwayatApproval::class, 'model_id', 'dok_id')
-            ->where('model', static::class)
-            ->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Models\Pemutu\RiwayatApproval::class, 'model_id', 'dok_id')
+                    ->where('model', self::class)
+                    ->orderBy('created_at', 'desc');
     }
 }

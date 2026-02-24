@@ -54,7 +54,7 @@
                         <div class="mb-3">
                             <label class="form-label">Terakhir Diupdate</label>
                             <div class="form-control-plaintext">{{ $page->updated_at->format('d M Y H:i') }}</div>
-                            <small class="text-muted">Oleh: {{ $page->updatedBy->name ?? '-' }}</small>
+                            <small class="text-muted">Oleh: {{ $page->updated_by ?? '-' }}</small>
                         </div>
                     </div>
                 </div>

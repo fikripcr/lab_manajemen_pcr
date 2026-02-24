@@ -31,6 +31,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Personil (Unified)
         Route::get('/personil/paginate', [PersonilController::class, 'paginate'])->name('personil.paginate');
         Route::get('/personil/{personil}/edit-modal', [PersonilController::class, 'editModal'])->name('personil.edit-modal.show');
+        Route::post('/personil/{personil}/generate-user', [PersonilController::class, 'generateUser'])->name('personil.generate-user');
         Route::resource('personil', PersonilController::class);
 
         // Slideshow

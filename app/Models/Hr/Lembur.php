@@ -25,9 +25,6 @@ class Lembur extends Model
         'jam_mulai',
         'jam_selesai',
         'durasi_menit',
-        'is_dibayar',
-        'metode_bayar',
-        'nominal_per_jam',
         'latest_riwayatapproval_id',
     ];
 
@@ -35,8 +32,6 @@ class Lembur extends Model
         'tgl_pelaksanaan' => 'date',
         'jam_mulai'       => 'datetime:H:i',
         'jam_selesai'     => 'datetime:H:i',
-        'is_dibayar'      => 'boolean',
-        'nominal_per_jam' => 'decimal:2',
         'durasi_menit'    => 'integer',
     ];
 
@@ -97,7 +92,7 @@ class Lembur extends Model
             'lembur_id',
             'pegawai_id'
         )
-            ->withPivot(['override_nominal', 'catatan', 'created_at', 'updated_at'])
+            ->withPivot(['catatan', 'created_at', 'updated_at'])
             ->withTimestamps();
     }
 
@@ -135,18 +130,7 @@ class Lembur extends Model
         return $this->latestApproval->status ?? 'pending';
     }
 
-    /**
-     * Accessor untuk total bayar
-     */
-    public function getTotalBayarAttribute(): float
-    {
-        if (! $this->is_dibayar || ! $this->nominal_per_jam || ! $this->durasi_menit) {
-            return 0;
-        }
 
-        $jam = $this->durasi_menit / 60;
-        return round($jam * $this->nominal_per_jam, 2);
-    }
 
     /**
      * Scope untuk filter by status approval

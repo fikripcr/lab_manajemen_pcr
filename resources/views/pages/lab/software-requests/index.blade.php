@@ -31,7 +31,7 @@
                         ['data' => 'mata_kuliah', 'name' => 'mata_kuliah', 'title' => 'Mata Kuliah', 'orderable' => false, 'searchable' => false],
                         ['data' => 'status', 'name' => 'status', 'title' => 'Status', 'class' => 'text-center'],
                         ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Tanggal', 'class' => 'text-center'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-end', 'width' => '10%']
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
                     ]"
                     :order="[[5, 'desc']]"
                 />

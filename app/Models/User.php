@@ -7,11 +7,15 @@ use App\Models\Lab\LaporanKerusakan;
 use App\Models\Lab\LogPenggunaanPc;
 use App\Models\Lab\PcAssignment;
 use App\Models\Lab\RequestSoftware;
-use App\Models\Pmb\ProfilMahasiswa;
+use App\Models\Pmb\Camaba;
 use App\Models\Sys\Notification;
+use App\Models\Shared\Pegawai;
+use App\Models\Shared\Mahasiswa;
+use App\Models\Shared\Personil;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -31,11 +35,35 @@ class User extends Authenticatable implements HasMedia, Searchable
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia, SoftDeletes, LogsActivity, HasApiTokens, Blameable, HashidBinding;
 
     /**
-     * Relationship to PMB Profile
+     * Get the Pegawai associated with this user.
+     */
+    public function pegawai(): HasOne
+    {
+        return $this->hasOne(Pegawai::class, 'user_id');
+    }
+
+    /**
+     * Get the Mahasiswa associated with this user.
+     */
+    public function mahasiswa(): HasOne
+    {
+        return $this->hasOne(Mahasiswa::class, 'user_id');
+    }
+
+    /**
+     * Get the Personil associated with this user.
+     */
+    public function personil(): HasOne
+    {
+        return $this->hasOne(Personil::class, 'user_id');
+    }
+
+    /**
+     * Relationship to PMB Profile (Camaba)
      */
     public function profilPmb()
     {
-        return $this->hasOne(ProfilMahasiswa::class, 'user_id');
+        return $this->hasOne(Camaba::class, 'user_id');
     }
 
     /**
@@ -52,8 +80,8 @@ class User extends Authenticatable implements HasMedia, Searchable
         'email_verified_at',
         'expired_at',
         'created_by',
-        'updated_by', 'deleted_by',
-
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $appends = ['encrypted_id'];
@@ -189,11 +217,6 @@ class User extends Authenticatable implements HasMedia, Searchable
     public function labTeam()
     {
         return $this->belongsToMany(Lab::class, 'lab_teams', 'user_id', 'lab_id');
-    }
-
-    public function pegawai()
-    {
-        return $this->belongsTo(\App\Models\Shared\Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
     /**

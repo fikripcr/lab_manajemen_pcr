@@ -39,12 +39,12 @@
                             id="table-public-pages"
                             route="{{ route('shared.public-page.index') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                                 ['data' => 'title', 'name' => 'title', 'title' => 'Judul'],
                                 ['data' => 'slug', 'name' => 'slug', 'title' => 'Slug'],
                                 ['data' => 'is_published', 'name' => 'is_published', 'title' => 'Status'],
                                 ['data' => 'updated_at', 'name' => 'updated_at', 'title' => 'Terakhir Update'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                             ]"
                         />
                     </div>

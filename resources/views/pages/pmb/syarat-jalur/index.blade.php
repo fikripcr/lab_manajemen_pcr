@@ -18,7 +18,7 @@
                         <form action="{{ route('pmb.syarat-jalur.store') }}" method="POST" class="ajax-form" data-redirect="true">
                             @csrf
                             <input type="hidden" name="jalur_id" value="{{ $jalur->encrypted_jalur_id }}">
-                            
+
                             <div class="mb-3">
                                 <label class="form-label required">Jenis Dokumen</label>
                                 <select name="jenis_dokumen_id" class="form-select" required>
@@ -48,7 +48,7 @@
                             ['name' => 'Nama Dokumen'],
                             ['name' => 'Tipe/Ukuran'],
                             ['name' => 'Wajib'],
-                            ['name' => '', 'orderable' => false, 'searchable' => false, 'className' => 'w-1']
+                            ['name' => '', 'orderable' => false, 'searchable' => false, 'class' => 'w-1']
                         ]"
                     >
                         @forelse($syarat as $s)
@@ -60,13 +60,13 @@
                             </td>
                             <td>
                                 @if($s->is_required)
-                                    <span class="badge bg-danger">Wajib</span>
+                                    <span class="badge bg-danger text-white">Wajib</span>
                                 @else
                                     <span class="badge bg-secondary text-white">Opsional</span>
                                 @endif
                             </td>
                             <td>
-                                <x-tabler.button type="button" class="btn-sm btn-icon btn-danger ajax-delete" 
+                                <x-tabler.button type="button" class="btn-sm btn-icon btn-danger ajax-delete"
                                     data-url="{{ route('pmb.syarat-jalur.destroy', $s->encrypted_syaratdokumenjalur_id) }}" data-title="Hapus Syarat?" icon="ti ti-trash" />
                             </td>
                         </tr>

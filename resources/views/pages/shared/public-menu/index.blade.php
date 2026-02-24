@@ -45,12 +45,12 @@
                                 id="pages-table"
                                 route="{{ route('shared.public-page.index') }}"
                                 :columns="[
-                                    ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                                    ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                                     ['data' => 'title', 'name' => 'title', 'title' => 'Judul'],
                                     ['data' => 'slug', 'name' => 'slug', 'title' => 'Slug'],
                                     ['data' => 'is_published', 'name' => 'is_published', 'title' => 'Status'],
                                     ['data' => 'updated_at', 'name' => 'updated_at', 'title' => 'Terakhir Update'],
-                                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
+                                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                                 ]"
                             />
                         </div>
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
         Array.from(ul.children).forEach(li => {
             const id = li.dataset.id;
             if (!id) return;
-            
+
             const item = { id: id };
             const nestedUl = li.querySelector(':scope > .sortable-list');
             if (nestedUl && nestedUl.children.length > 0) {
@@ -168,9 +168,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function saveHierarchy() {
         const rootUl = document.getElementById('menu-tree');
         if(!rootUl) return;
-        
+
         const hierarchy = getHierarchyFromUl(rootUl);
-        
+
         axios.post('{{ route("shared.public-menu.reorder") }}', { hierarchy: hierarchy })
             .then(response => {
                 if(typeof showSuccessMessage === 'function') {

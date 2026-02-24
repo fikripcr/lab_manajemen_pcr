@@ -124,10 +124,10 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::get('/', 'beritaIndex')->name('index');
         Route::get('/create', 'create')->defaults('type', 'berita')->name('create');
         Route::post('/', 'store')->name('store');
-        Route::get('/{berita}', 'show')->name('show');
-        Route::get('/{berita}/edit', 'edit')->name('edit');
-        Route::put('/{berita}', 'update')->name('update');
-        Route::delete('/{berita}', 'destroy')->name('destroy');
+        Route::get('/{pengumuman}', 'show')->name('show');
+        Route::get('/{pengumuman}/edit', 'edit')->name('edit');
+        Route::put('/{pengumuman}', 'update')->name('update');
+        Route::delete('/{pengumuman}', 'destroy')->name('destroy');
         Route::get('/api/data', 'paginate')->name('data');
     });
 
@@ -185,6 +185,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
     Route::get('api/mahasiswa', [MahasiswaController::class, 'paginate'])->name('mahasiswa.data');
     Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         Route::get('edit-modal/{id}', [MahasiswaController::class, 'editModal'])->name('edit-modal.show');
+        Route::post('{mahasiswa}/generate-user', [MahasiswaController::class, 'generateUser'])->name('generate-user');
     });
     Route::resource('mahasiswa', MahasiswaController::class);
 

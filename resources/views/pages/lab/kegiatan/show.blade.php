@@ -10,7 +10,7 @@
     </x-tabler.page-header>
 
         <div class="row row-cards">
-            <div class="col-md-8">
+            <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Informasi Kegiatan</h3>
@@ -18,6 +18,7 @@
                             @php
                                 $badges = [
                                     'pending' => 'warning',
+                                    'tangguhkan' => 'info',
                                     'approved' => 'success',
                                     'rejected' => 'danger',
                                     'completed' => 'info'
@@ -66,29 +67,26 @@
                         @endif
                     </div>
                 </div>
-
-                {{-- Approval History --}}
-                <x-tabler.approval-history :approvals="$kegiatan->approvals" />
             </div>
 
-            <div class="col-md-4">
+            <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Approval Action</h3>
                     </div>
                     <div class="card-body">
-                        @if($kegiatan->status == 'pending')
+                        @if(in_array($kegiatan->status, ['pending', 'tangguhkan']))
                             <form action="{{ route('lab.kegiatan.status', encryptId($kegiatan->kegiatan_id)) }}" method="POST" class="ajax-form">
                                 @csrf
                                 <x-tabler.form-textarea name="catatan" label="Catatan (Optional)" rows="3" placeholder="Alasan approval/rejection..." />
                                 <div class="d-flex gap-2">
                                     <x-tabler.button type="submit" name="status" value="approved" class="btn-success w-100" icon="bx bx-check" text="Setuju" />
+                                    <x-tabler.button type="submit" name="status" value="tangguhkan" class="btn-warning w-100" icon="bx bx-time" text="Tangguhkan" />
                                     <x-tabler.button type="submit" name="status" value="rejected" class="btn-danger w-100" icon="bx bx-x" text="Tolak" />
                                 </div>
                             </form>
                         @else
                             <div class="text-center py-4">
-                                <i class="bx bx-check-circle h1 text-success"></i>
                                 <p class="text-muted">Status sudah diproses: <strong>{{ ucfirst($kegiatan->status) }}</strong></p>
                                 @if($kegiatan->catatan_pic)
                                     <div class="alert alert-info">
@@ -99,6 +97,12 @@
                         @endif
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="row row-cards mt-1">
+            <div class="col-12">
+                <x-tabler.approval-history :approvals="$kegiatan->approvals" />
             </div>
         </div>
 @endsection

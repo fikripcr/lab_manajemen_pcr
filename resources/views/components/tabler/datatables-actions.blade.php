@@ -4,29 +4,33 @@
     'editModal' => true,
     'editModalSize' => null,
     'viewUrl' => null,
+    'viewTitle' => 'View Details',
+    'viewModal' => false,
+    'viewModalSize' => null,
     'loginAsUrl' => null,
     'loginAsName' => null,
     'deleteUrl' => null,
     'deleteTitle' => 'Delete Data?',
     'deleteText' => 'Are you sure? This action cannot be undone!',
-    'customActions' => []
+    'customActions' => [],
+    'extraActions' => [],
 ])
 
 <div class="btn-actions">
     {{-- Edit Button (Direct Action) --}}
     @if($editUrl)
         @if($editModal)
-            <a href="#" 
-               class="btn btn-action text-primary btn-animate-icon ajax-modal-btn" 
-               data-url="{{ $editUrl }}" 
-               data-modal-title="{{ $editTitle }}" 
+            <a href="#"
+               class="btn btn-action text-primary btn-animate-icon ajax-modal-btn"
+               data-url="{{ $editUrl }}"
+               data-modal-title="{{ $editTitle }}"
                @if($editModalSize) data-modal-size="{{ $editModalSize }}" @endif
                title="Edit">
                 <i class="ti ti-edit fs-2"></i>
             </a>
         @else
-            <a href="{{ $editUrl }}" 
-               class="btn btn-action text-primary btn-animate-icon" 
+            <a href="{{ $editUrl }}"
+               class="btn btn-action text-primary btn-animate-icon"
                title="Edit">
                 <i class="ti ti-edit fs-2"></i>
             </a>
@@ -40,9 +44,18 @@
         </button>
         <div class="dropdown-menu dropdown-menu-end">
             @if($viewUrl)
-                <a class="dropdown-item" href="{{ $viewUrl }}">
-                    <i class="ti ti-eye me-1"></i> View
-                </a>
+                @if($viewModal)
+                    <a href="javascript:void(0)" class="dropdown-item ajax-modal-btn"
+                       data-url="{{ $viewUrl }}"
+                       data-modal-title="{{ $viewTitle }}"
+                       @if($viewModalSize) data-modal-size="{{ $viewModalSize }}" @endif>
+                        <i class="ti ti-eye me-1"></i> View
+                    </a>
+                @else
+                    <a class="dropdown-item" href="{{ $viewUrl }}">
+                        <i class="ti ti-eye me-1"></i> View
+                    </a>
+                @endif
             @endif
 
             @if($loginAsUrl)
@@ -51,9 +64,20 @@
                 </a>
             @endif
 
+            {{-- Extra Actions (Simple Array) --}}
+            @foreach($extraActions as $action)
+                <a class="dropdown-item {{ $action['class'] ?? '' }}" 
+                   href="{{ $action['url'] ?? '#' }}"
+                   @if(isset($action['dataUrl'])) data-url="{{ $action['dataUrl'] }}" @endif
+                   @if(isset($action['attributes'])) {!! $action['attributes'] !!} @endif>
+                    @if(isset($action['icon'])) <i class="ti {{ $action['icon'] }} me-1"></i> @endif
+                    {{ $action['text'] ?? $action['label'] ?? 'Action' }}
+                </a>
+            @endforeach
+
             {{-- Custom Actions Slot/Array --}}
             @foreach($customActions as $action)
-                <a class="dropdown-item {{ $action['class'] ?? '' }}" href="{{ $action['url'] }}" 
+                <a class="dropdown-item {{ $action['class'] ?? '' }}" href="{{ $action['url'] }}"
                    @if(isset($action['attributes'])) {!! $action['attributes'] !!} @endif>
                     @if(isset($action['icon'])) <i class="ti ti-{{ $action['icon'] }} me-1"></i> @endif
                     {{ $action['label'] }}
@@ -63,9 +87,9 @@
             {{ $slot ?? '' }}
 
             @if($deleteUrl)
-                <a href="javascript:void(0)" class="dropdown-item text-danger ajax-delete" 
-                   data-url="{{ $deleteUrl }}" 
-                   data-title="{{ $deleteTitle }}" 
+                <a href="javascript:void(0)" class="dropdown-item text-danger ajax-delete"
+                   data-url="{{ $deleteUrl }}"
+                   data-title="{{ $deleteTitle }}"
                    data-text="{{ $deleteText }}">
                     <i class="ti ti-trash me-1"></i> Delete
                 </a>

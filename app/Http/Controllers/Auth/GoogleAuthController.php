@@ -35,7 +35,7 @@ class GoogleAuthController extends Controller
             // Redirect based on user role or status
             if (Auth::check()) {
                 // Redirect to dashboard or intended location
-                return redirect()->intended(route('lab.dashboard'));
+                return redirect()->intended(route('dashboard'));
             }
 
             return redirect()->route('login')->with('error', 'Authentication failed.');

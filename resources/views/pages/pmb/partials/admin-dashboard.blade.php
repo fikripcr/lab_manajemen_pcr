@@ -144,13 +144,13 @@
                         ['name' => 'Nama'],
                         ['name' => 'Jalur'],
                         ['name' => 'Status'],
-                        ['name' => '', 'className' => 'w-1']
+                        ['name' => '', 'class' => 'w-1']
                     ]"
                 >
                     @foreach($recentPendaftar as $pendaftar)
                         <tr>
                             <td>
-                                <span class="badge bg-blue-lt">{{ $pendaftar->no_pendaftaran }}</span>
+                                <span class="badge bg-blue-lt text-white">{{ $pendaftar->no_pendaftaran }}</span>
                             </td>
                             <td>{{ $pendaftar->user->name }}</td>
                             <td>{{ $pendaftar->jalur->nama_jalur }}</td>
@@ -223,7 +223,7 @@
             'Tidak_Lulus' => 'bg-danger',
             'Daftar_Ulang' => 'bg-purple'
         ];
-        
+
         return ($classes[$status] ?? 'bg-primary') . ' text-white';
     }
 @endphp

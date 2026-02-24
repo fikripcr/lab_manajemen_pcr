@@ -97,7 +97,7 @@ The `x-datatable.datatable` component provides a standardized way to create data
 <x-datatable.datatable :columns="[
     ['data' => 'name', 'title' => 'Name'],
     ['data' => 'email', 'title' => 'Email'],
-    ['data' => 'action', 'title' => 'Action', 'orderable' => false, 'searchable' => false]
+    ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
 ]">
     {{ route('admin.users.paginate') }}
 </x-datatable.datatable>
@@ -633,7 +633,7 @@ DataTable functionality using `ajax` option should remain unchanged as these are
                 ['data' => 'email', 'title' => 'Email'],
                 ['data' => 'role', 'title' => 'Role'],
                 ['data' => 'created_at', 'title' => 'Created'],
-                ['data' => 'action', 'title' => 'Action', 'orderable' => false, 'searchable' => false]
+                ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
             ]">
                 {{ route('admin.users.paginate') }}
             </x-datatable.datatable>

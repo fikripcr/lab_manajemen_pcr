@@ -32,7 +32,8 @@
                     'data' => 'DT_RowIndex',
                     'name' => 'DT_RowIndex',
                     'orderable' => false,
-                    'searchable' => false
+                    'searchable' => false,
+                    'class' => 'text-center'
                 ],
                 [
                     'title' => 'Time',
@@ -59,7 +60,8 @@
                     'data' => 'action',
                     'name' => 'action',
                     'orderable' => false,
-                    'searchable' => false
+                    'searchable' => false,
+                    'class' => 'text-center'
                 ]
             ]"
             :order="[[1, 'desc']]"

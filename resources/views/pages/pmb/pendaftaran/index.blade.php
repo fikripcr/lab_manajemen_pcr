@@ -8,16 +8,16 @@
 
         <div class="card">
             <div class="card-body">
-                <x-tabler.datatable 
-                    id="table-pendaftaran" 
+                <x-tabler.datatable
+                    id="table-pendaftaran"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                         ['data' => 'no_pendaftaran', 'name' => 'no_pendaftaran', 'title' => 'No. Pendaftaran'],
                         ['data' => 'user.name', 'name' => 'user.name', 'title' => 'Nama Calon'],
                         ['data' => 'jalur.nama_jalur', 'name' => 'jalur.nama_jalur', 'title' => 'Jalur'],
                         ['data' => 'status_terkini', 'name' => 'status_terkini', 'title' => 'Status'],
                         ['data' => 'waktu_daftar', 'name' => 'waktu_daftar', 'title' => 'Tanggal Daftar'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
                     :url="route('pmb.pendaftaran.paginate')"
                 />

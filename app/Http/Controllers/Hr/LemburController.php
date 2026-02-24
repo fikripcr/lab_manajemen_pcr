@@ -55,6 +55,7 @@ class LemburController extends Controller
             ->addColumn('status', function ($row) {
                 $status = $row->status_approval;
                 $badges = [
+                    'Diajukan' => 'bg-warning',
                     'pending'  => 'bg-warning',
                     'approved' => 'bg-success',
                     'rejected' => 'bg-danger',
@@ -94,7 +95,7 @@ class LemburController extends Controller
         try {
             $this->lemburService->store($request->validated());
 
-            return jsonSuccess('Lembur berhasil ditambahkan', route('hr.lembur.index'));
+            return jsonSuccess('Lembur berhasil ditambahkan');
         } catch (Exception $e) {
             logError($e);
             return jsonError('Gagal menambahkan lembur: ' . $e->getMessage());

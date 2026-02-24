@@ -33,7 +33,7 @@ class LayananDiskusi extends Model
         'pesan',
         'file_lampiran',
         'status_pengirim',
-        'created_by_email', 'created_by', 'updated_by', 'deleted_by',
+        'created_by', 'updated_by', 'deleted_by',
 
     ];
 

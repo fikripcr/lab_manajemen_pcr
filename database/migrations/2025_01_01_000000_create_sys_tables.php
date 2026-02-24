@@ -21,15 +21,14 @@ return new class extends Migration
             $table->string('password');
             $table->string('google_id', 191)->nullable();
             $table->string('avatar', 500)->nullable();
-            $table->unsignedBigInteger('pegawai_id')->nullable()->comment('Link to Shared Pegawai ID');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->index(['created_at']);
         });
@@ -63,9 +62,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes(); // mass_sync added softDeletes too
 
             $table->index(['created_at']);
@@ -80,9 +79,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->index(['created_at']);
@@ -132,9 +131,9 @@ return new class extends Migration
             $table->nullableTimestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->index(['model_id', 'model_type']);
@@ -183,9 +182,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->index(['notifiable_id', 'notifiable_type'], 'sys_notifications_notifiable_index');
@@ -209,9 +208,9 @@ return new class extends Migration
             $table->softDeletes();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->index(['created_at']);
         });
@@ -226,9 +225,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->index(['created_at']);
@@ -250,9 +249,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->index(['created_at']);
@@ -270,9 +269,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->index(['tokenable_id', 'tokenable_type'], 'sys_pat_tokenable_index');

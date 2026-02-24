@@ -26,24 +26,17 @@ class SuratBebasLab extends Model
         'student_id',
         'status',
         'file_path',
-        'remarks',
-        'approved_by',
-        'approved_at',
+        'latest_riwayatapproval_id',
         'created_by', 'updated_by', 'deleted_by',
     ];
 
     protected $casts = [
-        'approved_at' => 'datetime',
+        // approved_at removed - use latest_riwayatapproval->created_at instead
     ];
 
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
-    }
-
-    public function approver()
-    {
-        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function latestApproval()

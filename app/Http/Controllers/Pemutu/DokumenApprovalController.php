@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Pemutu\DokumenApprovalRequest;
+use Illuminate\Http\Request;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\RiwayatApproval;
 use App\Models\Shared\Personil;
@@ -17,8 +17,12 @@ class DokumenApprovalController extends Controller
         return view('pages.pemutu.dokumens._approval_form', compact('dokumen', 'pegawais'));
     }
 
-    public function store(DokumenApprovalRequest $request, Dokumen $dokumen)
+    public function store(Request $request, Dokumen $dokumen)
     {
+        $request->validate([
+            'status' => 'required',
+            'personil_id' => 'required'
+        ]);
         try {
             DB::beginTransaction();
 

@@ -17,13 +17,10 @@ class LemburPegawai extends Model
     protected $fillable = [
         'lembur_id',
         'pegawai_id',
-        'override_nominal',
         'catatan',
     ];
 
-    protected $casts = [
-        'override_nominal' => 'decimal:2',
-    ];
+    protected $casts = [];
 
     protected $appends = ['encrypted_lemburpegawai_id'];
 
@@ -53,30 +50,7 @@ class LemburPegawai extends Model
         return $this->belongsTo(Pegawai::class, 'pegawai_id', 'pegawai_id');
     }
 
-    /**
-     * Accessor untuk nominal yang digunakan (override atau dari lembur)
-     */
-    public function getNominalEfektifAttribute(): float
-    {
-        if ($this->override_nominal) {
-            return (float) $this->override_nominal;
-        }
 
-        return $this->lembur ? (float) $this->lembur->nominal_per_jam : 0;
-    }
-
-    /**
-     * Accessor untuk total bayar pegawai ini
-     */
-    public function getTotalBayarAttribute(): float
-    {
-        if (! $this->lembur || ! $this->lembur->is_dibayar) {
-            return 0;
-        }
-
-        $jam = $this->lembur->durasi_menit / 60;
-        return round($jam * $this->nominal_efektif, 2);
-    }
 
     /**
      * Scope untuk filter by lembur

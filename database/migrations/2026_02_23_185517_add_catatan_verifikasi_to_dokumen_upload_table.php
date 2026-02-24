@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pemutu_indikator_pegawai', function (Blueprint $table) {
-            $table->text('sasaran')->nullable()->after('notes');
-            $table->text('keterangan')->nullable()->after('sasaran');
+        Schema::table('pmb_dokumen_upload', function (Blueprint $table) {
+            $table->text('catatan_verifikasi')->nullable()->after('status_verifikasi');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pemutu_indikator_pegawai', function (Blueprint $table) {
-            $table->dropColumn(['sasaran', 'keterangan']);
+        Schema::table('pmb_dokumen_upload', function (Blueprint $table) {
+            $table->dropColumn('catatan_verifikasi');
         });
     }
 };

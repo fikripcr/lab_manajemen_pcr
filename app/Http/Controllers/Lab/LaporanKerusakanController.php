@@ -34,7 +34,7 @@ class LaporanKerusakanController extends Controller
                 return $row->inventaris ? $row->inventaris->nama_alat : 'Umum/Lainnya';
             })
             ->addColumn('pelapor', function ($row) {
-                return $row->createdBy ? $row->createdBy->name : '-';
+                return $row->created_by ?? '-';
             })
             ->addColumn('tanggal', function ($row) {
                 return $row->created_at->format('d M Y');
@@ -120,7 +120,7 @@ class LaporanKerusakanController extends Controller
 
     public function show(LaporanKerusakan $laporanKerusakan)
     {
-        $laporan = $laporanKerusakan->load(['inventaris.lab', 'createdBy', 'teknisi']);
+        $laporan = $laporanKerusakan->load(['inventaris.lab', 'teknisi']);
         return view('pages.lab.laporan-kerusakan.show', compact('laporan'));
     }
 }

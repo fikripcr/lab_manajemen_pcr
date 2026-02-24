@@ -48,12 +48,12 @@
                             id="jenis-layanan-table"
                             route="{{ route('eoffice.jenis-layanan.data') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '50px'],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '50px'],
                                 ['data' => 'nama_layanan', 'name' => 'nama_layanan', 'title' => 'Nama Layanan'],
                                 ['data' => 'kategori', 'name' => 'kategori', 'title' => 'Kategori'],
-                                ['data' => 'batas_pengerjaan', 'name' => 'batas_pengerjaan', 'title' => 'Est. Pengerjaan (Jam)', 'className' => 'text-center'],
-                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center', 'width' => '100px'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end', 'width' => '120px'],
+                                ['data' => 'batas_pengerjaan', 'name' => 'batas_pengerjaan', 'title' => 'Est. Pengerjaan (Jam)', 'class' => 'text-center'],
+                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center', 'width' => '100px'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '120px'],
                             ]"
                         />
                     </div>
@@ -75,12 +75,12 @@
                             id="kategori-isian-table"
                             route="{{ route('eoffice.kategori-isian.data') }}"
                             :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'className' => 'text-center', 'width' => '50px'],
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '50px'],
                                 ['data' => 'nama_isian', 'name' => 'nama_isian', 'title' => 'Nama Isian'],
-                                ['data' => 'type', 'name' => 'type', 'title' => 'Tipe Input', 'className' => 'text-center'],
-                                ['data' => 'is_required', 'name' => 'is_required', 'title' => 'Wajib', 'className' => 'text-center', 'width' => '80px'],
-                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'className' => 'text-center', 'width' => '100px'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'className' => 'text-end', 'width' => '100px'],
+                                ['data' => 'type', 'name' => 'type', 'title' => 'Tipe Input', 'class' => 'text-center'],
+                                ['data' => 'is_required', 'name' => 'is_required', 'title' => 'Wajib', 'class' => 'text-center', 'width' => '80px'],
+                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'class' => 'text-center', 'width' => '100px'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '100px'],
                             ]"
                         />
                     </div>

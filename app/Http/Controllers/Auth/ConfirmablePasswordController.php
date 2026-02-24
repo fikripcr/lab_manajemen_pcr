@@ -34,6 +34,6 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('pages.auth.password_confirmed_at', time());
 
-        return redirect()->intended(route('lab.dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

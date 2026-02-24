@@ -35,6 +35,7 @@ class KegiatanController extends Controller
             ->editColumn('status', function ($row) {
                 $badges = [
                     'pending'   => 'warning',
+                    'tangguhkan' => 'info',
                     'approved'  => 'success',
                     'rejected'  => 'danger',
                     'completed' => 'info',
@@ -68,7 +69,7 @@ class KegiatanController extends Controller
             }
 
             $this->kegiatanService->createBooking($data);
-            return jsonSuccess('Booking berhasil diajukan', route('lab.kegiatan.index'));
+            return jsonSuccess('Pemnjaman Lab berhasil diajukan');
         } catch (\Exception $e) {
             logError($e);
             return jsonError('Gagal melakukan booking: ' . $e->getMessage());
@@ -89,7 +90,7 @@ class KegiatanController extends Controller
         $kegiatan = $id;
         // Admin only functionality usually
         $request->validate([
-            'status'  => 'required|in:approved,rejected',
+            'status'  => 'required|in:approved,rejected,tangguhkan',
             'catatan' => 'nullable|string',
         ]);
 

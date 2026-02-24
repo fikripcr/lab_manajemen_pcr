@@ -12,7 +12,7 @@ class SuratBebasLabService
      */
     public function getFilteredQuery(array $filters = [])
     {
-        return SuratBebasLab::with(['student', 'approver'])
+        return SuratBebasLab::with(['student', 'latestApproval'])
             ->latest();
     }
 
@@ -21,7 +21,7 @@ class SuratBebasLabService
      */
     public function getById(string $id): ?SuratBebasLab
     {
-        return SuratBebasLab::with(['student', 'approver', 'approvals'])->find($id);
+        return SuratBebasLab::with(['student', 'latestApproval', 'approvals'])->find($id);
     }
 
     /**
@@ -33,7 +33,6 @@ class SuratBebasLabService
             $surat = SuratBebasLab::create([
                 'student_id' => auth()->id(),
                 'status'     => 'pending',
-                'remarks'    => $data['remarks'] ?? null,
             ]);
 
             // Create Initial Approval (Pending)
@@ -41,7 +40,7 @@ class SuratBebasLabService
                 'model'    => SuratBebasLab::class,
                 'model_id' => $surat->surat_bebas_lab_id,
                 'status'   => 'pending',
-                'catatan'  => 'Pengajuan baru',
+                'catatan'  => $data['catatan'] ?? 'Pengajuan baru',
             ]);
 
             $surat->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
@@ -59,14 +58,7 @@ class SuratBebasLabService
     {
         return DB::transaction(function () use ($surat, $data) {
             $status  = $data['status'];
-            $remarks = $data['remarks'] ?? null;
-
-            $updateData = [
-                'status'      => $status,
-                'remarks'     => $remarks,
-                'approved_by' => auth()->id(),
-                'approved_at' => now(),
-            ];
+            $catatan = $data['catatan'] ?? null;
 
             // Create New Approval Record
             $approval = RiwayatApproval::create([
@@ -74,12 +66,14 @@ class SuratBebasLabService
                 'model_id' => $surat->surat_bebas_lab_id,
                 'status'   => $status,
                 'pejabat'  => auth()->user()->name,
-                'catatan'  => $remarks,
+                'jabatan'  => auth()->user()->pegawai->jabatan_fungsional->jabfungsional ?? 'Staff',
+                'catatan'  => $catatan,
             ]);
 
-            $updateData['latest_riwayatapproval_id'] = $approval->riwayatapproval_id;
-
-            $surat->update($updateData);
+            $surat->update([
+                'status' => $status,
+                'latest_riwayatapproval_id' => $approval->riwayatapproval_id,
+            ]);
 
             logActivity('surat_bebas_lab', "Update status pengajuan surat bebas lab ID {$surat->surat_bebas_lab_id} menjadi {$status}");
 

@@ -16,13 +16,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes(); // mass_sync added softDeletes too
-
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         Schema::create('pemutu_label', function (Blueprint $table) {
@@ -35,14 +32,12 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('type_id')->references('labeltype_id')->on('pemutu_label_types')->cascadeOnDelete();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         // NOTE: pemutu_org_unit moved to shared migration as 'struktur_organisasi'
@@ -61,13 +56,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
-
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         Schema::create('pemutu_dokumen', function (Blueprint $table) {
@@ -89,9 +81,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('parent_id')->references('dok_id')->on('pemutu_dokumen')->onDelete('restrict');
@@ -121,12 +113,10 @@ return new class extends Migration
             $table->date('peningkatan_awal')->nullable();
             $table->date('peningkatan_akhir')->nullable();
             $table->timestamps();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         Schema::create('pemutu_periode_kpi', function (Blueprint $table) {
@@ -139,18 +129,17 @@ return new class extends Migration
             $table->date('tanggal_selesai');
             $table->boolean('is_active')->default(false);
             $table->timestamps();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         Schema::create('pemutu_indikator', function (Blueprint $table) {
             $table->id('indikator_id');
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->enum('type', ['renop', 'standar', 'performa'])->default('renop');
+            $table->enum('kelompok_indikator', ['Akademik', 'Non Akademik'])->nullable();
 
             $table->string('no_indikator', 50)->nullable();
             $table->text('indikator')->nullable();
@@ -161,24 +150,20 @@ return new class extends Migration
             $table->dateTime('periode_mulai')->nullable();
             $table->dateTime('periode_selesai')->nullable();
             $table->string('unit_ukuran', 50)->nullable();
-            $table->text('keterangan')->nullable();
-            $table->integer('seq')->nullable();
             $table->string('level_risk', 20)->nullable();
             $table->string('origin_from', 30)->nullable();
             $table->string('hash', 100)->nullable();
             $table->integer('peningkat_nonaktif_indik')->nullable();
-            $table->integer('is_new_indik_after_peningkatan')->nullable();
+            $table->integer('is_new_indikator_after_peningkatan')->nullable();
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('parent_id')->references('indikator_id')->on('pemutu_indikator')->nullOnDelete();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
 
         Schema::create('pemutu_indikator_doksub', function (Blueprint $table) {
@@ -189,9 +174,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
@@ -205,9 +190,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
@@ -219,12 +204,16 @@ return new class extends Migration
             $table->unsignedBigInteger('indikator_id');
             $table->unsignedBigInteger('org_unit_id');
             $table->string('target', 255)->nullable();
+            $table->text('ed_capaian')->nullable();
+            $table->text('ed_analisis')->nullable();
+            $table->string('ed_attachment')->nullable();
+            $table->json('ed_links')->nullable();
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('indikator_id')->references('indikator_id')->on('pemutu_indikator')->cascadeOnDelete();
@@ -237,20 +226,22 @@ return new class extends Migration
             $table->unsignedBigInteger('indikator_id');
             $table->unsignedBigInteger('periode_kpi_id')->nullable();
             $table->integer('year');
-            $table->string('semester', 20);
             $table->decimal('weight', 5, 2)->nullable();
             $table->decimal('target_value', 10, 2)->nullable();
             $table->text('realization')->nullable();
+            $table->text('kpi_analisis')->nullable();
+            $table->json('kpi_links')->nullable();
             $table->decimal('score', 5, 2)->nullable();
             $table->string('attachment')->nullable();
             $table->string('status', 20)->default('draft'); // draft, submitted, approved, rejected
             $table->text('notes')->nullable();
+            $table->string('unit_ukuran')->nullable();
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->cascadeOnDelete();
@@ -267,9 +258,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('dok_id')->references('dok_id')->on('pemutu_dokumen')->cascadeOnDelete();
@@ -283,9 +274,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Blameable
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('dokapproval_id')->references('dokapproval_id')->on('pemutu_dok_approval')->cascadeOnDelete();
@@ -296,29 +287,49 @@ return new class extends Migration
             $table->unsignedBigInteger('periodespmi_id');
             $table->unsignedBigInteger('org_unit_id');
             $table->unsignedBigInteger('pegawai_id');
-            $table->enum('role', ['auditee', 'anggota'])->default('anggota');
+            $table->enum('role', ['auditee', 'anggota', 'auditor', 'ketua_auditor'])->default('anggota');
             $table->text('catatan')->nullable();
             $table->timestamps();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
             $table->foreign('periodespmi_id')->references('periodespmi_id')->on('pemutu_periode_spmi')->cascadeOnDelete();
             $table->foreign('org_unit_id')->references('orgunit_id')->on('struktur_organisasi')->cascadeOnDelete();
             $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->cascadeOnDelete();
-            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
 
             $table->unique(['periodespmi_id', 'org_unit_id', 'pegawai_id', 'role'], 'tim_mutu_unique');
+        });
+
+        // Riwayat Approval for Pemutu
+        Schema::create('pemutu_riwayat_approval', function (Blueprint $table) {
+            $table->id('riwayatapproval_id');
+            $table->string('model');
+            $table->unsignedBigInteger('model_id');
+            $table->enum('status', ['Draft', 'Pending', 'Approved', 'Rejected'])->default('Draft');
+            $table->string('pejabat')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->text('catatan')->nullable();
+            $table->string('lampiran_url')->nullable();
+
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['model', 'model_id']);
         });
     }
 
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('pemutu_riwayat_approval');
         Schema::dropIfExists('pemutu_dok_approval_status');
         Schema::dropIfExists('pemutu_dok_approval');
+        Schema::dropIfExists('pemutu_dok_approval'); // legacy table
 
         // pemutu_rapat tables removed
         Schema::dropIfExists('pemutu_periode_kpi');

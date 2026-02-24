@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Detail Pendaftaran: {{ $pendaftaran->no_pendaftaran }}" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-settings" text="Ubah Status" 
+        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-settings" text="Ubah Status"
             data-modal-target="#modalAction" data-modal-title="Ubah Status Pendaftaran" data-url="{{ route('pmb.pendaftaran.update-status-form', $pendaftaran->encrypted_pendaftaran_id) }}" />
     </x-slot:actions>
 </x-tabler.page-header>
@@ -48,7 +48,7 @@
                             :columns="[
                                 ['name' => 'Jenis Dokumen'],
                                 ['name' => 'Status'],
-                                ['name' => 'Aksi', 'className' => 'w-10']
+                                ['name' => 'Aksi', 'class' => 'w-10']
                             ]"
                         >
                             @foreach($pendaftaran->dokumenUpload as $doc)
@@ -64,7 +64,7 @@
                                 <td>
                                     <div class="btn-list flex-nowrap">
                                         <x-tabler.button href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="btn-sm btn-info" text="Lihat" />
-                                        <x-tabler.button type="button" class="btn-sm btn-success ajax-modal-btn" text="Verifikasi" 
+                                        <x-tabler.button type="button" class="btn-sm btn-success ajax-modal-btn" text="Verifikasi"
                                             data-modal-target="#modalAction" data-modal-title="Verifikasi Dokumen" data-url="{{ route('pmb.pendaftaran.verify-document-form', $doc->encrypted_dokumenupload_id) }}" />
                                     </div>
                                 </td>

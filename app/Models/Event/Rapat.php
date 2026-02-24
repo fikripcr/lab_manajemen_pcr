@@ -72,14 +72,6 @@ class Rapat extends Model
         return $this->hasMany(RapatEntitas::class, 'rapat_id');
     }
 
-    /**
-     * Get the creator of the rapat.
-     */
-    public function creator()
-    {
-        return $this->belongsTo(\App\Models\User::class, 'created_by');
-    }
-
     public function ketua_user()
     {
         return $this->belongsTo(\App\Models\User::class, 'ketua_user_id');

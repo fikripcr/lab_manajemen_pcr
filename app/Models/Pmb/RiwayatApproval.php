@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Pmb;
 
-use App\Traits\BlameableName;
+use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RiwayatApproval extends Model
 {
-    use HasFactory, SoftDeletes, BlameableName, HashidBinding;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
     protected $table      = 'pmb_riwayat_approval';
     protected $primaryKey = 'riwayatapproval_id';

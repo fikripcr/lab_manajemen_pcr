@@ -11,6 +11,24 @@ class VerificationService
     public function __construct(protected PendaftaranService $pendaftaranService)
     {}
 
+    /**
+     * Get pending payments query
+     */
+    public function getPendingPaymentsQuery()
+    {
+        return Pembayaran::with(['pendaftaran.user', 'pendaftaran.jalur'])
+            ->where('status_verifikasi', 'Pending')
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get payment details
+     */
+    public function getPaymentDetails(Pembayaran $pembayaran)
+    {
+        return $pembayaran->load(['pendaftaran.user', 'pendaftaran.jalur', 'pendaftaran.camaba']);
+    }
+
     public function verifyPayment(Pembayaran $pembayaran, array $data): Pembayaran
     {
         return DB::transaction(function () use ($pembayaran, $data) {

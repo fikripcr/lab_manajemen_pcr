@@ -22,19 +22,19 @@
         </div>
         <div class="card-body p-0">
             <x-tabler.flash-message />
-            <x-tabler.datatable 
-                id="semesters-table" 
-                :route="route('lab.semesters.data')" 
+            <x-tabler.datatable
+                id="semesters-table"
+                :route="route('lab.semesters.data')"
                 :columns="[
-                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'className' => 'text-center'],
+                    ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ['title' => 'Tahun Ajaran', 'data' => 'tahun_ajaran', 'name' => 'tahun_ajaran'],
                     ['title' => 'Semester', 'data' => 'semester', 'name' => 'semester'],
                     ['title' => 'Start Date', 'data' => 'start_date', 'name' => 'start_date'],
                     ['title' => 'End Date', 'data' => 'end_date', 'name' => 'end_date'],
                     ['title' => 'Status', 'data' => 'is_active', 'name' => 'is_active'],
-                    ['title' => 'Actions', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-end']
-                ]" 
-                :order="[[0, 'desc']]" 
+                    ['title' => 'Actions', 'data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+                ]"
+                :order="[[0, 'desc']]"
             />
         </div>
     </div>

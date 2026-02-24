@@ -20,9 +20,9 @@ return new class extends Migration
             $table->integer('is_active')->default(1);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_status_aktifitas', function (Blueprint $table) {
@@ -32,9 +32,9 @@ return new class extends Migration
             $table->integer('is_active')->default(1);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_jabatan_fungsional', function (Blueprint $table) {
@@ -45,9 +45,9 @@ return new class extends Migration
             $table->integer('tunjangan')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_golongan_inpassing', function (Blueprint $table) {
@@ -58,9 +58,9 @@ return new class extends Migration
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_jenis_file', function (Blueprint $table) {
@@ -69,9 +69,9 @@ return new class extends Migration
             $table->integer('is_active')->default(1);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_jenis_indisipliner', function (Blueprint $table) {
@@ -79,9 +79,9 @@ return new class extends Migration
             $table->string('jenis_indisipliner', 100);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_jenis_izin', function (Blueprint $table) {
@@ -94,9 +94,9 @@ return new class extends Migration
             $table->integer('is_active')->default(1);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_jenis_shift', function (Blueprint $table) {
@@ -107,9 +107,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_tanggal_libur', function (Blueprint $table) {
@@ -119,9 +119,9 @@ return new class extends Migration
             $table->string('keterangan', 191)->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // NOTE: hr_org_unit moved to shared migration as 'struktur_organisasi'
@@ -137,9 +137,9 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_riwayat_datadiri', function (Blueprint $table) {
@@ -162,9 +162,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('orgunit_departemen_id')->references('orgunit_id')->on('struktur_organisasi')->nullOnDelete();
             $table->foreign('orgunit_posisi_id')->references('orgunit_id')->on('struktur_organisasi')->nullOnDelete();
@@ -177,13 +177,15 @@ return new class extends Migration
             $table->string('nama_pt', 191)->nullable();
             $table->integer('thn_lulus')->nullable();
             $table->string('bidang_ilmu', 191)->nullable();
+            $table->string('kotaasal_pt', 100)->nullable();
+            $table->string('kodenegara_pt', 100)->nullable();
             $table->date('tgl_ijazah')->nullable();
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_riwayat_statpegawai', function (Blueprint $table) {
@@ -197,9 +199,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_riwayat_stataktifitas', function (Blueprint $table) {
@@ -210,9 +212,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_riwayat_jabfungsional', function (Blueprint $table) {
@@ -224,9 +226,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_riwayat_jabstruktural', function (Blueprint $table) {
@@ -239,9 +241,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_keluarga', function (Blueprint $table) {
@@ -251,12 +253,14 @@ return new class extends Migration
             $table->string('hubungan', 30)->nullable();
             $table->date('tgl_lahir')->nullable();
             $table->string('jenis_kelamin', 1)->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('telp', 20)->nullable();
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_perizinan', function (Blueprint $table) {
@@ -265,15 +269,18 @@ return new class extends Migration
             $table->unsignedBigInteger('pengusul')->nullable()->index();
             $table->text('pekerjaan_ditinggalkan')->nullable();
             $table->text('keterangan')->nullable();
+            $table->text('alamat_izin')->nullable();
             $table->date('tgl_awal')->nullable();
+            $table->time('jam_awal')->nullable();
+            $table->time('jam_akhir')->nullable();
+            $table->string('periode', 20)->nullable();
             $table->date('tgl_akhir')->nullable();
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            // $table->timestamps() usually adds updated_at, but we need updated_by/deleted_by too
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_tanggal_tidak_masuk', function (Blueprint $table) {
@@ -283,9 +290,9 @@ return new class extends Migration
             $table->string('status', 20)->default('pending');
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('perizinan_id')->references('perizinan_id')->on('hr_perizinan')->onDelete('cascade');
         });
@@ -297,9 +304,9 @@ return new class extends Migration
             $table->date('tgl_indisipliner')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_indisipliner_pegawai', function (Blueprint $table) {
@@ -307,9 +314,9 @@ return new class extends Migration
             $table->unsignedBigInteger('indisipliner_id')->nullable();
             $table->unsignedBigInteger('pegawai_id')->nullable();
             $table->timestamps();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('indisipliner_id')->references('indisipliner_id')->on('hr_indisipliner')->cascadeOnDelete();
             $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->cascadeOnDelete();
@@ -331,9 +338,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_riwayat_inpassing', function (Blueprint $table) {
@@ -350,9 +357,9 @@ return new class extends Migration
             $table->string('file_sk', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_riwayat_penugasan', function (Blueprint $table) {
@@ -370,9 +377,9 @@ return new class extends Migration
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('hr_presensi', function (Blueprint $table) {
@@ -402,9 +409,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->index(['pegawai_id', 'tanggal']);
             $table->index('tanggal');
@@ -422,9 +429,9 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('pegawai_id')->references('pegawai_id')->on('pegawai')->onDelete('cascade');
             $table->foreign('jenisfile_id')->references('jenisfile_id')->on('hr_jenis_file')->onDelete('cascade');
@@ -447,9 +454,9 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatapproval_id')->nullable()->index();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->index(['pengusul_id', 'tgl_pelaksanaan']);
             $table->foreign('pengusul_id')->references('pegawai_id')->on('pegawai')->onDelete('cascade');
@@ -463,9 +470,9 @@ return new class extends Migration
             $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->unique(['lembur_id', 'pegawai_id', 'deleted_at'], 'unique_lembur_pegawai');
             $table->foreign('lembur_id')->references('lembur_id')->on('hr_lembur')->onDelete('cascade');

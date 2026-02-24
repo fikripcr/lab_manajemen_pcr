@@ -2,157 +2,146 @@
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Pmb\ConfirmPaymentRequest;
-use App\Http\Requests\Pmb\FileUploadRequest;
-use App\Http\Requests\Pmb\StoreRegistrationRequest;
-use App\Models\Pmb\JenisDokumen;
+use App\Models\Pmb\Camaba;
 use App\Models\Pmb\Pendaftaran;
 use App\Services\Pmb\CamabaService;
-use App\Services\Pmb\PeriodeService;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-// Use OrgUnit
+use Yajra\DataTables\Facades\DataTables;
 
 class CamabaController extends Controller
 {
     public function __construct(
-        protected CamabaService $camabaService,
-        protected PeriodeService $periodeService
+        protected CamabaService $camabaService
     ) {}
 
     /**
-     * Camaba Dashboard
+     * Display list of Camaba (for admin management)
      */
-    public function dashboard()
+    public function index()
     {
-        $data = $this->camabaService->getDashboardData(Auth::user());
-        return view('pages.pmb.camaba.dashboard', $data);
+        return view('pages.pmb.camaba.index');
     }
 
     /**
-     * Start new registration form
+     * Paginate camaba data
+     */
+    public function paginate(Request $request)
+    {
+        $query = Camaba::with(['user']);
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('nama', function ($row) {
+                return $row->user->name ?? '-';
+            })
+            ->addColumn('email', function ($row) {
+                return $row->user->email ?? '-';
+            })
+            ->addColumn('action', function ($row) {
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('pmb.camaba.edit', $row->encrypted_camaba_id),
+                    'editModal' => true,
+                    'viewUrl'   => route('pmb.camaba.show', $row->encrypted_camaba_id),
+                    'deleteUrl' => route('pmb.camaba.destroy', $row->encrypted_camaba_id),
+                ])->render();
+            })
+            ->editColumn('nik', function ($row) {
+                return $row->nik ?? '-';
+            })
+            ->editColumn('no_hp', function ($row) {
+                return $row->no_hp ?? '-';
+            })
+            ->rawColumns(['action', 'nama', 'email'])
+            ->make(true);
+    }
+
+    /**
+     * Show camaba details
+     */
+    public function show(Camaba $camaba)
+    {
+        $camaba->load(['user', 'pendaftaran' => function ($q) {
+            $q->with(['jalur', 'periode', 'pilihanProdi.orgUnit', 'orgUnitDiterima', 'dokumenUpload.jenisDokumen', 'pembayaran']);
+        }]);
+        
+        return view('pages.pmb.camaba.show', compact('camaba'));
+    }
+
+    /**
+     * Show edit form
+     */
+    public function edit(Camaba $camaba)
+    {
+        return view('pages.pmb.camaba.edit', compact('camaba'));
+    }
+
+    /**
+     * Show create form
      */
     public function create()
     {
-        $data = $this->camabaService->getRegistrationFormData(Auth::user());
-
-        if (isset($data['error'])) {
-            return redirect()->route('pmb.camaba.dashboard')->with('error', $data['error']);
-        }
-
-        if (isset($data['info'])) {
-            return redirect()->route('pmb.camaba.dashboard')->with('info', $data['info']);
-        }
-
-        return view('pages.pmb.camaba.register', $data);
+        return view('pages.pmb.camaba.create');
     }
 
     /**
-     * Store registration data
+     * Store camaba
      */
-    public function store(StoreRegistrationRequest $request)
+    public function store(Request $request)
     {
+        $request->validate([
+            'nik' => 'required|unique:pmb_camaba,nik',
+            'no_hp' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|in:L,P',
+            'alamat_lengkap' => 'required',
+            'asal_sekolah' => 'required',
+        ]);
+
         try {
-            $this->camabaService->createRegistration($request->validated());
-            return jsonSuccess('Pendaftaran berhasil dibuat. Silakan lengkapi langkah selanjutnya.', route('pmb.camaba.dashboard'));
-        } catch (Exception $e) {
+            Camaba::create($request->all());
+            return jsonSuccess('Data Camaba berhasil ditambahkan.', route('pmb.camaba.index'));
+        } catch (\Exception $e) {
             logError($e);
-            return jsonError('Gagal membuat pendaftaran: ' . $e->getMessage());
+            return jsonError('Gagal menambahkan data camaba: ' . $e->getMessage());
         }
     }
 
     /**
-     * Payment Page
+     * Update camaba
      */
-    public function payment()
+    public function update(Request $request, Camaba $camaba)
     {
-        try {
-            $pendaftaran = $this->camabaService->getPendingPaymentRegistration(Auth::user());
-            return view('pages.pmb.camaba.payment', compact('pendaftaran'));
-        } catch (Exception $e) {
-            return redirect()->route('pmb.camaba.dashboard')->with('error', $e->getMessage());
-        }
-    }
+        $request->validate([
+            'nik' => 'required|unique:pmb_camaba,nik,' . $camaba->camaba_id . ',camaba_id',
+            'no_hp' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|in:L,P',
+            'alamat_lengkap' => 'required',
+            'asal_sekolah' => 'required',
+        ]);
 
-    /**
-     * Confirm Payment
-     */
-    public function confirmPayment(ConfirmPaymentRequest $request, Pendaftaran $pendaftaran)
-    {
         try {
-            $this->camabaService->confirmPayment($pendaftaran, $request->validated(), $request->file('bukti_bayar'));
-            return jsonSuccess('Konfirmasi pembayaran berhasil dikirim.', route('pmb.camaba.dashboard'));
-        } catch (Exception $e) {
+            $camaba->update($request->all());
+            return jsonSuccess('Data Camaba berhasil diperbarui.', route('pmb.camaba.index'));
+        } catch (\Exception $e) {
             logError($e);
-            return jsonError('Gagal mengirim konfirmasi pembayaran: ' . $e->getMessage());
+            return jsonError('Gagal memperbarui data camaba: ' . $e->getMessage());
         }
     }
 
     /**
-     * Document Upload Page
+     * Delete camaba
      */
-    public function upload()
+    public function destroy(Camaba $camaba)
     {
         try {
-            $data = $this->camabaService->getUploadData(Auth::user());
-            return view('pages.pmb.camaba.upload', $data);
-        } catch (Exception $e) {
-            return redirect()->route('pmb.camaba.dashboard')->with('error', $e->getMessage());
-        }
-    }
-
-    /**
-     * Individual Upload Form (Modal)
-     */
-    public function uploadForm(Request $request)
-    {
-        $pendaftaran_id   = $request->input('pendaftaran');
-        $jenis_dokumen_id = $request->input('jenis');
-        $jenis            = JenisDokumen::findOrFail(decryptIdIfEncrypted($jenis_dokumen_id));
-
-        return view('pages.pmb.camaba.upload_form', compact('pendaftaran_id', 'jenis_dokumen_id', 'jenis'));
-    }
-
-    /**
-     * Do Upload
-     */
-    public function doUpload(FileUploadRequest $request, Pendaftaran $pendaftaran, JenisDokumen $jenis)
-    {
-        try {
-            $this->camabaService->uploadFile($pendaftaran, $jenis->jenis_dokumen_id, $request->file('file'));
-            return jsonSuccess('Dokumen berhasil diunggah.', route('pmb.camaba.upload'));
-        } catch (Exception $e) {
+            $camaba->delete();
+            return jsonSuccess('Data Camaba berhasil dihapus.');
+        } catch (\Exception $e) {
             logError($e);
-            return jsonError('Gagal mengunggah dokumen: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Finalize Upload
-     */
-    public function finalizeFiles(Pendaftaran $pendaftaran)
-    {
-        try {
-            $this->camabaService->finalizeFiles($pendaftaran);
-            return jsonSuccess('Berkas pendaftaran telah diajukan untuk verifikasi.', route('pmb.camaba.dashboard'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memfinalisasi berkas: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Exam Card View
-     */
-    public function examCard()
-    {
-        try {
-            $pendaftaran = $this->camabaService->getExamCardData(Auth::user());
-            return view('pages.pmb.camaba.exam-card', compact('pendaftaran'));
-        } catch (Exception $e) {
-            return redirect()->route('pmb.camaba.dashboard')->with('error', $e->getMessage());
+            return jsonError('Gagal menghapus data camaba: ' . $e->getMessage());
         }
     }
 }

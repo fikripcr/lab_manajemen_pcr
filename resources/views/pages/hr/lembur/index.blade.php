@@ -13,11 +13,11 @@
 
         <div class="card">
             <div class="card-body">
-                <x-tabler.datatable 
+                <x-tabler.datatable
                     id="table-lembur"
                     route="{{ route('hr.lembur.data') }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%'],
+                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
                         ['data' => 'judul', 'name' => 'judul', 'title' => 'Judul'],
                         ['data' => 'pengusul_nama', 'name' => 'pengusul.latestDataDiri.nama', 'title' => 'Pengusul'],
                         ['data' => 'tanggal', 'name' => 'tgl_pelaksanaan', 'title' => 'Tanggal'],
@@ -25,7 +25,7 @@
                         ['data' => 'durasi', 'name' => 'durasi_menit', 'title' => 'Durasi'],
                         ['data' => 'jumlah_pegawai', 'name' => 'jumlah_pegawai', 'title' => 'Pegawai', 'orderable' => false, 'searchable' => false],
                         ['data' => 'status', 'name' => 'status', 'title' => 'Status', 'orderable' => false],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'width' => '10%'],
+                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%'],
                     ]"
                 />
             </div>

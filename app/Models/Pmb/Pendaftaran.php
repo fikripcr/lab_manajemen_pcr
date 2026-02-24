@@ -14,6 +14,7 @@ use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pendaftaran extends Model
@@ -103,8 +104,13 @@ class Pendaftaran extends Model
         return $this->hasOne(PesertaUjian::class, 'pendaftaran_id');
     }
 
-    public function profil()
+    public function profil(): HasOne
     {
-        return $this->hasOne(ProfilMahasiswa::class, 'user_id', 'user_id');
+        return $this->hasOne(Camaba::class, 'user_id', 'user_id');
+    }
+
+    public function camaba(): HasOne
+    {
+        return $this->hasOne(Camaba::class, 'user_id', 'user_id');
     }
 }

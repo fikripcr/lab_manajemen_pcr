@@ -81,7 +81,7 @@
                 <div class="timeline-title {{ $step['completed'] ? '' : 'text-muted' }}">
                     {{ $step['title'] }}
                     @if($pendaftaran->status_terkini === $statusKey)
-                        <span class="badge bg-primary ms-2">Current</span>
+                        <span class="badge bg-primary text-white">Current</span>
                     @endif
                 </div>
                 <div class="timeline-body text-muted">{{ $step['description'] }}</div>

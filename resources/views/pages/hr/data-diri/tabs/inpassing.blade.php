@@ -20,7 +20,7 @@
                     id="table-inpassing"
                     route="{{ route('hr.inpassing.data') }}"
                     :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false],
+                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                         ['data' => 'nama_pegawai', 'name' => 'pegawai.nama', 'title' => 'Pegawai'],
                         ['data' => 'golongan', 'name' => 'golonganInpassing.golongan', 'title' => 'Golongan'],
                         ['data' => 'tmt', 'name' => 'tmt', 'title' => 'Terhitung Mulai Tanggal'],

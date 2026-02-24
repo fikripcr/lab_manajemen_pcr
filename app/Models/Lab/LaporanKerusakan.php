@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\Lab;
 
-use App\Models\User;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -75,21 +74,5 @@ class LaporanKerusakan extends Model
     public function getEncryptedTeknisiIdAttribute()
     {
         return encryptId($this->teknisi_id);
-    }
-
-    /**
-     * Relationship: Created By (Reporter)
-     */
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    /**
-     * Relationship: Reporter (Alias for createdBy)
-     */
-    public function pelapor()
-    {
-        return $this->createdBy();
     }
 }

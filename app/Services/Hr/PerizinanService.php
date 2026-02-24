@@ -30,8 +30,7 @@ class PerizinanService
             $approval = RiwayatApproval::create([
                 'model'            => 'Perizinan',
                 'model_id'         => $perizinan->perizinan_id,
-                'status'           => 'Draft',
-                'created_by_email' => Auth::user()?->email,
+                'status'           => 'Diajukan',
             ]);
 
             $perizinan->update([
@@ -65,11 +64,12 @@ class PerizinanService
     {
         DB::transaction(function () use ($perizinan, $data) {
             $approval = RiwayatApproval::create([
-                'model'      => 'Perizinan',
-                'model_id'   => $perizinan->perizinan_id,
-                'status'     => $data['status'],
-                'pejabat'    => $data['pejabat'] ?? null,
-                'keterangan' => $data['keterangan_approval'] ?? null,
+                'model'         => 'Perizinan',
+                'model_id'      => $perizinan->perizinan_id,
+                'status'        => $data['status'],
+                'pejabat'       => $data['pejabat'] ?? null,
+                'jenis_jabatan' => $data['jenis_jabatan'] ?? null,
+                'keterangan'    => $data['keterangan'] ?? null,
             ]);
 
             $perizinan->update([

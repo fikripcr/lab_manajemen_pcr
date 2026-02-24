@@ -20,7 +20,7 @@
                     :columns="[
                         ['name' => 'Jenis Dokumen'],
                         ['name' => 'Status'],
-                        ['name' => 'Aksi', 'className' => 'w-10']
+                        ['name' => 'Aksi', 'class' => 'w-10']
                     ]"
                 >
                     @foreach($syarat as $s)
@@ -31,7 +31,7 @@
                         <td data-label="Dokumen">
                             <div>{{ $s->jenisDokumen->nama_dokumen }}</div>
                             <div class="text-muted small">
-                                {{ $s->is_required ? 'Wajib' : 'Opsional' }} | 
+                                {{ $s->is_required ? 'Wajib' : 'Opsional' }} |
                                 Maks: {{ formatBytes($s->jenisDokumen->max_size_kb * 1024) }}
                             </div>
                         </td>
@@ -45,8 +45,8 @@
                         </td>
                         <td>
                             <x-tabler.button type="button" class="btn-sm btn-primary ajax-modal-btn" icon="ti ti-upload" text="Unggah"
-                                data-modal-target="#modalAction" 
-                                data-modal-title="Upload {{ $s->jenisDokumen->nama_dokumen }}" 
+                                data-modal-target="#modalAction"
+                                data-modal-title="Upload {{ $s->jenisDokumen->nama_dokumen }}"
                                 data-url="{{ route('pmb.camaba.upload-form', ['pendaftaran' => $pendaftaran->encrypted_pendaftaran_id, 'jenis' => $s->jenisDokumen->encrypted_jenis_dokumen_id]) }}" />
                             @if($upload)
                             <x-tabler.button href="{{ asset('storage/' . $upload->file_path) }}" target="_blank" class="btn-sm btn-info" icon="ti ti-eye" text="Lihat" />

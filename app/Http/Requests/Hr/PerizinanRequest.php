@@ -13,6 +13,35 @@ class PerizinanRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $data = [];
+
+        if ($this->filled('waktu_awal')) {
+            $parts = explode(' ', $this->input('waktu_awal'));
+            if (count($parts) >= 1) {
+                $data['tgl_awal'] = $parts[0];
+            }
+            if (count($parts) == 2) {
+                $data['jam_awal'] = $parts[1];
+            }
+        }
+
+        if ($this->filled('waktu_akhir')) {
+            $parts = explode(' ', $this->input('waktu_akhir'));
+            if (count($parts) >= 1) {
+                $data['tgl_akhir'] = $parts[0];
+            }
+            if (count($parts) == 2) {
+                $data['jam_akhir'] = $parts[1];
+            }
+        }
+
+        if (!empty($data)) {
+            $this->merge($data);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,6 +55,8 @@ class PerizinanRequest extends FormRequest
             'pekerjaan_ditinggalkan' => 'nullable|string|max:500',
             'keterangan'             => 'nullable|string|max:1000',
             'alamat_izin'            => 'nullable|string',
+            'waktu_awal'             => 'required',
+            'waktu_akhir'            => 'required',
             'tgl_awal'               => 'required|date',
             'tgl_akhir'              => 'required|date|after_or_equal:tgl_awal',
             'jam_awal'               => 'nullable',

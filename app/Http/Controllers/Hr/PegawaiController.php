@@ -56,7 +56,15 @@ class PegawaiController extends Controller
                         'viewUrl'    => route('hr.pegawai.show', $row->hashid),
                         'editUrl'    => route('hr.pegawai.edit', $row->hashid),
                         'deleteUrl'  => route('hr.pegawai.destroy', $row->hashid),
-                        'deleteName' => $row->nama, // Optional, if component supports it or we need it for JS
+                        'deleteName' => $row->nama,
+                        'extraActions' => !$row->user_id ? [
+                            [
+                                'icon' => 'ti ti-user-plus',
+                                'text' => 'Generate Data User',
+                                'class' => 'dropdown-item generate-user',
+                                'dataUrl' => route('hr.pegawai.generate-user', $row->hashid),
+                            ],
+                        ] : [],
                     ])->render();
                 })
                 ->addColumn('nama_lengkap', function ($row) {
@@ -204,5 +212,74 @@ class PegawaiController extends Controller
         } catch (Exception $e) {
             return jsonError($e->getMessage());
         }
+    }
+
+    /**
+     * Generate user account for pegawai without user.
+     */
+    public function generateUser(Pegawai $pegawai)
+    {
+        try {
+            if ($pegawai->user) {
+                return jsonError('Pegawai ini sudah memiliki user.');
+            }
+
+            // Get email from latest data diri
+            $email = $pegawai->latestDataDiri?->email;
+            
+            if (!$email) {
+                return jsonError('Email tidak ditemukan pada data diri pegawai.');
+            }
+
+            // Check if email already exists
+            if (\App\Models\User::where('email', $email)->exists()) {
+                return jsonError("Email {$email} sudah terdaftar. Silakan gunakan email lain.");
+            }
+
+            // Generate password default
+            $password = 'password123';
+            
+            // Create user
+            $user = \App\Models\User::create([
+                'name'              => $pegawai->nama,
+                'email'             => $email,
+                'password'          => \Illuminate\Support\Facades\Hash::make($password),
+                'email_verified_at' => now(),
+                'created_by'        => auth()->id() ?? 'system',
+            ]);
+
+            // Link pegawai to user
+            $pegawai->update(['user_id' => $user->id]);
+
+            // Assign default role based on posisi
+            $role = $this->determineRoleFromPosisi($pegawai->latestDataDiri?->posisi?->name);
+            $user->assignRole($role);
+
+            return jsonSuccess(
+                "User berhasil dibuat untuk {$pegawai->nama}.<br>Email: {$email}<br>Password: {$password}<br>Role: {$role}",
+                route('hr.pegawai.index')
+            );
+        } catch (Exception $e) {
+            logError($e);
+            return jsonError('Gagal membuat user: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Determine role from posisi.
+     */
+    private function determineRoleFromPosisi($posisi)
+    {
+        $posisi = strtolower($posisi ?? '');
+        
+        if (str_contains($posisi, 'dosen')) {
+            return 'dosen';
+        } elseif (str_contains($posisi, 'teknisi')) {
+            return 'teknisi';
+        } elseif (str_contains($posisi, 'kepala lab')) {
+            return 'penanggung_jawab_lab';
+        }
+        
+        return 'admin'; // Default role
     }
 }
