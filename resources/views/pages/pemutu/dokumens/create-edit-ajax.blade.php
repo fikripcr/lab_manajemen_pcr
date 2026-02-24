@@ -6,7 +6,7 @@
 
     // TYPE: 'dokumen', 'poin', 'indikator'
     if (!isset($type)) {
-        $type = 'dokumen'; 
+        $type = 'dokumen';
     }
 
     if ($type === 'dokumen') {
@@ -50,12 +50,12 @@
                 </div>
             @else
                 <div class="mb-3">
-                    <x-tabler.form-select 
-                        id="jenis" 
-                        name="jenis" 
+                    <x-tabler.form-select
+                        id="jenis"
+                        name="jenis"
                         label="Jenis Dokumen"
-                        required="true" 
-                        type="select2" 
+                        required="true"
+                        type="select2"
                         data-dropdown-parent="#modalAction"
                         :options="$allowedTypes"
                         :selected="null"
@@ -86,7 +86,7 @@
         <div class="mb-3">
             <x-tabler.form-input name="judul" id="judul" label="Judul Dokumen" :value="$isEdit ? $dokumen->judul : ''" placeholder="Contoh: Manual Mutu" required="true" />
         </div>
-        
+
         <div class="mb-3">
             <x-tabler.form-input name="kode" id="kode" label="Kode Dokumen" :value="$isEdit ? $dokumen->kode : ''" placeholder="Contoh: MM-01" />
         </div>
@@ -110,25 +110,25 @@
 
         <div class="row">
             <div class="col-md-12">
-                <x-tabler.form-input 
-                    name="judul" 
-                    label="Judul" 
-                    id="judul" 
+                <x-tabler.form-input
+                    name="judul"
+                    label="Judul"
+                    id="judul"
                     :value="$isEdit ? $dokSub->judul : ''"
-                    required="true" 
-                    placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan' : 'Contoh: Misi 1' }}" 
+                    required="true"
+                    placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan' : 'Contoh: Misi 1' }}"
                 />
             </div>
         </div>
-        
+
         @if($canProduceIndikator)
         <div class="mb-3 mt-3">
-            <x-tabler.form-checkbox 
-                name="is_hasilkan_indikator" 
-                label="Hasilkan Indikator?" 
-                value="1" 
-                :checked="$isEdit ? $dokSub->is_hasilkan_indikator : ($jenisPoin === 'renop' || $jenisPoin === 'standar')" 
-                switch 
+            <x-tabler.form-checkbox
+                name="is_hasilkan_indikator"
+                label="Hasilkan Indikator?"
+                value="1"
+                :checked="$isEdit ? $dokSub->is_hasilkan_indikator : ($jenisPoin === 'renop' || $jenisPoin === 'standar')"
+                switch
             />
             <div class="text-muted small">Jika dicentang, poin ini bisa ditambahkan Indikator.</div>
         </div>
@@ -136,14 +136,14 @@
 
         @if(!$canProduceIndikator || $jenisPoin === 'renop' || $isEdit)
         <div class="mt-3">
-            <x-tabler.form-textarea 
+            <x-tabler.form-textarea
                 :type="$isEdit ? 'editor' : 'textarea'"
-                name="isi" 
-                id="isi" 
-                label="{{ $isEdit ? 'Konten / Isi Lengkap' : 'Isi Poin' }}" 
+                name="isi"
+                id="isi"
+                label="{{ $isEdit ? $dokSub->isi : '' }}"
                 :value="$isEdit ? $dokSub->isi : ''"
-                rows="4" 
-                placeholder="Isi poin..." 
+                rows="4"
+                placeholder="Isi poin..."
                 :height="$isEdit ? 300 : null"
             />
         </div>
@@ -177,12 +177,12 @@
                     <label class="form-label">Tipe Indikator</label>
                     <div class="form-control-plaintext fw-bold text-success"><i class="ti ti-lock me-1"></i>Indikator Renop</div>
                 @else
-                    <x-tabler.form-select 
+                    <x-tabler.form-select
                         id="type"
-                        name="type" 
-                        label="Tipe Indikator" 
+                        name="type"
+                        label="Tipe Indikator"
                         :options="['standar' => 'Indikator Standar', 'renop' => 'Indikator Renop']"
-                        :selected="$isEdit ? $indikator->type : 'standar'" 
+                        :selected="$isEdit ? $indikator->type : 'standar'"
                         required="true"
                         data-dropdown-parent="#modalAction"
                     />
