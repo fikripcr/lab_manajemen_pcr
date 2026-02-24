@@ -1,7 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Tambah Personil Baru" pretitle="Personil" />
+<x-tabler.page-header :title="isset($personil) && $personil->exists ? 'Edit Personil' : 'Tambah Personil Baru'" pretitle="Personil" />
 @endsection
 
 @section('content')

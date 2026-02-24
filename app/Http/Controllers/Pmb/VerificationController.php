@@ -32,7 +32,7 @@ class VerificationController extends Controller
     {
         return datatables()->of($this->verificationService->getPendingPaymentsQuery())
             ->addIndexColumn()
-            ->editColumn('jumlah_bayar', fn($p) => 'Rp ' . number_format($p->jumlah_bayar, 0, ',', '.'))
+            ->editColumn('jumlah_bayar', fn($p) => pmbCurrency($p->jumlah_bayar))
             ->addColumn('action', function ($row) {
                 return view('pages.pmb.verification._payment_action', [
                     'row'       => $row,
@@ -129,8 +129,9 @@ class VerificationController extends Controller
                 ]);
             }
             
-            // Update status pendaftaran if all documents verified
-            $pendaftaran = $pendaftaran->dokumenUpload->first()?->pendaftaran;
+            // Corrected: find $pendaftaran for the first document
+            $pendaftaran = $request->status === 'Valid' ? \App\Models\Pmb\DokumenUpload::find($request->dokumen_ids[0] ?? null)?->pendaftaran : null;
+
             if ($pendaftaran && $request->status === 'Valid') {
                 $allVerified = $pendaftaran->dokumenUpload->where('status_verifikasi', '!=', 'Valid')->isEmpty();
                 if ($allVerified) {
@@ -138,7 +139,9 @@ class VerificationController extends Controller
                 }
             }
             
-            logActivity('pmb_verifikasi_berkas', "Verifikasi berkas batch: {$request->status}", $pendaftaran);
+            if ($pendaftaran) {
+                logActivity('pmb_verifikasi_berkas', "Verifikasi berkas batch: {$request->status}", $pendaftaran);
+            }
             
             return jsonSuccess('Verifikasi berkas berhasil.');
         } catch (\Exception $e) {

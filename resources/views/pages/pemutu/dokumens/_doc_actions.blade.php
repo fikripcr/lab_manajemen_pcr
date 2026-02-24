@@ -2,11 +2,11 @@
     Shared action buttons for Dokumen detail.
     Requires: $dokumen, $childLabel, $isDokSubBased
 --}}
-@if($dokumen->jenis === 'renop')
+{{-- @if($dokumen->jenis === 'renop') --}}
     <x-tabler.button type="button" class="btn-primary d-none d-sm-inline-block"
         href="{{ route('pemutu.dokumens.show-renop-with-indicators', $dokumen->encrypted_dok_id) }}"
         icon="ti ti-chart-bar" text="Akumulasi Indikator" />
-@endif
+{{-- @endif --}}
 
 <x-tabler.button-group>
     <x-tabler.button href="#" class="btn-white ajax-modal-btn"

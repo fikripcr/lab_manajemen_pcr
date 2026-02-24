@@ -8,7 +8,9 @@ use App\Models\Sys\ErrorLog;
 use App\Models\Sys\ServerMonitorCheck;
 use App\Models\User;
 use App\Notifications\SysTestNotification;
-use BaconQrCode\Renderer\GDLibRenderer;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -315,12 +317,14 @@ class TestController extends Controller
         $text = $request->input('text');
         $size = $request->input('size', 200);
 
-        // Generate QR code as PNG using BaconQrCode
-        $renderer  = new GDLibRenderer($size);
-        $writer    = new Writer($renderer);
-        $qrCodeSvg = $writer->writeString($text);
+        // Generate QR code as SVG text
+        $renderer = new ImageRenderer(
+            new RendererStyle($size),
+            new SvgImageBackEnd()
+        );
+        $qrCodeSvgValue = $renderer->render($text);
 
-        return jsonSuccess('QR code generated successfully', null, ['svg' => base64_encode($qrCodeSvg)]);
+        return jsonSuccess('QR code generated successfully', null, ['svg' => base64_encode($qrCodeSvgValue)]);
     }
 
     public function qrCode()

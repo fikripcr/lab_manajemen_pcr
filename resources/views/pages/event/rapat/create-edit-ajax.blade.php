@@ -3,19 +3,11 @@
 @section('title', $pageTitle)
 
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <h2 class="page-title">
-            {{ $pageTitle }}
-        </h2>
-        <div class="text-muted mt-1">Kegiatan / Rapat / {{ $rapat->exists ? 'Edit' : 'Jadwalkan' }}</div>
-    </div>
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-            <x-tabler.button type="back" href="{{ route('Kegiatan.rapat.index') }}" />
-        </div>
-    </div>
-</div>
+<x-tabler.page-header :title="$pageTitle" pretitle="Kegiatan / Rapat / {{ $rapat->exists ? 'Edit' : 'Jadwalkan' }}">
+    <x-slot:actions>
+        <x-tabler.button type="back" href="{{ route('Kegiatan.rapat.index') }}" />
+    </x-slot:actions>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

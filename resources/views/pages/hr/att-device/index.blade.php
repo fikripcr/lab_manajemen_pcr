@@ -1,18 +1,11 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <h2 class="page-title">
-            Data Mesin Presensi
-        </h2>
-    </div>
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
+    <x-tabler.page-header title="Data Mesin Presensi">
+        <x-slot:actions>
              <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Data" class="ajax-modal-btn" data-url="{{ route('hr.att-device.create') }}" data-modal-title="Tambah Mesin Presensi" />
-        </div>
-    </div>
-</div>
+        </x-slot:actions>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')

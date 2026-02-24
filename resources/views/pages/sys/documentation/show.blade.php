@@ -21,7 +21,13 @@
 @else
     @extends('layouts.tabler.app')
 
-    @section('title', 'Documentation: ' . $fileName)
+    @section('header')
+        <x-tabler.page-header title="Documentation: {{ $fileName }}">
+            <x-slot:actions>
+                <x-tabler.button type="back" :href="route('sys.documentation.index')" />
+            </x-slot:actions>
+        </x-tabler.page-header>
+    @endsection
 
     @section('content')
         @push('css')
@@ -31,9 +37,7 @@
         <div class="row">
             <div class="col-md-3 ">
                 <div class=" sticky-top">
-                    <div class="mb-1">
-                        <x-tabler.button type="back" :href="route('sys.documentation.index')" class="w-100" />
-                    </div>
+                    <!-- page-header back action replaces the manual back button here -->
 
                     <div class="card" style="top: 1rem;">
                         <div class="card-header d-flex justify-content-between align-items-center">

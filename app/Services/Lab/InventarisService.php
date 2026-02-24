@@ -29,12 +29,7 @@ class InventarisService
             $query->where('kondisi_terakhir', $filters['condition']);
         }
 
-        // Handle DataTables search format (array with 'value' key)
-        $searchValue = $filters['search'] ?? '';
-        if (is_array($searchValue)) {
-            $searchValue = $searchValue['value'] ?? '';
-        }
-
+        $searchValue = sysDataTableSearchValue($filters['search'] ?? '');
         if (! empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
                 $q->where('nama_alat', 'like', '%' . $searchValue . '%')

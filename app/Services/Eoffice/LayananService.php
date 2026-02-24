@@ -28,7 +28,7 @@ class LayananService
         }
 
         if ($request->filled('search')) {
-            $search = $request->search['value'];
+            $search = sysDataTableSearchValue($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('no_layanan', 'like', "%{$search}%")
                     ->orWhere('pengusul_nama', 'like', "%{$search}%")
@@ -49,11 +49,11 @@ class LayananService
         }
 
         if ($request->filled('date_range')) {
-            $dates = explode(' to ', $request->date_range);
-            if (count($dates) == 2) {
+            [$start, $end] = sysParseDateRange($request->date_range);
+            if ($start && $end) {
                 $query->whereBetween('created_at', [
-                    trim($dates[0]) . ' 00:00:00',
-                    trim($dates[1]) . ' 23:59:59',
+                    $start . ' 00:00:00',
+                    $end . ' 23:59:59',
                 ]);
             }
         }
@@ -129,11 +129,8 @@ class LayananService
      */
     private function generateNoLayanan(JenisLayanan $jl)
     {
-        $prefix = strtoupper(substr($jl->kategori, 0, 3));
-        $date   = date('Ymd');
-        $count  = Layanan::where('no_layanan', 'like', "{$prefix}-{$date}-%")->count() + 1;
-
-        return sprintf("%s-%s-%04d", $prefix, $date, $count);
+        $prefix = strtoupper(substr($jl->kategori, 0, 3)) . '-' . date('Ymd') . '-';
+        return sysGenerateRefNumber($prefix, Layanan::class, 'no_layanan');
     }
 
     /**

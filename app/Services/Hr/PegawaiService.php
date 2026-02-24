@@ -142,7 +142,7 @@ class PegawaiService
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $model->getKey()]);
 
-            $modelName = (new ReflectionClass($modelClass))->getShortName();
+            $modelName = hrModelLabel($modelClass);
             logActivity('hr', "Mengajukan perubahan {$modelName} untuk pegawai: {$pegawai->nama}", $pegawai);
 
             return $model;
@@ -177,7 +177,7 @@ class PegawaiService
             // 4. Update Approval with model_id
             $approval->update(['model_id' => $model->getKey()]);
 
-            $shortName = (new \ReflectionClass($modelClass))->getShortName();
+            $shortName = hrModelLabel($modelClass);
             logActivity('hr', "Mengajukan penambahan {$shortName} untuk pegawai: {$pegawai->nama}", $pegawai);
 
             return $model;
@@ -224,7 +224,7 @@ class PegawaiService
                 $pegawai->update([$col => $model->getKey()]);
             }
 
-            $modelShortName = (new \ReflectionClass($modelClass))->getShortName();
+            $modelShortName = hrModelLabel($modelClass);
             logActivity('hr', "Menyetujui pengajuan {$modelShortName} untuk pegawai: {$pegawai->nama}", $pegawai);
 
             return $approval;
@@ -255,7 +255,7 @@ class PegawaiService
             $model      = $modelClass::findOrFail($approval->model_id);
             $pegawai    = Pegawai::findOrFail($model->pegawai_id);
 
-            $modelShortName = (new \ReflectionClass($modelClass))->getShortName();
+            $modelShortName = hrModelLabel($modelClass);
             logActivity('hr', "Menolak pengajuan {$modelShortName} untuk pegawai: {$pegawai->nama} (Alasan: $reason)", $pegawai);
 
             return $approval;

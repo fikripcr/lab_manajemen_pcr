@@ -54,28 +54,16 @@ class PerizinanController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('nama_pegawai', function ($row) {
-                $dataDiri = $row->pengusulPegawai?->latestDataDiri;
-                return $dataDiri ? ($dataDiri->inisial . ' - ' . $dataDiri->nama) : 'N/A';
+                return hrPegawaiName($row->pengusulPegawai);
             })
             ->addColumn('jenis_izin', function ($row) {
                 return $row->jenisIzin?->nama ?? '-';
             })
             ->addColumn('tanggal', function ($row) {
-                $awal  = $row->tgl_awal?->format('d/m/Y') ?? '-';
-                $akhir = $row->tgl_akhir?->format('d/m/Y') ?? '-';
-                return $awal . ' s/d ' . $akhir;
+                return hrDateRange($row->tgl_awal, $row->tgl_akhir);
             })
             ->addColumn('status', function ($row) {
-                $status = $row->status;
-                $badges = [
-                    'Draft'    => 'bg-secondary-lt',
-                    'Diajukan' => 'bg-warning',
-                    'Pending'  => 'bg-warning-lt',
-                    'Approved' => 'bg-success-lt',
-                    'Rejected' => 'bg-danger-lt',
-                ];
-                $badge = $badges[$status] ?? 'bg-secondary-lt';
-                return '<span class="badge ' . $badge . ' text-white">' . $status . '</span>';
+                return hrStatusBadge($row->status);
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [

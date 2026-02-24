@@ -72,7 +72,7 @@ class CamabaController extends Controller
      */
     public function edit(Camaba $camaba)
     {
-        return view('pages.pmb.camaba.edit', compact('camaba'));
+        return view('pages.pmb.camaba.create-edit-ajax', compact('camaba'));
     }
 
     /**
@@ -80,7 +80,7 @@ class CamabaController extends Controller
      */
     public function create()
     {
-        return view('pages.pmb.camaba.create');
+        return view('pages.pmb.camaba.create-edit-ajax');
     }
 
     /**

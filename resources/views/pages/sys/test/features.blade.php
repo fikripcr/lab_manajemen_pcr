@@ -1,20 +1,11 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">System Test</div>
-        <h2 class="page-title">JS Library Features</h2>
-    </div>
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-            <a href="{{ route('sys.test.index') }}" class="btn btn-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
-                Back
-            </a>
-        </div>
-    </div>
-</div>
+<x-tabler.page-header title="JS Library Features" pretitle="System Test">
+    <x-slot:actions>
+        <x-tabler.button type="back" href="{{ route('sys.test.index') }}" />
+    </x-slot:actions>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

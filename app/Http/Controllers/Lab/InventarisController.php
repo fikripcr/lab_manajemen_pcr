@@ -41,24 +41,7 @@ class InventarisController extends Controller
                 return '<span class="badge bg-label-info me-1">' . $item->jenis_alat . '</span>';
             })
             ->editColumn('kondisi_terakhir', function ($item) {
-                $badgeClass = '';
-                switch ($item->kondisi_terakhir) {
-                    case 'Baik':
-                        $badgeClass = 'bg-label-success';
-                        break;
-                    case 'Rusak Ringan':
-                        $badgeClass = 'bg-label-warning';
-                        break;
-                    case 'Rusak Berat':
-                        $badgeClass = 'bg-label-danger';
-                        break;
-                    case 'Tidak Dapat Digunakan':
-                        $badgeClass = 'bg-label-dark';
-                        break;
-                    default:
-                        $badgeClass = 'bg-label-secondary';
-                }
-                return '<span class="badge ' . $badgeClass . '">' . $item->kondisi_terakhir . '</span>';
+                return labConditionBadge($item->kondisi_terakhir);
             })
             ->editColumn('tanggal_pengecekan', function ($item) {
                 return formatTanggalIndo($item->tanggal_pengecekan);

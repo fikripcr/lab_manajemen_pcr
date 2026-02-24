@@ -1383,8 +1383,78 @@ php artisan make:import UsersImport --model=User
 
 ---
 
-**Dokumen ini bersifat definitif dan diperbarui secara berkala.**  
+### D. Project Management Module Standards
+
+The Project Management module serves as a **reference implementation** for new modules.
+
+#### Module Structure Example:
+```
+app/
+├── Models/Project/
+│   ├── Project.php
+│   ├── ProjectTask.php
+│   └── ...
+├── Services/Project/
+│   ├── ProjectService.php
+│   └── ProjectTaskService.php
+├── Http/
+│   ├── Controllers/Project/
+│   │   ├── ProjectController.php
+│   │   └── ProjectTaskController.php
+│   └── Requests/Project/
+│       ├── ProjectRequest.php
+│       └── ProjectTaskRequest.php
+routes/
+└── project.php
+resources/
+├── views/pages/projects/
+│   ├── index.blade.php
+│   ├── show.blade.php
+│   ├── create-edit.blade.php
+│   └── kanban.blade.php
+└── components/project/
+    ├── project-name.blade.php
+    └── ...
+```
+
+#### Key Features:
+- ✅ Custom primary keys (`project_id`, `project_task_id`)
+- ✅ Encrypted IDs (HashidBinding trait)
+- ✅ Service Pattern architecture
+- ✅ Bottom-up costing system
+- ✅ Kanban board with drag & drop
+- ✅ DataTables integration
+- ✅ AJAX CRUD operations
+- ✅ Activity logging
+
+#### Naming Standards:
+```php
+// Tables: pr_{module}_{entity}
+pr_projects
+pr_project_tasks
+pr_project_costs
+
+// Models: PascalCase in Project namespace
+App\Models\Project\Project
+App\Models\Project\ProjectTask
+
+// Controllers: {Entity}Controller
+ProjectController
+ProjectTaskController
+
+// Services: {Entity}Service
+ProjectService
+ProjectTaskService
+
+// Requests: {Entity}Request
+ProjectRequest
+ProjectTaskRequest
+```
+
+---
+
+**Dokumen ini bersifat definitif dan diperbarui secara berkala.**
 Untuk pertanyaan atau clarifications, refer ke dokumen ini atau cek existing implementations di codebase.
 
-**Last Updated:** Februari 2026  
-**Version:** 2.0 (Comprehensive Single Source of Truth)
+**Last Updated:** Februari 2026
+**Version:** 2.1 (Added Project Management Module Standards)

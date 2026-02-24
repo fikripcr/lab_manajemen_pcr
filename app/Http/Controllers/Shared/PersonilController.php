@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shared\PersonilRequest;
+use App\Models\Shared\Personil;
 use App\Models\Shared\StrukturOrganisasi;
 use App\Services\Shared\PersonilService;
 use Exception;
@@ -68,8 +69,7 @@ class PersonilController extends Controller
 
     public function create()
     {
-        $units = StrukturOrganisasi::orderBy('name')->get();
-        return view('pages.shared.personil.create', compact('units'));
+        return view('pages.shared.personil.create-edit-ajax', compact('units'));
     }
 
     public function store(PersonilRequest $request)
@@ -92,7 +92,7 @@ class PersonilController extends Controller
     public function edit(Personil $personil)
     {
         $units = StrukturOrganisasi::orderBy('name')->get();
-        return view('pages.shared.personil.edit', compact('personil', 'units'));
+        return view('pages.shared.personil.create-edit-ajax', compact('personil', 'units'));
     }
 
     public function update(PersonilRequest $request, Personil $personil)

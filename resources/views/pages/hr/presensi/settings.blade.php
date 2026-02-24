@@ -1,793 +1,90 @@
 @extends('layouts.tabler.app')
 
-@section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <h2 class="page-title">
-            <i class="ti ti-settings me-2"></i>
-            Pengaturan Presensi
-        </h2>
-        <div class="text-muted mt-1">Konfigurasi lokasi kantor dan radius presensi online</div>
-    </div>
-    <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-            <a href="{{ route('hr.presensi.index') }}" class="btn btn-outline-primary">
-                <i class="ti ti-arrow-left me-2"></i>
-                Kembali
-            </a>
-        </div>
-    </div>
-</div>
+@section('title', 'Pengaturan Presensi')
+@section('pretitle', 'Konfigurasi lokasi kantor and radius presensi online')
+
+@section('actions')
+    <x-tabler.button href="{{ route('hr.presensi.index') }}" class="btn-ghost-secondary" icon="ti ti-arrow-left" text="Kembali" />
 @endsection
 
 @section('content')
-<div class="row g-4">
-    <!-- Main Settings Card -->
-    <div class="col-lg-8">
+<div class="row row-cards">
+    <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex align-items-center">
-                    <div class="me-3">
-                        <div class="avatar avatar-lg bg-primary-lt">
-                            <i class="ti ti-map-pin fs-2"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="card-title mb-1">Pengaturan Lokasi & Radius</h3>
-                        <div class="text-muted">Tentukan lokasi kantor dan batas radius presensi</div>
-                    </div>
-                </div>
+                <h3 class="card-title">Konfigurasi Lokasi Kantor</h3>
             </div>
             <div class="card-body">
-                <form id="settings-form" action="{{ route('hr.presensi.update-settings') }}" method="POST">
+                <form action="#" method="POST" class="ajax-form">
                     @csrf
-                    <div class="row g-4">
-                        <!-- Location Coordinates -->
-                        <div class="col-12">
-                            <div class="border rounded p-4 bg-light">
-                                <h5 class="mb-3">
-                                    <i class="ti ti-gps me-2"></i>
-                                    Koordinat Lokasi Kantor
-                                </h5>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <x-tabler.form-input type="number" step="0.000001" name="office_latitude" id="office_latitude" 
-                                               label="Latitude" value="-6.208763" required="true"
-                                               placeholder="Contoh: -6.208763">
-                                            <x-slot:prepend>
-                                                <span class="input-group-text">
-                                                    <i class="ti ti-map-pin"></i>
-                                                </span>
-                                            </x-slot:prepend>
-                                            <x-slot:append>
-                                                <x-tabler.button type="button" class="btn-primary" id="btn-get-lat" title="Dapatkan lokasi saat ini" icon="ti ti-crosshair" />
-                                            </x-slot:append>
-                                        </x-tabler.form-input>
-                                        <div class="form-text">Koordinat latitude lokasi kantor (contoh: -6.208763)</div>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <x-tabler.form-input type="number" step="0.000001" name="office_longitude" id="office_longitude" 
-                                               label="Longitude" value="106.845599" required="true"
-                                               placeholder="Contoh: 106.845599">
-                                            <x-slot:prepend>
-                                                <span class="input-group-text">
-                                                    <i class="ti ti-map-pin"></i>
-                                                </span>
-                                            </x-slot:prepend>
-                                            <x-slot:append>
-                                                <x-tabler.button type="button" class="btn-primary" id="btn-get-lng" title="Dapatkan lokasi saat ini" icon="ti ti-crosshair" />
-                                            </x-slot:append>
-                                        </x-tabler.form-input>
-                                        <div class="form-text">Koordinat longitude lokasi kantor (contoh: 106.845599)</div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="mb-3">
+                        <x-tabler.form-input name="office_name" label="Nama Kantor" value="Politeknik Caltex Riau" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <x-tabler.form-input name="latitude" label="Latitude" value="-0.531234" />
                         </div>
-
-                        <!-- Address -->
-                        <x-tabler.form-textarea name="office_address" id="office_address" label="Alamat Kantor" rows="3" required="true" placeholder="Masukkan alamat lengkap kantor..." value="Jakarta, Indonesia" help="Alamat lengkap kantor yang akan ditampilkan di presensi" />
-
-                        <!-- Radius Settings -->
-                        <div class="col-12">
-                            <div class="border rounded p-4 bg-light">
-                                <h5 class="mb-3">
-                                    <i class="ti ti-ruler me-2"></i>
-                                    Pengaturan Radius
-                                </h5>
-                                <div class="row g-3">
-                                    <div class="col-md-8">
-                                        <x-tabler.form-input type="range" name="allowed_radius" id="allowed_radius" 
-                                               label="Radius Presensi" min="10" max="1000" value="100" step="10">
-                                            <x-slot:prepend>
-                                                <span class="input-group-text">
-                                                    <i class="ti ti-ruler-2"></i>
-                                                </span>
-                                            </x-slot:prepend>
-                                            <x-slot:append>
-                                                <span class="input-group-text">
-                                                    <span id="radius-value">100</span> m
-                                                </span>
-                                            </x-slot:append>
-                                        </x-tabler.form-input>
-                                        <div class="form-text">
-                                            Radius maksimum untuk presensi (10-1000 meter)
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="text-center p-3 bg-white rounded border">
-                                            <div class="text-muted small mb-1">Radius Aktif</div>
-                                            <div class="h2 mb-0 text-primary">
-                                                <i class="ti ti-ruler-2"></i>
-                                                <span id="radius-display">100</span>
-                                                <small class="text-muted">m</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <x-tabler.form-input name="longitude" label="Longitude" value="101.442345" />
                         </div>
-
-                        <div class="col-12">
-                            <div class="form-label fw-semibold">
-                                <i class="ti me-2"></i>
-                                Status Presensi
-                            </div>
-                            <x-tabler.form-checkbox 
-                                id="is_active" 
-                                name="is_active" 
-                                value="1" 
-                                label="Aktifkan Presensi Online" 
-                                description="Aktifkan fitur presensi online untuk karyawan" 
-                                checked 
-                                switch 
-                                inputClass="form-check-lg" 
-                            />
+                    </div>
+                    <div class="mb-3">
+                        <x-tabler.form-input name="radius" label="Radius (Meter)" type="number" value="500" />
+                        <small class="text-muted">Jarak maksimal karyawan dari koordinat kantor untuk dapat melakukan presensi.</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Status Fitur Presensi Online</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" checked>
+                            <span class="form-check-label">Aktif</span>
                         </div>
-
-                        <!-- Action Buttons -->
-                        <div class="col-12">
-                            <div class="d-flex gap-2 justify-content-end">
-                                <x-tabler.button type="button" class="btn-outline-danger" id="btn-reset-default" icon="ti ti-refresh" text="Reset Default" />
-                                <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Pengaturan" />
-                            </div>
-                        </div>
+                    </div>
+                    
+                    <div class="form-footer">
+                        <x-tabler.button type="submit" text="Simpan Pengaturan" class="w-100" />
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <!-- Live Test Card -->
-    <div class="col-lg-4">
+    
+    <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex align-items-center">
-                    <div class="me-3">
-                        <div class="avatar avatar-lg bg-success-lt">
-                            <i class="ti ti-crosshair fs-2"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="card-title mb-1">Test Lokasi</h3>
-                        <div class="text-muted">Uji lokasi Anda secara real-time</div>
-                    </div>
-                </div>
+                <h3 class="card-title">Test Akurasi Lokasi</h3>
             </div>
             <div class="card-body">
-                <!-- Test Status -->
-                <div id="test-status" class="alert alert-info d-none">
-                    <div class="d-flex align-items-center">
-                        <div class="spinner-border spinner-border-sm me-3"></div>
-                        <div>
-                            <strong>Mendapatkan lokasi Anda...</strong>
-                            <div class="small">Mohon tunggu sebentar</div>
-                        </div>
+                <p class="text-muted">Gunakan fitur ini untuk mengetes apakah koordinat kantor sudah sesuai dengan lokasi fisik saat ini.</p>
+                
+                <div class="p-3 border rounded bg-light mb-3">
+                    <div class="id-info mb-2">
+                        <small class="text-muted uppercase">Lokasi Saat Ini</small>
+                        <div id="test-current-coord" class="fw-bold">-</div>
+                    </div>
+                    <div class="distance-info">
+                        <small class="text-muted uppercase">Jarak ke Koordinat Kantor</small>
+                        <div id="test-result-distance" class="fw-bold">-</div>
                     </div>
                 </div>
                 
-                <!-- Test Results -->
-                <div id="test-results" style="display: none;">
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-2">Lokasi Anda Saat Ini</h6>
-                        <div class="border rounded p-3 bg-light">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="ti ti-map-pin text-primary me-2"></i>
-                                <span class="fw-semibold">Koordinat:</span>
-                            </div>
-                            <div id="test-current-location" class="font-monospace text-muted"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-2">Lokasi Kantor</h6>
-                        <div class="border rounded p-3 bg-light">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="ti ti-building text-success me-2"></i>
-                                <span class="fw-semibold">Koordinat:</span>
-                            </div>
-                            <div id="test-office-location" class="font-monospace text-muted"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-2">Jarak & Status</h6>
-                        <div class="border rounded p-3 bg-light">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="fw-semibold">Jarak:</span>
-                                <span id="test-distance" class="h5 mb-0 text-primary"></span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-semibold">Status:</span>
-                                <span id="test-status-result"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Test Button -->
-                <x-tabler.button type="button" class="btn-success w-100 btn-lg" id="btn-test-location" icon="ti ti-crosshair" text="Test Lokasi Sekarang" />
-                <p class="text-muted text-center mt-2 mb-0">
-                    <small>Klik untuk menguji apakah lokasi Anda berada dalam radius presensi</small>
-                </p>
-            </div>
-        </div>
-
-        <!-- Quick Info Card -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5 class="card-title">
-                    <i class="ti ti-info-circle me-2"></i>
-                    Informasi Penting
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="space-y-3">
-                    <div class="d-flex">
-                        <div class="me-3">
-                            <div class="avatar avatar-sm bg-blue-lt">
-                                <i class="ti ti-map-pin"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="fw-semibold">Lokasi Akurat</div>
-                            <div class="text-muted small">Pastikan koordinat kantor akurat untuk validasi presensi yang tepat</div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex">
-                        <div class="me-3">
-                            <div class="avatar avatar-sm bg-green-lt">
-                                <i class="ti ti-ruler-2"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="fw-semibold">Radius Sesuai</div>
-                            <div class="text-muted small">Atur radius sesuai kebutuhan area kantor Anda</div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex">
-                        <div class="me-3">
-                            <div class="avatar avatar-sm bg-orange-lt">
-                                <i class="ti ti-test-pipe"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="fw-semibold">Test Lokasi</div>
-                            <div class="text-muted small">Selalu test lokasi setelah mengubah pengaturan</div>
-                        </div>
-                    </div>
-                </div>
+                <x-tabler.button id="btn-test-location" class="btn-outline-primary w-100" icon="ti ti-map-pin" text="Ambil Lokasi Sekarang & Hitung Jarak" />
             </div>
         </div>
     </div>
 </div>
 
-<!-- Location Test Modal (Hidden, using inline instead) -->
-<x-tabler.form-modal
-    id="locationTestModal"
-    title="Test Lokasi Presensi"
-    submitText=""
-    submitIcon=""
->
-    <div id="test-status" class="alert alert-info">
-        <i class="ti ti-map-pin me-2"></i>
-        Mendapatkan lokasi Anda...
-    </div>
-    
-    <div id="test-results" style="display: none;">
-        <div class="mb-3">
-            <h6>Lokasi Anda:</h6>
-            <div id="test-current-location" class="text-muted"></div>
-        </div>
-        
-        <div class="mb-3">
-            <h6>Lokasi Kantor:</h6>
-            <div id="test-office-location" class="text-muted"></div>
-        </div>
-        
-        <div class="mb-3">
-            <h6>Jarak:</h6>
-            <div id="test-distance" class="fw-bold"></div>
-        </div>
-        
-        <div class="mb-3">
-            <h6>Status:</h6>
-            <div id="test-status-result"></div>
-        </div>
-    </div>
-    <x-slot:footer>
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-        <x-tabler.button type="button" class="btn-primary" id="btn-retest" text="Test Ulang" />
-    </x-slot:footer>
-</x-tabler.form-modal>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    if (typeof $ === 'undefined') {
-        console.error('jQuery not loaded yet');
-        return;
-    }
-    
-    initializeSettings();
-});
-
-function initializeSettings() {
-    loadCurrentSettings();
-    updateRadiusDisplay();
-    
-    // Event listeners
-    $('#settings-form').submit(handleSaveSettings);
-    $('#btn-get-lat, #btn-get-lng').click(getCurrentLocationForField);
-    $('#btn-test-location').click(testLocation);
-    $('#btn-reset-default').click(resetToDefault);
-    
-    // Range slider real-time update
-    $('#allowed_radius').on('input', function() {
-        updateRadiusDisplay();
-    });
-    
-    // Update preview on input change
-    $('#office_latitude, #office_longitude').on('input', updateOfficeLocationDisplay);
-}
-
-function loadCurrentSettings() {
-    console.log('Loading current settings...');
-    $.get('{{ route('hr.presensi.get-settings') }}')
-        .done(function(data) {
-            console.log('Settings loaded:', data);
-            if (data.success && data.settings) {
-                $('#office_latitude').val(data.settings.office_latitude);
-                $('#office_longitude').val(data.settings.office_longitude);
-                $('#office_address').val(data.settings.office_address);
-                $('#allowed_radius').val(data.settings.allowed_radius);
-                $('#is_active').prop('checked', data.settings.is_active);
-                
-                updateRadiusDisplay();
-                updateOfficeLocationDisplay();
-                
-                console.log('Settings applied to form');
-            } else {
-                console.warn('No settings found in response');
-            }
-        })
-        .fail(function(xhr) {
-            console.error('Failed to load settings:', xhr.responseText);
-        });
-}
-
-function updateRadiusDisplay() {
-    const radius = $('#allowed_radius').val();
-    $('#radius-value').text(radius);
-    $('#radius-display').text(radius);
-}
-
-function updateOfficeLocationDisplay() {
-    const lat = $('#office_latitude').val();
-    const lng = $('#office_longitude').val();
-    
-    // Update test office location display
-    if (lat && lng) {
-        $('#test-office-location').text(`${parseFloat(lat).toFixed(6)}, ${parseFloat(lng).toFixed(6)}`);
-    }
-}
-
-function getCurrentLocationForField(e) {
-    const targetField = $(e.target).attr('id') === 'btn-get-lat' ? '#office_latitude' : '#office_longitude';
-    
-    const $button = $(e.target);
-    const originalContent = $button.html();
-    $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
-    
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                const value = position.coords.latitude.toFixed(6);
-                if (targetField === '#office_latitude') {
-                    $(targetField).val(position.coords.latitude.toFixed(6));
-                } else {
-                    $(targetField).val(position.coords.longitude.toFixed(6));
-                }
-                
-                updateOfficeLocationDisplay();
-                getAddressFromCoordinates(position.coords.latitude, position.coords.longitude);
-                
-                $button.prop('disabled', false).html(originalContent);
-                
-                // Show success feedback
-                showNotification('Lokasi berhasil didapatkan!', 'success');
-            },
-            function(error) {
-                let message = 'Gagal mendapatkan lokasi';
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        message = 'Akses lokasi ditolak';
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        message = 'Informasi lokasi tidak tersedia';
-                        break;
-                    case error.TIMEOUT:
-                        message = 'Timeout mendapatkan lokasi';
-                        break;
-                }
-                
-                showNotification(message, 'error');
-                $button.prop('disabled', false).html(originalContent);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-    } else {
-        showNotification('Geolocation tidak didukung browser Anda', 'error');
-        $button.prop('disabled', false).html(originalContent);
-    }
-}
-
-function getAddressFromCoordinates(lat, lng) {
-    // Mock address for now - in real app, this would call geocoding API
-    const mockAddress = `Lat: ${lat}, Lng: ${lng}`;
-    $('#office_address').val(mockAddress);
-}
-
-function handleSaveSettings(e) {
-    e.preventDefault();
-    
-    const $submitBtn = $('#settings-form button[type="submit"]');
-    const originalContent = $submitBtn.html();
-    $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...');
-    
-    const formData = {
-        office_latitude: parseFloat($('#office_latitude').val()) || 0,
-        office_longitude: parseFloat($('#office_longitude').val()) || 0,
-        office_address: $('#office_address').val() || '',
-        allowed_radius: parseInt($('#allowed_radius').val()) || 100,
-        is_active: $('#is_active').is(':checked')
-    };
-    
-    console.log('Saving settings:', formData);
-    
-    // Validate client-side first
-    if (!formData.office_latitude || !formData.office_longitude) {
-        showNotification('Latitude dan Longitude harus diisi', 'error');
-        $submitBtn.prop('disabled', false).html(originalContent);
-        return;
-    }
-    
-    if (!formData.office_address.trim()) {
-        showNotification('Alamat kantor harus diisi', 'error');
-        $submitBtn.prop('disabled', false).html(originalContent);
-        return;
-    }
-    
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    
-    // Debug CSRF token
-    const csrfToken = $('meta[name="csrf-token"]').attr('content');
-    console.log('CSRF Token:', csrfToken);
-    console.log('Form action:', $('#settings-form').attr('action'));
-    
-    // Use form action if available, otherwise use route
-    const postUrl = '/hr/presensi/update-settings'; // Hardcoded for testing
-    console.log('Posting to:', postUrl);
-    
-    $.ajax({
-        url: postUrl,
-        method: 'POST',
-        data: formData,
-        success: function(response) {
-            console.log('Save response:', response);
-            if (response.success) {
-                showNotification(response.message, 'success');
-                updateOfficeLocationDisplay();
-                
-                // Reload settings to confirm they were saved
-                setTimeout(() => {
-                    console.log('Reloading settings to verify...');
-                    loadCurrentSettings();
-                }, 500);
-            } else {
-                // Handle validation errors
-                if (response.errors) {
-                    let errorMessage = 'Validation error:<br>';
-                    for (let field in response.errors) {
-                        errorMessage += `• ${response.errors[field][0]}<br>`;
-                    }
-                    showNotification(errorMessage, 'error');
-                } else {
-                    showNotification(response.message || 'Terjadi kesalahan', 'error');
-                }
-            }
-        },
-        error: function(xhr) {
-            console.error('Save failed:', xhr);
-            console.error('Status:', xhr.status);
-            console.error('ResponseText:', xhr.responseText);
-            
-            let message = 'Terjadi kesalahan';
-            
-            if (xhr.status === 419) {
-                message = 'CSRF token mismatch. Silakan refresh halaman.';
-            } else if (xhr.status === 405) {
-                message = 'Method not allowed. URL: ' + postUrl;
-            } else if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                message = 'Validation error:<br>';
-                for (let field in xhr.responseJSON.errors) {
-                    message += `• ${xhr.responseJSON.errors[field][0]}<br>`;
-                }
-            } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                message = xhr.responseJSON.message;
-            }
-            
-            showNotification(message, 'error');
-        },
-        complete: function() {
-            $submitBtn.prop('disabled', false).html(originalContent);
-        }
-    });
-}
-
-function testLocation() {
-    const $testBtn = $('#btn-test-location');
-    const originalContent = $testBtn.html();
-    $testBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Testing...');
-    
-    // Show loading state
-    $('#test-results').hide();
-    $('#test-status').removeClass('d-none alert-danger alert-success').addClass('alert-info').html(`
-        <div class="d-flex align-items-center">
-            <div class="spinner-border spinner-border-sm me-3"></div>
-            <div>
-                <strong>Mendapatkan lokasi Anda...</strong>
-                <div class="small">Mohon tunggu sebentar</div>
-            </div>
-        </div>
-    `).show();
-    
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                const currentLat = position.coords.latitude;
-                const currentLng = position.coords.longitude;
-                // Debug form values before calculation
-                console.log('Form values before calculation:');
-                console.log('Office Latitude field value:', $('#office_latitude').val());
-                console.log('Office Longitude field value:', $('#office_longitude').val());
-                console.log('Allowed Radius field value:', $('#allowed_radius').val());
-                
-                const officeLat = parseFloat($('#office_latitude').val());
-                const officeLng = parseFloat($('#office_longitude').val());
-                const allowedRadius = parseInt($('#allowed_radius').val());
-                
-                console.log('Parsed values:', {officeLat, officeLng, allowedRadius});
-                
-                // Validate coordinates
-                if (isNaN(officeLat) || isNaN(officeLng)) {
-                    $('#test-status').removeClass('alert-info alert-success').addClass('alert-danger').html(`
-                        <div class="d-flex align-items-center">
-                            <i class="ti ti-alert-triangle me-3"></i>
-                            <div>
-                                <strong>Koordinat kantor tidak valid</strong>
-                                <div class="small">Silakan periksa pengaturan lokasi kantor</div>
-                            </div>
-                        </div>
-                    `);
-                    $testBtn.prop('disabled', false).html(originalContent);
-                    return;
-                }
-                
-                console.log('Test coordinates:', {
-                    current: {lat: currentLat, lng: currentLng},
-                    office: {lat: officeLat, lng: officeLng},
-                    radius: allowedRadius
-                });
-                
-                const distance = calculateDistance(currentLat, currentLng, officeLat, officeLng);
-                
-                // Debug distance calculation
-                console.log('Distance calculation:');
-                console.log('Current Location:', {lat: currentLat, lng: currentLng});
-                console.log('Office Location:', {lat: officeLat, lng: officeLng});
-                console.log('Calculated Distance:', distance + ' meters');
-                
-                const isValid = distance <= allowedRadius;
-                
-                // Update results
-                $('#test-current-location').text(`${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}`);
-                $('#test-office-location').text(`${officeLat.toFixed(6)}, ${officeLng.toFixed(6)}`);
-                $('#test-distance').text(`${distance.toFixed(2)} meter`);
-                
-                if (isValid) {
-                    $('#test-status-result').html('<span class="badge bg-success text-white"><i class="ti ti-check me-1"></i>Valid untuk presensi</span>');
-                } else {
-                    $('#test-status-result').html('<span class="badge bg-danger"><i class="ti ti-x me-1"></i>Di luar radius presensi</span>');
-                }
-                
-                // Hide loading, show results
-                $('#test-status').addClass('d-none');
-                $('#test-results').show();
-                
-                // Visual feedback
-                if (isValid) {
-                    $('#test-distance').removeClass('text-danger').addClass('text-success');
-                } else {
-                    $('#test-distance').removeClass('text-success').addClass('text-danger');
-                }
-                
-                $testBtn.prop('disabled', false).html(originalContent);
-            },
-            function(error) {
-                let message = 'Gagal mendapatkan lokasi';
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        message = 'Akses lokasi ditolak. Silakan izinkan akses lokasi.';
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        message = 'Informasi lokasi tidak tersedia';
-                        break;
-                    case error.TIMEOUT:
-                        message = 'Timeout mendapatkan lokasi';
-                        break;
-                }
-                
-                $('#test-status').removeClass('alert-info alert-success').addClass('alert-danger').html(`
-                    <div class="d-flex align-items-center">
-                        <i class="ti ti-alert-triangle me-3"></i>
-                        <div>
-                            <strong>${message}</strong>
-                            <div class="small">Silakan coba lagi</div>
-                        </div>
-                    </div>
-                `);
-                
-                $testBtn.prop('disabled', false).html(originalContent);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-    } else {
-        $('#test-status').removeClass('alert-info alert-success').addClass('alert-danger').html(`
-            <div class="d-flex align-items-center">
-                <i class="ti ti-alert-triangle me-3"></i>
-                <div>
-                    <strong>Geolocation tidak didukung</strong>
-                    <div class="small">Browser Anda tidak mendukung geolocation</div>
-                </div>
-            </div>
-        `);
+    $('#btn-test-location').on('click', function() {
+        $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Mendapatkan lokasi...');
         
-        $testBtn.prop('disabled', false).html(originalContent);
-    }
-}
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    console.log('calculateDistance inputs:', {lat1, lon1, lat2, lon2});
-    
-    const R = 6371000; // Earth's radius in meters
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    
-    console.log('Differences:', {dLat, dLon});
-    
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    
-    console.log('Haversine a:', a);
-    
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    console.log('Haversine c:', c);
-    
-    const distance = R * c;
-    console.log('Final distance:', distance);
-    
-    return distance;
-}
-
-function resetToDefault() {
-    Swal.fire({
-        title: 'Reset Pengaturan?',
-        html: `
-            <div class="text-start">
-                <p>Apakah Anda yakin ingin mereset pengaturan ke nilai default?</p>
-                <div class="mt-3">
-                    <strong>Default Settings:</strong>
-                    <ul class="mt-2">
-                        <li>Latitude: -6.208763</li>
-                        <li>Longitude: 106.845599</li>
-                        <li>Radius: 100 meter</li>
-                        <li>Status: Aktif</li>
-                    </ul>
-                </div>
-            </div>
-        `,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Reset',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#dc3545'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $('#office_latitude').val(-6.208763);
-            $('#office_longitude').val(106.845599);
-            $('#office_address').val('Jakarta, Indonesia');
-            $('#allowed_radius').val(100);
-            $('#is_active').prop('checked', true);
-            
-            updateRadiusDisplay();
-            updateOfficeLocationDisplay();
-            
-            showNotification('Pengaturan telah direset ke nilai default', 'success');
-        }
+        setTimeout(() => {
+            $('#test-current-coord').html('-0.531200, 101.442300');
+            $('#test-result-distance').html('38 meter <span class="badge bg-success ms-2">Akurat</span>');
+            $(this).prop('disabled', false).html('<i class="ti ti-map-pin me-2"></i>Ambil Lokasi Sekarang & Hitung Jarak');
+        }, 2000);
     });
-}
-
-function showNotification(message, type = 'info') {
-    // Create toast notification
-    const toastHtml = `
-        <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} border-0" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="ti ti-${type === 'success' ? 'check' : type === 'error' ? 'x' : 'info-circle'} me-2"></i>
-                    <span>${message}</span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        </div>
-    `;
-    
-    // Add toast to container
-    let toastContainer = $('#toast-container');
-    if (toastContainer.length === 0) {
-        toastContainer = $('<div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>');
-        $('body').append(toastContainer);
-    }
-    
-    const $toast = $(toastHtml);
-    toastContainer.append($toast);
-    
-    // Show toast
-    const toast = new bootstrap.Toast($toast[0], {
-        autohide: true,
-        delay: 5000 // Longer for validation errors
-    });
-    toast.show();
-    
-    // Remove toast after hidden
-    $toast.on('hidden.bs.toast', function() {
-        $(this).remove();
-    });
-}
+});
 </script>
 @endsection

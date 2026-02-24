@@ -61,13 +61,7 @@ class DokumenController extends Controller
                     $doksubId     = decryptIdIfEncrypted($request->input('parent_doksub_id'));
                     $parentDokSub = DokSub::find($doksubId);
                     if ($parentDokSub) {
-                        $fixedJenis = match (strtolower(trim($parent->jenis))) {
-                            'visi'    => 'misi',
-                            'misi'    => 'rjp',
-                            'rjp'     => 'renstra',
-                            'renstra' => 'renop',
-                            default   => null,
-                        };
+                        $fixedJenis = pemutuFixedJenis($parent->jenis);
                     }
                 }
             }
@@ -148,14 +142,11 @@ class DokumenController extends Controller
     public function show(Dokumen $dokumen)
     {
         // 1. Determine labels and types
+        // 1. Determine labels and types
         $parentJenis = strtolower(trim($dokumen->jenis));
-        $childLabel  = match ($parentJenis) {
-            'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin',
-            'standar' => 'Butir Standar',
-            default   => 'Turunan'
-        };
+        $childLabel  = pemutuChildLabel($parentJenis);
 
-        $isDokSubBased  = in_array($parentJenis, ['visi', 'misi', 'rjp', 'renstra']);
+        $isDokSubBased  = pemutuIsDokSubBased($parentJenis);
         $showIndikators = in_array($parentJenis, ['renop', 'standar']);
 
         $activeSubTab = \request()->get('subtab', 'overview');
@@ -339,14 +330,7 @@ class DokumenController extends Controller
                         }
 
                         $jenis      = strtolower(trim($row->jenis));
-                        $childLabel = match ($jenis) {
-                            'visi'    => 'Misi',
-                            'misi'    => 'RPJP',
-                            'rjp'     => 'Renstra',
-                            'renstra' => 'Renop',
-                            'renop'   => 'Poin',
-                            default   => 'Turunan'
-                        };
+                        $childLabel = pemutuChildLabel($jenis);
 
                         $html = '<div class="badge bg-blue-lt">' . $row->children_count . ' ' . $childLabel . '</div>';
 
@@ -390,13 +374,7 @@ class DokumenController extends Controller
 
     private function getIndexUrlByJenis($jenis)
     {
-        $tab = $this->getTabByJenis($jenis);
+        $tab = pemutuTabByJenis($jenis);
         return route('pemutu.dokumens.index', ['tabs' => $tab]);
-    }
-
-    private function getTabByJenis($jenis)
-    {
-        $standarTypes = ['standar', 'formulir', 'manual_prosedur'];
-        return in_array(strtolower(trim($jenis)), $standarTypes) ? 'standar' : 'kebijakan';
     }
 }

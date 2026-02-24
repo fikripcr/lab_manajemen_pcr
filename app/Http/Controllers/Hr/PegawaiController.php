@@ -117,7 +117,7 @@ class PegawaiController extends Controller
         $statusPegawai   = StatusPegawai::where('is_active', 1)->get();
         $statusAktifitas = StatusAktifitas::where('is_active', 1)->get();
 
-        return view('pages.hr.pegawai.create', compact('statusPegawai', 'statusAktifitas'));
+        return view('pages.hr.pegawai.create-edit', compact('statusPegawai', 'statusAktifitas'));
     }
 
     /**
@@ -179,11 +179,11 @@ class PegawaiController extends Controller
     {
         $pegawai->load('latestDataDiri');
 
-        $posisi     = OrgUnit::where('type', 'posisi')->select('org_unit_id', 'name')->get();
-        $departemen = OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('org_unit_id', 'name')->get();
-        $prodi      = OrgUnit::where('type', 'Prodi')->select('org_unit_id', 'name')->get();
+        $posisi     = OrgUnit::where('type', 'posisi')->select('orgunit_id', 'name')->get();
+        $departemen = OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->select('orgunit_id', 'name')->get();
+        $prodi      = OrgUnit::where('type', 'Prodi')->select('orgunit_id', 'name')->get();
 
-        return view('pages.hr.pegawai.edit', compact('pegawai', 'posisi', 'departemen', 'prodi'));
+        return view('pages.hr.pegawai.create-edit', compact('pegawai', 'posisi', 'departemen', 'prodi'));
     }
 
     /**

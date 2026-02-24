@@ -44,19 +44,16 @@
 @else
     @extends('layouts.tabler.app')
 
-    @section('content')
-        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-            <h4 class="fw-bold py-3 mb-0">Semester Details</h4>
-            <div class="d-flex gap-2">
+    @section('header')
+        <x-tabler.page-header title="Semester Details">
+            <x-slot:actions>
                 <x-tabler.button type="back" :href="route('lab.semesters.index')" />
-            </div>
-        </div>
+            </x-slot:actions>
+        </x-tabler.page-header>
+    @endsection
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <x-tabler.flash-message />
+    @section('content')
+        <x-tabler.flash-message />
 
                         <div class="row">
                             <div class="col-md-6 mb-3">

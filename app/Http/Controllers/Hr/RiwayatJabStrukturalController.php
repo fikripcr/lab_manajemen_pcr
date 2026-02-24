@@ -18,7 +18,7 @@ class RiwayatJabStrukturalController extends Controller
 
     public function index()
     {
-        return view('pages.hr.data-diri.tabs.struktural');
+        return view('pages.hr.jabatan-struktural.index');
     }
 
     public function create(Pegawai $pegawai)
@@ -30,7 +30,7 @@ class RiwayatJabStrukturalController extends Controller
             ->get();
 
         $riwayat = new RiwayatJabStruktural();
-        return view('pages.hr.pegawai.jabatan-struktural.create-edit-ajax', compact('pegawai', 'jabatan', 'riwayat'));
+        return view('pages.hr.jabatan-struktural.create-edit-ajax', compact('pegawai', 'jabatan', 'riwayat'));
     }
 
     public function store(RiwayatJabStrukturalRequest $request, Pegawai $pegawai)

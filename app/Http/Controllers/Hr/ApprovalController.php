@@ -31,13 +31,7 @@ class ApprovalController extends Controller
                     return $row->pegawai->nama ?? '-';
                 })
                 ->addColumn('tipe_request', function ($row) {
-                    // Extract readable name from model class
-                    // e.g., "App\Models\Hr\RiwayatPendidikan" -> "Riwayat Pendidikan"
-                    $modelClass = $row->model;
-                    if ($modelClass) {
-                        return (new \ReflectionClass($modelClass))->getShortName();
-                    }
-                    return '-';
+                    return hrModelLabel($row->model);
                 })
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at ? $row->created_at->format('d M Y H:i') : '-';

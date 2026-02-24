@@ -141,12 +141,12 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::resource('jabatan-fungsional', JabatanFungsionalController::class);
 
     // Status Aktifitas
-    Route::get('status-aktifitas/data', [StatusAktifitasController::class, 'data'])->name('status-aktifitas.data');
-    Route::resource('status-aktifitas', StatusAktifitasController::class);
+    Route::get('master-status-aktifitas/data', [StatusAktifitasController::class, 'data'])->name('master-status-aktifitas.data');
+    Route::resource('master-status-aktifitas', StatusAktifitasController::class);
 
     // Status Pegawai
-    Route::get('status-pegawai/data', [StatusPegawaiController::class, 'data'])->name('status-pegawai.data');
-    Route::resource('status-pegawai', StatusPegawaiController::class);
+    Route::get('master-status-pegawai/data', [StatusPegawaiController::class, 'data'])->name('master-status-pegawai.data');
+    Route::resource('master-status-pegawai', StatusPegawaiController::class);
 
     // Jenis Shift
     Route::get('jenis-shift/data', [JenisShiftController::class, 'data'])->name('jenis-shift.data');

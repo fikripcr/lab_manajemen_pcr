@@ -11,7 +11,13 @@
 @else
     @extends('layouts.tabler.app')
 
-    @section('title', 'Edit Documentation: ' . $page)
+    @section('header')
+        <x-tabler.page-header title="Edit Documentation: {{ $page }}">
+            <x-slot:actions>
+                <x-tabler.button type="back" :href="route('sys.documentation.show', $page)" class="me-2" />
+            </x-slot:actions>
+        </x-tabler.page-header>
+    @endsection
 
     @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
@@ -19,10 +25,7 @@
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Edit Documentation: {{ $page }}</h5>
-                <div>
-                    <x-tabler.button type="back" :href="route('sys.documentation.show', $page)" class="me-2" />
-                </div>
+                <h5 class="mb-0">Content Editor</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('sys.documentation.update', $page) }}" class="ajax-form">

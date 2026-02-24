@@ -24,11 +24,7 @@ class DokSubController extends Controller
         $parentJenis = strtolower(trim($parent->jenis));
 
         // Determine Child Type based on Parent Dokumen Type
-        $childLabel = match ($parentJenis) {
-            'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin',
-            'standar' => 'Butir Standar',
-            default   => 'Turunan'
-        };
+        $childLabel = pemutuChildLabel($parentJenis);
 
         // DokSub usually has markers/indicators if specified
         $showIndikators = $dokSub->is_hasilkan_indikator;

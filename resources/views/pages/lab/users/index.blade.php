@@ -1,21 +1,13 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-    <div class="row g-2 align-items-center">
-        <div class="col">
-            <h2 class="page-title">
-                User Management
-            </h2>
-            <div class="text-muted mt-1">Tables / User Management</div>
-        </div>
-        <div class="col-auto ms-auto d-print-none">
-            <div class="btn-list">
-                <x-tabler.button :href="route('lab.users.import.show')" icon="ti ti-file-import" text="Import" class="btn-secondary d-none d-sm-inline-block" />
-                <x-tabler.button :href="route('lab.users.export')" icon="ti ti-file-export" text="Export" class="btn-secondary d-none d-sm-inline-block" />
-                <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.users.create')" modal-title="Create User" />
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="User Management" pretitle="Tables / User Management">
+        <x-slot:actions>
+            <x-tabler.button :href="route('lab.users.import.show')" icon="ti ti-file-import" text="Import" class="btn-secondary d-none d-sm-inline-block" />
+            <x-tabler.button :href="route('lab.users.export')" icon="ti ti-file-export" text="Export" class="btn-secondary d-none d-sm-inline-block" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.users.create')" modal-title="Create User" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')

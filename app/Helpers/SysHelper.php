@@ -438,3 +438,69 @@ if (! function_exists('generateQrCodeBase64')) {
         return $base64Image;
     }
 }
+
+if (! function_exists('sysDataTableSearchValue')) {
+    /**
+     * Standardize extracting search string from DataTables request
+     *
+     * @param mixed $searchValue
+     * @return string
+     */
+    function sysDataTableSearchValue($searchValue)
+    {
+        if (is_array($searchValue)) {
+            return $searchValue['value'] ?? '';
+        }
+        return (string) $searchValue;
+    }
+}
+
+if (! function_exists('sysParseDateRange')) {
+    /**
+     * Standardize parsing "to" separated date strings
+     *
+     * @param string $rangeString
+     * @return array [start, end]
+     */
+    function sysParseDateRange($rangeString)
+    {
+        if (! $rangeString) return [null, null];
+        
+        $dates = explode(' to ', $rangeString);
+        if (count($dates) === 2) {
+            return [trim($dates[0]), trim($dates[1])];
+        }
+        
+        return [trim($dates[0]), trim($dates[0])]; // Single date
+    }
+}
+
+if (! function_exists('sysGenerateRefNumber')) {
+    /**
+     * Standardize sequential reference number generation
+     *
+     * @param string $prefix Prefix like "REG-YYYY-"
+     * @param string $modelClass Model to check
+     * @param string $column Column name
+     * @param int $padding Length of counter
+     * @return string
+     */
+    function sysGenerateRefNumber($prefix, $modelClass, $column, $padding = 4)
+    {
+        $last = $modelClass::where($column, 'like', $prefix . '%')
+            ->orderBy($column, 'desc')
+            ->first();
+
+        if (! $last) {
+            $number = 1;
+        } else {
+            // Extract number from the end of the string
+            // Assuming the number is the last part after the prefix
+            $lastRef = $last->{$column};
+            $lastNumberStr = substr($lastRef, strlen($prefix));
+            $number = (int) $lastNumberStr + 1;
+        }
+
+        return $prefix . str_pad($number, $padding, '0', STR_PAD_LEFT);
+    }
+}

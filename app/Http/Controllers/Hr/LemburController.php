@@ -36,7 +36,7 @@ class LemburController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('pengusul_nama', function ($row) {
-                return $row->pengusul?->latestDataDiri?->nama ?? '-';
+                return hrPegawaiName($row->pengusul);
             })
             ->addColumn('tanggal', function ($row) {
                 return $row->tgl_pelaksanaan?->format('d/m/Y') ?? '-';
@@ -53,15 +53,7 @@ class LemburController extends Controller
                 return $row->pegawais->count();
             })
             ->addColumn('status', function ($row) {
-                $status = $row->status_approval;
-                $badges = [
-                    'Diajukan' => 'bg-warning',
-                    'pending'  => 'bg-warning',
-                    'approved' => 'bg-success',
-                    'rejected' => 'bg-danger',
-                ];
-                $badge = $badges[$status] ?? 'bg-secondary';
-                return '<span class="badge ' . $badge . ' text-white">' . ucfirst($status) . '</span>';
+                return hrStatusBadge($row->status_approval, 'lembur');
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [

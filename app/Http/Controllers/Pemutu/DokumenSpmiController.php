@@ -50,14 +50,10 @@ class DokumenSpmiController extends Controller
     {
         try {
             if ($type === 'dokumen') {
-                $item        = Dokumen::findOrFail(decryptIdIfEncrypted($id));
-                $parentJenis = strtolower(trim($item->jenis));
-                $childLabel  = match ($parentJenis) {
-                    'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin',
-                    'standar' => 'Butir Standar',
-                    default   => 'Turunan'
-                };
-                $isDokSubBased = in_array($parentJenis, ['visi', 'misi', 'rjp', 'renstra', 'renop', 'standar', 'formulir', 'manual_prosedur']);
+                $item          = Dokumen::findOrFail(decryptIdIfEncrypted($id));
+                $parentJenis   = strtolower(trim($item->jenis));
+                $childLabel    = pemutuChildLabel($parentJenis);
+                $isDokSubBased = pemutuIsDokSubBased($parentJenis);
                 return view('pages.pemutu.dokumens._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased'));
             } elseif ($type === 'poin') {
                 $item = DokSub::with('dokumen')->findOrFail(decryptIdIfEncrypted($id));
@@ -93,9 +89,7 @@ class DokumenSpmiController extends Controller
         if ($request->filled('parent_id')) {
             $parent = Dokumen::find(decryptIdIfEncrypted($request->parent_id));
             if ($parent) {
-                $fixedJenis = match (strtolower(trim($parent->jenis))) {
-                    'visi' => 'misi', 'misi' => 'rjp', 'rjp' => 'renstra', 'renstra' => 'renop',     default => null,
-                };
+                $fixedJenis = pemutuFixedJenis($parent->jenis);
             }
         }
         if ($request->filled('parent_doksub_id')) {

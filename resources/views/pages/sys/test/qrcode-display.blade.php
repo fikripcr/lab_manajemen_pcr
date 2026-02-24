@@ -1,9 +1,9 @@
 @extends('layouts.tabler.app')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-    <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Test /</span> QR Code Display</h4>
-</div>
+@section('header')
+    <x-tabler.page-header title="QR Code Display" pretitle="System Test" />
+@endsection
 
 <div class="card">
     <div class="card-header">
@@ -11,7 +11,7 @@
     </div>
     <div class="card-body text-center">
         <div class="qr-container" style="display: inline-block; padding: 20px; background: white; border: 1px solid #ddd;">
-            {!! $qrCodeSvg !!}
+            <img src="data:image/png;base64,{{ base64_encode($qrCodeSvg) }}" alt="QR Code" style="max-width: 100%; height: auto;">
         </div>
         <p class="mt-3">QR Code generated with text: "{{ $text }}"</p>
         <a href="{{ route('sys.test.index') }}" class="btn btn-secondary">Back to Test Features</a>

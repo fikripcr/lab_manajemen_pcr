@@ -133,9 +133,11 @@
 
     <!-- Detail Panel -->
     <div class="col-lg-8">
-        <div class="card" id="document-detail-panel">
-            <div class="card-body text-center py-5">
-                <p class="text-muted">Pilih dokumen untuk melihat detail.</p>
+        <div id="document-detail-panel">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <p class="text-muted">Pilih dokumen untuk melihat detail.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -222,7 +224,7 @@
         function loadDetail(url, docJenis, pushState = true) {
             let detailUrl = url;
 
-            $('#document-detail-panel').html('<div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>');
+            $('#document-detail-panel').html('<div class="card"><div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div></div>');
 
             axios.get(detailUrl, { 
                 params: { ajax: 1 },

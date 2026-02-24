@@ -1,19 +1,11 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-    <div class="row g-2 align-items-center">
-        <div class="col">
-            <h2 class="page-title">
-                Manajemen Rapat
-            </h2>
-            <div class="text-muted mt-1">Kegiatan / Rapat</div>
-        </div>
-        <div class="col-auto ms-auto d-print-none">
-            <div class="btn-list">
-                <x-tabler.button type="create" href="{{ route('Kegiatan.rapat.create') }}" text="Jadwalkan" />
-            </div>
-        </div>
-    </div>
+    <x-tabler.page-header title="Manajemen Rapat" pretitle="Kegiatan / Rapat">
+        <x-slot:actions>
+            <x-tabler.button type="create" href="{{ route('Kegiatan.rapat.create') }}" text="Jadwalkan" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')

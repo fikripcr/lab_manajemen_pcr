@@ -37,8 +37,16 @@ class DocumentationController extends Controller
 
         $filePath = $this->docsPath . $page;
 
-        // Check if the file exists and is within the docs directory
-        if (!file_exists($filePath) || strpos(realpath($filePath), realpath($this->docsPath)) !== 0) {
+        // Fallback to project root if not in docs/
+        if (!file_exists($filePath)) {
+            $rootPath = base_path($page);
+            if (file_exists($rootPath) && strpos(realpath($rootPath), realpath(base_path())) === 0) {
+                $filePath = $rootPath;
+            }
+        }
+
+        // Check if the file exists and is within the allowed directories
+        if (!file_exists($filePath)) {
             abort(404, 'Documentation page not found');
         }
 
@@ -105,7 +113,7 @@ class DocumentationController extends Controller
         $content = file_get_contents($filePath);
         $pageTitle = $this->generatePageTitle($page);
 
-        return view('pages.sys.documentation.edit', [
+        return view('pages.sys.documentation.create-edit', [
             'content' => $content,
             'page' => str_replace('.md', '', $page),
             'pageTitle' => 'Edit - ' . $pageTitle

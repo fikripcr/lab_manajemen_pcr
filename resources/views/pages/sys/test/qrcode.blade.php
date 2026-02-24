@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom">
-            <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">System Test /</span> QR Code Generator & Scanner</h4>
-        </div>
+@section('header')
+    <x-tabler.page-header title="QR Code Generator & Scanner" pretitle="System Test" />
+@endsection
         <style>
             video,
             canvas {

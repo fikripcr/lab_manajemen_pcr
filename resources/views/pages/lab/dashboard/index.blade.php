@@ -2,6 +2,10 @@
 
 @section('title', 'Lab Dashboard')
 
+@section('header')
+    <x-tabler.page-header title="Lab Dashboard" />
+@endsection
+
 @section('content')
     <!-- Stats Widgets -->
     <div class="row row-cards mb-4">

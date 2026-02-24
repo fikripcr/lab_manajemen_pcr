@@ -1,7 +1,12 @@
 @extends('layouts.tabler.app')
 
+@section('title', 'Dashboard')
+
+@section('header')
+    <x-tabler.page-header title="Dashboard" pretitle="Overview" />
+@endsection
+
 @section('content')
-        <div class="row row-cards">
             @if(isset($slideshows) && $slideshows->count() > 0)
             <div class="col-12">
                 <div id="carousel-slideshow" class="carousel slide card shadow-sm border-0" data-bs-ride="carousel" style="border-radius: 12px; overflow: hidden;">

@@ -41,20 +41,8 @@ class IndikatorController extends Controller
                 })->unique()->implode(', ') ?: '-';
             })
             ->addColumn('tipe', function ($row) {
-                $color = match ($row->type) {
-                    'standar'  => 'primary',
-                    'renop'    => 'purple',
-                    'performa' => 'success',
-                    default    => 'secondary'
-                };
-                $label = match ($row->type) {
-                    'standar'  => 'Standar',
-                    'renop'    => 'Renop',
-                    'performa' => 'Performa',
-                    default    => ucfirst($row->type ?? '-')
-                };
-
-                $html = '<span class="badge bg-' . $color . '-lt">' . $label . '</span>';
+                $typeInfo = pemutuIndikatorTypeInfo($row->type);
+                $html = '<span class="badge bg-' . $typeInfo['color'] . '-lt">' . $typeInfo['label'] . '</span>';
 
                 // If Performa, show Parent Code
                 if ($row->type === 'performa' && $row->parent) {

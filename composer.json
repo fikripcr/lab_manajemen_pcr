@@ -57,7 +57,11 @@
             "app/Helpers/GlobalHelper.php",
             "app/Helpers/SysHelper.php",
             "app/Helpers/ApprovalHelpers.php",
-            "app/Helpers/EofficeHelper.php"
+            "app/Helpers/EofficeHelper.php",
+            "app/Helpers/PemutuHelper.php",
+            "app/Helpers/HrHelper.php",
+            "app/Helpers/PmbHelper.php",
+            "app/Helpers/LabHelper.php"
         ]
     },
     "autoload-dev": {

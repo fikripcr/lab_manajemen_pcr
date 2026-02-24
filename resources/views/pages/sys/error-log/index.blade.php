@@ -3,11 +3,11 @@
 @section('title', 'Error Log')
 
 @section('header')
-<x-tabler.page-header title="Error Log" pretitle="System Log">
-    <x-slot:actions>
-        <x-tabler.button type="delete" onclick="confirmClearAll()" text="Clear All" title="Clear All Error Logs" />
-    </x-slot:actions>
-</x-tabler.page-header>
+    <x-tabler.page-header title="Error Log" pretitle="System Log">
+        <x-slot:actions>
+            <x-tabler.button type="button" class="btn-danger" onclick="confirmClearAll()" text="Clear All" title="Clear All Error Logs" icon="ti ti-trash" />
+        </x-slot:actions>
+    </x-tabler.page-header>
 @endsection
 
 @section('content')

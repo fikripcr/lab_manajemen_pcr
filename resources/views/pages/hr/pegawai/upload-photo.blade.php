@@ -1,13 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <h2 class="page-title">
-            Upload Foto Pegawai
-        </h2>
-    </div>
-</div>
+<x-tabler.page-header title="Upload Foto Pegawai" />
 
 @section('content')
 <div class="row">

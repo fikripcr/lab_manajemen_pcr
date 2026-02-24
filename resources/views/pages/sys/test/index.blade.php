@@ -1,12 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<div class="row g-2 align-items-center">
-    <div class="col">
-        <div class="page-pretitle">Others</div>
-        <h2 class="page-title">Test Features</h2>
-    </div>
-</div>
+<x-tabler.page-header title="Test Features" pretitle="Others" />
 @endsection
 
 @section('content')

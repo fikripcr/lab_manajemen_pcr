@@ -3,11 +3,13 @@
 @section('title', 'Laporan Kerusakan')
 
 @section('content')
+@section('header')
     <x-tabler.page-header title="Laporan Kerusakan" pretitle="Berkas">
         <x-slot:actions>
             <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.laporan-kerusakan.create')" modal-title="Buat Laporan Kerusakan" />
         </x-slot:actions>
     </x-tabler.page-header>
+@endsection
 
         <div class="card">
             <div class="card-header">

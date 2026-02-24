@@ -2,8 +2,7 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\SoftwareRequestStoreRequest;
-use App\Http\Requests\Lab\SoftwareRequestUpdateRequest;
+use App\Http\Requests\Lab\SoftwareRequest;
 use App\Models\Lab\MataKuliah;
 use App\Models\Lab\PeriodSoftRequest;
 use App\Models\Lab\RequestSoftware;
@@ -60,7 +59,7 @@ class SoftwareRequestController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SoftwareRequestStoreRequest $request)
+    public function store(SoftwareRequest $request)
     {
         try {
             $this->softwareRequestService->createRequest($request->validated());
@@ -191,7 +190,7 @@ class SoftwareRequestController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SoftwareRequestUpdateRequest $request, RequestSoftware $requestSoftware)
+    public function update(SoftwareRequest $request, RequestSoftware $requestSoftware)
     {
         try {
             $this->softwareRequestService->updateRequest($requestSoftware, $request->validated());

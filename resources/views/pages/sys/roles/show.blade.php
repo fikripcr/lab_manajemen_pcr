@@ -66,24 +66,12 @@
     @section('title', 'Details Role')
 
     @section('header')
-    <div class="row g-2 align-items-center">
-        <div class="col">
-            <div class="page-pretitle">Access Control</div>
-            <h2 class="page-title">Role Details: {{ $role->name }}</h2>
-        </div>
-        <div class="col-auto ms-auto d-print-none">
-            <div class="btn-list">
-                <a href="{{ route('sys.roles.edit', $role->encrypted_id) }}" class="btn btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
-                    Edit Role
-                </a>
-                <a href="{{ route('sys.roles.index') }}" class="btn btn-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
-                    Back
-                </a>
-            </div>
-        </div>
-    </div>
+        <x-tabler.page-header title="Role Details: {{ $role->name }}" pretitle="Access Control">
+            <x-slot:actions>
+                <x-tabler.button type="edit" href="{{ route('sys.roles.edit', $role->encrypted_id) }}" text="Edit Role" />
+                <x-tabler.button type="back" href="{{ route('sys.roles.index') }}" />
+            </x-slot:actions>
+        </x-tabler.page-header>
     @endsection
 
     @section('content')

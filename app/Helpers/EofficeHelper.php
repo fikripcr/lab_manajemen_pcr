@@ -74,3 +74,20 @@ if (! function_exists('jenisIsian')) {
         return $types[$type] ?? $type;
     }
 }
+
+if (! function_exists('eofficeStatusBadge')) {
+    /**
+     * Get badge HTML for Eoffice status
+     */
+    function eofficeStatusBadge($status)
+    {
+        $info = statusLayananColor($status);
+        $color = $info['color'];
+        $display = $info['text'];
+        
+        // Use -lt (light) if color is not secondary or info for better contrast in Tabler
+        $class = in_array($color, ['secondary', 'info', 'primary', 'warning', 'danger', 'success']) ? "bg-{$color}-lt" : "bg-{$color}-lt";
+        
+        return '<span class="badge ' . $class . '">' . $display . '</span>';
+    }
+}

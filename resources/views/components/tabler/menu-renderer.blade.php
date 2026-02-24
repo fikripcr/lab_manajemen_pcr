@@ -14,7 +14,7 @@
             'title'         => 'Dashboard',
             'id'            => 'navbar-dashboards',
             'icon'          => 'ti ti-layout-dashboard',
-            'active_routes' => ['lab.dashboard', 'pemutu.dashboard', 'eoffice.dashboard', 'hr.dashboard', 'pmb.dashboard', 'cbt.dashboard'],
+            'active_routes' => ['lab.dashboard', 'pemutu.dashboard', 'eoffice.dashboard', 'hr.dashboard', 'pmb.dashboard', 'cbt.dashboard', 'sys.dashboard'],
             'children'      => [
                 ['title' => 'Lab', 'route' => 'lab.dashboard', 'icon' => 'ti ti-flask'],
                 ['title' => 'Pemutu', 'route' => 'pemutu.dashboard', 'icon' => 'ti ti-checkbox'],
@@ -22,6 +22,7 @@
                 ['title' => 'HR', 'route' => 'hr.dashboard', 'icon' => 'ti ti-briefcase'],
                 ['title' => 'PMB', 'route' => 'pmb.dashboard', 'icon' => 'ti ti-school'],
                 ['title' => 'CBT', 'route' => 'cbt.dashboard', 'icon' => 'ti ti-device-laptop'],
+                ['title' => 'System', 'route' => 'sys.dashboard', 'icon' => 'ti ti-settings-automation'],
             ],
         ],
 
@@ -322,8 +323,8 @@
             'children'      => [
                 [
                     'title'         => 'Master Data',
-                    'route'         => 'hr.status-pegawai.index',
-                    'active_routes' => ['hr.status-pegawai.*', 'hr.status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
+                    'route'         => 'hr.master-status-pegawai.index',
+                    'active_routes' => ['hr.master-status-pegawai.*', 'hr.master-status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
                     'icon'          => 'ti ti-database',
                 ],
                 [
@@ -518,13 +519,25 @@
                     'icon'          => 'ti ti-calendar-event',
                 ],
             ],
-            
+
         ],
         [
             'title' => 'Umpan Balik',
             'route' => 'survei.index',
             'icon'  => 'ti ti-forms',
             'active_routes' => ['survei.*'],
+        ],
+
+        // ==========================================
+        // 🔹 PROJECT MANAGEMENT MODULE
+        // ==========================================
+        [
+            'title'         => 'Project Management',
+            'id'            => 'navbar-projects',
+            'icon'          => 'ti ti-layout-dashboard',
+            'route'         => 'projects.index',
+            'active_routes' => ['projects.*'],
+
         ],
     ];
 
@@ -540,7 +553,7 @@
             'type'  => 'header',
             'title' => 'Kontrol Akses',
         ],
-        
+
             [
                 'type' => 'item',
                 'title'         => 'Peran (Roles)',
@@ -669,11 +682,11 @@
                 </li>
             @elseif(($item['type'] ?? 'item') === 'dropdown')
                 <li class="nav-item dropdown{{ $isActive($item['active_routes'] ?? []) ? ' active' : '' }}">
-                    <a class="nav-link dropdown-toggle{{ $isActive($item['active_routes'] ?? []) ? ' show' : '' }}" 
-                       href="#{{ $item['id'] ?? 'menu-'.Str::random(5) }}" 
-                       data-bs-toggle="dropdown" 
-                       data-bs-auto-close="false" 
-                       role="button" 
+                    <a class="nav-link dropdown-toggle{{ $isActive($item['active_routes'] ?? []) ? ' show' : '' }}"
+                       href="#{{ $item['id'] ?? 'menu-'.Str::random(5) }}"
+                       data-bs-toggle="dropdown"
+                       data-bs-auto-close="false"
+                       role="button"
                        aria-expanded="{{ $isActive($item['active_routes'] ?? []) ? 'true' : 'false' }}">
                         <span class="nav-link-icon d-lg-inline-block">
                             {!! $renderIcon($item['icon'] ?? '') !!}
@@ -692,11 +705,11 @@
                                             $isChildActive = $isActive($child['active_routes'] ?? []);
                                         @endphp
                                         <div class="dropend">
-                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}" 
-                                               href="#{{ $child['id'] ?? 'submenu-'.Str::random(5) }}" 
-                                               data-bs-toggle="dropdown" 
-                                               data-bs-auto-close="false" 
-                                               role="button" 
+                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}"
+                                               href="#{{ $child['id'] ?? 'submenu-'.Str::random(5) }}"
+                                               data-bs-toggle="dropdown"
+                                               data-bs-auto-close="false"
+                                               role="button"
                                                aria-expanded="{{ $isChildActive ? 'true' : 'false' }}">
                                                 @if(!empty($child['icon']))
                                                     {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
@@ -705,7 +718,7 @@
                                             </a>
                                             <div class="dropdown-menu{{ $isChildActive ? ' show' : '' }}">
                                                 @foreach($child['children'] as $subchild)
-                                                    <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}" 
+                                                    <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}"
                                                        href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
                                                         @if(!empty($subchild['icon']))
                                                             {!! $renderIcon($subchild['icon'], 'icon-inline me-1') !!}
@@ -716,7 +729,7 @@
                                             </div>
                                         </div>
                                     @else
-                                        <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" 
+                                        <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}"
                                            href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
                                             {{-- Icons optional in submenus --}}
                                             @if(!empty($child['icon']))
@@ -763,11 +776,11 @@
                                     @elseif(isset($child['children']) && count($child['children']) > 0)
                                         @php $isChildActive = $isActive($child['active_routes'] ?? []); @endphp
                                         <div class="dropend">
-                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}" 
-                                               href="javascript:void(0)" 
-                                               data-bs-toggle="dropdown" 
-                                               data-bs-auto-close="outside" 
-                                               role="button" 
+                                            <a class="dropdown-item dropdown-toggle{{ $isChildActive ? ' show' : '' }}"
+                                               href="javascript:void(0)"
+                                               data-bs-toggle="dropdown"
+                                               data-bs-auto-close="outside"
+                                               role="button"
                                                aria-expanded="{{ $isChildActive ? 'true' : 'false' }}">
                                                 @if(!empty($child['icon']))
                                                    {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}
@@ -776,7 +789,7 @@
                                             </a>
                                             <div class="dropdown-menu{{ $isChildActive ? ' show' : '' }}">
                                                 @foreach($child['children'] as $subchild)
-                                                    <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}" 
+                                                    <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}"
                                                        href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
                                                         @if(!empty($subchild['icon']))
                                                             {!! $renderIcon($subchild['icon'], 'icon-inline me-1') !!}
@@ -787,7 +800,7 @@
                                             </div>
                                         </div>
                                     @else
-                                        <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}" 
+                                        <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}"
                                            href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
                                             @if(!empty($child['icon']))
                                                {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}

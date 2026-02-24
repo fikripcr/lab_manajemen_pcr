@@ -81,18 +81,7 @@ class PendaftaranService
         $year   = date('Y');
         $prefix = "REG-{$year}-";
 
-        $last = Pendaftaran::where('no_pendaftaran', 'like', $prefix . '%')
-            ->orderBy('pendaftaran_id', 'desc')
-            ->first();
-
-        if (! $last) {
-            $number = 1;
-        } else {
-            $lastNumber = (int) substr($last->no_pendaftaran, -4);
-            $number     = $lastNumber + 1;
-        }
-
-        return $prefix . str_pad($number, 4, '0', STR_PAD_LEFT);
+        return sysGenerateRefNumber($prefix, Pendaftaran::class, 'no_pendaftaran');
     }
 
     /**

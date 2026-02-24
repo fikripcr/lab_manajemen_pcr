@@ -49,16 +49,7 @@ class LayananController extends Controller
                 return $row->created_at ? $row->created_at->format('d/m/Y H:i') : '-';
             })
             ->addColumn('status_label', function ($row) {
-                $status = $row->latestStatus->status_layanan ?? 'Menunggu';
-                $class  = match ($status) {
-                    'Diajukan' => 'bg-blue-lt',
-                    'Diproses' => 'bg-yellow-lt',
-                    'Selesai'  => 'bg-green-lt',
-                    'Ditolak'  => 'bg-red-lt',
-                    'Direvisi' => 'bg-orange-lt',
-                    default    => 'bg-secondary-lt'
-                };
-                return '<span class="badge ' . $class . '">' . $status . '</span>';
+                return eofficeStatusBadge($row->latestStatus->status_layanan ?? 'Menunggu');
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
