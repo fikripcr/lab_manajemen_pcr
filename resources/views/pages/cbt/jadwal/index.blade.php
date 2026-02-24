@@ -18,7 +18,7 @@
                     ['data' => 'kegiatan_paket', 'name' => 'nama_kegiatan', 'title' => 'Ujian & Paket', 'orderable' => false],
                     ['data' => 'token_info', 'name' => 'token_ujian', 'title' => 'Token', 'orderable' => false],
                     ['data' => 'waktu_status', 'name' => 'waktu_mulai', 'title' => 'Waktu & Status', 'orderable' => false],
-                    ['data' => 'peserta', 'name' => 'peserta', 'title' => 'Peserta', 'orderable' => false, 'width' => '120px'],
+                    ['data' => 'peserta', 'name' => 'peserta', 'title' => 'Peserta', 'orderable' => false, 'class' => 'text-center'],
                     ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'width' => '150px', 'class' => 'text-center']
                 ]"
                 :url="route('cbt.jadwal.paginate')"

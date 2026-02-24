@@ -26,7 +26,7 @@ class JadwalUjianController extends Controller
             ->addIndexColumn()
             ->addColumn('kegiatan_paket', function ($j) {
                 return '<div class="d-flex flex-column gap-1">
-                    <div class="fw-bold text-primary">' . e($j->nama_kegiatan) . '</div>
+                    <div class="fw-bold ">' . e($j->nama_kegiatan) . '</div>
                     <div class="text-muted small"><i class="ti ti-package me-1"></i>' . e($j->paket->nama_paket ?? '-') . '</div>
                 </div>';
             })

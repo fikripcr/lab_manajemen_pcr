@@ -108,17 +108,46 @@
         min-height: 200px !important;
     }
     
+    .kanban-board-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 15px 20px !important;
+        background: transparent !important;
+    }
+
+    .kanban-title-board {
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        color: var(--tblr-emphasis-color) !important;
+        margin: 0 !important;
+    }
+
     .kanban-title-button {
-        cursor: pointer;
-        background: transparent;
-        border: none;
-        color: var(--tblr-muted);
-        padding: 0;
-        margin-left: 8px;
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: var(--tblr-bg-surface-secondary) !important;
+        border: 1px solid var(--tblr-border-color) !important;
+        color: var(--tblr-muted) !important;
+        font-size: 1.5rem !important;
+        font-weight: 400 !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     
     .kanban-title-button:hover {
-        color: var(--tblr-primary);
+        background: var(--tblr-primary) !important;
+        border-color: var(--tblr-primary) !important;
+        color: white !important;
+        transform: scale(1.1) rotate(90deg) !important;
+        box-shadow: 0 4px 12px rgba(var(--tblr-primary-rgb), 0.3) !important;
     }
 </style>
 @endpush
@@ -168,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
             itemAddOptions: {
                 enabled: true,
                 content: '+',
-                class: 'kanban-title-button btn btn-sm btn-outline-secondary',
+                class: 'kanban-title-button',
                 footer: false
             },
             boards: [

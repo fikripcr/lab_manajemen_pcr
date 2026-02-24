@@ -4,15 +4,16 @@
     <div class="d-flex justify-content-between align-items-start mb-2">
         <div class="h4 mb-0 text-wrap">{{ $task->task_title }}</div>
         <div class="dropdown">
-            <a href="#" class="btn-action text-muted" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="btn-action text-muted" data-bs-toggle="dropdown" aria-expanded="false" onclick="event.stopPropagation();">
                 <i class="ti ti-dots-vertical" style="font-size: 1.1rem;"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-end">
-                <a class="dropdown-item" href="javascript:void(0)" onclick="openAjaxModal('{{ route('projects.tasks.edit-modal', [$task->project, $task]) }}', 'Edit Task')">
+                <a class="dropdown-item" href="javascript:void(0)" onclick="event.stopPropagation(); openAjaxModal('{{ route('projects.tasks.edit-modal', [$task->project, $task]) }}', 'Edit Task')">
                     <i class="ti ti-edit me-2"></i> Edit Task
                 </a>
-                <a class="dropdown-item text-danger ajax-delete" 
+                <a class="dropdown-item text-danger" 
                    href="javascript:void(0)" 
+                   onclick="event.stopPropagation(); window.handleAjaxDelete(this);"
                    data-url="{{ route('projects.tasks.destroy', [$task->project, $task]) }}"
                    data-title="Delete Task"
                    data-text="Are you sure you want to delete this task?">
@@ -27,7 +28,24 @@
     @endif
     
     <div class="d-flex justify-content-between align-items-center">
-        <span class="badge badge-sm bg-{{ $task->priority_badge_class }}-lt">{{ strtoupper($task->priority) }}</span>
+        @php
+            $priorityTranslation = match($task->priority) {
+                'low' => 'Rendah',
+                'medium' => 'Sedang',
+                'high' => 'Tinggi',
+                'urgent' => 'Mendesak',
+                default => strtoupper($task->priority)
+            };
+            
+            $priorityColor = match($task->priority) {
+                'low' => 'secondary',
+                'medium' => 'blue',
+                'high' => 'orange',
+                'urgent' => 'red',
+                default => 'secondary'
+            };
+        @endphp
+        <span class="badge badge-sm bg-{{ $priorityColor }} text-{{ $priorityColor }}-fg">{{ $priorityTranslation }}</span>
         @if($task->assignee)
         <span class="avatar avatar-xs rounded-circle" title="{{ $task->assignee->name }}">
             @if($task->assignee->avatar_url)

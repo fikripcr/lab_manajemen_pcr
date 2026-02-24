@@ -83,8 +83,7 @@ class ProjectTaskController extends Controller
             $task = $this->taskService->createTask($data);
 
             return jsonSuccess(
-                'Task created successfully',
-                route('projects.show', $project) . '#tasks'
+                'Task created successfully'
             );
         } catch (Exception $e) {
             logError($e);
@@ -102,8 +101,7 @@ class ProjectTaskController extends Controller
             $this->taskService->updateTask($task, $data);
 
             return jsonSuccess(
-                'Task updated successfully',
-                route('projects.show', $project)
+                'Task updated successfully'
             );
         } catch (Exception $e) {
             logError($e);
@@ -137,8 +135,7 @@ class ProjectTaskController extends Controller
             $this->taskService->deleteTask($task);
 
             return jsonSuccess(
-                'Task deleted successfully',
-                route('projects.show', $project)
+                'Task deleted successfully'
             );
         } catch (Exception $e) {
             logError($e);
@@ -199,10 +196,18 @@ class ProjectTaskController extends Controller
      */
     protected function formatForKanban($task)
     {
+        $borderColor = match ($task->priority) {
+            'low' => 'secondary',
+            'medium' => 'blue',
+            'high' => 'orange',
+            'urgent' => 'red',
+            default => 'transparent'
+        };
+
         return [
             'id' => $task->encrypted_project_task_id,
             'title' => view('components.project.kanban-task-card', ['task' => $task])->render(),
-            'class' => ['kanban-task-' . $task->encrypted_project_task_id]
+            'class' => ['kanban-task-' . $task->encrypted_project_task_id, 'border-start', 'border-start-wide', 'border-' . $borderColor]
         ];
     }
 }

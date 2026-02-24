@@ -8,10 +8,10 @@
     <x-slot:actions>
         <div class="btn-list">
             <x-tabler.button 
-                href="{{ route('projects.kanban', $project) }}" 
-                class="btn-azure" 
-                icon="ti ti-kanban" 
-                text="Full Kanban" 
+                href="javascript:history.back()" 
+                class="btn-outline-secondary" 
+                icon="ti ti-arrow-left" 
+                text="Kembali" 
             />
             <x-tabler.button 
                 href="{{ route('projects.edit', $project) }}" 
@@ -136,77 +136,118 @@
                             <div class="h4">{{ $project->project_name }}</div>
                         </div>
 
-                        @if($project->project_desc)
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Description</label>
-                            <p>{{ $project->project_desc }}</p>
-                        </div>
-                        @endif
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label text-muted">Start Date</label>
-                                    <div><i class="ti ti-calendar me-1"></i> {{ formatTanggalIndo($project->start_date) }}</div>
+                        <div class="row row-cards">
+                            @if($project->project_desc)
+                            <div class="col-md-12 mb-3">
+                                <div class="card card-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <span class="bg-primary text-white avatar"><i class="ti ti-file-description"></i></span>
+                                            <div class="ms-3">
+                                                <div class="font-weight-medium">Description</div>
+                                                <div class="text-muted small mt-1">{!! nl2br(e($project->project_desc ?: 'No description provided.')) !!}</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label text-muted">End Date</label>
-                                    <div><i class="ti ti-calendar me-1"></i> {{ formatTanggalIndo($project->end_date) }}</div>
+                            @endif
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="card card-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <span class="bg-info text-white avatar"><i class="ti ti-calendar"></i></span>
+                                            <div class="ms-3">
+                                                <div class="font-weight-medium">Timeline</div>
+                                                <div class="text-muted small mt-1">
+                                                    Start: {{ formatTanggalIndo($project->start_date) }}<br>
+                                                    End: {{ formatTanggalIndo($project->end_date) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Status</label>
-                            <div>
-                                <span class="badge {{ $project->status_badge_class }}">
-                                    {{ ucfirst(str_replace('_', ' ', $project->status)) }}
-                                </span>
+                            <div class="col-md-6 mb-3">
+                                <div class="card card-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <span class="bg-{{ $project->status_badge_class }} text-white avatar"><i class="ti ti-activity"></i></span>
+                                            <div class="ms-3">
+                                                <div class="font-weight-medium">Status</div>
+                                                <div class="text-muted small mt-1">{{ ucfirst(str_replace('_', ' ', $project->status)) }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Agile Mode</label>
-                            <div>
-                                @if($project->is_agile)
-                                    <span class="badge bg-success-lt">Enabled</span>
-                                @else
-                                    <span class="badge bg-secondary-lt">Disabled</span>
-                                @endif
+                            <div class="col-md-6 mb-3">
+                                <div class="card card-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <span class="bg-{{ $project->is_agile ? 'success' : 'secondary' }} text-white avatar"><i class="ti ti-refresh"></i></span>
+                                            <div class="ms-3">
+                                                <div class="font-weight-medium">Agile Mode</div>
+                                                <div class="text-muted small mt-1">{{ $project->is_agile ? 'Enabled' : 'Disabled' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
+                            @if($project->is_agile)
+                            <div class="col-md-6 mb-3">
+                                <div class="card card-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <span class="bg-purple text-white avatar"><i class="ti ti-layers-intersect"></i></span>
+                                            <div class="ms-3">
+                                                <div class="font-weight-medium">Phase & Sprint</div>
+                                                <div class="text-muted small mt-1">
+                                                    {{ $project->phases->count() }} Phases, {{ $project->sprints->count() }} Sprints
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
                     <div class="col-lg-4">
-                        <h4 class="mb-3">Quick Stats</h4>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="text-muted">Task Completion</span>
-                                <span class="text-muted">{{ $statistics['completed_tasks'] }}/{{ $statistics['total_tasks'] }}</span>
+                        <div class="card">
+                            <div class="card-header border-0 pb-0">
+                                <h3 class="card-title">Quick Stats</h3>
                             </div>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-success" style="width: {{ $statistics['progress_percentage'] }}%"></div>
-                            </div>
-                        </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">Task Completion</span>
+                                        <span class="text-muted">{{ $statistics['completed_tasks'] }}/{{ $statistics['total_tasks'] }}</span>
+                                    </div>
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar bg-success" style="width: {{ $statistics['progress_percentage'] }}%"></div>
+                                    </div>
+                                </div>
 
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="text-muted">To Do</span>
-                                <span class="badge bg-blue-lt">{{ $statistics['todo_tasks'] }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="text-muted">In Progress</span>
-                                <span class="badge bg-yellow-lt">{{ $statistics['in_progress_tasks'] }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="text-muted">Review</span>
-                                <span class="badge bg-orange-lt">{{ $statistics['review_tasks'] }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Done</span>
-                                <span class="badge bg-green-lt">{{ $statistics['completed_tasks'] }}</span>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">To Do</span>
+                                        <span class="badge bg-blue-lt">{{ $statistics['todo_tasks'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">In Progress</span>
+                                        <span class="badge bg-yellow-lt">{{ $statistics['in_progress_tasks'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Done</span>
+                                        <span class="badge bg-green-lt">{{ $statistics['completed_tasks'] ?? 0 }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -429,14 +470,6 @@
         background-color: #fff9db !important;
     }
     
-    .kanban-board[data-type="review"] .kanban-board-header {
-        background-color: #fff0f0 !important;
-    }
-    
-    .kanban-board[data-type="done"] .kanban-board-header {
-        background-color: #ebfbee !important;
-    }
-    
     .kanban-board-header {
         border-radius: 8px 8px 0 0 !important;
         padding: 12px !important;
@@ -448,58 +481,15 @@
         margin: 0 !important;
     }
     
-    .kanban-title-button {
-        cursor: pointer;
-        background: transparent;
-        border: none;
-        color: var(--tblr-muted);
-        padding: 0;
-        margin-left: 8px;
-    }
-    
-    .kanban-title-button:hover {
-        color: var(--tblr-primary);
-    }
-    
-    .kanban-item {
-        background: white !important;
-        border-radius: 6px !important;
-        padding: 12px !important;
-        margin-bottom: 8px !important;
-        cursor: grab !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-    }
-    
-    [data-bs-theme="dark"] .kanban-item {
-        background: #2b3a52 !important;
-    }
-    
-    .kanban-item:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-    }
-    
-    .kanban-item:last-child {
-        margin-bottom: 0 !important;
-    }
-    
-    .kanban-add-btn {
+    .kanban-board-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 12px 16px !important;
         background: transparent !important;
-        border: 2px dashed var(--tblr-border-color) !important;
-        color: var(--tblr-muted) !important;
-        padding: 8px 16px !important;
-        margin: 8px !important;
-        border-radius: 6px !important;
-        cursor: pointer !important;
-        width: calc(100% - 16px) !important;
-        text-align: center !important;
-        transition: all 0.2s !important;
     }
-    
-    .kanban-add-btn:hover {
-        border-color: var(--tblr-primary) !important;
-        color: var(--tblr-primary) !important;
-        background: rgba(var(--tblr-primary-rgb), 0.05) !important;
-    }
+
+
 </style>
 @endpush
 
@@ -532,6 +522,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Initial initialization
                         initKanbanBoard(tasks);
                     }
+                    
+                    // Re-initialize Bootstrap dropdowns for dynamically added cards
+                    setTimeout(() => {
+                        const dropdownElementList = document.querySelectorAll('.kanban-item [data-bs-toggle="dropdown"]');
+                        dropdownElementList.forEach(dropdownToggleEl => {
+                            if (!bootstrap.Dropdown.getInstance(dropdownToggleEl)) {
+                                new bootstrap.Dropdown(dropdownToggleEl);
+                            }
+                        });
+                    }, 50);
                 }
             })
             .catch(error => {
@@ -546,12 +546,6 @@ document.addEventListener('DOMContentLoaded', function() {
             gutter: '16px',
             widthBoard: '280px',
             dragItems: true,
-            itemAddOptions: {
-                enabled: true,
-                content: '+',
-                class: 'kanban-title-button btn btn-sm btn-outline-secondary',
-                footer: false
-            },
             boards: [
                 { id: 'todo', title: 'To Do', item: tasks.todo || [] },
                 { id: 'in_progress', title: 'In Progress', item: tasks.in_progress || [] },
@@ -566,7 +560,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     _token: '{{ csrf_token() }}'
                 })
                 .then(function(response) {
-                    showSuccessMessage('Task moved to ' + newStatus.replace('_', ' '));
+                    showSuccessMessage('Task diperbarui ke ' + newStatus.replace('_', ' '));
                 })
                 .catch(function(error) {
                     console.error('Error moving task:', error);

@@ -30,9 +30,9 @@
     </div>
 
     <div class="col-md-12 mb-3">
-        <label class="form-label">Priority</label>
+        <label class="form-label">Prioritas</label>
         <div class="form-selectgroup">
-            @foreach(['low' => 'Low', 'medium' => 'Medium', 'high' => 'High', 'urgent' => 'Urgent'] as $val => $label)
+            @foreach(['low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi', 'urgent' => 'Mendesak'] as $val => $label)
             <label class="form-selectgroup-item">
                 <input type="radio" name="priority" value="{{ $val }}" class="form-selectgroup-input" {{ old('priority', $task->priority ?? 'medium') == $val ? 'checked' : '' }}>
                 <span class="form-selectgroup-label">{{ $label }}</span>
@@ -88,14 +88,15 @@
 
     <div class="row">
         <div class="col-md-6 mb-3">
-            <x-tabler.form-input
-                name="weight"
-                type="number"
-                label="Weight"
-                :value="old('weight', $task->weight ?? 1)"
-                min="1"
-                max="10"
-            />
+            <label class="form-label">Bobot</label>
+            <div class="form-selectgroup">
+                @foreach([1 => 'Ringan', 5 => 'Sedang', 10 => 'Berat'] as $val => $label)
+                <label class="form-selectgroup-item">
+                    <input type="radio" name="weight" value="{{ $val }}" class="form-selectgroup-input" {{ old('weight', $task->weight ?? 1) == $val ? 'checked' : '' }}>
+                    <span class="form-selectgroup-label">{{ $label }}</span>
+                </label>
+                @endforeach
+            </div>
         </div>
 
         <div class="col-md-6 mb-3">
