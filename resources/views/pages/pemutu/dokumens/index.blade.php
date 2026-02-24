@@ -18,11 +18,7 @@
                 </span>
                 <input type="text" id="tree-search" class="form-control" placeholder="Cari dokumen...">
             </div>
-            @if($activeTab === 'standar')
-                <x-tabler.button type="create" text="Tambah Standar" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'standar']) }}" data-modal-title="Tambah Dokumen Standar" />
-            @else
-                <x-tabler.button type="create"  text="Tambah Kebijakan" class="ajax-modal-btn" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => $activeTab]) }}" data-modal-title="Tambah Dokumen Kebijakan" />
-            @endif
+
         </div>
     </x-slot:actions>
 </x-tabler.page-header>
@@ -43,7 +39,12 @@
                     </li>
                 </ul>
                 <div class="card-actions">
-                     <x-tabler.button href="{{ route('pemutu.dokumens.index', ['tabs' => $activeTab]) }}" style="ghost-secondary" size="xs" icon="ti ti-refresh" title="Reset Filters" icon-only />
+                    @if($activeTab === 'standar')
+                        <x-tabler.button type="create" text="Standar" class="btn-sm btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => 'standar']) }}" data-modal-title="Dokumen Standar" />
+                    @else
+                        <x-tabler.button type="create"  text="Kebijakan" class="btn-sm btn-outline-primary ajax-modal-btn" data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'tabs' => $activeTab]) }}" data-modal-title="Tambah Dokumen Kebijakan" />
+                    @endif
+                     {{-- <x-tabler.button href="{{ route('pemutu.dokumens.index', ['tabs' => $activeTab]) }}" style="ghost-secondary" size="xs" icon="ti ti-refresh" title="Reset Filters" icon-only /> --}}
                 </div>
             </div>
 
@@ -149,7 +150,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const activeTab = "{{ $activeTab }}";
-        
+
         // --- State Management Helpers ---
         function updateUrlParam(params) {
             const url = new URL(window.location);
@@ -184,7 +185,7 @@
             const nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable'));
             nestedSortables.forEach(function (el) {
                 if (el.sortableInstance) el.sortableInstance.destroy();
-                
+
                 el.sortableInstance = new Sortable(el, {
                     group: 'nested',
                     animation: 150,
@@ -226,13 +227,13 @@
 
             $('#document-detail-panel').html('<div class="card"><div class="card-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div></div>');
 
-            axios.get(detailUrl, { 
+            axios.get(detailUrl, {
                 params: { ajax: 1 },
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
                 .then(function(response) {
                     $('#document-detail-panel').html(response.data);
-                    
+
                     if (pushState) {
                         const idMatch = url.match(/\/([a-zA-Z0-9]+)$/);
                         if (idMatch) {
@@ -262,10 +263,10 @@
                 const $newTabContent = $temp.find('.tab-content').first();
                 if ($newTabContent.length) {
                     $('.tab-content').first().html($newTabContent.html());
-                    
+
                     // Re-init Sortable and Tree functionality
                     initializeDragAndDrop();
-                    
+
                     // Re-expand previously expanded nodes
                     const expanded = getExpandedNodes();
                     expanded.forEach(id => {
@@ -302,11 +303,11 @@
 
         // Global listeners for AJAX form/delete success
         $(document).off('ajax-form:success.refreshUI').on('ajax-form:success.refreshUI', '.ajax-form', function() {
-            refreshUI(); 
+            refreshUI();
         });
-        
+
         $(document).off('ajax-delete:success.refreshUI').on('ajax-delete:success.refreshUI', '.ajax-delete', function() {
-            refreshUI(); 
+            refreshUI();
         });
 
         // Sub-Tab Change
@@ -323,11 +324,11 @@
         // Tree Item Click
         $(document).on('click', '.tree-node-row', function(e) {
             if ($(e.target).closest('.tree-toggle, .tree-toggle-custom').length) return;
-            
+
             e.preventDefault();
             $('.tree-node-row').removeClass('fw-bold text-primary bg-blue-lt');
             $(this).addClass('fw-bold text-primary bg-blue-lt');
-            
+
             const link = $(this).find('.tree-item-link');
             if (link.length) {
                 loadDetail(link.data('url'), link.data('jenis'));
@@ -345,13 +346,13 @@
 
              target.toggleClass('d-none');
              const isExpanded = !target.hasClass('d-none');
-             
+
              if (isExpanded) {
                  icon.removeClass('ti-chevron-right').addClass('ti-chevron-down');
              } else {
                  icon.removeClass('ti-chevron-down').addClass('ti-chevron-right');
              }
-             
+
              if (nodeId) saveExpandedNode(nodeId, isExpanded);
         });
 
@@ -373,13 +374,13 @@
             const param = $(this).data('param');
             const value = $(this).val();
             const params = new URLSearchParams(window.location.search);
-            
+
             if (value) {
                 params.set(param, value);
             } else {
                 params.delete(param);
             }
-            
+
             // Also ensure 'jenis' is preserved from the active tab
             const activeSubTab = document.querySelector('.nav-link.active[data-jenis]');
             if (activeSubTab) {
@@ -427,7 +428,7 @@
                 if (link) {
                     link.classList.add('fw-bold', 'text-primary', 'bg-blue-lt');
                     loadDetail(link.dataset.url, link.dataset.jenis, false);
-                    
+
                     // Expand parents
                     $(targetNode).parents('ul').removeClass('d-none').each(function() {
                         const icon = $(this).parent().find('> .d-flex .tree-toggle i, > .d-flex .tree-toggle-custom i');
@@ -444,8 +445,8 @@
 <style>
     .tree-node-row { cursor: pointer; padding: 2px 8px; border-radius: 4px; transition: background-color 0.1s; width: 100%; }
     .tree-node-row:hover { background-color: rgba(var(--tblr-primary-rgb), 0.08); }
-    .tree-node-row:hover .tree-item-link, 
-    .tree-node-row:hover .tree-toggle, 
+    .tree-node-row:hover .tree-item-link,
+    .tree-node-row:hover .tree-toggle,
     .tree-node-row:hover .tree-item-name { color: var(--tblr-primary) !important; }
 
     .tree-item-link { text-decoration: none; color: inherit; display: block; }

@@ -50,7 +50,7 @@
                         <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
                             data-url="{{ route('pemutu.dokumens.approve.create', $item->encrypted_dok_id) }}"
                             data-modal-title="Form Approval Dokumen" />
-                        <x-tabler.button type="primary" class="btn-sm ajax-modal-btn" text="Edit" icon="ti ti-edit"
+                        <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn" text="Edit" icon="ti ti-edit"
                             data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
                             data-modal-title="Ubah Dokumen" />
                         <x-tabler.button type="delete" class="btn-sm ajax-delete" text="Hapus" icon="ti ti-trash"
