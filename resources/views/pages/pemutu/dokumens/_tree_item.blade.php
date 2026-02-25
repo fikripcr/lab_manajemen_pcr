@@ -68,6 +68,9 @@
                                     <div class="col">
                                         <div class="text-truncate">
                                             <span class="tree-item-name text-reset">{{ $sub->judul }}</span>
+                                            @if($sub->kode)
+                                            <div class="text-muted small">{{ $sub->kode }}</div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

@@ -2,6 +2,7 @@
 namespace App\Http\Requests\Pemutu;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DokSubRequest extends FormRequest
 {
@@ -34,8 +35,17 @@ class DokSubRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Get current record ID for ignore-self on update
+        $ignoreId = $this->isMethod('put') ? decryptIdIfEncrypted($this->route('id')) : null;
+
+        $kodeRule = Rule::unique('pemutu_dok_sub', 'kode')->whereNull('deleted_at')->whereNotNull('kode');
+        if ($ignoreId) {
+            $kodeRule = $kodeRule->ignore($ignoreId, 'doksub_id');
+        }
+
         $rules = [
             'judul'                 => 'required|string|max:150',
+            'kode'                  => ['nullable', 'string', 'max:50', $kodeRule],
             'isi'                   => 'nullable|string',
             'is_hasilkan_indikator' => 'nullable|boolean',
         ];

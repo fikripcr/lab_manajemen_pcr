@@ -22,12 +22,12 @@ class DokSub extends Model
     protected $fillable = [
         'dok_id',
         'judul',
+        'kode',
         'isi',
         'seq',
         'is_hasilkan_indikator',
         'created_by',
         'updated_by', 'deleted_by',
-
     ];
 
     protected $casts = [

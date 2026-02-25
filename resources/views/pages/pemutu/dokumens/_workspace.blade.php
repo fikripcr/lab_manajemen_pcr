@@ -100,9 +100,10 @@
                         <line x1="9" y1="13" x2="15" y2="13"/>
                         <line x1="9" y1="17" x2="15" y2="17"/>
                     </svg>
-                    Sub-Dokumen
+                    @if($type === 'dokumen') Sub-Dokumen @else Poin @endif
                 </a>
             </li>
+            @if($type === 'dokumen')
             <li class="nav-item" role="presentation">
                 <a href="#tab-informasi"
                    class="nav-link"
@@ -119,6 +120,7 @@
                     Approval Dokumen
                 </a>
             </li>
+            @endif
         </ul>
 
         {{-- ═══════════════════════════════════════════════════

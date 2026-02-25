@@ -2,6 +2,7 @@
 namespace App\Http\Requests\Pemutu;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DokumenRequest extends FormRequest
 {
@@ -44,11 +45,19 @@ class DokumenRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Get current record ID for ignore-self on update
+        $ignoreId = $this->isMethod('put') ? decryptIdIfEncrypted($this->route('id')) : null;
+
+        $kodeRule = Rule::unique('pemutu_dokumen', 'kode')->whereNull('deleted_at')->whereNotNull('kode');
+        if ($ignoreId) {
+            $kodeRule = $kodeRule->ignore($ignoreId, 'dok_id');
+        }
+
         return [
             'judul'            => 'required|string|max:255',
             'parent_id'        => 'nullable|exists:pemutu_dokumen,dok_id',
             'parent_doksub_id' => 'nullable|integer|exists:pemutu_dok_sub,doksub_id',
-            'kode'             => 'nullable|string|max:50',
+            'kode'             => ['nullable', 'string', 'max:50', $kodeRule],
             'isi'              => 'nullable|string',
             'jenis'            => 'required|in:visi,misi,rjp,renstra,renop,standar,formulir,manual_prosedur,dll',
             'periode'          => 'nullable|integer',

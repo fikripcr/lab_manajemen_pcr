@@ -108,9 +108,9 @@
             <input type="hidden" name="dok_id" value="{{ $dokumen->encrypted_dok_id }}">
         @endif
 
-        <div class="row">
+        <div class="row g-2">
             <div class="col-md-12">
-                <x-tabler.form-input
+                <x-tabler.form-textarea
                     name="judul"
                     label="Judul"
                     id="judul"
@@ -118,6 +118,9 @@
                     required="true"
                     placeholder="{{ $canProduceIndikator ? 'Contoh: Standar Kompetensi Lulusan' : 'Contoh: Misi 1' }}"
                 />
+            </div>
+            <div class="col-md-4">
+                <x-tabler.form-input name="kode" id="kode" label="Kode" :value="$isEdit ? $dokSub->kode : ''" placeholder="Contoh: S.01" />
             </div>
         </div>
 
@@ -133,10 +136,6 @@
             <div class="text-muted small">Jika dicentang, poin ini bisa ditambahkan Indikator.</div>
         </div>
         @endif
-
-        <div class="mb-3">
-            <x-tabler.form-input name="kode" id="kode" label="Kode Dokumen" :value="$isEdit ? $dokSub->kode : ''" placeholder="Contoh: MM-01" />
-        </div>
 
         @if(!$canProduceIndikator || $jenisPoin === 'renop' || $isEdit)
         <div class="mt-3">
@@ -212,7 +211,7 @@
 
         if (autoTypes.includes(val)) {
             let cleanTitle = text;
-            if(val === 'rjp') cleanTitle = 'Rencana Jangka Panjang (RJP)';
+            if(val === 'rjp') cleanTitle = 'Rencana Pembangunan Jangka Panjang (RPJP)';
             if(val === 'renstra') cleanTitle = 'Rencana Strategis (Renstra)';
             if(val === 'renop') cleanTitle = 'Rencana Operasional (Renop)';
             if(val === 'visi') cleanTitle = 'Visi';

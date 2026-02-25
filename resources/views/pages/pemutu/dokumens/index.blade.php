@@ -58,7 +58,7 @@
                              <li class="nav-item">
                                 <a href="#tab-visi-misi" class="nav-link py-1 {{ !request('jenis') || request('jenis') == 'visi-misi' ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="visi-misi">VISI & MISI</a>
                             </li>
-                            @foreach(['rjp' => 'RJP', 'renstra' => 'RENSTRA', 'renop' => 'RENOP'] as $key => $label)
+                            @foreach(['rjp' => 'RPJP', 'renstra' => 'RENSTRA', 'renop' => 'RENOP'] as $key => $label)
                             <li class="nav-item">
                                 <a href="#tab-{{ $key }}" class="nav-link py-1 {{ request('jenis') == $key ? 'active' : '' }}" data-bs-toggle="tab" data-jenis="{{ $key }}">{{ $label }}</a>
                             </li>
@@ -80,7 +80,7 @@
                                 </ul>
                              </div>
 
-                             <!-- RJP/RENSTRA/RENOP -->
+                             <!-- RPJP/RENSTRA/RENOP -->
                              @foreach(['rjp', 'renstra', 'renop'] as $jenis)
                              <div class="tab-pane {{ request('jenis') == $jenis ? 'active show' : '' }}" id="tab-{{ $jenis }}">
                                 <ul class="list-unstyled nested-sortable mb-0">

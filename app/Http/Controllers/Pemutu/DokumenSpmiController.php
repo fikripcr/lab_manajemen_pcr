@@ -78,7 +78,7 @@ class DokumenSpmiController extends Controller
         if ($activeTab === 'standar') {
             $allowedTypes = ['standar' => 'Standar', 'formulir' => 'Formulir', 'manual_prosedur' => 'Manual Prosedur'];
         } else {
-            $allowedTypes = ['kebijakan' => 'Kebijakan', 'visi' => 'Visi', 'misi' => 'Misi', 'rjp' => 'RJP', 'renstra' => 'Renstra', 'renop' => 'Renop'];
+            $allowedTypes = ['kebijakan' => 'Kebijakan', 'visi' => 'Visi', 'misi' => 'Misi', 'rjp' => 'RPJP', 'renstra' => 'Renstra', 'renop' => 'Renop'];
         }
 
         $fixedJenis   = null;
@@ -253,7 +253,14 @@ class DokumenSpmiController extends Controller
                 return DataTables::of($query)
                     ->addIndexColumn()
                     ->addColumn('judul', function ($row) {
-                        return '<div class="fw-bold">' . $row->judul . '</div>' . ($row->is_hasilkan_indikator ? '<div class="badge bg-green-lt mt-1">Hasilkan Indikator</div>' : '');
+                        $html = '<div class="fw-bold">' . e($row->judul) . '</div>';
+                        if ($row->kode) {
+                            $html .= '<small class="text-muted">' . e($row->kode) . '</small>';
+                        }
+                        if ($row->is_hasilkan_indikator) {
+                            $html .= '<div class="badge bg-green-lt mt-1">Hasilkan Indikator</div>';
+                        }
+                        return $html;
                     })
                     ->addColumn('jumlah_turunan', function ($row) {
                         $html = '';
@@ -280,7 +287,13 @@ class DokumenSpmiController extends Controller
                 $query = Dokumen::where('parent_doksub_id', $decryptedId)->orderBy('seq');
                 return DataTables::of($query)
                     ->addIndexColumn()
-                    ->addColumn('judul', function ($row) {return '<div class="fw-bold">' . $row->judul . '</div>';})
+                    ->addColumn('judul', function ($row) {
+                        $html = '<div class="fw-bold">' . e($row->judul) . '</div>';
+                        if ($row->kode) {
+                            $html .= '<small class="text-muted">' . e($row->kode) . '</small>';
+                        }
+                        return $html;
+                    })
                     ->addColumn('jenis', function ($row) {return '<span class="badge bg-blue-lt">' . strtoupper($row->jenis) . '</span>';})
                     ->addColumn('action', function ($row) {
                         return view('components.tabler.datatables-actions', [

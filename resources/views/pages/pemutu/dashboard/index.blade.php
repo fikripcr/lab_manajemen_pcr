@@ -144,7 +144,7 @@
                                 <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['misi'] }}</span></td>
                             </tr>
                             <tr>
-                                <td>RJP (Jangka Panjang)</td>
+                                <td>RPJP (Pembangunan Jangka Panjang)</td>
                                 <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['rjp'] }}</span></td>
                             </tr>
                             <tr>
