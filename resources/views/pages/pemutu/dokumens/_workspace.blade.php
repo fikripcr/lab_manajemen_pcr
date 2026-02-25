@@ -41,7 +41,7 @@
                 @elseif($type === 'poin')
                     <div class="badge bg-purple-lt mb-2">POIN ({{ strtoupper($item->dokumen->jenis) }})</div>
                     <h2 class="m-0">{{ $item->judul }}</h2>
-                    <div class="text-muted mt-1">Bagian dari Dokumen: {{ $item->dokumen->judul }}</div>
+                    <div class="text-muted mt-1">Kode: {{ $item->kode }}</div>
                 @endif
             </div>
             <div class="d-flex gap-2 flex-shrink-0">
@@ -50,18 +50,22 @@
                         <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
                             data-url="{{ route('pemutu.dokumens.approve.create', $item->encrypted_dok_id) }}"
                             data-modal-title="Form Approval Dokumen" />
-                        <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn" text="Edit" icon="ti ti-edit"
+
+
+                        <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
                             data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
                             data-modal-title="Ubah Dokumen" />
-                        <x-tabler.button type="delete" class="btn-sm ajax-delete" text="Hapus" icon="ti ti-trash"
+                        <x-tabler.button type="delete" class="btn-sm ajax-delete" text="" icon="ti ti-trash"
                             data-url="{{ route('pemutu.dokumen-spmi.destroy', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
                             data-title="Hapus Dokumen ini?" />
+
                     @elseif($type === 'poin')
                         @if(!$isRenopPoint)
-                            <x-tabler.button class="btn-primary btn-sm ajax-modal-btn"
+                            {{-- <x-tabler.button class="btn-primary btn-sm ajax-modal-btn"
                                 data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->dok_id]) }}"
-                                data-modal-title="Tambah Dokumen Turunan" icon="ti ti-plus" text="Tambah Turunan Dokumen" />
+                                data-modal-title="Tambah Dokumen Turunan" icon="ti ti-plus" text="Tambah Turunan Dokumen" /> --}}
                         @endif
+
                         @if($showIndikatorSection)
                             @if($isRenopPoint)
                                 <x-tabler.button class="btn-success"

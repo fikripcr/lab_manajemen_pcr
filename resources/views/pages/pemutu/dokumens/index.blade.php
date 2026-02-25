@@ -70,7 +70,7 @@
                          <div class="tab-content p-3">
                              <!-- VISI & MISI -->
                              <div class="tab-pane {{ !request('jenis') || request('jenis') == 'visi-misi' ? 'active show' : '' }}" id="tab-visi-misi">
-                                <ul class="list-unstyled nested-sortable">
+                                <ul class="list-unstyled nested-sortable mb-0">
                                     @foreach($dokumentByJenis['visi'] ?? [] as $dok)
                                         @include('pages.pemutu.dokumens._tree_item', ['dok' => $dok, 'level' => 0])
                                     @endforeach
@@ -83,7 +83,7 @@
                              <!-- RJP/RENSTRA/RENOP -->
                              @foreach(['rjp', 'renstra', 'renop'] as $jenis)
                              <div class="tab-pane {{ request('jenis') == $jenis ? 'active show' : '' }}" id="tab-{{ $jenis }}">
-                                <ul class="list-unstyled nested-sortable">
+                                <ul class="list-unstyled nested-sortable mb-0">
                                     @forelse($dokumentByJenis[$jenis] ?? [] as $dok)
                                         @include('pages.pemutu.dokumens._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
                                     @empty
@@ -112,7 +112,7 @@
                                    $isInitialActive = (!request('jenis') && $stType === 'standar') || request('jenis') == $stType;
                                @endphp
                                <div class="tab-pane {{ $isInitialActive ? 'active show' : '' }}" id="std-{{ $stType }}">
-                                    <ul class="list-unstyled nested-sortable">
+                                    <ul class="list-unstyled nested-sortable mb-0">
                                         @php
                                             $list = $dokumentByJenis[$stType] ?? [];
                                         @endphp
@@ -289,7 +289,7 @@
                         if (targetNode) {
                             const row = targetNode.querySelector('.tree-node-row');
                             if (row) {
-                                row.classList.add('fw-bold', 'text-primary', 'bg-blue-lt');
+                                row.classList.add('fw-bold', 'text-secondary');
                                 const link = row.querySelector('.tree-item-link');
                                 if (link) loadDetail(link.dataset.url, link.dataset.jenis, false);
                             }
@@ -326,8 +326,8 @@
             if ($(e.target).closest('.tree-toggle, .tree-toggle-custom').length) return;
 
             e.preventDefault();
-            $('.tree-node-row').removeClass('fw-bold text-primary bg-blue-lt');
-            $(this).addClass('fw-bold text-primary bg-blue-lt');
+            $('.tree-node-row').removeClass('fw-bold text-primary bg-primary-lt');
+            $(this).addClass('fw-bold text-primary bg-primary-lt');
 
             const link = $(this).find('.tree-item-link');
             if (link.length) {
@@ -426,7 +426,7 @@
             if (targetNode) {
                 const link = targetNode.querySelector('.tree-item-link');
                 if (link) {
-                    link.classList.add('fw-bold', 'text-primary', 'bg-blue-lt');
+                    link.classList.add('fw-bold', 'text-primary');
                     loadDetail(link.dataset.url, link.dataset.jenis, false);
 
                     // Expand parents

@@ -11,17 +11,17 @@
 
     if ($type === 'dokumen') {
         $isEdit = isset($dokumen) && $dokumen->exists;
-        $title = $isEdit ? "Edit Dokumen: " . $dokumen->judul : "Tambah Dokumen";
+        $title = $isEdit ? "Ubah Dokumen" : "Tambah Dokumen";
         $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'dokumen', 'id' => $dokumen->encrypted_dok_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'dokumen']);
         $method = $isEdit ? 'PUT' : 'POST';
     } elseif ($type === 'poin') {
         $isEdit = isset($dokSub) && $dokSub->exists;
-        $title = $isEdit ? "Edit Poin: " . $dokSub->judul : "Tambah Poin / Kegiatan";
+        $title = $isEdit ? "Ubah Poin" : "Tambah Poin / Kegiatan";
         $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'poin', 'id' => $dokSub->encrypted_doksub_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'poin']);
         $method = $isEdit ? 'PUT' : 'POST';
     } elseif ($type === 'indikator') {
         $isEdit = isset($indikator) && $indikator->exists;
-        $title = $isEdit ? "Edit Indikator: " . $indikator->no_indikator : "Tambah Indikator";
+        $title = $isEdit ? "<br>Ubah Indikator" : "Tambah Indikator";
         $route = $isEdit ? route('pemutu.dokumen-spmi.update', ['type' => 'indikator', 'id' => $indikator->encrypted_indikator_id]) : route('pemutu.dokumen-spmi.store', ['type' => 'indikator']);
         $method = $isEdit ? 'PUT' : 'POST';
     }
@@ -133,6 +133,10 @@
             <div class="text-muted small">Jika dicentang, poin ini bisa ditambahkan Indikator.</div>
         </div>
         @endif
+
+        <div class="mb-3">
+            <x-tabler.form-input name="kode" id="kode" label="Kode Dokumen" :value="$isEdit ? $dokSub->kode : ''" placeholder="Contoh: MM-01" />
+        </div>
 
         @if(!$canProduceIndikator || $jenisPoin === 'renop' || $isEdit)
         <div class="mt-3">
