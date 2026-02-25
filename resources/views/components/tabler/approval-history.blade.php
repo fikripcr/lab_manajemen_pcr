@@ -9,59 +9,61 @@
         <h3 class="card-title">{{ $title }}</h3>
     </div>
     <div class="card-body">
-        @forelse($approvals as $approval)
-            @php
-                $status = $approval->status;
-                $point  = match ($status) {
-                    'approved', 'Approved' => 'success',
-                    'rejected', 'Rejected' => 'danger',
-                    'tangguhkan', 'Tangguhkan' => 'warning',
-                    'pending', 'Pending' => 'secondary',
-                    default => 'secondary',
-                };
-            @endphp
 
-            @if($loop->first)
-                <div class="timeline">
-            @endif
-
-            <div class="timeline-item">
-                <div class="timeline-point timeline-point-{{ $point }}">
-                    <i class="{{ getApprovalIcon($approval->status) }}"></i>
-                </div>
-                <div class="timeline-content">
-                    <div class="timeline-time">{{ formatTanggalWaktuIndo($approval->created_at) }}</div>
-                    <div class="timeline-title">
-                        <span class="me-2">{{ $approval->pejabat ?? '-' }}</span>
-                        {!! getApprovalBadge($approval->status) !!}
-                    </div>
-
-                    @if($approval->jabatan)
-                        <div class="text-muted small">{{ $approval->jabatan }}</div>
-                    @endif
-
-                    @if($approval->catatan)
-                        <div class="text-muted mt-1">{{ $approval->catatan }}</div>
-                    @endif
-
-                    @if($approval->lampiran_url)
-                        <div class="mt-2">
-                            <a href="{{ asset('storage/' . $approval->lampiran_url) }}" target="_blank" class="btn btn-sm btn-ghost-info">
-                                <i class="ti ti-paperclip"></i> Lihat lampiran
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            @if($loop->last)
-                </div>
-            @endif
-        @empty
+        @if($approvals->isEmpty())
             <div class="text-center text-muted py-4">
                 <i class="ti ti-info-circle mb-2 h2 d-block"></i>
                 {{ $emptyText }}
             </div>
-        @endforelse
+        @else
+            <ul class="timeline">
+                @foreach($approvals as $approval)
+                    @php
+                        $status = $approval->status;
+                        $point  = match ($status) {
+                            'approved', 'Approved' => 'success',
+                            'rejected', 'Rejected' => 'danger',
+                            'tangguhkan', 'Tangguhkan' => 'warning',
+                            'pending', 'Pending' => 'secondary',
+                            default => 'secondary',
+                        };
+                        $icon = getApprovalIcon($approval->status);
+                    @endphp
+
+                    <li class="timeline-event">
+                        <div class="timeline-event-icon bg-{{ $point }}-lt">
+                            <i class="{{ $icon }}"></i>
+                        </div>
+
+                        <div class="timeline-event-card shadow-none border">
+                            <div class="card-body p-2">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-bold">{{ $approval->pejabat ?? '-' }} {!! getApprovalBadge($approval->status) !!}</div>
+                                        @if($approval->jabatan)
+                                            <div class="text-muted small">{{ $approval->jabatan }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="text-muted small text-end">{{ formatTanggalWaktuIndo($approval->created_at) }}</div>
+                                </div>
+
+                                @if($approval->catatan)
+                                    <div class="text-muted mt-1 small">{{ $approval->catatan }}</div>
+                                @endif
+
+                                @if($approval->lampiran_url)
+                                    <div class="mt-2">
+                                        <a href="{{ asset('storage/' . $approval->lampiran_url) }}" target="_blank" class="btn btn-sm btn-ghost-info">
+                                            <i class="ti ti-paperclip"></i> Lihat lampiran
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+
     </div>
 </div>

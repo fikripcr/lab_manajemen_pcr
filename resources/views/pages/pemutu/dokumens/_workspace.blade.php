@@ -33,7 +33,7 @@
         <div class="d-flex justify-content-between align-items-start mb-4">
             <div>
                 @if($type === 'dokumen')
-                    <div class="badge bg-blue-lt mb-2">{{ strtoupper($item->jenis) }}</div>
+                    <div class="badge bg-primary-lt mb-2">{{ strtoupper($item->jenis) }}</div>
                     <h2 class="m-0">{{ $item->judul }}</h2>
                     @if($item->kode)
                         <div class="text-muted mt-1">Kode: {{ $item->kode }}</div>
@@ -112,7 +112,7 @@
                         <line x1="12" y1="8" x2="12.01" y2="8"/>
                         <polyline points="11 12 12 12 12 16 13 16"/>
                     </svg>
-                    Informasi & Riwayat Approval
+                    Approval Dokumen
                 </a>
             </li>
         </ul>
