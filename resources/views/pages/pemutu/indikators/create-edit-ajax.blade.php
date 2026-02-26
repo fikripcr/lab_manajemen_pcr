@@ -1,16 +1,16 @@
-@php
+﻿@php
     $isEdit = $indikator->exists;
     $title = $isEdit ? 'Edit Indikator' : 'Tambah Indikator Baru';
     $route = $isEdit ? route('pemutu.indikators.update', $indikator) : route('pemutu.indikators.store');
     $method = $isEdit ? 'PUT' : 'POST';
-    
+
     // Determine context for pre-selection (Create case)
     if (!$isEdit && isset($parentDok)) {
         $selectedDokSubs = $selectedDokSubs ?? [];
     } else {
         $selectedDokSubs = $indikator->dokSubs->pluck('encrypted_doksub_id')->toArray();
     }
-    
+
     $assignedMap = $isEdit ? $indikator->orgUnits->keyBy('orgunit_id') : collect([]);
 @endphp
 
@@ -30,113 +30,179 @@
         @csrf
         @if($isEdit) @method('PUT') @endif
         <input type="hidden" name="redirect_to" value="{{ old('redirect_to', request('redirect_to', url()->previous())) }}">
-        
+
         <div class="row row-cards">
-            <!-- INFORMASI UMUM (KIRI) -->
+            <!-- INFORMASI UMUM & SKALA (KIRI) -->
             <div class="col-lg-7">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="ti ti-info-circle me-2"></i>Informasi Umum</h3>
+                    <div class="card-header border-bottom-0">
+                        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                            <li class="nav-item">
+                                <a href="#tab-informasi-umum" class="nav-link active" data-bs-toggle="tab">
+                                    <i class="ti ti-info-circle me-2"></i>Informasi Umum
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab-penilaian-skala" class="nav-link" data-bs-toggle="tab">
+                                    <i class="ti ti-list-numbers me-2"></i>Penilaian Skala
+                                </a>
+                            </li>
+                        </ul>
                     </div>
+                    
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
-                            </div>
-                        </div>
+                        <div class="tab-content">
+                            <!-- TAB: INFORMASI UMUM -->
+                            <div class="tab-pane active show" id="tab-informasi-umum">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
+                                    </div>
+                                </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{-- Tipe Indikator Field --}}
-                                @if(isset($parentDok) && !$isEdit && ($isRenopContext ?? false))
-                                    <input type="hidden" name="type" value="renop">
-                                    <label class="form-label">Tipe Indikator</label>
-                                    <div class="form-control-plaintext fw-bold text-primary"><i class="ti ti-lock me-2"></i>Indikator Renop</div>
-                                    <div class="form-hint text-muted small">Tipe dikunci karena menambah dari context Poin Renop.</div>
-                                @else
-                                    <x-tabler.form-select 
-                                        id="type-selector"
-                                        name="type" 
-                                        label="Tipe Indikator" 
-                                        :options="[
-                                            'renop' => 'Indikator Renop',
-                                            'standar' => 'Indikator Standar',
-                                            'performa' => 'Indikator Performa (KPI)'
-                                        ]"
-                                        :selected="old('type', $indikator->type ?? request('type'))" 
-                                        :readonly="isset($parentDok) && !$isEdit"
-                                      />
-                                    @if(isset($parentDok) && !$isEdit)
-                                        <input type="hidden" name="type" value="{{ request('type') }}">
-                                        <div class="form-hint text-success small">Tipe dikunci karena menambah dari context dokumen.</div>
-                                    @endif
-                                @endif
-                            </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        {{-- Tipe Indikator Field --}}
+                                        @if(isset($parentDok) && !$isEdit && ($isRenopContext ?? false))
+                                            <input type="hidden" name="type" value="renop">
+                                            <label class="form-label">Tipe Indikator</label>
+                                            <div class="form-control-plaintext fw-bold text-primary"><i class="ti ti-lock me-2"></i>Indikator Renop</div>
+                                            <div class="form-hint text-muted small">Tipe dikunci karena menambah dari context Poin Renop.</div>
+                                        @else
+                                            <x-tabler.form-select
+                                                id="type-selector"
+                                                name="type"
+                                                label="Tipe Indikator"
+                                                :options="[
+                                                    'renop' => 'Indikator Renop',
+                                                    'standar' => 'Indikator Standar',
+                                                    'performa' => 'Indikator Performa (KPI)'
+                                                ]"
+                                                :selected="old('type', $indikator->type ?? request('type'))"
+                                                :readonly="isset($parentDok) && !$isEdit"
+                                            />
+                                            @if(isset($parentDok) && !$isEdit)
+                                                <input type="hidden" name="type" value="{{ request('type') }}">
+                                                <div class="form-hint text-success small">Tipe dikunci karena menambah dari context dokumen.</div>
+                                            @endif
+                                        @endif
+                                    </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Kelompok Indikator</label>
-                                <div>
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="kelompok_indikator" value="Akademik" @checked(old('kelompok_indikator', $indikator->kelompok_indikator) == 'Akademik')>
-                                        <span class="form-check-label">Akademik</span>
-                                    </label>
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="kelompok_indikator" value="Non Akademik" @checked(old('kelompok_indikator', $indikator->kelompok_indikator) == 'Non Akademik')>
-                                        <span class="form-check-label">Non Akademik</span>
-                                    </label>
+                                    <div class="col-md-4 mb-3">
+                                        <x-tabler.form-select
+                                            name="kelompok_indikator"
+                                            label="Kelompok Indikator"
+                                            :required="true"
+                                            :options="[
+                                                'Akademik' => 'Akademik',
+                                                'Non Akademik' => 'Non Akademik'
+                                            ]"
+                                            :selected="old('kelompok_indikator', $indikator->kelompok_indikator)"
+                                        />
+                                    </div>
+
+                                    <div class="col-md-4 mb-3">
+                                        <x-tabler.form-input
+                                            name="no_indikator"
+                                            label="No Indikator"
+                                            type="text"
+                                            value="{{ old('no_indikator', $indikator->no_indikator) }}"
+                                            placeholder="cth: IND.01"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <x-tabler.form-select name="doksub_ids" label="Dokumen Penjaminan Mutu Terkait" type="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
+                                            @foreach($dokumens as $doc)
+                                                @if($doc->dokSubs->count() > 0)
+                                                    <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
+                                                        @foreach($doc->dokSubs as $ds)
+                                                            <option value="{{ $ds->encrypted_doksub_id }}" {{ in_array($ds->encrypted_doksub_id, $selectedDokSubs ?? []) ? 'selected' : '' }}>{{ $ds->judul }}</option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                @endif
+                                            @endforeach
+                                        </x-tabler.form-select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    @foreach($labelTypes as $type)
+                                    <div class="col-md-4 mb-1">
+                                        <x-tabler.form-select name="labels" id="label-{{ $type->labeltype_id }}" type="select2" label="{{ $type->name }}" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
+                                            @php
+                                                $selectedLabelIds = $isEdit ? $indikator->labels->where('type_id', $type->labeltype_id)->pluck('label_id')->toArray() : [];
+                                            @endphp
+                                            @foreach($type->labels as $label)
+                                                <option value="{{ $label->encrypted_label_id }}" {{ in_array($label->label_id, $selectedLabelIds) ? 'selected' : '' }}>{{ $label->name }}</option>
+                                            @endforeach
+                                        </x-tabler.form-select>
+                                    </div>
+                                    @endforeach
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <x-tabler.form-textarea id="keterangan" name="keterangan" label="Definisi / Keterangan" height="300" :value="old('keterangan', $indikator->keterangan)" />
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <x-tabler.form-input 
-                                    name="no_indikator" 
-                                    label="Kode / No Indikator" 
-                                    type="text" 
-                                    value="{{ old('no_indikator', $indikator->no_indikator) }}"
-                                    placeholder="cth: IND.01" 
-                                />
-                            </div>
-                        </div>
+                            <!-- END TAB: INFORMASI UMUM -->
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <x-tabler.form-select name="doksub_ids" label="Dokumen Penjaminan Mutu Terkait" type="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
-                                    @foreach($dokumens as $doc)
-                                        @if($doc->dokSubs->count() > 0)
-                                            <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
-                                                @foreach($doc->dokSubs as $ds)
-                                                    <option value="{{ $ds->encrypted_doksub_id }}" {{ in_array($ds->encrypted_doksub_id, $selectedDokSubs ?? []) ? 'selected' : '' }}>{{ $ds->judul }}</option>
-                                                @endforeach
-                                            </optgroup>
-                                        @endif
+                            <!-- TAB: PENILAIAN SKALA -->
+                            <div class="tab-pane" id="tab-penilaian-skala">
+                                @php
+                                    $hasSkala = false;
+                                    if ($indikator->skala && is_array($indikator->skala)) {
+                                        foreach($indikator->skala as $val) {
+                                            if (!empty(trim(strip_tags($val)))) {
+                                                $hasSkala = true;
+                                                break;
+                                            }
+                                        }
+                                    } elseif (old('enable_skala')) {
+                                        $hasSkala = true;
+                                    }
+                                @endphp
+
+                                <div class="mb-3">
+                                    <label class="form-check form-switch mb-0">
+                                        <input class="form-check-input" type="checkbox" id="enable_skala" name="enable_skala" value="1" {{ $hasSkala ? 'checked' : '' }}>
+                                        <span class="form-check-label fw-bold text-primary">Aktifkan Penilaian Skala Khusus</span>
+                                    </label>
+                                    <div class="text-muted small mt-1">Definisikan deskripsi untuk setiap level skala penilaian (0 – 4). Centang opsi ini jika Indikator ini memerlukan kriteria kustom. Skala ini akan otomatis ditampilkan kepada auditee saat mengisi Evaluasi Diri. JIKA TIDAK DICENTANG, nilai skala akan dikosongkan.</div>
+                                </div>
+
+                                <div id="skala-container" style="{{ $hasSkala ? '' : 'display: none;' }}">
+                                    <div class="row g-2">
+                                    @foreach([0,1,2,3,4] as $level)
+                                    <div class="col-12 mb-2">
+                                        <div class="card card-sm border-blue-lt mb-0">
+                                            <div class="card-header bg-blue-lt py-2">
+                                                <h4 class="card-title text-blue mb-0">Level Skala {{ $level }}</h4>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <x-tabler.form-textarea
+                                                    id="skala-{{ $level }}"
+                                                    name="skala[{{ $level }}]"
+                                                    label=""
+                                                    height="180"
+                                                    :value="old('skala.' . $level, ($indikator->skala[$level] ?? ($indikator->skala ? ($indikator->skala[$level] ?? '') : '')))"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                     @endforeach
-                                </x-tabler.form-select>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            @foreach($labelTypes as $type)
-                            <div class="col-md-4 mb-1">
-                                <label class="form-label">{{ $type->name }}</label>
-                                <x-tabler.form-select name="labels" id="label-{{ $type->labeltype_id }}" type="select2" multiple="true" data-placeholder="Pilih {{ $type->name }}...">
-                                    @php 
-                                        $selectedLabelIds = $isEdit ? $indikator->labels->where('type_id', $type->labeltype_id)->pluck('label_id')->toArray() : [];
-                                    @endphp
-                                    @foreach($type->labels as $label)
-                                        <option value="{{ $label->encrypted_label_id }}" {{ in_array($label->label_id, $selectedLabelIds) ? 'selected' : '' }}>{{ $label->name }}</option>
-                                    @endforeach
-                                </x-tabler.form-select>
-                            </div>
-                            @endforeach
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <x-tabler.form-textarea type="editor" id="keterangan" name="keterangan" label="Definisi / Keterangan" height="300" value="{{ old('keterangan', $indikator->keterangan) }}" />
-                            </div>
+                            <!-- END TAB: PENILAIAN SKALA -->
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>{{-- end col-lg-7 --}}
 
             <!-- ASSIGNMENTS (KANAN) -->
             <div class="col-lg-5">
@@ -189,8 +255,8 @@
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <input type="text" class="form-control mb-2" name="kpi_assign[{{$index}}][target_value]" placeholder="Nilai Target" value="{{ $kpi->target_value }}">
-                                                            <input type="text" class="form-control" name="kpi_assign[{{$index}}][unit_ukuran]" placeholder="%, org, dll (Satuan)" value="{{ $kpi->unit_ukuran ?? '' }}">
+                                                            <x-tabler.form-input class="mb-2" name="kpi_assign[{{$index}}][target_value]" placeholder="Nilai Target" value="{{ $kpi->target_value }}" />
+                                                            <x-tabler.form-input name="kpi_assign[{{$index}}][unit_ukuran]" placeholder="%, org, dll (Satuan)" value="{{ $kpi->unit_ukuran ?? '' }}" />
                                                         </td>
                                                         <td class="text-center">
                                                             <button type="button" class="btn btn-icon btn-danger btn-sm btn-remove-row" title="Hapus"><i class="ti ti-trash"></i></button>
@@ -201,7 +267,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                
+
                                 <button type="button" class="btn btn-outline-danger btn-sm w-100" id="btn-add-kpi">
                                     <i class="ti ti-plus me-1"></i> Tambah Sasaran
                                 </button>
@@ -233,8 +299,8 @@
                                                     function renderUnitRow($unit, $level = 0, $assignedMap) {
                                                         $padding = $level * 20;
                                                         $isBold = $level < 2 ? 'fw-bold' : '';
-                                                        $bg = ''; 
-                                                        
+                                                        $bg = '';
+
                                                         $isChecked = $assignedMap->has($unit->orgunit_id);
                                                         $targetVal = $isChecked ? $assignedMap->get($unit->orgunit_id)->pivot->target : '';
                                                         $isDisabled = !$isChecked ? 'disabled' : '';
@@ -282,107 +348,53 @@
             </div>
         </div>
     </form>
+    @endsection
     @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const typeSelector = document.getElementById('type-selector');
-            const cardPerforma = document.getElementById('card-performa');
-            const cardTarget = document.getElementById('card-target');
-            const parentIdSelector = document.getElementById('parent-id-selector');
+    <script type="module">
+    // Logic form ada di resources/js/helpers/pemutu-indikator.js
+    window.initPemutuIndikatorForm({
+        kpiInitialIndex: {{ isset($indikator) && $indikator->pegawai ? $indikator->pegawai->count() : 0 }},
+        pegawaiOptionsHtml: `@foreach($pegawais as $p)<option value="{{ $p->encrypted_pegawai_id }}">{{ $p->nama }}</option>@endforeach`
+    });
 
-            function getCurrentType() {
-                if (typeSelector) return typeSelector.value;
-                // Fallback: read from hidden input (renop context)
-                const hidden = document.querySelector('input[type="hidden"][name="type"]');
-                return hidden ? hidden.value : '';
-            }
-
-            function toggleTabs() {
-                const type = getCurrentType();
-                if (!cardPerforma || !cardTarget || !parentIdSelector) return;
-                
-                if (type === 'performa') {
-                    cardPerforma.style.display = 'block';
-                    cardTarget.style.display = 'none';
-                    parentIdSelector.setAttribute('required', 'required');
-                } else if (type === 'standar') {
-                    cardPerforma.style.display = 'none';
-                    cardTarget.style.display = 'block';
-                    parentIdSelector.removeAttribute('required');
-                } else {
-                    cardPerforma.style.display = 'none';
-                    cardTarget.style.display = 'none';
-                    parentIdSelector.removeAttribute('required');
-                }
-            }
-
-            if (typeSelector) {
-                typeSelector.addEventListener('change', toggleTabs);
-            }
-            toggleTabs();
-
-            // KPI Assignments Repeater Logic
-            const kpiBody = document.getElementById('kpi-repeater-body');
-            const btnAddKpi = document.getElementById('btn-add-kpi');
-            let kpiIndex = {{ isset($indikator) && $indikator->pegawai ? $indikator->pegawai->count() : 0 }};
-
-            // Options for Select2
-            const pegawaiOptions = `
-                @foreach($pegawais as $p)
-                    <option value="{{ $p->encrypted_pegawai_id }}">{{ $p->nama }}</option>
-                @endforeach
-            `;
-
-            if (btnAddKpi && kpiBody) {
-                btnAddKpi.addEventListener('click', function () {
-                    const tr = document.createElement('tr');
-                    tr.className = 'kpi-row';
-                    tr.innerHTML = `
-                        <td>
-                            <input type="hidden" name="kpi_assign[${kpiIndex}][selected]" value="1">
-                            <select class="form-select select2-kpi" name="kpi_assign[${kpiIndex}][pegawai_id]" required data-placeholder="Pilih pegawai...">
-                                ${pegawaiOptions}
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" class="form-control mb-2" name="kpi_assign[${kpiIndex}][target_value]" placeholder="Nilai Target">
-                            <input type="text" class="form-control" name="kpi_assign[${kpiIndex}][unit_ukuran]" placeholder="%, org, dll (Satuan)">
-                        </td>
-                        <td class="text-center">
-                            <button type="button" class="btn btn-icon btn-danger btn-sm btn-remove-row" title="Hapus"><i class="ti ti-trash"></i></button>
-                        </td>
-                    `;
-                    kpiBody.appendChild(tr);
-
-                    // Re-init select2 for the new row if function exists globally
-                    if (typeof window.initOfflineSelect2 === 'function') {
-                        window.initOfflineSelect2();
-                    }
-
-                    kpiIndex++;
-                });
-
-                kpiBody.addEventListener('click', function (e) {
-                    if (e.target.closest('.btn-remove-row')) {
-                        e.target.closest('tr').remove();
-                    }
-                });
-            }
-
-            const checkboxes = document.querySelectorAll('.unit-checkbox');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    const unitId = this.dataset.id;
-                    const targetInput = document.getElementById('target-' + unitId);
-                    if (this.checked) {
-                        targetInput.removeAttribute('disabled');
-                    } else {
-                        targetInput.setAttribute('disabled', 'disabled');
-                        targetInput.value = '';
-                    }
-                });
-            });
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#keterangan', { 
+            height: 200,
+            menubar: false,
+            statusbar: false,
+            plugins: 'lists',
+            toolbar: 'bold italic | outdent indent | bullist numlist'
         });
+        window.loadHugeRTE('textarea.form-control[id^="skala-"]', { 
+            height: 180,
+            menubar: false,
+            statusbar: false,
+            plugins: 'lists',
+            toolbar: 'bold italic | outdent indent | bullist numlist'
+        });
+    }
+
+    // Toggle Skala Logic
+    document.getElementById('enable_skala').addEventListener('change', function() {
+        const container = document.getElementById('skala-container');
+        if (this.checked) {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+            // Clear content via HugeRTE API if initialized
+            if (window.hugerte) {
+                [0, 1, 2, 3, 4].forEach(level => {
+                    const editor = window.hugerte.get('skala-' + level);
+                    if (editor) {
+                        editor.setContent('');
+                    } else {
+                        // fallback clear textarea value directly
+                        const textarea = document.getElementById('skala-' + level);
+                        if (textarea) textarea.value = '';
+                    }
+                });
+            }
+        }
+    });
     </script>
     @endpush
-    @endsection

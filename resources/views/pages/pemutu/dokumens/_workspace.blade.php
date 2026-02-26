@@ -30,18 +30,15 @@
         {{-- ═══════════════════════════════════════════════════
              ALWAYS-VISIBLE HEADER: Title, Badge, Action Buttons
              ═══════════════════════════════════════════════════ --}}
-        <div class="d-flex justify-content-between align-items-start mb-4">
+        <div class="d-flex justify-content-between align-items-start mb-1">
             <div>
-                @if($type === 'dokumen')
-                    <div class="badge bg-primary-lt mb-2">{{ strtoupper($item->jenis) }}</div>
-                    <h2 class="m-0">{{ $item->judul }}</h2>
-                    @if($item->kode)
-                        <div class="text-muted mt-1">Kode: {{ $item->kode }}</div>
-                    @endif
+                @if($type === 'dokumen')                   
+                    <div class="badge bg-primary-lt">DOKUMEN {{ strtoupper($item->jenis) }}</div>
                 @elseif($type === 'poin')
-                    <div class="badge bg-purple-lt mb-2">POIN ({{ strtoupper($item->dokumen->jenis) }})</div>
-                    <h2 class="m-0">{{ $item->judul }}</h2>
-                    <div class="text-muted mt-1">Kode: {{ $item->kode }}</div>
+                    <div class="badge bg-secondary-lt">POIN {{ strtoupper($item->dokumen->jenis) }}</div>
+                @endif
+                @if($item->kode)
+                    <div class="badge bg-secondary-lt" title="Kode Dokumen">{{ $item->kode }}</div>
                 @endif
             </div>
             <div class="d-flex gap-2 flex-shrink-0">
@@ -50,8 +47,6 @@
                         <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
                             data-url="{{ route('pemutu.dokumens.approve.create', $item->encrypted_dok_id) }}"
                             data-modal-title="Form Approval Dokumen" />
-
-
                         <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
                             data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
                             data-modal-title="Ubah Dokumen" />
@@ -81,6 +76,7 @@
                 </div>
             </div>
         </div>
+        <h2>{{ $item->judul }}</h2>
 
         {{-- ═══════════════════════════════════════════════════
              TAB NAVIGATION
@@ -203,7 +199,6 @@
                  TAB 2: Informasi & Riwayat Approval
                  ───────────────────────────────────────────── --}}
             <div class="tab-pane" id="tab-informasi" role="tabpanel">
-
                 @if($item->isi)
                     <div class="mb-4">
                         <h4 class="mb-2 text-muted fw-medium">Konten Dokumen</h4>

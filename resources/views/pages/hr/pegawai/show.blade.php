@@ -1,4 +1,4 @@
-@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.tabler.empty' : 'layouts.tabler.app')
+﻿@extends((request()->ajax() || request()->has('ajax')) ? 'layouts.tabler.empty' : 'layouts.tabler.app')
 
 @section('header')
 <x-tabler.page-header :title="$pegawai->nama" pretitle="Detail Pegawai">
@@ -219,61 +219,9 @@
 </div>
 
 @push('scripts')
-<script>
-// Tab-like behavior: Show/hide sections
-document.querySelectorAll('.nav-pills .nav-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-        // Only prevent default if it's a section hash
-        if (this.getAttribute('href').startsWith('#section-')) {
-            e.preventDefault();
-            
-            // Get target section
-            const targetId = this.getAttribute('href');
-            switchSection(targetId);
-            
-            // Update hash without scrolling
-            history.pushState(null, null, targetId);
-        }
-    });
-});
-
-function switchSection(targetId) {
-    const targetSection = document.querySelector(targetId);
-    
-    // Hide all sections
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.style.display = 'none';
-    });
-    
-    // Show target section
-    if (targetSection) {
-        targetSection.style.display = 'block';
-    }
-    
-    // Update active state in nav
-    document.querySelectorAll('.nav-pills .nav-link').forEach(item => {
-        if (item.getAttribute('href') === targetId) {
-            item.classList.add('active');
-        } else {
-            item.classList.remove('active');
-        }
-    });
-}
-
-// Initialize: Show section based on hash or first section
-document.addEventListener('DOMContentLoaded', function() {
-    const hash = window.location.hash;
-    if (hash && hash.startsWith('#section-') && document.querySelector(hash)) {
-        switchSection(hash);
-    } else {
-        // Show first section by default
-        const firstSectionLink = document.querySelector('.nav-pills .nav-link');
-        if (firstSectionLink) {
-            switchSection(firstSectionLink.getAttribute('href'));
-        }
-    }
-});
-
+<script type="module">
+// Section switcher logic ada di resources/js/helpers/hr-pegawai.js
+window.initHrSectionSwitcher('.nav-pills .nav-link', '.content-section');
 </script>
 @endpush
 @endsection

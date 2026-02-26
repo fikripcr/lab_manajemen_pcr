@@ -8,20 +8,23 @@ use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
 use App\Models\Shared\Pegawai;
 use App\Models\Shared\StrukturOrganisasi;
+use App\Services\Pemutu\PeriodeSpmiService;
 use App\Services\Pemutu\TimMutuService;
 use Exception;
 
 class TimMutuController extends Controller
 {
-    public function __construct(protected TimMutuService $timMutuService)
-    {}
+    public function __construct(
+        protected TimMutuService $timMutuService,
+        protected PeriodeSpmiService $PeriodeSpmiService,
+    ) {}
 
     /**
      * Index — select a Periode SPMI to manage.
      */
     public function index()
     {
-        $periodes = PeriodeSpmi::orderByDesc('periode')->get();
+        $periodes = $this->PeriodeSpmiService->getAll();
 
         $activePeriode = $periodes->first();
         $summary       = $activePeriode

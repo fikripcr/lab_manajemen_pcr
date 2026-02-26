@@ -23,24 +23,20 @@
         <h3 class="card-title">Daftar Indikator</h3>
     </div>
     <div class="card-body border-bottom py-3">
-        <div class="text-muted">
-            Berikut adalah daftar indikator yang ditargetkan untuk unit <strong>{{ $unit->name }}</strong>. Silakan isi capaian dan analisis untuk setiap indikator.
-        </div>
+            <x-tabler.datatable 
+                id="table-ed"
+                route="{{ route('pemutu.evaluasi-diri.data', $periode->encrypted_periodespmi_id) }}"
+                :columns="[
+                    ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                    ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
+                    ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
+                    ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '15%'],
+                    ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'width' => '30%'],
+                    ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                ]"
+            />
     </div>
-    <div class="table-responsive">
-        <x-tabler.datatable 
-            id="table-ed"
-            route="{{ route('pemutu.evaluasi-diri.data', $periode->encrypted_periodespmi_id) }}"
-            :columns="[
-                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator / Pernyataan Standar'],
-                ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
-                ['data' => 'capaian', 'name' => 'capaian', 'title' => 'Capaian', 'width' => '15%'],
-                ['data' => 'analisis', 'name' => 'analisis', 'title' => 'Analisis', 'width' => '30%'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-            ]"
-        />
-    </div>
+
 </div>
 
 @push('scripts')

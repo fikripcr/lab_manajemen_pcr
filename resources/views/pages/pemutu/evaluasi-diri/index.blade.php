@@ -2,11 +2,7 @@
 @section('title', 'Evaluasi Diri - Pilih Periode')
 
 @section('header')
-<x-tabler.page-header title="Evaluasi Diri" pretitle="SPMI">
-    <x-slot:actions>
-        {{-- Actions if any --}}
-    </x-slot:actions>
-</x-tabler.page-header>
+<x-tabler.page-header title="Evaluasi Diri" pretitle="SPMI" />
 @endsection
 
 @section('content')

@@ -14,8 +14,8 @@
 
     <x-tabler.form-textarea 
         name="answer" 
+        id="answer"
         label="Jawaban" 
-        type="editor"
         height="300"
         required="true"
     >{{ $faq->answer }}</x-tabler.form-textarea>
@@ -36,4 +36,10 @@
     </div>
 </x-tabler.form-modal>
 
-
+@push('js')
+<script>
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#answer', { height: 300 });
+    }
+</script>
+@endpush

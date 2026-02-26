@@ -2,7 +2,7 @@
     $menuGroup = request()->is('sys*') ? 'sys' : 'admin';
 @endphp
 
-<aside class="navbar navbar-vertical d-none d-lg-flex navbar-expand-lg">
+<aside class="navbar navbar-vertical d-none d-lg-flex navbar-expand-lg overflow-y-auto">
     <div class="container-fluid">
         {{-- 1. NAVBAR TOGGLER (for mobile collapse) --}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"

@@ -37,7 +37,6 @@
                 />
 
                 <x-tabler.form-textarea 
-                    type="editor" 
                     id="{{ $lab->exists ? 'description_edit_modal' : 'description_modal' }}" 
                     name="description" 
                     label="Deskripsi" 
@@ -98,3 +97,11 @@
         </div>
     </div>
 </x-tabler.form-modal>
+
+@push('js')
+<script>
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#{{ $lab->exists ? "description_edit_modal" : "description_modal" }}', { height: 300 });
+    }
+</script>
+@endpush

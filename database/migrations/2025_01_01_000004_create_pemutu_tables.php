@@ -50,6 +50,7 @@ return new class extends Migration
             $table->id('doksub_id');
             $table->unsignedBigInteger('dok_id')->index();
             $table->string('judul', 191);
+            $table->string('kode', 50)->nullable();
             $table->text('isi')->nullable();
             $table->integer('seq')->nullable();
             $table->boolean('is_hasilkan_indikator')->default(false);
@@ -145,6 +146,7 @@ return new class extends Migration
             $table->text('indikator')->nullable();
             $table->text('target')->nullable();
             $table->string('jenis_indikator', 30)->nullable();
+            $table->integer('seq')->default(1);
             $table->string('jenis_data', 30)->nullable();
             $table->string('periode_jenis', 30)->nullable();
             $table->dateTime('periode_mulai')->nullable();
@@ -155,6 +157,8 @@ return new class extends Migration
             $table->string('hash', 100)->nullable();
             $table->integer('peningkat_nonaktif_indik')->nullable();
             $table->integer('is_new_indikator_after_peningkatan')->nullable();
+            $table->json('skala')->nullable()->comment('Skala penilaian 0-4 dengan deskripsi masing-masing level');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
 
             // Blameable
@@ -208,6 +212,18 @@ return new class extends Migration
             $table->text('ed_analisis')->nullable();
             $table->string('ed_attachment')->nullable();
             $table->json('ed_links')->nullable();
+            $table->tinyInteger('ed_skala')->nullable()->comment('Skala yang dipilih auditee saat Evaluasi Diri (0-4)');
+            $table->tinyInteger('ami_hasil_akhir')->nullable()->comment('Hasil AMI: 0=KTS, 1=Terpenuhi, 2=Terlampaui');
+            $table->text('ami_hasil_temuan')->nullable()->comment('Catatan temuan auditor saat AMI');
+            $table->text('ami_hasil_temuan_sebab')->nullable();
+            $table->text('ami_hasil_temuan_akibat')->nullable();
+            $table->text('ami_hasil_temuan_rekom')->nullable();
+            $table->string('pengend_status', 20)->nullable();
+            $table->text('pengend_target')->nullable();
+            $table->text('pengend_analisis')->nullable();
+            $table->text('pengend_penyesuaian')->nullable();
+            $table->string('pengend_important_matrix', 20)->nullable();
+            $table->string('pengend_urgent_matrix', 20)->nullable();
             $table->timestamps();
 
             // Blameable
@@ -321,11 +337,27 @@ return new class extends Migration
 
             $table->index(['model', 'model_id']);
         });
+
+        Schema::create('pemutu_diskusi', function (Blueprint $table) {
+            $table->id('diskusi_id');
+            $table->unsignedBigInteger('pengirim_user_id');
+            $table->string('jenis_pengirim', 50)->comment('auditor / auditee / admin');
+            $table->string('jenis_diskusi', 50)->default('ami')->comment('Konteks diskusi: ami, ed, dll');
+            $table->morphs('model'); // Generates model_type (varchar) dan model_id (unsignedBigInteger)
+            $table->text('isi');
+            $table->string('attachment_file')->nullable();
+            $table->json('attachment_link')->nullable()->comment('Array link dengan name+url');
+            $table->boolean('is_done')->default(false);
+            $table->timestamps();
+
+            $table->foreign('pengirim_user_id')->references('id')->on('users')->onDelete('cascade');
+        });
     }
 
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('pemutu_diskusi');
         Schema::dropIfExists('pemutu_riwayat_approval');
         Schema::dropIfExists('pemutu_dok_approval_status');
         Schema::dropIfExists('pemutu_dok_approval');

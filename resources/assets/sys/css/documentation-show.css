@@ -1,0 +1,190 @@
+/* Documentation Styles */
+
+.documentation-content {
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.documentation-content h1,
+.documentation-content h2,
+.documentation-content h3,
+.documentation-content h4,
+.documentation-content h5,
+.documentation-content h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    scroll-margin-top: 100px;
+}
+
+.documentation-content h1 {
+    font-size: 2rem;
+    border-bottom: 2px solid var(--tblr-border-color);
+    padding-bottom: 0.5rem;
+}
+
+.documentation-content h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--tblr-border-color);
+    padding-bottom: 0.3rem;
+}
+
+.documentation-content h3 {
+    font-size: 1.25rem;
+}
+
+.documentation-content p {
+    margin-bottom: 1rem;
+}
+
+.documentation-content ul,
+.documentation-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.documentation-content li {
+    margin-bottom: 0.5rem;
+}
+
+.documentation-content code {
+    background-color: var(--tblr-bg-surface-secondary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.875em;
+    color: var(--tblr-code-color);
+}
+
+.documentation-content pre {
+    background-color: var(--tblr-bg-surface-secondary);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    border: 1px solid var(--tblr-border-color);
+}
+
+.documentation-content pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+}
+
+.documentation-content blockquote {
+    border-left: 4px solid var(--tblr-primary);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: var(--tblr-secondary);
+    font-style: italic;
+}
+
+.documentation-content table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+
+.documentation-content table th,
+.documentation-content table td {
+    border: 1px solid var(--tblr-border-color);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.documentation-content table th {
+    background-color: var(--tblr-bg-surface-secondary);
+    font-weight: 600;
+}
+
+.documentation-content a {
+    color: var(--tblr-primary);
+    text-decoration: none;
+}
+
+.documentation-content a:hover {
+    text-decoration: underline;
+}
+
+.documentation-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 1rem 0;
+}
+
+/* Table of Contents Styling */
+#toc-nav .nav-link {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--tblr-secondary);
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+#toc-nav .nav-link:hover {
+    color: var(--tblr-primary);
+    background-color: var(--tblr-bg-surface-secondary);
+}
+
+#toc-nav .nav-link.active {
+    color: var(--tblr-primary);
+    border-left-color: var(--tblr-primary);
+    background-color: var(--tblr-bg-surface-secondary);
+    font-weight: 500;
+}
+
+/* Depth-based indentation for TOC */
+#toc-nav .nav-link[data-depth="2"] {
+    padding-left: 1.5rem;
+}
+
+#toc-nav .nav-link[data-depth="3"] {
+    padding-left: 2.25rem;
+    font-size: 0.8125rem;
+}
+
+/* Documentation Index Cards */
+.doc-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.doc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.doc-card .icon {
+    transition: transform 0.2s;
+}
+
+.doc-card:hover .icon {
+    transform: scale(1.1);
+}
+
+/* Archive section styling */
+.archive-section {
+    opacity: 0.8;
+}
+
+.archive-section .card {
+    background-color: var(--tblr-bg-surface-secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .documentation-content {
+        font-size: 0.875rem;
+    }
+
+    .documentation-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .documentation-content h2 {
+        font-size: 1.25rem;
+    }
+
+    #toc-nav {
+        display: none;
+    }
+}

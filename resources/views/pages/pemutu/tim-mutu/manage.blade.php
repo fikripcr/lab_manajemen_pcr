@@ -8,7 +8,7 @@
                 <span class="input-icon-addon">
                     <i class="ti ti-search"></i>
                 </span>
-                <input type="text" id="search-unit" class="form-control" placeholder="Cari Unit...">
+                <x-tabler.form-input id="search-unit" placeholder="Cari Unit..." />
             </div>
             <x-tabler.button type="back" href="{{ route('pemutu.tim-mutu.index') }}" />
         </div>

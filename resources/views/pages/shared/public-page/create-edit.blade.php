@@ -32,8 +32,8 @@
                             <div class="mb-3">
                                 <x-tabler.form-textarea
                                     name="content"
+                                    id="content"
                                     label="Konten"
-                                    type="editor"
                                     rows="20"
                                     :value="$page->content"
                                 />
@@ -114,6 +114,8 @@
 
 @push('scripts')
 <script>
-    // Additional scripts if needed
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#content', { height: 600 });
+    }
 </script>
 @endpush

@@ -23,7 +23,7 @@ class EvaluasiDiriRequest extends FormRequest
         return [
             'ed_capaian'      => 'required|string',
             'ed_analisis'     => 'required|string',
-            'ed_attachment'   => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'ed_attachment'   => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx|max:5120',
             'target_unit_id'  => 'nullable|integer',
             'ed_links_name'   => 'nullable|array',
             'ed_links_name.*' => 'nullable|string',

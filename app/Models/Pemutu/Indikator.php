@@ -39,10 +39,16 @@ class Indikator extends Model
         'hash',
         'peningkat_nonaktif_indik',
         'is_new_indik_after_peningkatan',
+        'skala',
+        'keterangan',
         'created_by',
         'updated_by', 'deleted_by',
-
     ];
+
+    protected $casts = [
+        'skala' => 'array',
+    ];
+
     public $timestamps = false;
 
     public function getEncryptedIndikatorIdAttribute()
@@ -83,5 +89,10 @@ class Indikator extends Model
     public function pegawai()
     {
         return $this->hasMany(IndikatorPegawai::class, 'indikator_id', 'indikator_id');
+    }
+
+    public function indikatorOrgUnits()
+    {
+        return $this->hasMany(IndikatorOrgUnit::class, 'indikator_id', 'indikator_id');
     }
 }

@@ -25,34 +25,25 @@
                     @csrf
                     
                     <div class="mb-3">
-                        <label class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" value="{{ $camaba->user->name }}" readonly>
+                        <x-tabler.form-input label="Nama Lengkap" type="text" value="{{ $camaba->user->name }}" readonly="true" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">NIK</label>
-                        <input type="text" class="form-control" value="{{ $camaba->nik }}" readonly>
+                        <x-tabler.form-input label="NIK" type="text" value="{{ $camaba->nik }}" readonly="true" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">No. Pendaftaran</label>
-                        <input type="text" class="form-control" value="{{ $pendaftaran->no_pendaftaran }}" readonly>
+                        <x-tabler.form-input label="No. Pendaftaran" type="text" value="{{ $pendaftaran->no_pendaftaran }}" readonly="true" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Program Studi Diterima</label>
-                        <input type="text" class="form-control" value="{{ $pendaftaran->orgUnitDiterima->name ?? '-' }}" readonly>
+                        <x-tabler.form-input label="Program Studi Diterima" type="text" value="{{ $pendaftaran->orgUnitDiterima->name ?? '-' }}" readonly="true" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label required">NIM (Nomor Induk Mahasiswa)</label>
-                        <input type="text" name="nim_final" class="form-control @error('nim_final') is-invalid @enderror" 
-                               placeholder="Masukkan NIM Anda" required 
-                               value="{{ old('nim_final') }}">
-                        @error('nim_final')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">NIM harus unik. Contoh: 2024TI001</div>
+                        <x-tabler.form-input name="nim_final" label="NIM (Nomor Induk Mahasiswa)" type="text" :required="true" 
+                               placeholder="Masukkan NIM Anda" value="{{ old('nim_final') }}" />
+                        <div class="form-hint">NIM harus unik. Contoh: 2024TI001</div>
                     </div>
 
                     <div class="mt-4">

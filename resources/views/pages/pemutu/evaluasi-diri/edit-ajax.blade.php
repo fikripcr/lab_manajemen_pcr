@@ -1,7 +1,8 @@
 <x-tabler.form-modal
+    id="edit-ed-modal"
     :title="'Isi Evaluasi Diri'"
     :route="route('pemutu.evaluasi-diri.update', $indikator->encrypted_indikator_id)"
-    size="modal-fullscreen-md-down modal-xl" style="max-width: 1200px;"
+    size="modal-lg" 
     method="POST"
     data-redirect="false"
 >
@@ -90,6 +91,39 @@
                 />
             </div>
 
+            {{-- Penilaian Skala (jika indikator punya skala) --}}
+            @php $skalaData = $indikator->skala ?? []; @endphp
+            @if(!empty($skalaData))
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Penilaian Skala Capaian</label>
+                <p class="text-muted small mb-2">Pilih level yang paling sesuai dengan capaian unit Anda.</p>
+                <input type="hidden" name="ed_skala" id="ed-skala-value" value="{{ $pivot->ed_skala ?? '' }}">
+                <div class="row g-2">
+                    @foreach($skalaData as $level => $desc)
+                    @php $isChosen = ($pivot->ed_skala !== null && (int)$pivot->ed_skala === (int)$level); @endphp
+                    <div class="col-12">
+                        <div class="card mb-0 skala-card cursor-pointer {{ $isChosen ? 'border-primary bg-primary-lt border-2' : 'border' }}"
+                             data-level="{{ $level }}" role="button">
+                            <div class="card-body p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-auto pe-3 border-end">
+                                        <div class="fs-1 fw-bold {{ $isChosen ? 'text-primary' : 'text-muted' }} mb-0">{{ $level }}</div>
+                                    </div>
+                                    <div class="col ps-3">
+                                        <div class="skala-desc {{ $isChosen ? 'text-primary fw-semibold' : 'text-muted' }}">
+                                            {!! $desc !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+
             <hr class="my-4">
             <h3 class="mb-3">Bukti & Dokumen Pendukung</h3>
 
@@ -106,7 +140,7 @@
                         <div>
                             <span class="text-muted small d-block">File Pendukung saat ini:</span>
                             <span class="fw-bold fs-5"><i class="ti ti-file-check text-success me-1"></i> File Tersedia</span>
-                          <a href="{{ route('pemutu.evaluasi-diri.download', $pivot->indikorgunit_id) }}" target="_blank" class="btn btn-primary btn-sm">
+                          <a href="{{ route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id)) }}" target="_blank" class="btn btn-primary btn-sm">
                             <i class="ti ti-download fs-3 me-2"></i> Unduh File Saat Ini
                         </a>
                     </div>
@@ -188,5 +222,36 @@
                 }
             });
         }
+
+        // Skala card interactive selection
+        const skalaCards = document.querySelectorAll('.skala-card');
+        const skalaInput = document.getElementById('ed-skala-value');
+        if (skalaCards.length && skalaInput) {
+            skalaCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const level = card.dataset.level;
+                    skalaInput.value = level;
+
+                    // Reset all cards
+                    skalaCards.forEach(c => {
+                        c.classList.remove('border-primary', 'bg-primary-lt', 'border-2');
+                        c.classList.add('border');
+                        const num = c.querySelector('.fs-1');
+                        const lbl = c.querySelector('.skala-desc');
+                        if (num) { num.classList.remove('text-primary'); num.classList.add('text-muted'); }
+                        if (lbl) { lbl.classList.remove('text-primary', 'fw-semibold'); lbl.classList.add('text-muted'); }
+                    });
+
+                    // Highlight selected
+                    card.classList.add('border-primary', 'bg-primary-lt', 'border-2');
+                    card.classList.remove('border');
+                    const num = card.querySelector('.fs-1');
+                    const lbl = card.querySelector('.skala-desc');
+                    if (num) { num.classList.add('text-primary'); num.classList.remove('text-muted'); }
+                    if (lbl) { lbl.classList.add('text-primary', 'fw-semibold'); lbl.classList.remove('text-muted'); }
+                });
+            });
+        }
     }, 100);
 </script>
+

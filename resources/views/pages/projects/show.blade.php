@@ -1,4 +1,4 @@
-@extends('layouts.tabler.app')
+﻿@extends('layouts.tabler.app')
 
 @section('title', $project->project_name)
 @section('pretitle', 'Project Dashboard')
@@ -432,221 +432,22 @@
     </div>
 </div>
 @endsection
-
-@push('styles')
-{{-- jKanban CSS --}}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.css">
-<style>
-    #taskKanban {
-        overflow-x: auto;
-    }
-    
-    .kanban-container {
-        background-color: #f8f9fa !important;
-        padding: 20px !important;
-        border-radius: 8px;
-        width: max-content !important;
-    }
-    
-    [data-bs-theme="dark"] .kanban-container {
-        background-color: #1a2234 !important;
-    }
-    
-    .kanban-board {
-        background-color: #e9ecef !important;
-        border-radius: 8px;
-        margin-right: 16px !important;
-    }
-    
-    [data-bs-theme="dark"] .kanban-board {
-        background-color: #243046 !important;
-    }
-    
-    .kanban-board[data-type="todo"] .kanban-board-header {
-        background-color: #e7f5ff !important;
-    }
-    
-    .kanban-board[data-type="in_progress"] .kanban-board-header {
-        background-color: #fff9db !important;
-    }
-    
-    .kanban-board-header {
-        border-radius: 8px 8px 0 0 !important;
-        padding: 12px !important;
-    }
-    
-    .kanban-board-header h3 {
-        font-size: 0.875rem !important;
-        font-weight: 600 !important;
-        margin: 0 !important;
-    }
-    
-    .kanban-board-header {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 12px 16px !important;
-        background: transparent !important;
-    }
-
-
-</style>
 @endpush
 
 @push('scripts')
-{{-- jKanban JS --}}
-<script src="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.js"></script>
-<script>
+<script type="module">
+// jKanban logic ada di resources/js/helpers/projects-kanban.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Kanban Instance globally
-    let kanban;
-
-    // Load tasks data and initialize/refresh board
-    function loadKanbanData() {
-        axios.get('{{ route('projects.tasks.kanban-data', $project) }}')
-            .then(response => {
-                if (response.data.success) {
-                    const tasks = response.data.data;
-                    
-                    if (kanban) {
-                        // Update existing boards
-                        ['todo', 'in_progress', 'done'].forEach(boardId => {
-                            kanban.removeAllItems(boardId);
-                            if (tasks[boardId]) {
-                                tasks[boardId].forEach(item => {
-                                    kanban.addElement(boardId, item);
-                                });
-                            }
-                        });
-                    } else {
-                        // Initial initialization
-                        initKanbanBoard(tasks);
-                    }
-                    
-                    // Re-initialize Bootstrap dropdowns for dynamically added cards
-                    setTimeout(() => {
-                        const dropdownElementList = document.querySelectorAll('.kanban-item [data-bs-toggle="dropdown"]');
-                        dropdownElementList.forEach(dropdownToggleEl => {
-                            if (!bootstrap.Dropdown.getInstance(dropdownToggleEl)) {
-                                new bootstrap.Dropdown(dropdownToggleEl);
-                            }
-                        });
-                    }, 50);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Kanban data:', error);
-                showErrorMessage('Failed to refresh Kanban board');
-            });
-    }
-
-    function initKanbanBoard(tasks) {
-        kanban = new jKanban({
-            element: '#taskKanban',
-            gutter: '16px',
-            widthBoard: '280px',
-            dragItems: true,
-            boards: [
-                { id: 'todo', title: 'To Do', item: tasks.todo || [] },
-                { id: 'in_progress', title: 'In Progress', item: tasks.in_progress || [] },
-                { id: 'done', title: 'Done', item: tasks.done || [] }
-            ],
-            dropEl: function(el, target, source, sibling) {
-                var taskId = el.getAttribute('data-eid');
-                var newStatus = target.parentElement.getAttribute('data-id');
-                
-                axios.post('{{ route('projects.tasks.move', [$project, '__TASK_ID__']) }}'.replace('__TASK_ID__', taskId), {
-                    status: newStatus,
-                    _token: '{{ csrf_token() }}'
-                })
-                .then(function(response) {
-                    showSuccessMessage('Task diperbarui ke ' + newStatus.replace('_', ' '));
-                })
-                .catch(function(error) {
-                    console.error('Error moving task:', error);
-                    showErrorMessage('Failed to move task');
-                    loadKanbanData(); // Rollback UI
-                });
-            },
-            buttonClick: function(el, boardId) {
-                var modalUrl = '{{ route('projects.tasks.create-modal', $project) }}?status=' + boardId;
-                openAjaxModal(modalUrl, 'Create New Task');
-            }
-        });
-    }
-
-    // Initial load
-    loadKanbanData();
-
-    // Tab persistence
-    const lastActiveTab = localStorage.getItem('project_active_tab_{{ $project->project_id }}');
-    if (lastActiveTab) {
-        const tabEl = document.querySelector(`a[data-tab-id="${lastActiveTab}"]`);
-        if (tabEl) {
-            new bootstrap.Tab(tabEl).show();
-        }
-    }
-
-    document.querySelectorAll('#projectTabs a[data-bs-toggle="tab"]').forEach(tabLink => {
-        tabLink.addEventListener('shown.bs.tab', function(e) {
-            const tabId = e.target.getAttribute('data-tab-id');
-            localStorage.setItem('project_active_tab_{{ $project->project_id }}', tabId);
-        });
+    window.initProjectsKanban({
+        element: '#taskKanban',
+        loadUrl: '{{ route('projects.tasks.kanban-data', $project) }}',
+        moveUrl: '{{ route('projects.tasks.move', [$project, '__TASK_ID__']) }}',
+        createUrl: '{{ route('projects.tasks.create-modal', $project) }}',
+        widthBoard: '280px',
+        boards: ['todo', 'in_progress', 'done']
     });
-    
-    // Show notification toast
-    function showNotification(type, message) {
-        if (type === 'success') {
-            showSuccessMessage(message);
-        } else {
-            showErrorMessage(message);
-        }
-    }
-    
-    // Open AJAX modal helper
-    function openAjaxModal(url, title) {
-        const modal = document.getElementById('modalAction');
-        const modalContent = document.getElementById('modalContent');
-        
-        axios.get(url)
-            .then(response => {
-                modalContent.innerHTML = response.data;
-                const bsModal = new bootstrap.Modal(modal);
-                bsModal.show();
-            })
-            .catch(error => {
-                console.error('Error loading modal:', error);
-                showNotification('error', 'Failed to load modal');
-            });
-    }
-    
-    // Handle AJAX form success
-    document.addEventListener('ajax-form:success', function(e) {
-        // Check if response has redirect with #tasks
-        if (e.detail && e.detail.response) {
-            // If it's a task related action, refresh kanban instead of reload
-            loadKanbanData();
-            
-            if (e.detail.response.redirect && e.detail.response.redirect.includes('#tasks')) {
-                // Switch to tasks tab
-                const tasksTab = document.querySelector('a[href="#project-tasks"]');
-                if (tasksTab) {
-                    new bootstrap.Tab(tasksTab).show();
-                }
-            }
-        }
-    });
-    
-    // Also support jQuery event (for backward compatibility)
-    $(document).on('ajax-form:success', function(e, responseData, form) {
-        if (responseData && responseData.redirect && responseData.redirect.includes('#tasks')) {
-            const tasksTab = document.querySelector('a[href="#project-tasks"]');
-            if (tasksTab) {
-                new bootstrap.Tab(tasksTab).show();
-            }
-            setTimeout(() => location.reload(), 500);
-        }
-    });
+
+    window.initProjectTabPersistence({{ $project->project_id }});
 });
 </script>
 @endpush

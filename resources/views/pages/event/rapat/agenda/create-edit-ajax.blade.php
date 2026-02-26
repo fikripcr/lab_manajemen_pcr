@@ -1,5 +1,4 @@
 <x-tabler.form-modal
-    id="modal-add-agenda"
     title="Tambah Agenda Rapat"
     :route="route('Kegiatan.rapat.agenda.store', $rapat->encrypted_rapat_id)"
     redirect="false"

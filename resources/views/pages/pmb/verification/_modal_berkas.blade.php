@@ -59,13 +59,10 @@
     <div class="mt-3">
         <div class="row">
             <div class="col-6">
-                <select name="status" id="statusVerifikasi" class="form-select">
-                    <option value="Valid">Terima</option>
-                    <option value="Ditolak">Kembalikan</option>
-                </select>
+                <x-tabler.form-select name="status" id="statusVerifikasi" label="Status" :options="['Valid' => 'Valid', 'Ditolak' => 'Ditolak']" :required="true" />
             </div>
             <div class="col-6">
-                <input type="text" name="catatan" class="form-control" placeholder="Catatan verifikasi (opsional)">
+                <x-tabler.form-input name="catatan" label="Catatan" placeholder="Catatan verifikasi (opsional)" />
             </div>
         </div>
         <div class="mt-3 text-end">

@@ -36,6 +36,9 @@ class IndikatorRequest extends FormRequest
             'labels'          => 'nullable|array',
             'org_units'       => 'nullable|array',
             'kpi_assignments' => 'nullable|array',
+            'skala'           => 'nullable|array',
+            'skala.*'         => 'nullable|string',
+            'keterangan'      => 'nullable|string',
         ];
     }
 

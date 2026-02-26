@@ -71,7 +71,6 @@
     </div>
 
     <x-tabler.form-textarea 
-        type="editor" 
         name="deskripsi" 
         id="{{ $softwareRequest->exists ? 'deskripsi_edit_modal' : 'deskripsi_modal' }}" 
         label="Keterangan / Deskripsi" 
@@ -84,6 +83,9 @@
     <script>
         $(document).ready(function() {
             window.loadSelect2();
+            if (window.loadHugeRTE) {
+                window.loadHugeRTE('#{{ $softwareRequest->exists ? "deskripsi_edit_modal" : "deskripsi_modal" }}', { height: 200 });
+            }
         });
     </script>
     @endpush

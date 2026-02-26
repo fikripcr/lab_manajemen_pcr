@@ -4,3 +4,7 @@
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 @import '../assets/tabler/css/ThemeTabler.css';
 @import '../assets/tabler/css/ThemeTabler_Advanced.css';
+
+/* --- Module Components --- */
+@import './components/pemutu-tree.css';
+@import './components/projects-kanban.css';

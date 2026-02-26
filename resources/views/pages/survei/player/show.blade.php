@@ -78,10 +78,11 @@
                                placeholder="Jawaban singkat...">
 
                     @elseif($pertanyaan->tipe === 'Esai')
-                        <textarea id="jawaban-{{ $pertanyaan->pertanyaan_id }}" name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
-                                  class="form-control pertanyaan-input"
+                        <x-tabler.form-textarea
+                                  id="jawaban-{{ $pertanyaan->pertanyaan_id }}" 
+                                  name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
                                   data-id="{{ $pertanyaan->pertanyaan_id }}"
-                                  rows="4" placeholder="Tulis jawaban..."></textarea>
+                                  rows="4" placeholder="Tulis jawaban..." />
 
                     @elseif($pertanyaan->tipe === 'Angka')
                         <input type="number" id="jawaban-{{ $pertanyaan->pertanyaan_id }}" name="jawaban[{{ $pertanyaan->pertanyaan_id }}]"
@@ -310,7 +311,7 @@ function attachInputListeners() {
     });
 
     // Text/textarea live
-    document.querySelectorAll('input[type="text"].pertanyaan-input, textarea.pertanyaan-input, input[type="number"].pertanyaan-input, input[type="date"].pertanyaan-input').forEach(el => {
+    document.querySelectorAll('input[type="text"].pertanyaan-input, textarea[data-id], input[type="number"].pertanyaan-input, input[type="date"].pertanyaan-input').forEach(el => {
         el.addEventListener('input', function() {
             const id = this.dataset.id;
             allJawaban[id] = this.value;

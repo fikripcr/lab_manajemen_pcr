@@ -54,8 +54,8 @@ return new class extends Migration
         });
 
         // 2. USER & PROFIL
-        Schema::create('pmb_profil_mahasiswa', function (Blueprint $table) {
-            $table->id('profilmahasiswa_id');
+        Schema::create('pmb_camaba', function (Blueprint $table) {
+            $table->id('camaba_id');
             $table->foreignId('user_id')->constrained('users');
             $table->string('nik', 16)->unique();
             $table->string('no_hp')->nullable();
@@ -132,6 +132,7 @@ return new class extends Migration
             $table->unsignedBigInteger('jenis_dokumen_id');
             $table->string('path_file');
             $table->enum('status_verifikasi', ['Pending', 'Valid', 'Revisi', 'Ditolak'])->default('Pending');
+            $table->text('catatan_verifikasi')->nullable();
             $table->text('catatan_revisi')->nullable();
             $table->foreignId('verifikator_id')->nullable()->constrained('users');
             $table->timestamp('waktu_upload')->nullable();
@@ -222,7 +223,7 @@ return new class extends Migration
         Schema::dropIfExists('pmb_pilihan_prodi');
         Schema::dropIfExists('pmb_riwayat_pendaftaran');
         Schema::dropIfExists('pmb_pendaftaran');
-        Schema::dropIfExists('pmb_profil_mahasiswa');
+        Schema::dropIfExists('pmb_camaba');
         Schema::dropIfExists('pmb_syarat_dokumen_jalur');
         Schema::dropIfExists('pmb_jenis_dokumen');
 

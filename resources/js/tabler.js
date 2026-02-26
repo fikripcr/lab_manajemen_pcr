@@ -2,6 +2,7 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 
+
 // --- Axios (Modern AJAX)
 import axios from 'axios';
 // Only expose axios globally if truly needed by legacy code
@@ -34,6 +35,13 @@ import ThemeTabler from '../assets/tabler/js/ThemeTabler.js';
 import '../assets/tabler/js/CustomSweetAlerts.js';
 import '../assets/tabler/js/Notification.js';
 import '../assets/tabler/js/FormHandlerAjax.js';
+
+// --- Module Helpers ---
+import './helpers/pemutu-workspace.js';
+import './helpers/pemutu-indikator.js';
+import './helpers/projects-kanban.js';
+import './helpers/hr-pegawai.js';
+
 
 /**
  * Load HugeRTE Editor with error handling and dynamic skin loading
@@ -455,3 +463,4 @@ window.toggleTheme = function (mode) {
         console.warn('Axios not available, theme preference not saved to server');
     }
 };
+

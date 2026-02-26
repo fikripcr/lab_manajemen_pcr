@@ -11,12 +11,46 @@ Dokumen ini adalah referensi teknis mendalam (*Single Source of Truth*) untuk se
 ## Table of Contents
 
 1. [Arsitektur Backend](#1-arsitektur-backend)
+   - [A. Service-Oriented Architecture](#a-service-oriented-architecture)
+   - [A.2. Service Delegation Pattern](#a2-service-delegation-pattern-cross-service-usage)
+   - [A.3. Constructor Injection Pattern](#a3-constructor-injection-pattern)
+   - [A.4. Blameable Trait Implementation](#a4-blameable-trait-implementation)
+   - [B. Route Model Binding & Security](#c-route-model-binding--security-encrypted-id)
+   - [C. Validation (Form Requests)](#d-validation-form-requests)
+   - [D. Model Traits & Best Practices](#e-model-traits--best-practices)
+   - [E. Responses & Error Handling](#f-responses-global-helpers--error-handling)
+
 2. [Frontend & UI Standardization](#2-frontend--ui-standardization)
+   - [A. Layout Structure](#a-layout-structure-multi-context)
+   - [B. Vite Asset Bundling](#b-vite-asset-bundling)
+   - [C. Blade Components](#c-blade-components-x-tabler)
+   - [D. JavaScript Libraries](#d-javascript-libraries)
+   - [E. AJAX Handlers](#e-ajax-handlers)
+   - [F. Unified Views Pattern](#f-unified-views-pattern)
+   - [G. JavaScript Re-initialization](#g-javascript-re-initialization-pattern)
+   - [H. Global Search Implementation](#h-global-search-implementation)
+
 3. [Database & System Helpers](#3-database--system-helpers)
+   - [A. Sys Helpers](#a-sys-helpers-apphelperssyshelperphp)
+   - [B. Global Helpers](#b-global-helpers-apphelpersglobalhelperphp)
+   - [C. Activity Logging](#c-activity-logging)
+   - [D. Error Logging](#d-error-logging)
+   - [E. Approval System Pattern](#e-approval-system-pattern)
+
 4. [Struktur Folder & Naming](#4-struktur-folder--naming)
+
 5. [Authentication & Authorization](#5-authentication--authorization)
+
 6. [Features & Packages](#6-features--packages)
+   - [A. Core Packages](#a-core-packages)
+   - [B. Key Features](#b-key-features)
+   - [C. Frontend Libraries](#c-frontend-libraries)
+   - [D. Theme Toggle Pattern](#d-theme-toggle-pattern-server-first-approach)
+   - [E. DataTables State Persistence](#e-datatables-state-persistence)
+   - [F. Custom Event System](#f-custom-event-system-ajax-forms)
+
 7. [Development Workflow](#7-development-workflow)
+
 8. [Code Quality & Best Practices](#8-code-quality--best-practices)
 
 ---
@@ -92,9 +126,181 @@ public function createRole(array $data): Role
 - ✅ **Maintainable**: Business logic centralized di satu tempat
 - ✅ **Separation of Concerns**: Controller fokus di HTTP, Service fokus di business logic
 
-### B. Dependency Injection
+---
 
-Gunakan constructor injection. Nama properti service **WAJIB camelCase**:
+### A.2. Service Delegation Pattern (Cross-Service Usage)
+
+> **Prinsip Inti**: Setiap model memiliki satu Service yang bertanggung jawab atas domain-nya. Controller dan Service lain **WAJIB** memanggil service yang tepat — bukan query model langsung.
+
+#### ❌ Anti-Pattern: Direct Model Query di Luar Domain-nya
+
+```php
+// ❌ SALAH — AmiController query PeriodeSpmi langsung
+class AmiController extends Controller {
+    public function index() {
+        $periodes = PeriodeSpmi::orderBy('tahun', 'desc')->get(); // DILARANG!
+    }
+}
+
+// ❌ SALAH — TimMutuController query PeriodeSpmi langsung
+class TimMutuController extends Controller {
+    public function index() {
+        $periodes = PeriodeSpmi::orderByDesc('periode')->get(); // DILARANG!
+    }
+}
+```
+
+#### ✅ Correct Pattern: Delegate ke Service yang Tepat
+
+```php
+// ✅ BENAR — Inject PeriodeSpmiService, gunakan method-nya
+class AmiController extends Controller {
+    public function __construct(
+        protected AmiService $AmiService,
+        protected PeriodeSpmiService $PeriodeSpmiService, // inject service domain lain
+    ) {}
+
+    public function index() {
+        $periodes = $this->PeriodeSpmiService->getPeriodes(); // delegate ✅
+    }
+}
+
+// ✅ BENAR — TimMutuController gunakan PeriodeSpmiService
+class TimMutuController extends Controller {
+    public function __construct(
+        protected TimMutuService $timMutuService,
+        protected PeriodeSpmiService $PeriodeSpmiService,
+    ) {}
+
+    public function index() {
+        $periodes = $this->PeriodeSpmiService->getAll(); // delegate ✅
+    }
+}
+```
+
+#### Standard Query Methods di Setiap Service
+
+Setiap Service **WAJIB menyediakan** method standar berikut jika modelnya diakses dari luar:
+
+| Method | Return Type | Kegunaan |
+|--------|-------------|----------|
+| `getAll()` | `Collection` | List lengkap untuk dropdown/select |
+| `getPeriodes(int $perPage)` | `LengthAwarePaginator` | Paginated list untuk halaman index |
+| `getBaseQuery()` | `Builder` | Raw query untuk DataTables |
+| `getPeriodeAktif()` / `getAktif()` | `Model\|null` | Ambil record aktif saat ini |
+
+#### Scope Domain Setiap Service
+
+| Service | Domain Model | Siapa yang Boleh Inject |
+|---------|-------------|------------------------|
+| `PeriodeSpmiService` | `PeriodeSpmi` | Semua controller/service yang butuh periode SPMI |
+| `PeriodeService` | `PeriodeKpi` | Semua controller/service yang butuh periode KPI |
+| `IndikatorService` | `Indikator` | Controller yang manage indikator |
+| `TimMutuService` | `TimMutu` | Controller tim mutu |
+| `AmiService` | `IndikatorOrgUnit` (AMI context) | `AmiController` |
+
+> **Pengecualian**: `DashboardController` boleh query banyak model langsung karena fungsinya adalah **agregasi statistik lintas domain** — bukan CRUD dari satu domain.
+
+---
+
+### A.3. Constructor Injection Pattern
+
+Gunakan constructor injection dengan nama properti mengikuti **PascalCase** (mengikuti nama class service):
+
+```php
+// ✅ Good - PascalCase mengikuti nama class
+public function __construct(
+    protected AmiService $AmiService,
+    protected PeriodeSpmiService $PeriodeSpmiService,
+    protected UserService $UserService,
+) {}
+
+// ❌ Bad - snake_case (tidak konsisten)
+public function __construct(
+    protected AmiService $ami_service,
+    protected PeriodeSpmiService $periode_spmi_service,
+) {}
+
+// ❌ Bad - camelCase lowercase (tidak konsisten dengan nama class)
+public function __construct(
+    protected AmiService $amiService,
+    protected PeriodeSpmiService $periodeSpmiService,
+) {}
+```
+
+**Rationale:** Nama properti PascalCase memudahkan tracking saat search & replace, dan konsisten dengan naming convention class.
+
+---
+
+### A.4. Blameable Trait Implementation
+
+Trait `Blameable` otomatis mengisi `created_by`, `updated_by`, dan `deleted_by` dari user yang terautentikasi.
+
+**⚠️ IMPORTANT:** Implementasi saat ini menggunakan **string (nama user)**, bukan integer (ID user).
+
+```php
+// app/Traits/Blameable.php
+trait Blameable
+{
+    public static function bootBlameable()
+    {
+        static::creating(function ($model) {
+            if (Auth::check() && $model->isFillable('created_by')) {
+                $model->created_by = Auth::user()->name; // STRING, bukan ID!
+            }
+        });
+
+        static::updating(function ($model) {
+            if (Auth::check() && $model->isFillable('updated_by')) {
+                $model->updated_by = Auth::user()->name; // STRING, bukan ID!
+            }
+        });
+
+        static::deleting(function ($model) {
+            if (Auth::check() && $model->isFillable('deleted_by')) {
+                if (method_exists($model, 'isForceDeleting') && ! $model->isForceDeleting()) {
+                    $model->deleted_by = Auth::user()->name; // STRING, bukan ID!
+                    $model->saveQuietly();
+                }
+            }
+        });
+    }
+}
+```
+
+**Database Schema:**
+```php
+// Migration
+$table->string('created_by')->nullable();
+$table->string('updated_by')->nullable();
+$table->string('deleted_by')->nullable();
+```
+
+**Usage di Model:**
+```php
+// app/Models/User.php
+use App\Traits\Blameable;
+
+class User extends Model
+{
+    use Blameable;
+
+    protected $fillable = ['name', 'email', 'created_by', 'updated_by', 'deleted_by'];
+}
+```
+
+**Query berdasarkan Blameable:**
+```php
+// Get users created by specific user (by name, not ID!)
+$users = User::where('created_by', 'John Doe')->get();
+
+// Eager load tidak diperlukan karena ini kolom biasa, bukan relasi
+```
+
+---
+
+
+Gunakan constructor injection. Nama properti service **WAJIB PascalCase** (mengikuti nama class):
 
 ```php
 // ✅ Good
@@ -333,45 +539,97 @@ npm run build  # Production (minified)
 
 ### C. Blade Components (x-tabler)
 
+**🔴 ATURAN EMAS - WAJIB DIPATUHI:**
+
+> **DILARANG KERAS** membuat elemen UI HTML manual (seperti `<button>`, `<input>`, `<select>`, `<form>`, `<table>`) jika komponen `<x-tabler.*>` sudah tersedia. 
+> 
+> **Selalu gunakan komponen x-tabler** untuk konsistensi UI, fitur otomatis (Flatpickr, Select2, FilePond), dan maintainability.
+
 Hampir seluruh elemen UI dibungkus dalam komponen Blade untuk konsistensi.
+
+#### Daftar Komponen WAJIB
+
+| Komponen | Kegunaan | WAJIB Untuk |
+|----------|----------|-------------|
+| `<x-tabler.page-header>` | Judul halaman dan breadcrumb | **SEMUA** halaman |
+| `<x-tabler.button>` | Tombol standar (type: submit, back, delete, modal) | **SEMUA** tombol |
+| `<x-tabler.form-input>` | Input teks, date (Flatpickr), password (eye toggle), file (FilePond) | **SEMUA** input |
+| `<x-tabler.form-select>` | Select dropdown, otomatis mendukung Select2 (offline) | **SEMUA** select/option |
+| `<x-tabler.form-textarea>` | Textarea teks atau Rich Text Editor (`type="editor"`) | **SEMUA** textarea |
+| `<x-tabler.form-checkbox>` | Checkbox input | **SEMUA** checkbox |
+| `<x-tabler.form-radio>` | Radio input | **SEMUA** radio |
+| `<x-tabler.form-modal>` | Modal wrapper untuk form | **SEMUA** modal form |
+| `<x-tabler.empty-state>` | UI placeholder jika data tabel/list kosong | **SEMUA** empty state |
+| `<x-tabler.flash-message>` | Menampilkan notifikasi error/sukses dari session flash | **SEMUA** flash message |
+| `<x-tabler.datatable>` | Server-side DataTables component | **SEMUA** tabel data |
+| `<x-tabler.datatables-actions>` | Standard action buttons untuk DataTable | **SEMUA** action buttons |
+
+#### Komponen Tambahan (Opsional)
 
 | Komponen | Kegunaan |
 |----------|----------|
-| `<x-tabler.page-header>` | Judul halaman dan breadcrumb |
-| `<x-tabler.button>` | Tombol standar (type: submit, back, delete, modal) |
-| `<x-tabler.form-input>` | Input teks, date (Flatpickr), password (eye toggle), file (FilePond) |
-| `<x-tabler.form-select>` | Select dropdown, otomatis mendukung Select2 (offline) |
-| `<x-tabler.form-textarea>` | Textarea teks atau Rich Text Editor (`type="editor"`) |
-| `<x-tabler.form-checkbox>` | Checkbox input |
-| `<x-tabler.form-radio>` | Radio input |
-| `<x-tabler.form-modal>` | Modal wrapper untuk form |
-| `<x-tabler.empty-state>` | UI placeholder jika data tabel/list kosong |
-| `<x-tabler.flash-message>` | Menampilkan notifikasi error/sukses dari session flash |
-| `<x-tabler.datatable>` | Server-side DataTables component |
-| `<x-tabler.datatables-actions>` | Standard action buttons untuk DataTable |
+| `<x-tabler.modal-global-search>` | Modal pencarian global |
+| `<x-tabler.approval-history>` | History approval |
+| `<x-tabler.theme-settings>` | Theme customization panel |
+| `<x-tabler.button-group>` | Group tombol |
+| `<x-tabler.datatable-checkbox>` | Checkbox untuk DataTable |
+| `<x-tabler.datatable-filter>` | Filter DataTable |
+| `<x-tabler.datatable-info>` | Info DataTable |
+| `<x-tabler.datatable-pagination>` | Pagination DataTable |
+| `<x-tabler.datatable-page-length>` | Page length selector |
+| `<x-tabler.datatable-search>` | Search input DataTable |
 
-**CATATAN**: Dilarang membuat elemen UI ad-hoc jika komponen `<x-tabler.*>` sudah tersedia.
+**CATATAN PENTING**: 
+- ✅ **Gunakan ALWAYS komponen x-tabler** jika tersedia
+- ❌ **JANGAN PERNAH** buat HTML manual: `<button class="btn">`, `<input class="form-control">`, `<select class="form-select">`
+- ⚠️ **Jika komponen belum ada**, buat komponen baru di `resources/views/components/tabler/` jangan buat HTML manual
 
-#### Example: Form Input
+#### Example: Form Input (WAJIB pakai x-tabler)
+
 ```blade
-<x-tabler.form-input 
-    type="date" 
-    name="tanggal" 
-    label="Pilih Tanggal" 
-    required="true" 
+{{-- ✅ BENAR - Gunakan x-tabler.form-input --}}
+<x-tabler.form-input
+    type="date"
+    name="tanggal"
+    label="Pilih Tanggal"
+    required="true"
     help="Format: DD MMMM YYYY"
 />
 
-<x-tabler.form-input 
-    type="password" 
-    name="password" 
+<x-tabler.form-input
+    type="password"
+    name="password"
     label="Kata Sandi"
     placeholder="Minimal 8 karakter"
 />
+
+{{-- ❌ SALAH - JANGAN buat HTML manual --}}
+<div class="mb-3">
+    <label class="form-label">Pilih Tanggal</label>
+    <input type="date" name="tanggal" class="form-control" required>
+    <small class="form-text">Format: DD MMMM YYYY</small>
+</div>
 ```
 
-#### Example: DataTable
+#### Example: Button (WAJIB pakai x-tabler.button)
+
 ```blade
+{{-- ✅ BENAR - Gunakan x-tabler.button --}}
+<x-tabler.button type="submit" text="Simpan" icon="ti ti-device-floppy" />
+<x-tabler.button type="back" href="{{ route('users.index') }}" />
+<x-tabler.button type="delete" url="{{ route('users.destroy', $user) }}" />
+
+{{-- ❌ SALAH - JANGAN buat button manual --}}
+<button class="btn btn-primary">
+    <i class="ti ti-device-floppy"></i> Simpan
+</button>
+<a href="{{ route('users.index') }}" class="btn btn-secondary">Kembali</a>
+```
+
+#### Example: DataTable (WAJIB pakai x-tabler.datatable)
+
+```blade
+{{-- ✅ BENAR - Gunakan x-tabler.datatable --}}
 <x-tabler.datatable
     :columns="[
         ['data' => 'name', 'title' => 'Nama'],
@@ -380,11 +638,34 @@ Hampir seluruh elemen UI dibungkus dalam komponen Blade untuk konsistensi.
     ]"
     :url="route('admin.users.paginate')"
 />
+
+{{-- ❌ SALAH - JANGAN buat table manual --}}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($users as $user)
+        <tr>
+            <td>{{ $user->name }}</td>
+            <td>{{ $user->email }}</td>
+            <td>
+                <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-primary">Edit</a>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
 ```
 
 #### Example: DataTable Actions
+
 ```php
-// In Controller
+// In Controller - WAJIB gunakan component view
 ->addColumn('action', function ($row) {
     return view('components.tabler.datatables-actions', [
         'editUrl'   => route('module.sub.edit', $row->encrypted_id),
@@ -392,6 +673,33 @@ Hampir seluruh elemen UI dibungkus dalam komponen Blade untuk konsistensi.
         'deleteUrl' => route('module.sub.destroy', $row->encrypted_id),
     ])->render();
 })
+```
+
+#### Example: Form Modal (WAJIB pakai x-tabler.form-modal)
+
+```blade
+{{-- ✅ BENAR - Gunakan x-tabler.form-modal --}}
+<x-tabler.form-modal
+    id="formModal"
+    title="{{ $user->exists ? 'Edit User' : 'Tambah User' }}"
+    data-redirect="{{ $user->exists ? 'false' : 'true' }}"
+>
+    <form action="{{ $user->exists ? route('users.update', $user) : route('users.store') }}"
+          method="POST"
+          class="ajax-form"
+    >
+        @csrf
+        @if($user->exists) @method('PUT') @endif
+
+        <x-tabler.form-input name="name" label="Nama" :value="$user->name" required="true" />
+        <x-tabler.form-input name="email" label="Email" type="email" :value="$user->email" required="true" />
+
+        <div class="modal-footer">
+            <x-tabler.button type="back" text="Batal" />
+            <x-tabler.button type="submit" text="{{ $user->exists ? 'Update' : 'Simpan' }}" />
+        </div>
+    </form>
+</x-tabler.form-modal>
 ```
 
 ### D. JavaScript Libraries
@@ -496,13 +804,13 @@ Untuk mengurangi duplikasi file, gunakan pola satu file untuk tambah dan edit:
 **Filename:** `create-edit-ajax.blade.php`
 
 ```blade
-<x-tabler.form-modal 
-    id="formModal" 
+<x-tabler.form-modal
+    id="formModal"
     title="{{ $user->exists ? 'Edit User' : 'Tambah User' }}"
     data-redirect="{{ $user->exists ? 'false' : 'true' }}"
 >
-    <form action="{{ $user->exists ? route('users.update', $user) : route('users.store') }}" 
-          method="POST" 
+    <form action="{{ $user->exists ? route('users.update', $user) : route('users.store') }}"
+          method="POST"
           class="ajax-form"
     >
         @csrf
@@ -518,6 +826,248 @@ Untuk mengurangi duplikasi file, gunakan pola satu file untuk tambah dan edit:
     </form>
 </x-tabler.form-modal>
 ```
+
+---
+
+### G. JavaScript Re-initialization Pattern
+
+**PENTING:** Saat menambahkan elemen form via AJAX/Modal, komponen **TIDAK** otomatis terinisialisasi. Anda **WAJIB** memanggil fungsi re-init secara manual.
+
+#### Komponen yang Perlu Re-init
+
+| Komponen | Class/Trigger | Fungsi Re-init |
+|----------|---------------|----------------|
+| Flatpickr (Date Picker) | `.flatpickr-input` | `window.initFlatpickr()` |
+| Select2 (Dropdown) | `.select2-offline` | `window.initOfflineSelect2()` |
+| FilePond (File Upload) | `.filepond-input` | `window.initFilePond()` |
+| HugeRTE (Rich Text Editor) | `textarea` dengan `type="editor"` | `window.loadHugeRTE('#id')` |
+
+#### Kapan Re-init Diperlukan?
+
+1. **Setelah Modal AJAX Dibuka** - `FormHandlerAjax.js` sudah handle otomatis
+2. **Setelah AJAX Load Content** - Manual call diperlukan
+3. **Setelah Dynamic Content Insert** - Manual call diperlukan
+
+#### Example: Manual Re-init Setelah AJAX
+
+```javascript
+// Load content via AJAX
+axios.get('/api/form-content')
+    .then(function(response) {
+        $('#formContainer').html(response.data);
+        
+        // MANUAL RE-INIT - WAJIB!
+        if (typeof window.initFlatpickr === 'function') {
+            window.initFlatpickr();
+        }
+        if (typeof window.initOfflineSelect2 === 'function') {
+            window.initOfflineSelect2();
+        }
+        if (typeof window.initFilePond === 'function') {
+            window.initFilePond();
+        }
+    });
+```
+
+#### Example: Re-init HugeRTE di Modal
+
+```javascript
+// After modal content loaded
+$('#formModal').on('shown.bs.modal', function() {
+    // Re-init HugeRTE if present
+    if (typeof window.loadHugeRTE === 'function') {
+        $(this).find('textarea.form-control').each(function() {
+            const id = $(this).attr('id');
+            if (id && $(this).closest('.tinymce-container').length > 0) {
+                window.loadHugeRTE('#' + id, {
+                    height: 200,
+                    menubar: false,
+                    statusbar: false,
+                    setup: function(editor) {
+                        editor.on('change', function() {
+                            editor.save();
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+```
+
+#### Example: Cleanup HugeRTE Saat Modal Tutup
+
+```javascript
+// Cleanup to prevent initialization issues
+$('#formModal').on('hidden.bs.modal', function() {
+    const $modal = $(this);
+    const $form = $modal.find('.ajax-form');
+    
+    // Clean up HugeRTE instances
+    if (typeof window.hugerte !== 'undefined') {
+        $modal.find('textarea.form-control').each(function() {
+            const id = $(this).attr('id');
+            if (id && window.hugerte.get(id)) {
+                window.hugerte.remove('#' + id);
+            }
+        });
+    }
+    
+    // Reset form
+    if ($form.length) {
+        $form[0].reset();
+        $form.find('.is-invalid').removeClass('is-invalid');
+        $form.find('.invalid-feedback').remove();
+    }
+});
+```
+
+#### Auto Re-init di FormHandlerAjax.js
+
+`FormHandlerAjax.js` **sudah otomatis** melakukan re-init setelah AJAX modal dibuka:
+
+```javascript
+// Di FormHandlerAjax.js - AJAX Modal Button
+.then(function (response) {
+    $modalContent.html(response.data);
+    
+    // Auto re-init components
+    if (typeof window.initOfflineSelect2 === 'function') {
+        window.initOfflineSelect2();
+    }
+    if (typeof window.initFlatpickr === 'function') {
+        window.initFlatpickr();
+    }
+    if (typeof window.initFilePond === 'function') {
+        window.initFilePond();
+    }
+    
+    // Re-init HugeRTE if present
+    if (typeof window.loadHugeRTE === 'function') {
+        // ... auto init code
+    }
+});
+```
+
+**CATATAN:** Untuk custom AJAX calls di luar `FormHandlerAjax.js`, Anda **WAJIB** manual re-init.
+
+---
+
+### H. Global Search Implementation
+
+Fitur global search memungkinkan pencarian lintas model dengan real-time results.
+
+#### Architecture
+
+```
+User Input → GlobalSearch.js → AJAX /global-search → GlobalSearchController
+                                    ↓
+                            Spatie Searchable
+                                    ↓
+                            Multi-model results → JSON Response → Modal Display
+```
+
+#### Component Usage
+
+```blade
+<!-- Search Icon di Header -->
+<button class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#globalSearchModal">
+    <i class="ti ti-search"></i>
+</button>
+
+<!-- Modal Component -->
+<x-tabler.modal-global-search />
+```
+
+#### Controller Implementation
+
+```php
+// app/Http/Controllers/Lab/GlobalSearchController.php
+use Spatie\Searchable\Search;
+use Spatie\Searchable\Searchable;
+
+class GlobalSearchController extends Controller
+{
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        
+        $searchResults = (new Search())
+            ->registerModel(\App\Models\User::class, ['name', 'email'])
+            ->registerModel(\App\Models\Lab\Lab::class, ['name', 'kode'])
+            ->registerModel(\App\Models\Hr\Pegawai::class, ['name', 'nip'])
+            ->search($query);
+        
+        return response()->json([
+            'success' => true,
+            'results' => $searchResults->toArray(),
+        ]);
+    }
+}
+```
+
+#### Model Setup (Spatie Searchable)
+
+```php
+// app/Models/User.php
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
+
+class User extends Model implements Searchable
+{
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult($this, route('admin.users.show', $this->encrypted_id));
+    }
+}
+```
+
+#### JavaScript (GlobalSearch.js)
+
+```javascript
+// resources/assets/tabler/js/GlobalSearch.js
+export class GlobalSearch {
+    constructor() {
+        this.input = document.querySelector('#global-search-input');
+        this.resultsContainer = document.querySelector('#global-search-results');
+        this.bindEvents();
+    }
+    
+    bindEvents() {
+        this.input.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            if (query.length >= 3) {
+                this.search(query);
+            }
+        });
+    }
+    
+    async search(query) {
+        const response = await axios.get(`/global-search?q=${query}`);
+        this.renderResults(response.data.results);
+    }
+    
+    renderResults(results) {
+        // Render results to modal
+    }
+}
+```
+
+#### Route Setup
+
+```php
+// routes/web.php
+Route::get('/global-search', [GlobalSearchController::class, 'search'])
+    ->middleware(['auth', 'check.expired']);
+```
+
+#### Best Practices
+
+1. **Minimum 3 Characters** - Trigger search setelah 3 karakter untuk performa
+2. **Debounce Input** - Gunakan debounce 300ms untuk mengurangi request
+3. **Limit Results** - Max 10 results per model
+4. **Encrypted IDs** - Selalu gunakan encrypted ID di result URLs
+5. **Eager Loading** - Gunakan `with()` untuk prevent N+1
 
 ---
 
@@ -581,6 +1131,265 @@ Error disimpan ke `sys_error_log` table dengan informasi:
 - Full stack trace
 - Request context (URL, method, IP, user agent, user_id)
 - Additional custom context
+
+---
+
+### E. Approval System Pattern
+
+Sistem approval digunakan untuk workflow yang memerlukan persetujuan berjenjang (HR, Dokumen, dll).
+
+#### Architecture
+
+```
+Request → ApprovalController → ApprovalService → Update Model + Log Approval
+                                    ↓
+                            Notification ke Approver
+                                    ↓
+                            Approver Approve/Reject → Update Status
+```
+
+#### Database Schema
+
+```php
+// Table: hr_approvals (atau {module}_approvals)
+Schema::create('hr_approvals', function (Blueprint $table) {
+    $table->id();
+    $table->morphs('approvable'); // approvable_type, approvable_id
+    $table->foreignId('approver_id')->constrained('users');
+    $table->enum('status', ['pending', 'approved', 'rejected']);
+    $table->text('notes')->nullable();
+    $table->timestamp('approved_at')->nullable();
+    $table->timestamps();
+});
+```
+
+#### Helper Functions (ApprovalHelpers.php)
+
+```php
+// app/Helpers/ApprovalHelpers.php
+
+/**
+ * Get pending approvals for current user
+ */
+function getPendingApprovals($user = null)
+{
+    $user = $user ?? auth()->user();
+    
+    return \App\Models\Hr\Approval::where('approver_id', $user->id)
+        ->where('status', 'pending')
+        ->with('approvable')
+        ->get();
+}
+
+/**
+ * Check if user can approve specific model
+ */
+function canApprove($model, $user = null)
+{
+    $user = $user ?? auth()->user();
+    
+    return \App\Models\Hr\Approval::where('approvable_type', get_class($model))
+        ->where('approvable_id', $model->id)
+        ->where('approver_id', $user->id)
+        ->where('status', 'pending')
+        ->exists();
+}
+
+/**
+ * Approve model
+ */
+function approveModel($model, $notes = null)
+{
+    $approval = \App\Models\Hr\Approval::where('approvable_type', get_class($model))
+        ->where('approvable_id', $model->id)
+        ->where('status', 'pending')
+        ->where('approver_id', auth()->id())
+        ->first();
+    
+    if ($approval) {
+        $approval->update([
+            'status' => 'approved',
+            'notes' => $notes,
+            'approved_at' => now(),
+        ]);
+        
+        logActivity('approval', "Approved {$model->getMorphClass()} #{$model->id}", $model);
+        
+        // Notify requester
+        $model->requester->notify(new ApprovalNotification($model, 'approved'));
+    }
+    
+    return $approval;
+}
+
+/**
+ * Reject model
+ */
+function rejectModel($model, $notes = null)
+{
+    $approval = \App\Models\Hr\Approval::where('approvable_type', get_class($model))
+        ->where('approvable_id', $model->id)
+        ->where('status', 'pending')
+        ->where('approver_id', auth()->id())
+        ->first();
+    
+    if ($approval) {
+        $approval->update([
+            'status' => 'rejected',
+            'notes' => $notes,
+            'approved_at' => now(),
+        ]);
+        
+        logActivity('approval', "Rejected {$model->getMorphClass()} #{$model->id}", $model);
+        
+        // Notify requester
+        $model->requester->notify(new ApprovalNotification($model, 'rejected'));
+    }
+    
+    return $approval;
+}
+```
+
+#### Blade Component (Pending Approval Widget)
+
+```blade
+<!-- resources/views/components/hr/pending-approval-widget.blade.php -->
+@php
+    $pendingApprovals = getPendingApprovals();
+@endphp
+
+@if($pendingApprovals->count() > 0)
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Pending Approvals</h3>
+            <span class="badge bg-red">{{ $pendingApprovals->count() }}</span>
+        </div>
+        <div class="card-body">
+            @foreach($pendingApprovals as $approval)
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <div class="fw-bold">{{ $approval->approvable->getShortDescription() }}</div>
+                        <div class="text-muted small">{{ formatTanggalIndo($approval->created_at) }}</div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-success btn-sm" onclick="approveItem({{ $approval->id }})">
+                            <i class="ti ti-check"></i> Approve
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectItem({{ $approval->id }})">
+                            <i class="ti ti-x"></i> Reject
+                        </button>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
+```
+
+#### Approval History Component
+
+```blade
+<!-- resources/views/components/tabler/approval-history.blade.php -->
+@props(['model'])
+
+@php
+    $approvals = $model->approvals()->with('approver')->orderBy('created_at')->get();
+@endphp
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h3 class="card-title">Approval History</h3>
+    </div>
+    <div class="card-body">
+        @foreach($approvals as $approval)
+            <div class="d-flex align-items-center mb-3">
+                <div class="me-3">
+                    @if($approval->status === 'approved')
+                        <span class="badge bg-green-lt">Approved</span>
+                    @elseif($approval->status === 'rejected')
+                        <span class="badge bg-red-lt">Rejected</span>
+                    @else
+                        <span class="badge bg-yellow-lt">Pending</span>
+                    @endif
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">{{ $approval->approver->name }}</div>
+                    <div class="text-muted small">{{ $approval->notes }}</div>
+                </div>
+                <div class="text-muted small">
+                    {{ formatTanggalIndo($approval->created_at) }}
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
+```
+
+#### Usage di Controller
+
+```php
+// app/Http/Controllers/Hr/PerizinanController.php
+
+class PerizinanController extends Controller
+{
+    public function store(PerizinanRequest $request)
+    {
+        $data = $request->validated();
+        $perizinan = Perizinan::create($data);
+        
+        // Create approval request
+        $this->createApprovalRequest($perizinan);
+        
+        return jsonSuccess('Perizinan created. Waiting for approval.', route('hr.perizinan.index'));
+    }
+    
+    public function approve(Perizinan $perizinan, Request $request)
+    {
+        $request->validate([
+            'notes' => 'nullable|string|max:500',
+        ]);
+        
+        approveModel($perizinan, $request->notes);
+        
+        return jsonSuccess('Perizinan approved.');
+    }
+    
+    public function reject(Perizinan $perizinan, Request $request)
+    {
+        $request->validate([
+            'notes' => 'required|string|max:500',
+        ]);
+        
+        rejectModel($perizinan, $request->notes);
+        
+        return jsonSuccess('Perizinan rejected.');
+    }
+    
+    private function createApprovalRequest($perizinan)
+    {
+        // Get approver based on hierarchy
+        $approver = $this->determineApprover($perizinan);
+        
+        \App\Models\Hr\Approval::create([
+            'approvable_type' => get_class($perizinan),
+            'approvable_id' => $perizinan->id,
+            'approver_id' => $approver->id,
+            'status' => 'pending',
+        ]);
+        
+        // Notify approver
+        $approver->notify(new ApprovalRequestNotification($perizinan));
+    }
+}
+```
+
+#### Best Practices
+
+1. **Morphs Relationship** - Gunakan polymorphic relation untuk reusable approval system
+2. **Approval Chain** - Support multi-level approval (sequential atau parallel)
+3. **Notifications** - Selalu notify requester dan approver
+4. **Audit Trail** - Log semua approval actions
+5. **Timeout** - Auto-approve/reject setelah timeout tertentu (optional)
 
 ---
 
@@ -958,6 +1767,356 @@ $allRoles = getAllUserRoles();
 
 ---
 
+### D. Theme Toggle Pattern (Server-First Approach)
+
+Theme toggle menggunakan **server-first approach** dengan optimistic UI update dan rollback mechanism.
+
+#### Architecture
+
+```
+User Click → Update UI (Optimistic) → POST /theme/save → Server Save
+                                              ↓
+                                      Success: Save to localStorage
+                                      Fail: Rollback UI + Notify
+```
+
+#### JavaScript Implementation (tabler.js)
+
+```javascript
+/**
+ * Toggle theme with server-first approach
+ * Sends request to server first, then updates UI only on success
+ * @param {string} mode - 'light' or 'dark'
+ */
+window.toggleTheme = function (mode) {
+    const previousMode = document.documentElement.getAttribute('data-bs-theme');
+
+    // Optimistic UI update (for better UX, but we'll rollback if server fails)
+    document.documentElement.setAttribute('data-bs-theme', mode);
+
+    // Sync with ThemeTabler if available
+    if (window.themeTabler) {
+        window.themeTabler.refresh();
+    }
+
+    // Persist to Server FIRST (server is source of truth)
+    if (window.axios) {
+        axios.post('/theme/save', {
+            mode: 'tabler',
+            theme: mode
+        })
+        .then(() => {
+            // Server confirmed - save to localStorage
+            localStorage.setItem('tabler-theme', mode);
+        })
+        .catch((error) => {
+            console.error('Failed to save theme preference, rolling back...', error);
+            // Rollback: Restore previous theme
+            document.documentElement.setAttribute('data-bs-theme', previousMode);
+            localStorage.setItem('tabler-theme', previousMode);
+
+            if (window.themeTabler) {
+                window.themeTabler.refresh();
+            }
+
+            // Notify user of the failure
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Theme Sync Failed',
+                    text: 'Unable to save theme preference. Your local view has been restored.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        });
+    } else {
+        // No axios available - just update locally
+        localStorage.setItem('tabler-theme', mode);
+        console.warn('Axios not available, theme preference not saved to server');
+    }
+};
+```
+
+#### Server-Side (Theme Controller)
+
+```php
+// app/Http/Controllers/Sys/ThemeController.php
+
+class ThemeController extends Controller
+{
+    public function save(Request $request)
+    {
+        $request->validate([
+            'mode' => 'required|in:tabler',
+            'theme' => 'required|in:light,dark',
+        ]);
+        
+        // Save to user settings or session
+        auth()->user()->update([
+            'theme_preference' => $request->theme,
+        ]);
+        
+        return response()->json(['success' => true]);
+    }
+}
+```
+
+#### Dark Mode Detection (HugeRTE Example)
+
+```javascript
+// Dynamic dark mode detection for editors
+const isDarkMode = () => {
+    // Prioritize HTML element attribute (SSR source of truth)
+    const htmlTheme = document.documentElement.getAttribute('data-bs-theme');
+    if (htmlTheme === 'dark') return true;
+    if (htmlTheme === 'light') return false;
+
+    // Fallback to LocalStorage
+    const theme = localStorage.getItem("tabler-theme");
+    if (theme === 'dark') return true;
+    if (theme === 'light') return false;
+    
+    // Auto mode - check system preference
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+};
+
+// Load appropriate skin based on current theme
+const skinImport = currentDarkMode
+    ? import('hugerte/skins/ui/oxide-dark/skin.min.css')
+    : import('hugerte/skins/ui/oxide/skin.min.css');
+```
+
+#### Best Practices
+
+1. **Server is Source of Truth** - Selalu sync ke server dulu
+2. **Optimistic UI** - Update UI langsung untuk UX yang lebih baik
+3. **Rollback Mechanism** - Restore tema sebelumnya jika server fail
+4. **LocalStorage Cache** - Cache preferensi user di localStorage
+5. **User Notification** - Notify user jika sync gagal
+6. **System Preference Fallback** - Gunakan system preference jika tidak ada setting
+
+---
+
+### E. DataTables State Persistence
+
+DataTables menggunakan localStorage untuk persist state (page length, search, filters, sorting).
+
+#### Implementation (CustomDataTables.js)
+
+```javascript
+// resources/assets/tabler/js/CustomDataTables.js
+
+export default class CustomDataTables {
+    constructor(tableId, options = {}) {
+        this.tableId = tableId;
+        this.stateName = 'DataTables_' + this.tableId + '_' + window.location.pathname;
+        // ... other options
+    }
+
+    init() {
+        this.table = $(SELECTOR.table).DataTable({
+            processing: true,
+            serverSide: true,
+            stateSave: true, // Enable state saving
+            // ... other options
+            stateLoadCallback: (settings, callback) => this.loadState(callback, SELECTOR),
+            stateSaveCallback: (settings, data) => this.saveState(data, SELECTOR.filterForm),
+        });
+    }
+
+    loadState(callback, SELECTOR) {
+        const stored = localStorage.getItem(this.stateName);
+        if (stored) {
+            const state = JSON.parse(stored);
+            
+            // Set the page length from the stored state before loading
+            if (state.length !== undefined) {
+                this.options.pageLengthValue = state.length;
+            }
+
+            callback(state);
+
+            setTimeout(() => {
+                // Sync UI
+                const pageLengthEl = $(`#${this.tableId}-pagelength`);
+                if (pageLengthEl.length) pageLengthEl.val(state.length);
+
+                if (this.options.search && state.search?.search) {
+                    $(`#${this.tableId}-search`).val(state.search.search);
+                }
+
+                const form = document.getElementById(`${this.tableId}-filter`);
+                if (form && state.customFilter) {
+                    for (const [key, value] of Object.entries(state.customFilter)) {
+                        const el = form.querySelector(`[name="${key}"]`);
+                        if (el) el.value = value;
+                    }
+                }
+            }, 0);
+        } else {
+            callback(null);
+        }
+    }
+
+    saveState(data, filterFormSelector) {
+        const filterForm = document.querySelector(filterFormSelector);
+        if (filterForm && filterForm instanceof HTMLFormElement) {
+            const formData = new FormData(filterForm);
+            data.customFilter = Object.fromEntries(formData.entries());
+        }
+
+        // Ensure page length is preserved in state
+        data.length = this.table.page.len();
+
+        localStorage.setItem(this.stateName, JSON.stringify(data));
+    }
+}
+```
+
+#### State yang Disimpan
+
+| State | Description |
+|-------|-------------|
+| `length` | Page length (10, 25, 50, All) |
+| `start` | Current page/start index |
+| `order` | Current sorting |
+| `search` | Search query |
+| `customFilter` | Custom filter form values |
+| `columns` | Column visibility and search |
+
+#### Clear State (Jika Diperlukan)
+
+```javascript
+// Clear specific table state
+localStorage.removeItem('DataTables_myTable_/admin/users');
+
+// Clear all DataTables states
+Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('DataTables_')) {
+        localStorage.removeItem(key);
+    }
+});
+```
+
+#### Best Practices
+
+1. **Unique State Name** - Gunakan table ID + path untuk unique key
+2. **Preserve Page Length** - Selalu save page length di state
+3. **Sync Filter Form** - Save custom filter values
+4. **Clear on Schema Change** - Clear state jika kolom berubah
+5. **Path-Based State** - State berbeda per URL path
+
+---
+
+### F. Custom Event System (AJAX Forms)
+
+Sistem event custom untuk AJAX forms memungkinkan loose coupling antara form handlers dan custom logic.
+
+#### Event Types
+
+| Event | Trigger | Detail |
+|-------|---------|--------|
+| `ajax-form:success` | Form success | `{ response, form }` |
+| `ajax-form:error` | Form error | `{ error, form }` |
+| `ajax-delete:success` | Delete success | `{ response, button }` |
+| `ajax-delete:error` | Delete error | `{ error, button }` |
+
+#### Event Listener Example
+
+```javascript
+// Listen for AJAX form success
+document.addEventListener('ajax-form:success', function(e) {
+    console.log('Form submitted successfully:', e.detail.response);
+    console.log('Form element:', e.detail.form);
+    
+    // Custom logic here
+    if (e.detail.response.data.redirect) {
+        // Do something before redirect
+    }
+});
+
+// jQuery style (for delegated listeners)
+$(document).on('ajax-form:success', '.ajax-form', function(e, response, form) {
+    console.log('Success:', response);
+    console.log('Form:', form);
+});
+```
+
+#### Custom Event Dispatch (FormHandlerAjax.js)
+
+```javascript
+// resources/assets/tabler/js/FormHandlerAjax.js
+
+.then(function (response) {
+    // ... success handling
+
+    // Fire custom event
+    const successEvent = new CustomEvent('ajax-form:success', {
+        detail: { response: response.data, form: $form[0] },
+        bubbles: true,
+        cancelable: true
+    });
+    $form[0].dispatchEvent(successEvent);
+
+    // Fire jQuery event (for delegated listeners)
+    $form.trigger('ajax-form:success', [response.data, $form[0]]);
+
+    // Redirect immediately if specified
+    if (response.data.redirect) {
+        window.location.href = response.data.redirect;
+    }
+});
+```
+
+#### Use Cases
+
+1. **Analytics Tracking** - Track form submissions
+2. **Conditional Redirect** - Override default redirect
+3. **Additional Logging** - Log to external services
+4. **UI Updates** - Update other parts of the page
+5. **Integration** - Trigger third-party actions
+
+#### Example: Analytics Tracking
+
+```javascript
+// Track form submissions with Google Analytics
+document.addEventListener('ajax-form:success', function(e) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission', {
+            event_category: 'Forms',
+            event_label: e.target.action,
+            value: 1
+        });
+    }
+});
+```
+
+#### Example: Conditional Redirect Override
+
+```javascript
+// Override redirect for specific forms
+document.addEventListener('ajax-form:success', function(e) {
+    if (e.target.dataset.noRedirect === 'true') {
+        e.preventDefault(); // Cancel default redirect
+        // Custom handling
+        showSuccessMessage('Data saved without redirect!');
+    }
+});
+```
+
+#### Best Practices
+
+1. **Event Bubbling** - Set `bubbles: true` untuk parent listeners
+2. **Cancelable** - Set `cancelable: true` jika perlu prevent default
+3. **Detail Object** - Selalu include `response` dan `form` di detail
+4. **jQuery Fallback** - Support both CustomEvent dan jQuery events
+5. **Documentation** - Document custom events di README module
+
+---
+
 ## 7. Development Workflow
 
 ### A. Common Commands
@@ -1091,7 +2250,62 @@ Check `sys_error_log` table or `storage/logs/laravel.log`
 
 ## 8. Code Quality & Best Practices
 
-### A. Documentation
+### A. View Development Checklist (WAJIB SEBELUM MEMBUAT VIEW)
+
+**Sebelum membuat atau mengedit view file, WAJIB checklist ini:**
+
+#### 1. Cek Komponen x-tabler yang Tersedia ✅
+
+**DILARANG** membuat HTML manual jika komponen x-tabler sudah ada!
+
+```blade
+{{-- ❌ SALAH - HTML Manual (DILARANG!) --}}
+<input type="text" class="form-control" name="name">
+<button class="btn btn-primary">Simpan</button>
+<select class="form-select"><option>...</option></select>
+<table class="table">...</table>
+
+{{-- ✅ BENAR - Gunakan x-tabler --}}
+<x-tabler.form-input name="name" />
+<x-tabler.button type="submit" text="Simpan" />
+<x-tabler.form-select name="role_id">...</x-tabler.form-select>
+<x-tabler.datatable :columns="[...]" :url="route('...')" />
+```
+
+#### 2. Komponen WAJIB yang Harus Dicek
+
+| Element | Gunakan | JANGAN Gunakan |
+|---------|---------|----------------|
+| Page Header | `<x-tabler.page-header>` | `<h1>`, manual breadcrumb |
+| Button | `<x-tabler.button>` | `<button class="btn">` |
+| Input Text | `<x-tabler.form-input>` | `<input class="form-control">` |
+| Date Picker | `<x-tabler.form-input type="date">` | `<input type="date">` |
+| Select | `<x-tabler.form-select>` | `<select class="form-select">` |
+| Textarea | `<x-tabler.form-textarea>` | `<textarea>` |
+| Checkbox | `<x-tabler.form-checkbox>` | `<input type="checkbox">` |
+| Modal | `<x-tabler.form-modal>` | `<div class="modal">` |
+| DataTable | `<x-tabler.datatable>` | `<table class="table">` |
+| Flash Message | `<x-tabler.flash-message>` | Manual alert div |
+| Empty State | `<x-tabler.empty-state>` | Manual empty div |
+
+#### 3. Template Checklist
+
+```markdown
+## View Development Checklist
+
+- [ ] Apakah saya menggunakan `<x-tabler.page-header>` untuk header?
+- [ ] Apakah saya menggunakan `<x-tabler.button>` untuk semua tombol?
+- [ ] Apakah saya menggunakan `<x-tabler.form-input>` untuk semua input?
+- [ ] Apakah saya menggunakan `<x-tabler.form-select>` untuk semua select?
+- [ ] Apakah saya menggunakan `<x-tabler.datatable>` untuk tabel data?
+- [ ] Apakah saya menggunakan `<x-tabler.flash-message>` untuk notifikasi?
+- [ ] Apakah saya menggunakan `<x-tabler.form-modal>` untuk modal?
+- [ ] Apakah saya TIDAK menggunakan HTML manual (`<button>`, `<input>`, `<table>`)?
+- [ ] Apakah semua class menggunakan komponen x-tabler?
+- [ ] Apakah fitur otomatis (Flatpickr, Select2, FilePond) sudah terintegrasi?
+```
+
+### B. Documentation
 
 #### PHPDoc Blocks
 ```php
@@ -1116,7 +2330,7 @@ if ($user->hasRole('admin')) {
 }
 ```
 
-### B. Error Handling
+### C. Error Handling
 
 #### Try-Catch Pattern
 ```php
@@ -1250,6 +2464,8 @@ Escape output in Blade:
 ## Quick Reference
 
 ### Find Examples
+
+#### Code Examples
 - **Controllers:** `app/Http/Controllers/Sys/RoleController.php`
 - **Services:** `app/Services/Sys/RoleService.php`
 - **Requests:** `app/Http/Requests/Sys/RoleRequest.php`
@@ -1257,7 +2473,24 @@ Escape output in Blade:
 - **Views:** `resources/views/pages/sys/roles/`
 - **Traits:** `app/Traits/HashidBinding.php`, `app/Traits/Blameable.php`
 - **Helpers:** `app/Helpers/SysHelper.php`, `app/Helpers/GlobalHelper.php`
-- **Components:** `resources/views/components/tabler/`
+
+#### x-tabler Components (WAJIB GUNAKAN!)
+**Location:** `resources/views/components/tabler/`
+
+| Component File | Usage | Example View |
+|----------------|-------|--------------|
+| `button.blade.php` | Semua tombol | `sys/roles/index.blade.php` |
+| `form-input.blade.php` | Input, date, file | `sys/users/create-edit-ajax.blade.php` |
+| `form-select.blade.php` | Select dropdown | `sys/roles/create-edit-ajax.blade.php` |
+| `form-textarea.blade.php` | Textarea, editor | `sys/documentation/create-edit.blade.php` |
+| `form-modal.blade.php` | Modal form | `**/create-edit-ajax.blade.php` |
+| `datatable.blade.php` | Data tables | `sys/roles/index.blade.php` |
+| `datatables-actions.blade.php` | Action buttons | `sys/roles/index.blade.php` |
+| `page-header.blade.php` | Page header | `SEMUA halaman` |
+| `flash-message.blade.php` | Notifications | `SEMUA halaman` |
+| `empty-state.blade.php` | Empty data | `sys/backup/index.blade.php` |
+
+**🔴 REMINDER:** Dilarang membuat HTML manual jika komponen x-tabler sudah tersedia!
 
 ### Common Issues & Solutions
 
@@ -1457,4 +2690,56 @@ ProjectTaskRequest
 Untuk pertanyaan atau clarifications, refer ke dokumen ini atau cek existing implementations di codebase.
 
 **Last Updated:** Februari 2026
-**Version:** 2.1 (Added Project Management Module Standards)
+**Version:** 3.0 (Major Update - Added Service Delegation, JS Re-init, Global Search, Approval System, Theme Toggle, State Persistence, Custom Events)
+
+---
+
+## Changelog
+
+### Version 3.1 - Februari 2026 (x-tabler Components Update)
+
+#### Added
+- **Section C (Frontend)**: "ATURAN EMAS" - Explicit rule untuk x-tabler components
+- **Section 8.A**: View Development Checklist (WAJIB SEBELUM MEMBUAT VIEW)
+- **Quick Reference**: x-tabler Components table dengan contoh file
+- **Component List**: Daftar lengkap komponen WAJIB vs OPSIONAL
+- **Examples**: BENAR vs SALAH untuk setiap komponen (form-input, button, datatable, modal)
+
+#### Changed
+- **Section C**: Expanded dari 12 komponen menjadi 14 komponen (12 wajib + 2 opsional)
+- **Examples**: Lebih detail dengan perbandingan ✅ BENAR vs ❌ SALAH
+- **Checklist**: Template checklist untuk view development
+
+#### Emphasized
+- **DILARANG KERAS** membuat HTML manual jika x-tabler component tersedia
+- **WAJIB GUNAKAN** x-tabler components untuk konsistensi UI
+- **JANGAN PERNAH** gunakan `<button class="btn">`, `<input class="form-control">`, `<table class="table">`
+
+### Version 3.0 - Februari 2026 (Major Update)
+
+#### Added
+- **Section A.3**: Constructor Injection Pattern (PascalCase convention)
+- **Section A.4**: Blameable Trait Implementation (string-based user name)
+- **Section G**: JavaScript Re-initialization Pattern
+- **Section H**: Global Search Implementation
+- **Section E (Database)**: Approval System Pattern
+- **Section D (Features)**: Theme Toggle Pattern (Server-First Approach)
+- **Section E (Features)**: DataTables State Persistence
+- **Section F (Features)**: Custom Event System (AJAX Forms)
+
+#### Changed
+- Updated Table of Contents dengan section baru
+- Clarified service property naming convention (PascalCase)
+- Added detailed implementation examples untuk semua pattern baru
+
+#### Fixed
+- Inconsistency antara dokumentasi dan implementasi Blameable trait
+- Missing documentation untuk HugeRTE (replacing TinyMCE references)
+
+### Version 2.1 - Previous
+- Added Project Management Module Standards
+
+### Version 2.0 - Initial
+- Initial comprehensive documentation
+
+---

@@ -363,9 +363,9 @@
                 <form action="{{ route('eoffice.layanan.diskusi.store') }}" method="POST" class="ajax-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="layanan_id" value="{{ $layanan->encrypted_layanan_id }}">
-                    <div class="input-group input-group-sm">
-                        <textarea name="pesan" class="form-control" rows="1" placeholder="Pesan..." required></textarea>
-                        <x-tabler.button type="submit" class="btn-primary btn-icon" title="Kirim" icon="ti ti-send" />
+                    <x-tabler.form-textarea name="pesan" rows="2" placeholder="Tulis pesan..." required="true" />
+                    <div class="text-end">
+                        <x-tabler.button type="submit" class="btn-primary btn-sm" title="Kirim" icon="ti ti-send" text="Kirim Pesan" />
                     </div>
                 </form>
             </div>

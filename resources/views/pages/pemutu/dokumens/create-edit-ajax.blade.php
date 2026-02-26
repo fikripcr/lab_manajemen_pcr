@@ -93,7 +93,7 @@
 
         @if($isEdit)
             <div class="mb-3">
-                <x-tabler.form-textarea name="isi" id="isi" type="editor" height="400" rows="10" :value="$dokumen->isi" />
+                <x-tabler.form-textarea name="isi" id="isi" height="400" rows="10" :value="$dokumen->isi" />
             </div>
         @endif
 
@@ -222,3 +222,11 @@
     });
 </script>
 @endif
+
+@push('js')
+<script>
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#isi', { height: 400 });
+    }
+</script>
+@endpush

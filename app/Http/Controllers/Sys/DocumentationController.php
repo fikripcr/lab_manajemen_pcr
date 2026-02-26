@@ -12,17 +12,110 @@ use League\CommonMark\Extension\Table\TableExtension;
 class DocumentationController extends Controller
 {
     protected $docsPath;
+    protected $allowedDirectories;
 
     public function __construct()
     {
         $this->docsPath = base_path('docs/');
+        $this->allowedDirectories = [
+            base_path('docs/'),
+            base_path('docs/archive/'),
+        ];
     }
 
     public function index()
     {
+        $docs = $this->getAvailableDocumentation();
+        
         return view('pages.sys.documentation.index', [
-            'pageTitle' => 'Documentation Index'
+            'pageTitle' => 'Documentation Index',
+            'docs' => $docs
         ]);
+    }
+
+    /**
+     * Get all available documentation files
+     */
+    protected function getAvailableDocumentation()
+    {
+        $docs = [];
+        
+        // Scan docs directory
+        if (is_dir($this->docsPath)) {
+            $files = scandir($this->docsPath);
+            
+            foreach ($files as $file) {
+                if ($file === '.' || $file === '..') {
+                    continue;
+                }
+                
+                $filePath = $this->docsPath . $file;
+                
+                // Skip directories (they will be handled separately)
+                if (is_dir($filePath)) {
+                    continue;
+                }
+                
+                // Only process .md files
+                if (pathinfo($file, PATHINFO_EXTENSION) !== 'md') {
+                    continue;
+                }
+                
+                $fileName = pathinfo($file, PATHINFO_FILENAME);
+                $docs[] = [
+                    'name' => $fileName,
+                    'title' => $this->generatePageTitle($file),
+                    'file' => $file,
+                    'path' => $filePath,
+                    'lastUpdated' => filemtime($filePath),
+                    'size' => filesize($filePath),
+                    'category' => 'main'
+                ];
+            }
+            
+            // Scan archive subdirectory
+            $archivePath = $this->docsPath . 'archive/';
+            if (is_dir($archivePath)) {
+                $archiveFiles = scandir($archivePath);
+                
+                foreach ($archiveFiles as $file) {
+                    if ($file === '.' || $file === '..') {
+                        continue;
+                    }
+                    
+                    $filePath = $archivePath . $file;
+                    
+                    if (is_dir($filePath)) {
+                        continue;
+                    }
+                    
+                    if (pathinfo($file, PATHINFO_EXTENSION) !== 'md') {
+                        continue;
+                    }
+                    
+                    $fileName = pathinfo($file, PATHINFO_FILENAME);
+                    $docs[] = [
+                        'name' => 'archive/' . $fileName,
+                        'title' => $this->generatePageTitle($file),
+                        'file' => 'archive/' . $file,
+                        'path' => $filePath,
+                        'lastUpdated' => filemtime($filePath),
+                        'size' => filesize($filePath),
+                        'category' => 'archive'
+                    ];
+                }
+            }
+        }
+        
+        // Sort: main docs first, then archive, alphabetically
+        usort($docs, function($a, $b) {
+            if ($a['category'] !== $b['category']) {
+                return $a['category'] === 'main' ? -1 : 1;
+            }
+            return strcmp($a['title'], $b['title']);
+        });
+        
+        return $docs;
     }
 
     public function show($page = 'index')
@@ -169,6 +262,9 @@ class DocumentationController extends Controller
             \Log::warning('0 bytes written to documentation file: ' . $filePath);
             return redirect()->back()->with('error', 'Failed to update documentation file. No content was written.');
         }
+
+        // Log activity
+        logActivity('documentation', 'Updated documentation: ' . str_replace('.md', '', $page));
 
         return redirect()->route('sys.documentation.show', str_replace('.md', '', $page))
                          ->with('success', 'Documentation updated successfully.');

@@ -1,0 +1,99 @@
+/**
+ * pemutu-tree.css
+ * CSS untuk komponen Tree Dokumen SPMI (pemutu/dokumens/index.blade.php)
+ * Dipindah dari inline <style> di blade view.
+ */
+
+/* --- Tree Node Row --- */
+.tree-node-row {
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background-color 0.1s;
+    width: 100%;
+}
+
+.tree-node-row:hover,
+.tree-node-row.active-tree-node {
+    background-color: rgba(var(--tblr-primary-rgb), 0.08);
+}
+
+.tree-node-row:hover .tree-item-link,
+.tree-node-row:hover .tree-toggle,
+.tree-node-row:hover .tree-item-name,
+.tree-node-row.active-tree-node .tree-item-link,
+.tree-node-row.active-tree-node .tree-toggle,
+.tree-node-row.active-tree-node .tree-item-name {
+    color: var(--tblr-primary) !important;
+}
+
+.tree-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.tree-item-name {
+    cursor: pointer;
+}
+
+/* --- Tree Lines --- */
+ul#dokumen-tree,
+ul.nested-sortable {
+    list-style: none;
+    padding-left: 20px;
+}
+
+ul.nested-sortable {
+    margin-left: 5px;
+    border-left: 1px dashed #e6e7e9;
+    min-height: 10px;
+}
+
+li[data-id] {
+    position: relative;
+}
+
+li[data-id]::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: -20px;
+    width: 15px;
+    border-top: 1px dashed #e6e7e9;
+}
+
+ul#dokumen-tree > li[data-id]::before {
+    display: none;
+}
+
+ul#dokumen-tree > li[data-id] {
+    padding-left: 0;
+}
+
+/* --- Tree Toggle Icon --- */
+.tree-toggle {
+    cursor: pointer;
+    width: 20px;
+    display: inline-block;
+    text-align: center;
+    color: #6e7582;
+}
+
+.tree-toggle:hover {
+    color: var(--tblr-primary);
+}
+
+/* --- Drag & Drop --- */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #f1f5f9;
+}
+
+.d-flex[draggable] {
+    cursor: move;
+}
+
+.d-flex[draggable]:hover {
+    background-color: rgba(0, 105, 217, 0.06);
+}

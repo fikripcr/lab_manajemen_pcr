@@ -17,8 +17,7 @@
     <div class="row">
         <div class="col-md-12 mb-2">
             <label class="form-label required mb-1">Konten Pertanyaan</label>
-            <x-tabler.form-textarea name="konten_pertanyaan" type="editor" :value="$soal->konten_pertanyaan" required="true" 
-                toolbar="bold italic table forecolor | alignleft aligncenter alignright alignjustify | bullist numlist | fullscreen" />
+            <x-tabler.form-textarea name="konten_pertanyaan" id="konten_pertanyaan" :value="$soal->konten_pertanyaan" required="true" />
         </div>
     </div>
 
@@ -86,3 +85,14 @@
         </div>
     </div>
 </x-tabler.form-modal>
+
+@push('js')
+<script>
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#konten_pertanyaan', { 
+            height: 250,
+            toolbar: 'bold italic table forecolor | alignleft aligncenter alignright alignjustify | bullist numlist | fullscreen'
+        });
+    }
+</script>
+@endpush

@@ -257,35 +257,70 @@
                     'can' => 'admin',
                 ],
                 [
-                    'title' => 'Penetapan',
-                    'route' => 'pemutu.dokumens.index',
-                    'active_routes' => ['pemutu.dokumens.*'],
-                    'icon' => 'ti ti-file-text',
-                    'can' => 'admin',
+                    'title'         => 'Penetapan',
+                    'id'            => 'navbar-penetapan',
+                    'icon'          => 'ti ti-file-text',
+                    'can'           => 'admin',
+                    'active_routes' => ['pemutu.dokumens.*', 'pemutu.dokumen-spmi.*', 'pemutu.standar.*', 'pemutu.indikators.*', 'pemutu.renop.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Kebijakan',
+                            'route'         => 'pemutu.dokumens.index',
+                            'active_routes' => ['pemutu.dokumens.*', 'pemutu.dokumen-spmi.*'],
+                            'icon'          => 'ti ti-file-certificate',
+                            'query'         => ['tabs' => 'kebijakan'],
+                        ],
+                        [
+                            'title'         => 'Standar',
+                            'route'         => 'pemutu.dokumens.index',
+                            'active_routes' => ['pemutu.dokumens.*', 'pemutu.dokumen-spmi.*'],
+                            'icon'          => 'ti ti-book',
+                            'query'         => ['tabs' => 'standar'],
+                        ],
+                        [
+                            'title'         => 'Indikator',
+                            'route'         => 'pemutu.indikators.index',
+                            'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
+                            'icon'          => 'ti ti-target',
+                        ],
+                    ],
                 ],
                 [
-                    'title' => 'Indikator',
-                    'route' => 'pemutu.indikators.index',
-                    'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
-                    'icon' => 'ti ti-target',
-                    'can' => 'admin',
+                    'title'         => 'Evaluasi',
+                    'id'            => 'navbar-evaluasi',
+                    'icon'          => 'ti ti-chart-bar',
+                    'active_routes' => ['pemutu.evaluasi-diri.*', 'pemutu.evaluasi-kpi.*', 'pemutu.ami.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Evaluasi Diri',
+                            'route'         => 'pemutu.evaluasi-diri.index',
+                            'active_routes' => ['pemutu.evaluasi-diri.*'],
+                            'icon'          => 'ti ti-clipboard-check',
+                        ],
+                        [
+                            'title'         => 'Evaluasi KPI',
+                            'route'         => 'pemutu.evaluasi-kpi.index',
+                            'active_routes' => ['pemutu.evaluasi-kpi.*'],
+                            'icon'          => 'ti ti-clipboard-data',
+                        ],
+                        [
+                            'title'         => 'Audit Mutu Internal',
+                            'route'         => 'pemutu.ami.index',
+                            'active_routes' => ['pemutu.ami.*'],
+                            'icon'          => 'ti ti-shield-check',
+                        ],
+                    ],
                 ],
                 [
-                    'title' => 'Evaluasi Diri',
-                    'route' => 'pemutu.evaluasi-diri.index',
-                    'active_routes' => ['pemutu.evaluasi-diri.*'],
-                    'icon' => 'ti ti-clipboard-check',
-                ],
-
-                [
-                    'title' => 'Evaluasi KPI',
-                    'route' => 'pemutu.evaluasi-kpi.index',
-                    'active_routes' => ['pemutu.evaluasi-kpi.*'],
-                    'icon' => 'ti ti-clipboard-data',
+                    'title'         => 'Pengendalian',
+                    'route'         => 'pemutu.pengendalian.index',
+                    'active_routes' => ['pemutu.pengendalian.*'],
+                    'icon'          => 'ti ti-settings-check',
                 ],
 
             ],
         ],
+
         [
             'type'          => 'dropdown',
             'title'         => 'Kegiatan',
@@ -718,8 +753,16 @@
                                             </a>
                                             <div class="dropdown-menu{{ $isChildActive ? ' show' : '' }}">
                                                 @foreach($child['children'] as $subchild)
-                                                    <a class="dropdown-item{{ $isActive($subchild['route'] ?? null) ? ' active' : '' }}"
-                                                       href="{{ (isset($subchild['route']) && $subchild['route'] !== '#') ? route($subchild['route']) : '#' }}">
+                                                    @php
+                                                        $subHref = (isset($subchild['route']) && $subchild['route'] !== '#')
+                                                            ? route($subchild['route'], $subchild['query'] ?? [])
+                                                            : '#';
+                                                        $subIsActive = !empty($subchild['query'])
+                                                            ? $isActive($subchild['active_routes'] ?? []) && collect($subchild['query'])->every(fn($v, $k) => request($k) == $v)
+                                                            : $isActive($subchild['active_routes'] ?? $subchild['route'] ?? null);
+                                                    @endphp
+                                                    <a class="dropdown-item{{ $subIsActive ? ' active' : '' }}"
+                                                       href="{{ $subHref }}">
                                                         @if(!empty($subchild['icon']))
                                                             {!! $renderIcon($subchild['icon'], 'icon-inline me-1') !!}
                                                         @endif
@@ -729,8 +772,16 @@
                                             </div>
                                         </div>
                                     @else
-                                        <a class="dropdown-item{{ $isActive($child['active_routes'] ?? $child['route'] ?? '') ? ' active' : '' }}"
-                                           href="{{ (isset($child['route']) && $child['route'] !== '#') ? route($child['route']) : '#' }}">
+                                        @php
+                                            $childHref = (isset($child['route']) && $child['route'] !== '#')
+                                                ? route($child['route'], $child['query'] ?? [])
+                                                : '#';
+                                            $childIsActive = !empty($child['query'])
+                                                ? $isActive($child['active_routes'] ?? []) && collect($child['query'])->every(fn($v, $k) => request($k) == $v)
+                                                : $isActive($child['active_routes'] ?? $child['route'] ?? '');
+                                        @endphp
+                                        <a class="dropdown-item{{ $childIsActive ? ' active' : '' }}"
+                                           href="{{ $childHref }}">
                                             {{-- Icons optional in submenus --}}
                                             @if(!empty($child['icon']))
                                                 {!! $renderIcon($child['icon'], 'icon-inline me-1') !!}

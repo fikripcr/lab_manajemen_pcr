@@ -136,12 +136,7 @@
                                                         <span class="badge bg-primary rounded-pill">{{ $loop->iteration }}</span>
                                                     </div>
                                                     <div class="col">
-                                                        <input type="text" 
-                                                               name="agendas[{{ $index }}][judul_agenda]" 
-                                                               class="form-control form-control-sm fw-bold" 
-                                                               value="{{ $agenda->judul_agenda }}"
-                                                               placeholder="Judul Agenda"
-                                                               required>
+                                                        <x-tabler.form-input name="agendas[{{ $index }}][judul_agenda]" value="{{ $agenda->judul_agenda }}" placeholder="Judul Agenda" required="true" />
                                                     </div>
                                                     <div class="col-auto">
                                                         <button type="button" class="btn btn-icon btn-sm btn-danger remove-agenda" title="Hapus Agenda">

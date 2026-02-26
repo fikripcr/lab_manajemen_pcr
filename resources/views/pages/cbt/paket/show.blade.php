@@ -103,22 +103,22 @@
                     {{-- Filter Mata Uji --}}
                     <div class="row g-2">
                         <div class="col">
-                            <select id="filter-mata-uji" class="form-select form-select-sm">
-                                <option value="">Semua Mata Uji</option>
+                            <x-tabler.form-select id="filter-mata-uji" >
+                                <option value="" selected>Semua Mata Uji</option>
                                 @foreach($soalTersedia->pluck('mataUji')->filter()->unique('mata_uji_id') as $mu)
                                     <option value="{{ $mu->nama_mata_uji }}">{{ $mu->nama_mata_uji }}</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                         <div class="col-auto">
-                            <button type="button" id="btn-select-all" class="btn btn-sm btn-outline-primary" onclick="selectAllVisible()">
+                            <x-tabler.button type="button" class="btn btn-outline-primary" onclick="selectAllVisible()">
                                 <i class="ti ti-checks me-1"></i>Semua
-                            </button>
+                            </x-tabler.button>
                         </div>
                         <div class="col-auto">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearAll()">
+                            <x-tabler.button type="button"  class="btn btn-outline-secondary" onclick="clearAll()">
                                 <i class="ti ti-x me-1"></i>Reset
-                            </button>
+                            </x-tabler.button>
                         </div>
                     </div>
 

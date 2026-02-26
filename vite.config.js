@@ -6,6 +6,10 @@ export default defineConfig({
         host: 'localhost',
         port: 3010,
     },
+    optimizeDeps: {
+        // Paksa Vite pre-bundle jKanban (CommonJS/UMD) agar resolvable sebagai ESM module
+        include: ['jkanban'],
+    },
     plugins: [
         laravel({
             input: [

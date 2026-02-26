@@ -21,7 +21,6 @@
         <x-tabler.form-textarea
             name="isi"
             label="Konten"
-            type="editor"
             id="{{ $pengumuman->exists ? 'isi_edit_modal' : 'isi_modal' }}"
             rows="10"
             :value="old('isi', $pengumuman->isi)"
@@ -72,3 +71,11 @@
         />
     </div>
 </x-tabler.form-modal>
+
+@push('js')
+<script>
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#{{ $pengumuman->exists ? "isi_edit_modal" : "isi_modal" }}', { height: 400 });
+    }
+</script>
+@endpush

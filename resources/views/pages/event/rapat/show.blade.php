@@ -212,8 +212,7 @@
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h3 class="mb-0"><i class="ti ti-checklist me-2 text-purple"></i>Agenda & Pembahasan</h3>
-                    <p class="text-muted small mb-0">Ketukan isi notulen akan tersimpan otomatis.</p>
+                    <h3 class="mb-0"><i class="ti ti-checklist me-2"></i>Agenda & Pembahasan</h3>
                 </div>
                 <x-tabler.button type="button" class="btn-success btn-sm ajax-modal-btn"
                     data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}"
@@ -225,7 +224,7 @@
                 @csrf
                 <div class="accordion" id="accordion-agenda">
                     @forelse($rapat->agendas as $index => $agenda)
-                    <div class="accordion-item">
+                    <div class="accordion-item bg-white">
                         <h2 class="accordion-header" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
                             <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button"
                                 data-bs-toggle="collapse"
@@ -240,13 +239,13 @@
                             class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}"
                             data-bs-parent="#accordion-agenda">
                             <div class="accordion-body">
-                                <textarea
+                                <x-tabler.form-textarea
                                     name="agendas[{{ $agenda->encrypted_rapatagenda_id }}][isi]"
-                                    class="editor-agenda"
                                     data-agenda-id="{{ $agenda->encrypted_rapatagenda_id }}"
                                     rows="6"
                                     placeholder="Tulis notulen dan hasil pembahasan agenda ini..."
-                                >{{ $agenda->isi }}</textarea>
+                                    value="{{ $agenda->isi }}"
+                                />
                             </div>
                         </div>
                     </div>
@@ -444,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ─── HugeRTE Auto-save (on textarea directly) ─────────────
     if (window.loadHugeRTE) {
-        window.loadHugeRTE('.editor-agenda', {
+        window.loadHugeRTE('textarea[data-agenda-id]', {
             height: 280,
             menubar: false,
             statusbar: false,

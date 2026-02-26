@@ -120,24 +120,10 @@ class EvaluasiKpiController extends Controller
 
     public function downloadAttachment(IndikatorPegawai $indikatorPegawai)
     {
-        try {
-            if (empty($indikatorPegawai->attachment)) {
-                abort(404, 'File lampiran tidak ditemukan di database.');
-            }
+        $ext      = pathinfo($indikatorPegawai->attachment ?? '', PATHINFO_EXTENSION);
+        $filename = 'KPI_' . str_replace('/', '_', $indikatorPegawai->indikator->no_indikator ?? 'file') . '_' . date('Ymd') . ($ext ? '.' . $ext : '');
 
-            $path = storage_path('app/' . $indikatorPegawai->attachment);
-
-            if (! file_exists($path)) {
-                abort(404, 'File lampiran fisik tidak ditemukan di server.');
-            }
-
-            $ext         = pathinfo($path, PATHINFO_EXTENSION);
-            $newFilename = 'KPI_' . str_replace('/', '_', $indikatorPegawai->indikator->no_indikator) . '_' . date('Ymd_His') . '.' . $ext;
-
-            return response()->download($path, $newFilename);
-        } catch (Exception $e) {
-            logError($e);
-            abort(404, 'Terjadi kesalahan saat mengunduh file.');
-        }
+        return downloadStorageFile($indikatorPegawai->attachment, $filename, logActivity: true);
     }
 }
+

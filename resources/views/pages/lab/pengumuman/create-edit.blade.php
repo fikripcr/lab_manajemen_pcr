@@ -31,11 +31,11 @@
                             />
 
                             <div class="mb-3">
-                                <x-tabler.form-textarea
-                                    name="isi"
-                                    label="Konten"
-                                    type="editor"
-                                    rows="20"
+                                    <x-tabler.form-textarea
+                                        name="isi"
+                                        id="isi"
+                                        label="Konten"
+                                        rows="20"
                                     :value="old('isi', $pengumuman->isi ?? '')"
                                 />
                             </div>
@@ -106,3 +106,11 @@
             </div>
         </form>
 @endsection
+
+@push('scripts')
+<script>
+    if (window.loadHugeRTE) {
+        window.loadHugeRTE('#isi', { height: 600 });
+    }
+</script>
+@endpush

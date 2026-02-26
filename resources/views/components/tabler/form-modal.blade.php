@@ -13,13 +13,14 @@
 @if($id)
 <div class="modal modal-blur fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="true" data-bs-focus="true">
     <div class="modal-dialog modal-dialog-centered {{ $size }}" role="document" style="{{ $dialogStyle }}">
-        <div class="modal-content">
 @endif
 
             <div class="modal-header">
                 <h5 class="modal-title">{{ $title }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+        <div class="modal-content">
+
             <form action="{{ $route }}" method="POST" class="ajax-form" @if($id_form) id="{{ $id_form }}" @endif {{ $attributes }}>
                 @csrf
                 @if(in_array(strtoupper($method), ['PUT', 'PATCH', 'DELETE']))
@@ -34,9 +35,9 @@
                     <x-tabler.button type="submit" :icon="$submitIcon ? 'ti ' . $submitIcon : null" :text="$submitText" class="ms-auto" />
                 </div>
             </form>
+        </div>
 
 @if($id)
-        </div>
     </div>
 </div>
 @endif

@@ -504,3 +504,61 @@ if (! function_exists('sysGenerateRefNumber')) {
         return $prefix . str_pad($number, $padding, '0', STR_PAD_LEFT);
     }
 }
+
+if (! function_exists('downloadStorageFile')) {
+    /**
+     * Helper terpusat untuk mengunduh file dari Laravel Storage.
+     *
+     * Menggantikan pola manual response()->download() yang tersebar di controller.
+     * Semua validasi, MIME type detection, dan sanitasi nama file ditangani di sini.
+     *
+     * @param  string|null  $storagePath     Path relatif dari hasil ->store() (misal: "public/pemutu/ed-attachments/file.pdf")
+     * @param  string|null  $downloadFilename Nama file yang diterima user saat download. Jika null, gunakan nama asli.
+     * @param  bool         $logActivity     Apakah perlu log aktivitas download (default: false)
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     *
+     * @example
+     *   // Dengan custom filename:
+     *   return downloadStorageFile($model->attachment, 'Laporan_KPI_2025.pdf');
+     *
+     *   // Tanpa custom filename (pakai nama asli dari storage):
+     *   return downloadStorageFile($model->ed_attachment);
+     */
+    function downloadStorageFile(?string $storagePath, ?string $downloadFilename = null, bool $logActivity = false)
+    {
+        // 1. Validasi path tidak kosong
+        if (empty($storagePath)) {
+            abort(404, 'File lampiran tidak ditemukan.');
+        }
+
+        // 2. Normalisasi path — cegah directory traversal
+        $storagePath = normalizePath($storagePath);
+
+        // 3. Cek keberadaan file di storage
+        if (! \Illuminate\Support\Facades\Storage::exists($storagePath)) {
+            abort(404, 'File tidak ditemukan di server. Mungkin sudah dihapus.');
+        }
+
+        // 4. Tentukan nama file output
+        if (empty($downloadFilename)) {
+            // Gunakan nama asli dari path storage
+            $downloadFilename = basename($storagePath);
+        } else {
+            // Sanitasi: hapus karakter berbahaya, pertahankan ekstensi
+            $originalExt    = pathinfo($storagePath, PATHINFO_EXTENSION);
+            $safeBasename   = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', pathinfo($downloadFilename, PATHINFO_FILENAME));
+            $providedExt    = pathinfo($downloadFilename, PATHINFO_EXTENSION);
+            $finalExt       = $providedExt ?: $originalExt;
+            $downloadFilename = $safeBasename . ($finalExt ? '.' . $finalExt : '');
+        }
+
+        // 5. Log aktivitas (opsional)
+        if ($logActivity) {
+            logActivity('system', 'Download file: ' . $downloadFilename);
+        }
+
+        // 6. Stream file ke browser
+        return \Illuminate\Support\Facades\Storage::download($storagePath, $downloadFilename);
+    }
+}
+

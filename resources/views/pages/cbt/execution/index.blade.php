@@ -295,9 +295,12 @@ function renderQuestion(idx) {
         } else {
             wrapper.innerHTML = `
                 <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-                    <textarea class="form-control border-0 p-4 fs-3 h-auto" placeholder="Tulis jawaban esai Anda di sini..." id="essay-input" rows="8"
-                        oninput="saveEssay(${soalId}, this.value)">${ans.jawaban_esai || ''}</textarea>
+                    <x-tabler.form-textarea id="essay-input" name="jawaban_esai" rows="8" placeholder="Tulis jawaban esai Anda di sini..." oninput="saveEssay(${soalId}, this.value)" />
                 </div>`;
+            setTimeout(() => {
+                const essayEl = document.getElementById('essay-input');
+                if (essayEl) essayEl.value = ans.jawaban_esai || '';
+            }, 50);
         }
 
         // Button States

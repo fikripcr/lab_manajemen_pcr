@@ -18,13 +18,13 @@ class PeriodeSpmiController extends Controller
     public function index()
     {
         $pageTitle = 'Periode SPMI';
-        $periodes  = PeriodeSpmi::orderBy('periode', 'desc')->get();
+        $periodes  = $this->periodeSpmiService->getAll();
         return view('pages.pemutu.periode_spmis.index', compact('pageTitle', 'periodes'));
     }
 
     public function paginate(Request $request)
     {
-        $query = PeriodeSpmi::query()->orderBy('periode', 'desc');
+        $query = $this->periodeSpmiService->getBaseQuery();
 
         return DataTables::of($query)
             ->addIndexColumn()

@@ -2,10 +2,12 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\EvaluasiDiriRequest;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
 use App\Models\Shared\StrukturOrganisasi;
+use App\Services\Pemutu\IndikatorService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -40,15 +42,16 @@ class EvaluasiDiriController extends Controller
                 ->filter();
 
             // Fallback for testing/administration
-            if ($timMutuUnits->isNotEmpty()) {
-                $userUnits = $timMutuUnits;
-                $unit      = $userUnits->first();
-            } else {
-                $unit      = StrukturOrganisasi::first();
-                $userUnits = collect([$unit]);
-            }
+            // Ambil daftar seluruh unit untuk filter (atau biarkan TimMutu sementara waktu sesuai role)
+            $userUnits = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
+                ->with('orgUnit') // Ambil semua unit di periode ini, bukan cuma unit pegawai yang login
+                ->get()
+                ->pluck('orgUnit')
+                ->filter();
 
-            $selectedUnitId = request('unit_id', $unit->orgunit_id ?? null);
+            $selectedUnitId = request('unit_id');
+            // Supaya tampilan table render (tidak masuk ke block empty state)
+            $unit = true;
 
             return view('pages.pemutu.evaluasi-diri.show', compact('periode', 'unit', 'userUnits', 'selectedUnitId'));
         } catch (Exception $e) {
@@ -59,27 +62,14 @@ class EvaluasiDiriController extends Controller
     public function data(Request $request, PeriodeSpmi $periode)
     {
         try {
-            $user = auth()->user();
+            $unitId = $request->input('unit_id') ? (int) $request->input('unit_id') : null;
 
-            $unitId = $request->input('unit_id');
-
-            if (! $unitId) {
-                $timMutu = TimMutu::where('periodespmi_id', $periode->periodespmi_id)
-                    ->where('pegawai_id', $user->pegawai?->pegawai_id)
-                    ->first();
-
-                if ($timMutu) {
-                    $unitId = $timMutu->org_unit_id;
-                } else {
-                    $unit   = StrukturOrganisasi::first();
-                    $unitId = $unit->orgunit_id ?? 0;
-                }
-            }
-
-            // Tampilkan semua indikator sementara waktu sesuai permintaan
-            $query = Indikator::with(['orgUnits' => function ($q) use ($unitId) {
-                $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
-            }]);
+            // Tampilkan semua indikator sesuai unit dan periode yang dipilih
+            $filters = [
+                'kelompok_indikator' => $periode->jenis,
+                'tahun_dokumen'      => $periode->tahun,
+            ];
+            $query = app(IndikatorService::class)->getByOrgUnit($unitId, $filters);
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -102,7 +92,8 @@ class EvaluasiDiriController extends Controller
                     if ($pivot) {
                         $file = $pivot->ed_attachment;
                         if ($file) {
-                            $url           = route('pemutu.evaluasi-diri.download', $pivot->indikorgunit_id);
+                            // Encrypt id from pivot
+                            $url           = route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id));
                             $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                         }
 
@@ -131,7 +122,7 @@ class EvaluasiDiriController extends Controller
                         Isi ED
                         </button>';
                 })
-                ->rawColumns(['indikator_full', 'target', 'capaian', 'file', 'action'])
+                ->rawColumns(['indikator_full', 'target', 'capaian', 'file', 'action','analisis'])
                 ->make(true);
         } catch (Exception $e) {
             logError($e);
@@ -207,7 +198,7 @@ class EvaluasiDiriController extends Controller
         }
     }
 
-    public function update(\App\Http\Requests\Pemutu\EvaluasiDiriRequest $request, Indikator $indikator)
+    public function update(EvaluasiDiriRequest $request, Indikator $indikator)
     {
         try {
             $validated = $request->validated();
@@ -231,8 +222,10 @@ class EvaluasiDiriController extends Controller
             $data = [
                 'ed_capaian'  => $request->ed_capaian,
                 'ed_analisis' => $request->ed_analisis,
+                'ed_skala'    => $request->filled('ed_skala') ? (int) $request->ed_skala : null,
                 'updated_at'  => now(),
             ];
+
 
             // Handle Links JSON
             $linksArray = [];
@@ -282,27 +275,12 @@ class EvaluasiDiriController extends Controller
 
     public function downloadAttachment($id)
     {
-        try {
-            $pivot = DB::table('pemutu_indikator_orgunit')
-                ->where('indikorgunit_id', $id)
-                ->first();
+        $realId = decryptIdIfEncrypted($id);
+        
+        $pivot = DB::table('pemutu_indikator_orgunit')
+            ->where('indikorgunit_id', $realId)
+            ->first();
 
-            if (! $pivot || empty($pivot->ed_attachment)) {
-                abort(404, 'File lampiran tidak ditemukan.');
-            }
-
-            $path = storage_path('app/' . $pivot->ed_attachment);
-
-            if (! file_exists($path)) {
-                abort(404, 'File fisik tidak ditemukan di server.');
-            }
-
-            logActivity('pemutu', "Mengunduh file lampiran Evaluasi Diri untuk pivot ID: {$id}");
-
-            return response()->download($path);
-        } catch (Exception $e) {
-            logError($e);
-            abort(500, 'Terjadi kesalahan saat memproses unduhan: ' . $e->getMessage());
-        }
+        return downloadStorageFile($pivot->ed_attachment ?? null, logActivity: true);
     }
 }
