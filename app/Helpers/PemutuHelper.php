@@ -50,8 +50,7 @@ if (! function_exists('pemutuChildLabel')) {
     function pemutuChildLabel($jenis)
     {
         return match (strtolower(trim($jenis))) {
-            'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin',
-            'standar' => 'Sub Standar',
+            'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin', 'standar' => 'Poin',
             default   => 'Turunan'
         };
     }

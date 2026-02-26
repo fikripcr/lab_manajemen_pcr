@@ -226,6 +226,12 @@ window.initPemutuWorkspace = function (config) {
             const link = $(this).find('.tree-item-link');
             if (link.length) pemutuLoadDetail(link.data('url'), link.data('jenis'));
         });
+        
+        // Ensure tree-item-link text/span clicks bubble properly
+        $(document).on('click', '.tree-item-link', function(e) {
+            e.preventDefault(); 
+            // the parent .tree-node-row will handle the logic
+        });
 
         // 8. Toggle tree children
         $(document).on('click', '.tree-toggle, .tree-toggle-custom', function (e) {

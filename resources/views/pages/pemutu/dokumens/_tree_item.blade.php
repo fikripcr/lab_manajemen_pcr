@@ -17,13 +17,13 @@
             <div class="d-flex align-items-center mb-1">
                 <div class="row align-items-center w-100 gx-2">
                     <div class="col-auto">
-                        <span class="avatar avatar-xs rounded bg-muted-lt text-muted">
+                        <span class="avatar avatar-xs rounded">
                             {{ substr($dok->judul, 0, 1) }}
                         </span>
                     </div>
                     <div class="col">
                         <div class="text-truncate">
-                            <span class="tree-item-name fw-bold text-reset">{{ $dok->judul }}</span>
+                            <span class="tree-item-name">{{ $dok->judul }}</span>
                             @if($dok->kode)
                             <div class="text-muted small">{{ $dok->kode }}</div>
                             @endif

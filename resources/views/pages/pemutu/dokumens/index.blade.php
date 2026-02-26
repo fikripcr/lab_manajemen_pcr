@@ -122,9 +122,10 @@
 
 @push('scripts')
 <script type="module">
-// Inisialisasi workspace Dokumen SPMI
-window.{
-    reorderUrl: '{{ route("pemutu.dokumens.reorder") }}'
-});
+    if (typeof window.initPemutuWorkspace === 'function') {
+        window.initPemutuWorkspace({
+            reorderUrl: '{{ route("pemutu.dokumens.reorder") }}'
+        });
+    }
 </script>
 @endpush

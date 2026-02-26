@@ -1,12 +1,14 @@
 <?php
 namespace Database\Seeders;
 
+use App\Models\Pmb\Camaba;
 use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\Periode;
 use App\Models\Pmb\SyaratDokumenJalur;
 use App\Models\Shared\StrukturOrganisasi as OrgUnit;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class MainPmbSeeder extends Seeder
 {
@@ -130,40 +132,27 @@ class MainPmbSeeder extends Seeder
         for ($i = 0; $i < 300; $i++) {
             // Create User
             $email = 'camaba' . ($i + 1) . '@pmb.test';
+            $name = $faker->name.'-'.($i + 1);
             $user  = \App\Models\User::firstOrCreate(
                 ['email' => $email],
                 [
-                    'name'              => $faker->name,
-                    'password'          => \Illuminate\Support\Facades\Hash::make('password'),
+                    'name'              => $name,
+                    'password'          => Hash::make('password'),
                     'email_verified_at' => now(),
                 ]
             );
             $user->assignRole('mahasiswa'); // Assuming 'mahasiswa' role implies student/candidate
 
             // Create Camaba with user_id relationship
-            $existingCamaba = \App\Models\Pmb\Camaba::where('user_id', $user->id)->first();
-            
-            if (!$existingCamaba) {
-                \App\Models\Pmb\Camaba::create([
-                    'user_id'          => $user->id,
-                    'nik'              => $faker->unique()->numerify('14##############'),
-                    'nama'             => $user->name,
-                    'email'            => $email,
-                    'no_hp'            => $faker->phoneNumber,
-                    'tempat_lahir'     => $faker->city,
-                    'tanggal_lahir'    => $faker->date('Y-m-d', '2006-01-01'),
-                    'jenis_kelamin'    => $faker->randomElement(['L', 'P']),
-                    'alamat'           => $faker->address,
-                    'angkatan'         => date('Y'),
-                    'created_by'       => 'system',
-                ]);
-            }
+            $existingCamaba = Camaba::where('user_id', $user->id)->first();
 
-            // Create Pendaftaran using the user
-            \App\Models\Pmb\Camaba::updateOrCreate(
+            // Create or update Camaba profile
+            Camaba::updateOrCreate(
                 ['user_id' => $user->id],
                 [
                     'nik'              => $existingCamaba?->nik ?? $faker->unique()->numerify('14##############'),
+                    'nama'             => $name,
+                    'email'            => $email,
                     'no_hp'            => $faker->phoneNumber,
                     'tempat_lahir'     => $faker->city,
                     'tanggal_lahir'    => $faker->date('Y-m-d', '2006-01-01'),
@@ -172,6 +161,7 @@ class MainPmbSeeder extends Seeder
                     'asal_sekolah'     => 'SMA ' . $faker->company,
                     'nisn'             => $faker->numerify('00########'),
                     'nama_ibu_kandung' => $faker->name('female'),
+                    'created_by'       => 'system',
                 ]
             );
 

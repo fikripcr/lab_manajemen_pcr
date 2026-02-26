@@ -58,6 +58,8 @@ return new class extends Migration
             $table->id('camaba_id');
             $table->foreignId('user_id')->constrained('users');
             $table->string('nik', 16)->unique();
+            $table->string('nama')->nullable();
+            $table->string('email')->nullable();
             $table->string('no_hp')->nullable();
             $table->string('tempat_lahir')->nullable();
             $table->date('tanggal_lahir')->nullable();

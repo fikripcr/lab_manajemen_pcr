@@ -31,6 +31,8 @@ class Camaba extends Model
     protected $fillable = [
         'user_id',
         'nik',
+        'nama',
+        'email',
         'no_hp',
         'tempat_lahir',
         'tanggal_lahir',

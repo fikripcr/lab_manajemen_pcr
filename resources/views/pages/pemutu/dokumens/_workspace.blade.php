@@ -26,13 +26,9 @@
 
 <div class="card">
     <div class="card-body">
-
-        {{-- ═══════════════════════════════════════════════════
-             ALWAYS-VISIBLE HEADER: Title, Badge, Action Buttons
-             ═══════════════════════════════════════════════════ --}}
         <div class="d-flex justify-content-between align-items-start mb-1">
             <div>
-                @if($type === 'dokumen')                   
+                @if($type === 'dokumen')
                     <div class="badge bg-primary-lt">DOKUMEN {{ strtoupper($item->jenis) }}</div>
                 @elseif($type === 'poin')
                     <div class="badge bg-secondary-lt">POIN {{ strtoupper($item->dokumen->jenis) }}</div>
@@ -78,9 +74,6 @@
         </div>
         <h2>{{ $item->judul }}</h2>
 
-        {{-- ═══════════════════════════════════════════════════
-             TAB NAVIGATION
-             ═══════════════════════════════════════════════════ --}}
         <ul class="nav nav-tabs mb-3" role="tablist">
             <li class="nav-item" role="presentation">
                 <a href="#tab-subdokumen"
@@ -96,7 +89,7 @@
                         <line x1="9" y1="13" x2="15" y2="13"/>
                         <line x1="9" y1="17" x2="15" y2="17"/>
                     </svg>
-                    @if($type === 'dokumen') Sub-Dokumen @else Poin @endif
+                    @if($type === 'dokumen') Poin @else  Dokumen Turunan @endif
                 </a>
             </li>
             @if($type === 'dokumen')
@@ -118,17 +111,8 @@
             </li>
             @endif
         </ul>
-
-        {{-- ═══════════════════════════════════════════════════
-             TAB CONTENT
-             ═══════════════════════════════════════════════════ --}}
         <div class="tab-content">
-
-            {{-- ─────────────────────────────────────────────
-                 TAB 1: Sub-Dokumen (Active by default)
-                 ───────────────────────────────────────────── --}}
             <div class="tab-pane active show" id="tab-subdokumen" role="tabpanel">
-
                 @if($type === 'dokumen')
                     <div class="card bg-transparent shadow-none border">
                         <div class="card-header border-0 d-flex justify-content-between align-items-center">
@@ -178,7 +162,7 @@
                     @if(!$isRenopPoint)
                         <div class="card bg-transparent shadow-none border">
                             <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                                <h2 class="card-title">Berdasarkan Poin Ini (Sub-Dokumen)</h2>
+                                <h2 class="card-title">Poin ini memiliki beberapa Dokumen Turunan:</h2>
                                 <x-tabler.button class="ajax-modal-btn"
                                     text="Tambah Dokumen Turunan" icon="ti ti-plus"
                                     data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->dok_id]) }}"
@@ -193,11 +177,8 @@
                     @endif
 
                 @endif
-            </div>{{-- end #tab-subdokumen --}}
+            </div>
 
-            {{-- ─────────────────────────────────────────────
-                 TAB 2: Informasi & Riwayat Approval
-                 ───────────────────────────────────────────── --}}
             <div class="tab-pane" id="tab-informasi" role="tabpanel">
                 @if($item->isi)
                     <div class="mb-4">
@@ -218,9 +199,9 @@
                         description="Riwayat approval hanya tersedia pada level Dokumen utama." />
                 @endif
 
-            </div>{{-- end #tab-informasi --}}
+            </div>
 
-        </div>{{-- end .tab-content --}}
+        </div>
 
-    </div>{{-- end .card-body --}}
-</div>{{-- end .card --}}
+    </div>
+</div>
