@@ -2,16 +2,12 @@
 @section('title', $pageTitle)
 
 @section('header')
-<x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu">
-    <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.periode-kpis.index') }}" class="btn-outline-primary" icon="ti ti-calendar" text="Kelola Periode KPI" />
-    </x-slot:actions>
-</x-tabler.page-header>
+<x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu"/>
 @endsection
 
 @section('content')
 {{-- Metrics Row --}}
-<div class="row row-cards">
+<div class="row row-cards bg-white">
     <div class="col-sm-6 col-lg-3">
         <div class="card card-sm border-0 shadow-sm bg-primary-lt">
             <div class="card-body">
@@ -76,7 +72,7 @@
                         @php
                             $phases = [
                                 ['label' => 'Penetapan', 'date' => $activePeriodeSpmi->penetapan_awal, 'end' => $activePeriodeSpmi->penetapan_akhir, 'icon' => 'ti ti-gavel', 'color' => 'primary'],
-                                ['label' => 'Pelaksanaan', 'date' => $activePeriodeSpmi->penetapan_akhir, 'end' => $activePeriodeSpmi->ami_awal, 'icon' => 'ti ti-player-play', 'color' => 'teal'],
+                                ['label' => 'Pelaksanaan', 'date' => $activePeriodeSpmi->penetapan_akhir, 'end' => $activePeriodeSpmi->ami_awal, 'icon' => 'ti ti-player-play', 'color' => 'secondary'],
                                 ['label' => 'Evaluasi (AMI)', 'date' => $activePeriodeSpmi->ami_awal, 'end' => $activePeriodeSpmi->ami_akhir, 'icon' => 'ti ti-clipboard-check', 'color' => 'warning'],
                                 ['label' => 'Pengendalian', 'date' => $activePeriodeSpmi->pengendalian_awal, 'end' => $activePeriodeSpmi->pengendalian_akhir, 'icon' => 'ti ti-settings-exclamation', 'color' => 'danger'],
                                 ['label' => 'Peningkatan', 'date' => $activePeriodeSpmi->peningkatan_awal, 'end' => $activePeriodeSpmi->peningkatan_akhir, 'icon' => 'ti ti-trending-up', 'color' => 'success'],
@@ -92,7 +88,7 @@
                                 $isPast = $now->gt($end ?? $start);
                             @endphp
                             <li class="timeline-event">
-                                <div class="timeline-event-icon bg-{{ $phase['color'] }}-lt">
+                                <div class="timeline-event-icon bg-{{ $phase['color'] }}">
                                     <i class="{{ $phase['icon'] }}"></i>
                                 </div>
                                 <div class="card timeline-event-card {{ $isActive ? 'border-primary shadow-sm' : 'border-0 shadow-none' }}">
@@ -124,7 +120,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-vcenter table-nowrap card-table">
+                    <table class="table table-sm table-vcenter table-nowrap card-table">
                         <thead>
                             <tr>
                                 <th>Kategori</th>
@@ -136,23 +132,23 @@
                             {{-- Kebijakan --}}
                             <tr>
                                 <td rowspan="5" class="bg-light fw-bold text-dark">Kebijakan</td>
-                                <td>Visi</td>
+                                <td>{{ pemutuJenisLabel('visi') }}</td>
                                 <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['visi'] }}</span></td>
                             </tr>
                             <tr>
-                                <td>Misi</td>
+                                <td>{{ pemutuJenisLabel('misi') }}</td>
                                 <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['misi'] }}</span></td>
                             </tr>
                             <tr>
-                                <td>RPJP (Pembangunan Jangka Panjang)</td>
+                                <td>{{ pemutuJenisLabel('rjp') }}</td>
                                 <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['rjp'] }}</span></td>
                             </tr>
                             <tr>
-                                <td>Renstra (Strategis)</td>
+                                <td>{{ pemutuJenisLabel('renstra') }}</td>
                                 <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['renstra'] }}</span></td>
                             </tr>
                             <tr>
-                                <td>Renop (Operasional)</td>
+                                <td>{{ pemutuJenisLabel('renop') }}</td>
                                 <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['renop'] }}</span></td>
                             </tr>
 

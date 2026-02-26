@@ -177,9 +177,12 @@
                 </div>
                 <div class="list-group list-group-flush">
                     @forelse($indikator->dokSubs as $relSub)
-                        <a href="{{ route('pemutu.dok-subs.show', $relSub->encrypted_doksub_id) }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        @php
+                            $tabName = pemutuTabByJenis($relSub->dokumen->jenis) ?? 'kebijakan';
+                        @endphp
+                        <a href="{{ route('pemutu.dokumens.index', ['tabs' => $tabName]) }}#tree-node-sub-{{ $relSub->encrypted_doksub_id }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <div>
-                                <span class="badge bg-purple-lt me-2">{{ $relSub->dokumen->jenis }}</span>
+                                <span class="badge bg-purple-lt me-2">{{ pemutuJenisLabel($relSub->dokumen->jenis) }}</span>
                                 {{ $relSub->dokumen->judul }}
                                 <div class="text-muted small mt-1">
                                     <i class="ti ti-corner-down-right me-1"></i>

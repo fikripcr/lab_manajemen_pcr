@@ -42,7 +42,7 @@ class IndikatorController extends Controller
             })
             ->addColumn('tipe', function ($row) {
                 $typeInfo = pemutuIndikatorTypeInfo($row->type);
-                $html = '<span class="badge bg-' . $typeInfo['color'] . '-lt">' . $typeInfo['label'] . '</span>';
+                $html = '<span class="badge bg-' . $typeInfo['color'] . '-lt" title="' . $typeInfo['label'] . '">' . $typeInfo['short-label'] . '</span>';
 
                 // If Performa, show Parent Code
                 if ($row->type === 'performa' && $row->parent) {

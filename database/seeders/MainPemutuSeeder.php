@@ -167,7 +167,7 @@ class MainPemutuSeeder extends Seeder
 
     private function seedDokumen()
     {
-        $this->command->info('Seeding Dokumen & Indikator (Hierarki Lengkap)...');
+        $this->command->info('Seeding Dokumen & Indikator (Hierarki Massive)...');
         $periode = 2026;
         $faker = \Faker\Factory::create('id_ID');
 
@@ -186,8 +186,14 @@ class MainPemutuSeeder extends Seeder
         ];
 
         // 1. HIERARKI KEBIJAKAN (VISI -> MISI -> RPJP -> RENSTRA -> RENOP)
-        // Buat 2 Visi
-        for ($v = 1; $v <= 2; $v++) {
+        // Kita butuh sekitar 200+ Dokumen.
+        // 4 Visi * 5 Poin Visi = 20 Poin Visi
+        // 20 Poin Visi * 2 Misi = 40 Dokumen Misi
+        // 40 Misi * 3 Poin Misi = 120 Poin Misi
+        // 120 Poin Misi * 1 RPJP = 120 Dokumen RPJP
+        // Setidaknya Visi(4) + Misi(40) + RPJP(120) + Renstra(120) + Renop(120) = 404 Dokumen (Sudah melampaui 200)
+
+        for ($v = 1; $v <= 4; $v++) {
             $visi = Dokumen::create([
                 'judul' => "Visi Utama Akademik PCR 2030 - Varian $v", 
                 'periode' => $periode, 
@@ -198,12 +204,10 @@ class MainPemutuSeeder extends Seeder
                 'created_by' => 1
             ]);
 
-            // Setiap Visi punya 5 Poin
             for ($pv = 1; $pv <= 5; $pv++) {
                 $teksVisi = $poinTexts[array_rand($poinTexts)] . " (Poin Visi $pv)";
                 $poinVisi = DokSub::create(['dok_id' => $visi->dok_id, 'judul' => $teksVisi, 'isi' => "<p>$teksVisi</p>", 'seq' => $pv, 'kode' => "PV-$v-$pv", 'created_by' => 1]);
 
-                // Setiap Poin Visi punya 2 Dokumen Misi
                 for ($m = 1; $m <= 2; $m++) {
                     $misi = Dokumen::create([
                         'parent_doksub_id' => $poinVisi->doksub_id, 
@@ -217,25 +221,33 @@ class MainPemutuSeeder extends Seeder
                         'created_by' => 1
                     ]);
 
-                    // Setiap Misi punya 5 Poin Misi
-                    for ($pm = 1; $pm <= 5; $pm++) {
+                    for ($pm = 1; $pm <= 3; $pm++) {
                         $teksMisi = $poinTexts[array_rand($poinTexts)] . " (Poin Misi $pm)";
                         $poinMisi = DokSub::create(['dok_id' => $misi->dok_id, 'judul' => $teksMisi, 'isi' => "<p>$teksMisi</p>", 'seq' => $pm, 'kode' => "PM-$v-$pv-$m-$pm", 'created_by' => 1]);
 
-                        // Lanjut ke RPJP, 1 Dokumen RPJP per Poin Misi
                         $rpjp = Dokumen::create(['parent_doksub_id' => $poinMisi->doksub_id, 'parent_id' => $misi->dok_id, 'judul' => "RPJP Tahap $pm", 'periode' => $periode, 'jenis' => 'rjp', 'level' => 3, 'seq' => 1, 'kode' => "RPJP-$v-$m-$pm", 'created_by' => 1]);
                         
-                        // 2 Poin RPJP
-                        for ($prpjp = 1; $prpjp <= 2; $prpjp++) {
-                            $poinRpjp = DokSub::create(['dok_id' => $rpjp->dok_id, 'judul' => "Draft RPJP $prpjp", 'isi' => "<p>Draft</p>", 'seq' => $prpjp, 'created_by' => 1]);
-                            
-                            // Lanjut Renstra, 1 Dokumen
-                            $renstra = Dokumen::create(['parent_doksub_id' => $poinRpjp->doksub_id, 'parent_id' => $rpjp->dok_id, 'judul' => "RENSTRA Strategis $prpjp", 'periode' => $periode, 'jenis' => 'renstra', 'level' => 4, 'seq' => 1, 'created_by' => 1]);
-                            $poinRenstra = DokSub::create(['dok_id' => $renstra->dok_id, 'judul' => "Poin Renstra $prpjp", 'isi' => "<p>Poin Renstra</p>", 'seq' => 1, 'created_by' => 1]);
-                            
-                            // Lanjut Renop, 1 Dokumen
-                            $renop = Dokumen::create(['parent_doksub_id' => $poinRenstra->doksub_id, 'parent_id' => $renstra->dok_id, 'judul' => "RENOP Operasional $prpjp", 'periode' => $periode, 'jenis' => 'renop', 'level' => 5, 'seq' => 1, 'created_by' => 1]);
-                            $poinRenop = DokSub::create(['dok_id' => $renop->dok_id, 'judul' => "Poin Renop Action $prpjp", 'isi' => "<p>Poin Renop</p>", 'seq' => 1, 'created_by' => 1]);
+                        $poinRpjp = DokSub::create(['dok_id' => $rpjp->dok_id, 'judul' => "Draft RPJP 1", 'isi' => "<p>Draft</p>", 'seq' => 1, 'created_by' => 1]);
+                        
+                        $renstra = Dokumen::create(['parent_doksub_id' => $poinRpjp->doksub_id, 'parent_id' => $rpjp->dok_id, 'judul' => "RENSTRA Strategis 1", 'periode' => $periode, 'jenis' => 'renstra', 'level' => 4, 'seq' => 1, 'created_by' => 1]);
+                        $poinRenstra = DokSub::create(['dok_id' => $renstra->dok_id, 'judul' => "Poin Renstra 1", 'isi' => "<p>Poin Renstra</p>", 'seq' => 1, 'created_by' => 1]);
+                        
+                        $renop = Dokumen::create(['parent_doksub_id' => $poinRenstra->doksub_id, 'parent_id' => $renstra->dok_id, 'judul' => "RENOP Operasional 1", 'periode' => $periode, 'jenis' => 'renop', 'level' => 5, 'seq' => 1, 'created_by' => 1]);
+                        
+                        // Menghasilkan 1 Indikator Renop per Dokumen Renop = 4*5*2*3 = 120 Indikator Renop. 
+                        // Tambah Poin Renop menjadi 2 agar jadi 240 Indikator Renop.
+                        for ($pr = 1; $pr <= 2; $pr++) {
+                            $poinRenop = DokSub::create(['dok_id' => $renop->dok_id, 'judul' => "Poin Renop Action $pr", 'isi' => "<p>Poin Renop</p>", 'seq' => $pr, 'created_by' => 1]);
+                            $indRenop = Indikator::create([
+                                'type' => 'renop', 
+                                'kelompok_indikator' => 'Akademik',
+                                'no_indikator' => "IND-RNP-$v-$m-$pm-$pr", 
+                                'indikator' => "Tercapainya sasaran luaran Renop " . rand(70,100) . "%", 
+                                'target' => rand(70,100).'%', 
+                                'jenis_indikator' => 'Utama',
+                                'created_by' => 1
+                            ]);
+                            $indRenop->dokSubs()->attach($poinRenop->doksub_id, ['is_hasilkan_indikator' => true]);
                         }
                     }
                 }
@@ -243,98 +255,129 @@ class MainPemutuSeeder extends Seeder
         }
 
         // 2. HIERARKI STANDAR & INDIKATOR (MAPPING UNIT & PEGAWAI)
-        $this->command->info('Seeding Standar dan Indikator Performa...');
+        $this->command->info('Seeding Standar (500) dan Indikator Pegawai (800+)...');
         $units = OrgUnit::whereIn('type', ['Institusi', 'Jurusan', 'Prodi', 'Laboratorium'])->get();
         if ($units->isEmpty()) $units = OrgUnit::limit(10)->get();
 
-        $pegawais = Pegawai::limit(20)->get();
+        $pegawais = Pegawai::limit(50)->get(); // Ambil lebih banyak pegawai jika ada
+        if($pegawais->count() < 10) {
+            // Jika pegawai sedikit di database, tetap jalankan saja yang ada, nanti diputar loopnya
+        }
         $periodeKpi = PeriodeKpi::where('is_active', true)->first();
         
-        // Buat 5 Dokumen Standar
-        for ($s = 1; $s <= 5; $s++) {
-            $standarNames = ['Standar Kompetensi Lulusan', 'Standar Isi Pembelajaran', 'Standar Proses Pembelajaran', 'Standar Penilaian Pembelajaran', 'Standar Dosen dan Tenaga Kependidikan'];
+        // Buat 10 Dokumen Standar Akademik (masing-masing punya 50 poin standar = 500 Poin Standar)
+        // Tiap poin standar = 1 Indikator Standar. Total = 500 Indikator Standar.
+        for ($s = 1; $s <= 10; $s++) {
+            $standarNames = ['Standar Kompetensi Lulusan', 'Standar Isi Pembelajaran', 'Standar Proses Pembelajaran', 'Standar Penilaian Pembelajaran', 'Standar Dosen dan Tenaga Kependidikan', 'Standar Sarana Prasarana', 'Standar Pengelolaan', 'Standar Pembiayaan', 'Standar Penelitian', 'Standar Pengabdian'];
             $stdDoc = Dokumen::create([
-                'judul' => $standarNames[$s-1] ?? "Standar Akademik $s", 
+                'judul' => $standarNames[$s-1] ?? "Standar SPMI Seri $s", 
                 'periode' => $periode, 
                 'jenis' => 'standar', 
                 'level' => 1, 
                 'seq' => $s, 
-                'kode' => "STD-00$s",
+                'kode' => "STD-0$s",
                 'created_by' => 1
             ]);
 
-            // Setiap Standar punya 5 Poin Standar
-            for ($ps = 1; $ps <= 5; $ps++) {
-                $isHasilkanIndikator = ($ps === 1); // Poin pertama selalu hasilkan indikator
+            // 50 poin standar / indikator standar per dokumen
+            for ($ps = 1; $ps <= 50; $ps++) {
                 $poinStd = DokSub::create([
                     'dok_id' => $stdDoc->dok_id, 
                     'judul' => "Pernyataan Standar ke-$ps", 
-                    'isi' => "<p>Detail pernyataan standar $ps untuk {$standarNames[$s-1]}</p>", 
+                    'isi' => "<p>Detail pernyataan standar $ps untuk " . ($standarNames[$s-1] ?? '') . "</p>", 
                     'seq' => $ps,
-                    'is_hasilkan_indikator' => $isHasilkanIndikator ? 1 : 0,
+                    'is_hasilkan_indikator' => 1,
                     'created_by' => 1
                 ]);
 
-                // Buat Indikator Standar JIKA poin ini disetting menghasikan indikator
-                if ($isHasilkanIndikator) {
-                    $indikatorText = "Tercapainya target evaluasi pembelajaran > 80% pada bagian $s";
-                    $indStandar = Indikator::create([
-                        'type' => 'standar', 
+                // Buat Indikator Standar 
+                $indStandar = Indikator::create([
+                    'type' => 'standar', 
+                    'kelompok_indikator' => 'Akademik',
+                    'no_indikator' => "IND-STD-$s-$ps", 
+                    'indikator' => "Memenuhi target SPMI pada poin $s-$ps minimal > " . rand(60,95) . "%", 
+                    'target' => rand(60,100).'%', 
+                    'jenis_indikator' => 'Utama',
+                    'created_by' => 1
+                ]);
+                $indStandar->dokSubs()->attach($poinStd->doksub_id, ['is_hasilkan_indikator' => true]);
+                
+                // Tambahkan 1 atau 2 indikator IKU Pegawai dari sini.
+                for ($iku = 1; $iku <= 2; $iku++) {
+                    $ikuTarget = rand(70, 95);
+                    $indPerforma = Indikator::create([
+                        'type' => 'performa', 
+                        'parent_id' => $indStandar->indikator_id, 
                         'kelompok_indikator' => 'Akademik',
-                        'no_indikator' => "IND-STD-$s-$ps", 
-                        'indikator' => $indikatorText, 
-                        'target' => '80%', 
-                        'jenis_indikator' => 'Utama',
+                        'no_indikator' => "IKU-$s-$ps-$iku", 
+                        'indikator' => "[IKU Kampus] Kinerja $s-$ps-$iku " . $poinTexts[array_rand($poinTexts)], 
+                        'target' => $ikuTarget . ' Poin Kinerja', 
+                        'jenis_indikator' => 'IKU',
                         'created_by' => 1
                     ]);
                     
-                    // Attach ke poin standar
-                    $indStandar->dokSubs()->attach($poinStd->doksub_id, ['is_hasilkan_indikator' => true]);
-                    
-                    // Mapping ke Unit (3 unit random)
-                    if ($units->isNotEmpty()) {
-                        $targetUnits = $units->random(min(3, $units->count()));
-                        foreach ($targetUnits as $unit) {
-                            $indStandar->orgUnits()->attach($unit->orgunit_id, [
-                                'target' => '80%',
-                                'created_at' => now(),
-                                'updated_at' => now(),
-                            ]);
-                        }
-                    }
-
-                    // Sekaligus buat 4 Indikator Performa turunan Standar ini yang akan dimapping ke Dosen/Pegawai
-                    for ($iku = 1; $iku <= 4; $iku++) {
-                        $ikuTarget = rand(70, 95);
-                        $indPerforma = Indikator::create([
-                            'type' => 'performa', 
-                            'parent_id' => $indStandar->indikator_id, // Terhubung ke Indikator Standar ini
-                            'kelompok_indikator' => 'Akademik',
-                            'no_indikator' => "IKU-$s-$ps-$iku", 
-                            'indikator' => "[Kinerja] Penyusunan modul dan publikasi ilmiah seri $s-$iku", 
-                            'target' => $ikuTarget . ' Dokumen', 
-                            'jenis_indikator' => 'IKU',
-                            'created_by' => 1
+                    if ($pegawais->isNotEmpty() && $periodeKpi) {
+                        $pegawaiRandom = $pegawais->random();
+                        IndikatorPegawai::create([
+                            'pegawai_id' => $pegawaiRandom->pegawai_id,
+                            'indikator_id' => $indPerforma->indikator_id,
+                            'periode_kpi_id' => $periodeKpi->periode_kpi_id,
+                            'year' => $periodeKpi->tahun,
+                            'weight' => rand(1, 4),
+                            'target_value' => $ikuTarget, 
+                            'created_by' => 1,
                         ]);
-                        
-                        // Mapping ke Pegawai (minimal 2 pegawai per performa)
-                        if ($pegawais->isNotEmpty() && $periodeKpi) {
-                            $targetPegawais = $pegawais->random(min(2, $pegawais->count()));
-                            foreach ($targetPegawais as $pegawai) {
-                                IndikatorPegawai::create([
-                                    'pegawai_id' => $pegawai->pegawai_id,
-                                    'indikator_id' => $indPerforma->indikator_id,
-                                    'periode_kpi_id' => $periodeKpi->periode_kpi_id,
-                                    'year' => $periodeKpi->tahun,
-                                    'weight' => rand(2, 5),
-                                    'target_value' => $ikuTarget, 
-                                    'created_by' => 1,
-                                ]);
-                            }
-                        }
                     }
-                } // End if hasikan indikator
+                } // End IKU
             } // End for poin standar
+
+            // Tambahkan 30 Manual Prosedur per Standar
+            for ($mp = 1; $mp <= 30; $mp++) {
+                $manualProsedur = Dokumen::create([
+                    'parent_id' => $stdDoc->dok_id,
+                    'judul' => "Manual Prosedur - " . ($standarNames[$s-1] ?? "Standar $s") . " Bagian $mp",
+                    'periode' => $periode,
+                    'jenis' => 'manual_prosedur',
+                    'level' => 2,
+                    'seq' => $mp,
+                    'kode' => "MP-0$s-" . str_pad($mp, 2, '0', STR_PAD_LEFT),
+                    'created_by' => 1
+                ]);
+
+                // 1 Poin prosedur
+                DokSub::create([
+                    'dok_id' => $manualProsedur->dok_id,
+                    'judul' => "Poin Prosedur $mp",
+                    'isi' => "<p>Detail langkah-langkah pelaksanaan prosedur ke-$mp untuk memastikan " . ($standarNames[$s-1] ?? '') . " berjalan lancar.</p>",
+                    'seq' => 1,
+                    'kode' => "PM-0$s-$mp",
+                    'created_by' => 1
+                ]);
+            }
+
+            // Tambahkan 30 Formulir per Standar
+            for ($fm = 1; $fm <= 30; $fm++) {
+                $formulir = Dokumen::create([
+                    'parent_id' => $stdDoc->dok_id,
+                    'judul' => "Formulir " . ($standarNames[$s-1] ?? "Standar $s") . " - F$fm",
+                    'periode' => $periode,
+                    'jenis' => 'formulir',
+                    'level' => 2,
+                    'seq' => $fm,
+                    'kode' => "FRM-0$s-" . str_pad($fm, 2, '0', STR_PAD_LEFT),
+                    'created_by' => 1
+                ]);
+
+                // 1 Poin isian formulir
+                DokSub::create([
+                    'dok_id' => $formulir->dok_id,
+                    'judul' => "Bagian Formulir $fm",
+                    'isi' => "<p>Mohon isi data / bukti yang relevan pada rekaman form bagian $fm terkait kelengkapan standar.</p>",
+                    'seq' => 1,
+                    'kode' => "PF-0$s-$fm",
+                    'created_by' => 1
+                ]);
+            }
         } // End for standar
     }
 

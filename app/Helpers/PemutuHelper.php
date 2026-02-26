@@ -103,9 +103,9 @@ if (! function_exists('pemutuIndikatorTypeInfo')) {
     function pemutuIndikatorTypeInfo($type)
     {
         $data = [
-            'standar'  => ['color' => 'primary', 'label' => 'Standar'],
-            'renop'    => ['color' => 'purple',  'label' => 'Renop'],
-            'performa' => ['color' => 'success', 'label' => 'Performa'],
+            'standar'  => ['color' => 'primary', 'label' => 'Indikator Standar', 'short-label' => 'ISTD'],
+            'renop'    => ['color' => 'purple',  'label' => 'Indikator Renop', 'short-label' => 'IRNP'],
+            'performa' => ['color' => 'success', 'label' => 'Indikator Performa', 'short-label' => 'IPRF'],
         ];
 
         return $data[strtolower(trim($type))] ?? ['color' => 'secondary', 'label' => ucfirst($type ?? '-')];
