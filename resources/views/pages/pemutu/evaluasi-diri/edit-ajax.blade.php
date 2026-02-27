@@ -1,5 +1,4 @@
 <x-tabler.form-modal
-    id="edit-ed-modal"
     :title="'Isi Evaluasi Diri'"
     :route="route('pemutu.evaluasi-diri.update', $indikator->encrypted_indikator_id)"
     size="modal-lg" 
