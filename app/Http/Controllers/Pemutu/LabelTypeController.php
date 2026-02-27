@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelTypeRequest;
 use App\Services\Pemutu\LabelService;
+use App\Models\Pemutu\LabelType;
 use Exception;
 
 class LabelTypeController extends Controller

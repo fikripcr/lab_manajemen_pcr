@@ -264,6 +264,15 @@ class MainPemutuSeeder extends Seeder
             // Jika pegawai sedikit di database, tetap jalankan saja yang ada, nanti diputar loopnya
         }
         $periodeKpi = PeriodeKpi::where('is_active', true)->first();
+        $labels = \App\Models\Pemutu\Label::all();
+        
+        $skalaDesc = [
+            0 => "Pencapaian sangat kurang dan jauh di bawah standar yang ditetapkan. Evaluasi menyeluruh dan perbaikan sistemik segera diperlukan untuk mengidentifikasi hambatan utama dan menyusun strategi pemulihan yang efektif agar kinerja dapat meningkat signifikan.",
+            1 => "Pencapaian masih di bawah standar minimal yang diharapkan. Terdapat beberapa kekurangan yang perlu mendapat perhatian khusus dan tindakan korektif secepatnya agar proses operasional dapat kembali berjalan sesuai dengan pedoman dan ketentuan yang berlaku.",
+            2 => "Pencapaian sudah memenuhi standar minimal yang ditetapkan. Kinerja berjalan cukup baik namun masih terdapat ruang untuk perbaikan dan optimalisasi lebih lanjut guna memastikan kualitas dan efisiensi yang lebih tinggi di masa mendatang.",
+            3 => "Pencapaian melampaui harapan dan menunjukkan hasil yang sangat memuaskan. Strategi yang dijalankan terbukti efektif dan selaras dengan tujuan institusi. Praktik baik ini perlu dipertahankan dan dijadikan contoh bagi unit kerja atau indikator lainnya.",
+            4 => "Pencapaian luar biasa dan sangat unggul, menunjukkan inovasi serta efisiensi maksimal dalam pelaksanaan tugas. Kinerja ini tidak sekadar memenuhi target, melainkan menetapkan standar baru yang sangat berharga bagi peningkatan mutu dan reputasi institusi."
+        ];
         
         // Buat 10 Dokumen Standar Akademik (masing-masing punya 50 poin standar = 500 Poin Standar)
         // Tiap poin standar = 1 Indikator Standar. Total = 500 Indikator Standar.
@@ -298,10 +307,29 @@ class MainPemutuSeeder extends Seeder
                     'indikator' => "Memenuhi target SPMI pada poin $s-$ps minimal > " . rand(60,95) . "%", 
                     'target' => rand(60,100).'%', 
                     'jenis_indikator' => 'Utama',
+                    'keterangan' => "<p>Indikator ini diukur secara berkala untuk mengevaluasi sejauh mana unit menerapkan <strong>" . ($standarNames[$s-1] ?? "Standar $s") . "</strong> sesuai pedoman akademik yang berlaku.</p>",
+                    'skala' => $skalaDesc,
                     'created_by' => 1
                 ]);
                 $indStandar->dokSubs()->attach($poinStd->doksub_id, ['is_hasilkan_indikator' => true]);
                 
+                // Tempelkan Label Random untuk Indikator Standar
+                if ($labels->isNotEmpty()) {
+                    $indStandar->labels()->attach($labels->random(rand(1, 3))->pluck('label_id')->toArray());
+                }
+
+                // Plot Indikator Standar ke OrgUnit Tertentu (random basis)
+                if ($units->isNotEmpty()) {
+                    $unitRandom = $units->random();
+                    \App\Models\Pemutu\IndikatorOrgUnit::create([
+                        'indikator_id' => $indStandar->indikator_id,
+                        'org_unit_id' => $unitRandom->orgunit_id,
+                        'target' => $indStandar->target,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
                 // Tambahkan 1 atau 2 indikator IKU Pegawai dari sini.
                 for ($iku = 1; $iku <= 2; $iku++) {
                     $ikuTarget = rand(70, 95);
@@ -313,9 +341,16 @@ class MainPemutuSeeder extends Seeder
                         'indikator' => "[IKU Kampus] Kinerja $s-$ps-$iku " . $poinTexts[array_rand($poinTexts)], 
                         'target' => $ikuTarget . ' Poin Kinerja', 
                         'jenis_indikator' => 'IKU',
+                        'keterangan' => "<p>Indikator Performa IKU ini menjadi sasaran objektif penugasan pegawai semester ganjil/genap berjalan. Berkorelasi langsung pada <strong>" . ($standarNames[$s-1] ?? "Standar $s") . "</strong> institusi.</p>",
+                        'skala' => $skalaDesc,
                         'created_by' => 1
                     ]);
                     
+                    // Tempelkan Label Random ke Indikator Performa
+                    if ($labels->isNotEmpty()) {
+                        $indPerforma->labels()->attach($labels->random(rand(1, 2))->pluck('label_id')->toArray());
+                    }
+
                     if ($pegawais->isNotEmpty() && $periodeKpi) {
                         $pegawaiRandom = $pegawais->random();
                         IndikatorPegawai::create([

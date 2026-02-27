@@ -100,7 +100,7 @@
                 <input type="hidden" name="ed_skala" id="ed-skala-value" value="{{ $pivot->ed_skala ?? '' }}">
                 <div class="row g-2">
                     @foreach($skalaData as $level => $desc)
-                    @php $isChosen = ($pivot->ed_skala !== null && (int)$pivot->ed_skala === (int)$level); @endphp
+                    @php $isChosen = (isset($pivot->ed_skala) && (int)$pivot->ed_skala === (int)$level); @endphp
                     <div class="col-12">
                         <div class="card mb-0 skala-card cursor-pointer {{ $isChosen ? 'border-primary bg-primary-lt border-2' : 'border' }}"
                              data-level="{{ $level }}" role="button">

@@ -33,6 +33,16 @@ function initAjaxFormHandler() {
         return;
     }
 
+    // Fix Bootstrap 5 Modal Focus Trap issue with Third-Party Plugins (Select2 & TinyMCE/HugeRTE)
+    // This allows spacebar and clicking inside the editor/dropdown to work
+    document.addEventListener('focusin', function (e) {
+        if (e.target.closest('.tox-tinymce, .tox-tinymce-aux, .moxman-window, .tam-assetmanager-root') !== null ||
+            e.target.closest('.select2-search__field') !== null ||
+            e.target.closest('.select2-container') !== null) {
+            e.stopImmediatePropagation();
+        }
+    });
+
     /**
      * Handle AJAX form submission
      */
@@ -219,8 +229,14 @@ function initAjaxFormHandler() {
         // Initialize modal if not already initialized
         let bootstrapModal = window.bootstrap.Modal.getInstance($modal[0]);
         if (!bootstrapModal) {
-            bootstrapModal = new window.bootstrap.Modal($modal[0]);
+            // Disable native focus trap so it doesn't break HugeRTE / Select2 search spaces
+            bootstrapModal = new window.bootstrap.Modal($modal[0], {
+                focus: false
+            });
         }
+        
+        // Remove tabindex to prevent focus stealing by the modal wrapper
+        $modal.removeAttr('tabindex');
 
         // Handle size
         const $modalDialog = $modal.find('.modal-dialog');
@@ -246,10 +262,6 @@ function initAjaxFormHandler() {
         })
             .then(function (response) {
                 $modalContent.html(response.data);
-
-                // Move modal to body to prevent z-index issues
-                $modal.appendTo('body');
-
                 // Re-initialize components
                 if (typeof window.initOfflineSelect2 === 'function') {
                     window.initOfflineSelect2();
