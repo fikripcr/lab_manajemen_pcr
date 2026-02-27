@@ -261,7 +261,7 @@
                     'id'            => 'navbar-penetapan',
                     'icon'          => 'ti ti-file-text',
                     'can'           => 'admin',
-                    'active_routes' => ['pemutu.dokumens.*', 'pemutu.dokumen-spmi.*', 'pemutu.standar.*', 'pemutu.indikators.*', 'pemutu.renop.*'],
+                    'active_routes' => ['pemutu.dokumens.*', 'pemutu.dokumen-spmi.*', 'pemutu.standar.*', 'pemutu.indikators.*', 'pemutu.renop.*', 'pemutu.indikator-summary.*'],
                     'children'      => [
                         [
                             'title'         => 'Kebijakan',
@@ -282,6 +282,26 @@
                             'route'         => 'pemutu.indikators.index',
                             'active_routes' => ['pemutu.indikators.*', 'pemutu.renop.*'],
                             'icon'          => 'ti ti-target',
+                        ],
+                        [
+                            'title'         => 'Summary Indikator',
+                            'id'            => 'navbar-summary-indikator',
+                            'icon'          => 'ti ti-table-share',
+                            'active_routes' => ['pemutu.indikator-summary.*'],
+                            'children'      => [
+                                [
+                                    'title'         => 'Indikator Standar',
+                                    'route'         => 'pemutu.indikator-summary.standar',
+                                    'active_routes' => ['pemutu.indikator-summary.standar', 'pemutu.indikator-summary.data-standar'],
+                                    'icon'          => 'ti ti-book',
+                                ],
+                                [
+                                    'title'         => 'Indikator Performa (KPI)',
+                                    'route'         => 'pemutu.indikator-summary.performa',
+                                    'active_routes' => ['pemutu.indikator-summary.performa', 'pemutu.indikator-summary.data-performa'],
+                                    'icon'          => 'ti ti-chart-bar',
+                                ],
+                            ],
                         ],
                     ],
                 ],

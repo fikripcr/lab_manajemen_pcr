@@ -5,6 +5,7 @@ use App\Http\Controllers\Pemutu\DokumenApprovalController;
 use App\Http\Controllers\Pemutu\DokumenController;
 use App\Http\Controllers\Pemutu\DokumenSpmiController;
 use App\Http\Controllers\Pemutu\IndikatorController;
+use App\Http\Controllers\Pemutu\IndikatorSummaryController;
 use App\Http\Controllers\Pemutu\LabelController;
 use App\Http\Controllers\Pemutu\LabelTypeController;
 use App\Http\Controllers\Pemutu\PegawaiController;
@@ -56,6 +57,21 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Indikators
     Route::get('api/indikators', [IndikatorController::class, 'paginate'])->name('indikators.data');
     Route::resource('indikators', IndikatorController::class);
+
+    // Indikator Summary (NEW - with separate routes for Standar and Performa)
+    Route::get('indikator-summary', [IndikatorSummaryController::class, 'index'])->name('indikator-summary.index');
+    
+    // Indikator Standar (ED, AMI, Pengendalian)
+    Route::get('indikator-summary/standar', [IndikatorSummaryController::class, 'standar'])->name('indikator-summary.standar');
+    Route::get('indikator-summary/standar/data', [IndikatorSummaryController::class, 'dataStandar'])->name('indikator-summary.data-standar');
+    
+    // Indikator Performa (KPI)
+    Route::get('indikator-summary/performa', [IndikatorSummaryController::class, 'performa'])->name('indikator-summary.performa');
+    Route::get('indikator-summary/performa/data', [IndikatorSummaryController::class, 'dataPerforma'])->name('indikator-summary.data-performa');
+    
+    // Shared routes
+    Route::get('indikator-summary/export', [IndikatorSummaryController::class, 'export'])->name('indikator-summary.export');
+    Route::get('indikator-summary/{indikator}', [IndikatorSummaryController::class, 'detail'])->name('indikator-summary.detail');
 
     // Standar (Indikator Standar)
     Route::get('api/standar', [App\Http\Controllers\Pemutu\StandarController::class, 'paginate'])->name('standar.data');
