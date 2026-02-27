@@ -69,18 +69,7 @@
     </div>
 </div>
 
-<!-- Detail Modal -->
-<x-tabler.form-modal
-    id="detailModal"
-    title="Detail Presensi"
-    size="modal-lg"
-    submitText=""
-    submitIcon=""
->
-    <div id="detail-content">
-        <!-- Detail content will be loaded here -->
-    </div>
-</x-tabler.form-modal>
+{{-- Modal is now loaded via AJAX --}}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -165,9 +154,10 @@ const presensiColumnDefs = [
     {
         targets: 7, // Action column
         render: function(data, type, row) {
+            const detailUrl = '{{ route("hr.presensi.history.show", ":date") }}'.replace(':date', row.date);
             return `
                 <div class="btn-list">
-                    <x-tabler.button class="btn-sm btn-outline-primary" onclick="showDetail('${row.date}')" icon="ti ti-eye" />
+                    <x-tabler.button class="btn-sm btn-outline-primary ajax-modal-btn" data-url="${detailUrl}" icon="ti ti-eye" />
                 </div>
             `;
         }
@@ -182,93 +172,5 @@ $(document).ready(function() {
     });
 });
 
-function showDetail(date) {
-    // Mock detail data - in real app, this would fetch from API
-    const mockDetail = {
-        date: date,
-        checkIn: '08:15:00',
-        checkOut: '17:30:00',
-        status: 'on_time',
-        checkInLocation: {
-            latitude: -6.208763,
-            longitude: 106.845599,
-            address: 'Jakarta, Indonesia'
-        },
-        checkOutLocation: {
-            latitude: -6.208763,
-            longitude: 106.845599,
-            address: 'Jakarta, Indonesia'
-        },
-        duration: '9 jam 15 menit',
-        shift: 'Reguler (08:00 - 17:00)',
-        notes: '-'
-    };
-
-    const detailHtml = `
-        <div class="row">
-            <div class="col-md-6">
-                <h6>Informasi Presensi</h6>
-                <table class="table table-sm">
-                    <tr>
-                        <td><strong>Tanggal:</strong></td>
-                        <td>${mockDetail.date}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Shift:</strong></td>
-                        <td>${mockDetail.shift}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Status:</strong></td>
-                        <td><span class="badge bg-success text-white">Tepat Waktu</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Durasi:</strong></td>
-                        <td>${mockDetail.duration}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Catatan:</strong></td>
-                        <td>${mockDetail.notes}</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <h6>Lokasi Check In</h6>
-                <table class="table table-sm">
-                    <tr>
-                        <td><strong>Waktu:</strong></td>
-                        <td>${mockDetail.checkIn}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Alamat:</strong></td>
-                        <td>${mockDetail.checkInLocation.address}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Koordinat:</strong></td>
-                        <td>${mockDetail.checkInLocation.latitude}, ${mockDetail.checkInLocation.longitude}</td>
-                    </tr>
-                </table>
-
-                <h6 class="mt-3">Lokasi Check Out</h6>
-                <table class="table table-sm">
-                    <tr>
-                        <td><strong>Waktu:</strong></td>
-                        <td>${mockDetail.checkOut}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Alamat:</strong></td>
-                        <td>${mockDetail.checkOutLocation.address}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Koordinat:</strong></td>
-                        <td>${mockDetail.checkOutLocation.latitude}, ${mockDetail.checkOutLocation.longitude}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    `;
-
-    $('#detail-content').html(detailHtml);
-    $('#detailModal').modal('show');
-}
 </script>
 @endsection

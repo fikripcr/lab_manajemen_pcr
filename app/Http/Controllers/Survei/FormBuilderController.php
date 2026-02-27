@@ -42,6 +42,11 @@ class FormBuilderController extends Controller
         return jsonSuccess('Halaman berhasil ditambahkan', null, ['halaman' => $halaman]);
     }
 
+    public function editHalaman(Halaman $halaman)
+    {
+        return view('pages.survei.admin.ajax.form-halaman', compact('halaman'));
+    }
+
     public function updateHalaman(\App\Http\Requests\Survei\HalamanRequest $request, Halaman $halaman)
     {
         $this->formBuilderService->updateHalaman($halaman, $request->validated());

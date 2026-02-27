@@ -53,7 +53,7 @@ class ActivityLogController extends Controller
                 ->addColumn('action', function ($activity) {
                     return '
                         <div class="d-flex align-items-center">
-                            <a class="text-success me-2" href="#" data-bs-toggle="modal" data-bs-target="#activityDetailModal" data-activity-id="' . $activity->id . '" title="View Details">
+                            <a class="text-success me-2 ajax-modal-btn" href="javascript:void(0)" data-url="' . route('activity-log.show', $activity->id) . '" title="View Details">
                                 <i class="bx bx-show"></i>
                             </a>
                         </div>';
@@ -87,7 +87,13 @@ class ActivityLogController extends Controller
      */
     public function show($id)
     {
-        //
+        $activity = $this->activityLogService->getActivityLogById($id);
+        
+        if (request()->ajax()) {
+            return view('pages.sys.activity-log.ajax.detail', compact('activity'));
+        }
+
+        return redirect()->route('activity-log.index');
     }
 
     /**

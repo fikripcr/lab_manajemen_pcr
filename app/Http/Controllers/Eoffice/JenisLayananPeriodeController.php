@@ -17,6 +17,16 @@ class JenisLayananPeriodeController extends Controller
         $this->jenisLayananPeriodeService = $jenisLayananPeriodeService;
     }
 
+    public function create(JenisLayanan $jenisLayanan)
+    {
+        return view('pages.eoffice.jenis_layanan.ajax.form-periode', compact('jenisLayanan'));
+    }
+
+    public function edit(JenisLayanan $jenisLayanan, JenisLayananPeriode $periode)
+    {
+        return view('pages.eoffice.jenis_layanan.ajax.form-periode', compact('jenisLayanan', 'periode'));
+    }
+
     /**
      * Store a new periode for a Jenis Layanan.
      */

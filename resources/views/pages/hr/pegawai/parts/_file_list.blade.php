@@ -5,8 +5,8 @@
             <x-tabler.button 
                 style="primary" 
                 icon="ti ti-upload" 
-                data-bs-toggle="modal" 
-                data-bs-target="#modal-upload-file" 
+                class="ajax-modal-btn"
+                data-url="{{ route('hr.pegawai.files.create', $pegawai->hashid) }}"
                 text="Unggah File" />
         </div>
     </div>
@@ -73,68 +73,12 @@
     </div>
 </div>
 
-<!-- Modal Upload -->
-<x-tabler.form-modal
-    id="modal-upload-file"
-    id_form="form-upload-file"
-    title="Unggah File Pegawai"
-    route="#"
-    method="POST"
-    submitText="Unggah Sekarang"
-    submitIcon="ti-upload"
-    enctype="multipart/form-data"
->
-    <input type="hidden" name="pegawai_id" value="{{ $pegawai->encrypted_pegawai_id }}">
-    <div class="mb-3">
-        <x-tabler.form-select name="jenisfile_id" label="Kategori File" required="true">
-            <option value="">Pilih Kategori...</option>
-            @foreach(\App\Models\Hr\JenisFile::where('is_active', 1)->get() as $jenis)
-                <option value="{{ $jenis->jenisfile_id }}">{{ $jenis->jenisfile }}</option>
-            @endforeach
-        </x-tabler.form-select>
-    </div>
-    <div class="mb-3">
-        <x-tabler.form-input type="file" name="file" label="Pilih File" required="true" help="Maksimal 10MB (PDF, JPG, PNG, DOCX, dll)" />
-    </div>
-    <div class="mb-3">
-        <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" placeholder="Tambahkan catatan jika perlu..." />
-    </div>
-</x-tabler.form-modal>
 
 @push('js')
 <script>
     $(function() {
-        $('#form-upload-file').on('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const submitBtn = $(this).find('button[type="submit"]');
-            
-            submitBtn.prop('disabled', true).addClass('btn-loading');
-
-            $.ajax({
-                url: "{{ route('hr.pegawai.files.store', $pegawai->encrypted_pegawai_id) }}",
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(res) {
-                    if (res.success) {
-                        $('#modal-upload-file').modal('hide');
-                        $('#form-upload-file')[0].reset();
-                        location.reload(); // Reload to show new file
-                        toastr.success(res.message);
-                    } else {
-                        toastr.error(res.message);
-                    }
-                },
-                error: function(xhr) {
-                    const message = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi kesalahan sistem';
-                    toastr.error(message);
-                },
-                complete: function() {
-                    submitBtn.prop('disabled', false).removeClass('btn-loading');
-                }
-            });
+        document.addEventListener('ajax-form:success', function() {
+            location.reload();
         });
 
         window.deleteFile = function(encrypted_id) {

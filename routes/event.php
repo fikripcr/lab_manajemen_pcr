@@ -12,7 +12,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
     Route::post('rapat/{rapat}/attendance', [App\Http\Controllers\Event\RapatController::class, 'updateAttendance'])->name('rapat.update-attendance');
     Route::post('rapat/{rapat}/agenda', [App\Http\Controllers\Event\RapatController::class, 'updateAgenda'])->name('rapat.update-agenda');
     Route::post('rapat/{rapat}/agenda/store', [App\Http\Controllers\Event\RapatController::class, 'storeAgenda'])->name('rapat.agenda.store');
+    Route::get('rapat/{rapat}/officials', [App\Http\Controllers\Event\RapatController::class, 'editOfficials'])->name('rapat.edit-officials');
     Route::post('rapat/{rapat}/officials', [App\Http\Controllers\Event\RapatController::class, 'updateOfficials'])->name('rapat.update-officials');
+    Route::get('rapat/{rapat}/participants/create', [App\Http\Controllers\Event\RapatController::class, 'createParticipants'])->name('rapat.participants.create');
     Route::post('rapat/{rapat}/participants', [App\Http\Controllers\Event\RapatController::class, 'storeParticipants'])->name('rapat.participants.store');
     Route::post('rapat/peserta/{peserta}/resend-invite', [App\Http\Controllers\Event\RapatController::class, 'resendInvitation'])->name('rapat.peserta.resend-invite');
     Route::get('rapat/{rapat}/pdf', [App\Http\Controllers\Event\RapatController::class, 'generatePdf'])->name('rapat.generate-pdf');

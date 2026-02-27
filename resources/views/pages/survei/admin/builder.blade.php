@@ -32,7 +32,7 @@
                                 <div class="dropdown">
                                     <i class="ti ti-dots-vertical cursor-pointer" data-bs-toggle="dropdown"></i>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); window.editHalaman && window.editHalaman('{{ $halaman->encrypted_halaman_id }}')">
+                                        <a class="dropdown-item ajax-modal-btn" href="javascript:void(0)" data-url="{{ route('survei.halaman.edit', $halaman->encrypted_halaman_id) }}">
                                             <i class="ti ti-pencil me-2"></i>Edit Halaman
                                         </a>
                                         <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); window.deleteHalaman && window.deleteHalaman('{{ $halaman->encrypted_halaman_id }}')">
@@ -95,22 +95,7 @@
                 </div>
             </div>
         </div>
-<!-- Modal Edit Halaman -->
-<x-tabler.form-modal
-    id="modalEditHalaman"
-    title="Edit Halaman"
-    route="#"
-    id_form="formEditHalaman"
->
-    <input type="hidden" id="edit-halaman-id">
-    <x-tabler.form-input name="judul_halaman" label="Judul Halaman" id="edit-halaman-judul" placeholder="Judul Halaman" />
-    <x-tabler.form-textarea name="deskripsi_halaman" label="Keterangan" id="edit-halaman-deskripsi" rows="3" placeholder="Instruksi singkat untuk responden di halaman ini..." />
-    
-    <x-slot:footer>
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Batal" />
-        <x-tabler.button type="button" class="ms-auto" onclick="window.saveHalaman()" text="Simpan" />
-    </x-slot:footer>
-</x-tabler.form-modal>
+{{-- Modals are now loaded via AJAX --}}
 
 @endsection
 
@@ -299,50 +284,7 @@
 
         // selectHalaman already declared globally above (no jQuery needed for it)
 
-        window.editHalaman = function(id) {
-            const $item = $(`#list-halaman .list-group-item[data-id="${id}"]`);
-            const currentTitle = $item.find('.halaman-title').text().trim();
-            const currentDesc = $item.data('deskripsi') || '';
-
-            $('#edit-halaman-id').val(id);
-            $('#edit-halaman-judul').val(currentTitle);
-            $('#edit-halaman-deskripsi').val(currentDesc);
-
-            let modalEl = document.getElementById('modalEditHalaman');
-            let modal = bootstrap.Modal.getInstance(modalEl);
-            if (!modal) {
-                modal = new bootstrap.Modal(modalEl);
-            }
-            modal.show();
-        };
-
-        window.saveHalaman = function() {
-            let id = $('#edit-halaman-id').val();
-            let judul = $('#edit-halaman-judul').val();
-            let deskripsi = $('#edit-halaman-deskripsi').val().trim();
-
-            $.ajax({
-                url: routeFor('halamanUpdate', id),
-                type: 'PUT',
-                data: { _token: csrfToken, judul_halaman: judul, deskripsi_halaman: deskripsi },
-                success: function(res) {
-                    if (res.success) {
-                        $(`#list-halaman .list-group-item[data-id="${id}"] .halaman-title`).text(judul);
-                        $(`#list-halaman .list-group-item[data-id="${id}"]`).data('deskripsi', deskripsi);
-                        $(`#halaman-${id} .halaman-title-display`).text(judul);
-                        $(`#halaman-${id} .halaman-deskripsi-display`).html(deskripsi);
-                        
-                        let modalEl = document.getElementById('modalEditHalaman');
-                        let modal = bootstrap.Modal.getInstance(modalEl);
-                        if (modal) {
-                            modal.hide();
-                        }
-                        
-                        showSuccessMessage('Halaman berhasil diperbarui.');
-                    }
-                }
-            });
-        };
+        // window.editHalaman and window.saveHalaman are now handled by AJAX modal system
 
         window.deleteHalaman = function(id) {
             Swal.fire({
@@ -439,6 +381,11 @@
             });
         };
 
+        document.addEventListener('ajax-form:success', function() {
+            // To be precise, we could update the DOM elements, but a reload is safer for state
+            // Given builder complexity, reload ensures everything (Sortable, etc) stays in sync
+            location.reload();
+        });
     }); // end DOMContentLoaded
 </script>
 @endpush

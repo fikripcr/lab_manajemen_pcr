@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Services\Sys\UserService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
@@ -137,6 +136,11 @@ class UserController extends Controller
     public function show(User $user)
     {
         return view('pages.lab.users.show', compact('user'));
+    }
+
+    public function changePassword()
+    {
+        return view('pages.lab.users.ajax.change-password');
     }
 
     /**

@@ -69,77 +69,8 @@
     </div>
 </div>
 
-<!-- Activity Detail Modal -->
-<x-tabler.form-modal
-    id="activityDetailModal"
-    title="Activity Details"
-    submitText=""
-    submitIcon=""
->
-    <div id="activity-detail-content">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-</x-tabler.form-modal>
+{{-- Modal is now loaded via AJAX --}}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle activity detail modal
-        document.addEventListener('click', function(event) {
-            var targetElement = event.target.closest('[data-bs-toggle="modal"][data-bs-target="#activityDetailModal"]');
-            if (targetElement) {
-                var activityId = targetElement.getAttribute('data-activity-id');
-                if (activityId) {
-                    loadActivityDetails(activityId);
-                }
-            }
-        });
-
-        function loadActivityDetails(activityId) {
-            axios.get('/api/activity-logs/' + activityId)
-                .then(function(response) {
-                    if (response.data.status === 'success' && response.data.data) {
-                        var activity = response.data.data.activity;
-                        var properties = activity.properties || {};
-
-                        var content = '<div class="row">';
-                        content += '<div class="col-md-6"><strong>Time:</strong> ' + activity.created_at + '</div>';
-                        content += '<div class="col-md-6"><strong>Log Name:</strong> ' + activity.log_name + '</div>';
-                        content += '<div class="col-md-6"><strong>Event:</strong> ' + activity.event + '</div>';
-                        content += '<div class="col-md-6"><strong>User:</strong> ' + (activity.causer ? activity.causer.name : 'System') + '</div>';
-                        content += '<div class="col-md-12"><strong>Subject:</strong> ' + (activity.subject ? activity.subject_type + ': ' + activity.subject.name : 'N/A') + '</div>';
-                        content += '<div class="col-md-12"><strong>Description:</strong> ' + activity.description + '</div>';
-
-                        if (activity.properties && typeof activity.properties === 'object' && Object.keys(activity.properties).length > 0) {
-                            content += '<div class="col-md-12 mt-3"><strong>Properties:</strong></div>';
-                            content += '<div class="col-md-12">';
-                            for (var key in activity.properties) {
-                                if (activity.properties.hasOwnProperty(key)) {
-                                    content += '<div><strong>' + key + ':</strong> ';
-                                    if (typeof activity.properties[key] === 'object') {
-                                        content += '<pre>' + JSON.stringify(activity.properties[key], null, 2) + '</pre>';
-                                    } else {
-                                        content += activity.properties[key];
-                                    }
-                                    content += '</div>';
-                                }
-                            }
-                            content += '</div>';
-                        }
-
-                        content += '</div>';
-
-                        document.getElementById('activity-detail-content').innerHTML = content;
-                    } else {
-                        document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    document.getElementById('activity-detail-content').innerHTML = '<div class="alert alert-danger">Failed to load activity details.</div>';
-                });
-        }
-    });
 </script>
 @endsection

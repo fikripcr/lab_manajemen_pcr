@@ -103,6 +103,32 @@ class JenisLayananController extends Controller
         }
     }
 
+    // --- AJAX Form View Handlers ---
+
+    public function createPic(JenisLayanan $jenisLayanan)
+    {
+        $layanan = $jenisLayanan;
+        $users   = User::orderBy('name')->get();
+        return view('pages.eoffice.jenis_layanan.ajax.form-pic', compact('layanan', 'users'));
+    }
+
+    public function createIsian(JenisLayanan $jenisLayanan)
+    {
+        $layanan        = $jenisLayanan;
+        $kategoriIsians = KategoriIsian::orderBy('nama_isian')->get();
+        return view('pages.eoffice.jenis_layanan.ajax.form-isian', compact('layanan', 'kategoriIsians'));
+    }
+
+    public function editIsianRule(JenisLayananIsian $isian)
+    {
+        return view('pages.eoffice.jenis_layanan.ajax.form-isian-rule', compact('isian'));
+    }
+
+    public function editIsianInfo(JenisLayananIsian $isian)
+    {
+        return view('pages.eoffice.jenis_layanan.ajax.form-isian-info', compact('isian'));
+    }
+
     // PIC & Isian Handlers
     public function storePic(JenisLayananPicStoreRequest $request, JenisLayanan $jenisLayanan)
     {

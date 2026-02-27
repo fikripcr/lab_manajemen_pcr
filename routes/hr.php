@@ -120,6 +120,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
 
         // File Pegawai
         Route::get('files/data', [FilePegawaiController::class, 'index'])->name('files.data');
+        Route::get('files/create', [FilePegawaiController::class, 'create'])->name('files.create');
         Route::resource('files', FilePegawaiController::class)->only(['store', 'destroy']);
     });
 
@@ -210,5 +211,6 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::post('presensi/update-settings', [PresensiController::class, 'updateSettings'])->name('presensi.update-settings');
     Route::get('presensi/history', [PresensiController::class, 'history'])->name('presensi.history');
     Route::get('presensi/history-data', [PresensiController::class, 'historyData'])->name('presensi.history-data');
+    Route::get('presensi/history/{date}', [PresensiController::class, 'show'])->name('presensi.history.show');
     Route::get('presensi/employee-face-data', [PresensiController::class, 'getEmployeeFaceData'])->name('presensi.employee-face-data');
 });

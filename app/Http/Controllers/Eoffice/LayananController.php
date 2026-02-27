@@ -270,4 +270,12 @@ class LayananController extends Controller
 
         return $pdf->download('E-Office-' . $layanan->no_layanan . '.pdf');
     }
+
+    /**
+     * Show feedback form for AJAX modal
+     */
+    public function createFeedback(Layanan $layanan)
+    {
+        return view('pages.eoffice.layanan.ajax-feedback', compact('layanan'));
+    }
 }

@@ -36,6 +36,7 @@ Route::middleware(['auth'])->prefix('survei')->name('survei.')->group(function (
     // Form Builder
     Route::get('/{survei}/builder', [FormBuilderController::class, 'index'])->name('builder');
     Route::post('/{survei}/halaman', [FormBuilderController::class, 'storeHalaman'])->name('halaman.store');
+    Route::get('/halaman/{halaman}/edit', [FormBuilderController::class, 'editHalaman'])->name('halaman.edit');
     Route::put('/halaman/{halaman}', [FormBuilderController::class, 'updateHalaman'])->name('halaman.update');
     Route::delete('/halaman/{halaman}', [FormBuilderController::class, 'destroyHalaman'])->name('halaman.destroy');
     Route::post('/halaman/reorder', [FormBuilderController::class, 'reorderHalaman'])->name('halaman.reorder');

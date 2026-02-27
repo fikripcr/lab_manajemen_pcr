@@ -41,19 +41,25 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::delete('/{jenis_layanan}', [JenisLayananController::class, 'destroy'])->name('destroy');
 
             // PIC & Isian
+            Route::get('/{jenis_layanan}/pic/create', [JenisLayananController::class, 'createPic'])->name('create-pic');
             Route::post('/{jenis_layanan}/pic', [JenisLayananController::class, 'storePic'])->name('store-pic');
             Route::delete('/pic/{pic}', [JenisLayananController::class, 'destroyPic'])->name('destroy-pic');
+            
+            Route::get('/{jenis_layanan}/isian/create', [JenisLayananController::class, 'createIsian'])->name('create-isian');
             Route::post('/{jenis_layanan}/isian', [JenisLayananController::class, 'storeIsian'])->name('store-isian');
-            Route::post('/isian/{isian}/toggle', [JenisLayananController::class, 'updateIsianField'])->name('update-isian-field');
+            Route::get('/isian/{isian}/rule', [JenisLayananController::class, 'editIsianRule'])->name('edit-isian-rule');
             Route::post('/isian/{isian}/rule', [JenisLayananController::class, 'updateIsianRule'])->name('update-isian-rule');
+            Route::get('/isian/{isian}/info', [JenisLayananController::class, 'editIsianInfo'])->name('edit-isian-info');
             Route::post('/isian/{isian}/info', [JenisLayananController::class, 'updateIsianInfo'])->name('update-isian-info');
+            Route::post('/isian/{isian}/toggle', [JenisLayananController::class, 'updateIsianField'])->name('update-isian-field');
             Route::post('/isian/seq', [JenisLayananController::class, 'updateIsianSeq'])->name('update-isian-seq');
             Route::delete('/isian/{isian}', [JenisLayananController::class, 'destroyIsian'])->name('destroy-isian');
 
             // 🔹 Disposisi Chain
             Route::prefix('{jenis_layanan}/disposisi')->name('disposisi.')->group(function () {
                 Route::get('/data', [JenisLayananDisposisiController::class, 'data'])->name('data');
-                Route::get('/{disposisi}/data', [JenisLayananDisposisiController::class, 'show'])->name('get-data');
+                Route::get('/create', [JenisLayananDisposisiController::class, 'create'])->name('create');
+                Route::get('/{disposisi}/edit', [JenisLayananDisposisiController::class, 'edit'])->name('edit');
                 Route::post('/', [JenisLayananDisposisiController::class, 'store'])->name('store');
                 Route::post('/{disposisi}/seq', [JenisLayananDisposisiController::class, 'updateSeq'])->name('update-seq');
                 Route::put('/{disposisi}/{action?}', [JenisLayananDisposisiController::class, 'update'])->name('update');
@@ -63,7 +69,8 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             // 🔹 Periode
             Route::prefix('{jenis_layanan}/periode')->name('periode.')->group(function () {
                 Route::get('/data', [JenisLayananPeriodeController::class, 'data'])->name('data');
-                Route::get('/{periode}', [JenisLayananPeriodeController::class, 'show'])->name('show');
+                Route::get('/create', [JenisLayananPeriodeController::class, 'create'])->name('create');
+                Route::get('/{periode}/edit', [JenisLayananPeriodeController::class, 'edit'])->name('edit');
                 Route::post('/', [JenisLayananPeriodeController::class, 'store'])->name('store');
                 Route::put('/{periode}', [JenisLayananPeriodeController::class, 'update'])->name('update');
                 Route::delete('/{periode}', [JenisLayananPeriodeController::class, 'destroy'])->name('destroy');
@@ -97,6 +104,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::post('/simpan', [LayananController::class, 'store'])->name('store');
             Route::get('/{layanan}', [LayananController::class, 'show'])->name('show');
             Route::get('/{layanan}/download-pdf', [LayananController::class, 'downloadPdf'])->name('download-pdf');
+            Route::get('/{layanan}/feedback', [LayananController::class, 'createFeedback'])->name('feedback.create');
 
             // 🔹 Status Update (dedicated controller)
             Route::post('/{layanan}/status/{status?}', [LayananStatusController::class, 'update'])->name('update-status');

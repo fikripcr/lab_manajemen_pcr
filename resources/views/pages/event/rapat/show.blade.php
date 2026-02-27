@@ -97,8 +97,8 @@
                         <div class="card-header">
                             <h3 class="card-title"><i class="ti ti-user-star me-2 text-orange"></i>Pejabat Rapat</h3>
                             <div class="card-actions">
-                                <x-tabler.button type="warning" class="btn-sm"
-                                    data-bs-toggle="modal" data-bs-target="#modal-set-officials"
+                                <x-tabler.button type="warning" class="btn-sm ajax-modal-btn"
+                                    data-url="{{ route('Kegiatan.rapat.edit-officials', $rapat->hashid) }}"
                                     icon="ti ti-edit" text="Set" />
                             </div>
                         </div>
@@ -131,8 +131,8 @@
                         <div class="card-header">
                             <h3 class="card-title"><i class="ti ti-users me-2 text-green"></i>Daftar Peserta & Absensi</h3>
                             <div class="card-actions">
-                                <x-tabler.button type="primary" class="btn-sm"
-                                    data-bs-toggle="modal" data-bs-target="#modal-add-participants"
+                                <x-tabler.button type="primary" class="btn-sm ajax-modal-btn"
+                                    data-url="{{ route('Kegiatan.rapat.participants.create', $rapat->hashid) }}"
                                     icon="ti ti-user-plus" text="Tambah Peserta" />
                                 <span class="badge bg-green-lt ms-1">{{ $rapat->pesertas->count() }} orang</span>
                             </div>
@@ -301,80 +301,6 @@
     </div>{{-- /col-12 --}}
 </div>{{-- /row --}}
 
-{{-- MODAL: Set Pejabat Rapat --}}
-<x-tabler.form-modal id="modal-set-officials" title="Set Pejabat Rapat"
-    :route="route('Kegiatan.rapat.update-officials', $rapat->encrypted_rapat_id)">
-    <x-tabler.form-select name="ketua_user_id" label="Ketua Rapat" type="select2" required="true" class="select2-officials">
-        <option value="" selected disabled>Pilih Ketua Rapat</option>
-        @foreach($rapat->pesertas as $peserta)
-            <option value="{{ $peserta->user_id }}" {{ $rapat->ketua_user_id == $peserta->user_id ? 'selected' : '' }}>
-                {{ $peserta->user->name }}
-            </option>
-        @endforeach
-    </x-tabler.form-select>
-    <x-tabler.form-select name="notulen_user_id" label="Notulen" type="select2" required="true" class="select2-officials">
-        <option value="" selected disabled>Pilih Notulen</option>
-        @foreach($rapat->pesertas as $peserta)
-            <option value="{{ $peserta->user_id }}" {{ $rapat->notulen_user_id == $peserta->user_id ? 'selected' : '' }}>
-                {{ $peserta->user->name }}
-            </option>
-        @endforeach
-    </x-tabler.form-select>
-</x-tabler.form-modal>
-
-{{-- MODAL: Tambah Peserta --}}
-<x-tabler.form-modal id="modal-add-participants" title="Tambah Peserta Rapat"
-    :route="route('Kegiatan.rapat.participants.store', $rapat->encrypted_rapat_id)">
-
-    <ul class="nav nav-tabs mb-3" id="tab-tambah-peserta" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#tab-internal">
-                <i class="ti ti-users me-1"></i> Pegawai Internal
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#tab-luar">
-                <i class="ti ti-user-plus me-1"></i> Peserta Luar
-            </a>
-        </li>
-    </ul>
-
-    <div class="tab-content">
-        {{-- Tab Internal --}}
-        <div class="tab-pane active show" id="tab-internal">
-            <div class="mb-3">
-                <label class="form-label">Pilih Peserta <span class="text-muted small">(bisa pilih banyak)</span></label>
-                <select name="user_ids[]" class="form-select select2-participants" multiple="multiple"
-                    data-placeholder="Cari pegawai...">
-                    @foreach(\App\Models\User::all() as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} — {{ $user->email }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <x-tabler.form-input name="jabatan_internal" label="Jabatan / Peran" placeholder="Contoh: Peserta, Narasumber" />
-        </div>
-
-        {{-- Tab Luar --}}
-        <div class="tab-pane" id="tab-luar">
-            <div id="peserta-luar-list">
-                <div class="row g-2 mb-2 peserta-luar-row">
-                    <div class="col">
-                        <input type="text" name="peserta_luar[0][nama]" class="form-control" placeholder="Nama lengkap" required>
-                    </div>
-                    <div class="col">
-                        <input type="email" name="peserta_luar[0][email]" class="form-control" placeholder="Email">
-                    </div>
-                    <div class="col">
-                        <input type="text" name="peserta_luar[0][jabatan]" class="form-control" placeholder="Jabatan/Peran">
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary mt-1" id="btn-add-luar">
-                <i class="ti ti-plus me-1"></i> Tambah Baris
-            </button>
-        </div>
-    </div>
-</x-tabler.form-modal>
 @endsection
 
 @push('scripts')
@@ -433,13 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ─── Select2 in Modals ────────────────────────────────────
-    if (window.loadSelect2) {
-        window.loadSelect2().then(() => {
-            $('.select2-officials').select2({ theme: 'bootstrap-5', width: '100%', dropdownParent: $('#modal-set-officials') });
-            $('.select2-participants').select2({ theme: 'bootstrap-5', width: '100%', placeholder: 'Cari peserta...', dropdownParent: $('#modal-add-participants') });
-        });
-    }
+    // Select2 is now handled automatically by FormHandlerAjax for AJAX modals
 
     // ─── HugeRTE Auto-save (on textarea directly) ─────────────
     if (window.loadHugeRTE) {
@@ -495,12 +415,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Reload page after adding participants
+    // Reload page after adding participants/agenda via AJAX modal
     document.addEventListener('ajax-form:success', function () {
-        if ($('#modal-add-participants').is(':visible')) {
-            setTimeout(() => location.reload(), 500);
-        }
-        if ($('#modal-add-agenda').length && !$('#modal-add-agenda').hasClass('d-none')) {
+        if ($('#modalAction').is(':visible')) {
             setTimeout(() => location.reload(), 500);
         }
     });

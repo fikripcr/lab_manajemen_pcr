@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Hr;
 
+use App\Models\Hr\Pegawai;
+use App\Models\Hr\FilePegawai;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\FilePegawaiStoreRequest;
 use App\Services\Hr\FilePegawaiService;
@@ -11,6 +13,11 @@ class FilePegawaiController extends Controller
 {
     public function __construct(protected FilePegawaiService $filePegawaiService)
     {}
+
+    public function create(Pegawai $pegawai)
+    {
+        return view('pages.hr.pegawai.ajax.upload-file', compact('pegawai'));
+    }
 
     /**
      * Display a listing of files for a specific employee via AJAX.

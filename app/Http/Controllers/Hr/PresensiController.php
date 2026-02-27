@@ -11,10 +11,12 @@ use App\Models\Hr\Pegawai;
 use App\Services\Hr\PresensiService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class PresensiController extends Controller
 {
-    public function __construct(protected \App\Services\Hr\PresensiService $presensiService)
+    public function __construct(protected PresensiService $presensiService)
     {}
 
     public function index()
@@ -132,6 +134,25 @@ class PresensiController extends Controller
     {
         $data = $this->presensiService->getPresensiHistory($request->all());
         return response()->json($data);
+    }
+
+    public function show($date)
+    {
+        // Mock data for now since we don't have a specific service method for one date detail
+        // In real app, this would query by date and auth user
+        $data = [
+            'date' => $date,
+            'check_in' => '08:15:00',
+            'check_out' => '17:30:00',
+            'status' => 'on_time',
+            'duration' => '9 jam 15 menit',
+            'shift' => 'Reguler (08:00 - 17:00)',
+            'check_in_location' => 'Jakarta, Indonesia',
+            'check_out_location' => 'Jakarta, Indonesia',
+            'notes' => '-'
+        ];
+
+        return view('pages.hr.presensi.ajax.detail', compact('data'));
     }
 
     public function showUploadPhoto()

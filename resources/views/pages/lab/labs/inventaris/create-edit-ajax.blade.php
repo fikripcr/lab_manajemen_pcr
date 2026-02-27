@@ -16,8 +16,10 @@
             <x-tabler.form-select 
                 name="inventaris_id" 
                 label="Pilih Alat" 
-                :options="$inventarisList->mapWithKeys(fn($i) => [$i->inventaris_id => $i->nama_alat . ' (' . $i->jenis_alat . ')'])->toArray()" 
-                placeholder="-- Pilih Alat --" 
+                :options="[]" 
+                placeholder="Cari alat..." 
+                class="ajax-select"
+                data-url="{{ route('lab.labs.inventaris.get-inventaris', $lab->encrypted_lab_id) }}"
                 required 
             />
         @endif

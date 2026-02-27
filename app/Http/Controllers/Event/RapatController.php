@@ -257,6 +257,12 @@ class RapatController extends Controller
         return $pdf->download('Hasil_Rapat_' . $rapat->judul_kegiatan . '.pdf');
     }
 
+    public function editOfficials(Rapat $rapat)
+    {
+        $users = User::with('pegawai.latestDataDiri')->get();
+        return view('pages.event.rapat.set_officials_form', compact('rapat', 'users'));
+    }
+
     public function updateOfficials(RapatOfficialsRequest $request, Rapat $rapat)
     {
         try {
@@ -267,6 +273,12 @@ class RapatController extends Controller
             logError($e);
             return redirect()->to(route('Kegiatan.rapat.show', $rapat) . '#tabs-info')->with('error', 'Gagal memperbarui pejabat rapat: ' . $e->getMessage());
         }
+    }
+
+    public function createParticipants(Rapat $rapat)
+    {
+        $users = User::with('pegawai.latestDataDiri')->get();
+        return view('pages.event.rapat.add_participants_form', compact('rapat', 'users'));
     }
 
     public function storeParticipants(RapatBulkPesertaRequest $request, Rapat $rapat)

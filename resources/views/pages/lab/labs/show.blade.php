@@ -221,7 +221,9 @@
                     <div class="card-header">
                         <h3 class="card-title">Inventaris Terbaru</h3>
                         <div class="card-actions btn-group">
-                            <x-tabler.button type="create" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalInventarisAdd" icon="ti ti-plus" />
+                            <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn" 
+                                data-url="{{ route('lab.labs.inventaris.create', $lab->encrypted_lab_id) }}" 
+                                icon="ti ti-plus" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush">
@@ -289,7 +291,9 @@
                     <div class="card-header">
                         <h3 class="card-title">Tim Lab</h3>
                         <div class="card-actions btn-group">
-                            <x-tabler.button type="create" class="btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTeamAdd" icon="ti ti-plus" />
+                            <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn" 
+                                data-url="{{ route('lab.labs.teams.create', $lab->encrypted_lab_id) }}" 
+                                icon="ti ti-plus" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush">
@@ -337,145 +341,12 @@
         </div>
     @endsection
 
-    @push('modals')
-        <!-- Modal Add Team -->
-        <x-tabler.form-modal
-            id="modalTeamAdd"
-            id_form="formTeamAdd"
-            title="Tambah Anggota Tim"
-            route="{{ route('lab.labs.teams.store', $lab->encrypted_lab_id) }}"
-            method="POST"
-            size="modal-lg"
-            class="lab-assignment-form"
-        >
-            <x-tabler.form-select class="select2-user" name="user_id" label="Pilih User" required="true" style="width: 100%;" />
-            <div class="mb-3">
-                <x-tabler.form-input name="jabatan" label="Jabatan" placeholder="Misal: Teknisi" />
-            </div>
-            <div class="mb-3">
-                <x-tabler.form-input type="date" name="tanggal_mulai" label="Tanggal Mulai" value="{{ date('Y-m-d') }}" />
-            </div>
-        </x-tabler.form-modal>
-
-        <!-- Modal Add Inventaris -->
-        <x-tabler.form-modal
-            id="modalInventarisAdd"
-            id_form="formInventarisAdd"
-            title="Tambah Inventaris"
-            route="{{ route('lab.labs.inventaris.store', $lab->encrypted_lab_id) }}"
-            method="POST"
-            size="modal-lg"
-            class="lab-assignment-form"
-        >
-            <x-tabler.form-select class="select2-inventaris" name="inventaris_id" label="Nama Alat" required="true" style="width: 100%;" />
-            <div class="mb-3">
-                <x-tabler.form-input name="no_series" label="Nomor Seri" required="true" />
-            </div>
-            <div class="mb-3">
-                <x-tabler.form-input type="date" name="tanggal_penempatan" label="Tanggal Penempatan" value="{{ date('Y-m-d') }}" required="true" />
-            </div>
-            <x-tabler.form-select name="status" label="Status" value="active">
-                <option value="active" selected>Active</option>
-                <option value="moved">Moved</option>
-                <option value="inactive">Inactive</option>
-            </x-tabler.form-select>
-            <x-tabler.form-textarea name="keterangan" label="Keterangan" rows="3" />
-        </x-tabler.form-modal>
-    @endpush
+    {{-- Modals are now loaded via AJAX --}}
 
     @push('scripts')
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                $.fn.select2.defaults.set( "theme", "bootstrap-5" );
-
-                $('#modalTeamAdd').on('shown.bs.modal', function () {
-                    $('.select2-user').select2({
-                        dropdownParent: $('#modalTeamAdd'),
-                        placeholder: 'Cari User...',
-                        ajax: {
-                            url: '{{ route("lab.labs.teams.get-users", $lab->encrypted_lab_id) }}',
-                            dataType: 'json',
-                            delay: 250,
-                            data: params => ({ search: params.term }),
-                            processResults: data => ({
-                                results: (data.results || data).map(item => ({ id: item.id, text: item.text }))
-                            }),
-                            cache: true
-                        }
-                    });
-                });
-
-                 $('#modalInventarisAdd').on('shown.bs.modal', function () {
-                    $('.select2-inventaris').select2({
-                        dropdownParent: $('#modalInventarisAdd'),
-                        placeholder: 'Cari Inventaris...',
-                        ajax: {
-                            url: '{{ route("lab.labs.inventaris.get-inventaris", $lab->encrypted_lab_id) }}',
-                            dataType: 'json',
-                            delay: 250,
-                            data: params => ({ search: params.term }),
-                            processResults: data => ({
-                                results: (data.results || data).map(item => ({ id: item.id, text: item.text }))
-                            }),
-                            cache: true
-                        }
-                    });
-                });
-
-                $('.lab-assignment-form').on('submit', function(e) {
-                    e.preventDefault();
-                    const $form = $(this);
-                    const $btn = $form.find('button[type="submit"]');
-                    const originalText = $btn.html();
-
-                    $btn.prop('disabled', true).html('Proses...');
-                    
-                    $form.find('.is-invalid').removeClass('is-invalid');
-                    $form.find('.invalid-feedback').remove();
-
-                    const formData = new FormData(this);
-
-                    axios.post($form.attr('action'), formData)
-                        .then(response => {
-                            if(window.Swal) {
-                                window.Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil',
-                                    text: response.data.message || 'Data berhasil disimpan',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    window.location.reload();
-                                });
-                            } else {
-                                alert(response.data.message);
-                                 window.location.reload();
-                            }
-                        })
-                        .catch(error => {
-                            $btn.prop('disabled', false).html(originalText);
-                            let msg = "Terjadi kesalahan";
-                            if(error.response && error.response.data && error.response.data.message) {
-                                 msg = error.response.data.message;
-                                 if(error.response.data.errors) {
-                                      msg += "\n" + Object.values(error.response.data.errors).flat().join("\n");
-                                 }
-                            }
-                             if(window.Swal) {
-                                window.Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: msg
-                                });
-                            } else {
-                                alert(msg);
-                            }
-                        });
-                });
+            document.addEventListener('ajax-form:success', function() {
+                window.location.reload();
             });
         </script>
     @endpush

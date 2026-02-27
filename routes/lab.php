@@ -40,6 +40,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         Route::get('export-pdf/{id}', [UserController::class, 'exportPdf'])->name('export.pdf.detail');
         Route::get('import', [UserController::class, 'showImport'])->name('import.show');
         Route::post('import', [UserController::class, 'import'])->name('import.store');
+        Route::get('change-password', [UserController::class, 'changePassword'])->name('change-password');
     });
     Route::resource('users', UserController::class);
     Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('users.login.as');

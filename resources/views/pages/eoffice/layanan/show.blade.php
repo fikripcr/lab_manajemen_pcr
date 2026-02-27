@@ -80,7 +80,9 @@
                     @else
                         <div class="h3 mb-2">Bagaimana pengalaman Anda?</div>
                         <p class="text-muted mb-3">Silakan berikan penilaian dan masukan untuk meningkatkan kualitas layanan kami.</p>
-                        <x-tabler.button type="button" class="btn-warning w-100" data-bs-toggle="modal" data-bs-target="#modal-feedback" icon="ti ti-star" text="Beri Nilai Layanan" />
+                        <x-tabler.button type="button" class="btn-warning w-100 ajax-modal-btn"
+                            data-url="{{ route('eoffice.layanan.feedback.create', $layanan->hashid) }}"
+                            icon="ti ti-star" text="Beri Nilai Layanan" />
                     @endif
                 </div>
             </div>
@@ -375,39 +377,7 @@
 </div>
 @endsection
 
-@if($layanan->jenisLayanan->is_feedback && !$layanan->feedback)
-<!-- Modal Feedback -->
-<!-- Modal Feedback -->
-<x-tabler.form-modal
-    id="modal-feedback"
-    title="Beri Penilaian Layanan"
-    route="{{ route('eoffice.feedback.store') }}"
-    method="POST"
-    submitText="Kirim Feedback"
-    submitIcon="ti-star"
-    class="btn-warning ms-auto"
->
-    <input type="hidden" name="layanan_id" value="{{ $layanan->encrypted_layanan_id }}">
-    
-    <div class="text-center py-4">
-        <div class="mb-3">
-            <div class="text-muted mb-2">Ketuk bintang untuk memberi nilai</div>
-            <div class="rating-stars">
-                @for($i=1; $i<=5; $i++)
-                    <input type="radio" name="rating" id="rating-{{ $i }}" value="{{ $i }}" class="d-none">
-                    <label for="rating-{{ $i }}" class="cursor-pointer">
-                        <i class="ti ti-star fs-1 text-muted star-icon" data-value="{{ $i }}"></i>
-                    </label>
-                @endfor
-            </div>
-            <div class="mt-2 fw-bold text-warning" id="rating-text">Pilih rating...</div>
-        </div>
-        <div class="mb-3 text-start">
-            <x-tabler.form-textarea name="catatan" label="Catatan / Masukan (Opsional)" rows="3" placeholder="Ceritakan pengalaman Anda..." />
-        </div>
-    </div>
-</x-tabler.form-modal>
-@endif
+@endsection
 
 @push('scripts')
 <script>
@@ -440,63 +410,9 @@
             });
         });
 
-        document.addEventListener('form-success', function() {
+        document.addEventListener('ajax-form:success', function() {
             window.location.reload();
         });
-
-        // Star Rating Logic
-        const stars = document.querySelectorAll('.star-icon');
-        const ratingText = document.getElementById('rating-text');
-        const ratingLabels = ['Sangat Buruk', 'Buruk', 'Cukup', 'Baik', 'Sangat Baik'];
-
-        stars.forEach(star => {
-            star.addEventListener('mouseover', function() {
-                let val = this.dataset.value;
-                highlightStars(val);
-            });
-
-            star.addEventListener('mouseout', function() {
-                let checked = document.querySelector('input[name="rating"]:checked');
-                if (checked) {
-                    highlightStars(checked.value);
-                } else {
-                    resetStars();
-                }
-            });
-
-            star.addEventListener('click', function() {
-                let val = this.dataset.value;
-                document.getElementById('rating-' + val).checked = true;
-                highlightStars(val);
-                ratingText.textContent = ratingLabels[val - 1];
-            });
-        });
-
-        function highlightStars(count) {
-            stars.forEach(s => {
-                if (s.dataset.value <= count) {
-                    s.classList.remove('text-muted');
-                    s.classList.add('text-yellow');
-                    s.classList.remove('ti-star');
-                    s.classList.add('ti-star-filled');
-                } else {
-                    s.classList.add('text-muted');
-                    s.classList.remove('text-yellow');
-                    s.classList.add('ti-star');
-                    s.classList.remove('ti-star-filled');
-                }
-            });
-        }
-
-        function resetStars() {
-            stars.forEach(s => {
-                s.classList.add('text-muted');
-                s.classList.remove('text-yellow');
-                s.classList.add('ti-star');
-                s.classList.remove('ti-star-filled');
-            });
-            ratingText.textContent = 'Pilih rating...';
-        }
     });
 </script>
 @endpush

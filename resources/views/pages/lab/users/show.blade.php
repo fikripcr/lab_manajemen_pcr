@@ -41,7 +41,7 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <x-tabler.button type="button" class="btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal" icon="ti ti-key" text="Change Password" />
+                                <x-tabler.button type="button" class="btn-warning ajax-modal-btn" data-url="{{ route('lab.users.change-password') }}" icon="ti ti-key" text="Change Password" />
 
                                 @if(auth()->id() == $user->id)
                                     <x-tabler.button type="edit" :href="route('lab.users.edit', $user->encrypted_id)" text="Edit Profile" />
@@ -167,35 +167,5 @@
     </div>
 
     <!-- Change Password Modal -->
-    <x-tabler.form-modal
-        id="changePasswordModal"
-        title="Change Password"
-        route="{{ route('password.update') }}"
-        method="PUT"
-        submitText="Change Password"
-    >
-        <x-tabler.form-input 
-            type="password" 
-            name="current_password" 
-            label="Current Password" 
-            required 
-            autocomplete="current-password" 
-        />
-
-        <x-tabler.form-input 
-            type="password" 
-            name="password" 
-            label="New Password" 
-            required 
-            autocomplete="new-password" 
-        />
-
-        <x-tabler.form-input 
-            type="password" 
-            name="password_confirmation" 
-            label="Confirm New Password" 
-            required 
-            autocomplete="new-password" 
-        />
-    </x-tabler.form-modal>
+{{-- Modal is now loaded via AJAX --}}
 @endsection

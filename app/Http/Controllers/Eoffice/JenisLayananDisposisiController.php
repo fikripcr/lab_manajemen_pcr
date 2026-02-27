@@ -6,11 +6,22 @@ use App\Http\Requests\Eoffice\JenisLayananDisposisiRequest;
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\JenisLayananDisposisi;
 use App\Services\Eoffice\JenisLayananDisposisiService;
+use Exception;
 
 class JenisLayananDisposisiController extends Controller
 {
     public function __construct(protected \App\Services\Eoffice\JenisLayananDisposisiService $JenisLayananDisposisiService)
     {}
+
+    public function create(JenisLayanan $jenisLayanan)
+    {
+        return view('pages.eoffice.jenis_layanan.ajax.form-disposisi', compact('jenisLayanan'));
+    }
+
+    public function edit(JenisLayanan $jenisLayanan, JenisLayananDisposisi $disposisi)
+    {
+        return view('pages.eoffice.jenis_layanan.ajax.form-disposisi', compact('jenisLayanan', 'disposisi'));
+    }
 
     /**
      * Store a new disposisi for a Jenis Layanan.
