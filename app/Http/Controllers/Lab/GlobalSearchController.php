@@ -6,48 +6,38 @@ use App\Models\Sys\Permission;
 use App\Models\Sys\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Spatie\Searchable\Search;
 
 class GlobalSearchController extends Controller
 {
     public function search(Request $request)
     {
-        try {
-            $query = $request->input('q');
+        $query = $request->input('q');
 
-            if (empty($query)) {
-                return jsonSuccess('Search results', null, [
-                    'users'       => [],
-                    'roles'       => [],
-                    'permissions' => [],
-                ]);
-            }
-
-            // Perform search with spatie/laravel-searchable
-            $searchResults = (new Search())
-                ->registerModel(User::class, 'name', 'email')
-                ->registerModel(Role::class, 'name')
-                ->registerModel(Permission::class, 'name')
-                ->search($query);
-
-            $users       = $searchResults->where('type', 'users');
-            $roles       = $searchResults->where('type', 'roles');
-            $permissions = $searchResults->where('type', 'permissions');
-
+        if (empty($query)) {
             return jsonSuccess('Search results', null, [
-                'users'       => $users,
-                'roles'       => $roles,
-                'permissions' => $permissions,
-                'query'       => $query,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Global search error: ' . $e->getMessage());
-            return jsonError('Search failed', 500, [
                 'users'       => [],
                 'roles'       => [],
                 'permissions' => [],
             ]);
         }
+
+        // Perform search with spatie/laravel-searchable
+        $searchResults = (new Search())
+            ->registerModel(User::class, 'name', 'email')
+            ->registerModel(Role::class, 'name')
+            ->registerModel(Permission::class, 'name')
+            ->search($query);
+
+        $users       = $searchResults->where('type', 'users');
+        $roles       = $searchResults->where('type', 'roles');
+        $permissions = $searchResults->where('type', 'permissions');
+
+        return jsonSuccess('Search results', null, [
+            'users'       => $users,
+            'roles'       => $roles,
+            'permissions' => $permissions,
+            'query'       => $query,
+        ]);
     }
 }

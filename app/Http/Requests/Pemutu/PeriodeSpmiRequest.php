@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PeriodeSpmiRequest extends FormRequest
+class PeriodeSpmiRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -30,9 +30,12 @@ class PeriodeSpmiRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'periode.required'       => 'Periode wajib diisi.',
             'jenis_periode.required' => 'Jenis periode wajib diisi.',
-        ];
+            'tgl_mulai.required'   => 'Tanggal Mulai harus diisi.',
+            'tgl_selesai.required' => 'Tanggal Selesai harus diisi.',
+            'tgl_selesai.after'    => 'Tanggal Selesai harus setelah Tanggal Mulai.',
+        ]);
     }
 }

@@ -5,12 +5,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\AttDeviceRequest;
 use App\Models\Hr\AttDevice;
 use App\Services\Hr\AttDeviceService;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class AttDeviceController extends Controller
 {
-    public function __construct(protected \App\Services\Hr\AttDeviceService $attDeviceService)
+    public function __construct(protected AttDeviceService $attDeviceService)
     {}
 
     public function index()
@@ -46,12 +45,8 @@ class AttDeviceController extends Controller
 
     public function store(AttDeviceRequest $request)
     {
-        try {
-            $this->attDeviceService->create($request->validated());
-            return jsonSuccess('Mesin Presensi created successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->attDeviceService->create($request->validated());
+        return jsonSuccess('Mesin Presensi created successfully.');
     }
 
     public function edit(AttDevice $attDevice)
@@ -61,21 +56,13 @@ class AttDeviceController extends Controller
 
     public function update(AttDeviceRequest $request, AttDevice $attDevice)
     {
-        try {
-            $this->attDeviceService->update($attDevice, $request->validated());
-            return jsonSuccess('Mesin Presensi updated successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->attDeviceService->update($attDevice, $request->validated());
+        return jsonSuccess('Mesin Presensi updated successfully.');
     }
 
     public function destroy(AttDevice $attDevice)
     {
-        try {
-            $this->attDeviceService->delete($attDevice->att_device_id);
-            return jsonSuccess('Mesin Presensi deleted successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->attDeviceService->delete($attDevice->att_device_id);
+        return jsonSuccess('Mesin Presensi deleted successfully.');
     }
 }

@@ -64,13 +64,8 @@ class EventTamuController extends Controller
 
     public function store(EventTamuRequest $request)
     {
-        try {
-            $this->EventTamuService->store($request->validated());
-            return jsonSuccess('Data tamu berhasil disimpan');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan data tamu: ' . $e->getMessage());
-        }
+        $this->EventTamuService->store($request->validated());
+        return jsonSuccess('Data tamu berhasil disimpan');
     }
 
     public function edit(EventTamu $tamu)
@@ -81,24 +76,14 @@ class EventTamuController extends Controller
 
     public function update(EventTamuRequest $request, EventTamu $tamu)
     {
-        try {
-            $this->EventTamuService->update($tamu, $request->validated());
-            return jsonSuccess('Data tamu berhasil diperbarui');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui data tamu: ' . $e->getMessage());
-        }
+        $this->EventTamuService->update($tamu, $request->validated());
+        return jsonSuccess('Data tamu berhasil diperbarui');
     }
 
     public function destroy(EventTamu $tamu)
     {
-        try {
-            $this->EventTamuService->destroy($tamu);
-            return jsonSuccess('Data tamu berhasil dihapus');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus data tamu: ' . $e->getMessage());
-        }
+        $this->EventTamuService->destroy($tamu);
+        return jsonSuccess('Data tamu berhasil dihapus');
     }
 
     // ─── Public Buku Tamu — Permanent hashid URL ─────────────────
@@ -117,19 +102,14 @@ class EventTamuController extends Controller
         $eventId = decryptId($hashid, false);
         $event   = Event::findOrFail($eventId);
 
-        try {
-            $data                 = $request->validated();
-            $data['event_id']     = $event->event_id;
-            $data['waktu_datang'] = now();
+        $data                 = $request->validated();
+        $data['event_id']     = $event->event_id;
+        $data['waktu_datang'] = now();
 
-            $this->EventTamuService->storeFromPublic($data);
+        $this->EventTamuService->storeFromPublic($data);
 
-            return redirect()->route('attendance.form', $hashid)
-                ->with('attendance_sukses', true);
-        } catch (\Exception $e) {
-            logError($e);
-            return back()->withInput()->withErrors(['error' => 'Gagal menyimpan: ' . $e->getMessage()]);
-        }
+        return redirect()->route('attendance.form', $hashid)
+            ->with('attendance_sukses', true);
     }
 
     // ─── Legacy ──────────────────────────────────────────────────
@@ -147,13 +127,8 @@ class EventTamuController extends Controller
         $validated['event_id']     = $kegiatan->event_id;
         $validated['waktu_datang'] = now();
 
-        try {
-            $this->EventTamuService->storeFromPublic($validated);
-            return jsonSuccess('Terima kasih, data Anda telah berhasil disimpan.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan pendaftaran: ' . $e->getMessage());
-        }
+        $this->EventTamuService->storeFromPublic($validated);
+        return jsonSuccess('Terima kasih, data Anda telah berhasil disimpan.');
     }
 
     // ─── Helper ──────────────────────────────────────────────────

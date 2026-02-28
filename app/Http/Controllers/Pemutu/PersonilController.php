@@ -7,7 +7,6 @@ use App\Http\Requests\Pemutu\PersonilRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Models\Shared\Personil; // Import Service
 use App\Services\Pemutu\PersonilService;
-use Exception;
 use Yajra\DataTables\DataTables;
 
 class PersonilController extends Controller
@@ -51,16 +50,11 @@ class PersonilController extends Controller
 
     public function store(PersonilRequest $request)
     {
-        try {
-            $this->personilService->createPersonil($request->validated());
+        $this->personilService->createPersonil($request->validated());
 
-            logActivity('pemutu', "Menambah personil baru: " . ($request->nama ?? ''));
+        logActivity('pemutu', "Menambah personil baru: " . ($request->nama ?? ''));
 
-            return jsonSuccess('Personil created successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan personil: ' . $e->getMessage());
-        }
+        return jsonSuccess('Personil created successfully.');
     }
 
     public function edit(Personil $personil)
@@ -71,31 +65,21 @@ class PersonilController extends Controller
 
     public function update(PersonilRequest $request, Personil $personil)
     {
-        try {
-            $this->personilService->updatePersonil($personil->personil_id, $request->validated());
+        $this->personilService->updatePersonil($personil->personil_id, $request->validated());
 
-            logActivity('pemutu', "Memperbarui data personil: {$personil->nama}");
+        logActivity('pemutu', "Memperbarui data personil: {$personil->nama}");
 
-            return jsonSuccess('Personil updated successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui personil: ' . $e->getMessage());
-        }
+        return jsonSuccess('Personil updated successfully.');
     }
 
     public function destroy(Personil $personil)
     {
-        try {
-            $personilName = $personil->nama;
-            $this->personilService->deletePersonil($personil->personil_id);
+        $personilName = $personil->nama;
+        $this->personilService->deletePersonil($personil->personil_id);
 
-            logActivity('pemutu', "Menghapus personil: {$personilName}");
+        logActivity('pemutu', "Menghapus personil: {$personilName}");
 
-            return jsonSuccess('Personil deleted successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus personil: ' . $e->getMessage());
-        }
+        return jsonSuccess('Personil deleted successfully.');
     }
 
     public function import(PersonilImportRequest $request)
@@ -104,15 +88,10 @@ class PersonilController extends Controller
             return view('pages.pemutu.personils.import');
         }
 
-        try {
-            $this->personilService->importPersonils($request->file('file'));
+        $this->personilService->importPersonils($request->file('file'));
 
-            logActivity('pemutu', "Mengimport data personil via Excel");
+        logActivity('pemutu', "Mengimport data personil via Excel");
 
-            return jsonSuccess('Personils imported successfully.', route('pemutu.personils.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengimport personil: ' . $e->getMessage());
-        }
+        return jsonSuccess('Personils imported successfully.', route('pemutu.personils.index'));
     }
 }

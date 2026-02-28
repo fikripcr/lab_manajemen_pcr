@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pmb;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class StoreJalurRequest extends FormRequest
+class StoreJalurRequest extends BaseRequest
 {
     public function authorize()
     {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class LabTeamStoreRequest extends FormRequest
+class LabTeamStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -46,11 +46,12 @@ class LabTeamStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'user_id.required' => 'User harus dipilih.',
-            'user_id.exists' => 'User tidak ditemukan.',
+        return array_merge(parent::messages(), [
+            'user_id.required' => 'Anggota tim harus dipilih.',
+            'user_id.exists'   => 'User tidak ditemukan.',
+            'jabatan.required' => 'Jabatan wajib diisi.',
             'role.required' => 'Role harus dipilih.',
             'role.in' => 'Role harus PIC atau Member.',
-        ];
+        ]);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Shared;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class ReorderRequest extends FormRequest
+class ReorderRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

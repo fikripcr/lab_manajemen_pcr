@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Cbt;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class StoreJadwalRequest extends FormRequest
+class StoreJadwalRequest extends BaseRequest
 {
     public function authorize()
     {

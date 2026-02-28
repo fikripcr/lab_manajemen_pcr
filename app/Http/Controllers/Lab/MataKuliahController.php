@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\MataKuliahRequest;
 use App\Models\Lab\MataKuliah;
 use App\Services\Lab\MataKuliahService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -70,13 +69,8 @@ class MataKuliahController extends Controller
      */
     public function store(MataKuliahRequest $request)
     {
-        try {
-            $this->mataKuliahService->createMataKuliah($request->validated());
-            return jsonSuccess('Mata Kuliah berhasil dibuat.', route('lab.mata-kuliah.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat mata kuliah: ' . $e->getMessage());
-        }
+        $this->mataKuliahService->createMataKuliah($request->validated());
+        return jsonSuccess('Mata Kuliah berhasil dibuat.', route('lab.mata-kuliah.index'));
     }
 
     /**
@@ -100,13 +94,8 @@ class MataKuliahController extends Controller
      */
     public function update(MataKuliahRequest $request, MataKuliah $mataKuliah)
     {
-        try {
-            $this->mataKuliahService->updateMataKuliah($mataKuliah, $request->validated());
-            return jsonSuccess('Mata Kuliah berhasil diperbarui.', route('lab.mata-kuliah.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui mata kuliah: ' . $e->getMessage());
-        }
+        $this->mataKuliahService->updateMataKuliah($mataKuliah, $request->validated());
+        return jsonSuccess('Mata Kuliah berhasil diperbarui.', route('lab.mata-kuliah.index'));
     }
 
     /**
@@ -114,13 +103,8 @@ class MataKuliahController extends Controller
      */
     public function destroy(MataKuliah $mataKuliah)
     {
-        try {
-            $this->mataKuliahService->deleteMataKuliah($mataKuliah);
-            return jsonSuccess('Mata Kuliah berhasil dihapus.', route('lab.mata-kuliah.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus mata kuliah: ' . $e->getMessage());
-        }
+        $this->mataKuliahService->deleteMataKuliah($mataKuliah);
+        return jsonSuccess('Mata Kuliah berhasil dihapus.', route('lab.mata-kuliah.index'));
     }
 
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PegawaiImportRequest extends FormRequest
+class PegawaiImportRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -32,9 +32,9 @@ class PegawaiImportRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'file.required' => 'File import harus diupload.',
-            'file.mimes'    => 'File harus berformat XLSX, XLS, atau CSV.',
-        ];
+        return array_merge(parent::messages(), [
+            'file.required' => 'File Excel wajib diunggah.',
+            'file.mimes'    => 'File harus berformat .xlsx atau .xls.',
+        ]);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class RapatRequest extends FormRequest
+class RapatRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,10 +36,10 @@ class RapatRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'waktu_selesai.after' => 'Waktu Selesai harus setelah Waktu Mulai.',
             'date_format'         => 'Format :attribute tidak valid (HH:MM).',
-        ];
+        ]);
     }
 
     public function attributes(): array

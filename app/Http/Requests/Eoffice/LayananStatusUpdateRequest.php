@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class LayananStatusUpdateRequest extends FormRequest
+class LayananStatusUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

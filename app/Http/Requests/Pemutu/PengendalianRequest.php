@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PengendalianRequest extends FormRequest
+class PengendalianRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -18,15 +18,19 @@ class PengendalianRequest extends FormRequest
             'pengend_analisis'          => ['required', 'string'],
             'pengend_important_matrix'  => ['nullable', 'string', 'in:important,not_important'],
             'pengend_urgent_matrix'     => ['nullable', 'string', 'in:urgent,not_urgent'],
+            'pengendalian_desc'         => ['required', 'string'],
+            'tgl_target'                => ['required', 'date'],
         ];
     }
 
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'pengend_status.required'   => 'Status pengendalian wajib dipilih.',
             'pengend_status.in'         => 'Status tidak valid. Pilih: Tetap, Penyesuaian, atau Nonaktifkan.',
             'pengend_analisis.required' => 'Deskripsi analisis wajib diisi.',
-        ];
+            'pengendalian_desc.required' => 'Deskripsi Pengendalian wajib diisi.',
+            'tgl_target.required'        => 'Tanggal Target wajib diisi.',
+        ]);
     }
 }

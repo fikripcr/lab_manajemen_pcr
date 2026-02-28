@@ -84,13 +84,8 @@ class SemesterController extends Controller
      */
     public function store(SemesterRequest $request)
     {
-        try {
-            $this->semesterService->createSemester($request->validated());
-            return jsonSuccess('Semester berhasil dibuat.', route('lab.semesters.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat semester: ' . $e->getMessage());
-        }
+        $this->semesterService->createSemester($request->validated());
+        return jsonSuccess('Semester berhasil dibuat.', route('lab.semesters.index'));
     }
 
     /**
@@ -114,23 +109,13 @@ class SemesterController extends Controller
      */
     public function update(SemesterRequest $request, Semester $semester)
     {
-        try {
-            $this->semesterService->updateSemester($semester, $request->validated());
-            return jsonSuccess('Semester berhasil diperbarui.', route('lab.semesters.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui semester: ' . $e->getMessage());
-        }
+        $this->semesterService->updateSemester($semester, $request->validated());
+        return jsonSuccess('Semester berhasil diperbarui.', route('lab.semesters.index'));
     }
 
     public function destroy(Semester $semester)
     {
-        try {
-            $this->semesterService->deleteSemester($semester);
-            return jsonSuccess('Semester deleted successfully.', route('lab.semesters.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus semester: ' . $e->getMessage());
-        }
+        $this->semesterService->deleteSemester($semester);
+        return jsonSuccess('Semester deleted successfully.', route('lab.semesters.index'));
     }
 }

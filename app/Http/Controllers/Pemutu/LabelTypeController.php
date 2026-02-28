@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelTypeRequest;
 use App\Services\Pemutu\LabelService;
 use App\Models\Pemutu\LabelType;
-use Exception;
+
 
 class LabelTypeController extends Controller
 {
@@ -19,16 +19,11 @@ class LabelTypeController extends Controller
 
     public function store(LabelTypeRequest $request)
     {
-        try {
-            $this->labelService->createLabelType($request->validated());
+        $this->labelService->createLabelType($request->validated());
 
-            logActivity('pemutu', "Menambah jenis label baru: " . ($request->name ?? ''));
+        logActivity('pemutu', "Menambah jenis label baru: " . ($request->name ?? ''));
 
-            return jsonSuccess('Label Type created successfully.', route('pemutu.labels.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan jenis label: ' . $e->getMessage());
-        }
+        return jsonSuccess('Label Type created successfully.', route('pemutu.labels.index'));
     }
 
     public function edit(LabelType $labelType)
@@ -38,30 +33,20 @@ class LabelTypeController extends Controller
 
     public function update(LabelTypeRequest $request, LabelType $labelType)
     {
-        try {
-            $this->labelService->updateLabelType($labelType->labeltype_id, $request->validated());
+        $this->labelService->updateLabelType($labelType->labeltype_id, $request->validated());
 
-            logActivity('pemutu', "Memperbarui jenis label: {$labelType->name}");
+        logActivity('pemutu', "Memperbarui jenis label: {$labelType->name}");
 
-            return jsonSuccess('Label Type updated successfully.', route('pemutu.labels.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui jenis label: ' . $e->getMessage());
-        }
+        return jsonSuccess('Label Type updated successfully.', route('pemutu.labels.index'));
     }
 
     public function destroy(LabelType $labelType)
     {
-        try {
-            $typeName = $labelType->name;
-            $this->labelService->deleteLabelType($labelType->labeltype_id);
+        $typeName = $labelType->name;
+        $this->labelService->deleteLabelType($labelType->labeltype_id);
 
-            logActivity('pemutu', "Menghapus jenis label: {$typeName}");
+        logActivity('pemutu', "Menghapus jenis label: {$typeName}");
 
-            return jsonSuccess('Label Type deleted successfully.', route('pemutu.labels.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus jenis label: ' . $e->getMessage());
-        }
+        return jsonSuccess('Label Type deleted successfully.', route('pemutu.labels.index'));
     }
 }

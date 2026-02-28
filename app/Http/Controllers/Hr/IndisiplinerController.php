@@ -6,7 +6,6 @@ use App\Http\Requests\Hr\IndisiplinerRequest;
 use App\Models\Hr\Indisipliner;
 use App\Models\Hr\JenisIndisipliner;
 use App\Services\Hr\IndisiplinerService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -67,14 +66,9 @@ class IndisiplinerController extends Controller
 
     public function store(IndisiplinerRequest $request)
     {
-        try {
-            $this->indisiplinerService->store($request->validated(), $request->file('bukti'));
+        $this->indisiplinerService->store($request->validated(), $request->file('bukti'));
 
-            return jsonSuccess('Indisipliner berhasil dibuat.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat indisipliner: ' . $e->getMessage());
-        }
+        return jsonSuccess('Indisipliner berhasil dibuat.');
     }
 
     public function edit(Indisipliner $indisipliner)
@@ -87,25 +81,15 @@ class IndisiplinerController extends Controller
 
     public function update(IndisiplinerRequest $request, Indisipliner $indisipliner)
     {
-        try {
-            $this->indisiplinerService->update($indisipliner, $request->validated(), $request->file('bukti'));
+        $this->indisiplinerService->update($indisipliner, $request->validated(), $request->file('bukti'));
 
-            return jsonSuccess('Indisipliner berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui indisipliner: ' . $e->getMessage());
-        }
+        return jsonSuccess('Indisipliner berhasil diperbarui.');
     }
 
     public function destroy(Indisipliner $indisipliner)
     {
-        try {
-            $this->indisiplinerService->delete($indisipliner);
+        $this->indisiplinerService->delete($indisipliner);
 
-            return jsonSuccess('Data indisipliner berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus data: ' . $e->getMessage());
-        }
+        return jsonSuccess('Data indisipliner berhasil dihapus.');
     }
 }

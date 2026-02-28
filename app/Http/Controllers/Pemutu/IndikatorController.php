@@ -10,7 +10,7 @@ use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
 use App\Models\Shared\Pegawai;
 use App\Services\Pemutu\IndikatorService;
-use Exception;
+
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -139,64 +139,59 @@ class IndikatorController extends Controller
 
     public function store(IndikatorRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            // Handle Assignments Parsing
-            if ($request->has('assignments')) {
-                $syncData = [];
-                foreach ($request->assignments as $unitId => $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
-                    }
+        // Handle Assignments Parsing
+        if ($request->has('assignments')) {
+            $syncData = [];
+            foreach ($request->assignments as $unitId => $val) {
+                if (isset($val['selected']) && $val['selected'] == 1) {
+                    $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                 }
-                $data['org_units'] = $syncData;
             }
-
-            // Handle KPI Assignments Parsing
-            if ($request->has('kpi_assign')) {
-                $kpiData = [];
-                foreach ($request->kpi_assign as $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1 && ! empty($val['pegawai_id'])) {
-                        $pegawaiIds = is_array($val['pegawai_id']) ? $val['pegawai_id'] : [$val['pegawai_id']];
-                        unset($val['selected']);
-                        unset($val['sasaran']);
-                        unset($val['keterangan']);
-
-                        foreach ($pegawaiIds as $pId) {
-                            $newVal               = $val;
-                            $newVal['pegawai_id'] = decryptIdIfEncrypted($pId);
-                            $kpiData[]            = $newVal;
-                        }
-                    }
-                }
-                $data['kpi_assignments'] = $kpiData;
-            }
-
-            if (isset($data['doksub_ids'])) {
-                $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
-            }
-            if (isset($data['labels'])) {
-                $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
-            }
-            if (isset($data['parent_id'])) {
-                $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
-            }
-
-            $indikator = $this->indikatorService->createIndikator($data);
-
-            logActivity('pemutu', "Menambah indikator baru: {$indikator->no_indikator}");
-
-            $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.index'));
-            if (! $request->has('redirect_to') && $request->has('parent_dok_id')) {
-                $redirectUrl = route('pemutu.dokumens.show-renop-with-indicators', $request->parent_dok_id);
-            }
-
-            return jsonSuccess('Indikator created successfully.', $redirectUrl);
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan indikator: ' . $e->getMessage());
+            $data['org_units'] = $syncData;
         }
+
+        // Handle KPI Assignments Parsing
+        if ($request->has('kpi_assign')) {
+            $kpiData = [];
+            foreach ($request->kpi_assign as $val) {
+                if (isset($val['selected']) && $val['selected'] == 1 && ! empty($val['pegawai_id'])) {
+                    $pegawaiIds = is_array($val['pegawai_id']) ? $val['pegawai_id'] : [$val['pegawai_id']];
+                    unset($val['selected']);
+                    unset($val['sasaran']);
+                    unset($val['keterangan']);
+
+                    foreach ($pegawaiIds as $pId) {
+                        $newVal               = $val;
+                        $newVal['pegawai_id'] = decryptIdIfEncrypted($pId);
+                        $kpiData[]            = $newVal;
+                    }
+                }
+            }
+            $data['kpi_assignments'] = $kpiData;
+        }
+
+        if (isset($data['doksub_ids'])) {
+            $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
+        }
+        if (isset($data['labels'])) {
+            $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
+        }
+        if (isset($data['parent_id'])) {
+            $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
+        }
+
+        $indikator = $this->indikatorService->createIndikator($data);
+
+        logActivity('pemutu', "Menambah indikator baru: {$indikator->no_indikator}");
+
+        $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.index'));
+        if (! $request->has('redirect_to') && $request->has('parent_dok_id')) {
+            $redirectUrl = route('pemutu.dokumens.show-renop-with-indicators', $request->parent_dok_id);
+        }
+
+        return jsonSuccess('Indikator created successfully.', $redirectUrl);
     }
 
     public function show(Indikator $indikator)
@@ -229,74 +224,64 @@ class IndikatorController extends Controller
 
     public function update(IndikatorRequest $request, Indikator $indikator)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            // Handle Assignments Parsing
-            if ($request->has('assignments')) {
-                $syncData = [];
-                foreach ($request->assignments as $unitId => $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
-                    }
+        // Handle Assignments Parsing
+        if ($request->has('assignments')) {
+            $syncData = [];
+            foreach ($request->assignments as $unitId => $val) {
+                if (isset($val['selected']) && $val['selected'] == 1) {
+                    $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                 }
-                $data['org_units'] = $syncData;
             }
-
-            if ($request->has('kpi_assign')) {
-                $kpiData = [];
-                foreach ($request->kpi_assign as $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1 && ! empty($val['pegawai_id'])) {
-                        $pegawaiIds = is_array($val['pegawai_id']) ? $val['pegawai_id'] : [$val['pegawai_id']];
-                        unset($val['selected']);
-                        unset($val['sasaran']);
-                        unset($val['keterangan']);
-
-                        foreach ($pegawaiIds as $pId) {
-                            $newVal               = $val;
-                            $newVal['pegawai_id'] = decryptIdIfEncrypted($pId);
-                            $kpiData[]            = $newVal;
-                        }
-                    }
-                }
-                $data['kpi_assignments'] = $kpiData;
-            }
-
-            if (isset($data['doksub_ids'])) {
-                $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
-            }
-            if (isset($data['labels'])) {
-                $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
-            }
-            if (isset($data['parent_id'])) {
-                $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
-            }
-
-            $this->indikatorService->updateIndikator($indikator->indikator_id, $data);
-
-            logActivity('pemutu', "Memperbarui indikator: {$indikator->no_indikator}");
-
-            $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.show', $indikator->encrypted_indikator_id));
-
-            return jsonSuccess('Indikator updated successfully.', $redirectUrl);
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui indikator: ' . $e->getMessage());
+            $data['org_units'] = $syncData;
         }
+
+        if ($request->has('kpi_assign')) {
+            $kpiData = [];
+            foreach ($request->kpi_assign as $val) {
+                if (isset($val['selected']) && $val['selected'] == 1 && ! empty($val['pegawai_id'])) {
+                    $pegawaiIds = is_array($val['pegawai_id']) ? $val['pegawai_id'] : [$val['pegawai_id']];
+                    unset($val['selected']);
+                    unset($val['sasaran']);
+                    unset($val['keterangan']);
+
+                    foreach ($pegawaiIds as $pId) {
+                        $newVal               = $val;
+                        $newVal['pegawai_id'] = decryptIdIfEncrypted($pId);
+                        $kpiData[]            = $newVal;
+                    }
+                }
+            }
+            $data['kpi_assignments'] = $kpiData;
+        }
+
+        if (isset($data['doksub_ids'])) {
+            $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
+        }
+        if (isset($data['labels'])) {
+            $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
+        }
+        if (isset($data['parent_id'])) {
+            $data['parent_id'] = decryptIdIfEncrypted($data['parent_id']);
+        }
+
+        $this->indikatorService->updateIndikator($indikator->indikator_id, $data);
+
+        logActivity('pemutu', "Memperbarui indikator: {$indikator->no_indikator}");
+
+        $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.show', $indikator->encrypted_indikator_id));
+
+        return jsonSuccess('Indikator updated successfully.', $redirectUrl);
     }
 
     public function destroy(Indikator $indikator)
     {
-        try {
-            $noIndikator = $indikator->no_indikator;
-            $this->indikatorService->deleteIndikator($indikator->indikator_id);
+        $noIndikator = $indikator->no_indikator;
+        $this->indikatorService->deleteIndikator($indikator->indikator_id);
 
-            logActivity('pemutu', "Menghapus indikator: {$noIndikator}");
+        logActivity('pemutu', "Menghapus indikator: {$noIndikator}");
 
-            return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikators.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus indikator: ' . $e->getMessage());
-        }
+        return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikators.index'));
     }
 }

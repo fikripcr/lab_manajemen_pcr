@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pmb;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class FileUploadRequest extends FormRequest
+class FileUploadRequest extends BaseRequest
 {
     public function authorize()
     {

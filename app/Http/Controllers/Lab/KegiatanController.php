@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\KegiatanRequest;
+use App\Http\Requests\Lab\KegiatanStatusRequest;
 use App\Models\Lab\Kegiatan;
 use App\Models\Lab\Lab;
 use App\Services\Lab\KegiatanService;
@@ -61,19 +62,14 @@ class KegiatanController extends Controller
 
     public function store(KegiatanRequest $request)
     {
-        try {
-            $data = $request->except('dokumentasi_path');
+        $data = $request->except('dokumentasi_path');
 
-            if ($request->hasFile('dokumentasi_path')) {
-                $data['dokumentasi_path'] = $request->file('dokumentasi_path')->store('kegiatan-docs', 'public');
-            }
-
-            $this->kegiatanService->createBooking($data);
-            return jsonSuccess('Pemnjaman Lab berhasil diajukan');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal melakukan booking: ' . $e->getMessage());
+        if ($request->hasFile('dokumentasi_path')) {
+            $data['dokumentasi_path'] = $request->file('dokumentasi_path')->store('kegiatan-docs', 'public');
         }
+
+        $this->kegiatanService->createBooking($data);
+        return jsonSuccess('Pemnjaman Lab berhasil diajukan');
     }
 
     public function show(Kegiatan $id)
@@ -85,21 +81,12 @@ class KegiatanController extends Controller
         return view('pages.lab.kegiatan.show', compact('kegiatan'));
     }
 
-    public function updateStatus(Request $request, Kegiatan $id)
+    public function updateStatus(KegiatanStatusRequest $request, Kegiatan $id)
     {
         $kegiatan = $id;
         // Admin only functionality usually
-        $request->validate([
-            'status'  => 'required|in:approved,rejected,tangguhkan',
-            'catatan' => 'nullable|string',
-        ]);
 
-        try {
-            $this->kegiatanService->updateStatus($kegiatan, $request->status, $request->catatan);
-            return jsonSuccess('Status updated');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
-        }
+        $this->kegiatanService->updateStatus($kegiatan, $request->status, $request->catatan);
+        return jsonSuccess('Status updated');
     }
 }

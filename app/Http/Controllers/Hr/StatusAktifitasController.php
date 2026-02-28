@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\StatusAktifitasRequest;
 use App\Models\Hr\StatusAktifitas;
 use App\Services\Hr\StatusAktifitasService;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class StatusAktifitasController extends Controller
@@ -51,13 +50,8 @@ class StatusAktifitasController extends Controller
 
     public function store(StatusAktifitasRequest $request)
     {
-        try {
-            $this->statusAktifitasService->create($request->validated());
-            return jsonSuccess('Status Aktifitas created successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->statusAktifitasService->create($request->validated());
+        return jsonSuccess('Status Aktifitas created successfully.');
     }
 
     public function edit(StatusAktifitas $statusAktifitas)
@@ -67,23 +61,13 @@ class StatusAktifitasController extends Controller
 
     public function update(StatusAktifitasRequest $request, StatusAktifitas $statusAktifitas)
     {
-        try {
-            $this->statusAktifitasService->update($statusAktifitas, $request->validated());
-            return jsonSuccess('Status Aktifitas updated successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->statusAktifitasService->update($statusAktifitas, $request->validated());
+        return jsonSuccess('Status Aktifitas updated successfully.');
     }
 
     public function destroy(StatusAktifitas $statusAktifitas)
     {
-        try {
-            $statusAktifitas->delete();
-            return jsonSuccess('Status Aktifitas deleted successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError($e->getMessage(), 500);
-        }
+        $statusAktifitas->delete();
+        return jsonSuccess('Status Aktifitas deleted successfully.');
     }
 }

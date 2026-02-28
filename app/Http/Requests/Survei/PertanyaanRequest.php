@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Survei;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PertanyaanRequest extends FormRequest
+class PertanyaanRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

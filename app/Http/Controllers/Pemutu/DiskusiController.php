@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pemutu\Diskusi;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Services\Pemutu\DiskusiService;
-use Illuminate\Http\Request;
+use App\Http\Requests\Pemutu\DiskusiRequest;
 
 class DiskusiController extends Controller
 {
@@ -17,12 +17,8 @@ class DiskusiController extends Controller
     /**
      * Kirim pesan diskusi baru untuk AMI.
      */
-    public function storeAmi(Request $request, IndikatorOrgUnit $indOrg)
+    public function storeAmi(DiskusiRequest $request, IndikatorOrgUnit $indOrg)
     {
-        $request->validate([
-            'isi' => ['required', 'string', 'max:5000'],
-            'attachment_file' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx', 'max:5120'],
-        ]);
 
         $this->DiskusiService->store(
             $indOrg,

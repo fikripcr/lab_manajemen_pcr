@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelRequest;
 use App\Services\Pemutu\LabelService;
-use Exception;
+
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -54,16 +54,11 @@ class LabelController extends Controller
 
     public function store(LabelRequest $request)
     {
-        try {
-            $this->labelService->createLabel($request->validated());
+        $this->labelService->createLabel($request->validated());
 
-            logActivity('pemutu', "Menambah label baru: " . ($request->name ?? ''));
+        logActivity('pemutu', "Menambah label baru: " . ($request->name ?? ''));
 
-            return jsonSuccess('Label created successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan label: ' . $e->getMessage());
-        }
+        return jsonSuccess('Label created successfully.');
     }
 
     public function edit(\App\Models\Pemutu\Label $label)
@@ -75,30 +70,20 @@ class LabelController extends Controller
 
     public function update(LabelRequest $request, \App\Models\Pemutu\Label $label)
     {
-        try {
-            $this->labelService->updateLabel($label->label_id, $request->validated());
+        $this->labelService->updateLabel($label->label_id, $request->validated());
 
-            logActivity('pemutu', "Memperbarui label: {$label->name}");
+        logActivity('pemutu', "Memperbarui label: {$label->name}");
 
-            return jsonSuccess('Label updated successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui label: ' . $e->getMessage());
-        }
+        return jsonSuccess('Label updated successfully.');
     }
 
     public function destroy(\App\Models\Pemutu\Label $label)
     {
-        try {
-            $labelName = $label->name;
-            $this->labelService->deleteLabel($label->label_id);
+        $labelName = $label->name;
+        $this->labelService->deleteLabel($label->label_id);
 
-            logActivity('pemutu', "Menghapus label: {$labelName}");
+        logActivity('pemutu', "Menghapus label: {$labelName}");
 
-            return jsonSuccess('Label deleted successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus label: ' . $e->getMessage());
-        }
+        return jsonSuccess('Label deleted successfully.');
     }
 }

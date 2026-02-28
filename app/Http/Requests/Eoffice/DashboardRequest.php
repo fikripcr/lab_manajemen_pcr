@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class DashboardRequest extends FormRequest
+class DashboardRequest extends BaseRequest
 {
     public function authorize()
     {

@@ -1,8 +1,15 @@
 <?php
 
+use App\Http\Middleware\CheckAccountExpiration;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,11 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             // 'auth' => \App\Http\Middleware\Authenticate::class,
-            'role'               => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission'         => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'impersonate.protect' => \Lab404\Impersonate\Middleware\ProtectFromImpersonation::class,
-            'check.expired'      => \App\Http\Middleware\CheckAccountExpiration::class,
+            'role'               => RoleMiddleware::class,
+            'permission'         => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'check.expired'      => CheckAccountExpiration::class,
             // 'validatePasswordResetToken' => \App\Http\Middleware\ValidatePasswordResetToken::class,
         ]);
     })
@@ -26,63 +32,45 @@ return Application::configure(basePath: dirname(__DIR__))
         // Report all exceptions to our custom ErrorLog model
         $exceptions->report(function (\Throwable $e) {
             // Only don't log specific exceptions that are routine and not errors
-            if ($e instanceof \Illuminate\Validation\ValidationException  ||
-                $e instanceof \Illuminate\Auth\AuthenticationException) {
-                return; // Don't log these as they are routine validation/auth issues, not errors
+            if ($e instanceof ValidationException ||
+                $e instanceof AuthenticationException) {
+                return; // Don't log ini karena ini error rutin user
             }
 
-            // Create error log record
-            try {
-                // Extract additional context data from exception if it's a database exception
-                $additionalContext = [];
+            // Simpan ke sys_error_log menggunakan helper tersentralisasi
+            logError($e);
+        });
 
-                if ($e instanceof \PDOException  || $e instanceof \Illuminate\Database\QueryException) {
-                    if (isset($e->errorInfo) && is_array($e->errorInfo)) {
-                        $additionalContext = [
-                            'error_info' => [
-                                'SQLSTATE'       => $e->errorInfo[0] ?? null,
-                                'Driver Code'    => $e->errorInfo[1] ?? null,
-                                'Driver Message' => $e->errorInfo[2] ?? null,
-                            ],
-                        ];
-                    } elseif (property_exists($e, 'getCode') && $e->getCode()) {
-                        $additionalContext['sql_state'] = $e->getCode();
-                    }
-                } elseif (method_exists($e, 'getSqlState')) {
-                    $additionalContext['sql_state'] = $e->getSqlState();
+        // Global response handler untuk request AJAX/JSON dan HTTP
+        $exceptions->render(function (\Throwable $e, Request $request) {
+            // Handle specific survey exceptions
+            if ($e->getMessage() === 'AUTH_REQUIRED') {
+                return redirect()->route('login')->with('error', 'Anda harus login untuk mengisi survei ini.');
+            }
+            if ($e->getMessage() === 'ALREADY_FILLED') {
+                return redirect()->route('dashboard')->with('error', 'Anda sudah mengisi survei ini.');
+            }
+
+            // 1. Tangani request AJAX/JSON
+            if ($request->expectsJson()) {
+                if ($e instanceof ValidationException) {
+                    return null;
                 }
-
-                $request   = app('request');
-                $errorData = [
-                    'level'           => 'error',
-                    'message'         => $e->getMessage(),
-                    'exception_class' => get_class($e),
-                    'file'            => $e->getFile(),
-                    'line'            => $e->getLine(),
-                    'trace'           => collect($e->getTrace())->map(function ($trace) {
-                        return [
-                            'file'     => $trace['file'] ?? 'unknown',
-                            'line'     => $trace['line'] ?? 'unknown',
-                            'function' => $trace['function'] ?? 'unknown',
-                            'class'    => $trace['class'] ?? null,
-                            'type'     => $trace['type'] ?? null,
-                        ];
-                    })->toArray(),
-                    'context'         => array_merge([
-                        'url'        => $request->fullUrl(),
-                        'method'     => $request->method(),
-                        'ip_address' => $request->ip(),
-                        'user_agent' => $request->userAgent(),
-                        'user_id'    => auth()->id(),
-                        'session_id' => session()->getId(),
-                        'timestamp'  => now()->toISOString(),
-                    ], $additionalContext),
-                ];
-
-                \App\Models\Sys\ErrorLog::create($errorData);
-            } catch (\Throwable $logError) {
-                // If we can't log the error to the ErrorLog model, at least write it to standard Laravel log
-                \Log::error('Failed to log error to sys_error_log: ' . $logError->getMessage());
+                return jsonError('Terjadi kesalahan sistem: ' . $e->getMessage());
             }
+
+            // 2. Tangani request HTTP Biasa
+            if ($e instanceof ValidationException) {
+                return null;
+            }
+
+            // Jika error terjadi pada saat submit data (bukan GET), redirect back dengan flash message
+            if (!$request->isMethod('GET')) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+            }
+
+            return null; // Fallback ke default handler (Error Page 500) untuk request GET
         });
     })->create();

@@ -8,7 +8,6 @@ use App\Models\Project\Project;
 use App\Models\User;
 use App\Services\Project\ProjectService;
 use App\Services\Project\ProjectTaskService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -89,17 +88,11 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-        try {
-            $data = $request->validated();
-            $project = $this->projectService->createProject($data);
+        $data = $request->validated();
+        $project = $this->projectService->createProject($data);
 
-            return redirect()->route('projects.show', $project)
-                ->with('success', 'Project created successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return back()->with('error', 'Failed to create project: ' . $e->getMessage())
-                ->withInput();
-        }
+        return redirect()->route('projects.show', $project)
+            ->with('success', 'Project created successfully');
     }
 
     /**
@@ -139,17 +132,11 @@ class ProjectController extends Controller
      */
     public function update(ProjectRequest $request, Project $project)
     {
-        try {
-            $data = $request->validated();
-            $this->projectService->updateProject($project, $data);
+        $data = $request->validated();
+        $this->projectService->updateProject($project, $data);
 
-            return redirect()->route('projects.show', $project)
-                ->with('success', 'Project updated successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return back()->with('error', 'Failed to update project: ' . $e->getMessage())
-                ->withInput();
-        }
+        return redirect()->route('projects.show', $project)
+            ->with('success', 'Project updated successfully');
     }
 
     /**
@@ -157,17 +144,12 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        try {
-            $projectName = $project->project_name;
-            $this->projectService->deleteProject($project);
+        $projectName = $project->project_name;
+        $this->projectService->deleteProject($project);
 
-            return jsonSuccess(
-                'Project deleted successfully',
-                route('projects.index')
-            );
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to delete project: ' . $e->getMessage());
-        }
+        return jsonSuccess(
+            'Project deleted successfully',
+            route('projects.index')
+        );
     }
 }

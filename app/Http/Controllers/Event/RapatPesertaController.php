@@ -33,49 +33,19 @@ class RapatPesertaController extends Controller
 
     public function store(RapatPesertaRequest $request)
     {
-        try {
-            $this->service->store($request->validated());
-            return response()->json([
-                'success' => true,
-                'message' => 'Peserta berhasil ditambahkan',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        $this->service->store($request->validated());
+        return jsonSuccess('Peserta berhasil ditambahkan');
     }
 
     public function update(RapatPesertaRequest $request, RapatPeserta $peserta)
     {
-        try {
-            $this->service->update($peserta, $request->validated());
-            return response()->json([
-                'success' => true,
-                'message' => 'Peserta berhasil diperbarui',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        $this->service->update($peserta, $request->validated());
+        return jsonSuccess('Peserta berhasil diperbarui');
     }
 
     public function destroy(RapatPeserta $peserta)
     {
-        try {
-            $this->service->destroy($peserta);
-            return response()->json([
-                'success' => true,
-                'message' => 'Peserta berhasil dihapus',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        $this->service->destroy($peserta);
+        return jsonSuccess('Peserta berhasil dihapus');
     }
 }

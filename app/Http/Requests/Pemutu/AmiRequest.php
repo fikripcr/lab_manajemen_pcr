@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class AmiRequest extends FormRequest
+class AmiRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -24,9 +24,9 @@ class AmiRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
-            'ami_hasil_akhir.required' => 'Status hasil AMI wajib dipilih.',
-            'ami_hasil_akhir.in'       => 'Status AMI harus salah satu dari: KTS, Terpenuhi, atau Terlampaui.',
-        ];
+        return array_merge(parent::messages(), [
+            'tgl_ami.required'   => 'Tanggal AMI harus diisi.',
+            'org_unit_id.required' => 'Unit Kerja harus dipilih.',
+        ]);
     }
 }

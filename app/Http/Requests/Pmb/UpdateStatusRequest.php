@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pmb;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class UpdateStatusRequest extends FormRequest
+class UpdateStatusRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

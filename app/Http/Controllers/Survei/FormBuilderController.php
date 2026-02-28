@@ -55,12 +55,8 @@ class FormBuilderController extends Controller
 
     public function destroyHalaman(Halaman $halaman)
     {
-        try {
-            $this->formBuilderService->deleteHalaman($halaman);
-            return jsonSuccess('Halaman dihapus');
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->formBuilderService->deleteHalaman($halaman);
+        return jsonSuccess('Halaman dihapus');
     }
 
     public function reorderHalaman(\App\Http\Requests\Survei\ReorderHalamanRequest $request)
@@ -73,34 +69,25 @@ class FormBuilderController extends Controller
 
     public function storePertanyaan(\App\Http\Requests\Survei\PertanyaanRequest $request, Survei $survei)
     {
-        try {
-            $pertanyaan = $this->formBuilderService->addPertanyaan($survei, $request->validated());
+        $pertanyaan = $this->formBuilderService->addPertanyaan($survei, $request->validated());
 
-            $pertanyaan->load('opsi');
-            $allPertanyaan = $survei->pertanyaan()->orderBy('urutan')->get();
-            $html          = view('pages.survei.admin.partials.question_card', compact('pertanyaan', 'allPertanyaan'))->render();
+        $pertanyaan->load('opsi');
+        $allPertanyaan = $survei->pertanyaan()->orderBy('urutan')->get();
+        $html          = view('pages.survei.admin.partials.question_card', compact('pertanyaan', 'allPertanyaan'))->render();
 
-            return jsonSuccess('Pertanyaan ditambahkan', null, ['html' => $html]);
-
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        return jsonSuccess('Pertanyaan ditambahkan', null, ['html' => $html]);
     }
 
     public function updatePertanyaan(\App\Http\Requests\Survei\PertanyaanRequest $request, Pertanyaan $pertanyaan)
     {
-        try {
-            $this->formBuilderService->updatePertanyaan($pertanyaan, $request->validated());
+        $this->formBuilderService->updatePertanyaan($pertanyaan, $request->validated());
 
-            // Reload and return fresh HTML for the question card
-            $pertanyaan->load('opsi');
-            $allPertanyaan = $pertanyaan->survei->pertanyaan()->orderBy('urutan')->get();
-            $html          = view('pages.survei.admin.partials.question_card', compact('pertanyaan', 'allPertanyaan'))->render();
+        // Reload and return fresh HTML for the question card
+        $pertanyaan->load('opsi');
+        $allPertanyaan = $pertanyaan->survei->pertanyaan()->orderBy('urutan')->get();
+        $html          = view('pages.survei.admin.partials.question_card', compact('pertanyaan', 'allPertanyaan'))->render();
 
-            return jsonSuccess('Pertanyaan disimpan', null, ['html' => $html]);
-        } catch (\Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        return jsonSuccess('Pertanyaan disimpan', null, ['html' => $html]);
     }
 
     public function destroyPertanyaan(Pertanyaan $pertanyaan)

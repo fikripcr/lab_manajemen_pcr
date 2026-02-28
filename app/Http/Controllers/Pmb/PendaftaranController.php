@@ -8,7 +8,6 @@ use App\Models\Pmb\DokumenUpload;
 use App\Models\Pmb\Pendaftaran;
 use App\Services\Pmb\PendaftaranService;
 use App\Services\Pmb\PeriodeService;
-use Exception;
 use Illuminate\Http\Request;
 
 class PendaftaranController extends Controller
@@ -105,13 +104,8 @@ class PendaftaranController extends Controller
      */
     public function updateStatus(UpdateStatusRequest $request, Pendaftaran $pendaftaran)
     {
-        try {
-            $this->verificationService->updatePendaftaranStatus($pendaftaran, $request->validated('status'), $request->validated('keterangan'));
-            return jsonSuccess('Status pendaftaran berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
-        }
+        $this->verificationService->updatePendaftaranStatus($pendaftaran, $request->validated('status'), $request->validated('keterangan'));
+        return jsonSuccess('Status pendaftaran berhasil diperbarui.');
     }
 
     /**
@@ -127,15 +121,10 @@ class PendaftaranController extends Controller
      */
     public function verifyDocument(VerifyDocRequest $request, DokumenUpload $document)
     {
-        try {
-            $this->verificationService->verifyDocument($document->pendaftaran, [
-                'status'     => $request->validated('status'),
-                'keterangan' => $request->validated('keterangan'),
-            ]);
-            return jsonSuccess('Status dokumen berhasil diperbarui!');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memverifikasi dokumen: ' . $e->getMessage());
-        }
+        $this->verificationService->verifyDocument($document->pendaftaran, [
+            'status'     => $request->validated('status'),
+            'keterangan' => $request->validated('keterangan'),
+        ]);
+        return jsonSuccess('Status dokumen berhasil diperbarui!');
     }
 }

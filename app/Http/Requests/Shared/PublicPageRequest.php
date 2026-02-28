@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Requests\Shared;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\BaseRequest;
 
-class PublicPageRequest extends FormRequest
+class PublicPageRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -32,14 +32,15 @@ class PublicPageRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
+            'slug.unique'            => 'Slug sudah digunakan oleh halaman lain.',
             'main_image.image'       => 'File harus berupa gambar.',
             'main_image.mimes'       => 'Format gambar harus :values.',
             'main_image.max'         => 'Ukuran gambar maksimal 5MB.',
             'main_image.uploaded'    => 'Gagal mengupload gambar utama. Pastikan ukuran tidak melebihi batas server.',
             'attachments.*.max'      => 'Ukuran file maksimal 10MB.',
             'attachments.*.uploaded' => 'Gagal mengupload file pendukung.',
-        ];
+        ]);
     }
 
     public function prepareForValidation()

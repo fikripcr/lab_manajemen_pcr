@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class BackupStoreRequest extends FormRequest
+class BackupStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

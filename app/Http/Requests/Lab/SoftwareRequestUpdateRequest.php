@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SoftwareRequestUpdateRequest extends FormRequest
+class SoftwareRequestUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,6 +29,11 @@ class SoftwareRequestUpdateRequest extends FormRequest
      */
     public function messages(): array
     {
-        return validation_messages_id();
+        return array_merge(parent::messages(), [
+            'software_name.required' => 'Nama software harus diisi.',
+            'version.required'       => 'Versi software harus diisi.',
+            'semester_id.required'   => 'Semester harus dipilih.',
+            'category.required'      => 'Kategori software harus diisi.',
+        ]);
     }
 }

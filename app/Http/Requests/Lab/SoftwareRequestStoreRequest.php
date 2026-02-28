@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SoftwareRequestStoreRequest extends FormRequest
+class SoftwareRequestStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

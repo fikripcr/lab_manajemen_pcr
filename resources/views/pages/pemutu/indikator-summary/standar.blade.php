@@ -123,13 +123,13 @@
                     route="{{ route('pemutu.indikator-summary.data-standar') }}"
                     :columns="[
                         ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                        ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator & Unit', 'width' => '30%'],
+                        ['data' => 'indikator_full', 'name' => 'no_indikator', 'title' => 'Indikator & Unit', 'width' => '25%'],
                         ['data' => 'parent_info', 'name' => 'parent_no_indikator', 'title' => 'Parent', 'width' => '8%'],
                         ['data' => 'labels', 'name' => 'label_details', 'title' => 'Label', 'width' => '10%'],
-                        ['data' => 'ed_detail', 'name' => 'ed_capaian_detail', 'title' => 'ED - Capaian', 'width' => '15%'],
-                        ['data' => 'ed_analisis', 'name' => 'ed_analisis_detail', 'title' => 'ED - Analisis', 'width' => '15%'],
-                        ['data' => 'ami_detail', 'name' => 'ami_hasil_detail', 'title' => 'AMI - Hasil', 'width' => '15%'],
-                        ['data' => 'pengend_detail', 'name' => 'pengend_status_detail', 'title' => 'Pengendalian', 'width' => '12%'],
+                        ['data' => 'ed_detail', 'name' => 'ed_capaian', 'title' => 'Capaian', 'width' => '10%', 'class' => 'text-center'],
+                        ['data' => 'ed_analisis', 'name' => 'ed_analisis', 'title' => 'Analisis', 'width' => '15%'],
+                        ['data' => 'ami_detail', 'name' => 'ami_hasil_label', 'title' => 'AMI Hasil', 'width' => '15%'],
+                        ['data' => 'pengend_detail', 'name' => 'pengend_status', 'title' => 'Pengendalian', 'width' => '12%'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"
                     :options="[
@@ -146,8 +146,35 @@
 </div>
 
 @push('scripts')
+<style>
+    .summary-text-full { white-space: pre-wrap; word-break: break-word; }
+    .summary-text-excerpt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 250px; }
+</style>
 <script>
-    console.log('Standar page loaded');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Standar page ready');
+        
+        // Use delegation for read more buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-read-more')) {
+                const targetId = e.target.getAttribute('data-target');
+                const excerpt = document.getElementById(targetId + '-excerpt');
+                const full = document.getElementById(targetId + '-full');
+                
+                if (excerpt && full) {
+                    if (full.classList.contains('d-none')) {
+                        full.classList.remove('d-none');
+                        excerpt.classList.add('d-none');
+                        e.target.textContent = 'Sembunyikan';
+                    } else {
+                        full.classList.add('d-none');
+                        excerpt.classList.remove('d-none');
+                        e.target.textContent = 'Selengkapnya';
+                    }
+                }
+            }
+        });
+    });
     
     function exportExcel() {
         const params = new URLSearchParams();

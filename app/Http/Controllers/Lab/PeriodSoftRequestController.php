@@ -6,7 +6,6 @@ use App\Http\Requests\Lab\PeriodSoftRequestRequest;
 use App\Models\Lab\PeriodSoftRequest;
 use App\Models\Lab\Semester;
 use App\Services\Lab\PeriodSoftRequestService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -56,13 +55,8 @@ class PeriodSoftRequestController extends Controller
 
     public function store(PeriodSoftRequestRequest $request)
     {
-        try {
-            $this->periodSoftRequestService->createPeriod($request->validated());
-            return jsonSuccess('Periode Request berhasil dibuat.', route('lab.periode-request.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat periode request: ' . $e->getMessage());
-        }
+        $this->periodSoftRequestService->createPeriod($request->validated());
+        return jsonSuccess('Periode Request berhasil dibuat.', route('lab.periode-request.index'));
     }
 
     public function edit(PeriodSoftRequest $periodeRequest)
@@ -74,23 +68,13 @@ class PeriodSoftRequestController extends Controller
 
     public function update(PeriodSoftRequestRequest $request, PeriodSoftRequest $periodeRequest)
     {
-        try {
-            $this->periodSoftRequestService->updatePeriod($periodeRequest, $request->validated());
-            return jsonSuccess('Periode Request berhasil diperbarui.', route('lab.periode-request.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui periode request: ' . $e->getMessage());
-        }
+        $this->periodSoftRequestService->updatePeriod($periodeRequest, $request->validated());
+        return jsonSuccess('Periode Request berhasil diperbarui.', route('lab.periode-request.index'));
     }
 
     public function destroy(PeriodSoftRequest $periodeRequest)
     {
-        try {
-            $this->periodSoftRequestService->deletePeriod($periodeRequest);
-            return jsonSuccess('Periode Request berhasil dihapus.', route('lab.periode-request.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus periode request: ' . $e->getMessage());
-        }
+        $this->periodSoftRequestService->deletePeriod($periodeRequest);
+        return jsonSuccess('Periode Request berhasil dihapus.', route('lab.periode-request.index'));
     }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pmb;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class VerifyPaymentRequest extends FormRequest
+class VerifyPaymentRequest extends BaseRequest
 {
     public function authorize()
     {

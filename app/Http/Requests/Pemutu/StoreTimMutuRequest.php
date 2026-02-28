@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class StoreTimMutuRequest extends FormRequest
+class StoreTimMutuRequest extends BaseRequest
 {
     public function authorize(): bool
     {

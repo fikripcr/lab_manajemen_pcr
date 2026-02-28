@@ -3,7 +3,6 @@ namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\LaporanKerusakanRequest;
-use App\Models\Lab\Inventaris;
 use App\Models\Lab\Lab;
 use App\Models\Lab\LabInventaris;
 use App\Models\Lab\LaporanKerusakan;
@@ -71,51 +70,42 @@ class LaporanKerusakanController extends Controller
             return response()->json(['data' => []]);
         }
 
-        try {
-            $labId = decryptIdIfEncrypted($request->lab_id);
+        $labId = decryptIdIfEncrypted($request->lab_id);
 
-            // Get LabAssignments where status is active
-            // Note: Relationship structure depends on implementation.
-            // Assuming LabInventaris table links Lab to Inventaris.
-            // Check LabInventaris model if needed, but assuming standard.
-            $assignments = LabInventaris::with('inventaris')
-                ->where('lab_id', $labId)
-                ->where('is_active', true) // or status 'active'
-                ->get();
+        // Get LabAssignments where status is active
+        // Note: Relationship structure depends on implementation.
+        // Assuming LabInventaris table links Lab to Inventaris.
+        // Check LabInventaris model if needed, but assuming standard.
+        $assignments = LabInventaris::with('inventaris')
+            ->where('lab_id', $labId)
+            ->where('is_active', true) // or status 'active'
+            ->get();
 
-            $results = $assignments->map(function ($item) {
-                // Return only if inventaris exists
-                if (! $item->inventaris) {
-                    return null;
-                }
+        $results = $assignments->map(function ($item) {
+            // Return only if inventaris exists
+            if (! $item->inventaris) {
+                return null;
+            }
 
-                return [
-                    'id'   => encryptId($item->inventaris_id),
-                    'text' => $item->inventaris->nama_alat, // . ' (' . $item->kode_inventaris . ')'
-                ];
-            })->filter()->values();
+            return [
+                'id'   => encryptId($item->inventaris_id),
+                'text' => $item->inventaris->nama_alat, // . ' (' . $item->kode_inventaris . ')'
+            ];
+        })->filter()->values();
 
-            return jsonSuccess('Data retrieved', null, ['data' => $results]);
-        } catch (\Exception $e) {
-            return response()->json(['data' => []]);
-        }
+        return jsonSuccess('Data retrieved', null, ['data' => $results]);
     }
 
     public function store(LaporanKerusakanRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            if ($request->hasFile('bukti_foto')) {
-                $data['bukti_foto'] = $request->file('bukti_foto')->store('laporan-kerusakan', 'public');
-            }
-
-            $this->laporanKerusakanService->createLaporan($data);
-            return jsonSuccess('Laporan berhasil dikirim', route('lab.laporan-kerusakan.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengirim laporan: ' . $e->getMessage());
+        if ($request->hasFile('bukti_foto')) {
+            $data['bukti_foto'] = $request->file('bukti_foto')->store('laporan-kerusakan', 'public');
         }
+
+        $this->laporanKerusakanService->createLaporan($data);
+        return jsonSuccess('Laporan berhasil dikirim', route('lab.laporan-kerusakan.index'));
     }
 
     public function show(LaporanKerusakan $laporanKerusakan)

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Project;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class MoveTaskRequest extends FormRequest
+class MoveTaskRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,9 +29,10 @@ class MoveTaskRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'status.required' => 'Status baru wajib diisi',
+        return array_merge(parent::messages(), [
+            'status.required' => 'Status tujuan wajib diisi.',
             'status.in'       => 'Status tidak valid. Harus salah satu dari: todo, in_progress, review, done',
-        ];
+            'order.required' => 'Urutan baru wajib diisi.',
+        ]);
     }
 }

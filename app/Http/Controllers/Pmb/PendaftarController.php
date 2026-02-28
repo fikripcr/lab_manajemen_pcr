@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pmb;
 use App\Http\Controllers\Controller;
 use App\Models\Pmb\Pendaftaran;
 use App\Models\Pmb\DokumenUpload;
+use App\Http\Requests\Pmb\VerifySingleDocumentRequest;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -103,34 +104,25 @@ class PendaftarController extends Controller
     /**
      * Verify document with toggle
      */
-    public function verifyDocument(Request $request)
+    public function verifyDocument(VerifySingleDocumentRequest $request)
     {
-        $request->validate([
-            'dokumen_id' => 'required|exists:pmb_dokumen_upload,dokumenupload_id',
-            'status' => 'required|in:Valid,Pending',
+
+        $dokumen = DokumenUpload::findOrFail($request->dokumen_id);
+        $dokumen->update([
+            'status_verifikasi' => $request->status,
+            'verifikator_id' => auth()->id(),
         ]);
 
-        try {
-            $dokumen = DokumenUpload::findOrFail($request->dokumen_id);
-            $dokumen->update([
-                'status_verifikasi' => $request->status,
-                'verifikator_id' => auth()->id(),
-            ]);
+        // Check if all documents verified
+        $pendaftaran = $dokumen->pendaftaran;
+        $allVerified = $pendaftaran->dokumenUpload->where('status_verifikasi', '!=', 'Valid')->isEmpty();
 
-            // Check if all documents verified
-            $pendaftaran = $dokumen->pendaftaran;
-            $allVerified = $pendaftaran->dokumenUpload->where('status_verifikasi', '!=', 'Valid')->isEmpty();
-            
-            if ($allVerified && $request->status === 'Valid') {
-                $pendaftaran->update(['status_terkini' => 'Siap_Ujian']);
-            }
-
-            logActivity('pmb_verifikasi_berkas', "Verifikasi berkas: {$request->status}", $dokumen);
-
-            return jsonSuccess('Verifikasi berkas berhasil.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memverifikasi berkas: ' . $e->getMessage());
+        if ($allVerified && $request->status === 'Valid') {
+            $pendaftaran->update(['status_terkini' => 'Siap_Ujian']);
         }
+
+        logActivity('pmb_verifikasi_berkas', "Verifikasi berkas: {$request->status}", $dokumen);
+
+        return jsonSuccess('Verifikasi berkas berhasil.');
     }
 }

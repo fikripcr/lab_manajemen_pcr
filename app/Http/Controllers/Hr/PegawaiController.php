@@ -9,7 +9,6 @@ use App\Models\Hr\StatusAktifitas;
 use App\Models\Hr\StatusPegawai;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -125,12 +124,8 @@ class PegawaiController extends Controller
      */
     public function store(PegawaiRequest $request)
     {
-        try {
-            $this->pegawaiService->createPegawai($request->validated());
-            return jsonSuccess('Pegawai berhasil ditambahkan', route('hr.pegawai.index'));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->createPegawai($request->validated());
+        return jsonSuccess('Pegawai berhasil ditambahkan', route('hr.pegawai.index'));
     }
 
     /**
@@ -192,13 +187,9 @@ class PegawaiController extends Controller
      */
     public function update(PegawaiRequest $request, Pegawai $pegawai)
     {
-        try {
-            // Request Change Logic
-            $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
-            return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        // Request Change Logic
+        $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
+        return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     /**
@@ -206,12 +197,8 @@ class PegawaiController extends Controller
      */
     public function destroy(Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->delete($pegawai->pegawai_id);
-            return jsonSuccess('Pegawai berhasil dihapus');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->delete($pegawai->pegawai_id);
+        return jsonSuccess('Pegawai berhasil dihapus');
     }
 
     /**
@@ -219,50 +206,45 @@ class PegawaiController extends Controller
      */
     public function generateUser(Pegawai $pegawai)
     {
-        try {
-            if ($pegawai->user) {
-                return jsonError('Pegawai ini sudah memiliki user.');
-            }
-
-            // Get email from latest data diri
-            $email = $pegawai->latestDataDiri?->email;
-            
-            if (!$email) {
-                return jsonError('Email tidak ditemukan pada data diri pegawai.');
-            }
-
-            // Check if email already exists
-            if (\App\Models\User::where('email', $email)->exists()) {
-                return jsonError("Email {$email} sudah terdaftar. Silakan gunakan email lain.");
-            }
-
-            // Generate password default
-            $password = 'password123';
-            
-            // Create user
-            $user = \App\Models\User::create([
-                'name'              => $pegawai->nama,
-                'email'             => $email,
-                'password'          => \Illuminate\Support\Facades\Hash::make($password),
-                'email_verified_at' => now(),
-                'created_by'        => auth()->id() ?? 'system',
-            ]);
-
-            // Link pegawai to user
-            $pegawai->update(['user_id' => $user->id]);
-
-            // Assign default role based on posisi
-            $role = $this->determineRoleFromPosisi($pegawai->latestDataDiri?->posisi?->name);
-            $user->assignRole($role);
-
-            return jsonSuccess(
-                "User berhasil dibuat untuk {$pegawai->nama}.<br>Email: {$email}<br>Password: {$password}<br>Role: {$role}",
-                route('hr.pegawai.index')
-            );
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat user: ' . $e->getMessage());
+        if ($pegawai->user) {
+            return jsonError('Pegawai ini sudah memiliki user.');
         }
+
+        // Get email from latest data diri
+        $email = $pegawai->latestDataDiri?->email;
+
+        if (!$email) {
+            return jsonError('Email tidak ditemukan pada data diri pegawai.');
+        }
+
+        // Check if email already exists
+        if (\App\Models\User::where('email', $email)->exists()) {
+            return jsonError("Email {$email} sudah terdaftar. Silakan gunakan email lain.");
+        }
+
+        // Generate password default
+        $password = 'password123';
+
+        // Create user
+        $user = \App\Models\User::create([
+            'name'              => $pegawai->nama,
+            'email'             => $email,
+            'password'          => \Illuminate\Support\Facades\Hash::make($password),
+            'email_verified_at' => now(),
+            'created_by'        => auth()->id() ?? 'system',
+        ]);
+
+        // Link pegawai to user
+        $pegawai->update(['user_id' => $user->id]);
+
+        // Assign default role based on posisi
+        $role = $this->determineRoleFromPosisi($pegawai->latestDataDiri?->posisi?->name);
+        $user->assignRole($role);
+
+        return jsonSuccess(
+            "User berhasil dibuat untuk {$pegawai->nama}.<br>Email: {$email}<br>Password: {$password}<br>Role: {$role}",
+            route('hr.pegawai.index')
+        );
     }
 
     /**

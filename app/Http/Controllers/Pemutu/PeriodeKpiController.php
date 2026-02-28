@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PeriodeKpiRequest;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Services\Pemutu\PeriodeService;
-use Exception;
 use Yajra\DataTables\DataTables;
 
 class PeriodeKpiController extends Controller
@@ -36,13 +35,8 @@ class PeriodeKpiController extends Controller
 
     public function store(PeriodeKpiRequest $request)
     {
-        try {
-            $this->periodeService->store($request->validated());
-            return jsonSuccess('Periode KPI berhasil disimpan.', route('pemutu.periode-kpis.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan periode: ' . $e->getMessage());
-        }
+        $this->periodeService->store($request->validated());
+        return jsonSuccess('Periode KPI berhasil disimpan.', route('pemutu.periode-kpis.index'));
     }
 
     public function edit(PeriodeKpi $periodeKpi)
@@ -52,34 +46,19 @@ class PeriodeKpiController extends Controller
 
     public function update(PeriodeKpiRequest $request, PeriodeKpi $periodeKpi)
     {
-        try {
-            $this->periodeService->update($periodeKpi, $request->validated());
-            return jsonSuccess('Periode KPI berhasil diupdate.', route('pemutu.periode-kpis.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui periode: ' . $e->getMessage());
-        }
+        $this->periodeService->update($periodeKpi, $request->validated());
+        return jsonSuccess('Periode KPI berhasil diupdate.', route('pemutu.periode-kpis.index'));
     }
 
     public function destroy(PeriodeKpi $periodeKpi)
     {
-        try {
-            $this->periodeService->destroy($periodeKpi);
-            return jsonSuccess('Periode KPI berhasil dihapus.', route('pemutu.periode-kpis.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus periode: ' . $e->getMessage());
-        }
+        $this->periodeService->destroy($periodeKpi);
+        return jsonSuccess('Periode KPI berhasil dihapus.', route('pemutu.periode-kpis.index'));
     }
 
     public function activate(PeriodeKpi $periodeKpi)
     {
-        try {
-            $this->periodeService->activate($periodeKpi);
-            return jsonSuccess('Periode KPI berhasil diaktifkan.', route('pemutu.periode-kpis.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengaktifkan periode: ' . $e->getMessage());
-        }
+        $this->periodeService->activate($periodeKpi);
+        return jsonSuccess('Periode KPI berhasil diaktifkan.', route('pemutu.periode-kpis.index'));
     }
 }

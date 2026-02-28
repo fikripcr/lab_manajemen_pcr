@@ -6,7 +6,6 @@ use App\Http\Requests\Lab\PengumumanRequest;
 use App\Models\Shared\Pengumuman;
 use App\Models\User;
 use App\Services\Lab\PengumumanService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -44,23 +43,18 @@ class PengumumanController extends Controller
      */
     public function store(PengumumanRequest $request)
     {
-        try {
-            $data = $request->validated();
-            if ($request->hasFile('cover')) {
-                $data['cover'] = $request->file('cover');
-            }
-            if ($request->hasFile('attachments')) {
-                $data['attachments'] = $request->file('attachments');
-            }
-
-            $pengumuman    = $this->pengumumanService->createPengumuman($data);
-            $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
-
-            return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil ditambahkan.');
-        } catch (Exception $e) {
-            logError($e);
-            return back()->with('error', 'Gagal menambahkan ' . $request->jenis . ': ' . $e->getMessage())->withInput();
+        $data = $request->validated();
+        if ($request->hasFile('cover')) {
+            $data['cover'] = $request->file('cover');
         }
+        if ($request->hasFile('attachments')) {
+            $data['attachments'] = $request->file('attachments');
+        }
+
+        $pengumuman    = $this->pengumumanService->createPengumuman($data);
+        $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
+
+        return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil ditambahkan.');
     }
 
     public function show(Pengumuman $pengumuman)
@@ -80,23 +74,18 @@ class PengumumanController extends Controller
      */
     public function update(PengumumanRequest $request, Pengumuman $pengumuman)
     {
-        try {
-            $data = $request->validated();
-            if ($request->hasFile('cover')) {
-                $data['cover'] = $request->file('cover');
-            }
-            if ($request->hasFile('attachments')) {
-                $data['attachments'] = $request->file('attachments');
-            }
-
-            $this->pengumumanService->updatePengumuman($pengumuman, $data);
-            $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
-
-            return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return back()->with('error', 'Gagal memperbarui ' . $pengumuman->jenis . ': ' . $e->getMessage())->withInput();
+        $data = $request->validated();
+        if ($request->hasFile('cover')) {
+            $data['cover'] = $request->file('cover');
         }
+        if ($request->hasFile('attachments')) {
+            $data['attachments'] = $request->file('attachments');
+        }
+
+        $this->pengumumanService->updatePengumuman($pengumuman, $data);
+        $redirectRoute = $pengumuman->jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
+
+        return redirect()->route($redirectRoute)->with('success', ucfirst($pengumuman->jenis) . ' berhasil diperbarui.');
     }
 
     /**
@@ -104,15 +93,10 @@ class PengumumanController extends Controller
      */
     public function destroy(Pengumuman $pengumuman)
     {
-        try {
-            $jenis = $pengumuman->jenis;
-            $this->pengumumanService->deletePengumuman($pengumuman);
-            $redirectRoute = $jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
-            return jsonSuccess(ucfirst($jenis) . ' deleted successfully.', route($redirectRoute));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus ' . $pengumuman->jenis . ': ' . $e->getMessage());
-        }
+        $jenis = $pengumuman->jenis;
+        $this->pengumumanService->deletePengumuman($pengumuman);
+        $redirectRoute = $jenis === 'pengumuman' ? 'lab.pengumuman.index' : 'lab.berita.index';
+        return jsonSuccess(ucfirst($jenis) . ' deleted successfully.', route($redirectRoute));
     }
 
     /**

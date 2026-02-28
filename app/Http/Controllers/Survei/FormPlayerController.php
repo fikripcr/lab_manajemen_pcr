@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Survei\FormPlayerRequest;
 use App\Models\Survei\Survei;
 use App\Services\Survei\FormPlayerService;
-use Exception;
 
 class FormPlayerController extends Controller
 {
@@ -21,17 +20,7 @@ class FormPlayerController extends Controller
             ->where('is_aktif', true)
             ->firstOrFail();
 
-        try {
-            $this->formPlayerService->validateAccessibility($survei);
-        } catch (\Exception $e) {
-            if ($e->getMessage() == 'AUTH_REQUIRED') {
-                return redirect()->route('login')->with('error', 'Anda harus login untuk mengisi survei ini.');
-            }
-            if ($e->getMessage() == 'ALREADY_FILLED') {
-                return redirect()->route('dashboard')->with('error', 'Anda sudah mengisi survei ini.');
-            }
-            abort(403, $e->getMessage());
-        }
+        $this->formPlayerService->validateAccessibility($survei);
 
         // Load survey structure
         $survei = $this->formPlayerService->getSurveyForPlayer($survei);
@@ -54,17 +43,12 @@ class FormPlayerController extends Controller
             ->where('is_aktif', true)
             ->firstOrFail();
 
-        try {
-            $this->formPlayerService->validateAccessibility($survei);
-            
-            // Create session flag for survey in progress
-            session(['survei_in_progress_' . $survei->id => true]);
-            
-            return redirect()->route('survei.public.show', $survei->slug);
-        } catch (Exception $e) {
-            return redirect()->route('survei.public.welcome', $survei->slug)
-                ->with('error', $e->getMessage());
-        }
+        $this->formPlayerService->validateAccessibility($survei);
+        
+        // Create session flag for survey in progress
+        session(['survei_in_progress_' . $survei->id => true]);
+        
+        return redirect()->route('survei.public.show', $survei->slug);
     }
 
     public function show($slug)
@@ -73,18 +57,7 @@ class FormPlayerController extends Controller
             ->where('is_aktif', true)
             ->firstOrFail();
 
-        try {
-            $this->formPlayerService->validateAccessibility($survei);
-        } catch (\Exception $e) {
-            if ($e->getMessage() == 'AUTH_REQUIRED') {
-                return redirect()->route('login')->with('error', 'Anda harus login untuk mengisi survei ini.');
-            }
-            if ($e->getMessage() == 'ALREADY_FILLED') {
-                return redirect()->route('dashboard')->with('error', 'Anda sudah mengisi survei ini.');
-            }
-            // Redirect to welcome if not started
-            return redirect()->route('survei.public.welcome', $survei->slug);
-        }
+        $this->formPlayerService->validateAccessibility($survei);
 
         $survei = $this->formPlayerService->getSurveyForPlayer($survei);
 
@@ -97,30 +70,10 @@ class FormPlayerController extends Controller
             ->where('is_aktif', true)
             ->firstOrFail();
 
-        try {
-            $jawaban = $request->input('jawaban', []);
-            $this->formPlayerService->submitSurvey($survei, $jawaban, $request->ip());
-            
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Jawaban berhasil disimpan',
-                    'redirect' => route('survei.public.thankyou', $survei->slug),
-                ]);
-            }
-            
-            return redirect()->route('survei.public.thankyou', $survei->slug)
-                ->with('success', 'Terima kasih! Jawaban Anda berhasil disimpan.');
-        } catch (\Exception $e) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal menyimpan jawaban: ' . $e->getMessage(),
-                ], 500);
-            }
-            
-            return back()->with('error', 'Gagal menyimpan jawaban: ' . $e->getMessage());
-        }
+        $jawaban = $request->input('jawaban', []);
+        $this->formPlayerService->submitSurvey($survei, $jawaban, $request->ip());
+        
+        return jsonSuccess('Jawaban berhasil disimpan', route('survei.public.thankyou', $survei->slug));
     }
 
     public function thankyou($slug)

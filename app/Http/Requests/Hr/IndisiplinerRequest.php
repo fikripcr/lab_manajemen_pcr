@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class IndisiplinerRequest extends FormRequest
+class IndisiplinerRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -37,7 +37,7 @@ class IndisiplinerRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'jenisindisipliner_id.required' => 'Jenis indisipliner harus dipilih.',
             'jenisindisipliner_id.exists'   => 'Jenis indisipliner tidak ditemukan.',
             'tgl_indisipliner.required'     => 'Tanggal indisipliner harus diisi.',
@@ -51,6 +51,6 @@ class IndisiplinerRequest extends FormRequest
             'bukti.file'                    => 'Bukti harus berupa file.',
             'bukti.mimes'                   => 'File harus berformat PDF, DOCX, DOC, JPG, JPEG, atau PNG.',
             'bukti.max'                     => 'File maksimal 5MB.',
-        ];
+        ]);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class JenisIndisiplinerRequest extends FormRequest
+class JenisIndisiplinerRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -40,11 +40,13 @@ class JenisIndisiplinerRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'jenis_indisipliner.required' => 'Jenis indisipliner harus diisi.',
             'jenis_indisipliner.string'   => 'Jenis indisipliner harus berupa string.',
             'jenis_indisipliner.max'      => 'Jenis indisipliner maksimal 100 karakter.',
             'jenis_indisipliner.unique'   => 'Jenis indisipliner sudah ada.',
-        ];
+            'nama_jenis.required'         => 'Nama jenis indisipliner wajib diisi.',
+            'poin.required'               => 'Poin indisipliner wajib diisi.',
+        ]);
     }
 }

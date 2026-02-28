@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Survei;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SurveiRequest extends FormRequest
+class SurveiRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -27,13 +27,13 @@ class SurveiRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'judul.required'                 => 'Judul survei wajib diisi.',
             'target_role.required'           => 'Target role wajib dipilih.',
             'target_role.in'                 => 'Target role tidak valid.',
             'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
             'mode.required'                  => 'Mode survei wajib dipilih.',
             'mode.in'                        => 'Mode survei tidak valid.',
-        ];
+        ]);
     }
 }

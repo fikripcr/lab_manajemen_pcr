@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PerizinanUpdateRequest extends FormRequest
+class PerizinanUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

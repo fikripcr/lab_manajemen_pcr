@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class LayananDiskusiStoreRequest extends FormRequest
+class LayananDiskusiStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -47,11 +47,11 @@ class LayananDiskusiStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'layanan_id.required' => 'Layanan harus dipilih.',
             'pesan.required' => 'Pesan harus diisi.',
             'pesan.string' => 'Pesan harus berupa string.',
             'status_pengirim.string' => 'Status pengirim harus berupa string.',
-        ];
+        ]);
     }
 }

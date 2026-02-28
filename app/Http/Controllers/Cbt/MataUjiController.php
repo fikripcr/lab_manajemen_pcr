@@ -6,7 +6,6 @@ use App\Http\Requests\Cbt\StoreMataUjiRequest;
 use App\Http\Requests\Cbt\UpdateMataUjiRequest;
 use App\Models\Cbt\MataUji;
 use App\Services\Cbt\MataUjiService;
-use Exception;
 use Illuminate\Http\Request;
 
 class MataUjiController extends Controller
@@ -61,24 +60,14 @@ class MataUjiController extends Controller
 
     public function show(MataUji $mata_uji)
     {
-        try {
-            $mata_uji->load(['soal']);
-            return view('pages.cbt.mata-uji.show', ['mu' => $mata_uji]);
-        } catch (Exception $e) {
-            logError($e);
-            return redirect()->back()->with('error', 'Gagal memuat detail mata uji: ' . $e->getMessage());
-        }
+        $mata_uji->load(['soal']);
+        return view('pages.cbt.mata-uji.show', ['mu' => $mata_uji]);
     }
 
     public function store(StoreMataUjiRequest $request)
     {
-        try {
-            $this->MataUjiService->store($request->validated());
-            return jsonSuccess('Mata uji berhasil disimpan.', route('cbt.mata-uji.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan mata uji.');
-        }
+        $this->MataUjiService->store($request->validated());
+        return jsonSuccess('Mata uji berhasil disimpan.', route('cbt.mata-uji.index'));
     }
 
     public function edit(MataUji $mata_uji)
@@ -88,23 +77,13 @@ class MataUjiController extends Controller
 
     public function update(UpdateMataUjiRequest $request, MataUji $mata_uji)
     {
-        try {
-            $this->MataUjiService->update($mata_uji, $request->validated());
-            return jsonSuccess('Mata uji berhasil diperbarui.', route('cbt.mata-uji.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui mata uji.');
-        }
+        $this->MataUjiService->update($mata_uji, $request->validated());
+        return jsonSuccess('Mata uji berhasil diperbarui.', route('cbt.mata-uji.index'));
     }
 
     public function destroy(MataUji $mata_uji)
     {
-        try {
-            $this->MataUjiService->delete($mata_uji);
-            return jsonSuccess('Mata uji berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus mata uji.');
-        }
+        $this->MataUjiService->delete($mata_uji);
+        return jsonSuccess('Mata uji berhasil dihapus.');
     }
 }

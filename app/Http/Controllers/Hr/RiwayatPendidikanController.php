@@ -7,7 +7,6 @@ use App\Models\Hr\RiwayatPendidikan;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatPendidikanController extends Controller
@@ -28,12 +27,8 @@ class RiwayatPendidikanController extends Controller
 
     public function store(RiwayatPendidikanRequest $request, Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->requestAddition($pegawai, RiwayatPendidikan::class, $request->validated());
-            return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestAddition($pegawai, RiwayatPendidikan::class, $request->validated());
+        return jsonSuccess('Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
     public function edit(Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
@@ -42,22 +37,14 @@ class RiwayatPendidikanController extends Controller
 
     public function update(RiwayatPendidikanRequest $request, Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
-        try {
-            $this->pegawaiService->requestChange($pegawai, RiwayatPendidikan::class, $request->validated(), null, $pendidikan);
-            return jsonSuccess('Perubahan Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestChange($pegawai, RiwayatPendidikan::class, $request->validated(), null, $pendidikan);
+        return jsonSuccess('Perubahan Riwayat Pendidikan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function destroy(Pegawai $pegawai, RiwayatPendidikan $pendidikan)
     {
-        try {
-            $pendidikan->delete();
-            return jsonSuccess('Riwayat Pendidikan berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $pendidikan->delete();
+        return jsonSuccess('Riwayat Pendidikan berhasil dihapus.');
     }
 
     public function data()

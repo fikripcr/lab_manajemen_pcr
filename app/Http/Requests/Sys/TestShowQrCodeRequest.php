@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class TestShowQrCodeRequest extends FormRequest
+class TestShowQrCodeRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -34,13 +34,13 @@ class TestShowQrCodeRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'text.required' => 'Text untuk QR Code harus diisi.',
             'text.string' => 'Text harus berupa string.',
             'text.max' => 'Text maksimal 500 karakter.',
             'size.integer' => 'Ukuran harus berupa angka.',
             'size.min' => 'Ukuran minimal 100px.',
             'size.max' => 'Ukuran maksimal 500px.',
-        ];
+        ]);
     }
 }

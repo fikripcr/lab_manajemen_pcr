@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shared\PublicPageRequest;
 use App\Models\Shared\PublicPage;
 use App\Services\Shared\PublicPageService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -54,12 +53,8 @@ class PublicPageController extends Controller
 
     public function store(PublicPageRequest $request)
     {
-        try {
-            $this->pageService->createPage($request->validated());
-            return redirect()->route('shared.public-page.index')->with('success', 'Halaman berhasil dibuat.');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
-        }
+        $this->pageService->createPage($request->validated());
+        return redirect()->route('shared.public-page.index')->with('success', 'Halaman berhasil dibuat.');
     }
 
     public function edit(PublicPage $publicPage)
@@ -69,21 +64,13 @@ class PublicPageController extends Controller
 
     public function update(PublicPageRequest $request, PublicPage $publicPage)
     {
-        try {
-            $this->pageService->updatePage($publicPage, $request->validated());
-            return redirect()->route('shared.public-page.index')->with('success', 'Halaman berhasil diperbarui.');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
-        }
+        $this->pageService->updatePage($publicPage, $request->validated());
+        return redirect()->route('shared.public-page.index')->with('success', 'Halaman berhasil diperbarui.');
     }
 
     public function destroy(PublicPage $publicPage)
     {
-        try {
-            $this->pageService->deletePage($publicPage);
-            return jsonSuccess('Halaman berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->pageService->deletePage($publicPage);
+        return jsonSuccess('Halaman berhasil dihapus.');
     }
 }

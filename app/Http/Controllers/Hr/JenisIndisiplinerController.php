@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Hr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JenisIndisiplinerRequest;
 use App\Models\Hr\JenisIndisipliner;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class JenisIndisiplinerController extends Controller
@@ -40,13 +39,8 @@ class JenisIndisiplinerController extends Controller
     public function store(JenisIndisiplinerRequest $request)
     {
         $validated = $request->validated();
-
-        try {
-            JenisIndisipliner::create($validated);
-            return jsonSuccess('Jenis indisipliner berhasil dibuat.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        JenisIndisipliner::create($validated);
+        return jsonSuccess('Jenis indisipliner berhasil dibuat.');
     }
 
     public function edit(JenisIndisipliner $jenisIndisipliner)
@@ -57,27 +51,18 @@ class JenisIndisiplinerController extends Controller
     public function update(JenisIndisiplinerRequest $request, JenisIndisipliner $jenisIndisipliner)
     {
         $validated = $request->validated();
-
-        try {
-            $jenisIndisipliner->update($validated);
-            return jsonSuccess('Jenis Indisipliner berhasil diperbarui.');
-        } catch (Exception $e) {
-            return jsonError('Gagal memperbarui data: ' . $e->getMessage(), 500);
-        }
+        $jenisIndisipliner->update($validated);
+        return jsonSuccess('Jenis Indisipliner berhasil diperbarui.');
     }
 
     public function destroy(JenisIndisipliner $jenisIndisipliner)
     {
-        try {
-            // Check if there are any indisipliner records using this type
-            if ($jenisIndisipliner->indisipliner()->count() > 0) {
-                return jsonError('Tidak dapat menghapus jenis indisipliner yang masih digunakan.', 422);
-            }
-
-            $jenisIndisipliner->delete();
-            return jsonSuccess('Jenis Indisipliner berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError('Gagal menghapus data: ' . $e->getMessage(), 500);
+        // Check if there are any indisipliner records using this type
+        if ($jenisIndisipliner->indisipliner()->count() > 0) {
+            return jsonError('Tidak dapat menghapus jenis indisipliner yang masih digunakan.', 422);
         }
+
+        $jenisIndisipliner->delete();
+        return jsonSuccess('Jenis Indisipliner berhasil dihapus.');
     }
 }

@@ -67,13 +67,8 @@ class SuratBebasLabController extends Controller
 
     public function store(SuratBebasLabRequest $request)
     {
-        try {
-            $this->suratBebasLabService->createRequest($request->validated() ?: $request->all());
-            return jsonSuccess('Pengajuan berhasil dikirim.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengirim pengajuan: ' . $e->getMessage());
-        }
+        $this->suratBebasLabService->createRequest($request->validated() ?: $request->all());
+        return jsonSuccess('Pengajuan berhasil dikirim.');
     }
 
     public function show(SuratBebasLab $id)
@@ -87,12 +82,7 @@ class SuratBebasLabController extends Controller
     public function updateStatus(SuratBebasLabRequest $request, SuratBebasLab $id)
     {
         $suratBeba = $id;
-        try {
-            $this->suratBebasLabService->updateStatus($suratBeba, $request->validated());
-            return jsonSuccess('Status berhasil diperbarui.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
-        }
+        $this->suratBebasLabService->updateStatus($suratBeba, $request->validated());
+        return jsonSuccess('Status berhasil diperbarui.');
     }
 }

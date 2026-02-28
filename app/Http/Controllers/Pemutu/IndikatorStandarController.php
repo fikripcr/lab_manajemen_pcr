@@ -7,7 +7,7 @@ use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorPersonil;
 use App\Models\Shared\Personil;
-use Exception;
+
 use Illuminate\Support\Facades\DB;
 
 class IndikatorStandarController extends Controller
@@ -36,26 +36,21 @@ class IndikatorStandarController extends Controller
 
     public function store(IndikatorStandarRequest $request)
     {
-        try {
-            DB::transaction(function () use ($request) {
-                $indikator = Indikator::create([
-                    'indikator' => $request->indikator,
-                    'target'    => $request->target,
-                    'type'      => $request->type,
-                    'parent_id' => $request->parent_id,
-                ]);
+        DB::transaction(function () use ($request) {
+            $indikator = Indikator::create([
+                'indikator' => $request->indikator,
+                'target'    => $request->target,
+                'type'      => $request->type,
+                'parent_id' => $request->parent_id,
+            ]);
 
-                // Link to DokSub
-                $indikator->dokSubs()->attach($request->doksub_id);
-            });
+            // Link to DokSub
+            $indikator->dokSubs()->attach($request->doksub_id);
+        });
 
-            logActivity('pemutu', "Membuat indikator standar baru: {$request->indikator}");
+        logActivity('pemutu', "Membuat indikator standar baru: {$request->indikator}");
 
-            return jsonSuccess('Indikator Standar berhasil dibuat', route('pemutu.standar.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan indikator standar: ' . $e->getMessage());
-        }
+        return jsonSuccess('Indikator Standar berhasil dibuat', route('pemutu.standar.index'));
     }
 
     public function assign(Indikator $indikator)
@@ -70,41 +65,31 @@ class IndikatorStandarController extends Controller
 
     public function storeAssignment(IndikatorStandarRequest $request, Indikator $indikator)
     {
-        try {
-            IndikatorPersonil::updateOrCreate(
-                [
-                    'indikator_id' => $indikator->indikator_id,
-                    'personil_id'  => $request->personil_id,
-                    'year'         => $request->year,
-                ],
-                [
-                    'target_value' => $request->target_value ?? $indikator->target,
-                    'weight'       => $request->weight ?? 0,
-                ]
-            );
+        IndikatorPersonil::updateOrCreate(
+            [
+                'indikator_id' => $indikator->indikator_id,
+                'personil_id'  => $request->personil_id,
+                'year'         => $request->year,
+            ],
+            [
+                'target_value' => $request->target_value ?? $indikator->target,
+                'weight'       => $request->weight ?? 0,
+            ]
+        );
 
-            logActivity('pemutu', "Menugaskan personel ke indikator ID: {$indikator->indikator_id}");
+        logActivity('pemutu', "Menugaskan personel ke indikator ID: {$indikator->indikator_id}");
 
-            return jsonSuccess('Penugasan Personel berhasil disimpan', route('pemutu.standar.assign', $indikator->indikator_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan penugasan: ' . $e->getMessage());
-        }
+        return jsonSuccess('Penugasan Personel berhasil disimpan', route('pemutu.standar.assign', $indikator->indikator_id));
     }
 
     public function destroyAssignment($id)
     {
-        try {
-            $assignment  = IndikatorPersonil::findOrFail($id);
-            $indikatorId = $assignment->indikator_id;
-            $assignment->delete();
+        $assignment  = IndikatorPersonil::findOrFail($id);
+        $indikatorId = $assignment->indikator_id;
+        $assignment->delete();
 
-            logActivity('pemutu', "Menghapus penugasan personel untuk indikator ID: {$indikatorId}");
+        logActivity('pemutu', "Menghapus penugasan personel untuk indikator ID: {$indikatorId}");
 
-            return jsonSuccess('Penugasan berhasil dihapus', route('pemutu.standar.assign', $indikatorId));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus penugasan: ' . $e->getMessage());
-        }
+        return jsonSuccess('Penugasan berhasil dihapus', route('pemutu.standar.assign', $indikatorId));
     }
 }

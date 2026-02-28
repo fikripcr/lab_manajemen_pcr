@@ -62,21 +62,16 @@ class LabController extends Controller
      */
     public function store(LabRequest $request)
     {
-        try {
-            $data = $request->validated();
-            if ($request->hasFile('lab_images')) {
-                $data['lab_images'] = $request->file('lab_images');
-            }
-            if ($request->hasFile('lab_attachments')) {
-                $data['lab_attachments'] = $request->file('lab_attachments');
-            }
-
-            $this->labService->createLab($data);
-            return jsonSuccess('Lab berhasil ditambahkan.', route('lab.labs.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat lab: ' . $e->getMessage());
+        $data = $request->validated();
+        if ($request->hasFile('lab_images')) {
+            $data['lab_images'] = $request->file('lab_images');
         }
+        if ($request->hasFile('lab_attachments')) {
+            $data['lab_attachments'] = $request->file('lab_attachments');
+        }
+
+        $this->labService->createLab($data);
+        return jsonSuccess('Lab berhasil ditambahkan.', route('lab.labs.index'));
     }
 
     /**
@@ -101,21 +96,16 @@ class LabController extends Controller
      */
     public function update(LabRequest $request, Lab $lab)
     {
-        try {
-            $data = $request->validated();
-            if ($request->hasFile('lab_images')) {
-                $data['lab_images'] = $request->file('lab_images');
-            }
-            if ($request->hasFile('lab_attachments')) {
-                $data['lab_attachments'] = $request->file('lab_attachments');
-            }
-
-            $this->labService->updateLab($lab, $data);
-            return jsonSuccess('Lab berhasil diperbarui.', route('lab.labs.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui lab: ' . $e->getMessage());
+        $data = $request->validated();
+        if ($request->hasFile('lab_images')) {
+            $data['lab_images'] = $request->file('lab_images');
         }
+        if ($request->hasFile('lab_attachments')) {
+            $data['lab_attachments'] = $request->file('lab_attachments');
+        }
+
+        $this->labService->updateLab($lab, $data);
+        return jsonSuccess('Lab berhasil diperbarui.', route('lab.labs.index'));
     }
 
     /**
@@ -123,12 +113,7 @@ class LabController extends Controller
      */
     public function destroy(Lab $lab)
     {
-        try {
-            $this->labService->deleteLab($lab);
-            return jsonSuccess('Lab berhasil dihapus.', route('lab.labs.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus lab: ' . $e->getMessage());
-        }
+        $this->labService->deleteLab($lab);
+        return jsonSuccess('Lab berhasil dihapus.', route('lab.labs.index'));
     }
 }

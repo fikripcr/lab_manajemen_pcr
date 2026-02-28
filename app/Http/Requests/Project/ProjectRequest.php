@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Project;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class ProjectRequest extends FormRequest
+class ProjectRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -41,7 +41,7 @@ class ProjectRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'project_name.required'      => 'Nama proyek wajib diisi',
             'project_name.max'           => 'Nama proyek maksimal 200 karakter',
             'start_date.required'        => 'Tanggal mulai wajib diisi',
@@ -51,6 +51,6 @@ class ProjectRequest extends FormRequest
             'end_date.after_or_equal'    => 'Tanggal akhir harus setelah atau sama dengan tanggal mulai',
             'status.required'            => 'Status wajib diisi',
             'status.in'                  => 'Status tidak valid',
-        ];
+        ]);
     }
 }

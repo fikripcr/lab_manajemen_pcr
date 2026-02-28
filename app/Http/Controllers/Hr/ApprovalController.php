@@ -5,13 +5,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Hr\RiwayatApproval;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class ApprovalController extends Controller
 {
-    public function __construct(protected \App\Services\Hr\PegawaiService $pegawaiService)
+    public function __construct(protected PegawaiService $pegawaiService)
     {}
 
     public function index(Request $request)
@@ -48,24 +47,16 @@ class ApprovalController extends Controller
 
     public function approve($id)
     {
-        try {
-            $this->pegawaiService->approveRequest($id);
-            return jsonSuccess('Pengajuan berhasil didsetujui.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->approveRequest($id);
+        return jsonSuccess('Pengajuan berhasil didsetujui.');
     }
 
     public function reject(Request $request, $id)
     {
-        try {
-            $reason = $request->input('reason', 'Ditolak tanpa keterangan');
-            $this->pegawaiService->rejectRequest($id, $reason);
+        $reason = $request->input('reason', 'Ditolak tanpa keterangan');
+        $this->pegawaiService->rejectRequest($id, $reason);
 
-            return jsonSuccess('Pengajuan berhasil ditolak.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        return jsonSuccess('Pengajuan berhasil ditolak.');
     }
 
     public function employeeHistory(Pegawai $pegawai)

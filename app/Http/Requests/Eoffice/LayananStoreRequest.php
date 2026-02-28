@@ -3,10 +3,10 @@
 namespace App\Http\Requests\Eoffice;
 
 use App\Models\Eoffice\JenisLayanan;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 use Illuminate\Validation\Validator;
 
-class LayananStoreRequest extends FormRequest
+class LayananStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,7 +36,7 @@ class LayananStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'jenislayanan_id.required' => 'Jenis layanan harus dipilih.',
             'jenislayanan_id.exists'   => 'Jenis layanan tidak ditemukan.',
             'keterangan.max'           => 'Keterangan maksimal 1000 karakter.',

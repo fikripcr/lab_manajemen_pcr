@@ -6,7 +6,6 @@ use App\Http\Requests\Sys\NotificationSendRequest;
 use App\Models\User;
 use App\Notifications\SysTestNotification;
 use App\Services\Sys\NotificationService;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -210,27 +209,22 @@ class NotificationsController extends Controller
             $notification = new $notificationClass();
         }
 
-        try {
-            if ($type === 'email') {
-                // Verify the recipient has an email address
-                if (empty($recipient->email)) {
-                    return jsonError('Recipient does not have an email address.', 400);
-                }
-
-                $recipient->notify($notification);
-                $message = 'Email notification sent successfully to ' . $recipient->email;
-            } else {
-                $recipient->notify($notification);
-                $message = 'Database notification sent successfully to ' . $recipient->name;
+        if ($type === 'email') {
+            // Verify the recipient has an email address
+            if (empty($recipient->email)) {
+                return jsonError('Recipient does not have an email address.', 400);
             }
 
-            // Log the notification sending
-            logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
-
-            return jsonSuccess($message);
-        } catch (Exception $e) {
-            \Log::error('Notification sending failed: ' . $e->getMessage() . ' in file ' . $e->getFile() . ' on line ' . $e->getLine());
-            return jsonError('Failed to send notification: ' . $e->getMessage(), 500);
+            $recipient->notify($notification);
+            $message = 'Email notification sent successfully to ' . $recipient->email;
+        } else {
+            $recipient->notify($notification);
+            $message = 'Database notification sent successfully to ' . $recipient->name;
         }
+
+        // Log the notification sending
+        logActivity('notification', "Notification ({$type}) sent to user: " . $recipient->name . ' (ID: ' . $recipient->id . ') by user: ' . auth()->user()->name . ' (ID: ' . auth()->id() . ')');
+
+        return jsonSuccess($message);
     }
 }

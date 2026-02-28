@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pmb\StoreJenisDokumenRequest;
 use App\Models\Pmb\JenisDokumen;
 use App\Services\Pmb\JenisDokumenService;
-use Exception;
 
 class JenisDokumenController extends Controller
 {
@@ -40,13 +39,8 @@ class JenisDokumenController extends Controller
 
     public function store(StoreJenisDokumenRequest $request)
     {
-        try {
-            $this->jenisDokumenService->createJenisDokumen($request->validated());
-            return jsonSuccess('Jenis Dokumen berhasil ditambahkan.', route('pmb.jenis-dokumen.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan jenis dokumen: ' . $e->getMessage());
-        }
+        $this->jenisDokumenService->createJenisDokumen($request->validated());
+        return jsonSuccess('Jenis Dokumen berhasil ditambahkan.', route('pmb.jenis-dokumen.index'));
     }
 
     public function edit(JenisDokumen $jenisDokumen)
@@ -56,23 +50,13 @@ class JenisDokumenController extends Controller
 
     public function update(StoreJenisDokumenRequest $request, JenisDokumen $jenisDokumen)
     {
-        try {
-            $this->jenisDokumenService->updateJenisDokumen($jenisDokumen, $request->validated());
-            return jsonSuccess('Jenis Dokumen berhasil diperbarui.', route('pmb.jenis-dokumen.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui jenis dokumen: ' . $e->getMessage());
-        }
+        $this->jenisDokumenService->updateJenisDokumen($jenisDokumen, $request->validated());
+        return jsonSuccess('Jenis Dokumen berhasil diperbarui.', route('pmb.jenis-dokumen.index'));
     }
 
     public function destroy(JenisDokumen $jenisDokumen)
     {
-        try {
-            $this->jenisDokumenService->deleteJenisDokumen($jenisDokumen);
-            return jsonSuccess('Jenis Dokumen berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus jenis dokumen: ' . $e->getMessage());
-        }
+        $this->jenisDokumenService->deleteJenisDokumen($jenisDokumen);
+        return jsonSuccess('Jenis Dokumen berhasil dihapus.');
     }
 }

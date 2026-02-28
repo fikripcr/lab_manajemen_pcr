@@ -9,7 +9,6 @@ use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\IndikatorService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -110,48 +109,37 @@ class StandarController extends Controller
 
     public function store(IndikatorRequest $request)
     {
-        try {
-            $data         = $request->validated();
-            $data['type'] = 'standar'; // Force type
+        $data         = $request->validated();
+        $data['type'] = 'standar'; // Force type
 
-            // Handle Assignments Parsing (Org Units)
-            if ($request->has('assignments')) {
-                $syncData = [];
-                foreach ($request->assignments as $unitId => $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
-                    }
+        // Handle Assignments Parsing (Org Units)
+        if ($request->has('assignments')) {
+            $syncData = [];
+            foreach ($request->assignments as $unitId => $val) {
+                if (isset($val['selected']) && $val['selected'] == 1) {
+                    $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                 }
-                $data['org_units'] = $syncData;
             }
-
-            if (isset($data['doksub_ids'])) {
-                $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
-            }
-            if (isset($data['labels'])) {
-                $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
-            }
-
-            $this->indikatorService->createIndikator($data);
-
-            return jsonSuccess('Indikator Standar berhasil dibuat.', route('pemutu.standar.index'));
-
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan indikator standar: ' . $e->getMessage());
+            $data['org_units'] = $syncData;
         }
+
+        if (isset($data['doksub_ids'])) {
+            $data['doksub_ids'] = array_map('decryptIdIfEncrypted', $data['doksub_ids']);
+        }
+        if (isset($data['labels'])) {
+            $data['labels'] = array_map('decryptIdIfEncrypted', $data['labels']);
+        }
+
+        $this->indikatorService->createIndikator($data);
+
+        return jsonSuccess('Indikator Standar berhasil dibuat.', route('pemutu.standar.index'));
     }
 
     public function destroy(Indikator $indikator)
     {
-        try {
-            $this->indikatorService->deleteIndikator($indikator->indikator_id);
+        $this->indikatorService->deleteIndikator($indikator->indikator_id);
 
-            return jsonSuccess('Indikator Standar berhasil dihapus.', route('pemutu.standar.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus indikator standar: ' . $e->getMessage());
-        }
+        return jsonSuccess('Indikator Standar berhasil dihapus.', route('pemutu.standar.index'));
     }
 
     public function assign(Indikator $indikator)
@@ -167,25 +155,20 @@ class StandarController extends Controller
 
     public function storeAssignment(StandarAssignmentRequest $request, Indikator $indikator)
     {
-        try {
-            $validated = $request->validated();
-            $syncData  = [];
-            if (isset($validated['assignments'])) {
-                foreach ($validated['assignments'] as $unitId => $val) {
-                    if (isset($val['selected']) && $val['selected'] == 1) {
-                        $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
-                    }
+        $validated = $request->validated();
+        $syncData  = [];
+        if (isset($validated['assignments'])) {
+            foreach ($validated['assignments'] as $unitId => $val) {
+                if (isset($val['selected']) && $val['selected'] == 1) {
+                    $syncData[decryptIdIfEncrypted($unitId)] = ['target' => $val['target'] ?? null];
                 }
             }
-
-            $indikator->orgUnits()->sync($syncData);
-
-            logActivity('pemutu', "Memperbarui penugasan unit kerja untuk indikator: {$indikator->no_indikator}");
-
-            return jsonSuccess('Penugasan Unit Kerja berhasil disimpan.', route('pemutu.standar.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan penugasan unit: ' . $e->getMessage());
         }
+
+        $indikator->orgUnits()->sync($syncData);
+
+        logActivity('pemutu', "Memperbarui penugasan unit kerja untuk indikator: {$indikator->no_indikator}");
+
+        return jsonSuccess('Penugasan Unit Kerja berhasil disimpan.', route('pemutu.standar.index'));
     }
 }

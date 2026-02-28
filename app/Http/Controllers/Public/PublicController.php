@@ -6,6 +6,7 @@ use App\Models\Lab\MataKuliah;
 use App\Models\Lab\Pengumuman;
 use App\Models\Lab\RequestSoftware;
 use App\Models\Shared\Slideshow;
+use App\Http\Requests\Public\PublicSoftwareRequest;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -55,24 +56,19 @@ class PublicController extends Controller
         return view('pages.public.request-software', compact('mataKuliahs'));
     }
 
-    public function storeSoftwareRequest(Request $request)
+    public function storeSoftwareRequest(PublicSoftwareRequest $request)
     {
-        $request->validate([
-            'nama_software'     => 'required|string|max:255',
-            'alasan'            => 'required|string',
-            'mata_kuliah_ids'   => 'array',
-            'mata_kuliah_ids.*' => 'exists:lab_mata_kuliahs,mata_kuliah_id',
-        ]);
+        $validated = $request->validated();
 
         $softwareRequest = RequestSoftware::create([
-            'nama_software' => $request->nama_software,
-            'alasan'        => $request->alasan,
+            'nama_software' => $validated['nama_software'],
+            'alasan'        => $validated['alasan'],
             'status'        => 'Pending', // waiting for approval
         ]);
 
         // Attach selected mata kuliah if provided
-        if ($request->mata_kuliah_ids) {
-            $softwareRequest->mataKuliahs()->attach($request->mata_kuliah_ids);
+        if (isset($validated['mata_kuliah_ids'])) {
+            $softwareRequest->mataKuliahs()->attach($validated['mata_kuliah_ids']);
         }
 
         if ($request->wantsJson()) {

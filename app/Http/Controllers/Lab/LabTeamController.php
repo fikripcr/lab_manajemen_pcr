@@ -6,7 +6,6 @@ use App\Http\Requests\Lab\LabTeamStoreRequest;
 use App\Models\Lab\Lab;
 use App\Models\Lab\LabTeam;
 use App\Services\Lab\LabTeamService;
-use Exception;
 use Illuminate\Http\Request;
 
 class LabTeamController extends Controller
@@ -29,15 +28,10 @@ class LabTeamController extends Controller
 
     public function store(LabTeamStoreRequest $request, Lab $lab)
     {
-        try {
-            $validated = $request->validated();
+        $validated = $request->validated();
 
-            $this->labTeamService->assignUserToLab($lab->lab_id, $validated);
-            return jsonSuccess('Anggota tim berhasil ditambahkan ke lab.', route('lab.labs.teams.index', $lab->encrypted_lab_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan anggota tim: ' . $e->getMessage());
-        }
+        $this->labTeamService->assignUserToLab($lab->lab_id, $validated);
+        return jsonSuccess('Anggota tim berhasil ditambahkan ke lab.', route('lab.labs.teams.index', $lab->encrypted_lab_id));
     }
 
     public function edit(Lab $lab, LabTeam $team)
@@ -48,24 +42,14 @@ class LabTeamController extends Controller
 
     public function update(LabTeamStoreRequest $request, Lab $lab, LabTeam $team)
     {
-        try {
-            $this->labTeamService->updateLabTeam($team, $request->validated());
-            return jsonSuccess('Anggota tim berhasil diperbarui.', route('lab.labs.teams.index', $lab->encrypted_lab_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui anggota tim: ' . $e->getMessage());
-        }
+        $this->labTeamService->updateLabTeam($team, $request->validated());
+        return jsonSuccess('Anggota tim berhasil diperbarui.', route('lab.labs.teams.index', $lab->encrypted_lab_id));
     }
 
     public function destroy(Lab $lab, LabTeam $team)
     {
-        try {
-            $this->labTeamService->removeUserFromLab($lab->lab_id, $team);
-            return jsonSuccess('Anggota tim berhasil dinonaktifkan dari lab.', route('lab.labs.teams.index', $lab->encrypted_lab_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menonaktifkan anggota tim: ' . $e->getMessage());
-        }
+        $this->labTeamService->removeUserFromLab($lab->lab_id, $team);
+        return jsonSuccess('Anggota tim berhasil dinonaktifkan dari lab.', route('lab.labs.teams.index', $lab->encrypted_lab_id));
     }
 
     public function getUsers(Request $request, Lab $lab)

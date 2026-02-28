@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JenisShiftRequest;
 use App\Models\Hr\JenisShift;
 use App\Services\Hr\JenisShiftService;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class JenisShiftController extends Controller
@@ -46,12 +45,8 @@ class JenisShiftController extends Controller
 
     public function store(JenisShiftRequest $request)
     {
-        try {
-            $this->jenisShiftService->create($request->validated());
-            return jsonSuccess('Jenis Shift created successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->jenisShiftService->create($request->validated());
+        return jsonSuccess('Jenis Shift created successfully.');
     }
 
     public function edit(JenisShift $jenisShift)
@@ -61,21 +56,13 @@ class JenisShiftController extends Controller
 
     public function update(JenisShiftRequest $request, JenisShift $jenisShift)
     {
-        try {
-            $this->jenisShiftService->update($jenisShift, $request->validated());
-            return jsonSuccess('Jenis Shift updated successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->jenisShiftService->update($jenisShift, $request->validated());
+        return jsonSuccess('Jenis Shift updated successfully.');
     }
 
     public function destroy(JenisShift $jenisShift)
     {
-        try {
-            $jenisShift->delete();
-            return jsonSuccess('Jenis Shift deleted successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $jenisShift->delete();
+        return jsonSuccess('Jenis Shift deleted successfully.');
     }
 }

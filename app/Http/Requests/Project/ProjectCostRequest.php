@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Project;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class ProjectCostRequest extends FormRequest
+class ProjectCostRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -25,11 +25,10 @@ class ProjectCostRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
-            'cost_desc.required' => 'Description is required.',
-            'cost_type.required' => 'Cost type is required.',
-            'amount.required'    => 'Amount is required.',
-            'cost_date.required' => 'Date is required.',
-        ];
+        return array_merge(parent::messages(), [
+            'cost_desc.required' => 'Judul biaya wajib diisi.', // Changed from 'Description is required.'
+            'amount.required'    => 'Jumlah biaya wajib diisi.', // Overwrites original 'Amount is required.'
+            'cost_date.required' => 'Tanggal wajib diisi.',     // Changed from 'Date is required.'
+        ]);
     }
 }

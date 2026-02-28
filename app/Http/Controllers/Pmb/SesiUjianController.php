@@ -6,7 +6,6 @@ use App\Http\Requests\Pmb\StoreSesiRequest;
 use App\Models\Pmb\Periode;
 use App\Models\Pmb\SesiUjian;
 use App\Services\Pmb\SesiUjianService;
-use Exception;
 
 class SesiUjianController extends Controller
 {
@@ -54,13 +53,8 @@ class SesiUjianController extends Controller
 
     public function store(StoreSesiRequest $request)
     {
-        try {
-            $this->sesiUjianService->store($request->validated());
-            return jsonSuccess('Sesi ujian berhasil dibuat.', route('pmb.sesi-ujian.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat sesi ujian: ' . $e->getMessage());
-        }
+        $this->sesiUjianService->store($request->validated());
+        return jsonSuccess('Sesi ujian berhasil dibuat.', route('pmb.sesi-ujian.index'));
     }
 
     public function edit(SesiUjian $sesi)
@@ -71,23 +65,13 @@ class SesiUjianController extends Controller
 
     public function update(StoreSesiRequest $request, SesiUjian $sesi)
     {
-        try {
-            $this->sesiUjianService->update($sesi, $request->validated());
-            return jsonSuccess('Sesi ujian berhasil diperbarui.', route('pmb.sesi-ujian.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui sesi ujian: ' . $e->getMessage());
-        }
+        $this->sesiUjianService->update($sesi, $request->validated());
+        return jsonSuccess('Sesi ujian berhasil diperbarui.', route('pmb.sesi-ujian.index'));
     }
 
     public function destroy(SesiUjian $sesi)
     {
-        try {
-            $this->sesiUjianService->delete($sesi);
-            return jsonSuccess('Sesi ujian berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus sesi ujian: ' . $e->getMessage());
-        }
+        $this->sesiUjianService->delete($sesi);
+        return jsonSuccess('Sesi ujian berhasil dihapus.');
     }
 }

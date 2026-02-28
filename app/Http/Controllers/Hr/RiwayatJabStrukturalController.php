@@ -8,7 +8,6 @@ use App\Models\Hr\RiwayatJabStruktural;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatJabStrukturalController extends Controller
@@ -35,13 +34,9 @@ class RiwayatJabStrukturalController extends Controller
 
     public function store(RiwayatJabStrukturalRequest $request, Pegawai $pegawai)
     {
-        try {
-            $headerCol = 'latest_riwayatjabstruktural_id';
-            $this->pegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
-            return jsonSuccess('Perubahan Jabatan Struktural berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $headerCol = 'latest_riwayatjabstruktural_id';
+        $this->pegawaiService->requestChange($pegawai, RiwayatJabStruktural::class, $request->validated(), $headerCol);
+        return jsonSuccess('Perubahan Jabatan Struktural berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function data()

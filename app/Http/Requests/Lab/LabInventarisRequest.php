@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class LabInventarisRequest extends FormRequest
+class LabInventarisRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -40,13 +40,18 @@ class LabInventarisRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'inventaris_id.required' => 'Inventaris harus dipilih.',
             'inventaris_id.exists'   => 'Inventaris tidak ditemukan.',
             'no_series.string'       => 'Nomor seri harus berupa string.',
             'no_series.max'          => 'Nomor seri maksimal 255 karakter.',
             'keterangan.string'      => 'Keterangan harus berupa string.',
             'keterangan.max'         => 'Keterangan maksimal 1000 karakter.',
-        ];
+            'barcode.required' => 'Barcode inventaris harus diisi.',
+            'barcode.unique'   => 'Barcode inventaris sudah terdaftar.',
+            'name.required'    => 'Nama barang harus diisi.',
+            'lab_id.required'  => 'Lab harus dipilih.',
+            'status.required'  => 'Status barang harus dipilih.',
+        ]);
     }
 }

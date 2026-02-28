@@ -7,7 +7,6 @@ use App\Models\Hr\Keluarga;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class KeluargaController extends Controller
@@ -28,12 +27,8 @@ class KeluargaController extends Controller
 
     public function store(KeluargaRequest $request, Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->requestAddition($pegawai, Keluarga::class, $request->validated());
-            return jsonSuccess('Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestAddition($pegawai, Keluarga::class, $request->validated());
+        return jsonSuccess('Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
     public function edit(Pegawai $pegawai, Keluarga $keluarga)
     {
@@ -42,22 +37,14 @@ class KeluargaController extends Controller
 
     public function update(KeluargaRequest $request, Pegawai $pegawai, Keluarga $keluarga)
     {
-        try {
-            $this->pegawaiService->requestChange($pegawai, Keluarga::class, $request->validated(), null, $keluarga);
-            return jsonSuccess('Perubahan Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestChange($pegawai, Keluarga::class, $request->validated(), null, $keluarga);
+        return jsonSuccess('Perubahan Data Keluarga berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function destroy(Pegawai $pegawai, Keluarga $keluarga)
     {
-        try {
-            $keluarga->delete();
-            return jsonSuccess('Data Keluarga berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $keluarga->delete();
+        return jsonSuccess('Data Keluarga berhasil dihapus.');
     }
 
     public function data()

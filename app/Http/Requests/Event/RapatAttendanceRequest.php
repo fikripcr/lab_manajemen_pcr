@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Event;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class RapatAttendanceRequest extends FormRequest
+class RapatAttendanceRequest extends BaseRequest
 {
     public function authorize(): bool
     {

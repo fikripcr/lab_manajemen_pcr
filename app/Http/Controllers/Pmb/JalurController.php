@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pmb\StoreJalurRequest;
 use App\Models\Pmb\Jalur;
 use App\Services\Pmb\JalurService;
-use Exception;
 
 class JalurController extends Controller
 {
@@ -45,13 +44,8 @@ class JalurController extends Controller
 
     public function store(StoreJalurRequest $request)
     {
-        try {
-            $this->jalurService->createJalur($request->validated());
-            return jsonSuccess('Jalur berhasil ditambahkan.', route('pmb.jalur.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan jalur: ' . $e->getMessage());
-        }
+        $this->jalurService->createJalur($request->validated());
+        return jsonSuccess('Jalur berhasil ditambahkan.', route('pmb.jalur.index'));
     }
 
     public function edit(Jalur $jalur)
@@ -61,23 +55,13 @@ class JalurController extends Controller
 
     public function update(StoreJalurRequest $request, Jalur $jalur)
     {
-        try {
-            $this->jalurService->updateJalur($jalur, $request->validated());
-            return jsonSuccess('Jalur berhasil diperbarui.', route('pmb.jalur.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui jalur: ' . $e->getMessage());
-        }
+        $this->jalurService->updateJalur($jalur, $request->validated());
+        return jsonSuccess('Jalur berhasil diperbarui.', route('pmb.jalur.index'));
     }
 
     public function destroy(Jalur $jalur)
     {
-        try {
-            $this->jalurService->deleteJalur($jalur);
-            return jsonSuccess('Jalur berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus jalur: ' . $e->getMessage());
-        }
+        $this->jalurService->deleteJalur($jalur);
+        return jsonSuccess('Jalur berhasil dihapus.');
     }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PerizinanStoreRequest extends FormRequest
+class PerizinanStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -37,20 +37,12 @@ class PerizinanStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'jenisizin_id.required'         => 'Jenis izin harus dipilih.',
-            'jenisizin_id.exists'           => 'Jenis izin tidak ditemukan.',
-            'pengusul.required'             => 'Pengusul harus dipilih.',
-            'pengusul.exists'               => 'Pengusul tidak ditemukan.',
-            'pekerjaan_ditinggalkan.string' => 'Pekerjaan yang ditinggalkan harus berupa string.',
-            'pekerjaan_ditinggalkan.max'    => 'Pekerjaan yang ditinggalkan maksimal 500 karakter.',
-            'tgl_mulai.required'            => 'Tanggal mulai harus diisi.',
-            'tgl_mulai.date'                => 'Tanggal mulai harus berupa tanggal.',
-            'tgl_selesai.required'          => 'Tanggal selesai harus diisi.',
-            'tgl_selesai.date'              => 'Tanggal selesai harus berupa tanggal.',
-            'tgl_selesai.after_or_equal'    => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
-            'keterangan.string'             => 'Keterangan harus berupa string.',
-            'keterangan.max'                => 'Keterangan maksimal 1000 karakter.',
-        ];
+        return array_merge(parent::messages(), [
+            'perizinan_jenis_id.required' => 'Jenis izin wajib dipilih.',
+            'tgl_mulai.required'          => 'Tanggal mulai wajib diisi.',
+            'tgl_selesai.required'        => 'Tanggal selesai wajib diisi.',
+            'tgl_selesai.after_or_equal'  => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
+            'alasan.required'             => 'Alasan wajib diisi.',
+        ]);
     }
 }

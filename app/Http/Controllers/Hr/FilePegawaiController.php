@@ -6,7 +6,6 @@ use App\Models\Hr\FilePegawai;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\FilePegawaiStoreRequest;
 use App\Services\Hr\FilePegawaiService;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class FilePegawaiController extends Controller
@@ -52,15 +51,10 @@ class FilePegawaiController extends Controller
      */
     public function store(FilePegawaiStoreRequest $request)
     {
+        $pegawaiId = decryptIdIfEncrypted($request->pegawai_id);
+        $this->filePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
 
-        try {
-            $pegawaiId = decryptIdIfEncrypted($request->pegawai_id);
-            $this->filePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
-
-            return jsonSuccess('File berhasil diunggah');
-        } catch (Exception $e) {
-            return jsonError('Gagal mengunggah file: ' . $e->getMessage());
-        }
+        return jsonSuccess('File berhasil diunggah');
     }
 
     /**
@@ -68,12 +62,8 @@ class FilePegawaiController extends Controller
      */
     public function destroy(FilePegawai $file)
     {
-        try {
-            $this->filePegawaiService->deleteFile($file->filepegawai_id);
+        $this->filePegawaiService->deleteFile($file->filepegawai_id);
 
-            return jsonSuccess('File berhasil dihapus');
-        } catch (Exception $e) {
-            return jsonError('Gagal menghapus file: ' . $e->getMessage());
-        }
+        return jsonSuccess('File berhasil dihapus');
     }
 }

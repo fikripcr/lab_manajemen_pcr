@@ -6,7 +6,6 @@ use App\Http\Requests\Cbt\StoreJadwalRequest;
 use App\Models\Cbt\JadwalUjian;
 use App\Models\Cbt\PaketUjian;
 use App\Services\Cbt\JadwalUjianService;
-use Exception;
 use Illuminate\Http\Request;
 
 class JadwalUjianController extends Controller
@@ -123,13 +122,8 @@ class JadwalUjianController extends Controller
 
     public function store(StoreJadwalRequest $request)
     {
-        try {
-            $this->JadwalUjianService->store($request->validated());
-            return jsonSuccess('Jadwal ujian berhasil dibuat.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat jadwal ujian.');
-        }
+        $this->JadwalUjianService->store($request->validated());
+        return jsonSuccess('Jadwal ujian berhasil dibuat.');
     }
 
     public function edit(JadwalUjian $jadwal)
@@ -140,46 +134,26 @@ class JadwalUjianController extends Controller
 
     public function update(StoreJadwalRequest $request, JadwalUjian $jadwal)
     {
-        try {
-            $jadwal->update($request->validated());
-            logActivity('cbt', "Memperbarui jadwal ujian: {$jadwal->nama_kegiatan}", $jadwal);
-            return jsonSuccess('Jadwal ujian berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui jadwal ujian.');
-        }
+        $jadwal->update($request->validated());
+        logActivity('cbt', "Memperbarui jadwal ujian: {$jadwal->nama_kegiatan}", $jadwal);
+        return jsonSuccess('Jadwal ujian berhasil diperbarui.');
     }
 
     public function generateToken(JadwalUjian $jadwal)
     {
-        try {
-            $this->JadwalUjianService->generateToken($jadwal);
-            return jsonSuccess('Token baru berhasil digenerate: ' . $jadwal->token_ujian);
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal generate token.');
-        }
+        $this->JadwalUjianService->generateToken($jadwal);
+        return jsonSuccess('Token baru berhasil digenerate: ' . $jadwal->token_ujian);
     }
 
     public function toggleToken(JadwalUjian $jadwal)
     {
-        try {
-            $this->JadwalUjianService->toggleToken($jadwal);
-            return jsonSuccess('Status token berhasil diubah.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengubah status token.');
-        }
+        $this->JadwalUjianService->toggleToken($jadwal);
+        return jsonSuccess('Status token berhasil diubah.');
     }
 
     public function destroy(JadwalUjian $jadwal)
     {
-        try {
-            $this->JadwalUjianService->delete($jadwal);
-            return jsonSuccess('Jadwal ujian berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus jadwal ujian.');
-        }
+        $this->JadwalUjianService->delete($jadwal);
+        return jsonSuccess('Jadwal ujian berhasil dihapus.');
     }
 }

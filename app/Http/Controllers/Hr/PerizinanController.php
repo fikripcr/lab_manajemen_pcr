@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\PerizinanApproveRequest;
 use App\Http\Requests\Hr\PerizinanRequest;
 use App\Models\Hr\JenisIzin;
 use App\Models\Hr\Perizinan;
@@ -13,7 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 class PerizinanController extends Controller
 {
     public function __construct(
-        protected \App\Services\Hr\PerizinanService $perizinanService
+        protected PerizinanService $perizinanService
     ) {}
 
     public function index(Request $request)
@@ -90,14 +91,9 @@ class PerizinanController extends Controller
 
     public function store(PerizinanRequest $request)
     {
-        try {
-            $this->perizinanService->store($request->validated());
+        $this->perizinanService->store($request->validated());
 
-            return jsonSuccess('Perizinan berhasil dibuat.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat perizinan: ' . $e->getMessage());
-        }
+        return jsonSuccess('Perizinan berhasil dibuat.');
     }
 
     public function show(Perizinan $perizinan)
@@ -120,14 +116,8 @@ class PerizinanController extends Controller
             return jsonError('Perizinan tidak dapat diubah karena sudah diproses.');
         }
 
-        try {
-            $this->perizinanService->update($perizinan, $request->validated());
-
-            return jsonSuccess('Perizinan berhasil diperbarui.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui perizinan: ' . $e->getMessage());
-        }
+        $this->perizinanService->update($perizinan, $request->validated());
+        return jsonSuccess('Perizinan berhasil diperbarui.');
     }
 
     public function destroy(Perizinan $perizinan)
@@ -136,41 +126,24 @@ class PerizinanController extends Controller
             return jsonError('Perizinan tidak dapat dihapus karena sudah diproses.');
         }
 
-        try {
-            $perizinan->delete();
+        $perizinan->delete();
 
-            return jsonSuccess('Perizinan berhasil dihapus.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus perizinan: ' . $e->getMessage());
-        }
+        return jsonSuccess('Perizinan berhasil dihapus.');
     }
 
     /**
      * Approve perizinan
      */
-    public function approve(Request $request, Perizinan $perizinan)
+    public function approve(PerizinanApproveRequest $request, Perizinan $perizinan)
     {
-        try {
-            $validated = $request->validate([
-                'status'        => 'required|in:Approved,Rejected,Pending',
-                'pejabat'       => 'required|string|max:255',
-                'jenis_jabatan' => 'required|string|max:255',
-                'keterangan'    => 'nullable|string',
-            ]);
+        $this->perizinanService->approve($perizinan, $request->validated());
 
-            $this->perizinanService->approve($perizinan, $validated);
+        $statusText = [
+            'Approved' => 'disetujui',
+            'Rejected' => 'ditolak',
+            'Pending'  => 'ditangguhkan',
+        ];
 
-            $statusText = [
-                'Approved' => 'disetujui',
-                'Rejected' => 'ditolak',
-                'Pending'  => 'ditangguhkan',
-            ];
-
-            return jsonSuccess('Perizinan berhasil di-' . ($statusText[$validated['status']] ?? 'proses'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memproses approval: ' . $e->getMessage());
-        }
+        return jsonSuccess('Perizinan berhasil di-' . ($statusText[$request->status] ?? 'proses'));
     }
 }

@@ -6,7 +6,6 @@ use App\Http\Requests\Eoffice\JenisLayananPeriodeStoreRequest;
 use App\Models\Eoffice\JenisLayanan;
 use App\Models\Eoffice\JenisLayananPeriode;
 use App\Services\Eoffice\JenisLayananPeriodeService;
-use Exception;
 
 class JenisLayananPeriodeController extends Controller
 {
@@ -35,12 +34,8 @@ class JenisLayananPeriodeController extends Controller
         $validated                    = $request->validated();
         $validated['jenislayanan_id'] = $jenisLayanan->jenislayanan_id;
 
-        try {
-            $this->jenisLayananPeriodeService->createPeriode($validated);
-            return jsonSuccess('Periode berhasil dibuat.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->jenisLayananPeriodeService->createPeriode($validated);
+        return jsonSuccess('Periode berhasil dibuat.');
     }
 
     /**
@@ -50,12 +45,8 @@ class JenisLayananPeriodeController extends Controller
     {
         $validated = $request->validated();
 
-        try {
-            $this->jenisLayananPeriodeService->update($periode->jlperiode_id, $validated);
-            return jsonSuccess('Periode berhasil diperbarui.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->jenisLayananPeriodeService->update($periode->jlperiode_id, $validated);
+        return jsonSuccess('Periode berhasil diperbarui.');
     }
 
     /**
@@ -63,12 +54,8 @@ class JenisLayananPeriodeController extends Controller
      */
     public function destroy(JenisLayananPeriode $periode)
     {
-        try {
-            $this->jenisLayananPeriodeService->destroy($periode->jlperiode_id);
-            return jsonSuccess('Periode berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->jenisLayananPeriodeService->destroy($periode->jlperiode_id);
+        return jsonSuccess('Periode berhasil dihapus.');
     }
 
     /**

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Lab;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Lab\SoftwareApprovalRequest;
 use App\Http\Requests\Lab\SoftwareRequest;
 use App\Models\Lab\MataKuliah;
 use App\Models\Lab\PeriodSoftRequest;
@@ -61,14 +62,9 @@ class SoftwareRequestController extends Controller
      */
     public function store(SoftwareRequest $request)
     {
-        try {
-            $this->softwareRequestService->createRequest($request->validated());
+        $this->softwareRequestService->createRequest($request->validated());
 
-            return jsonSuccess('Permintaan software berhasil dibuat.', \route('lab.software-requests.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat permintaan software: ' . $e->getMessage());
-        }
+        return jsonSuccess('Permintaan software berhasil dibuat.', \route('lab.software-requests.index'));
     }
 
     public function paginate(Request $request)
@@ -135,22 +131,11 @@ class SoftwareRequestController extends Controller
     /**
      * Approve Request
      */
-    public function approve(Request $request, RequestSoftware $requestSoftware)
+    public function approve(SoftwareApprovalRequest $request, RequestSoftware $requestSoftware)
     {
-        $validated = $request->validate([
-            'status'     => 'required|in:approved,rejected,tangguhkan',
-            'pejabat'    => 'required|string|max:191',
-            'keterangan' => 'nullable|string',
-        ]);
+        $this->softwareRequestService->approveRequest($requestSoftware, $request->validated());
 
-        try {
-            $this->softwareRequestService->approveRequest($requestSoftware, $validated);
-
-            return jsonSuccess('Status permintaan software berhasil diperbarui.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui status: ' . $e->getMessage());
-        }
+        return jsonSuccess('Status permintaan software berhasil diperbarui.');
     }
 
     /**
@@ -192,13 +177,8 @@ class SoftwareRequestController extends Controller
      */
     public function update(SoftwareRequest $request, RequestSoftware $requestSoftware)
     {
-        try {
-            $this->softwareRequestService->updateRequest($requestSoftware, $request->validated());
+        $this->softwareRequestService->updateRequest($requestSoftware, $request->validated());
 
-            return jsonSuccess('Status permintaan software berhasil diperbarui.', \route('lab.software-requests.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui permintaan software: ' . $e->getMessage());
-        }
+        return jsonSuccess('Status permintaan software berhasil diperbarui.', \route('lab.software-requests.index'));
     }
 }

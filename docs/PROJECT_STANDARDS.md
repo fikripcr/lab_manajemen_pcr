@@ -18,7 +18,8 @@ Dokumen ini adalah referensi teknis mendalam (*Single Source of Truth*) untuk se
    - [B. Route Model Binding & Security](#c-route-model-binding--security-encrypted-id)
    - [C. Validation (Form Requests)](#d-validation-form-requests)
    - [D. Model Traits & Best Practices](#e-model-traits--best-practices)
-   - [E. Responses & Error Handling](#f-responses-global-helpers--error-handling)
+   - [E. Responses & Global Error Handling](#f-responses-global-helpers--global-error-handling)
+   - [F. Centralized Venezuelan Validation (Bahasa Indonesia)](#g-centralized-indonesian-validation)
 
 2. [Frontend & UI Standardization](#2-frontend--ui-standardization)
    - [A. Layout Structure](#a-layout-structure-multi-context)
@@ -388,9 +389,27 @@ class CreateUserRequest extends FormRequest
 
     public function messages(): array
     {
-        return validation_messages_id(); // Use Indonesian messages
+        return validation_messages_id(); // Use Indonesian messages from SysHelper
     }
 }
+```
+
+#### ✅ BaseRequest Usage
+Gunakan `BaseRequest` sebagai parent class untuk semua `FormRequest` baru agar otomatis menggunakan pesan validasi Bahasa Indonesia:
+
+```php
+// app/Http/Requests/BaseRequest.php
+abstract class BaseRequest extends FormRequest {
+    public function messages(): array {
+        return validation_messages_id();
+    }
+}
+
+// app/Http/Requests/Sys/UserRequest.php
+class UserRequest extends BaseRequest {
+    public function rules(): array { ... }
+}
+```
 ```
 
 #### Controller Integration
@@ -454,9 +473,41 @@ DB::transaction(function() {
 });
 ```
 
-### F. Responses (Global Helpers & Error Handling)
+### F. Responses (Global Helpers & Global Error Handling)
 
-Seluruh aksi di Controller **WAJIB** dibungkus dalam blok `try-catch`.
+Seluruh penanganan error di aplikasi telah **disentralisasi** melalui `bootstrap/app.php`. 
+
+> [!IMPORTANT]
+> **HINDARI** penggunaan blok `try-catch` manual di Controller hanya untuk `logError` atau `jsonError` standar. Exception yang tidak ditangkap akan otomatis dihandle secara global.
+
+#### Centralized Error Logic (`bootstrap/app.php`)
+Handler global otomatis melakukan:
+1. **Logging**: Memanggil `logError()` (ke tabel `sys_error_log`) untuk setiap exception.
+2. **AJAX/JSON Response**: Mengembalikan `jsonError()` jika request mengharapkan JSON/AJAX.
+3. **HTTP Redirect**: Melakukan `back()->withInput()->with('error', ...)` untuk request web biasa.
+4. **Activity Log**: Tetap mencatat aktivitas jika diperlukan.
+
+#### Standard Response Usage
+```php
+// ✅ BENAR - Controller lean, biarkan handler tangkap exception
+public function store(UserRequest $request)
+{
+    $this->userService->createUser($request->validated());
+    return jsonSuccess('User created', route('users.index'));
+}
+
+// ❌ SALAH - Jangan pakai try-catch manual jika hanya untuk logging standar
+public function store(UserRequest $request)
+{
+    try {
+        $this->userService->createUser($request->validated());
+        return jsonSuccess('User created', route('users.index'));
+    } catch (\Exception $e) {
+        logError($e);
+        return jsonError($e->getMessage());
+    }
+}
+```
 
 #### JSON Response Helpers
 ```php
@@ -469,21 +520,24 @@ jsonSuccess([
     'redirect' => route('users.show', $user),
 ]);
 
-// Error response
-jsonError('User not found', 404);
-
-// Manual response
-jsonResponse(true, 'Success', ['user' => $user], 200, route('users.show'));
+// Error response (Manual error, bukan Exception)
+jsonError('Kredensial tidak valid', 401);
 ```
 
-#### Error Logging
+### G. Centralized Indonesian Validation
+
+Untuk memastikan seluruh pesan validasi menggunakan Bahasa Indonesia yang konsisten, gunakan helper `validation_messages_id()` yang didefinisikan di `SysHelper.php`.
+
+**Cara Penggunaan:**
+1. Semua class Request **WAJIB** extend `App\Http\Requests\BaseRequest`.
+2. Jika perlu menambahkan pesan kustom di luar standar, override method `messages()` dan merge dengan hasil helper:
+
 ```php
-try {
-    $this->userService->createUser($data);
-    return jsonSuccess('User created', route('users.index'));
-} catch (\Exception $e) {
-    logError($e); // Log to ErrorLog model
-    return jsonError($e->getMessage(), 500);
+public function messages(): array
+{
+    return array_merge(parent::messages(), [
+        'email.unique' => 'Alamat email ini sudah terdaftar di sistem kami.',
+    ]);
 }
 ```
 

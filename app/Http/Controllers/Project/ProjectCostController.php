@@ -7,8 +7,6 @@ use App\Http\Requests\Project\ProjectCostRequest;
 use App\Models\Project\Project;
 use App\Models\Project\ProjectCost;
 use App\Services\Project\ProjectService;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectCostController extends Controller
@@ -21,18 +19,13 @@ class ProjectCostController extends Controller
      */
     public function store(ProjectCostRequest $request, Project $project)
     {
-        try {
-            $data = $request->validated();
-            $data['project_id'] = $project->project_id;
-            $data['author_id'] = Auth::id();
-            
-            ProjectCost::create($data);
+        $data = $request->validated();
+        $data['project_id'] = $project->project_id;
+        $data['author_id'] = Auth::id();
+        
+        ProjectCost::create($data);
 
-            return jsonSuccess('Cost recorded successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to record cost: ' . $e->getMessage());
-        }
+        return jsonSuccess('Cost recorded successfully');
     }
 
     /**
@@ -40,14 +33,9 @@ class ProjectCostController extends Controller
      */
     public function update(ProjectCostRequest $request, Project $project, ProjectCost $cost)
     {
-        try {
-            $cost->update($request->validated());
+        $cost->update($request->validated());
 
-            return jsonSuccess('Cost updated successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to update cost: ' . $e->getMessage());
-        }
+        return jsonSuccess('Cost updated successfully');
     }
 
     /**
@@ -55,14 +43,9 @@ class ProjectCostController extends Controller
      */
     public function destroy(Project $project, ProjectCost $cost)
     {
-        try {
-            $cost->delete();
+        $cost->delete();
 
-            return jsonSuccess('Cost deleted successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to delete cost: ' . $e->getMessage());
-        }
+        return jsonSuccess('Cost deleted successfully');
     }
 
     /**

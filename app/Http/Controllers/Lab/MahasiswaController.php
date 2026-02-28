@@ -6,7 +6,6 @@ use App\Http\Requests\Lab\MahasiswaRequest;
 use App\Models\Lab\Mahasiswa;
 use App\Services\Lab\MahasiswaService;
 use App\Services\Shared\StrukturOrganisasiService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -78,13 +77,8 @@ class MahasiswaController extends Controller
 
     public function store(MahasiswaRequest $request)
     {
-        try {
-            $this->mahasiswaService->createMahasiswa($request->validated());
-            return jsonSuccess('Data Mahasiswa berhasil ditambahkan.', route('lab.mahasiswa.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan mahasiswa: ' . $e->getMessage());
-        }
+        $this->mahasiswaService->createMahasiswa($request->validated());
+        return jsonSuccess('Data Mahasiswa berhasil ditambahkan.', route('lab.mahasiswa.index'));
     }
 
     public function edit(Mahasiswa $mahasiswa)
@@ -98,24 +92,14 @@ class MahasiswaController extends Controller
 
     public function update(MahasiswaRequest $request, Mahasiswa $mahasiswa)
     {
-        try {
-            $this->mahasiswaService->updateMahasiswa($mahasiswa, $request->validated());
-            return jsonSuccess('Data Mahasiswa berhasil diperbarui.', route('lab.mahasiswa.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui mahasiswa: ' . $e->getMessage());
-        }
+        $this->mahasiswaService->updateMahasiswa($mahasiswa, $request->validated());
+        return jsonSuccess('Data Mahasiswa berhasil diperbarui.', route('lab.mahasiswa.index'));
     }
 
     public function destroy(Mahasiswa $mahasiswa)
     {
-        try {
-            $this->mahasiswaService->deleteMahasiswa($mahasiswa);
-            return jsonSuccess('Data Mahasiswa berhasil dihapus.', route('lab.mahasiswa.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus mahasiswa: ' . $e->getMessage());
-        }
+        $this->mahasiswaService->deleteMahasiswa($mahasiswa);
+        return jsonSuccess('Data Mahasiswa berhasil dihapus.', route('lab.mahasiswa.index'));
     }
 
     /**
@@ -123,36 +107,31 @@ class MahasiswaController extends Controller
      */
     public function generateUser(Mahasiswa $mahasiswa)
     {
-        try {
-            if ($mahasiswa->user) {
-                return jsonError('Mahasiswa ini sudah memiliki user.');
-            }
-
-            // Generate password default
-            $password = 'password123';
-            
-            // Create user
-            $user = \App\Models\User::create([
-                'name'              => $mahasiswa->nama,
-                'email'             => $mahasiswa->email,
-                'password'          => \Illuminate\Support\Facades\Hash::make($password),
-                'email_verified_at' => now(),
-                'created_by'        => auth()->id() ?? 'system',
-            ]);
-
-            // Link mahasiswa to user
-            $mahasiswa->update(['user_id' => $user->id]);
-
-            // Assign default role
-            $user->assignRole('mahasiswa');
-
-            return jsonSuccess(
-                "User berhasil dibuat untuk {$mahasiswa->nama}.<br>Email: {$mahasiswa->email}<br>Password: {$password}",
-                route('lab.mahasiswa.index')
-            );
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat user: ' . $e->getMessage());
+        if ($mahasiswa->user) {
+            return jsonError('Mahasiswa ini sudah memiliki user.');
         }
+
+        // Generate password default
+        $password = 'password123';
+
+        // Create user
+        $user = \App\Models\User::create([
+            'name'              => $mahasiswa->nama,
+            'email'             => $mahasiswa->email,
+            'password'          => \Illuminate\Support\Facades\Hash::make($password),
+            'email_verified_at' => now(),
+            'created_by'        => auth()->id() ?? 'system',
+        ]);
+
+        // Link mahasiswa to user
+        $mahasiswa->update(['user_id' => $user->id]);
+
+        // Assign default role
+        $user->assignRole('mahasiswa');
+
+        return jsonSuccess(
+            "User berhasil dibuat untuk {$mahasiswa->nama}.<br>Email: {$mahasiswa->email}<br>Password: {$password}",
+            route('lab.mahasiswa.index')
+        );
     }
 }

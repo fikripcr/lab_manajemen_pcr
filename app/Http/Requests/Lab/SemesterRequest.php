@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SemesterRequest extends FormRequest
+class SemesterRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,13 +27,5 @@ class SemesterRequest extends FormRequest
             'end_date'     => 'required|date|after:start_date',
             'is_active'    => 'boolean',
         ];
-    }
-
-    /**
-     * Get custom validation messages.
-     */
-    public function messages(): array
-    {
-        return validation_messages_id();
     }
 }

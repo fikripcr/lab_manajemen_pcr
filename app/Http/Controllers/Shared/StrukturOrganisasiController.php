@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shared\ReorderRequest;
 use App\Http\Requests\Shared\SetAuditeeRequest;
 use App\Http\Requests\Shared\StrukturOrganisasiRequest;
+use App\Models\Shared\StrukturOrganisasi;
 use App\Services\Shared\StrukturOrganisasiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -59,13 +60,8 @@ class StrukturOrganisasiController extends Controller
 
     public function store(StrukturOrganisasiRequest $request)
     {
-        try {
-            $this->strukturOrganisasiService->createOrgUnit($request->validated());
-            return jsonSuccess('Unit Organisasi berhasil ditambahkan.', route('shared.struktur-organisasi.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan unit organisasi: ' . $e->getMessage());
-        }
+        $this->strukturOrganisasiService->createOrgUnit($request->validated());
+        return jsonSuccess('Unit Organisasi berhasil ditambahkan.', route('shared.struktur-organisasi.index'));
     }
 
     public function show(StrukturOrganisasi $orgUnit)
@@ -84,61 +80,36 @@ class StrukturOrganisasiController extends Controller
 
     public function update(StrukturOrganisasiRequest $request, StrukturOrganisasi $orgUnit)
     {
-        try {
-            $this->strukturOrganisasiService->updateOrgUnit($orgUnit, $request->validated());
-            return jsonSuccess('Unit Organisasi berhasil diperbarui.', route('shared.struktur-organisasi.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui unit organisasi: ' . $e->getMessage());
-        }
+        $this->strukturOrganisasiService->updateOrgUnit($orgUnit, $request->validated());
+        return jsonSuccess('Unit Organisasi berhasil diperbarui.', route('shared.struktur-organisasi.index'));
     }
 
     public function destroy(StrukturOrganisasi $orgUnit)
     {
-        try {
-            $this->strukturOrganisasiService->deleteOrgUnit($orgUnit);
-            return jsonSuccess('Unit Organisasi berhasil dihapus.', route('shared.struktur-organisasi.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus unit organisasi: ' . $e->getMessage());
-        }
+        $this->strukturOrganisasiService->deleteOrgUnit($orgUnit);
+        return jsonSuccess('Unit Organisasi berhasil dihapus.', route('shared.struktur-organisasi.index'));
     }
 
     public function reorder(ReorderRequest $request)
     {
-        try {
-            $hierarchy = $request->validated()['hierarchy'] ?? [];
-            if ($hierarchy) {
-                $this->strukturOrganisasiService->reorderUnits($hierarchy);
-                return jsonSuccess('Urutan unit organisasi berhasil diperbarui.');
-            }
-            return jsonError('Data urutan tidak valid.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui urutan: ' . $e->getMessage());
+        $hierarchy = $request->validated()['hierarchy'] ?? [];
+        if ($hierarchy) {
+            $this->strukturOrganisasiService->reorderUnits($hierarchy);
+            return jsonSuccess('Urutan unit organisasi berhasil diperbarui.');
         }
+        return jsonError('Data urutan tidak valid.');
     }
 
     public function toggleStatus(StrukturOrganisasi $orgUnit)
     {
-        try {
-            $unit = $this->strukturOrganisasiService->toggleStatus($orgUnit);
-            return jsonSuccess('Status berhasil diubah.', null, ['is_active' => $unit->is_active]);
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengubah status: ' . $e->getMessage());
-        }
+        $unit = $this->strukturOrganisasiService->toggleStatus($orgUnit);
+        return jsonSuccess('Status berhasil diubah.', null, ['is_active' => $unit->is_active]);
     }
 
     public function setAuditee(SetAuditeeRequest $request, StrukturOrganisasi $orgUnit)
     {
-        try {
-            $validated = $request->validated();
-            $this->strukturOrganisasiService->setAuditee($orgUnit, $validated['auditee_user_id']);
-            return jsonSuccess('Auditee berhasil diset.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyetel auditee: ' . $e->getMessage());
-        }
+        $validated = $request->validated();
+        $this->strukturOrganisasiService->setAuditee($orgUnit, $validated['auditee_user_id']);
+        return jsonSuccess('Auditee berhasil diset.');
     }
 }

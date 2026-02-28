@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class NotificationSendRequest extends FormRequest
+class NotificationSendRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -38,9 +38,10 @@ class NotificationSendRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'type.required' => 'Tipe notifikasi harus diisi.',
             'type.in' => 'Tipe harus database atau email.',
+            'user_id.required' => 'Penerima harus dipilih.',
             'user_id.exists' => 'User tidak ditemukan.',
             'title.required' => 'Judul notifikasi harus diisi.',
             'title.max' => 'Judul maksimal 255 karakter.',
@@ -48,6 +49,6 @@ class NotificationSendRequest extends FormRequest
             'message.max' => 'Pesan maksimal 1000 karakter.',
             'level.in' => 'Level harus info, success, warning, atau error.',
             'icon.max' => 'Icon maksimal 50 karakter.',
-        ];
+        ]);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class LabelRequest extends FormRequest
+class LabelRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

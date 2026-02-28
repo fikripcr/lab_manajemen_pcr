@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\LogPenggunaanPcRequest;
 use App\Models\Lab\LogPenggunaanPc;
 use App\Services\Lab\LogPenggunaanPcService;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -70,16 +69,11 @@ class LogPenggunaanPcController extends Controller
      */
     public function store(LogPenggunaanPcRequest $request)
     {
-        try {
-            $data            = $request->all();
-            $data['user_id'] = Auth::id();
+        $data            = $request->all();
+        $data['user_id'] = Auth::id();
 
-            $this->logPenggunaanPcService->storeLog($data);
+        $this->logPenggunaanPcService->storeLog($data);
 
-            return jsonSuccess('Log berhasil disimpan.', route('lab.log-pc.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan log: ' . $e->getMessage());
-        }
+        return jsonSuccess('Log berhasil disimpan.', route('lab.log-pc.index'));
     }
 }

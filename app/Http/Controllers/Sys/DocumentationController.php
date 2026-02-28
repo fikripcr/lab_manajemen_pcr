@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Sys;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Sys\DocumentationUpdateRequest;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use League\CommonMark\Extension\Table\TableExtension;
@@ -216,31 +215,8 @@ class DocumentationController extends Controller
     /**
      * Update the documentation file
      */
-    public function update(Request $request, $page = 'index')
+    public function update(DocumentationUpdateRequest $request, $page = 'index')
     {
-        // Sanitize the page parameter to prevent directory traversal
-        $page = basename($page);
-
-        // Ensure the file has .md extension and is valid
-        if (!str_ends_with($page, '.md')) {
-            $page .= '.md';
-        }
-
-        // Additional security: Only allow files in docs directory and with expected extensions
-        if (!preg_match('/^[a-zA-Z0-9_-]+\.md$/', $page)) {
-            abort(400, 'Invalid file name');
-        }
-
-        $filePath = $this->docsPath . $page;
-
-        // Check if the file exists and is within the docs directory
-        if (!file_exists($filePath) || strpos(realpath($filePath), realpath($this->docsPath)) !== 0) {
-            abort(404, 'Documentation page not found');
-        }
-
-        $request->validate([
-            'content' => 'required|string'
-        ]);
 
         // Sanitize content to prevent potential security issues
         $content = $request->input('content');

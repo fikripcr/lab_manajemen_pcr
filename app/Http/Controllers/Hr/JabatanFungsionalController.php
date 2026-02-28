@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JabatanFungsionalRequest;
 use App\Models\Hr\JabatanFungsional;
 use App\Services\Hr\JabatanFungsionalService;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class JabatanFungsionalController extends Controller
@@ -49,12 +48,8 @@ class JabatanFungsionalController extends Controller
 
     public function store(JabatanFungsionalRequest $request)
     {
-        try {
-            $this->jabatanFungsionalService->create($request->validated());
-            return jsonSuccess('Jabatan Fungsional created successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->jabatanFungsionalService->create($request->validated());
+        return jsonSuccess('Jabatan Fungsional created successfully.');
     }
 
     public function edit(JabatanFungsional $jabatanFungsional)
@@ -64,21 +59,13 @@ class JabatanFungsionalController extends Controller
 
     public function update(JabatanFungsionalRequest $request, JabatanFungsional $jabatanFungsional)
     {
-        try {
-            $this->jabatanFungsionalService->update($jabatanFungsional, $request->validated());
-            return jsonSuccess('Jabatan Fungsional updated successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->jabatanFungsionalService->update($jabatanFungsional, $request->validated());
+        return jsonSuccess('Jabatan Fungsional updated successfully.');
     }
 
     public function destroy(JabatanFungsional $jabatanFungsional)
     {
-        try {
-            $jabatanFungsional->delete();
-            return jsonSuccess('Jabatan Fungsional deleted successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $jabatanFungsional->delete();
+        return jsonSuccess('Jabatan Fungsional deleted successfully.');
     }
 }

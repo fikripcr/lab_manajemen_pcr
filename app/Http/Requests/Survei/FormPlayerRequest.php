@@ -2,9 +2,9 @@
 namespace App\Http\Requests\Survei;
 
 use App\Models\Survei\Survei;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class FormPlayerRequest extends FormRequest
+class FormPlayerRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

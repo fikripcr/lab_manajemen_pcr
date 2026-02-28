@@ -8,6 +8,7 @@ use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Pemutu\PengendalianService;
 use App\Services\Pemutu\PeriodeSpmiService;
+use App\Http\Requests\Pemutu\UpdateMatrixRequest;
 use Illuminate\Http\Request;
 
 class PengendalianController extends Controller
@@ -162,12 +163,8 @@ class PengendalianController extends Controller
     /**
      * Update hanya Eisenhower Matrix field (inline AJAX dari DataTable).
      */
-    public function updateMatrix(Request $request, IndikatorOrgUnit $indOrg)
+    public function updateMatrix(UpdateMatrixRequest $request, IndikatorOrgUnit $indOrg)
     {
-        $request->validate([
-            'pengend_important_matrix' => ['nullable', 'string', 'in:important,not_important'],
-            'pengend_urgent_matrix'    => ['nullable', 'string', 'in:urgent,not_urgent'],
-        ]);
 
         $this->PengendalianService->updateMatrix($indOrg, $request->only(['pengend_important_matrix', 'pengend_urgent_matrix']));
 

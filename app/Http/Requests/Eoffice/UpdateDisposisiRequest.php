@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class UpdateDisposisiRequest extends FormRequest
+class UpdateDisposisiRequest extends BaseRequest
 {
     public function authorize()
     {

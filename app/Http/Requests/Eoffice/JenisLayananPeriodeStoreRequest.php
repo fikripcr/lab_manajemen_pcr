@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class JenisLayananPeriodeStoreRequest extends FormRequest
+class JenisLayananPeriodeStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,14 +36,14 @@ class JenisLayananPeriodeStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'tgl_mulai.required' => 'Tanggal mulai harus diisi.',
+        return array_merge(parent::messages(), [
+            'tgl_mulai.required'   => 'Tanggal mulai harus diisi.',
             'tgl_mulai.date' => 'Tanggal mulai harus berupa tanggal.',
             'tgl_selesai.required' => 'Tanggal selesai harus diisi.',
             'tgl_selesai.date' => 'Tanggal selesai harus berupa tanggal.',
             'tgl_selesai.after_or_equal' => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
             'tahun_ajaran.string' => 'Tahun ajaran harus berupa string.',
             'semester.string' => 'Semester harus berupa string.',
-        ];
+        ]);
     }
 }

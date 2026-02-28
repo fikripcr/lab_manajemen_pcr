@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PeriodeSpmiRequest;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Services\Pemutu\PeriodeSpmiService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -65,13 +64,8 @@ class PeriodeSpmiController extends Controller
 
     public function store(PeriodeSpmiRequest $request)
     {
-        try {
-            $this->periodeSpmiService->store($request->validated());
-            return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmis.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambah periode: ' . $e->getMessage());
-        }
+        $this->periodeSpmiService->store($request->validated());
+        return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmis.index'));
     }
 
     public function edit(PeriodeSpmi $periodeSpmi)
@@ -81,23 +75,13 @@ class PeriodeSpmiController extends Controller
 
     public function update(PeriodeSpmiRequest $request, PeriodeSpmi $periodeSpmi)
     {
-        try {
-            $this->periodeSpmiService->update($periodeSpmi, $request->validated());
-            return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmis.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui periode: ' . $e->getMessage());
-        }
+        $this->periodeSpmiService->update($periodeSpmi, $request->validated());
+        return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmis.index'));
     }
 
     public function destroy(PeriodeSpmi $periodeSpmi)
     {
-        try {
-            $this->periodeSpmiService->delete($periodeSpmi);
-            return jsonSuccess('Periode SPMI berhasil dihapus.', route('pemutu.periode-spmis.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus periode: ' . $e->getMessage());
-        }
+        $this->periodeSpmiService->delete($periodeSpmi);
+        return jsonSuccess('Periode SPMI berhasil dihapus.', route('pemutu.periode-spmis.index'));
     }
 }

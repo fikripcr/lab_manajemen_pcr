@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PresensiUploadPhotoRequest extends FormRequest
+class PresensiUploadPhotoRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

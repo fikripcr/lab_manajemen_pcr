@@ -121,13 +121,8 @@ class UserController extends Controller
             $validated['avatar'] = $request->file('avatar');
         }
 
-        try {
-            $this->userService->createUser($validated);
-            return jsonSuccess('Pengguna berhasil dibuat.', route('lab.users.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->userService->createUser($validated);
+        return jsonSuccess('Pengguna berhasil dibuat.', route('lab.users.index'));
     }
 
     /**
@@ -163,13 +158,8 @@ class UserController extends Controller
             $validated['avatar'] = $request->file('avatar');
         }
 
-        try {
-            $this->userService->updateUser($user->id, $validated);
-            return jsonSuccess('Pengguna berhasil diperbarui.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui pengguna: ' . $e->getMessage());
-        }
+        $this->userService->updateUser($user->id, $validated);
+        return jsonSuccess('Pengguna berhasil diperbarui.');
     }
 
     /**
@@ -177,13 +167,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        try {
-            $this->userService->deleteUser($user->id);
-            return jsonSuccess('Data berhasil dihapus.', route('lab.users.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus pengguna: ' . $e->getMessage());
-        }
+        $this->userService->deleteUser($user->id);
+        return jsonSuccess('Data berhasil dihapus.', route('lab.users.index'));
     }
 
     /**
@@ -251,25 +236,18 @@ class UserController extends Controller
      */
     public function import(UserImportRequest $request)
     {
-        try {
-            $file = $request->file('file');
+        $file = $request->file('file');
 
-            $defaultRole       = $request->input('role_default');
-            $overwriteExisting = $request->input('overwrite_existing', false);
+        $defaultRole       = $request->input('role_default');
+        $overwriteExisting = $request->input('overwrite_existing', false);
 
-            $import = new UserImport($defaultRole, $overwriteExisting);
-            Excel::import($import, $file);
+        $import = new UserImport($defaultRole, $overwriteExisting);
+        Excel::import($import, $file);
 
-            logActivity('user', 'Import users from file.');
+        logActivity('user', 'Import users from file.');
 
-            return redirect()->route('lab.users.index')
-                ->with('success', "Import completed successfully. Users have been added to the database.");
-        } catch (\Exception $e) {
-            logError($e);
-            return redirect()->back()
-                ->with('error', 'Error importing users: ' . $e->getMessage())
-                ->withInput();
-        }
+        return redirect()->route('lab.users.index')
+            ->with('success', "Import completed successfully. Users have been added to the database.");
     }
 
     /**

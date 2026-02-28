@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Survei\SurveiRequest;
 use App\Models\Survei\Survei;
 use App\Services\Survei\SurveiService;
-use Exception;
 use Illuminate\Support\Str;
 
 class SurveiController extends Controller
@@ -95,13 +94,8 @@ class SurveiController extends Controller
 
     public function store(SurveiRequest $request)
     {
-        try {
-            $survei = $this->surveiService->createSurvei($request->validated());
-            return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->encrypted_survei_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat survei.');
-        }
+        $survei = $this->surveiService->createSurvei($request->validated());
+        return jsonSuccess('Survei berhasil dibuat.', route('survei.builder', $survei->encrypted_survei_id));
     }
 
     public function edit(Survei $survei)
@@ -111,13 +105,8 @@ class SurveiController extends Controller
 
     public function update(SurveiRequest $request, Survei $survei)
     {
-        try {
-            $this->surveiService->updateSurvei($survei, $request->validated());
-            return jsonSuccess('Survei berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui survei.');
-        }
+        $this->surveiService->updateSurvei($survei, $request->validated());
+        return jsonSuccess('Survei berhasil diperbarui.');
     }
 
     public function responses(Survei $survei)
@@ -130,25 +119,15 @@ class SurveiController extends Controller
 
     public function toggleStatus(Survei $survei)
     {
-        try {
-            $this->surveiService->toggleStatus($survei);
-            $status = $survei->is_aktif ? 'dipublikasikan' : 'di-unpublish';
-            return jsonSuccess("Survei berhasil {$status}.");
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengubah status survei.');
-        }
+        $this->surveiService->toggleStatus($survei);
+        $status = $survei->is_aktif ? 'dipublikasikan' : 'di-unpublish';
+        return jsonSuccess("Survei berhasil {$status}.");
     }
 
     public function duplicate(Survei $survei)
     {
-        try {
-            $this->surveiService->duplicateSurvei($survei);
-            return jsonSuccess('Survei berhasil diduplikasi.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menduplikasi survei.');
-        }
+        $this->surveiService->duplicateSurvei($survei);
+        return jsonSuccess('Survei berhasil diduplikasi.');
     }
 
     public function export(Survei $survei)
@@ -202,12 +181,7 @@ class SurveiController extends Controller
 
     public function destroy(Survei $survei)
     {
-        try {
-            $this->surveiService->deleteSurvei($survei);
-            return jsonSuccess('Survei berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus survei.');
-        }
+        $this->surveiService->deleteSurvei($survei);
+        return jsonSuccess('Survei berhasil dihapus.');
     }
 }

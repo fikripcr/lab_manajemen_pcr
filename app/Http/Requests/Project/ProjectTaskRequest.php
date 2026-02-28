@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Project;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class ProjectTaskRequest extends FormRequest
+class ProjectTaskRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -43,7 +43,7 @@ class ProjectTaskRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'project_id.required'         => 'Proyek wajib dipilih',
             'project_id.exists'           => 'Proyek tidak ditemukan',
             'task_title.required'         => 'Judul tugas wajib diisi',
@@ -58,6 +58,6 @@ class ProjectTaskRequest extends FormRequest
             'hours_worked.integer'        => 'Jam kerja harus berupa angka',
             'hours_worked.min'            => 'Jam kerja minimal 0',
             'due_date.date'               => 'Tanggal jatuh tempo tidak valid',
-        ];
+        ]);
     }
 }

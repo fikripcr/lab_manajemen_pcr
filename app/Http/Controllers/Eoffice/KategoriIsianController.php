@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\KategoriIsianRequest;
 use App\Models\Eoffice\KategoriIsian;
 use App\Services\Eoffice\KategoriIsianService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -47,13 +46,8 @@ class KategoriIsianController extends Controller
 
     public function store(KategoriIsianRequest $request)
     {
-        try {
-            $this->KategoriIsianService->createKategori($request->validated());
-            return jsonSuccess('Isian berhasil ditambahkan.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan isian: ' . $e->getMessage());
-        }
+        $this->KategoriIsianService->createKategori($request->validated());
+        return jsonSuccess('Isian berhasil ditambahkan.');
     }
 
     public function edit(KategoriIsian $kategoriIsian)
@@ -64,23 +58,13 @@ class KategoriIsianController extends Controller
 
     public function update(KategoriIsianRequest $request, KategoriIsian $kategoriIsian)
     {
-        try {
-            $this->KategoriIsianService->updateKategori($kategoriIsian->kategoriisian_id, $request->validated());
-            return jsonSuccess('Isian berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui isian: ' . $e->getMessage());
-        }
+        $this->KategoriIsianService->updateKategori($kategoriIsian->kategoriisian_id, $request->validated());
+        return jsonSuccess('Isian berhasil diperbarui.');
     }
 
     public function destroy(KategoriIsian $kategoriIsian)
     {
-        try {
-            $this->KategoriIsianService->deleteKategori($kategoriIsian->kategoriisian_id);
-            return jsonSuccess('Isian berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus isian: ' . $e->getMessage());
-        }
+        $this->KategoriIsianService->deleteKategori($kategoriIsian->kategoriisian_id);
+        return jsonSuccess('Isian berhasil dihapus.');
     }
 }

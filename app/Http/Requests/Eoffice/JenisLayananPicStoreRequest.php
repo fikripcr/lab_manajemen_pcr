@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class JenisLayananPicStoreRequest extends FormRequest
+class JenisLayananPicStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,9 +33,9 @@ class JenisLayananPicStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'user_id.required' => 'User harus dipilih.',
             'user_id.exists' => 'User tidak ditemukan.',
-        ];
+        ]);
     }
 }

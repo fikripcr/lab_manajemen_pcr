@@ -6,7 +6,6 @@ use App\Http\Requests\Lab\InventarisRequest;
 use App\Models\Lab\Inventaris;
 use App\Models\Lab\Lab;
 use App\Services\Lab\InventarisService;
-use Exception;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
@@ -73,13 +72,8 @@ class InventarisController extends Controller
      */
     public function store(InventarisRequest $request)
     {
-        try {
-            $this->inventarisService->createInventaris($request->validated());
-            return jsonSuccess('Inventaris berhasil dibuat.', route('lab.inventaris.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan inventaris: ' . $e->getMessage());
-        }
+        $this->inventarisService->createInventaris($request->validated());
+        return jsonSuccess('Inventaris berhasil dibuat.', route('lab.inventaris.index'));
     }
 
     /**
@@ -104,13 +98,8 @@ class InventarisController extends Controller
      */
     public function update(InventarisRequest $request, Inventaris $inventaris)
     {
-        try {
-            $this->inventarisService->updateInventaris($inventaris, $request->validated());
-            return jsonSuccess('Inventaris berhasil diperbarui.', route('lab.inventaris.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui inventaris: ' . $e->getMessage());
-        }
+        $this->inventarisService->updateInventaris($inventaris, $request->validated());
+        return jsonSuccess('Inventaris berhasil diperbarui.', route('lab.inventaris.index'));
     }
 
     /**
@@ -118,13 +107,8 @@ class InventarisController extends Controller
      */
     public function destroy(Inventaris $inventaris)
     {
-        try {
-            $this->inventarisService->deleteInventaris($inventaris);
-            return jsonSuccess('Inventaris berhasil dihapus.', route('lab.inventaris.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus inventaris: ' . $e->getMessage());
-        }
+        $this->inventarisService->deleteInventaris($inventaris);
+        return jsonSuccess('Inventaris berhasil dihapus.', route('lab.inventaris.index'));
     }
 
     /**

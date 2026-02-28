@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Project;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class ProjectMemberRequest extends FormRequest
+class ProjectMemberRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -23,11 +23,11 @@ class ProjectMemberRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
-            'user_id.required' => 'User must be selected.',
-            'user_id.exists'   => 'User not found.',
-            'role.required'    => 'Role is required.',
+        return array_merge(parent::messages(), [
+            'user_id.required' => 'Anggota tim harus dipilih.',
+            'user_id.exists' => 'User tidak ditemukan.',
+            'role.required' => 'Peran anggota wajib diisi.',
             'role.in'          => 'Invalid role selected.',
-        ];
+        ]);
     }
 }

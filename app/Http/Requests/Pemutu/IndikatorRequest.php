@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class IndikatorRequest extends FormRequest
+class IndikatorRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -44,11 +44,13 @@ class IndikatorRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
-            'type.required'       => 'Tipe Indikator harus dipilih.',
-            'type.in'             => 'Tipe Indikator tidak valid.',
-            'indikator.required'  => 'Nama Indikator wajib diisi.',
-            'doksub_ids.required' => 'Dokumen Penjaminan Mutu wajib dipilih (jika wajib).',
-        ];
+        return array_merge(parent::messages(), [
+            'type.required'           => 'Tipe Indikator harus dipilih.',
+            'type.in'                 => 'Tipe Indikator tidak valid.',
+            'indikator.required'      => 'Nama Indikator wajib diisi.',
+            'doksub_ids.required'     => 'Dokumen Penjaminan Mutu wajib dipilih (jika wajib).',
+            'indikator_desc.required' => 'Deskripsi Indikator wajib diisi.',
+            'bobot.required'          => 'Bobot harus diisi.',
+        ]);
     }
 }

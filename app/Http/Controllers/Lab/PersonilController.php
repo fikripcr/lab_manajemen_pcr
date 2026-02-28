@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\PersonilRequest;
 use App\Models\Lab\Personil;
 use App\Services\Lab\PersonilService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -60,15 +59,10 @@ class PersonilController extends Controller
 
     public function store(PersonilRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            $this->personilService->createPersonil($data);
-            return jsonSuccess('Data Personil berhasil ditambahkan.', route('lab.personil.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan personil: ' . $e->getMessage());
-        }
+        $this->personilService->createPersonil($data);
+        return jsonSuccess('Data Personil berhasil ditambahkan.', route('lab.personil.index'));
     }
 
     public function edit(Personil $personil)
@@ -78,25 +72,15 @@ class PersonilController extends Controller
 
     public function update(PersonilRequest $request, Personil $personil)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            $this->personilService->updatePersonil($personil, $data);
-            return jsonSuccess('Data Personil berhasil diperbarui.', route('lab.personil.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui personil: ' . $e->getMessage());
-        }
+        $this->personilService->updatePersonil($personil, $data);
+        return jsonSuccess('Data Personil berhasil diperbarui.', route('lab.personil.index'));
     }
 
     public function destroy(Personil $personil)
     {
-        try {
-            $this->personilService->deletePersonil($personil);
-            return jsonSuccess('Data Personil berhasil dihapus.', route('lab.personil.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus personil: ' . $e->getMessage());
-        }
+        $this->personilService->deletePersonil($personil);
+        return jsonSuccess('Data Personil berhasil dihapus.', route('lab.personil.index'));
     }
 }

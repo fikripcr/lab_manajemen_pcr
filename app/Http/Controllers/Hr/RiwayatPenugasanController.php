@@ -9,7 +9,6 @@ use App\Models\Hr\OrgUnit;
 use App\Models\Hr\Pegawai;
 use App\Models\Hr\RiwayatPenugasan;
 use App\Services\Hr\PegawaiService;
-use Exception;
 
 class RiwayatPenugasanController extends Controller
 {
@@ -41,12 +40,8 @@ class RiwayatPenugasanController extends Controller
 
     public function store(RiwayatPenugasanRequest $request, Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->addPenugasan($pegawai, $request->validated());
-            return jsonSuccess('Penugasan berhasil ditambahkan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->addPenugasan($pegawai, $request->validated());
+        return jsonSuccess('Penugasan berhasil ditambahkan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function edit(Pegawai $pegawai, RiwayatPenugasan $penugasan)
@@ -61,33 +56,21 @@ class RiwayatPenugasanController extends Controller
 
     public function update(RiwayatPenugasanRequest $request, Pegawai $pegawai, RiwayatPenugasan $penugasan)
     {
-        try {
-            $this->pegawaiService->updatePenugasan($penugasan, $request->validated());
-            return jsonSuccess('Penugasan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->updatePenugasan($penugasan, $request->validated());
+        return jsonSuccess('Penugasan berhasil diperbarui.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function destroy(Pegawai $pegawai, RiwayatPenugasan $penugasan)
     {
-        try {
-            $this->pegawaiService->deletePenugasan($pegawai, $penugasan);
-            return jsonSuccess('Penugasan berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->deletePenugasan($pegawai, $penugasan);
+        return jsonSuccess('Penugasan berhasil dihapus.');
     }
 
     // End current assignment
     public function endAssignment(EndPenugasanRequest $request, Pegawai $pegawai, RiwayatPenugasan $penugasan)
     {
-        try {
-            $this->pegawaiService->endPenugasan($penugasan, $request->validated()['tgl_selesai']);
-            return jsonSuccess('Penugasan berhasil diakhiri.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->endPenugasan($penugasan, $request->validated()['tgl_selesai']);
+        return jsonSuccess('Penugasan berhasil diakhiri.');
     }
 
     // Mass Penugasan Page
@@ -119,13 +102,9 @@ class RiwayatPenugasanController extends Controller
     // Mass Assign (AJAX)
     public function massAssign(MassPenugasanRequest $request)
     {
-        try {
-            $pegawai = Pegawai::findOrFail($request->pegawai_id);
-            $this->pegawaiService->addPenugasan($pegawai, $request->validated());
+        $pegawai = Pegawai::findOrFail($request->pegawai_id);
+        $this->pegawaiService->addPenugasan($pegawai, $request->validated());
 
-            return jsonSuccess('Penugasan berhasil ditambahkan.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        return jsonSuccess('Penugasan berhasil ditambahkan.');
     }
 }

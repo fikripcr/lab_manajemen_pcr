@@ -8,7 +8,6 @@ use App\Models\Hr\RiwayatStatPegawai;
 use App\Models\Hr\StatusPegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
-use Exception;
 use Yajra\DataTables\DataTables;
 
 class RiwayatStatPegawaiController extends Controller
@@ -29,12 +28,8 @@ class RiwayatStatPegawaiController extends Controller
 
     public function store(RiwayatStatPegawaiRequest $request, Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->requestChange($pegawai, RiwayatStatPegawai::class, $request->validated(), 'latest_riwayatstatpegawai_id');
-            return jsonSuccess('Perubahan Status Pegawai berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestChange($pegawai, RiwayatStatPegawai::class, $request->validated(), 'latest_riwayatstatpegawai_id');
+        return jsonSuccess('Perubahan Status Pegawai berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function data()

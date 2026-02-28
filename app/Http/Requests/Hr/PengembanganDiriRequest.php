@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PengembanganDiriRequest extends FormRequest
+class PengembanganDiriRequest extends BaseRequest
 {
     public function authorize()
     {

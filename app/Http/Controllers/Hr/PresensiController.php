@@ -9,10 +9,8 @@ use App\Http\Requests\Hr\PresensiUpdateSettingsRequest;
 use App\Http\Requests\Hr\PresensiUploadPhotoRequest;
 use App\Models\Hr\Pegawai;
 use App\Services\Hr\PresensiService;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class PresensiController extends Controller
 {
@@ -26,61 +24,29 @@ class PresensiController extends Controller
 
     public function checkIn(PresensiCheckInRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
+        $result = $this->presensiService->checkIn($data);
 
-            $result = $this->presensiService->checkIn($data);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Check-in berhasil!',
-                'data'    => $result,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
-        }
+        return jsonSuccess('Check-in berhasil!', null, $result);
     }
 
     public function checkOut(PresensiCheckOutRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
+        $result = $this->presensiService->checkOut($data);
 
-            $result = $this->presensiService->checkOut($data);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Check-out berhasil!',
-                'data'    => $result,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
-        }
+        return jsonSuccess('Check-out berhasil!', null, $result);
     }
 
     public function getCurrentLocation(PresensiLocationRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
+        $location = $this->presensiService->getLocationFromCoordinates($data['latitude'], $data['longitude']);
 
-            $location = $this->presensiService->getLocationFromCoordinates($data['latitude'], $data['longitude']);
-
-            return response()->json([
-                'success' => true,
-                'address' => $location,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
-        }
+        return response()->json([
+            'success' => true,
+            'address' => $location,
+        ]);
     }
 
     public function settings()
@@ -99,30 +65,14 @@ class PresensiController extends Controller
 
     public function updateSettings(PresensiUpdateSettingsRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            // Handle checkbox properly
-            $data['is_active'] = $request->has('is_active');
+        // Handle checkbox properly
+        $data['is_active'] = $request->has('is_active');
 
-            $this->presensiService->updateSettings($data);
+        $this->presensiService->updateSettings($data);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Pengaturan presensi berhasil diperbarui!',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors'  => $e->errors(),
-            ], 422);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
-        }
+        return jsonSuccess('Pengaturan presensi berhasil diperbarui!');
     }
 
     public function history()
@@ -162,61 +112,47 @@ class PresensiController extends Controller
 
     public function storeUploadPhoto(PresensiUploadPhotoRequest $request)
     {
-        try {
-            // $request->validated() is sufficient, we can access params directly or via validated()
-            $request->validated();
+        // $request->validated() is sufficient, we can access params directly or via validated()
+        $request->validated();
 
-            $user    = auth()->user();
-            $pegawai = Pegawai::where('user_id', $user->id)->first();
+        $user    = auth()->user();
+        $pegawai = Pegawai::where('user_id', $user->id)->first();
 
-            if (! $pegawai) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data pegawai tidak ditemukan',
-                ], 404);
-            }
-
-            // Handle photo upload
-            if ($request->hasFile('photo')) {
-                $photo     = $request->file('photo');
-                $photoName = 'pegawai_' . $pegawai->pegawai_id . '_' . time() . '.' . $photo->getClientOriginalExtension();
-                $photoPath = $photo->storeAs('pegawai/photos', $photoName, 'public');
-
-                // Update photo path
-                $pegawai->photo = $photoPath;
-            }
-
-            // Handle face encoding
-            if ($request->has('face_encoding')) {
-                $pegawai->face_encoding = $request->face_encoding;
-            } else {
-                // Extract face encoding from uploaded photo
-                try {
-                    $faceEncoding = $this->extractFaceEncoding($pegawai->photo);
-                    if ($faceEncoding) {
-                        $pegawai->face_encoding = json_encode($faceEncoding);
-                    }
-                } catch (Exception $e) {
-                    Log::warning('Failed to extract face encoding: ' . $e->getMessage());
-                }
-            }
-
-            $pegawai->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Foto berhasil diupload!',
-                'data'    => [
-                    'photo_path'        => $pegawai->photo,
-                    'has_face_encoding' => ! empty($pegawai->face_encoding),
-                ],
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
+        if (! $pegawai) {
+            return jsonError('Data pegawai tidak ditemukan', 404);
         }
+
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            $photo     = $request->file('photo');
+            $photoName = 'pegawai_' . $pegawai->pegawai_id . '_' . time() . '.' . $photo->getClientOriginalExtension();
+            $photoPath = $photo->storeAs('pegawai/photos', $photoName, 'public');
+
+            // Update photo path
+            $pegawai->photo = $photoPath;
+        }
+
+        // Handle face encoding
+        if ($request->has('face_encoding')) {
+            $pegawai->face_encoding = $request->face_encoding;
+        } else {
+            // Extract face encoding from uploaded photo
+            try {
+                $faceEncoding = $this->extractFaceEncoding($pegawai->photo);
+                if ($faceEncoding) {
+                    $pegawai->face_encoding = json_encode($faceEncoding);
+                }
+            } catch (\Exception $e) {
+                Log::warning('Failed to extract face encoding: ' . $e->getMessage());
+            }
+        }
+
+        $pegawai->save();
+
+        return jsonSuccess('Foto berhasil diupload!', null, [
+            'photo_path'        => $pegawai->photo,
+            'has_face_encoding' => ! empty($pegawai->face_encoding),
+        ]);
     }
 
     private function extractFaceEncoding($photoPath)
@@ -246,19 +182,12 @@ class PresensiController extends Controller
 
     public function getEmployeeFaceData()
     {
-        try {
-            $user     = auth()->user();
-            $faceData = $this->presensiService->getEmployeeFaceData($user->id);
+        $user     = auth()->user();
+        $faceData = $this->presensiService->getEmployeeFaceData($user->id);
 
-            return response()->json([
-                'success'  => true,
-                'faceData' => $faceData,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
-        }
+        return response()->json([
+            'success'  => true,
+            'faceData' => $faceData,
+        ]);
     }
 }

@@ -8,7 +8,6 @@ use App\Models\Hr\RiwayatJabFungsional;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatJabFungsionalController extends Controller
@@ -30,12 +29,8 @@ class RiwayatJabFungsionalController extends Controller
 
     public function store(RiwayatJabFungsionalRequest $request, Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->requestChange($pegawai, RiwayatJabFungsional::class, $request->validated(), 'latest_riwayatjabfungsional_id');
-            return jsonSuccess('Perubahan Jabatan Fungsional berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestChange($pegawai, RiwayatJabFungsional::class, $request->validated(), 'latest_riwayatjabfungsional_id');
+        return jsonSuccess('Perubahan Jabatan Fungsional berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function data()

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class JadwalRequest extends FormRequest
+class JadwalRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,13 +29,5 @@ class JadwalRequest extends FormRequest
             'jam_selesai'    => 'required|date_format:H:i|after:jam_mulai',
             'lab_id'         => 'required|exists:lab_labs,lab_id',
         ];
-    }
-
-    /**
-     * Get custom validation messages.
-     */
-    public function messages(): array
-    {
-        return validation_messages_id();
     }
 }

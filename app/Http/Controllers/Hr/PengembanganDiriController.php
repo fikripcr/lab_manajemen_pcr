@@ -7,7 +7,6 @@ use App\Models\Hr\Pegawai;
 use App\Models\Hr\PengembanganDiri;
 use App\Services\Hr\PegawaiService;
 use Carbon\Carbon;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class PengembanganDiriController extends Controller
@@ -28,12 +27,8 @@ class PengembanganDiriController extends Controller
 
     public function store(PengembanganDiriRequest $request, Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->requestAddition($pegawai, PengembanganDiri::class, $request->validated());
-            return jsonSuccess('Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestAddition($pegawai, PengembanganDiri::class, $request->validated());
+        return jsonSuccess('Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function edit(Pegawai $pegawai, PengembanganDiri $pengembangan)
@@ -43,22 +38,14 @@ class PengembanganDiriController extends Controller
 
     public function update(PengembanganDiriRequest $request, Pegawai $pegawai, PengembanganDiri $pengembangan)
     {
-        try {
-            $this->pegawaiService->requestChange($pegawai, PengembanganDiri::class, $request->validated(), null, $pengembangan);
-            return jsonSuccess('Perubahan Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestChange($pegawai, PengembanganDiri::class, $request->validated(), null, $pengembangan);
+        return jsonSuccess('Perubahan Riwayat Pengembangan Diri berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function destroy(Pegawai $pegawai, PengembanganDiri $pengembangan)
     {
-        try {
-            $pengembangan->delete();
-            return jsonSuccess('Riwayat Pengembangan Diri berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $pengembangan->delete();
+        return jsonSuccess('Riwayat Pengembangan Diri berhasil dihapus.');
     }
 
     public function data()

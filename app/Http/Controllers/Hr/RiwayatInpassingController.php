@@ -7,7 +7,6 @@ use App\Models\Hr\GolonganInpassing;
 use App\Models\Hr\RiwayatInpassing;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatInpassingController extends Controller
@@ -32,12 +31,8 @@ class RiwayatInpassingController extends Controller
 
     public function store(RiwayatInpassingRequest $request, Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id');
-            return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id');
+        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function edit(Pegawai $pegawai, RiwayatInpassing $inpassing)
@@ -48,22 +43,14 @@ class RiwayatInpassingController extends Controller
 
     public function update(RiwayatInpassingRequest $request, Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
-        try {
-            $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id', $inpassing);
-            return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id', $inpassing);
+        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 
     public function destroy(Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
-        try {
-            $inpassing->delete();
-            return jsonSuccess('Riwayat Inpassing berhasil dihapus.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $inpassing->delete();
+        return jsonSuccess('Riwayat Inpassing berhasil dihapus.');
     }
 
     public function data()

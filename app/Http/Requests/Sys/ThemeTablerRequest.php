@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class ThemeTablerRequest extends FormRequest
+class ThemeTablerRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -53,10 +53,10 @@ class ThemeTablerRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'mode.required' => 'Mode harus diisi.',
             'mode.in'       => 'Mode harus sys, auth, atau tabler.',
             'theme.in'      => 'Theme harus light atau dark.',
-        ];
+        ]);
     }
 }

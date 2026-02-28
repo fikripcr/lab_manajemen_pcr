@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class UserImportRequest extends FormRequest
+class UserImportRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,10 +33,10 @@ class UserImportRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'file.required' => 'File import harus diupload.',
-            'file.mimes' => 'File harus berformat XLSX, XLS, atau CSV.',
-            'file.max' => 'File maksimal 10MB.',
-        ];
+        return array_merge(parent::messages(), [
+            'file.required' => 'File harus diunggah.',
+            'file.mimes'    => 'Format file harus .xlsx atau .xls.',
+            'file.max'      => 'File maksimal 10MB.',
+        ]);
     }
 }

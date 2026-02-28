@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class OrgUnitStoreRequest extends FormRequest
+class OrgUnitStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -38,11 +38,11 @@ class OrgUnitStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'name.required'      => 'Nama organisasi harus diisi.',
+        return array_merge(parent::messages(), [
+            'name.required'      => 'Nama unit wajib diisi.',
             'name.string'        => 'Nama harus berupa string.',
             'name.max'           => 'Nama maksimal 255 karakter.',
-            'type.required'      => 'Tipe harus diisi.',
+            'type.required'      => 'Tipe unit wajib dipilih.',
             'type.string'        => 'Tipe harus berupa string.',
             'parent_id.exists'   => 'Parent organisasi tidak ditemukan.',
             'level.integer'      => 'Level harus berupa angka.',
@@ -52,6 +52,6 @@ class OrgUnitStoreRequest extends FormRequest
             'is_active.boolean'  => 'Status aktif harus true atau false.',
             'description.string' => 'Deskripsi harus berupa string.',
             'description.max'    => 'Deskripsi maksimal 1000 karakter.',
-        ];
+        ]);
     }
 }

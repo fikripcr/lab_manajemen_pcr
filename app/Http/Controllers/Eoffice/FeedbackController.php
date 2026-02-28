@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Eoffice\FeedbackStoreRequest;
 use App\Models\Eoffice\JenisLayanan;
 use App\Services\Eoffice\FeedbackService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -32,12 +31,8 @@ class FeedbackController extends Controller
     {
         $validated = $request->validated();
 
-        try {
-            $this->feedbackService->store($validated);
-            return jsonSuccess('Feedback berhasil disimpan.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage());
-        }
+        $this->feedbackService->store($validated);
+        return jsonSuccess('Feedback berhasil disimpan.');
     }
 
     /**

@@ -11,7 +11,6 @@ use App\Models\Eoffice\JenisLayananPic;
 use App\Models\Eoffice\KategoriIsian;
 use App\Models\User;
 use App\Services\Eoffice\JenisLayananService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -56,13 +55,8 @@ class JenisLayananController extends Controller
 
     public function store(JenisLayananRequest $request)
     {
-        try {
-            $this->jenisLayananService->createJenisLayanan($request->validated());
-            return jsonSuccess('Jenis layanan berhasil ditambahkan.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan jenis layanan: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->createJenisLayanan($request->validated());
+        return jsonSuccess('Jenis layanan berhasil ditambahkan.');
     }
 
     public function show(JenisLayanan $jenisLayanan)
@@ -83,24 +77,14 @@ class JenisLayananController extends Controller
 
     public function update(JenisLayananRequest $request, JenisLayanan $jenisLayanan)
     {
-        try {
-            $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, $request->validated());
-            return jsonSuccess('Jenis layanan berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui jenis layanan: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, $request->validated());
+        return jsonSuccess('Jenis layanan berhasil diperbarui.');
     }
 
     public function destroy(JenisLayanan $jenisLayanan)
     {
-        try {
-            $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, ['is_active' => false]);
-            return jsonSuccess('Jenis layanan berhasil dinonaktifkan.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menonaktifkan jenis layanan: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->updateJenisLayanan($jenisLayanan->jenislayanan_id, ['is_active' => false]);
+        return jsonSuccess('Jenis layanan berhasil dinonaktifkan.');
     }
 
     // --- AJAX Form View Handlers ---
@@ -132,89 +116,49 @@ class JenisLayananController extends Controller
     // PIC & Isian Handlers
     public function storePic(JenisLayananPicStoreRequest $request, JenisLayanan $jenisLayanan)
     {
-        try {
-            $this->jenisLayananService->storePic($jenisLayanan->jenislayanan_id, $request->all());
-            return jsonSuccess('PIC berhasil ditambahkan.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan PIC: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->storePic($jenisLayanan->jenislayanan_id, $request->all());
+        return jsonSuccess('PIC berhasil ditambahkan.');
     }
 
     public function destroyPic(JenisLayananPic $pic)
     {
-        try {
-            $this->jenisLayananService->deletePic($pic->jlpic_id);
-            return jsonSuccess('PIC berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus PIC: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->deletePic($pic->jlpic_id);
+        return jsonSuccess('PIC berhasil dihapus.');
     }
 
     public function storeIsian(JenisLayananIsianStoreRequest $request, JenisLayanan $jenisLayanan)
     {
-        try {
-            $this->jenisLayananService->storeIsian($jenisLayanan->jenislayanan_id, $request->all());
-            return jsonSuccess('Isian berhasil ditambahkan.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan isian: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->storeIsian($jenisLayanan->jenislayanan_id, $request->all());
+        return jsonSuccess('Isian berhasil ditambahkan.');
     }
 
     public function destroyIsian(JenisLayananIsian $isian)
     {
-        try {
-            $this->jenisLayananService->deleteIsian($isian->jlisian_id);
-            return jsonSuccess('Isian berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus isian: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->deleteIsian($isian->jlisian_id);
+        return jsonSuccess('Isian berhasil dihapus.');
     }
 
     public function updateIsianField(\App\Http\Requests\Eoffice\UpdateIsianFieldRequest $request, JenisLayananIsian $isian)
     {
-        try {
-            $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
-            return jsonSuccess('Field berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui field: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
+        return jsonSuccess('Field berhasil diperbarui.');
     }
 
     public function updateIsianRule(\App\Http\Requests\Eoffice\UpdateIsianRuleRequest $request, JenisLayananIsian $isian)
     {
-        try {
-            $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
-            return jsonSuccess('Rule berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui rule: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
+        return jsonSuccess('Rule berhasil diperbarui.');
     }
 
     public function updateIsianInfo(\App\Http\Requests\Eoffice\UpdateIsianInfoRequest $request, JenisLayananIsian $isian)
     {
-        try {
-            $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
-            return jsonSuccess('Info tambahan berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui info: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->updateIsian($isian->jlisian_id, $request->validated());
+        return jsonSuccess('Info tambahan berhasil diperbarui.');
     }
 
     public function updateIsianSeq(\App\Http\Requests\Shared\ReorderRequest $request)
     {
-        try {
-            $this->jenisLayananService->updateIsianSeq($request->validated('sequences'));
-            return jsonSuccess('Urutan berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui urutan: ' . $e->getMessage());
-        }
+        $this->jenisLayananService->updateIsianSeq($request->validated('sequences'));
+        return jsonSuccess('Urutan berhasil diperbarui.');
     }
 }

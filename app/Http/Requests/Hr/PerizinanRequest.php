@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PerizinanRequest extends FormRequest
+class PerizinanRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -72,16 +72,16 @@ class PerizinanRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'jenisizin_id.required'    => 'Jenis izin harus dipilih.',
-            'jenisizin_id.exists'      => 'Jenis izin tidak ditemukan.',
-            'pengusul.required'        => 'Pengusul harus dipilih.',
-            'pengusul.exists'          => 'Pengusul tidak ditemukan.',
-            'tgl_awal.required'        => 'Tanggal mulai harus diisi.',
-            'tgl_awal.date'            => 'Tanggal mulai harus berupa tanggal.',
-            'tgl_akhir.required'       => 'Tanggal selesai harus diisi.',
-            'tgl_akhir.date'           => 'Tanggal selesai harus berupa tanggal.',
-            'tgl_akhir.after_or_equal' => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
-        ];
+        return array_merge(parent::messages(), [
+            'tgl_pengajuan.required'      => 'Tanggal pengajuan wajib diisi.',
+            'perizinan_jenis_id.required' => 'Jenis izin wajib dipilih.',
+            'attachment.mimes'            => 'File lampiran harus berformat PDF, JPG, PNG, atau JPEG.',
+            'pengusul.required'           => 'Pengusul harus dipilih.',
+            'pengusul.exists'             => 'Pengusul tidak ditemukan.',
+            'tgl_awal.required'           => 'Tanggal mulai harus diisi.',
+            'tgl_awal.date'               => 'Tanggal mulai harus berupa tanggal.',
+            'tgl_akhir.required'          => 'Tanggal selesai harus diisi.',
+            'tgl_akhir.date'              => 'Tanggal selesai harus berupa tanggal.',
+        ]);
     }
 }

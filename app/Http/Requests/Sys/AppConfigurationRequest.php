@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class AppConfigurationRequest extends FormRequest
+class AppConfigurationRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -59,15 +59,16 @@ class AppConfigurationRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'app_name.string' => 'The application name must be a text string.',
             'app_name.max' => 'The application name must not exceed 255 characters.',
+            'app_name.required' => 'Nama aplikasi wajib diisi.',
             'app_debug.boolean' => 'The debug mode must be enabled or disabled.',
-            'app_url.url' => 'The application URL must be a valid URL format.',
+            'app_url.url' => 'URL aplikasi tidak valid.',
             'mail_port.integer' => 'The mail port must be a number.',
             'mail_from_address.email' => 'The mail from address must be a valid email address.',
             'google_redirect_uri.url' => 'The Google redirect URI must be a valid URL format.',
             'mysqldump_path.string' => 'The mysqldump path must be a text string.',
-        ];
+        ]);
     }
 }

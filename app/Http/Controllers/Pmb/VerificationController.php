@@ -2,12 +2,12 @@
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pmb\VerifyDocumentBatchRequest;
 use App\Http\Requests\Pmb\VerifyPaymentRequest;
 use App\Models\Pmb\Pembayaran;
 use App\Models\Pmb\Pendaftaran;
 use App\Services\Pmb\PendaftaranService;
 use App\Services\Pmb\VerificationService;
-use Exception;
 use Illuminate\Http\Request;
 
 class VerificationController extends Controller
@@ -60,13 +60,8 @@ class VerificationController extends Controller
     {
         $pembayaran = Pembayaran::findOrFail(decryptIdIfEncrypted($encryptedId));
         
-        try {
-            $this->verificationService->verifyPayment($pembayaran, $request->validated());
-            return jsonSuccess('Proses verifikasi pembayaran selesai.', route('pmb.verification.payments'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memverifikasi pembayaran: ' . $e->getMessage());
-        }
+        $this->verificationService->verifyPayment($pembayaran, $request->validated());
+        return jsonSuccess('Proses verifikasi pembayaran selesai.', route('pmb.verification.payments'));
     }
 
     /**
@@ -112,41 +107,31 @@ class VerificationController extends Controller
     /**
      * Verify document batch
      */
-    public function verifyDocumentBatch(Request $request)
+    public function verifyDocumentBatch(VerifyDocumentBatchRequest $request)
     {
-        $request->validate([
-            'dokumen_ids' => 'required|array',
-            'status' => 'required|in:Valid,Ditolak',
-            'catatan' => 'nullable|string',
-        ]);
         
-        try {
-            foreach ($request->dokumen_ids as $dokumenId) {
-                $dokumen = \App\Models\Pmb\DokumenUpload::findOrFail($dokumenId);
-                $dokumen->update([
-                    'status_verifikasi' => $request->status,
-                    'catatan_verifikasi' => $request->catatan,
-                ]);
-            }
-            
-            // Corrected: find $pendaftaran for the first document
-            $pendaftaran = $request->status === 'Valid' ? \App\Models\Pmb\DokumenUpload::find($request->dokumen_ids[0] ?? null)?->pendaftaran : null;
-
-            if ($pendaftaran && $request->status === 'Valid') {
-                $allVerified = $pendaftaran->dokumenUpload->where('status_verifikasi', '!=', 'Valid')->isEmpty();
-                if ($allVerified) {
-                    $pendaftaran->update(['status_terkini' => 'Siap_Ujian']);
-                }
-            }
-            
-            if ($pendaftaran) {
-                logActivity('pmb_verifikasi_berkas', "Verifikasi berkas batch: {$request->status}", $pendaftaran);
-            }
-            
-            return jsonSuccess('Verifikasi berkas berhasil.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memverifikasi berkas: ' . $e->getMessage());
+        foreach ($request->dokumen_ids as $dokumenId) {
+            $dokumen = \App\Models\Pmb\DokumenUpload::findOrFail($dokumenId);
+            $dokumen->update([
+                'status_verifikasi' => $request->status,
+                'catatan_verifikasi' => $request->catatan,
+            ]);
         }
+        
+        // Corrected: find $pendaftaran for the first document
+        $pendaftaran = $request->status === 'Valid' ? \App\Models\Pmb\DokumenUpload::find($request->dokumen_ids[0] ?? null)?->pendaftaran : null;
+
+        if ($pendaftaran && $request->status === 'Valid') {
+            $allVerified = $pendaftaran->dokumenUpload->where('status_verifikasi', '!=', 'Valid')->isEmpty();
+            if ($allVerified) {
+                $pendaftaran->update(['status_terkini' => 'Siap_Ujian']);
+            }
+        }
+        
+        if ($pendaftaran) {
+            logActivity('pmb_verifikasi_berkas', "Verifikasi berkas batch: {$request->status}", $pendaftaran);
+        }
+        
+        return jsonSuccess('Verifikasi berkas berhasil.');
     }
 }

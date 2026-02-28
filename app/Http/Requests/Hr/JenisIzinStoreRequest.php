@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class JenisIzinStoreRequest extends FormRequest
+class JenisIzinStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -37,7 +37,7 @@ class JenisIzinStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'nama.required' => 'Nama jenis izin harus diisi.',
             'nama.string' => 'Nama harus berupa string.',
             'nama.max' => 'Nama maksimal 50 karakter.',
@@ -49,6 +49,6 @@ class JenisIzinStoreRequest extends FormRequest
             'is_active.boolean' => 'Status aktif harus true atau false.',
             'keterangan.string' => 'Keterangan harus berupa string.',
             'keterangan.max' => 'Keterangan maksimal 500 karakter.',
-        ];
+        ]);
     }
 }

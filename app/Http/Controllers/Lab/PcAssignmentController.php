@@ -76,13 +76,8 @@ class PcAssignmentController extends Controller
      */
     public function store(PcAssignmentRequest $request, JadwalKuliah $jadwal)
     {
-        try {
-            $this->pcAssignmentService->createAssignment($jadwal, $request->validated());
-            return jsonSuccess('Assignment berhasil dibuat.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat assignment: ' . $e->getMessage());
-        }
+        $this->pcAssignmentService->createAssignment($jadwal, $request->validated());
+        return jsonSuccess('Assignment berhasil dibuat.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
     }
 
     /**
@@ -90,12 +85,7 @@ class PcAssignmentController extends Controller
      */
     public function destroy(JadwalKuliah $jadwal, PcAssignment $assignment)
     {
-        try {
-            $this->pcAssignmentService->deleteAssignment($assignment);
-            return jsonSuccess('Assignment berhasil dihapus.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus assignment: ' . $e->getMessage());
-        }
+        $this->pcAssignmentService->deleteAssignment($assignment);
+        return jsonSuccess('Assignment berhasil dihapus.', route('lab.jadwal.assignments.index', $jadwal->encrypted_jadwal_kuliah_id));
     }
 }

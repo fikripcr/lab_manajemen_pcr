@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\BackupStoreRequest;
 use App\Services\Sys\BackupService;
-use Exception;
 
 class BackupController extends Controller
 {
@@ -27,19 +26,9 @@ class BackupController extends Controller
     public function store(BackupStoreRequest $request)
     {
         $type = $request->input('type', 'files');
+        $this->backupService->createBackup($type);
 
-        try {
-            $this->backupService->createBackup($type);
-
-            return jsonSuccess('Backup created successfully');
-        } catch (Exception $e) {
-            logError($e, 'error', [
-                'backup_type' => $type,
-                'description' => 'Error during backup creation',
-            ]);
-
-            return jsonError('Failed to create backup: ' . $e->getMessage(), 500);
-        }
+        return jsonSuccess('Backup created successfully');
     }
 
     /**
@@ -47,13 +36,9 @@ class BackupController extends Controller
      */
     public function download($filename)
     {
-        try {
-            $filePath = $this->backupService->getBackupFilePath($filename);
+        $filePath = $this->backupService->getBackupFilePath($filename);
 
-            return response()->download($filePath);
-        } catch (Exception $e) {
-            abort(404, $e->getMessage());
-        }
+        return response()->download($filePath);
     }
 
     /**
@@ -61,12 +46,8 @@ class BackupController extends Controller
      */
     public function destroy($filename)
     {
-        try {
-            $this->backupService->deleteBackup($filename);
+        $this->backupService->deleteBackup($filename);
 
-            return jsonSuccess('Backup deleted successfully');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 404);
-        }
+        return jsonSuccess('Backup deleted successfully');
     }
 }

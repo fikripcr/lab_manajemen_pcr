@@ -8,8 +8,6 @@ use App\Models\Project\Project;
 use App\Models\Project\ProjectMember;
 use App\Models\User;
 use App\Services\Project\ProjectService;
-use Exception;
-use Illuminate\Http\Request;
 
 class ProjectMemberController extends Controller
 {
@@ -21,14 +19,9 @@ class ProjectMemberController extends Controller
      */
     public function store(ProjectMemberRequest $request, Project $project)
     {
-        try {
-            $this->projectService->addMember($project, $request->validated());
+        $this->projectService->addMember($project, $request->validated());
 
-            return jsonSuccess('Member added successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to add member: ' . $e->getMessage());
-        }
+        return jsonSuccess('Member added successfully');
     }
 
     /**
@@ -36,14 +29,9 @@ class ProjectMemberController extends Controller
      */
     public function destroy(Project $project, ProjectMember $member)
     {
-        try {
-            $this->projectService->removeMember($project, $member->project_member_id);
+        $this->projectService->removeMember($project, $member->project_member_id);
 
-            return jsonSuccess('Member removed successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to remove member: ' . $e->getMessage());
-        }
+        return jsonSuccess('Member removed successfully');
     }
 
     /**

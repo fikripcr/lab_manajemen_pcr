@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\RenopRequest;
 use App\Models\Pemutu\Indikator;
 use App\Services\Pemutu\IndikatorService;
-use Exception;
 
 class RenopController extends Controller
 {
@@ -32,13 +31,8 @@ class RenopController extends Controller
 
     public function store(RenopRequest $request)
     {
-        try {
-            $this->indikatorService->createIndikator($request->validated());
-            return jsonSuccess('Renop created successfully', route('pemutu.renop.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan Renop: ' . $e->getMessage());
-        }
+        $this->indikatorService->createIndikator($request->validated());
+        return jsonSuccess('Renop created successfully', route('pemutu.renop.index'));
     }
 
     public function edit(Indikator $renop)
@@ -52,23 +46,13 @@ class RenopController extends Controller
 
     public function update(RenopRequest $request, Indikator $renop)
     {
-        try {
-            $this->indikatorService->updateIndikator($renop->indikator_id, $request->validated());
-            return jsonSuccess('Renop updated successfully', route('pemutu.renop.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui Renop: ' . $e->getMessage());
-        }
+        $this->indikatorService->updateIndikator($renop->indikator_id, $request->validated());
+        return jsonSuccess('Renop updated successfully', route('pemutu.renop.index'));
     }
 
     public function destroy(Indikator $renop)
     {
-        try {
-            $this->indikatorService->deleteIndikator($renop->indikator_id);
-            return jsonSuccess('Renop deleted successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus Renop: ' . $e->getMessage());
-        }
+        $this->indikatorService->deleteIndikator($renop->indikator_id);
+        return jsonSuccess('Renop deleted successfully.');
     }
 }

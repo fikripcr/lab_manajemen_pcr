@@ -2,9 +2,10 @@
 namespace App\Http\Requests\Eoffice;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 use Illuminate\Validation\Rule;
 
-class KategoriIsianRequest extends FormRequest
+class KategoriIsianRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -36,11 +37,11 @@ class KategoriIsianRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'nama_isian.required'    => 'Nama isian wajib diisi.',
             'nama_isian.unique'      => 'Nama isian sudah digunakan.',
             'type.required'          => 'Tipe isian wajib dipilih.',
             'type_value.required_if' => 'Opsi pilihan wajib diisi untuk tipe select.',
-        ];
+        ]);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PresensiCheckInRequest extends FormRequest
+class PresensiCheckInRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -35,13 +35,17 @@ class PresensiCheckInRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'latitude.required' => 'Latitude harus diisi.',
             'latitude.numeric' => 'Latitude harus berupa angka.',
             'longitude.required' => 'Longitude harus diisi.',
             'longitude.numeric' => 'Longitude harus berupa angka.',
             'address.string' => 'Address harus berupa string.',
             'address.max' => 'Address maksimal 500 karakter.',
-        ];
+            'lat_in.required' => 'Lokasi latitud tidak terdeteksi.',
+            'lng_in.required' => 'Lokasi longitud tidak terdeteksi.',
+            'photo.required'  => 'Foto wajib diambil.',
+            'photo.image'     => 'Lampiran harus berupa gambar.',
+        ]);
     }
 }

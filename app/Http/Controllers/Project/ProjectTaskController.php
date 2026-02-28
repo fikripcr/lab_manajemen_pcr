@@ -10,7 +10,6 @@ use App\Models\Project\ProjectTask;
 use App\Models\User;
 use App\Services\Project\ProjectService;
 use App\Services\Project\ProjectTaskService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -77,18 +76,13 @@ class ProjectTaskController extends Controller
      */
     public function store(ProjectTaskRequest $request, Project $project)
     {
-        try {
-            $data = $request->validated();
-            $data['project_id'] = $project->project_id;
-            $task = $this->taskService->createTask($data);
+        $data = $request->validated();
+        $data['project_id'] = $project->project_id;
+        $this->taskService->createTask($data);
 
-            return jsonSuccess(
-                'Task created successfully'
-            );
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to create task: ' . $e->getMessage());
-        }
+        return jsonSuccess(
+            'Task created successfully'
+        );
     }
 
     /**
@@ -96,17 +90,12 @@ class ProjectTaskController extends Controller
      */
     public function update(ProjectTaskRequest $request, Project $project, ProjectTask $task)
     {
-        try {
-            $data = $request->validated();
-            $this->taskService->updateTask($task, $data);
+        $data = $request->validated();
+        $this->taskService->updateTask($task, $data);
 
-            return jsonSuccess(
-                'Task updated successfully'
-            );
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to update task: ' . $e->getMessage());
-        }
+        return jsonSuccess(
+            'Task updated successfully'
+        );
     }
 
     /**
@@ -114,15 +103,10 @@ class ProjectTaskController extends Controller
      */
     public function move(MoveTaskRequest $request, Project $project, ProjectTask $task)
     {
-        try {
-            $data = $request->validated();
-            $this->taskService->updateTaskStatus($task, $data['status']);
+        $data = $request->validated();
+        $this->taskService->updateTaskStatus($task, $data['status']);
 
-            return jsonSuccess('Task moved successfully');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to move task: ' . $e->getMessage());
-        }
+        return jsonSuccess('Task moved successfully');
     }
 
     /**
@@ -130,17 +114,12 @@ class ProjectTaskController extends Controller
      */
     public function destroy(Project $project, ProjectTask $task)
     {
-        try {
-            $taskTitle = $task->task_title;
-            $this->taskService->deleteTask($task);
+        $taskTitle = $task->task_title;
+        $this->taskService->deleteTask($task);
 
-            return jsonSuccess(
-                'Task deleted successfully'
-            );
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to delete task: ' . $e->getMessage());
-        }
+        return jsonSuccess(
+            'Task deleted successfully'
+        );
     }
 
     /**
@@ -171,24 +150,16 @@ class ProjectTaskController extends Controller
      */
     public function kanbanData(Project $project)
     {
-        try {
-            $tasks = $this->taskService->getTasksGroupedByStatus($project->project_id);
-            
-            // Reformat tasks for jKanban
-            $formattedTasks = [
-                'todo' => collect($tasks['todo'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
-                'in_progress' => collect($tasks['in_progress'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
-                'done' => collect($tasks['done'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
-            ];
+        $tasks = $this->taskService->getTasksGroupedByStatus($project->project_id);
+        
+        // Reformat tasks for jKanban
+        $formattedTasks = [
+            'todo' => collect($tasks['todo'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
+            'in_progress' => collect($tasks['in_progress'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
+            'done' => collect($tasks['done'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
+        ];
 
-            return response()->json([
-                'success' => true,
-                'data' => $formattedTasks
-            ]);
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Failed to fetch Kanban data: ' . $e->getMessage());
-        }
+        return jsonSuccess('Data retrieved', null, $formattedTasks);
     }
 
     /**

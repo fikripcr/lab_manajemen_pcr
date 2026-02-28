@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Cbt;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SaveAnswerRequest extends FormRequest
+class SaveAnswerRequest extends BaseRequest
 {
     public function authorize()
     {

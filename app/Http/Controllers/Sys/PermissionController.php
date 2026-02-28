@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Sys;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sys\PermissionRequest;
 use App\Services\Sys\PermissionService;
-use Exception;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Yajra\DataTables\DataTables;
@@ -31,38 +30,34 @@ class PermissionController extends Controller
      */
     public function paginate(Request $request)
     {
-        try {
-            // Get all request parameters and use them as filters
-            $filters = $request->all();
+        // Get all request parameters and use them as filters
+        $filters = $request->all();
 
-            // Use the service to get the filtered query
-            $permissions = $this->permissionService->getFilteredQuery($filters);
+        // Use the service to get the filtered query
+        $permissions = $this->permissionService->getFilteredQuery($filters);
 
-            return DataTables::of($permissions)
-                ->addIndexColumn()
-                ->editColumn('id', function ($permission) {
-                    return $permission->encryptedId;
-                })
-                ->editColumn('created_at', function ($permission) {
-                    return formatTanggalIndo($permission->created_at);
-                })
-                ->addColumn('category', function ($permission) {
-                    return $permission->category ?? '-';
-                })
-                ->addColumn('sub_category', function ($permission) {
-                    return $permission->sub_category ?? '-';
-                })
-                ->addColumn('action', function ($permission) {
-                    return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('sys.permissions.edit', $permission->encryptedId),
-                        'deleteUrl' => route('sys.permissions.destroy', $permission->encryptedId),
-                    ])->render();
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        return DataTables::of($permissions)
+            ->addIndexColumn()
+            ->editColumn('id', function ($permission) {
+                return $permission->encryptedId;
+            })
+            ->editColumn('created_at', function ($permission) {
+                return formatTanggalIndo($permission->created_at);
+            })
+            ->addColumn('category', function ($permission) {
+                return $permission->category ?? '-';
+            })
+            ->addColumn('sub_category', function ($permission) {
+                return $permission->sub_category ?? '-';
+            })
+            ->addColumn('action', function ($permission) {
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('sys.permissions.edit', $permission->encryptedId),
+                    'deleteUrl' => route('sys.permissions.destroy', $permission->encryptedId),
+                ])->render();
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**
@@ -79,14 +74,10 @@ class PermissionController extends Controller
      */
     public function store(PermissionRequest $request)
     {
-        try {
-            $data = $request->validated();
-            $this->permissionService->createPermission($data);
+        $data = $request->validated();
+        $this->permissionService->createPermission($data);
 
-            return jsonSuccess('Izin berhasildibuat . ');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        return jsonSuccess('Izin berhasil dibuat.');
     }
 
     /**
@@ -110,14 +101,10 @@ class PermissionController extends Controller
      */
     public function update(PermissionRequest $request, Permission $permission)
     {
-        try {
-            $data = $request->validated();
-            $this->permissionService->updatePermission($permission->id, $data);
+        $data = $request->validated();
+        $this->permissionService->updatePermission($permission->id, $data);
 
-            return jsonSuccess();
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        return jsonSuccess();
     }
 
     /**
@@ -125,13 +112,8 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        try {
-            $this->permissionService->deletePermission($permission->id);
+        $this->permissionService->deletePermission($permission->id);
 
-            return jsonSuccess('Izin berhasil dihapus.');
-
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        return jsonSuccess('Izin berhasil dihapus.');
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class DocumentationUpdateRequest extends FormRequest
+class DocumentationUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,16 +26,4 @@ class DocumentationUpdateRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'content.required' => 'Konten dokumentasi harus diisi.',
-            'content.string' => 'Konten harus berupa string.',
-        ];
-    }
 }

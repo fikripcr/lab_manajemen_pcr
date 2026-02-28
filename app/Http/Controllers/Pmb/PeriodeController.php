@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Pmb\StorePeriodeRequest;
 use App\Models\Pmb\Periode;
 use App\Services\Pmb\PeriodeService;
-use Exception;
 
 class PeriodeController extends Controller
 {
@@ -46,13 +45,8 @@ class PeriodeController extends Controller
 
     public function store(StorePeriodeRequest $request)
     {
-        try {
-            $this->periodeService->createPeriode($request->validated());
-            return jsonSuccess('Periode berhasil ditambahkan.', route('pmb.periode.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan periode: ' . $e->getMessage());
-        }
+        $this->periodeService->createPeriode($request->validated());
+        return jsonSuccess('Periode berhasil ditambahkan.', route('pmb.periode.index'));
     }
 
     public function edit(Periode $periode)
@@ -62,23 +56,13 @@ class PeriodeController extends Controller
 
     public function update(StorePeriodeRequest $request, Periode $periode)
     {
-        try {
-            $this->periodeService->updatePeriode($periode, $request->validated());
-            return jsonSuccess('Periode berhasil diperbarui.', route('pmb.periode.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui periode: ' . $e->getMessage());
-        }
+        $this->periodeService->updatePeriode($periode, $request->validated());
+        return jsonSuccess('Periode berhasil diperbarui.', route('pmb.periode.index'));
     }
 
     public function destroy(Periode $periode)
     {
-        try {
-            $this->periodeService->deletePeriode($periode);
-            return jsonSuccess('Periode berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus periode: ' . $e->getMessage());
-        }
+        $this->periodeService->deletePeriode($periode);
+        return jsonSuccess('Periode berhasil dihapus.');
     }
 }

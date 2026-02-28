@@ -5,13 +5,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\StatusPegawaiRequest;
 use App\Models\Hr\StatusPegawai;
 use App\Services\Hr\StatusPegawaiService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class StatusPegawaiController extends Controller
 {
-    public function __construct(protected \App\Services\Hr\StatusPegawaiService $statusPegawaiService)
+    public function __construct(protected StatusPegawaiService $statusPegawaiService)
     {}
 
     public function index(Request $request)
@@ -53,12 +52,8 @@ class StatusPegawaiController extends Controller
 
     public function store(StatusPegawaiRequest $request)
     {
-        try {
-            $this->statusPegawaiService->create($request->validated());
-            return jsonSuccess('Status Pegawai created successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->statusPegawaiService->create($request->validated());
+        return jsonSuccess('Status Pegawai created successfully.');
     }
 
     public function edit(StatusPegawai $statusPegawai)
@@ -68,21 +63,13 @@ class StatusPegawaiController extends Controller
 
     public function update(StatusPegawaiRequest $request, StatusPegawai $statusPegawai)
     {
-        try {
-            $this->StatusPegawaiService->update($statusPegawai, $request->validated());
-            return jsonSuccess('Status Pegawai updated successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $this->statusPegawaiService->update($statusPegawai, $request->validated());
+        return jsonSuccess('Status Pegawai updated successfully.');
     }
 
     public function destroy(StatusPegawai $statusPegawai)
     {
-        try {
-            $statusPegawai->delete();
-            return jsonSuccess('Status Pegawai deleted successfully.');
-        } catch (Exception $e) {
-            return jsonError($e->getMessage(), 500);
-        }
+        $statusPegawai->delete();
+        return jsonSuccess('Status Pegawai deleted successfully.');
     }
 }

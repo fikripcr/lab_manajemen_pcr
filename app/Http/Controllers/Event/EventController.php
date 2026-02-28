@@ -53,13 +53,8 @@ class EventController extends Controller
 
     public function store(EventRequest $request)
     {
-        try {
-            $event = $this->eventService->store($request->validated());
-            return jsonSuccess('Kegiatan berhasil disimpan', route('Kegiatan.Kegiatans.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan kegiatan: ' . $e->getMessage());
-        }
+        $this->eventService->store($request->validated());
+        return jsonSuccess('Kegiatan berhasil disimpan', route('Kegiatan.Kegiatans.index'));
     }
 
     public function show(Event $event)
@@ -78,23 +73,13 @@ class EventController extends Controller
 
     public function update(EventRequest $request, Event $event)
     {
-        try {
-            $this->eventService->update($event, $request->validated());
-            return jsonSuccess('Kegiatan berhasil diperbarui', route('Kegiatan.Kegiatans.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui kegiatan: ' . $e->getMessage());
-        }
+        $this->eventService->update($event, $request->validated());
+        return jsonSuccess('Kegiatan berhasil diperbarui', route('Kegiatan.Kegiatans.index'));
     }
 
     public function destroy(Event $event)
     {
-        try {
-            $this->eventService->destroy($event);
-            return jsonSuccess('Kegiatan berhasil dihapus');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus kegiatan: ' . $e->getMessage());
-        }
+        $this->eventService->destroy($event);
+        return jsonSuccess('Kegiatan berhasil dihapus');
     }
 }

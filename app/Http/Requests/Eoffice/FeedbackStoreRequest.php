@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class FeedbackStoreRequest extends FormRequest
+class FeedbackStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -47,14 +47,13 @@ class FeedbackStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'layanan_id.required' => 'Layanan harus dipilih.',
-            'rating.required' => 'Silahkan mengisi rating bintang.',
-            'rating.numeric' => 'Rating harus berupa angka.',
-            'rating.min' => 'Rating minimal 1.',
-            'rating.max' => 'Rating maksimal 5.',
-            'feedback.required' => 'Silahkan mengisi kolom komentar.',
-            'feedback.string' => 'Feedback harus berupa string.',
-        ];
+        return array_merge(parent::messages(), [
+            'rating.required'  => 'Rating harus diisi.',
+            'rating.integer'   => 'Rating tidak valid.',
+            'rating.min'       => 'Rating minimal 1.',
+            'rating.max'       => 'Rating maksimal 5.',
+            'catatan.required' => 'Catatan harus diisi.',
+            'catatan.min'      => 'Catatan minimal 5 karakter.',
+        ]);
     }
 }

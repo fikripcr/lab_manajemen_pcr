@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class MataKuliahRequest extends FormRequest
+class MataKuliahRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +25,5 @@ class MataKuliahRequest extends FormRequest
             'nama_mk' => 'required|string|max:255',
             'sks'     => 'required|integer|min:1|max:6',
         ];
-    }
-
-    /**
-     * Get custom validation messages.
-     */
-    public function messages(): array
-    {
-        return validation_messages_id();
     }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Shared;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SlideshowRequest extends FormRequest
+class SlideshowRequest extends BaseRequest
 {
     public function authorize(): bool
     {

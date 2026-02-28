@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\JenisIzinStoreRequest;
 use App\Models\Hr\JenisIzin;
 use App\Services\Hr\JenisIzinService;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class JenisIzinController extends Controller
@@ -44,13 +43,8 @@ class JenisIzinController extends Controller
 
     public function store(JenisIzinStoreRequest $request)
     {
-        try {
-            $this->jenisIzinService->store($request->validated());
-            return jsonSuccess('Jenis izin berhasil dibuat.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal membuat jenis izin: ' . $e->getMessage());
-        }
+        $this->jenisIzinService->store($request->validated());
+        return jsonSuccess('Jenis izin berhasil dibuat.');
     }
 
     public function edit(JenisIzin $jenisIzin)
@@ -60,23 +54,13 @@ class JenisIzinController extends Controller
 
     public function update(JenisIzinStoreRequest $request, JenisIzin $jenisIzin)
     {
-        try {
-            $this->jenisIzinService->update($jenisIzin, $request->validated());
-            return jsonSuccess('Jenis Izin berhasil diperbarui.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui jenis izin: ' . $e->getMessage());
-        }
+        $this->jenisIzinService->update($jenisIzin, $request->validated());
+        return jsonSuccess('Jenis Izin berhasil diperbarui.');
     }
 
     public function destroy(JenisIzin $jenisIzin)
     {
-        try {
-            $this->jenisIzinService->delete($jenisIzin);
-            return jsonSuccess('Jenis Izin berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus jenis izin: ' . $e->getMessage());
-        }
+        $this->jenisIzinService->delete($jenisIzin);
+        return jsonSuccess('Jenis Izin berhasil dihapus.');
     }
 }

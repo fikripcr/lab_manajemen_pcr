@@ -7,7 +7,6 @@ use App\Http\Requests\Cbt\UpdateSoalRequest;
 use App\Models\Cbt\MataUji;
 use App\Models\Cbt\Soal;
 use App\Services\Cbt\SoalService;
-use Exception;
 use Illuminate\Http\Request;
 
 class SoalController extends Controller
@@ -55,13 +54,8 @@ class SoalController extends Controller
 
     public function store(StoreSoalRequest $request)
     {
-        try {
-            $this->SoalService->store($request->validated());
-            return jsonSuccess('Soal berhasil disimpan.', route('cbt.soal.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan soal.');
-        }
+        $this->SoalService->store($request->validated());
+        return jsonSuccess('Soal berhasil disimpan.', route('cbt.soal.index'));
     }
 
     public function edit(Soal $soal)
@@ -72,23 +66,13 @@ class SoalController extends Controller
 
     public function update(UpdateSoalRequest $request, Soal $soal)
     {
-        try {
-            $this->SoalService->update($soal, $request->validated());
-            return jsonSuccess('Soal berhasil diperbarui.', route('cbt.soal.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui soal.');
-        }
+        $this->SoalService->update($soal, $request->validated());
+        return jsonSuccess('Soal berhasil diperbarui.', route('cbt.soal.index'));
     }
 
     public function destroy(Soal $soal)
     {
-        try {
-            $this->SoalService->delete($soal);
-            return jsonSuccess('Soal berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus soal.');
-        }
+        $this->SoalService->delete($soal);
+        return jsonSuccess('Soal berhasil dihapus.');
     }
 }

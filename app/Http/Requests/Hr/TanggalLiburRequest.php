@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class TanggalLiburRequest extends FormRequest
+class TanggalLiburRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,11 +28,16 @@ class TanggalLiburRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'entries.required' => 'Data entry tidak boleh kosong.',
             'tahun.required'   => 'Tahun harus dipilih.',
-        ];
+        ]);
     }
 }

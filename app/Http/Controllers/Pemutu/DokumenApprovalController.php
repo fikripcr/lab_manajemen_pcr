@@ -2,11 +2,10 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Pemutu\DokumenApprovalRequest;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\RiwayatApproval;
 use App\Models\Shared\Personil;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class DokumenApprovalController extends Controller
@@ -17,58 +16,44 @@ class DokumenApprovalController extends Controller
         return view('pages.pemutu.dokumens._approval_form', compact('dokumen', 'pegawais'));
     }
 
-    public function store(Request $request, Dokumen $dokumen)
+    public function store(DokumenApprovalRequest $request, Dokumen $dokumen)
     {
-        $request->validate([
-            'status' => 'required',
-            'personil_id' => 'required'
+
+        DB::beginTransaction();
+
+        // Standardization: terima -> Approved, tolak -> Rejected, tangguhkan -> Pending
+        $statusMapping = [
+            'terima'     => 'Approved',
+            'tolak'      => 'Rejected',
+            'tangguhkan' => 'Pending',
+        ];
+
+        $status = $statusMapping[$request->status] ?? 'Pending';
+
+        $personil = Personil::findOrFail(decryptId($request->personil_id));
+
+        $approval = RiwayatApproval::create([
+            'model'    => Dokumen::class,
+            'model_id' => $dokumen->dok_id,
+            'status'   => $status,
+            'pejabat'  => $personil->nama,
+            'catatan'  => $request->komentar,
         ]);
-        try {
-            DB::beginTransaction();
 
-            // Standardization: terima -> Approved, tolak -> Rejected, tangguhkan -> Pending
-            $statusMapping = [
-                'terima'     => 'Approved',
-                'tolak'      => 'Rejected',
-                'tangguhkan' => 'Pending',
-            ];
+        DB::commit();
 
-            $status = $statusMapping[$request->status] ?? 'Pending';
+        logActivity('pemutu', "Memberikan approval untuk dokumen: {$dokumen->judul} dengan status {$status}");
 
-            $personil = Personil::findOrFail(decryptId($request->personil_id));
-
-            $approval = RiwayatApproval::create([
-                'model'    => Dokumen::class,
-                'model_id' => $dokumen->dok_id,
-                'status'   => $status,
-                'pejabat'  => $personil->nama,
-                'catatan'  => $request->komentar,
-            ]);
-
-            DB::commit();
-
-            logActivity('pemutu', "Memberikan approval untuk dokumen: {$dokumen->judul} dengan status {$status}");
-
-            return jsonSuccess('Approval berhasil disimpan');
-        } catch (Exception $e) {
-            DB::rollBack();
-            logError($e);
-            return jsonError('Gagal menyimpan approval: ' . $e->getMessage());
-        }
+        return jsonSuccess('Approval berhasil disimpan');
     }
 
     public function destroy(RiwayatApproval $approval)
     {
-        try {
-            $dokName = $approval->subject?->judul ?? 'Dokumen';
-            $approval->delete();
+        $dokName = $approval->subject?->judul ?? 'Dokumen';
+        $approval->delete();
 
-            logActivity('pemutu', "Menghapus approval untuk dokumen: {$dokName}");
+        logActivity('pemutu', "Menghapus approval untuk dokumen: {$dokName}");
 
-            return jsonSuccess('Approval berhasil dihapus');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus approval: ' . $e->getMessage());
-        }
+        return jsonSuccess('Approval berhasil dihapus');
     }
 }

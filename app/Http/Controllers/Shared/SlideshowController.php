@@ -6,7 +6,6 @@ use App\Http\Requests\Shared\ReorderRequest;
 use App\Http\Requests\Shared\SlideshowRequest;
 use App\Models\Shared\Slideshow;
 use App\Services\Shared\SlideshowService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -23,17 +22,12 @@ class SlideshowController extends Controller
 
     public function reorder(ReorderRequest $request)
     {
-        try {
-            $order = $request->validated()['order'] ?? [];
-            if ($order) {
-                $this->slideshowService->reorderSlideshows($order);
-                return jsonSuccess('Urutan slideshow berhasil diperbarui.');
-            }
-            return jsonError('Data urutan tidak valid.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui urutan slideshow: ' . $e->getMessage());
+        $order = $request->validated()['order'] ?? [];
+        if ($order) {
+            $this->slideshowService->reorderSlideshows($order);
+            return jsonSuccess('Urutan slideshow berhasil diperbarui.');
         }
+        return jsonError('Data urutan tidak valid.');
     }
 
     public function paginate(Request $request)
@@ -67,13 +61,8 @@ class SlideshowController extends Controller
 
     public function store(SlideshowRequest $request)
     {
-        try {
-            $this->slideshowService->createSlideshow($request->validated());
-            return jsonSuccess('Slideshow berhasil ditambahkan.', route('shared.slideshow.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan slideshow: ' . $e->getMessage());
-        }
+        $this->slideshowService->createSlideshow($request->validated());
+        return jsonSuccess('Slideshow berhasil ditambahkan.', route('shared.slideshow.index'));
     }
 
     public function edit(Slideshow $slideshow)
@@ -83,23 +72,13 @@ class SlideshowController extends Controller
 
     public function update(SlideshowRequest $request, Slideshow $slideshow)
     {
-        try {
-            $this->slideshowService->updateSlideshow($slideshow, $request->validated());
-            return jsonSuccess('Slideshow berhasil diperbarui.', route('shared.slideshow.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui slideshow: ' . $e->getMessage());
-        }
+        $this->slideshowService->updateSlideshow($slideshow, $request->validated());
+        return jsonSuccess('Slideshow berhasil diperbarui.', route('shared.slideshow.index'));
     }
 
     public function destroy(Slideshow $slideshow)
     {
-        try {
-            $this->slideshowService->deleteSlideshow($slideshow);
-            return jsonSuccess('Slideshow berhasil dihapus.', route('shared.slideshow.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus slideshow: ' . $e->getMessage());
-        }
+        $this->slideshowService->deleteSlideshow($slideshow);
+        return jsonSuccess('Slideshow berhasil dihapus.', route('shared.slideshow.index'));
     }
 }

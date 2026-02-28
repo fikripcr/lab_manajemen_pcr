@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Pemutu;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class OrgUnitAuditeeRequest extends FormRequest
+class OrgUnitAuditeeRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,8 +33,10 @@ class OrgUnitAuditeeRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'auditee_user_id.exists' => 'User auditee tidak ditemukan.',
-        ];
+            'org_unit_id.required'  => 'Unit Kerja harus dipilih.',
+            'org_unit_id.exists'    => 'Unit Kerja tidak ditemukan.',
+        ]);
     }
 }

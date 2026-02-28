@@ -6,7 +6,6 @@ use App\Http\Requests\Pemutu\PegawaiImportRequest;
 use App\Http\Requests\Pemutu\PegawaiRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Services\Pemutu\PegawaiService;
-use Exception;
 use Yajra\DataTables\DataTables;
 
 class PegawaiController extends Controller
@@ -51,16 +50,11 @@ class PegawaiController extends Controller
 
     public function store(PegawaiRequest $request)
     {
-        try {
-            $this->pegawaiService->createPegawai($request->validated());
+        $this->pegawaiService->createPegawai($request->validated());
 
-            logActivity('pemutu', "Menambah pegawai baru: " . ($request->nama ?? ''));
+        logActivity('pemutu', "Menambah pegawai baru: " . ($request->nama ?? ''));
 
-            return jsonSuccess('Pegawai created successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan pegawai: ' . $e->getMessage());
-        }
+        return jsonSuccess('Pegawai created successfully.');
     }
 
     public function edit(\App\Models\Shared\Pegawai $pegawai)
@@ -71,31 +65,21 @@ class PegawaiController extends Controller
 
     public function update(PegawaiRequest $request, \App\Models\Shared\Pegawai $pegawai)
     {
-        try {
-            $this->pegawaiService->updatePegawai($pegawai->pegawai_id, $request->validated());
+        $this->pegawaiService->updatePegawai($pegawai->pegawai_id, $request->validated());
 
-            logActivity('pemutu', "Memperbarui data pegawai: {$pegawai->nama}");
+        logActivity('pemutu', "Memperbarui data pegawai: {$pegawai->nama}");
 
-            return jsonSuccess('Pegawai updated successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui pegawai: ' . $e->getMessage());
-        }
+        return jsonSuccess('Pegawai updated successfully.');
     }
 
     public function destroy(\App\Models\Shared\Pegawai $pegawai)
     {
-        try {
-            $pegawaiName = $pegawai->nama;
-            $this->pegawaiService->deletePegawai($pegawai->pegawai_id);
+        $pegawaiName = $pegawai->nama;
+        $this->pegawaiService->deletePegawai($pegawai->pegawai_id);
 
-            logActivity('pemutu', "Menghapus pegawai: {$pegawaiName}");
+        logActivity('pemutu', "Menghapus pegawai: {$pegawaiName}");
 
-            return jsonSuccess('Pegawai deleted successfully.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus pegawai: ' . $e->getMessage());
-        }
+        return jsonSuccess('Pegawai deleted successfully.');
     }
 
     public function import(PegawaiImportRequest $request)
@@ -104,15 +88,10 @@ class PegawaiController extends Controller
             return view('pages.pemutu.pegawai.import');
         }
 
-        try {
-            $this->pegawaiService->importPegawai($request->file('file'));
+        $this->pegawaiService->importPegawai($request->file('file'));
 
-            logActivity('pemutu', "Mengimport data pegawai via Excel");
+        logActivity('pemutu', "Mengimport data pegawai via Excel");
 
-            return jsonSuccess('Pegawai imported successfully.', route('pemutu.pegawai.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengimport pegawai: ' . $e->getMessage());
-        }
+        return jsonSuccess('Pegawai imported successfully.', route('pemutu.pegawai.index'));
     }
 }

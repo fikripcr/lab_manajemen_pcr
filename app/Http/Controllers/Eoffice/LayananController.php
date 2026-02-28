@@ -10,7 +10,6 @@ use App\Services\Eoffice\LayananService;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -94,54 +93,49 @@ class LayananController extends Controller
      */
     public function store(LayananStoreRequest $request)
     {
-        try {
-            $validated    = $request->validated();
-            $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')->findOrFail($validated['jenislayanan_id']);
+        $validated    = $request->validated();
+        $jenisLayanan = JenisLayanan::with('isians.kategoriIsian')->findOrFail($validated['jenislayanan_id']);
 
-            $data          = $request->only(['jenislayanan_id', 'keterangan']);
-            $dynamicFields = [];
+        $data          = $request->only(['jenislayanan_id', 'keterangan']);
+        $dynamicFields = [];
 
-            // Handle dynamic fields from the request
-            foreach ($jenisLayanan->isians as $item) {
-                $field     = $item->kategoriIsian;
-                
-                // Skip if kategoriIsian is not loaded (defensive programming)
-                if (!$field) {
-                    \Log::warning("Kategori Isian not found for JL Isian ID: {$item->jlisian_id}");
-                    continue;
-                }
-                
-                $fieldName = 'field_' . $field->kategoriisian_id;
-
-                if ($request->has($fieldName)) {
-                    $value = $request->input($fieldName);
-
-                    // Handle file upload
-                    if ($field->type === 'file' && $request->hasFile($fieldName)) {
-                        $file = $request->file($fieldName);
-                        
-                        // Validate file size (max 2MB)
-                        if ($file->getSize() > 2 * 1024 * 1024) {
-                            return jsonError('File ' . $field->nama_isian . ' terlalu besar (maks 2MB)');
-                        }
-                        
-                        $path  = $file->store('eoffice/requests/' . date('Y/m'), 'public');
-                        $value = $path;
-                    }
-
-                    $dynamicFields[$field->nama_isian] = $value;
-                } elseif ($item->is_required) {
-                    // Required field is missing
-                    return jsonError('Field "' . $field->nama_isian . '" wajib diisi.');
-                }
+        // Handle dynamic fields from the request
+        foreach ($jenisLayanan->isians as $item) {
+            $field     = $item->kategoriIsian;
+            
+            // Skip if kategoriIsian is not loaded (defensive programming)
+            if (!$field) {
+                \Log::warning("Kategori Isian not found for JL Isian ID: {$item->jlisian_id}");
+                continue;
             }
+            
+            $fieldName = 'field_' . $field->kategoriisian_id;
 
-            $this->LayananService->createLayanan($data, $dynamicFields);
-            return jsonSuccess('Pengajuan berhasil dikirim.', route('eoffice.layanan.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengirim pengajuan: ' . $e->getMessage());
+            if ($request->has($fieldName)) {
+                $value = $request->input($fieldName);
+
+                // Handle file upload
+                if ($field->type === 'file' && $request->hasFile($fieldName)) {
+                    $file = $request->file($fieldName);
+                    
+                    // Validate file size (max 2MB)
+                    if ($file->getSize() > 2 * 1024 * 1024) {
+                        return jsonError('File ' . $field->nama_isian . ' terlalu besar (maks 2MB)');
+                    }
+                    
+                    $path  = $file->store('eoffice/requests/' . date('Y/m'), 'public');
+                    $value = $path;
+                }
+
+                $dynamicFields[$field->nama_isian] = $value;
+            } elseif ($item->is_required) {
+                // Required field is missing
+                return jsonError('Field "' . $field->nama_isian . '" wajib diisi.');
+            }
         }
+
+        $this->LayananService->createLayanan($data, $dynamicFields);
+        return jsonSuccess('Pengajuan berhasil dikirim.', route('eoffice.layanan.index'));
     }
 
     /**
@@ -232,13 +226,8 @@ class LayananController extends Controller
             $data['file_lampiran'] = $request->file('file_lampiran')->store('eoffice/status_attachments', 'public');
         }
 
-        try {
-            $this->LayananService->updateStatus($layanan->layanan_id, $data);
-            return jsonSuccess('Status berhasil dirubah.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal merubah status: ' . $e->getMessage());
-        }
+        $this->LayananService->updateStatus($layanan->layanan_id, $data);
+        return jsonSuccess('Status berhasil dirubah.');
     }
 
     /**

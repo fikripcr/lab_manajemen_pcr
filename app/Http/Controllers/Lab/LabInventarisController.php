@@ -8,7 +8,6 @@ use App\Models\Lab\Lab;
 use App\Models\Lab\LabInventaris;
 use App\Services\Lab\InventarisService;
 use App\Services\Lab\LabInventarisService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -78,13 +77,8 @@ class LabInventarisController extends Controller
 
     public function store(LabInventarisRequest $request, Lab $lab)
     {
-        try {
-            $this->labInventarisService->assignInventaris($lab->lab_id, $request->all());
-            return jsonSuccess('Inventaris berhasil ditambahkan ke lab.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan inventaris ke lab: ' . $e->getMessage());
-        }
+        $this->labInventarisService->assignInventaris($lab->lab_id, $request->all());
+        return jsonSuccess('Inventaris berhasil ditambahkan ke lab.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
     }
 
     public function edit(Lab $lab, LabInventaris $inventarisLab)
@@ -96,24 +90,14 @@ class LabInventarisController extends Controller
 
     public function update(LabInventarisRequest $request, Lab $lab, LabInventaris $inventarisLab)
     {
-        try {
-            $this->labInventarisService->updateAssignment($inventarisLab, $request->validated());
-            return jsonSuccess('Data inventaris lab berhasil diperbarui.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui data inventaris lab: ' . $e->getMessage());
-        }
+        $this->labInventarisService->updateAssignment($inventarisLab, $request->validated());
+        return jsonSuccess('Data inventaris lab berhasil diperbarui.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
     }
 
     public function destroy(Lab $lab, LabInventaris $inventarisLab)
     {
-        try {
-            $this->labInventarisService->deleteAssignment($inventarisLab);
-            return jsonSuccess('Inventaris berhasil dihapus dari lab.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus inventaris dari lab: ' . $e->getMessage());
-        }
+        $this->labInventarisService->deleteAssignment($inventarisLab);
+        return jsonSuccess('Inventaris berhasil dihapus dari lab.', route('lab.labs.inventaris.index', $lab->encrypted_lab_id));
     }
 
     public function getInventaris(Request $request, Lab $lab)

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class RolePermissionRequest extends FormRequest
+class RolePermissionRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,6 +30,8 @@ class RolePermissionRequest extends FormRequest
      */
     public function messages(): array
     {
-        return validation_messages_id();
+        return array_merge(parent::messages(), [
+            'permissions.required' => 'Setidaknya satu permission harus dipilih.',
+        ]);
     }
 }

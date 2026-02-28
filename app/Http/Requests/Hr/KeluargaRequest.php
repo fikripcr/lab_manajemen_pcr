@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Hr;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class KeluargaRequest extends FormRequest
+class KeluargaRequest extends BaseRequest
 {
     public function authorize()
     {

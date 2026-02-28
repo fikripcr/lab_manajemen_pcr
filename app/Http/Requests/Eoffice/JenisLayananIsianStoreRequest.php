@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class JenisLayananIsianStoreRequest extends FormRequest
+class JenisLayananIsianStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -34,7 +34,7 @@ class JenisLayananIsianStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'kategoriisian_id.required' => 'Kategori isian harus dipilih.',
             'kategoriisian_id.exists'   => 'Kategori isian tidak ditemukan.',
             'seq.required'              => 'Urutan harus diisi.',
@@ -49,6 +49,6 @@ class JenisLayananIsianStoreRequest extends FormRequest
             'placeholder.max'           => 'Placeholder maksimal 255 karakter.',
             'options.string'            => 'Options harus berupa string.',
             'validasi.string'           => 'Validasi harus berupa string.',
-        ];
+        ]);
     }
 }

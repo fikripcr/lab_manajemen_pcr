@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class TestDocxTemplateRequest extends FormRequest
+class TestDocxTemplateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,11 +33,11 @@ class TestDocxTemplateRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'template.required' => 'File template harus diupload.',
-            'template.file' => 'Harus berupa file.',
-            'template.mimes' => 'File harus berformat DOC atau DOCX.',
-            'template.max' => 'File maksimal 10MB.',
-        ];
+        return array_merge(parent::messages(), [
+            'template.required' => 'Template DOCX harus diunggah.',
+            'template.file'     => 'Input harus berupa file.',
+            'template.mimes'    => 'Format file harus docx.',
+            'template.max'      => 'File maksimal 10MB.',
+        ]);
     }
 }

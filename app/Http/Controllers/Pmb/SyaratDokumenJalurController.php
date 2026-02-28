@@ -7,7 +7,6 @@ use App\Models\Pmb\Jalur;
 use App\Models\Pmb\JenisDokumen;
 use App\Models\Pmb\SyaratDokumenJalur;
 use App\Services\Pmb\SyaratDokumenJalurService;
-use Exception;
 use Illuminate\Http\Request;
 
 class SyaratDokumenJalurController extends Controller
@@ -27,23 +26,13 @@ class SyaratDokumenJalurController extends Controller
 
     public function store(StoreSyaratRequest $request)
     {
-        try {
-            $this->syaratDokumenJalurService->updateOrCreate($request->validated());
-            return jsonSuccess('Syarat dokumen berhasil dikonfigurasi.', route('pmb.syarat-jalur.index', ['jalur' => $request->jalur]));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengonfigurasi syarat dokumen: ' . $e->getMessage());
-        }
+        $this->syaratDokumenJalurService->updateOrCreate($request->validated());
+        return jsonSuccess('Syarat dokumen berhasil dikonfigurasi.', route('pmb.syarat-jalur.index', ['jalur' => $request->jalur]));
     }
 
     public function destroy(SyaratDokumenJalur $syarat)
     {
-        try {
-            $this->syaratDokumenJalurService->delete($syarat);
-            return jsonSuccess('Syarat dokumen berhasil dihapus.');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus syarat dokumen: ' . $e->getMessage());
-        }
+        $this->syaratDokumenJalurService->delete($syarat);
+        return jsonSuccess('Syarat dokumen berhasil dihapus.');
     }
 }

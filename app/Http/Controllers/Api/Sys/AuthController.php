@@ -22,41 +22,24 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        try {
-            $credentials = $request->validated();
-            $deviceName  = $request->input('device_name', $request->userAgent());
+        $credentials = $request->validated();
+        $deviceName  = $request->input('device_name', $request->userAgent());
 
-            $result = $this->apiAuthService->loginAndCreateToken($credentials, $deviceName);
+        $result = $this->apiAuthService->loginAndCreateToken($credentials, $deviceName);
 
-            if (! $result) {
-                throw ValidationException::withMessages([
-                    'email' => ['The provided credentials are incorrect.'],
-                ]);
-            }
-
-            // Log the login activity
-            logActivity('auth', 'API token generated for user: ' . $result['user']->name, $result['user']);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful',
-                'data'    => [
-                    'user'  => $result['user'],
-                    'token' => $result['token'],
-                ],
+        if (! $result) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
             ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Login failed',
-                'errors'  => $e->errors(),
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred during authentication',
-            ], 500);
         }
+
+        // Log the login activity
+        logActivity('auth', 'API token generated for user: ' . $result['user']->name, $result['user']);
+
+        return jsonSuccess('Login successful', null, [
+            'user'  => $result['user'],
+            'token' => $result['token'],
+        ]);
     }
 
     /**
@@ -64,25 +47,15 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        try {
-            $user = $request->user(); // Get authenticated user from Sanctum token
+        $user = $request->user(); // Get authenticated user from Sanctum token
 
-            // Revoke the current token
-            $request->user()->currentAccessToken()->delete();
+        // Revoke the current token
+        $request->user()->currentAccessToken()->delete();
 
-            // Log the logout activity
-            logActivity('auth', 'API token revoked for user: ' . $user->name, $user);
+        // Log the logout activity
+        logActivity('auth', 'API token revoked for user: ' . $user->name, $user);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully logged out',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred during logout',
-            ], 500);
-        }
+        return jsonSuccess('Successfully logged out');
     }
 
     /**
@@ -90,18 +63,8 @@ class AuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
-        try {
-            $user = $request->user();
+        $user = $request->user();
 
-            return response()->json([
-                'success' => true,
-                'data'    => $user,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred retrieving user information',
-            ], 500);
-        }
+        return jsonSuccess('User information retrieved', null, $user);
     }
 }

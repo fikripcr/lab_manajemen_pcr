@@ -6,7 +6,6 @@ use App\Http\Requests\Hr\LemburRequest;
 use App\Models\Hr\Lembur;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\LemburService;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -84,14 +83,9 @@ class LemburController extends Controller
      */
     public function store(LemburRequest $request)
     {
-        try {
-            $this->lemburService->store($request->validated());
+        $this->lemburService->store($request->validated());
 
-            return jsonSuccess('Lembur berhasil ditambahkan');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan lembur: ' . $e->getMessage());
-        }
+        return jsonSuccess('Lembur berhasil ditambahkan');
     }
 
     /**
@@ -119,14 +113,9 @@ class LemburController extends Controller
      */
     public function update(LemburRequest $request, Lembur $lembur)
     {
-        try {
-            $this->lemburService->update($lembur, $request->validated());
+        $this->lemburService->update($lembur, $request->validated());
 
-            return jsonSuccess('Lembur berhasil diupdate', route('hr.lembur.index'));
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal mengupdate lembur: ' . $e->getMessage());
-        }
+        return jsonSuccess('Lembur berhasil diupdate', route('hr.lembur.index'));
     }
 
     /**
@@ -134,14 +123,9 @@ class LemburController extends Controller
      */
     public function destroy(Lembur $lembur)
     {
-        try {
-            $lembur->delete();
+        $lembur->delete();
 
-            return jsonSuccess('Lembur berhasil dihapus');
-        } catch (Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus lembur: ' . $e->getMessage());
-        }
+        return jsonSuccess('Lembur berhasil dihapus');
     }
 
     /**
@@ -149,14 +133,9 @@ class LemburController extends Controller
      */
     public function approve(LemburRequest $request, Lembur $lembur)
     {
-        try {
-            $validated = $request->validated();
-            $this->lemburService->approve($lembur, $validated);
+        $validated = $request->validated();
+        $this->lemburService->approve($lembur, $validated);
 
-            return jsonSuccess('Lembur berhasil di-' . ($validated['status'] === 'approved' ? 'setujui' : 'tolak'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memproses approval: ' . $e->getMessage());
-        }
+        return jsonSuccess('Lembur berhasil di-' . ($validated['status'] === 'approved' ? 'setujui' : 'tolak'));
     }
 }

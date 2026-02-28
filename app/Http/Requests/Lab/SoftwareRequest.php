@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SoftwareRequest extends FormRequest
+class SoftwareRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -43,6 +43,5 @@ class SoftwareRequest extends FormRequest
      */
     public function messages(): array
     {
-        return validation_messages_id();
     }
 }

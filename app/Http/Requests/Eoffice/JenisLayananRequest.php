@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Requests\Eoffice;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 use Illuminate\Validation\Rule;
 
-class JenisLayananRequest extends FormRequest
+class JenisLayananRequest extends BaseRequest
 {
     public function authorize(): bool
     {

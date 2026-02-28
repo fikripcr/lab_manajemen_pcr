@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class LabRequest extends FormRequest
+class LabRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,15 +28,5 @@ class LabRequest extends FormRequest
             'capacity'    => ['required', 'integer', 'min:1'],
             'description' => ['nullable', 'string'],
         ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return validation_messages_id();
     }
 }

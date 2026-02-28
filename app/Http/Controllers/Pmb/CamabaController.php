@@ -2,8 +2,8 @@
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pmb\CamabaRequest;
 use App\Models\Pmb\Camaba;
-use App\Models\Pmb\Pendaftaran;
 use App\Services\Pmb\CamabaService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -86,49 +86,19 @@ class CamabaController extends Controller
     /**
      * Store camaba
      */
-    public function store(Request $request)
+    public function store(CamabaRequest $request)
     {
-        $request->validate([
-            'nik' => 'required|unique:pmb_camaba,nik',
-            'no_hp' => 'required',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|in:L,P',
-            'alamat_lengkap' => 'required',
-            'asal_sekolah' => 'required',
-        ]);
-
-        try {
-            Camaba::create($request->all());
-            return jsonSuccess('Data Camaba berhasil ditambahkan.', route('pmb.camaba.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan data camaba: ' . $e->getMessage());
-        }
+        Camaba::create($request->validated());
+        return jsonSuccess('Data Camaba berhasil ditambahkan.', route('pmb.camaba.index'));
     }
 
     /**
      * Update camaba
      */
-    public function update(Request $request, Camaba $camaba)
+    public function update(CamabaRequest $request, Camaba $camaba)
     {
-        $request->validate([
-            'nik' => 'required|unique:pmb_camaba,nik,' . $camaba->camaba_id . ',camaba_id',
-            'no_hp' => 'required',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|in:L,P',
-            'alamat_lengkap' => 'required',
-            'asal_sekolah' => 'required',
-        ]);
-
-        try {
-            $camaba->update($request->all());
-            return jsonSuccess('Data Camaba berhasil diperbarui.', route('pmb.camaba.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui data camaba: ' . $e->getMessage());
-        }
+        $camaba->update($request->validated());
+        return jsonSuccess('Data Camaba berhasil diperbarui.', route('pmb.camaba.index'));
     }
 
     /**
@@ -136,12 +106,7 @@ class CamabaController extends Controller
      */
     public function destroy(Camaba $camaba)
     {
-        try {
-            $camaba->delete();
-            return jsonSuccess('Data Camaba berhasil dihapus.');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus data camaba: ' . $e->getMessage());
-        }
+        $camaba->delete();
+        return jsonSuccess('Data Camaba berhasil dihapus.');
     }
 }

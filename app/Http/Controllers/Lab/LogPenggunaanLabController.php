@@ -61,23 +61,18 @@ class LogPenggunaanLabController extends Controller
 
     public function store(LogPenggunaanLabRequest $request)
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            if ($request->filled('kegiatan_id')) {
-                $kegiatan            = Kegiatan::findOrFail($data['kegiatan_id']);
-                $data['lab_id']      = $kegiatan->lab_id;
-            } elseif ($request->filled('lab_id')) {
-                // lab_id already decrypted via Form Request
-            } else {
-                return jsonError('Pilih Kegiatan atau Lab');
-            }
-
-            $this->logPenggunaanLabService->createLog($data);
-            return jsonSuccess('Log berhasil disimpan', route('lab.log-lab.index'));
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menyimpan log: ' . $e->getMessage());
+        if ($request->filled('kegiatan_id')) {
+            $kegiatan            = Kegiatan::findOrFail($data['kegiatan_id']);
+            $data['lab_id']      = $kegiatan->lab_id;
+        } elseif ($request->filled('lab_id')) {
+            // lab_id already decrypted via Form Request
+        } else {
+            return jsonError('Pilih Kegiatan atau Lab');
         }
+
+        $this->logPenggunaanLabService->createLog($data);
+        return jsonSuccess('Log berhasil disimpan', route('lab.log-lab.index'));
     }
 }

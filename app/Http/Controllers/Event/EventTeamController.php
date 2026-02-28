@@ -32,17 +32,12 @@ class EventTeamController extends Controller
      */
     public function store(EventTeamRequest $request, Event $event)
     {
-        try {
-            $validated = $request->validated();
-            $validated['event_id'] = $event->event_id;
-            
-            $this->eventTeamService->store($validated);
-            
-            return jsonSuccess('Anggota tim berhasil ditambahkan');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menambahkan anggota tim: ' . $e->getMessage());
-        }
+        $validated = $request->validated();
+        $validated['event_id'] = $event->event_id;
+
+        $this->eventTeamService->store($validated);
+
+        return jsonSuccess('Anggota tim berhasil ditambahkan');
     }
 
     /**
@@ -63,14 +58,9 @@ class EventTeamController extends Controller
      */
     public function update(EventTeamRequest $request, Event $event, EventTeam $team)
     {
-        try {
-            $this->eventTeamService->update($team, $request->validated());
-            
-            return jsonSuccess('Data anggota tim berhasil diperbarui');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal memperbarui data anggota tim: ' . $e->getMessage());
-        }
+        $this->eventTeamService->update($team, $request->validated());
+
+        return jsonSuccess('Data anggota tim berhasil diperbarui');
     }
 
     /**
@@ -78,13 +68,8 @@ class EventTeamController extends Controller
      */
     public function destroy(Event $event, EventTeam $team)
     {
-        try {
-            $this->eventTeamService->destroy($team);
-            
-            return jsonSuccess('Anggota tim berhasil dihapus');
-        } catch (\Exception $e) {
-            logError($e);
-            return jsonError('Gagal menghapus anggota tim: ' . $e->getMessage());
-        }
+        $this->eventTeamService->destroy($team);
+
+        return jsonSuccess('Anggota tim berhasil dihapus');
     }
 }

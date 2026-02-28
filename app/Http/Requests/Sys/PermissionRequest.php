@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Sys;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PermissionRequest extends FormRequest
+class PermissionRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,6 +36,9 @@ class PermissionRequest extends FormRequest
      */
     public function messages(): array
     {
-        return validation_messages_id();
+        return array_merge(parent::messages(), [
+            'name.required'   => 'Nama permission wajib diisi.',
+            'name.unique'     => 'Nama permission sudah digunakan.',
+        ]);
     }
 }

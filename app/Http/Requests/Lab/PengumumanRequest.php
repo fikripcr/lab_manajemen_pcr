@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Requests\Lab;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class PengumumanRequest extends FormRequest
+class PengumumanRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -37,19 +37,7 @@ class PengumumanRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'judul.required'       => 'Judul wajib diisi.',
-            'judul.string'         => 'Judul harus berupa teks.',
-            'judul.max'            => 'Judul tidak boleh lebih dari 255 karakter.',
-
-            'isi.required'         => 'Isi wajib diisi.',
-            'isi.string'           => 'Isi harus berupa teks.',
-
-            'jenis.required'       => 'Jenis wajib dipilih.',
-            'jenis.in'             => 'Jenis yang dipilih tidak valid.',
-
-            'is_published.boolean' => 'Status publikasi harus berupa benar atau salah.',
-
+        return array_merge(parent::messages(), [
             'cover.image'          => 'Cover harus berupa gambar.',
             'cover.mimes'          => 'Cover harus berupa file JPEG, PNG, JPG, atau GIF.',
             'cover.max'            => 'Ukuran cover tidak boleh lebih dari 2MB.',
@@ -57,6 +45,6 @@ class PengumumanRequest extends FormRequest
             'attachments.*.file'   => 'Lampiran harus berupa file.',
             'attachments.*.mimes'  => 'Lampiran harus berupa file PDF, DOC, DOCX, ZIP, XLS, atau XLSX.',
             'attachments.*.max'    => 'Ukuran lampiran tidak boleh lebih dari 5MB.',
-        ];
+        ]);
     }
 }
