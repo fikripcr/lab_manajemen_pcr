@@ -27,4 +27,15 @@ class ConfirmPaymentRequest extends BaseRequest
             'tanggal_bayar'  => 'required|date',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'pendaftaran_id' => 'Pendaftaran',
+            'bukti_bayar'    => 'Bukti Pembayaran',
+            'bank_asal'      => 'Bank Asal',
+            'nama_pengirim'  => 'Nama Pengirim',
+            'tanggal_bayar'  => 'Tanggal Pembayaran',
+        ];
+    }
 }

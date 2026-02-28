@@ -14,8 +14,15 @@ class DiskusiRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'isi' => ['required', 'string', 'max:5000'],
             'attachment_file' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png,xls,xlsx', 'max:5120'],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'isi'             => 'Isi Diskusi',
+            'attachment_file' => 'File Lampiran',
         ];
     }
 }

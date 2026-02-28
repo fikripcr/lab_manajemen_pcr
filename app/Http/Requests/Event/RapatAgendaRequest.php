@@ -19,4 +19,14 @@ class RapatAgendaRequest extends BaseRequest
             'seq'          => 'nullable|integer',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'rapat_id'     => 'Rapat',
+            'judul_agenda' => 'Judul Agenda',
+            'isi'          => 'Isi Agenda',
+            'seq'          => 'Urutan',
+        ];
+    }
 }

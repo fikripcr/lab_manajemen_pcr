@@ -26,17 +26,10 @@ class UserImportRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'file.required' => 'File harus diunggah.',
-            'file.mimes'    => 'Format file harus .xlsx atau .xls.',
-            'file.max'      => 'File maksimal 10MB.',
-        ]);
+        return [
+            'file' => 'File Import',
+        ];
     }
 }

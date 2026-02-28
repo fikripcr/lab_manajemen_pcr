@@ -84,14 +84,27 @@ class EvaluasiDiriController extends Controller
                 // Evidence items
                 $evidenceHtml = '';
                 if ($pivot) {
-                    $file = $pivot->ed_attachment;
-                    if ($file) {
-                        // Encrypt id from pivot
-                        $url           = route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id));
+                    $hasFile = !empty($pivot->ed_attachment);
+                    $hasLinks = !empty(json_decode($pivot->ed_links, true));
+
+                    // 1. Show Skala first
+                    if (isset($pivot->ed_skala) && $pivot->ed_skala !== null && $pivot->ed_skala !== '') {
+                        $evidenceHtml .= '<span class="badge bg-primary text-white me-2 mb-1" title="Nilai Skala Capaian" data-bs-toggle="tooltip">Skala [' . e($pivot->ed_skala) . ']</span>';
+                        
+                        // Add pipeline if there are subsequent attachments/links
+                        if ($hasFile || $hasLinks) {
+                            $evidenceHtml .= '<span class="text-muted mx-1 mb-1">|</span>';
+                        }
+                    }
+
+                    // 2. Show File Attachment
+                    if ($hasFile) {
+                        $url = route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id));
                         $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                     }
 
-                    if (! empty($pivot->ed_links)) {
+                    // 3. Show External Links
+                    if ($hasLinks) {
                         $links = json_decode($pivot->ed_links, true) ?? [];
                         if (is_array($links)) {
                             foreach ($links as $link) {
@@ -104,7 +117,7 @@ class EvaluasiDiriController extends Controller
                 }
 
                 if ($evidenceHtml) {
-                    $html .= '<div class="d-flex flex-wrap border-top pt-2">' . $evidenceHtml . '</div>';
+                    $html .= '<div class="d-flex flex-wrap align-items-center border-top pt-2">' . $evidenceHtml . '</div>';
                 }
 
                 return $html;
@@ -112,7 +125,8 @@ class EvaluasiDiriController extends Controller
             ->addColumn('action', function ($row) {
                 return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"
                     data-url="' . route('pemutu.evaluasi-diri.edit', $row->encrypted_indikator_id) . '"
-                    data-modal-title="Isi Evaluasi Diri">
+                    data-modal-title="Isi Evaluasi Diri"
+                    data-modal-size="modal-xl">
                     Isi ED
                     </button>';
             })
@@ -257,7 +271,7 @@ class EvaluasiDiriController extends Controller
     public function downloadAttachment($id)
     {
         $realId = decryptIdIfEncrypted($id);
-        
+
         $pivot = DB::table('pemutu_indikator_orgunit')
             ->where('indikorgunit_id', $realId)
             ->first();

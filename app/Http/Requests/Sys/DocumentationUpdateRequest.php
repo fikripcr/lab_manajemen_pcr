@@ -26,4 +26,10 @@ class DocumentationUpdateRequest extends BaseRequest
         ];
     }
 
+    public function attributes(): array
+    {
+        return [
+            'content' => 'Konten',
+        ];
+    }
 }

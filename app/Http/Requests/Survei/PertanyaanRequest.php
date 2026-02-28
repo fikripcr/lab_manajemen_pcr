@@ -70,4 +70,21 @@ class PertanyaanRequest extends BaseRequest
             'opsi.*.next_pertanyaan_id' => 'nullable|exists:survei_pertanyaan,pertanyaan_id',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'halaman_id'                => 'Halaman',
+            'tipe'                      => 'Tipe Pertanyaan',
+            'teks_pertanyaan'           => 'Teks Pertanyaan',
+            'bantuan_teks'              => 'Teks Bantuan',
+            'wajib_diisi'               => 'Wajib Diisi',
+            'urutan'                    => 'Urutan',
+            'next_pertanyaan_id'        => 'Lompat ke Pertanyaan',
+            'config_json'               => 'Konfigurasi Tambahan',
+            'opsi'                      => 'Pilihan Opsi',
+            'opsi.*.label'              => 'Label Opsi',
+            'opsi.*.next_pertanyaan_id' => 'Lompat ke Pertanyaan (Opsi)',
+        ];
+    }
 }

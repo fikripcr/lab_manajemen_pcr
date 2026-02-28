@@ -23,4 +23,18 @@ class JenisShiftRequest extends BaseRequest
             'is_active'        => 'boolean',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'jenis_shift'      => 'Jenis Shift',
+            'jam_masuk'        => 'Jam Masuk',
+            'jam_masuk_awal'   => 'Jam Masuk Awal',
+            'jam_masuk_akhir'  => 'Jam Masuk Akhir',
+            'jam_pulang'       => 'Jam Pulang',
+            'jam_pulang_awal'  => 'Jam Pulang Awal',
+            'jam_pulang_akhir' => 'Jam Pulang Akhir',
+            'is_active'        => 'Status Aktif',
+        ];
+    }
 }

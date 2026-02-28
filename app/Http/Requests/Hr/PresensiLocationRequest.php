@@ -21,8 +21,15 @@ class PresensiLocationRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'latitude'  => 'required|numeric',
             'longitude' => 'required|numeric',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'latitude'  => 'Latitude',
+            'longitude' => 'Longitude',
         ];
     }
 }

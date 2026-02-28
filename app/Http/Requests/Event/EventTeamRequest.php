@@ -29,33 +29,13 @@ class EventTeamRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'pegawai_id.required' => 'Pegawai wajib dipilih',
-            'pegawai_id.exists' => 'Pegawai tidak valid',
-            'role.max' => 'Peran maksimal 100 karakter',
-            'jabatan_dalam_tim.max' => 'Jabatan maksimal 100 karakter',
-        ];
-    }
-
-    /**
-     * Get the validation attributes for the request.
-     *
-     * @return array<string, string>
-     */
     public function attributes(): array
     {
         return [
-            'pegawai_id' => 'pegawai',
-            'role' => 'peran dalam tim',
-            'jabatan_dalam_tim' => 'jabatan dalam kegiatan',
-            'is_pic' => 'status PIC',
+            'pegawai_id'        => 'Pegawai',
+            'role'              => 'Peran Dalam Tim',
+            'jabatan_dalam_tim' => 'Jabatan Dalam Kegiatan',
+            'is_pic'            => 'Status PIC',
         ];
     }
 }

@@ -21,4 +21,16 @@ class KeluargaRequest extends BaseRequest
             'telp'          => 'nullable|string|max:20',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nama'          => 'Nama Keluarga',
+            'hubungan'      => 'Hubungan Keluarga',
+            'jenis_kelamin' => 'Jenis Kelamin',
+            'tgl_lahir'     => 'Tanggal Lahir',
+            'alamat'        => 'Alamat',
+            'telp'          => 'No. Telepon',
+        ];
+    }
 }

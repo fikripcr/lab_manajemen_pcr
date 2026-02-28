@@ -17,4 +17,11 @@ class JadwalImportRequest extends BaseRequest
             'file' => 'required|mimes:xlsx,xls,csv',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'file' => 'File Jadwal',
+        ];
+    }
 }

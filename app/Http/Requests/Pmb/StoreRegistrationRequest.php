@@ -35,4 +35,22 @@ class StoreRegistrationRequest extends BaseRequest
             'nama_ibu_kandung' => 'required|string|max:255',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'periode_id'       => 'Periode',
+            'jalur_id'         => 'Jalur',
+            'pilihan_prodi'    => 'Pilihan Program Studi',
+            'pilihan_prodi.*'  => 'Pilihan Program Studi',
+            'nik'              => 'NIK',
+            'no_hp'            => 'Nomor HP',
+            'tempat_lahir'     => 'Tempat Lahir',
+            'tanggal_lahir'    => 'Tanggal Lahir',
+            'jenis_kelamin'    => 'Jenis Kelamin',
+            'alamat_lengkap'   => 'Alamat Lengkap',
+            'asal_sekolah'     => 'Asal Sekolah',
+            'nama_ibu_kandung' => 'Nama Ibu Kandung',
+        ];
+    }
 }

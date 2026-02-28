@@ -15,8 +15,17 @@ class RiwayatStatAktifitasRequest extends BaseRequest
         return [
             'statusaktifitas_id' => 'required|exists:hr_status_aktifitas,statusaktifitas_id',
             'tmt'                => 'required|date',
-            'no_sk'              => 'nullable|string|max:100',
             'keterangan'         => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'statusaktifitas_id' => 'Status Aktifitas',
+            'tmt'                => 'TMT',
+            'no_sk'              => 'Nomor SK',
+            'keterangan'         => 'Keterangan',
         ];
     }
 }

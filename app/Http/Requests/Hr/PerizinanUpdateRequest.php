@@ -28,8 +28,22 @@ class PerizinanUpdateRequest extends BaseRequest
             'alamat_izin'            => 'nullable|string',
             'tgl_awal'               => 'required|date',
             'tgl_akhir'              => 'required|date|after_or_equal:tgl_awal',
-            'jam_awal'               => 'nullable',
             'jam_akhir'              => 'nullable',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'jenisizin_id'           => 'Jenis Izin',
+            'pengusul'               => 'Pengusul',
+            'pekerjaan_ditinggalkan' => 'Pekerjaan Ditinggalkan',
+            'keterangan'             => 'Keterangan',
+            'alamat_izin'            => 'Alamat Izin',
+            'tgl_awal'               => 'Tanggal Awal',
+            'tgl_akhir'              => 'Tanggal Akhir',
+            'jam_awal'               => 'Jam Awal',
+            'jam_akhir'              => 'Jam Akhir',
         ];
     }
 }

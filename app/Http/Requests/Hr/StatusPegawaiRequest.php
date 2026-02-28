@@ -15,8 +15,17 @@ class StatusPegawaiRequest extends BaseRequest
         return [
             'kode_status' => 'required|string|max:10',
             'nama_status' => 'required|string|max:50',
-            'organisasi'  => 'nullable|string|max:50',
             'is_active'   => 'boolean',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'kode_status' => 'Kode Status',
+            'nama_status' => 'Nama Status',
+            'organisasi'  => 'Organisasi',
+            'is_active'   => 'Status Aktif',
         ];
     }
 }

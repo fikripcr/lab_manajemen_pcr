@@ -28,24 +28,12 @@ class PresensiCheckInRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'latitude.required' => 'Latitude harus diisi.',
-            'latitude.numeric' => 'Latitude harus berupa angka.',
-            'longitude.required' => 'Longitude harus diisi.',
-            'longitude.numeric' => 'Longitude harus berupa angka.',
-            'address.string' => 'Address harus berupa string.',
-            'address.max' => 'Address maksimal 500 karakter.',
-            'lat_in.required' => 'Lokasi latitud tidak terdeteksi.',
-            'lng_in.required' => 'Lokasi longitud tidak terdeteksi.',
-            'photo.required'  => 'Foto wajib diambil.',
-            'photo.image'     => 'Lampiran harus berupa gambar.',
-        ]);
+        return [
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+            'address' => 'Alamat',
+        ];
     }
 }

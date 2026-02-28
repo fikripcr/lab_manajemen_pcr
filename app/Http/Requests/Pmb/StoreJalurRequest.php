@@ -25,4 +25,13 @@ class StoreJalurRequest extends BaseRequest
             'is_aktif' => $this->has('is_aktif'),
         ]);
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nama_jalur'        => 'Nama Jalur',
+            'biaya_pendaftaran' => 'Biaya Pendaftaran',
+            'is_aktif'          => 'Status Aktif',
+        ];
+    }
 }

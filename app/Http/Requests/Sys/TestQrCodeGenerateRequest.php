@@ -32,16 +32,11 @@ class TestQrCodeGenerateRequest extends BaseRequest
      *
      * @return array<string, string>
      */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'text.required' => 'Teks QR Code harus diisi.',
-            'text.string' => 'Teks harus berupa string.',
-            'text.max' => 'Teks maksimal 500 karakter.',
-            'size.required' => 'Ukuran QR Code harus diisi.',
-            'size.integer' => 'Ukuran harus berupa angka.',
-            'size.min' => 'Ukuran minimal 100px.',
-            'size.max' => 'Ukuran maksimal 500px.',
-        ]);
+        return [
+            'text' => 'Teks QR Code',
+            'size' => 'Ukuran QR Code',
+        ];
     }
 }

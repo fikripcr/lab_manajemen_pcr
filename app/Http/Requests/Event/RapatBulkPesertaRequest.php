@@ -18,4 +18,13 @@ class RapatBulkPesertaRequest extends BaseRequest
             'jabatan'    => 'nullable|string|max:255',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'user_ids'   => 'Peserta Rapat',
+            'user_ids.*' => 'Peserta Rapat',
+            'jabatan'    => 'Jabatan',
+        ];
+    }
 }

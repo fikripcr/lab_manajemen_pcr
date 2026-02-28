@@ -38,8 +38,18 @@ class PersonilRequest extends BaseRequest
     {
         if ($this->filled('user_id')) {
             $this->merge([
-                'user_id' => decryptIdIfEncrypted($this->user_id),
             ]);
         }
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'nip'     => 'NIP',
+            'nama'    => 'Nama',
+            'email'   => 'Email',
+            'posisi'  => 'Posisi',
+            'user_id' => 'User',
+        ];
     }
 }

@@ -28,16 +28,13 @@ class TanggalLiburRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'entries.required' => 'Data entry tidak boleh kosong.',
-            'tahun.required'   => 'Tahun harus dipilih.',
-        ]);
+        return [
+            'entries'              => 'Data Entry',
+            'entries.*.dates'      => 'Tanggal Libur',
+            'entries.*.keterangan' => 'Keterangan',
+            'tahun'                => 'Tahun',
+        ];
     }
 }

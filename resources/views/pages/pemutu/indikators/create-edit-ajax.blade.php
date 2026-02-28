@@ -26,7 +26,7 @@
     @endsection
 
     @section('content')
-    <form action="{{ $route }}" method="POST" class="ajax-form">
+    <form action="{{ $route }}" method="POST" class="ajax-form" novalidate>
         @csrf
         @if($isEdit) @method('PUT') @endif
         <input type="hidden" name="redirect_to" value="{{ old('redirect_to', request('redirect_to', url()->previous())) }}">

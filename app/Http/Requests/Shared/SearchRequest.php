@@ -24,4 +24,11 @@ class SearchRequest extends BaseRequest
             'q' => 'nullable|string|max:255',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'q' => 'Pencarian',
+        ];
+    }
 }

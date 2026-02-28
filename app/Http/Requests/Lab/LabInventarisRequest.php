@@ -33,25 +33,16 @@ class LabInventarisRequest extends BaseRequest
         return $rules;
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'inventaris_id.required' => 'Inventaris harus dipilih.',
-            'inventaris_id.exists'   => 'Inventaris tidak ditemukan.',
-            'no_series.string'       => 'Nomor seri harus berupa string.',
-            'no_series.max'          => 'Nomor seri maksimal 255 karakter.',
-            'keterangan.string'      => 'Keterangan harus berupa string.',
-            'keterangan.max'         => 'Keterangan maksimal 1000 karakter.',
-            'barcode.required' => 'Barcode inventaris harus diisi.',
-            'barcode.unique'   => 'Barcode inventaris sudah terdaftar.',
-            'name.required'    => 'Nama barang harus diisi.',
-            'lab_id.required'  => 'Lab harus dipilih.',
-            'status.required'  => 'Status barang harus dipilih.',
-        ]);
+        return [
+            'no_series'     => 'Nomor Seri',
+            'keterangan'    => 'Keterangan',
+            'inventaris_id' => 'Inventaris',
+            'barcode'       => 'Barcode',
+            'name'          => 'Nama Barang',
+            'lab_id'        => 'Lab',
+            'status'        => 'Status',
+        ];
     }
 }

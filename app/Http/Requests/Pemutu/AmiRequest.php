@@ -22,11 +22,16 @@ class AmiRequest extends BaseRequest
         ];
     }
 
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'tgl_ami.required'   => 'Tanggal AMI harus diisi.',
-            'org_unit_id.required' => 'Unit Kerja harus dipilih.',
-        ]);
+        return [
+            'ami_hasil_akhir'          => 'Hasil Akhir AMI',
+            'ami_hasil_temuan'         => 'Temuan AMI',
+            'ami_hasil_temuan_sebab'   => 'Sebab Temuan AMI',
+            'ami_hasil_temuan_akibat'  => 'Akibat Temuan AMI',
+            'ami_hasil_temuan_rekom'   => 'Rekomendasi Temuan AMI',
+            'tgl_ami'                  => 'Tanggal AMI',
+            'org_unit_id'              => 'Unit Kerja',
+        ];
     }
 }

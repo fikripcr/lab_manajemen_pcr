@@ -22,8 +22,16 @@ class DokumenApprovalRequest extends BaseRequest
     {
         return [
             'personil_id' => 'required|exists:personil,personil_id',
-            'status'      => 'required|in:terima,tolak,tangguhkan',
             'komentar'    => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'personil_id' => 'Personil Approval',
+            'status'      => 'Status Approval',
+            'komentar'    => 'Komentar',
         ];
     }
 }

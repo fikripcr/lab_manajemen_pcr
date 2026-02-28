@@ -14,8 +14,16 @@ class StatusAktifitasRequest extends BaseRequest
     {
         return [
             'kode_status' => 'required|string|max:5',
-            'nama_status' => 'required|string|max:50',
             'is_active'   => 'boolean',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'kode_status' => 'Kode Status',
+            'nama_status' => 'Nama Status',
+            'is_active'   => 'Status Aktif',
         ];
     }
 }

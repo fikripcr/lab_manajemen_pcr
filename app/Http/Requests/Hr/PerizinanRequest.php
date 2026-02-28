@@ -67,21 +67,23 @@ class PerizinanRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'tgl_pengajuan.required'      => 'Tanggal pengajuan wajib diisi.',
-            'perizinan_jenis_id.required' => 'Jenis izin wajib dipilih.',
-            'attachment.mimes'            => 'File lampiran harus berformat PDF, JPG, PNG, atau JPEG.',
-            'pengusul.required'           => 'Pengusul harus dipilih.',
-            'pengusul.exists'             => 'Pengusul tidak ditemukan.',
-            'tgl_awal.required'           => 'Tanggal mulai harus diisi.',
-            'tgl_awal.date'               => 'Tanggal mulai harus berupa tanggal.',
-            'tgl_akhir.required'          => 'Tanggal selesai harus diisi.',
-            'tgl_akhir.date'              => 'Tanggal selesai harus berupa tanggal.',
-        ]);
+        return [
+            'jenisizin_id'           => 'Jenis Izin',
+            'pengusul'               => 'Pengusul',
+            'pekerjaan_ditinggalkan' => 'Pekerjaan Ditinggalkan',
+            'keterangan'             => 'Keterangan',
+            'alamat_izin'            => 'Alamat Izin',
+            'waktu_awal'             => 'Waktu Awal',
+            'waktu_akhir'            => 'Waktu Akhir',
+            'tgl_awal'               => 'Tanggal Awal',
+            'tgl_akhir'              => 'Tanggal Akhir',
+            'jam_awal'               => 'Jam Awal',
+            'jam_akhir'              => 'Jam Akhir',
+            'status'                 => 'Status',
+            'pejabat'                => 'Pejabat',
+            'keterangan_approval'    => 'Keterangan Approval',
+        ];
     }
 }

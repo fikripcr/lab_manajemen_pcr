@@ -63,4 +63,17 @@ class DokumenRequest extends BaseRequest
             'periode'          => 'nullable|integer',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'judul'            => 'Judul Dokumen',
+            'parent_id'        => 'Dokumen Induk',
+            'parent_doksub_id' => 'Sub-Dokumen Induk',
+            'kode'             => 'Kode Dokumen',
+            'isi'              => 'Isi Dokumen',
+            'jenis'            => 'Jenis Dokumen',
+            'periode'          => 'Periode',
+        ];
+    }
 }

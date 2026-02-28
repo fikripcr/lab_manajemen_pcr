@@ -19,7 +19,7 @@
                 <h5 class="modal-title">{{ $title }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ $route }}" method="POST" class="ajax-form" @if($id_form) id="{{ $id_form }}" @endif {{ $attributes }}>
+            <form action="{{ $route }}" method="POST" class="ajax-form" novalidate @if($id_form) id="{{ $id_form }}" @endif {{ $attributes }}>
                 @csrf
                 @if(in_array(strtoupper($method), ['PUT', 'PATCH', 'DELETE']))
                     @method($method)

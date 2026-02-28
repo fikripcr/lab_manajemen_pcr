@@ -24,4 +24,11 @@ class BackupStoreRequest extends BaseRequest
             'type' => 'required|string|in:files,database,full',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'type' => 'Tipe Backup',
+        ];
+    }
 }

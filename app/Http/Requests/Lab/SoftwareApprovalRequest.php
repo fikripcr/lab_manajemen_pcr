@@ -15,8 +15,16 @@ class SoftwareApprovalRequest extends BaseRequest
     {
         return [
             'status'     => 'required|in:approved,rejected,tangguhkan',
-            'pejabat'    => 'required|string|max:191',
             'keterangan' => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'status'     => 'Status',
+            'pejabat'    => 'Pejabat',
+            'keterangan' => 'Keterangan',
         ];
     }
 }

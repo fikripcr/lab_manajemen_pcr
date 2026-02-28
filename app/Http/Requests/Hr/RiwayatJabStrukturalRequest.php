@@ -16,8 +16,18 @@ class RiwayatJabStrukturalRequest extends BaseRequest
             'org_unit_id' => 'required|exists:struktur_organisasi,orgunit_id',
             'tgl_awal'    => 'required|date',
             'tgl_akhir'   => 'nullable|date|after_or_equal:tgl_awal',
-            'no_sk'       => 'nullable|string|max:100',
             'keterangan'  => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'org_unit_id' => 'Unit Organisasi',
+            'tgl_awal'    => 'Tanggal Awal',
+            'tgl_akhir'   => 'Tanggal Akhir',
+            'no_sk'       => 'Nomor SK',
+            'keterangan'  => 'Keterangan',
         ];
     }
 }

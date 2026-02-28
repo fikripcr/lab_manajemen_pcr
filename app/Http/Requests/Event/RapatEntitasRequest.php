@@ -19,4 +19,14 @@ class RapatEntitasRequest extends BaseRequest
             'keterangan' => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'rapat_id'   => 'Rapat',
+            'model'      => 'Entitas',
+            'model_id'   => 'ID Entitas',
+            'keterangan' => 'Keterangan',
+        ];
+    }
 }

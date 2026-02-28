@@ -14,9 +14,17 @@ class FAQRequest extends BaseRequest
     {
         return [
             'question' => 'required|string|max:191',
-            'answer'   => 'required|string',
-            'category' => 'nullable|string|max:191',
             'seq'      => 'nullable|integer',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'question' => 'Pertanyaan',
+            'answer'   => 'Jawaban',
+            'category' => 'Kategori',
+            'seq'      => 'Urutan',
         ];
     }
 }

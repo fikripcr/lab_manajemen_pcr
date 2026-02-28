@@ -21,8 +21,23 @@ class RiwayatInpassingRequest extends BaseRequest
             'angka_kredit'     => 'nullable|numeric',
             'masa_kerja_tahun' => 'nullable|integer',
             'masa_kerja_bulan' => 'nullable|integer',
-            'gaji_pokok'       => 'nullable|numeric',
             'keterangan'       => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'gol_inpassing_id' => 'Golongan Inpassing',
+            'tmt'              => 'TMT',
+            'no_sk'            => 'Nomor SK',
+            'tgl_sk'           => 'Tanggal SK',
+            'file_sk'          => 'File SK',
+            'angka_kredit'     => 'Angka Kredit',
+            'masa_kerja_tahun' => 'Masa Kerja (Tahun)',
+            'masa_kerja_bulan' => 'Masa Kerja (Bulan)',
+            'gaji_pokok'       => 'Gaji Pokok',
+            'keterangan'       => 'Keterangan',
         ];
     }
 }

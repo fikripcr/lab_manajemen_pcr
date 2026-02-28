@@ -20,8 +20,16 @@ class LabelTypeRequest extends BaseRequest
     {
         return [
             'name'        => 'required|string|max:100',
-            'description' => 'nullable|string',
             'color'       => 'nullable|string|max:20',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'name'        => 'Nama Tipe Label',
+            'description' => 'Deskripsi',
+            'color'       => 'Warna',
         ];
     }
 }

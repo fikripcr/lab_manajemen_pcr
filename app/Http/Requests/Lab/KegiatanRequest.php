@@ -42,4 +42,17 @@ class KegiatanRequest extends BaseRequest
             ]);
         }
     }
+
+    public function attributes(): array
+    {
+        return [
+            'lab_id'           => 'Lab',
+            'nama_kegiatan'    => 'Nama Kegiatan',
+            'deskripsi'        => 'Deskripsi',
+            'tanggal'          => 'Tanggal',
+            'jam_mulai'        => 'Jam Mulai',
+            'jam_selesai'      => 'Jam Selesai',
+            'dokumentasi_path' => 'Dokumentasi',
+        ];
+    }
 }

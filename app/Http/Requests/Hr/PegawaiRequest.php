@@ -39,7 +39,18 @@ class PegawaiRequest extends BaseRequest
             // 'statuspegawai_id' => 'required|exists:hr_status_pegawai,statuspegawai_id',
             // 'statusaktifitas_id' => 'required|exists:hr_status_aktifitas,statusaktifitas_id',
         ];
-
         return $rules;
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'nama'                  => 'Nama',
+            'email'                 => 'Email',
+            'nip'                   => 'NIP',
+            'inisial'               => 'Inisial',
+            'orgunit_posisi_id'     => 'Posisi',
+            'orgunit_departemen_id' => 'Departemen',
+        ];
     }
 }

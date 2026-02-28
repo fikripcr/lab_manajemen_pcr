@@ -27,9 +27,22 @@ class StrukturOrganisasiRequest extends BaseRequest
             'type'        => 'required|string',
             'description' => 'nullable|string',
             'is_active'   => 'sometimes|boolean',
-            'color'       => 'nullable|string|max:20',
-            'sort_order'  => 'nullable|integer',
             'seq'         => 'nullable|integer',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'parent_id'   => 'Induk Organisasi',
+            'name'        => 'Nama Unit',
+            'code'        => 'Kode Unit',
+            'type'        => 'Tipe',
+            'description' => 'Deskripsi',
+            'is_active'   => 'Status Aktif',
+            'color'       => 'Warna Label',
+            'sort_order'  => 'Urutan Sortir',
+            'seq'         => 'Urutan',
         ];
     }
 

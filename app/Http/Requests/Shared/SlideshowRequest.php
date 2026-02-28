@@ -16,8 +16,18 @@ class SlideshowRequest extends BaseRequest
             'slideshow_image' => ($this->isMethod('POST') ? 'required' : 'nullable') . '|image|mimes:jpeg,png,jpg,gif',
             'title'           => 'nullable|string|max:191',
             'caption'         => 'nullable|string',
-            'link'            => 'nullable|url|max:191',
             'seq'             => 'nullable|integer',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'slideshow_image' => 'Gambar Slideshow',
+            'title'           => 'Judul',
+            'caption'         => 'Caption',
+            'link'            => 'URL Link',
+            'seq'             => 'Urutan',
         ];
     }
 }

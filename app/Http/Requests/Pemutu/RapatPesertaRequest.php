@@ -22,8 +22,16 @@ class RapatPesertaRequest extends BaseRequest
     {
         return [
             'rapat_id' => 'required|exists:rapats,rapat_id',
-            'user_id'  => 'required|exists:users,id',
             'jabatan'  => 'required|string|max:100',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'rapat_id' => 'Rapat',
+            'user_id'  => 'Peserta Rapat',
+            'jabatan'  => 'Jabatan',
         ];
     }
 }

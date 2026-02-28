@@ -26,4 +26,14 @@ class StorePeriodeRequest extends BaseRequest
             'is_aktif' => $this->has('is_aktif'),
         ]);
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nama_periode'    => 'Nama Periode',
+            'tanggal_mulai'   => 'Tanggal Mulai',
+            'tanggal_selesai' => 'Tanggal Selesai',
+            'is_aktif'        => 'Status Aktif',
+        ];
+    }
 }

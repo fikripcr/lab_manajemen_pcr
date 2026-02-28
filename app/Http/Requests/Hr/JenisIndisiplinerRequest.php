@@ -33,20 +33,10 @@ class JenisIndisiplinerRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'jenis_indisipliner.required' => 'Jenis indisipliner harus diisi.',
-            'jenis_indisipliner.string'   => 'Jenis indisipliner harus berupa string.',
-            'jenis_indisipliner.max'      => 'Jenis indisipliner maksimal 100 karakter.',
-            'jenis_indisipliner.unique'   => 'Jenis indisipliner sudah ada.',
-            'nama_jenis.required'         => 'Nama jenis indisipliner wajib diisi.',
-            'poin.required'               => 'Poin indisipliner wajib diisi.',
-        ]);
+        return [
+            'jenis_indisipliner' => 'Jenis Indisipliner',
+        ];
     }
 }

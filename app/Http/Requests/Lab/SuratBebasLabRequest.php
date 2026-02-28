@@ -27,8 +27,15 @@ class SuratBebasLabRequest extends BaseRequest
         }
 
         return [
-            'status'  => 'required|in:approved,rejected,tangguhkan',
             'catatan' => 'nullable|string|max:1000',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'status'  => 'Status',
+            'catatan' => 'Catatan',
         ];
     }
 }

@@ -17,8 +17,19 @@ class RiwayatPenugasanRequest extends BaseRequest
             'tgl_mulai'   => 'required|date',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_mulai',
             'no_sk'       => 'nullable|string|max:100',
-            'tgl_sk'      => 'nullable|date',
             'keterangan'  => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'org_unit_id' => 'Unit Organisasi',
+            'tgl_mulai'   => 'Tanggal Mulai',
+            'tgl_selesai' => 'Tanggal Selesai',
+            'no_sk'       => 'Nomor SK',
+            'tgl_sk'      => 'Tanggal SK',
+            'keterangan'  => 'Keterangan',
         ];
     }
 }

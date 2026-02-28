@@ -34,11 +34,10 @@ class PermissionRequest extends BaseRequest
     /**
      * Get custom validation messages.
      */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'name.required'   => 'Nama permission wajib diisi.',
-            'name.unique'     => 'Nama permission sudah digunakan.',
-        ]);
+        return [
+            'name' => 'Nama Permission',
+        ];
     }
 }

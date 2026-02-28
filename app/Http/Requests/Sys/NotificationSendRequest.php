@@ -39,16 +39,21 @@ class NotificationSendRequest extends BaseRequest
     public function messages(): array
     {
         return array_merge(parent::messages(), [
-            'type.required' => 'Tipe notifikasi harus diisi.',
             'type.in' => 'Tipe harus database atau email.',
-            'user_id.required' => 'Penerima harus dipilih.',
             'user_id.exists' => 'User tidak ditemukan.',
-            'title.required' => 'Judul notifikasi harus diisi.',
-            'title.max' => 'Judul maksimal 255 karakter.',
-            'message.required' => 'Pesan notifikasi harus diisi.',
-            'message.max' => 'Pesan maksimal 1000 karakter.',
             'level.in' => 'Level harus info, success, warning, atau error.',
-            'icon.max' => 'Icon maksimal 50 karakter.',
         ]);
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'type' => 'Tipe Notifikasi',
+            'user_id' => 'Penerima',
+            'title' => 'Judul Notifikasi',
+            'message' => 'Pesan Notifikasi',
+            'level' => 'Level',
+            'icon' => 'Icon',
+        ];
     }
 }

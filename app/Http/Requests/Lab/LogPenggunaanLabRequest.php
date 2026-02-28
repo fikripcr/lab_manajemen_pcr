@@ -39,4 +39,15 @@ class LogPenggunaanLabRequest extends BaseRequest
             'kegiatan_id' => decryptIdIfEncrypted($this->kegiatan_id),
         ]);
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nama_peserta' => 'Nama Peserta',
+            'lab_id'       => 'Lab',
+            'kegiatan_id'  => 'Kegiatan',
+            'nomor_pc'     => 'Nomor PC',
+            'kondisi'      => 'Kondisi',
+        ];
+    }
 }

@@ -25,4 +25,12 @@ class HalamanRequest extends BaseRequest
             'deskripsi_halaman' => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'judul_halaman'     => 'Judul Halaman',
+            'deskripsi_halaman' => 'Deskripsi Halaman',
+        ];
+    }
 }

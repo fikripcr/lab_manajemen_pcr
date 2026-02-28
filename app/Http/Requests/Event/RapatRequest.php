@@ -28,10 +28,10 @@ class RapatRequest extends BaseRequest
 
     public function messages(): array
     {
-        return [
+        return array_merge(parent::messages(), [
             'waktu_selesai.after' => 'Waktu Selesai harus setelah Waktu Mulai.',
             'date_format'         => 'Format :attribute tidak valid (HH:MM).',
-        ];
+        ]);
     }
 
     public function attributes(): array

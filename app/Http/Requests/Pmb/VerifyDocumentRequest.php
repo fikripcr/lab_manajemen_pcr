@@ -17,4 +17,12 @@ class VerifyDocumentRequest extends BaseRequest
             'keterangan' => 'nullable|string|max:500',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'status'     => 'Status Verifikasi',
+            'keterangan' => 'Keterangan',
+        ];
+    }
 }

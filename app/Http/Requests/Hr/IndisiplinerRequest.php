@@ -30,27 +30,15 @@ class IndisiplinerRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'jenisindisipliner_id.required' => 'Jenis indisipliner harus dipilih.',
-            'jenisindisipliner_id.exists'   => 'Jenis indisipliner tidak ditemukan.',
-            'tgl_indisipliner.required'     => 'Tanggal indisipliner harus diisi.',
-            'tgl_indisipliner.date'         => 'Tanggal indisipliner harus berupa tanggal.',
-            'pegawai_id.required'           => 'Pegawai harus dipilih.',
-            'pegawai_id.array'              => 'Pegawai harus berupa array.',
-            'pegawai_id.min'                => 'Minimal pilih 1 pegawai.',
-            'pegawai_id.*.exists'           => 'Pegawai tidak ditemukan.',
-            'keterangan.string'             => 'Keterangan harus berupa string.',
-            'keterangan.max'                => 'Keterangan maksimal 1000 karakter.',
-            'bukti.file'                    => 'Bukti harus berupa file.',
-            'bukti.mimes'                   => 'File harus berformat PDF, DOCX, DOC, JPG, JPEG, atau PNG.',
-            'bukti.max'                     => 'File maksimal 5MB.',
-        ]);
+        return [
+            'jenisindisipliner_id' => 'Jenis Indisipliner',
+            'tgl_indisipliner'     => 'Tanggal Indisipliner',
+            'pegawai_id'           => 'Pegawai',
+            'pegawai_id.*'         => 'Pegawai',
+            'keterangan'           => 'Keterangan',
+            'bukti'                => 'Bukti File',
+        ];
     }
 }

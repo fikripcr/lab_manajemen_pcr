@@ -25,15 +25,18 @@ class SurveiRequest extends BaseRequest
         ];
     }
 
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'judul.required'                 => 'Judul survei wajib diisi.',
-            'target_role.required'           => 'Target role wajib dipilih.',
-            'target_role.in'                 => 'Target role tidak valid.',
-            'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
-            'mode.required'                  => 'Mode survei wajib dipilih.',
-            'mode.in'                        => 'Mode survei tidak valid.',
-        ]);
+        return [
+            'judul'           => 'Judul Survei',
+            'deskripsi'       => 'Deskripsi Survei',
+            'target_role'     => 'Target Role',
+            'tanggal_mulai'   => 'Tanggal Mulai',
+            'tanggal_selesai' => 'Tanggal Selesai',
+            'is_aktif'        => 'Status Aktif',
+            'wajib_login'     => 'Wajib Login',
+            'bisa_isi_ulang'  => 'Bisa Isi Ulang',
+            'mode'            => 'Mode Survei',
+        ];
     }
 }

@@ -25,16 +25,10 @@ class PegawaiImportRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'file.required' => 'File Excel wajib diunggah.',
-            'file.mimes'    => 'File harus berformat .xlsx atau .xls.',
-        ]);
+        return [
+            'file' => 'File Excel',
+        ];
     }
 }

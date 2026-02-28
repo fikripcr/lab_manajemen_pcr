@@ -21,8 +21,15 @@ class PresensiUploadPhotoRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'photo'         => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'face_encoding' => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'photo'         => 'Foto Presensi',
+            'face_encoding' => 'Face Encoding',
         ];
     }
 }

@@ -26,8 +26,20 @@ class JadwalRequest extends BaseRequest
             'dosen_id'       => 'required|exists:users,id',
             'hari'           => 'required|string|max:20',
             'jam_mulai'      => 'required|date_format:H:i',
-            'jam_selesai'    => 'required|date_format:H:i|after:jam_mulai',
             'lab_id'         => 'required|exists:lab_labs,lab_id',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'semester_id'    => 'Semester',
+            'mata_kuliah_id' => 'Mata Kuliah',
+            'dosen_id'       => 'Dosen',
+            'hari'           => 'Hari',
+            'jam_mulai'      => 'Jam Mulai',
+            'jam_selesai'    => 'Jam Selesai',
+            'lab_id'         => 'Lab',
         ];
     }
 }

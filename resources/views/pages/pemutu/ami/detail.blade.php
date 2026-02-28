@@ -76,31 +76,34 @@
             <div class="card-body">
                 @if($indOrg->ed_capaian)
                 <div class="row g-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Capaian</div>
                         <div class="fw-semibold fs-4">{{ $indOrg->ed_capaian }}</div>
+                        <div class="text-uppercase text-muted small fw-bold mb-1 mt-3">Bukti & Dokumen</div>
+                        <div class="d-flex flex-wrap align-items-center">
+                            @if($indOrg->ed_attachment)
+                                <a href="{{ route('pemutu.evaluasi-diri.download', $indOrg->encrypted_indorgunit_id) }}" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip">
+                                    <i class="ti ti-file-download fs-3"></i>
+                                </a>
+                            @endif
+                            @if(!empty($indOrg->ed_links))
+                                @foreach($indOrg->ed_links as $link)
+                                    <a href="{{ $link['url'] ?? '#' }}" target="_blank" class="btn btn-sm btn-ghost-info me-1 mb-1" title="{{ htmlspecialchars($link['name'] ?? 'Tautan') }}" data-bs-toggle="tooltip">
+                                        <i class="ti ti-link fs-3"></i>
+                                    </a>
+                                @endforeach
+                            @endif
+                            @if(!$indOrg->ed_attachment && empty($indOrg->ed_links))
+                                <span class="text-muted small fst-italic">Tidak ada bukti terlampir</span>
+                            @endif
+                        </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Analisis</div>
-                        <div>{{ $indOrg->ed_analisis ?? '—' }}</div>
+                        <div style="max-height: 10em; overflow-y:scroll">{{ $indOrg->ed_analisis ?? '—' }}</div>
                     </div>
-                    @if($indOrg->ed_attachment)
-                    <div class="col-12">
-                        <a href="{{ route('pemutu.evaluasi-diri.download', $indOrg->encrypted_indorgunit_id) }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                            <i class="ti ti-download me-1"></i> Unduh Lampiran
-                        </a>
-                    </div>
-                    @endif
-                    @if(!empty($indOrg->ed_links))
-                    <div class="col-12">
-                        <div class="text-uppercase text-muted small fw-bold mb-1">Link Pendukung</div>
-                        @foreach($indOrg->ed_links as $link)
-                            <a href="{{ $link['url'] ?? '#' }}" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1">
-                                <i class="ti ti-external-link me-1"></i>{{ $link['name'] ?? $link['url'] }}
-                            </a>
-                        @endforeach
-                    </div>
-                    @endif
+
+
                 </div>
 
                 {{-- Highlight Skala --}}
@@ -109,22 +112,29 @@
                 <div class="text-uppercase text-muted small fw-bold mb-3">Penilaian Skala (Dipilih Auditee)</div>
                 <div class="row g-2">
                     @foreach($skala as $level => $desc)
-                    @php
-                        $isChosen = ($indOrg->ed_skala !== null && (int) $indOrg->ed_skala === (int) $level);
-                        $cardClass = $isChosen
-                            ? 'border-primary bg-primary-lt shadow-sm'
-                            : 'border bg-transparent opacity-60';
+                    @php 
+                        $isChosen = ($indOrg->ed_skala !== null && (int)$indOrg->ed_skala === (int)$level); 
                     @endphp
-                    <div class="col-md-{{ count($skala) <= 3 ? 4 : (count($skala) <= 5 ? (12 / count($skala)) : 2) }}">
-                        <div class="card {{ $cardClass }} mb-0 h-100" style="{{ $isChosen ? 'border-width: 2px !important;' : '' }}">
-                            <div class="card-body p-3 text-center">
-                                <div class="display-5 fw-bold {{ $isChosen ? 'text-primary' : 'text-muted' }}">
-                                    {{ $level }}
+                    <div class="col-12">
+                        <div class="card mb-0 border {{ $isChosen ? 'border-primary bg-primary-lt border-2 shadow-sm' : 'border opacity-75' }}">
+                            <div class="card-body p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-auto pe-3 border-end">
+                                        <div class="fs-1 fw-bold {{ $isChosen ? 'text-primary' : 'text-muted' }} mb-0">
+                                            {{ $level }}
+                                        </div>
+                                    </div>
+                                    <div class="col ps-3">
+                                        <div class="{{ $isChosen ? 'text-primary fw-semibold' : 'text-muted' }}">
+                                            {!! $desc !!}
+                                        </div>
+                                    </div>
                                     @if($isChosen)
-                                        <i class="ti ti-check-circle-filled text-primary ms-1 fs-3"></i>
+                                    <div class="col-auto">
+                                        <i class="ti ti-check-circle-filled text-primary fs-2"></i>
+                                    </div>
                                     @endif
                                 </div>
-                                <div class="small {{ $isChosen ? 'text-primary fw-semibold' : 'text-muted' }} mt-1">{{ $desc }}</div>
                             </div>
                         </div>
                     </div>

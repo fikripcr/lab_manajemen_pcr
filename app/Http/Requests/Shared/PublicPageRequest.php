@@ -38,9 +38,23 @@ class PublicPageRequest extends BaseRequest
             'main_image.mimes'       => 'Format gambar harus :values.',
             'main_image.max'         => 'Ukuran gambar maksimal 5MB.',
             'main_image.uploaded'    => 'Gagal mengupload gambar utama. Pastikan ukuran tidak melebihi batas server.',
-            'attachments.*.max'      => 'Ukuran file maksimal 10MB.',
             'attachments.*.uploaded' => 'Gagal mengupload file pendukung.',
         ]);
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'title'         => 'Judul',
+            'slug'          => 'Slug',
+            'content'       => 'Konten',
+            'meta_desc'     => 'Meta Deskripsi',
+            'meta_keywords' => 'Meta Keyword',
+            'is_published'  => 'Status Publikasi',
+            'main_image'    => 'Gambar Utama',
+            'attachments'   => 'Lampiran',
+            'attachments.*' => 'Lampiran',
+        ];
     }
 
     public function prepareForValidation()

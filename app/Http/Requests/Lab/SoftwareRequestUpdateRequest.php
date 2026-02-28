@@ -24,16 +24,11 @@ class SoftwareRequestUpdateRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom validation messages.
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'software_name.required' => 'Nama software harus diisi.',
-            'version.required'       => 'Versi software harus diisi.',
-            'semester_id.required'   => 'Semester harus dipilih.',
-            'category.required'      => 'Kategori software harus diisi.',
-        ]);
+        return [
+            'status'        => 'Status',
+            'catatan_admin' => 'Catatan Admin',
+        ];
     }
 }

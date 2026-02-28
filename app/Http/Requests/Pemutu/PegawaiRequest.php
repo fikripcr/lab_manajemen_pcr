@@ -21,8 +21,17 @@ class PegawaiRequest extends BaseRequest
         return [
             'nama'        => 'required|string|max:100',
             'email'       => 'nullable|email|max:100',
-            'org_unit_id' => 'nullable|exists:org_unit,orgunit_id',
             'jenis'       => 'nullable|string|max:20',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'nama'        => 'Nama',
+            'email'       => 'Email',
+            'org_unit_id' => 'Unit Organisasi',
+            'jenis'       => 'Jenis',
         ];
     }
 }

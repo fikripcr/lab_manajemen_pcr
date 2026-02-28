@@ -26,17 +26,11 @@ class OrgUnitAuditeeRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'auditee_user_id.exists' => 'User auditee tidak ditemukan.',
-            'org_unit_id.required'  => 'Unit Kerja harus dipilih.',
-            'org_unit_id.exists'    => 'Unit Kerja tidak ditemukan.',
-        ]);
+        return [
+            'auditee_user_id' => 'User Auditee',
+            'org_unit_id'     => 'Unit Kerja',
+        ];
     }
 }

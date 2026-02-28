@@ -22,8 +22,16 @@ class StandarAssignmentRequest extends BaseRequest
     {
         return [
             'assignments'            => 'required|array',
-            'assignments.*.selected' => 'sometimes|boolean',
             'assignments.*.target'   => 'nullable|string|max:255',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'assignments'            => 'Penugasan Standar',
+            'assignments.*.selected' => 'Status Pilihan',
+            'assignments.*.target'   => 'Target Penugasan',
         ];
     }
 }

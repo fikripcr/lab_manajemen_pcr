@@ -29,4 +29,16 @@ class UpdatePaketRequest extends BaseRequest
             'is_acak_opsi'       => 'boolean',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nama_paket'         => 'Nama Paket',
+            'tipe_paket'         => 'Tipe Paket',
+            'total_durasi_menit' => 'Total Durasi (Menit)',
+            'kk_nilai_minimal'   => 'KK / Nilai Minimal',
+            'is_acak_soal'       => 'Acak Soal',
+            'is_acak_opsi'       => 'Acak Opsi',
+        ];
+    }
 }

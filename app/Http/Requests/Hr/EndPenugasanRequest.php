@@ -16,4 +16,11 @@ class EndPenugasanRequest extends BaseRequest
             'tgl_selesai' => 'required|date',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'tgl_selesai' => 'Tanggal Selesai',
+        ];
+    }
 }

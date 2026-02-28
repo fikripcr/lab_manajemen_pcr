@@ -18,4 +18,13 @@ class StoreJenisDokumenRequest extends BaseRequest
             'max_size_kb'  => 'required|integer|min:1',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nama_dokumen' => 'Nama Dokumen',
+            'tipe_file'    => 'Tipe File',
+            'max_size_kb'  => 'Ukuran Maksimal (KB)',
+        ];
+    }
 }

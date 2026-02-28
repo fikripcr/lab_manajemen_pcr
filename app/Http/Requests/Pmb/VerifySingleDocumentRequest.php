@@ -24,4 +24,12 @@ class VerifySingleDocumentRequest extends BaseRequest
             'status' => 'required|in:Valid,Pending',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'dokumen_id' => 'Dokumen',
+            'status'     => 'Status Dokumen',
+        ];
+    }
 }

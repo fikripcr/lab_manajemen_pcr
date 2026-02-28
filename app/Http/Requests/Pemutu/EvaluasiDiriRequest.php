@@ -27,8 +27,21 @@ class EvaluasiDiriRequest extends BaseRequest
             'target_unit_id'  => 'nullable|integer',
             'ed_links_name'   => 'nullable|array',
             'ed_links_name.*' => 'nullable|string',
-            'ed_links_url'    => 'nullable|array',
             'ed_links_url.*'  => 'nullable|url',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'ed_capaian'      => 'Capaian Evaluasi Diri',
+            'ed_analisis'     => 'Analisis Evaluasi Diri',
+            'ed_attachment'   => 'Lampiran Evaluasi Diri',
+            'target_unit_id'  => 'Target Unit',
+            'ed_links_name'   => 'Nama Link',
+            'ed_links_name.*' => 'Nama Link',
+            'ed_links_url'    => 'URL Link',
+            'ed_links_url.*'  => 'URL Link',
         ];
     }
 }

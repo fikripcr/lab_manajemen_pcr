@@ -10,7 +10,7 @@ class PersonilRequest extends BaseRequest
         return true;
     }
 
-    public function rules(): bool
+    public function rules(): array
     {
         $id = $this->route('personil');
         if (is_string($id)) {
@@ -23,8 +23,20 @@ class PersonilRequest extends BaseRequest
             'nip'         => 'nullable|string|max:50|unique:personil,nip,' . $id . ',personil_id',
             'posisi'      => 'nullable|string|max:191',
             'tipe'        => 'nullable|string|max:30',
-            'vendor'      => 'nullable|string|max:191',
             'org_unit_id' => 'nullable|exists:struktur_organisasi,orgunit_id',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'nama'        => 'Nama',
+            'email'       => 'Email',
+            'nip'         => 'NIP',
+            'posisi'      => 'Posisi',
+            'tipe'        => 'Tipe',
+            'vendor'      => 'Vendor',
+            'org_unit_id' => 'Unit Organisasi',
         ];
     }
 }

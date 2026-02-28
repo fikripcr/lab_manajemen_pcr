@@ -18,9 +18,21 @@ class PublicMenuRequest extends BaseRequest
             'url'       => 'nullable|string|max:255',
             'type'      => 'required|in:url,page,route',
             'page_id'   => 'nullable|exists:public_pages,page_id',
-            'position'  => 'required|string|max:50',
-            'target'    => 'required|in:_self,_blank',
             'is_active' => 'boolean',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'parent_id' => 'Induk Menu',
+            'title'     => 'Judul Menu',
+            'url'       => 'URL',
+            'type'      => 'Tipe',
+            'page_id'   => 'Halaman Publik',
+            'position'  => 'Posisi',
+            'target'    => 'Target',
+            'is_active' => 'Status Aktif',
         ];
     }
 

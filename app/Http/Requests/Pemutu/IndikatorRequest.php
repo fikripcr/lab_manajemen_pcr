@@ -42,15 +42,29 @@ class IndikatorRequest extends BaseRequest
         ];
     }
 
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'type.required'           => 'Tipe Indikator harus dipilih.',
-            'type.in'                 => 'Tipe Indikator tidak valid.',
-            'indikator.required'      => 'Nama Indikator wajib diisi.',
-            'doksub_ids.required'     => 'Dokumen Penjaminan Mutu wajib dipilih (jika wajib).',
-            'indikator_desc.required' => 'Deskripsi Indikator wajib diisi.',
-            'bobot.required'          => 'Bobot harus diisi.',
-        ]);
+        return [
+            'type'            => 'Tipe Indikator',
+            'doksub_ids'      => 'Sub-Dokumen',
+            'parent_id'       => 'Indikator Induk',
+            'no_indikator'    => 'Nomor Indikator',
+            'indikator'       => 'Nama Indikator',
+            'target'          => 'Target',
+            'jenis_indikator' => 'Jenis Indikator',
+            'jenis_data'      => 'Jenis Data',
+            'periode_jenis'   => 'Jenis Periode',
+            'periode_mulai'   => 'Periode Mulai',
+            'periode_selesai' => 'Periode Selesai',
+            'seq'             => 'Urutan',
+            'level_risk'      => 'Level Risiko',
+            'origin_from'     => 'Asal Indikator',
+            'labels'          => 'Label',
+            'org_units'       => 'Unit Organisasi',
+            'kpi_assignments' => 'Penugasan KPI',
+            'skala'           => 'Skala',
+            'skala.*'         => 'Skala',
+            'keterangan'      => 'Keterangan',
+        ];
     }
 }

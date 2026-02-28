@@ -18,4 +18,12 @@ class RapatBulkAgendaRequest extends BaseRequest
             'agendas.*.isi' => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'agendas'       => 'Agenda Rapat',
+            'agendas.*.isi' => 'Isi Agenda',
+        ];
+    }
 }

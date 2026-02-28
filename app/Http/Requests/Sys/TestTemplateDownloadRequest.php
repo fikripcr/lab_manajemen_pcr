@@ -31,13 +31,10 @@ class TestTemplateDownloadRequest extends BaseRequest
      *
      * @return array<string, string>
      */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'template.required' => 'Template harus diupload.',
-            'template.file' => 'Template harus berupa file.',
-            'template.mimes' => 'Template harus berformat DOC atau DOCX.',
-            'template.max' => 'Template maksimal 10MB.',
-        ]);
+        return [
+            'template' => 'Template DOCX',
+        ];
     }
 }

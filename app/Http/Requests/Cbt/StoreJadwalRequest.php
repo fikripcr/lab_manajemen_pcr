@@ -28,4 +28,14 @@ class StoreJadwalRequest extends BaseRequest
             'waktu_selesai' => 'required|date|after:waktu_mulai',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'paket_id'      => 'Paket Ujian',
+            'nama_kegiatan' => 'Nama Kegiatan',
+            'waktu_mulai'   => 'Waktu Mulai',
+            'waktu_selesai' => 'Waktu Selesai',
+        ];
+    }
 }

@@ -28,14 +28,21 @@ class PeriodeSpmiRequest extends BaseRequest
         ];
     }
 
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'periode.required'       => 'Periode wajib diisi.',
-            'jenis_periode.required' => 'Jenis periode wajib diisi.',
-            'tgl_mulai.required'   => 'Tanggal Mulai harus diisi.',
-            'tgl_selesai.required' => 'Tanggal Selesai harus diisi.',
-            'tgl_selesai.after'    => 'Tanggal Selesai harus setelah Tanggal Mulai.',
-        ]);
+        return [
+            'periode'            => 'Periode',
+            'jenis_periode'      => 'Jenis Periode',
+            'penetapan_awal'     => 'Penetapan Awal',
+            'penetapan_akhir'    => 'Penetapan Akhir',
+            'ed_awal'            => 'Evaluasi Diri Awal',
+            'ed_akhir'           => 'Evaluasi Diri Akhir',
+            'ami_awal'           => 'AMI Awal',
+            'ami_akhir'          => 'AMI Akhir',
+            'pengendalian_awal'  => 'Pengendalian Awal',
+            'pengendalian_akhir' => 'Pengendalian Akhir',
+            'peningkatan_awal'   => 'Peningkatan Awal',
+            'peningkatan_akhir'  => 'Peningkatan Akhir',
+        ];
     }
 }

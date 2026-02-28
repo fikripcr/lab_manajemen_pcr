@@ -14,8 +14,15 @@ class KegiatanStatusRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'status'  => 'required|in:approved,rejected,tangguhkan',
             'catatan' => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'status'  => 'Status',
+            'catatan' => 'Catatan',
         ];
     }
 }

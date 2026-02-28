@@ -22,8 +22,16 @@ class MataKuliahRequest extends BaseRequest
 
         return [
             'kode_mk' => $mataKuliahId ? 'required|string|max:20|unique:mata_kuliahs,kode_mk,' . $mataKuliahId : 'required|string|max:20|unique:mata_kuliahs,kode_mk',
-            'nama_mk' => 'required|string|max:255',
             'sks'     => 'required|integer|min:1|max:6',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'kode_mk' => 'Kode Mata Kuliah',
+            'nama_mk' => 'Nama Mata Kuliah',
+            'sks'     => 'SKS',
         ];
     }
 }

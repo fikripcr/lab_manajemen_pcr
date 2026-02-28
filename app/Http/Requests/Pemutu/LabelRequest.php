@@ -21,8 +21,17 @@ class LabelRequest extends BaseRequest
         return [
             'type_id'     => 'required|exists:pemutu_label_types,labeltype_id',
             'name'        => 'required|string|max:100',
-            'slug'        => 'nullable|string|max:100',
             'description' => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'type_id'     => 'Tipe Label',
+            'name'        => 'Nama Label',
+            'slug'        => 'Slug',
+            'description' => 'Deskripsi',
         ];
     }
 }

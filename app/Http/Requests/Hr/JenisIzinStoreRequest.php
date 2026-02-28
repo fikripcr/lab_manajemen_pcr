@@ -30,25 +30,14 @@ class JenisIzinStoreRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'nama.required' => 'Nama jenis izin harus diisi.',
-            'nama.string' => 'Nama harus berupa string.',
-            'nama.max' => 'Nama maksimal 50 karakter.',
-            'kategori.string' => 'Kategori harus berupa string.',
-            'kategori.max' => 'Kategori maksimal 10 karakter.',
-            'max_hari.integer' => 'Maksimal hari harus berupa angka.',
-            'max_hari.min' => 'Maksimal hari minimal 1.',
-            'max_hari.max' => 'Maksimal hari maksimal 365.',
-            'is_active.boolean' => 'Status aktif harus true atau false.',
-            'keterangan.string' => 'Keterangan harus berupa string.',
-            'keterangan.max' => 'Keterangan maksimal 500 karakter.',
-        ]);
+        return [
+            'nama'       => 'Nama Jenis Izin',
+            'kategori'   => 'Kategori',
+            'max_hari'   => 'Maksimal Hari',
+            'is_active'  => 'Status Aktif',
+            'keterangan' => 'Keterangan',
+        ];
     }
 }

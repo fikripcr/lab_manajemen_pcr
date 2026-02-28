@@ -20,8 +20,16 @@ class LabTeamRequest extends BaseRequest
     {
         return [
             'user_id'       => 'required', // ID is encrypted string
-            'jabatan'       => 'nullable|string|max:255',
             'tanggal_mulai' => 'nullable|date',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'user_id'       => 'User',
+            'jabatan'       => 'Jabatan',
+            'tanggal_mulai' => 'Tanggal Mulai',
         ];
     }
 }

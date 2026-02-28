@@ -27,4 +27,14 @@ class FilePegawaiStoreRequest extends BaseRequest
             'keterangan'   => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'pegawai_id'   => 'Pegawai',
+            'jenisfile_id' => 'Jenis File',
+            'file'         => 'File Pegawai',
+            'keterangan'   => 'Keterangan',
+        ];
+    }
 }

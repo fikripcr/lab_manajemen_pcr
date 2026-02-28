@@ -19,4 +19,14 @@ class JabatanFungsionalRequest extends BaseRequest
             'is_active'     => 'boolean',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'kode_jabatan'  => 'Kode Jabatan',
+            'jabfungsional' => 'Jabatan Fungsional',
+            'tunjangan'     => 'Tunjangan',
+            'is_active'     => 'Status Aktif',
+        ];
+    }
 }

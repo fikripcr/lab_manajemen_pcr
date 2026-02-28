@@ -51,4 +51,12 @@ class FormPlayerRequest extends BaseRequest
             'jawaban.*.required' => 'Pertanyaan wajib harus diisi.',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'jawaban'   => 'Jawaban',
+            'jawaban.*' => 'Jawaban',
+        ];
+    }
 }

@@ -24,4 +24,11 @@ class SetAuditeeRequest extends BaseRequest
             'auditee_user_id' => 'required|exists:users,id',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'auditee_user_id' => 'Auditee',
+        ];
+    }
 }

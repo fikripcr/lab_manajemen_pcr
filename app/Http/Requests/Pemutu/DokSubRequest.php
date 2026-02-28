@@ -56,4 +56,15 @@ class DokSubRequest extends BaseRequest
 
         return $rules;
     }
+
+    public function attributes(): array
+    {
+        return [
+            'judul'                 => 'Judul Sub-Dokumen',
+            'kode'                  => 'Kode Sub-Dokumen',
+            'isi'                   => 'Isi Sub-Dokumen',
+            'is_hasilkan_indikator' => 'Menghasilkan Indikator',
+            'dok_id'                => 'Dokumen Induk',
+        ];
+    }
 }

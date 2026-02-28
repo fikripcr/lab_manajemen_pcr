@@ -35,8 +35,23 @@ class IndikatorStandarRequest extends BaseRequest
             'doksub_id' => 'required|exists:pemutu_dok_sub,doksub_id',
             'indikator' => 'required|string',
             'target'    => 'required|string',
-            'type'      => 'required|in:standar,performa',
             'parent_id' => 'nullable|exists:pemutu_indikator,indikator_id',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'personil_id'  => 'Pegawai',
+            'year'         => 'Tahun',
+            'semester'     => 'Semester',
+            'target_value' => 'Target Value',
+            'weight'       => 'Bobot',
+            'doksub_id'    => 'Sub-Dokumen',
+            'indikator'    => 'Indikator',
+            'target'       => 'Target',
+            'type'         => 'Tipe',
+            'parent_id'    => 'Indikator Induk',
         ];
     }
 }

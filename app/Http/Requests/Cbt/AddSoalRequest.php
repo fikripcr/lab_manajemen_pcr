@@ -17,4 +17,12 @@ class AddSoalRequest extends BaseRequest
             'soal_ids.*' => 'string', // hashids
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'soal_ids'   => 'Soal',
+            'soal_ids.*' => 'ID Soal',
+        ];
+    }
 }

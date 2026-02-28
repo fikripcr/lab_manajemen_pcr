@@ -37,8 +37,26 @@ class LemburRequest extends BaseRequest
             'jam_mulai'        => 'required',
             'jam_selesai'      => 'required',
             'pegawai_ids'      => 'required|array|min:1',
-            'pegawai_ids.*'    => 'exists:pegawai,pegawai_id',
             'catatan_pegawai'  => 'nullable|array',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'status'           => 'Status',
+            'pejabat'          => 'Pejabat',
+            'keterangan'       => 'Keterangan',
+            'pengusul_id'      => 'Pengusul',
+            'judul'            => 'Judul Lembur',
+            'uraian_pekerjaan' => 'Uraian Pekerjaan',
+            'alasan'           => 'Alasan',
+            'tgl_pelaksanaan'  => 'Tanggal Pelaksanaan',
+            'jam_mulai'        => 'Jam Mulai',
+            'jam_selesai'      => 'Jam Selesai',
+            'pegawai_ids'      => 'Pegawai',
+            'pegawai_ids.*'    => 'Pegawai',
+            'catatan_pegawai'  => 'Catatan Pegawai',
         ];
     }
 }

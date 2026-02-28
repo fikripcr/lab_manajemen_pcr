@@ -17,4 +17,12 @@ class LogViolationRequest extends BaseRequest
             'keterangan' => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'type'       => 'Tipe Pelanggaran',
+            'keterangan' => 'Keterangan',
+        ];
+    }
 }

@@ -14,8 +14,15 @@ class UpdateMatrixRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'pengend_important_matrix' => ['nullable', 'string', 'in:important,not_important'],
             'pengend_urgent_matrix'    => ['nullable', 'string', 'in:urgent,not_urgent'],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'pengend_important_matrix' => 'Matrix Important',
+            'pengend_urgent_matrix'    => 'Matrix Urgent',
         ];
     }
 }

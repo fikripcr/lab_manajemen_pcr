@@ -25,20 +25,12 @@ class PresensiRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'latitude.required' => 'Latitude wajib diisi',
-            'latitude.numeric' => 'Latitude harus berupa angka',
-            'latitude.between' => 'Latitude harus antara -90 dan 90',
-            'longitude.required' => 'Longitude wajib diisi',
-            'longitude.numeric' => 'Longitude harus berupa angka',
-            'longitude.between' => 'Longitude harus antara -180 dan 180',
-            'address.string' => 'Alamat harus berupa teks',
-            'address.max' => 'Alamat maksimal 500 karakter',
-        ]);
+        return [
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+            'address' => 'Alamat',
+        ];
     }
 }

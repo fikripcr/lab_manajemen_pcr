@@ -18,4 +18,13 @@ class RapatAttendanceRequest extends BaseRequest
             'attendance.*.waktu_hadir' => 'nullable|date_format:H:i',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'attendance'               => 'Kehadiran',
+            'attendance.*.status'      => 'Status Kehadiran',
+            'attendance.*.waktu_hadir' => 'Waktu Hadir',
+        ];
+    }
 }

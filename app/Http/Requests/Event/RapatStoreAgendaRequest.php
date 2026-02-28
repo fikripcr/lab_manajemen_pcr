@@ -17,4 +17,11 @@ class RapatStoreAgendaRequest extends BaseRequest
             'judul_agenda' => 'required|string|max:255',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'judul_agenda' => 'Judul Agenda',
+        ];
+    }
 }

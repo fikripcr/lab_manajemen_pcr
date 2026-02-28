@@ -28,16 +28,12 @@ class PresensiCheckOutRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'lat_out.required' => 'Lokasi latitud tidak terdeteksi.',
-            'lng_out.required' => 'Lokasi longitud tidak terdeteksi.',
-        ]);
+        return [
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+            'address' => 'Alamat',
+        ];
     }
 }

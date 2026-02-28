@@ -24,8 +24,18 @@ class RenopRequest extends BaseRequest
             'indikator' => 'required|string',
             'target'    => 'required|string',
             'parent_id' => 'nullable|exists:pemutu_indikator,indikator_id',
-            'seq'       => 'nullable|integer',
             'type'      => 'required|in:renop',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'indikator' => 'Indikator',
+            'target'    => 'Target',
+            'parent_id' => 'Indikator Induk',
+            'seq'       => 'Urutan',
+            'type'      => 'Tipe',
         ];
     }
 }

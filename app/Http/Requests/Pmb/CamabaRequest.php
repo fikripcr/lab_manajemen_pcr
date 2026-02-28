@@ -31,4 +31,17 @@ class CamabaRequest extends BaseRequest
             'asal_sekolah' => 'required',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nik' => 'NIK',
+            'no_hp' => 'Nomor HP',
+            'tempat_lahir' => 'Tempat Lahir',
+            'tanggal_lahir' => 'Tanggal Lahir',
+            'jenis_kelamin' => 'Jenis Kelamin',
+            'alamat_lengkap' => 'Alamat Lengkap',
+            'asal_sekolah' => 'Asal Sekolah',
+        ];
+    }
 }

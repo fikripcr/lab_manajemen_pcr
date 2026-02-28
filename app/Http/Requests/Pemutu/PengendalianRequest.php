@@ -23,14 +23,15 @@ class PengendalianRequest extends BaseRequest
         ];
     }
 
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'pengend_status.required'   => 'Status pengendalian wajib dipilih.',
-            'pengend_status.in'         => 'Status tidak valid. Pilih: Tetap, Penyesuaian, atau Nonaktifkan.',
-            'pengend_analisis.required' => 'Deskripsi analisis wajib diisi.',
-            'pengendalian_desc.required' => 'Deskripsi Pengendalian wajib diisi.',
-            'tgl_target.required'        => 'Tanggal Target wajib diisi.',
-        ]);
+        return [
+            'pengend_status'           => 'Status Pengendalian',
+            'pengend_analisis'         => 'Analisis Pengendalian',
+            'pengend_important_matrix' => 'Matrix Important',
+            'pengend_urgent_matrix'    => 'Matrix Urgent',
+            'pengendalian_desc'        => 'Deskripsi Pengendalian',
+            'tgl_target'               => 'Tanggal Target',
+        ];
     }
 }

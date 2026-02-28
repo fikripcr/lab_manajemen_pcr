@@ -18,4 +18,13 @@ class StoreMataUjiRequest extends BaseRequest
             'deskripsi'     => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'nama_mata_uji' => 'Nama Mata Uji',
+            'tipe'          => 'Tipe Mata Uji',
+            'deskripsi'     => 'Deskripsi Mata Uji',
+        ];
+    }
 }

@@ -24,8 +24,18 @@ class PeriodSoftRequestRequest extends BaseRequest
             'semester_id'  => 'required|exists:lab_semesters,semester_id',
             'nama_periode' => 'required|string|max:191',
             'start_date'   => 'required|date',
-            'end_date'     => 'required|date|after_or_equal:start_date',
             'is_active'    => 'boolean',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'semester_id'  => 'Semester',
+            'nama_periode' => 'Nama Periode',
+            'start_date'   => 'Tanggal Mulai',
+            'end_date'     => 'Tanggal Selesai',
+            'is_active'    => 'Status Aktif',
         ];
     }
 }

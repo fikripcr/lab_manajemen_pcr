@@ -38,4 +38,14 @@ class LogPenggunaanPcRequest extends BaseRequest
             'lab_id'    => decryptIdIfEncrypted($this->lab_id),
         ]);
     }
+
+    public function attributes(): array
+    {
+        return [
+            'status_pc'    => 'Status PC',
+            'catatan_umum' => 'Catatan Umum',
+            'jadwal_id'    => 'Jadwal',
+            'lab_id'       => 'Lab',
+        ];
+    }
 }

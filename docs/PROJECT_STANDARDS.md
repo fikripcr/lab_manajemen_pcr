@@ -387,29 +387,42 @@ class CreateUserRequest extends FormRequest
         ];
     }
 
-    public function messages(): array
+    public function attributes(): array
     {
-        return validation_messages_id(); // Use Indonesian messages from SysHelper
+        return [
+            'name'     => 'Nama Pengguna',
+            'email'    => 'Alamat Email',
+            'password' => 'Kata Sandi',
+        ];
     }
 }
 ```
 
-#### ✅ BaseRequest Usage
-Gunakan `BaseRequest` sebagai parent class untuk semua `FormRequest` baru agar otomatis menggunakan pesan validasi Bahasa Indonesia:
+#### ✅ BaseRequest & Attributes Usage
+Gunakan `BaseRequest` sebagai parent class untuk semua `FormRequest` agar otomatis menggunakan pesan validasi Bahasa Indonesia tersentralisasi. Selain itu, **WAJIB** menyertakan method `attributes()` untuk menamai ulang atribut agar ramah pengguna (*human-readable*).
 
 ```php
 // app/Http/Requests/BaseRequest.php
 abstract class BaseRequest extends FormRequest {
     public function messages(): array {
-        return validation_messages_id();
+        // ... (mengembalikan seluruh pesan generic terpusat)
     }
 }
 
 // app/Http/Requests/Sys/UserRequest.php
 class UserRequest extends BaseRequest {
-    public function rules(): array { ... }
+    public function rules(): array { 
+        return [
+            'name' => 'required|string',
+        ];
+    }
+    
+    public function attributes(): array {
+        return [
+            'name' => 'Nama Lengkap',
+        ];
+    }
 }
-```
 ```
 
 #### Controller Integration
@@ -526,17 +539,19 @@ jsonError('Kredensial tidak valid', 401);
 
 ### G. Centralized Indonesian Validation
 
-Untuk memastikan seluruh pesan validasi menggunakan Bahasa Indonesia yang konsisten, gunakan helper `validation_messages_id()` yang didefinisikan di `SysHelper.php`.
+Untuk memastikan seluruh pesan validasi menggunakan Bahasa Indonesia yang konsisten, proyek ini mempusatkan *error messages* di dalam `BaseRequest`.
 
-**Cara Penggunaan:**
-1. Semua class Request **WAJIB** extend `App\Http\Requests\BaseRequest`.
-2. Jika perlu menambahkan pesan kustom di luar standar, override method `messages()` dan merge dengan hasil helper:
+**Aturan & Cara Penggunaan:**
+1. Semua class Request **WAJIB** extend `App\Http\Requests\BaseRequest`. `BaseRequest` menangani seluruh format pesan validasi bawaan tipe data, *rules* standar, size, dll.
+2. **WAJIB** menambahkan method `attributes()` di setiap class Request untuk mendefinisikan alias atribut yang ramah pengguna. *Hindari mendefinisikan array `messages` manual jika fungsi `attributes()` sudah cukup mengubah pesan error default*.
+3. Hanya override method `messages()` jika membutuhkan **pesan kesalahan yang sangat spesifik / unik** untuk field tertentu. Jika melakukannya, wajib menggunakan `array_merge()` dengan `parent::messages()`.
 
 ```php
 public function messages(): array
 {
+    // Cukup tambahkan khusus untuk rule spesifik ini:
     return array_merge(parent::messages(), [
-        'email.unique' => 'Alamat email ini sudah terdaftar di sistem kami.',
+        'email.unique' => 'Alamat email ini dipastikan sudah terdaftar di sistem kami.',
     ]);
 }
 ```

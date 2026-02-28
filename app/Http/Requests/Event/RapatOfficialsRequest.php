@@ -17,4 +17,12 @@ class RapatOfficialsRequest extends BaseRequest
             'notulen_user_id' => 'required|exists:users,id',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'ketua_user_id'   => 'Ketua Rapat',
+            'notulen_user_id' => 'Notulen Rapat',
+        ];
+    }
 }

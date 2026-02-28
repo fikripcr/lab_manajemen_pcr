@@ -29,4 +29,16 @@ class StoreSoalRequest extends BaseRequest
             'kunci_jawaban'     => 'required_unless:tipe_soal,Esai',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'mata_uji_id'       => 'Mata Uji',
+            'tipe_soal'         => 'Tipe Soal',
+            'konten_pertanyaan' => 'Konten Pertanyaan',
+            'tingkat_kesulitan' => 'Tingkat Kesulitan',
+            'opsi'              => 'Opsi Jawaban',
+            'kunci_jawaban'     => 'Kunci Jawaban',
+        ];
+    }
 }

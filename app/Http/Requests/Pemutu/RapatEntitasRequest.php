@@ -23,8 +23,17 @@ class RapatEntitasRequest extends BaseRequest
         return [
             'rapat_id'   => 'required|exists:rapats,rapat_id',
             'model'      => 'required|string|max:50',
-            'model_id'   => 'required|integer',
             'keterangan' => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'rapat_id'   => 'Rapat',
+            'model'      => 'Model Entitas',
+            'model_id'   => 'ID Entitas',
+            'keterangan' => 'Keterangan',
         ];
     }
 }

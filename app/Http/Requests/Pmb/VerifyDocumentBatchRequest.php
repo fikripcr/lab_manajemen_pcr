@@ -25,4 +25,13 @@ class VerifyDocumentBatchRequest extends BaseRequest
             'catatan' => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'dokumen_ids' => 'Dokumen IDs',
+            'status'      => 'Status Verifikasi',
+            'catatan'     => 'Catatan Verifikasi',
+        ];
+    }
 }

@@ -19,8 +19,21 @@ class PengembanganDiriRequest extends BaseRequest
             'peran'              => 'nullable|string|max:100',
             'tgl_mulai'          => 'required|date',
             'tgl_selesai'        => 'nullable|date|after_or_equal:tgl_mulai',
-            'tahun'              => 'required|integer|digits:4',
             'keterangan'         => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'jenis_kegiatan'     => 'Jenis Kegiatan',
+            'nama_kegiatan'      => 'Nama Kegiatan',
+            'nama_penyelenggara' => 'Penyelenggara',
+            'peran'              => 'Peran',
+            'tgl_mulai'          => 'Tanggal Mulai',
+            'tgl_selesai'        => 'Tanggal Selesai',
+            'tahun'              => 'Tahun',
+            'keterangan'         => 'Keterangan',
         ];
     }
 }

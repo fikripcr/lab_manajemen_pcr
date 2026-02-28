@@ -25,8 +25,19 @@ class PeriodeKpiRequest extends BaseRequest
             'semester'        => 'required|in:Ganjil,Genap',
             'tahun_akademik'  => 'required|string|max:20',
             'tahun'           => 'required|integer',
-            'tanggal_mulai'   => 'required|date',
             'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'nama'            => 'Nama',
+            'semester'        => 'Semester',
+            'tahun_akademik'  => 'Tahun Akademik',
+            'tahun'           => 'Tahun',
+            'tanggal_mulai'   => 'Tanggal Mulai',
+            'tanggal_selesai' => 'Tanggal Selesai',
         ];
     }
 }

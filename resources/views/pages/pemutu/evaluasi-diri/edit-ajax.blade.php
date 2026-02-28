@@ -1,15 +1,15 @@
 <x-tabler.form-modal
     :title="'Isi Evaluasi Diri'"
     :route="route('pemutu.evaluasi-diri.update', $indikator->encrypted_indikator_id)"
-    size="modal-lg" 
+    size="modal-lg"
     method="POST"
     data-redirect="false"
 >
     <div class="row">
         {{-- Kiri: Detail Indikator & Info --}}
-        <div class="col-md-4 border-end pe-4">
+        <div class="col-md-4 border-end pe-4" style="max-height: 70vh; overflow-y: auto;">
             <h3 class="mb-3">Informasi Indikator</h3>
-            
+
             <div class="mb-3">
                 <span class="text-muted text-uppercase fw-bold fs-5">Kode</span>
                 <p class="mt-1 mb-0 fs-3 fw-bold">{{ $indikator->no_indikator }}</p>
@@ -65,28 +65,28 @@
         </div>
 
         {{-- Kanan: Form Pengisian ED --}}
-        <div class="col-md-8 ps-4">
+        <div class="col-md-8 ps-4 pe-2" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
             <h3 class="mb-3">Pengisian Capaian</h3>
             <input type="hidden" name="target_unit_id" value="{{ $targetUnitId }}">
 
             <div class="mb-3">
-                <x-tabler.form-input 
-                    name="ed_capaian" 
-                    label="Capaian saat ini" 
-                    placeholder="Contoh: 100%, 5 Dokumen, Selesai, dsb." 
-                    :value="$pivot->ed_capaian ?? ''" 
-                    required="true" 
+                <x-tabler.form-input
+                    name="ed_capaian"
+                    label="Capaian saat ini"
+                    placeholder="Contoh: 100%, 5 Dokumen, Selesai, dsb."
+                    :value="$pivot->ed_capaian ?? ''"
+                    required="true"
                 />
             </div>
 
             <div class="mb-3">
-                <x-tabler.form-textarea 
-                    name="ed_analisis" 
-                    label="Analisis Capaian & Tindak Lanjut" 
-                    placeholder="Jelaskan analisis capaian, kendala yang dihadapi, atau upaya tindak lanjut." 
-                    :value="$pivot->ed_analisis ?? ''" 
-                    rows="4" 
-                    required="true" 
+                <x-tabler.form-textarea
+                    name="ed_analisis"
+                    label="Analisis Capaian & Tindak Lanjut"
+                    placeholder="Jelaskan analisis capaian, kendala yang dihadapi, atau upaya tindak lanjut."
+                    :value="$pivot->ed_analisis ?? ''"
+                    rows="4"
+                    required="true"
                 />
             </div>
 
@@ -101,7 +101,7 @@
                     @foreach($skalaData as $level => $desc)
                     @php $isChosen = (isset($pivot->ed_skala) && (int)$pivot->ed_skala === (int)$level); @endphp
                     <div class="col-12">
-                        <div class="card mb-0 skala-card cursor-pointer {{ $isChosen ? 'border-primary bg-primary-lt border-2' : 'border' }}"
+                        <div class="card mb-0 skala-card border cursor-pointer {{ $isChosen ? 'border-primary bg-primary-lt border-2' : 'border' }}"
                              data-level="{{ $level }}" role="button">
                             <div class="card-body p-3">
                                 <div class="row align-items-center">
@@ -127,10 +127,10 @@
             <h3 class="mb-3">Bukti & Dokumen Pendukung</h3>
 
             <div class="mb-4">
-                <x-tabler.form-input 
-                    name="ed_attachment" 
-                    label="Unggah File (Opsional)" 
-                    type="file" 
+                <x-tabler.form-input
+                    name="ed_attachment"
+                    label="Unggah File (Opsional)"
+                    type="file"
                     accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png"
                     helper="Maksimal 5MB. Format: PDF, Excel, Word, Gambar."
                 />
@@ -149,7 +149,7 @@
             <div class="mb-3">
                 <label class="form-label">Link Pendukung Eksternal (URL)</label>
                 <div class="text-muted mb-2"><small>Tambahkan tautan ke Google Drive, Sharepoint, Website, dll.</small></div>
-                
+
                 <div id="ed-links-container">
                     @forelse($edLinks as $link)
                         <div class="ed-link-item row gap-2 mb-2 g-0 align-items-center">
@@ -181,7 +181,7 @@
                         </div>
                     @endforelse
                 </div>
-                
+
                 <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-link-btn">
                     <i class="ti ti-plus me-2"></i> Tambah Link
                 </button>

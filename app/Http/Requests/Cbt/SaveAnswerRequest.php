@@ -27,4 +27,14 @@ class SaveAnswerRequest extends BaseRequest
             'is_ragu'      => 'nullable|boolean',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'soal_id'      => 'Soal',
+            'opsi_id'      => 'Opsi Jawaban',
+            'jawaban_esai' => 'Jawaban Esai',
+            'is_ragu'      => 'Status Ragu-Ragu',
+        ];
+    }
 }

@@ -26,4 +26,13 @@ class FileUploadRequest extends BaseRequest
             'file'             => 'required|file|max:5120',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'pendaftaran_id'   => 'Pendaftaran',
+            'jenis_dokumen_id' => 'Jenis Dokumen',
+            'file'             => 'File',
+        ];
+    }
 }

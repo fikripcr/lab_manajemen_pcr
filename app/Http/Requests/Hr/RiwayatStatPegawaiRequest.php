@@ -15,8 +15,16 @@ class RiwayatStatPegawaiRequest extends BaseRequest
         return [
             'statuspegawai_id' => 'required|exists:hr_status_pegawai,statuspegawai_id',
             'tmt'              => 'required|date',
-            'no_sk'            => 'nullable|string|max:100',
             // 'file_sk' => 'nullable|file...',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'statuspegawai_id' => 'Status Pegawai',
+            'tmt'              => 'TMT',
+            'no_sk'            => 'Nomor SK',
         ];
     }
 }

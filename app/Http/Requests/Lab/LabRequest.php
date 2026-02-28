@@ -25,8 +25,17 @@ class LabRequest extends BaseRequest
         return [
             'name'        => ['required', 'string', 'max:255'],
             'location'    => ['required', 'string', 'max:255'],
-            'capacity'    => ['required', 'integer', 'min:1'],
             'description' => ['nullable', 'string'],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'name'        => 'Nama Lab',
+            'location'    => 'Lokasi',
+            'capacity'    => 'Kapasitas',
+            'description' => 'Deskripsi',
         ];
     }
 }

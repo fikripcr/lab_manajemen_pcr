@@ -34,4 +34,12 @@ class RolePermissionRequest extends BaseRequest
             'permissions.required' => 'Setidaknya satu permission harus dipilih.',
         ]);
     }
+
+    public function attributes(): array
+    {
+        return [
+            'permissions' => 'Permissions',
+            'sys.permissions.*' => 'Permissions',
+        ];
+    }
 }

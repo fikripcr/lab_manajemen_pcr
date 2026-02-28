@@ -18,4 +18,13 @@ class RapatPesertaRequest extends BaseRequest
             'jabatan'  => 'required|string|max:100',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'rapat_id' => 'Rapat',
+            'user_id'  => 'Peserta Rapat',
+            'jabatan'  => 'Jabatan',
+        ];
+    }
 }

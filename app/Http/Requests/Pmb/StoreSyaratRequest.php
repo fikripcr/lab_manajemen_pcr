@@ -27,4 +27,13 @@ class StoreSyaratRequest extends BaseRequest
             'is_required'      => 'boolean',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'jalur_id'         => 'Jalur',
+            'jenis_dokumen_id' => 'Jenis Dokumen',
+            'is_required'      => 'Format Dokumen Wajib',
+        ];
+    }
 }

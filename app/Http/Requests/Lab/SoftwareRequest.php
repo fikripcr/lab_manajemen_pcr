@@ -38,10 +38,18 @@ class SoftwareRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom validation messages.
-     */
-    public function messages(): array
+    public function attributes(): array
     {
+        return [
+            'status'            => 'Status',
+            'catatan_admin'     => 'Catatan Admin',
+            'periodsoftreq_id'  => 'Periode',
+            'mata_kuliah_ids'   => 'Mata Kuliah',
+            'mata_kuliah_ids.*' => 'Mata Kuliah',
+            'nama_software'     => 'Nama Software',
+            'versi'             => 'Versi',
+            'url_download'      => 'URL Download',
+            'deskripsi'         => 'Deskripsi',
+        ];
     }
 }

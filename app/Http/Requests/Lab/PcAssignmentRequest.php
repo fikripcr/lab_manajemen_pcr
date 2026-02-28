@@ -22,8 +22,16 @@ class PcAssignmentRequest extends BaseRequest
     {
         return [
             'user_id'     => 'required|exists:users,id',
-            'nomor_pc'    => 'required|integer|min:1',
             'nomor_loker' => 'nullable|integer',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'user_id'     => 'User',
+            'nomor_pc'    => 'Nomor PC',
+            'nomor_loker' => 'Nomor Loker',
         ];
     }
 }

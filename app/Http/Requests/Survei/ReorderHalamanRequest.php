@@ -38,4 +38,12 @@ class ReorderHalamanRequest extends BaseRequest
             'order.*' => 'integer',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'order'   => 'Urutan',
+            'order.*' => 'Urutan',
+        ];
+    }
 }

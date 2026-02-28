@@ -24,8 +24,18 @@ class SemesterRequest extends BaseRequest
             'tahun_ajaran' => 'required|string|max:20',
             'semester'     => 'required|integer|in:1,2',
             'start_date'   => 'required|date',
-            'end_date'     => 'required|date|after:start_date',
             'is_active'    => 'boolean',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'tahun_ajaran' => 'Tahun Ajaran',
+            'semester'     => 'Semester',
+            'start_date'   => 'Tanggal Mulai',
+            'end_date'     => 'Tanggal Selesai',
+            'is_active'    => 'Status Aktif',
         ];
     }
 }

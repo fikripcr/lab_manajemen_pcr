@@ -25,4 +25,12 @@ class UpdateStatusRequest extends BaseRequest
             'keterangan' => 'nullable|string|max:1000',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'status'     => 'Status',
+            'keterangan' => 'Keterangan',
+        ];
+    }
 }

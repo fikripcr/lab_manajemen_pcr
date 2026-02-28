@@ -30,4 +30,16 @@ class StoreSesiRequest extends BaseRequest
             'kuota'         => 'required|integer|min:1',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'periode_id'    => 'Periode',
+            'nama_sesi'     => 'Nama Sesi',
+            'waktu_mulai'   => 'Waktu Mulai',
+            'waktu_selesai' => 'Waktu Selesai',
+            'lokasi'        => 'Lokasi Sesi',
+            'kuota'         => 'Kuota Sesi',
+        ];
+    }
 }

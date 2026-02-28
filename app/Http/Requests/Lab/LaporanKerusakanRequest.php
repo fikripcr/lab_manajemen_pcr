@@ -39,4 +39,14 @@ class LaporanKerusakanRequest extends BaseRequest
             ]);
         }
     }
+
+    public function attributes(): array
+    {
+        return [
+            'lab_id'              => 'Lab',
+            'inventaris_id'       => 'Inventaris',
+            'deskripsi_kerusakan' => 'Deskripsi Kerusakan',
+            'bukti_foto'          => 'Bukti Foto',
+        ];
+    }
 }

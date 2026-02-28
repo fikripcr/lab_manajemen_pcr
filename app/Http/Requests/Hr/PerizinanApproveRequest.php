@@ -16,8 +16,17 @@ class PerizinanApproveRequest extends BaseRequest
         return [
             'status'        => 'required|in:Approved,Rejected,Pending',
             'pejabat'       => 'required|string|max:255',
-            'jenis_jabatan' => 'required|string|max:255',
             'keterangan'    => 'nullable|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'status'        => 'Status',
+            'pejabat'       => 'Pejabat',
+            'jenis_jabatan' => 'Jenis Jabatan',
+            'keterangan'    => 'Keterangan',
         ];
     }
 }

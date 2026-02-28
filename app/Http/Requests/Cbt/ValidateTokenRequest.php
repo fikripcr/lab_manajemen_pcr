@@ -16,4 +16,11 @@ class ValidateTokenRequest extends BaseRequest
             'token_ujian' => 'required|string|size:6',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'token_ujian' => 'Token Ujian',
+        ];
+    }
 }

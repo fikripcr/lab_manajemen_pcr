@@ -57,18 +57,24 @@ class AppConfigurationRequest extends BaseRequest
     /**
      * Get custom messages for validation errors.
      */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'app_name.string' => 'The application name must be a text string.',
-            'app_name.max' => 'The application name must not exceed 255 characters.',
-            'app_name.required' => 'Nama aplikasi wajib diisi.',
-            'app_debug.boolean' => 'The debug mode must be enabled or disabled.',
-            'app_url.url' => 'URL aplikasi tidak valid.',
-            'mail_port.integer' => 'The mail port must be a number.',
-            'mail_from_address.email' => 'The mail from address must be a valid email address.',
-            'google_redirect_uri.url' => 'The Google redirect URI must be a valid URL format.',
-            'mysqldump_path.string' => 'The mysqldump path must be a text string.',
-        ]);
+        return [
+            'app_name' => 'Nama Aplikasi',
+            'app_debug' => 'Mode Debug',
+            'app_url' => 'URL Aplikasi',
+            'mail_mailer' => 'Mail Mailer',
+            'mail_host' => 'Mail Host',
+            'mail_port' => 'Mail Port',
+            'mail_username' => 'Mail Username',
+            'mail_password' => 'Mail Password',
+            'mail_encryption' => 'Mail Encryption',
+            'mail_from_address' => 'Email Pengirim',
+            'mail_from_name' => 'Nama Pengirim',
+            'google_client_id' => 'Google Client ID',
+            'google_client_secret' => 'Google Client Secret',
+            'google_redirect_uri' => 'Google Redirect URI',
+            'mysqldump_path' => 'Path Mysqldump',
+        ];
     }
 }

@@ -23,8 +23,17 @@ class RapatAgendaRequest extends BaseRequest
         return [
             'rapat_id'     => 'required|exists:rapats,rapat_id', // Note: Using table name from migration/model
             'judul_agenda' => 'required|string|max:250',
-            'isi'          => 'required|string',
             'seq'          => 'required|integer',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'rapat_id'     => 'Rapat',
+            'judul_agenda' => 'Judul Agenda',
+            'isi'          => 'Isi Agenda',
+            'seq'          => 'Urutan',
         ];
     }
 }

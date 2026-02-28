@@ -44,7 +44,19 @@ class PengumumanRequest extends BaseRequest
 
             'attachments.*.file'   => 'Lampiran harus berupa file.',
             'attachments.*.mimes'  => 'Lampiran harus berupa file PDF, DOC, DOCX, ZIP, XLS, atau XLSX.',
-            'attachments.*.max'    => 'Ukuran lampiran tidak boleh lebih dari 5MB.',
         ]);
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'judul'         => 'Judul',
+            'isi'           => 'Isi',
+            'jenis'         => 'Jenis',
+            'is_published'  => 'Status Publikasi',
+            'cover'         => 'Cover',
+            'attachments'   => 'Lampiran',
+            'attachments.*' => 'Lampiran',
+        ];
     }
 }

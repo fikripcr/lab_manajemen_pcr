@@ -21,8 +21,15 @@ class ReorderRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'order'     => 'nullable|array',
             'hierarchy' => 'nullable|array',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'order'     => 'Urutan',
+            'hierarchy' => 'Hierarki',
         ];
     }
 }

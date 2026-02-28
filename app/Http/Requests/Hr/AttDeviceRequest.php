@@ -20,4 +20,15 @@ class AttDeviceRequest extends BaseRequest
             'is_active' => 'boolean',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name'      => 'Nama Device',
+            'sn'        => 'Serial Number',
+            'ip'        => 'IP Address',
+            'port'      => 'Port',
+            'is_active' => 'Status Aktif',
+        ];
+    }
 }

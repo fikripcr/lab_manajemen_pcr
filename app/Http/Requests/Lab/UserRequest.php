@@ -47,4 +47,16 @@ class UserRequest extends BaseRequest
         ];
     }
 
+    public function attributes(): array
+    {
+        return [
+            'name'       => 'Nama',
+            'email'      => 'Email',
+            'role'       => 'Role',
+            'role.*'     => 'Role',
+            'password'   => 'Password',
+            'avatar'     => 'Avatar',
+            'expired_at' => 'Tanggal Kedaluwarsa',
+        ];
+    }
 }

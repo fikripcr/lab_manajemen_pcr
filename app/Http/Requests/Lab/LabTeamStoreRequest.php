@@ -39,19 +39,12 @@ class LabTeamStoreRequest extends BaseRequest
         }
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'user_id.required' => 'Anggota tim harus dipilih.',
-            'user_id.exists'   => 'User tidak ditemukan.',
-            'jabatan.required' => 'Jabatan wajib diisi.',
-            'role.required' => 'Role harus dipilih.',
-            'role.in' => 'Role harus PIC atau Member.',
-        ]);
+        return [
+            'user_id' => 'Anggota Tim',
+            'role'    => 'Role',
+            'jabatan' => 'Jabatan',
+        ];
     }
 }

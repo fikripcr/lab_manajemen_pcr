@@ -54,9 +54,35 @@ class ThemeTablerRequest extends BaseRequest
     public function messages(): array
     {
         return array_merge(parent::messages(), [
-            'mode.required' => 'Mode harus diisi.',
             'mode.in'       => 'Mode harus sys, auth, atau tabler.',
             'theme.in'      => 'Theme harus light atau dark.',
         ]);
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'mode'                    => 'Mode',
+            'theme'                   => 'Theme',
+            'theme-primary'           => 'Theme Primary',
+            'theme-font'              => 'Theme Font',
+            'theme-base'              => 'Theme Base',
+            'theme-radius'            => 'Theme Radius',
+            'theme-card-style'        => 'Theme Card Style',
+            'theme-header-sticky'     => 'Theme Header Sticky',
+            'theme-bg'                => 'Theme Background',
+            'theme-sidebar-bg'        => 'Theme Sidebar Background',
+            'theme-header-top-bg'     => 'Theme Header Top Background',
+            'theme-header-overlap-bg' => 'Theme Header Overlap Background',
+            'theme-boxed-bg'          => 'Theme Boxed Background',
+            'layout'                  => 'Layout',
+            'container-width'         => 'Container Width',
+            'auth-layout'             => 'Auth Layout',
+            'auth-form-position'      => 'Auth Form Position',
+            'theme-density'           => 'Theme Density',
+            'theme-font-size'         => 'Theme Font Size',
+            'theme-icon-weight'       => 'Theme Icon Weight',
+            'theme-texture'           => 'Theme Texture',
+        ];
     }
 }

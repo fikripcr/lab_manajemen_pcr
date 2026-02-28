@@ -30,19 +30,15 @@ class PerizinanStoreRequest extends BaseRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'perizinan_jenis_id.required' => 'Jenis izin wajib dipilih.',
-            'tgl_mulai.required'          => 'Tanggal mulai wajib diisi.',
-            'tgl_selesai.required'        => 'Tanggal selesai wajib diisi.',
-            'tgl_selesai.after_or_equal'  => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
-            'alasan.required'             => 'Alasan wajib diisi.',
-        ]);
+        return [
+            'jenisizin_id'           => 'Jenis Izin',
+            'pengusul'               => 'Pengusul',
+            'pekerjaan_ditinggalkan' => 'Pekerjaan Ditinggalkan',
+            'tgl_mulai'              => 'Tanggal Mulai',
+            'tgl_selesai'            => 'Tanggal Selesai',
+            'keterangan'             => 'Keterangan',
+        ];
     }
 }

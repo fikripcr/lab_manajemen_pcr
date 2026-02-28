@@ -24,8 +24,18 @@ class PresensiUpdateSettingsRequest extends BaseRequest
             'office_latitude'  => 'required|numeric',
             'office_longitude' => 'required|numeric',
             'office_address'   => 'required|string|max:500',
-            'allowed_radius'   => 'required|integer|min:10|max:1000',
             'is_active'        => 'nullable', // handled as boolean in controller
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'office_latitude'  => 'Latitude Kantor',
+            'office_longitude' => 'Longitude Kantor',
+            'office_address'   => 'Alamat Kantor',
+            'allowed_radius'   => 'Radius Diizinkan',
+            'is_active'        => 'Status Aktif',
         ];
     }
 }

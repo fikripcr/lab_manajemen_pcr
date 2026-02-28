@@ -30,11 +30,12 @@ class RoleRequest extends BaseRequest
     /**
      * Get custom validation messages.
      */
-    public function messages(): array
+    public function attributes(): array
     {
-        return array_merge(parent::messages(), [
-            'name.required' => 'Nama role wajib diisi.',
-            'name.unique'   => 'Nama role sudah digunakan.',
-        ]);
+        return [
+            'name' => 'Nama Role',
+            'permissions' => 'Permissions',
+            'sys.permissions.*' => 'Permissions',
+        ];
     }
 }
