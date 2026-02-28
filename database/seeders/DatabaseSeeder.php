@@ -1,6 +1,7 @@
 <?php
 namespace Database\Seeders;
 
+use Database\Seeders\MainProjectSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,12 +21,12 @@ class DatabaseSeeder extends Seeder
             // Modules
             MainHrSeeder::class,
             MainLabSeeder::class,
-            // MainPemutuSeeder::class,
+            MainPemutuSeeder::class,
             MainEofficeSeeder::class,
             MainPmbSeeder::class,
             MainCbtSeeder::class,
             MainSurveiSeeder::class,
-            ProjectSeeder::class,
+            MainProjectSeeder::class,
             // Shared / Additional
             SlideshowSeeder::class,
             FAQSeeder::class,

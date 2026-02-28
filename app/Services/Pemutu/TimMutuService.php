@@ -165,6 +165,110 @@ class TimMutuService
     }
 
     /**
+     * Update Tim Auditee for a single OrgUnit.
+     */
+    public function updateAuditee($periodeId, $unitId, $auditeeId, array $anggotaIds)
+    {
+        return DB::transaction(function () use ($periodeId, $unitId, $auditeeId, $anggotaIds) {
+            $periode = PeriodeSpmi::findOrFail($periodeId);
+            $unit    = OrgUnit::findOrFail($unitId);
+
+            // Delete existing auditee roles
+            TimMutu::forPeriode($periodeId)
+                ->forUnit($unitId)
+                ->whereIn('role', ['auditee', 'anggota'])
+                ->forceDelete();
+
+            $inserts = [];
+            $now     = now();
+            $userId  = auth()->id();
+
+            // Helper
+            $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
+                return [
+                    'periodespmi_id' => $periodeId,
+                    'org_unit_id'    => $unitId,
+                    'pegawai_id'     => $pegawaiId,
+                    'role'           => $role,
+                    'created_at'     => $now,
+                    'updated_at'     => $now,
+                    'created_by'     => $userId,
+                    'updated_by'     => $userId,
+                ];
+            };
+
+            if ($auditeeId) {
+                $inserts[] = $addInsert($auditeeId, 'auditee');
+            }
+
+            foreach ($anggotaIds as $pegawaiId) {
+                if ($pegawaiId) {
+                    $inserts[] = $addInsert($pegawaiId, 'anggota');
+                }
+            }
+
+            if (! empty($inserts)) {
+                TimMutu::insert($inserts);
+            }
+
+            logActivity('Tim Mutu Updated', "Mengupdate Tim Auditee untuk unit {$unit->name} pada periode {$periode->periode}", $unit);
+            return true;
+        });
+    }
+
+    /**
+     * Update Tim Auditor for a single OrgUnit.
+     */
+    public function updateAuditor($periodeId, $unitId, $ketuaAuditorId, array $auditorIds)
+    {
+        return DB::transaction(function () use ($periodeId, $unitId, $ketuaAuditorId, $auditorIds) {
+            $periode = PeriodeSpmi::findOrFail($periodeId);
+            $unit    = OrgUnit::findOrFail($unitId);
+
+            // Delete existing auditor roles
+            TimMutu::forPeriode($periodeId)
+                ->forUnit($unitId)
+                ->whereIn('role', ['ketua_auditor', 'auditor'])
+                ->forceDelete();
+
+            $inserts = [];
+            $now     = now();
+            $userId  = auth()->id();
+
+            // Helper
+            $addInsert = function ($pegawaiId, $role) use ($periodeId, $unitId, $now, $userId) {
+                return [
+                    'periodespmi_id' => $periodeId,
+                    'org_unit_id'    => $unitId,
+                    'pegawai_id'     => $pegawaiId,
+                    'role'           => $role,
+                    'created_at'     => $now,
+                    'updated_at'     => $now,
+                    'created_by'     => $userId,
+                    'updated_by'     => $userId,
+                ];
+            };
+
+            if ($ketuaAuditorId) {
+                $inserts[] = $addInsert($ketuaAuditorId, 'ketua_auditor');
+            }
+
+            foreach ($auditorIds as $pegawaiId) {
+                if ($pegawaiId) {
+                    $inserts[] = $addInsert($pegawaiId, 'auditor');
+                }
+            }
+
+            if (! empty($inserts)) {
+                TimMutu::insert($inserts);
+            }
+
+            logActivity('Tim Mutu Updated', "Mengupdate Tim Auditor untuk unit {$unit->name} pada periode {$periode->periode}", $unit);
+            return true;
+        });
+    }
+
+    /**
      * Search Pegawai for Select2.
      */
     public function searchPegawai($search)

@@ -60,15 +60,15 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Indikator Summary (NEW - with separate routes for Standar and Performa)
     Route::get('indikator-summary', [IndikatorSummaryController::class, 'index'])->name('indikator-summary.index');
-    
+
     // Indikator Standar (ED, AMI, Pengendalian)
     Route::get('indikator-summary/standar', [IndikatorSummaryController::class, 'standar'])->name('indikator-summary.standar');
     Route::get('indikator-summary/standar/data', [IndikatorSummaryController::class, 'dataStandar'])->name('indikator-summary.data-standar');
-    
+
     // Indikator Performa (KPI)
     Route::get('indikator-summary/performa', [IndikatorSummaryController::class, 'performa'])->name('indikator-summary.performa');
     Route::get('indikator-summary/performa/data', [IndikatorSummaryController::class, 'dataPerforma'])->name('indikator-summary.data-performa');
-    
+
     // Shared routes
     Route::get('indikator-summary/export', [IndikatorSummaryController::class, 'export'])->name('indikator-summary.export');
     Route::get('indikator-summary/{indikator}', [IndikatorSummaryController::class, 'detail'])->name('indikator-summary.detail');
@@ -94,8 +94,10 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('tim-mutu', [TimMutuController::class, 'index'])->name('tim-mutu.index');
     Route::get('tim-mutu/search-pegawai', [TimMutuController::class, 'searchPegawai'])->name('tim-mutu.search-pegawai');
     Route::get('tim-mutu/{periode}/manage', [TimMutuController::class, 'manage'])->name('tim-mutu.manage');
-    Route::get('tim-mutu/{periode}/unit/{unit}/edit', [TimMutuController::class, 'editUnit'])->name('tim-mutu.edit-unit');
-    Route::post('tim-mutu/{periode}/unit/{unit}', [TimMutuController::class, 'storeUnit'])->name('tim-mutu.store-unit');
+    Route::get('tim-mutu/{periode}/unit/{unit}/edit-auditee', [TimMutuController::class, 'editAuditee'])->name('tim-mutu.edit-auditee');
+    Route::post('tim-mutu/{periode}/unit/{unit}/auditee', [TimMutuController::class, 'storeAuditee'])->name('tim-mutu.store-auditee');
+    Route::get('tim-mutu/{periode}/unit/{unit}/edit-auditor', [TimMutuController::class, 'editAuditor'])->name('tim-mutu.edit-auditor');
+    Route::post('tim-mutu/{periode}/unit/{unit}/auditor', [TimMutuController::class, 'storeAuditor'])->name('tim-mutu.store-auditor');
 
     // Renop (Rencana Operasional)
     Route::get('renop/create', [RenopController::class, 'create'])->name('renop.create');
@@ -137,4 +139,3 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('pengendalian/update/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'update'])->name('pengendalian.update');
     Route::post('pengendalian/matrix/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'updateMatrix'])->name('pengendalian.update-matrix');
 });
-

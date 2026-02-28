@@ -177,7 +177,7 @@
                                     </div>
                                     <div class="small text-muted">{{ $hasilSaatIni['desc'] }}</div>
                                 </div>
-                                
+
                                 <div class="col-md-8">
                                     <div class="text-uppercase text-muted small fw-bold mb-1">Temuan Umum</div>
                                     <div class="fs-4">{{ $indOrg->ami_hasil_temuan ?? '—' }}</div>
@@ -186,21 +186,18 @@
                                 {{-- Jika KTS --}}
                                 @if($indOrg->ami_hasil_akhir === 0)
                                     <div class="col-12 mt-4">
-                                        <div class="alert alert-danger">
-                                            <h4 class="alert-title"><i class="ti ti-alert-triangle me-1"></i>Detail Ketidaksesuaian (KTS)</h4>
-                                            <div class="mt-2">
-                                                <div class="mb-2">
-                                                    <strong>Sebab:</strong>
-                                                    <div class="mt-1 bg-white p-2 border rounded small">{!! nl2br(e($indOrg->ami_hasil_temuan_sebab ?? '—')) !!}</div>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <strong>Akibat:</strong>
-                                                    <div class="mt-1 bg-white p-2 border rounded small">{!! nl2br(e($indOrg->ami_hasil_temuan_akibat ?? '—')) !!}</div>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <strong>Rekomendasi Tindak Lanjut:</strong>
-                                                    <div class="mt-1 bg-white p-2 border rounded small">{!! nl2br(e($indOrg->ami_hasil_temuan_rekom ?? '—')) !!}</div>
-                                                </div>
+                                        <div class="mt-2">
+                                            <div class="mb-2">
+                                                <strong class="text-danger">Sebab:</strong>
+                                                <div class="mt-1 bg-white p-2 border rounded small text-break">{!! $indOrg->ami_hasil_temuan_sebab ?: '—' !!}</div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong class="text-danger">Akibat:</strong>
+                                                <div class="mt-1 bg-white p-2 border rounded small text-break">{!! $indOrg->ami_hasil_temuan_akibat ?: '—' !!}</div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong class="text-danger">Rekomendasi Tindak Lanjut:</strong>
+                                                <div class="mt-1 bg-white p-2 border rounded small text-break">{!! $indOrg->ami_hasil_temuan_rekom ?: '—' !!}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -227,7 +224,7 @@
         @php
             $hasilSaatIni = $indOrg->ami_hasil_akhir !== null ? ($hasilAkhirLabels[$indOrg->ami_hasil_akhir] ?? null) : null;
         @endphp
-        @if($hasilSaatIni)
+        {{-- @if($hasilSaatIni)
         <div class="card mb-4 border-{{ $hasilSaatIni['color'] }}">
             <div class="card-body text-center py-3">
                 <div class="text-uppercase text-muted small fw-bold mb-1">Hasil AMI Saat Ini</div>
@@ -241,7 +238,7 @@
                 @endif
             </div>
         </div>
-        @endif
+        @endif --}}
 
         {{-- SECTION C & D: Diskusi & Penilaian Auditor --}}
         <div class="card mb-4 sticky-top" style="top: 80px;">
@@ -251,7 +248,7 @@
                         <a href="#tabs-diskusi" class="nav-link active justify-content-center" data-bs-toggle="tab" aria-selected="true" role="tab" style="border-top-left-radius: 4px;">
                             <i class="ti ti-messages me-2"></i>Diskusi
                             @if($indOrg->diskusi->count() > 0)
-                                <span class="badge bg-secondary ms-2">{{ $indOrg->diskusi->count() }}</span>
+                                <span class="status status-secondary ms-2">{{ $indOrg->diskusi->count() }}</span>
                             @endif
                         </a>
                     </li>
@@ -277,7 +274,7 @@
                             <div class="avatar avatar-sm bg-{{ $color }}-lt text-{{ $color }} me-2 {{ $isSelf ? 'ms-2 me-0' : '' }}">
                                 <i class="ti ti-user"></i>
                             </div>
-                            <div style="max-width: 80%;">
+                            <div style="max-width: 90%;">
                                 <div class="d-flex align-items-center gap-2 mb-1 {{ $isSelf ? 'flex-row-reverse' : '' }}">
                                     <span class="fw-bold small">{{ $msg->pengirim->name ?? 'Unknown' }}</span>
                                     <span class="badge bg-{{ $color }}-lt text-{{ $color }} py-0 px-1 small">{{ ucfirst($msg->jenis_pengirim) }}</span>
@@ -318,16 +315,25 @@
                     <div class="card-footer bg-light p-2 border-top">
                         <form action="{{ route('pemutu.diskusi.store-ami', $indOrg->encrypted_indorgunit_id) }}" method="POST" enctype="multipart/form-data" class="ajax-form" data-redirect="true">
                             @csrf
-                            <input type="hidden" name="jenis_pengirim" value="auditor">
                             <input type="hidden" name="jenis_diskusi" value="ami">
                             <x-tabler.form-textarea name="isi" rows="2" placeholder="Tuliskan pesan..." required="true" />
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <div class="w-100 me-2" style="max-width: 200px;">
-                                    <input type="file" class="form-control form-control-sm" name="attachment_file" accept=".pdf,.doc,.docx,.jpg,.png" title="Lampirkan File" />
+
+                            <div class="mt-2 mb-2">
+                                <x-tabler.form-input type="file" name="attachment_file" accept=".pdf,.doc,.docx,.jpg,.png" title="Lampirkan File" class="filepond" />
+                            </div>
+
+                            <div class="row g-2 align-items-center">
+                                <div class="col-8">
+                                    <select name="jenis_pengirim" class="form-select form-select-sm w-auto" required>
+                                        <option value="auditor" selected>Kirim sebagai: Auditor</option>
+                                        <option value="auditee">Kirim sebagai: Auditee</option>
+                                    </select>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="ti ti-send"></i>
-                                </button>
+                                <div class="col-4 text-end">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                                        <i class="ti ti-send me-1"></i>Kirim
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -345,7 +351,7 @@
                                 <div class="row g-2">
                                     @foreach($hasilAkhirLabels as $value => $meta)
                                     <div class="col-12">
-                                        <label class="form-check border rounded p-2 cursor-pointer w-100
+                                        <label class="form-check border rounded p-2 ms-4 cursor-pointer
                                             {{ $indOrg->ami_hasil_akhir === $value ? 'border-' . $meta['color'] . ' bg-' . $meta['color'] . '-lt' : '' }}">
                                             <input class="form-check-input mt-1" type="radio" name="ami_hasil_akhir" value="{{ $value }}"
                                                 id="radio_hasil_{{ $value }}"
@@ -377,15 +383,15 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label required fw-semibold small">Sebab</label>
+                                    <label class="form-label required fw-semibold small">Sebab Ketidaksesuaian</label>
                                     <textarea id="ami_sebab" name="ami_hasil_temuan_sebab" class="form-control" rows="2">{{ $indOrg->ami_hasil_temuan_sebab ?? '' }}</textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label required fw-semibold small">Akibat</label>
+                                    <label class="form-label required fw-semibold small">Akibat Ketidaksesuaian</label>
                                     <textarea id="ami_akibat" name="ami_hasil_temuan_akibat" class="form-control" rows="2">{{ $indOrg->ami_hasil_temuan_akibat ?? '' }}</textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label required fw-semibold small">Rekomendasi</label>
+                                    <label class="form-label required fw-semibold small">Rekomendasi Tindak Lanjut</label>
                                     <textarea id="ami_rekom" name="ami_hasil_temuan_rekom" class="form-control" rows="2">{{ $indOrg->ami_hasil_temuan_rekom ?? '' }}</textarea>
                                 </div>
                             </div>
@@ -441,6 +447,32 @@ document.querySelectorAll('input[name="ami_hasil_akhir"]').forEach(radio => {
 // Scroll chat ke bawah otomatis
 const chat = document.getElementById('chat-container');
 if (chat) chat.scrollTop = chat.scrollHeight;
+
+// Simpan state Tab Aktif menggunakan sessionStorage
+const tabGroups = [
+    { key: 'ami_left_tab', selector: 'a[data-bs-toggle="tab"][href^="#tabs-ed"], a[data-bs-toggle="tab"][href^="#tabs-hasil-ami"]' },
+    { key: 'ami_right_tab', selector: 'a[data-bs-toggle="tab"][href^="#tabs-diskusi"], a[data-bs-toggle="tab"][href^="#tabs-penilaian"]' }
+];
+
+tabGroups.forEach(group => {
+    // Restore active tab
+    const savedHref = sessionStorage.getItem(group.key);
+    if (savedHref) {
+        const targetTab = document.querySelector(`a[data-bs-toggle="tab"][href="${savedHref}"]`);
+        if (targetTab) {
+            // Trigger Tabler bootstrap Tab show
+            const tabEl = new bootstrap.Tab(targetTab);
+            tabEl.show();
+        }
+    }
+
+    // Save on tab change
+    document.querySelectorAll(group.selector).forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (e) {
+            sessionStorage.setItem(group.key, e.target.getAttribute('href'));
+        });
+    });
+});
 </script>
 @endpush
 @endsection

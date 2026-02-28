@@ -16,6 +16,11 @@
             </div>
 
             <div class="mb-3">
+                <span class="text-muted text-uppercase fw-bold fs-5">Pegawai</span>
+                <p class="mt-1 mb-0 fs-4 fw-semibold">{{ $indikatorPegawai->pegawai->nama ?? '—' }}</p>
+            </div>
+
+            <div class="mb-3">
                 <span class="text-muted text-uppercase fw-bold fs-5">Sasaran / Indikator Kinerja</span>
                 <p class="mt-1 mb-0 fs-3">{{ $indikator->indikator }}</p>
             </div>
@@ -89,6 +94,7 @@
                     :value="$indikatorPegawai->kpi_analisis ?? ''" 
                     rows="4" 
                     required="true" 
+                    type="editor"
                 />
             </div>
 
@@ -189,6 +195,14 @@
                 if (e.target.closest('.remove-link-btn')) {
                     e.target.closest('.kpi-link-item').remove();
                 }
+            });
+        }
+
+        if (window.loadHugeRTE) {
+            window.loadHugeRTE('#kpi_analisis', {
+                height: 250, menubar: false, statusbar: false,
+                plugins: 'lists link table',
+                toolbar: 'bold italic underline | bullist numlist | link table'
             });
         }
     }, 100);

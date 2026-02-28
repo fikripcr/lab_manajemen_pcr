@@ -8,7 +8,7 @@
                 <span class="input-icon-addon">
                     <i class="ti ti-search"></i>
                 </span>
-                <x-tabler.form-input id="search-unit" placeholder="Cari Unit..." />
+                <input type="text" id="search-unit" class="form-control" placeholder="Cari Unit...">
             </div>
             <x-tabler.button type="back" href="{{ route('pemutu.tim-mutu.index') }}" />
         </div>
@@ -33,11 +33,27 @@
                         <h3 class="card-title mb-0">{{ $unit->name }}</h3>
                     </div>
                     <div class="card-actions">
-                        <button type="button" class="btn px-2 py-1 btn-outline-primary ajax-modal-btn"
-                                data-url="{{ route('pemutu.tim-mutu.edit-unit', [$periode->encrypted_periodespmi_id, $unitId]) }}"
-                                data-modal-title="Set Tim Mutu">
-                            <i class="ti ti-settings me-1"></i> Set Tim
-                        </button>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm px-2 py-1 btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ti ti-settings me-1"></i> Set Tim
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <button type="button" class="dropdown-item ajax-modal-btn"
+                                            data-url="{{ route('pemutu.tim-mutu.edit-auditee', [$periode->encrypted_periodespmi_id, $unitId]) }}"
+                                            data-modal-title="Set Tim Auditee">
+                                        <i class="ti ti-users me-2 text-warning"></i> Set Tim Auditee
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item ajax-modal-btn"
+                                            data-url="{{ route('pemutu.tim-mutu.edit-auditor', [$periode->encrypted_periodespmi_id, $unitId]) }}"
+                                            data-modal-title="Set Tim Auditor">
+                                        <i class="ti ti-crown me-2 text-primary"></i> Set Tim Auditor
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body pt-3">

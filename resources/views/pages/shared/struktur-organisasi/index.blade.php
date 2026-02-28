@@ -31,16 +31,9 @@
             <div class="tab-pane active show" id="tabs-tree">
                 <div class="row row-cards">
                     <!-- Tree View -->
-                    <div class="col-lg-5">
-                        <div class="alert alert-info mb-3">
-                            <i class="ti ti-info-circle me-2"></i>
-                            <strong>Info:</strong> Struktur organisasi ini digunakan oleh seluruh modul (HR, Pemutu, dll).
-                        </div>
-                        <div class="card border-0 shadow-none">
-                            <div class="card-header">
-                                <h3 class="card-title">Struktur Organisasi</h3>
-                            </div>
-                            <div class="card-body overflow-auto" style="max-height: 70vh;">
+                    <div class="col-lg-8">
+
+                            <div class="overflow-auto" style="max-height: 70vh;">
                                 @php
                                     $treeUnits = \App\Models\Shared\StrukturOrganisasi::whereNull('parent_id')->orderBy('sort_order')->orderBy('seq')->get();
                                 @endphp
@@ -54,10 +47,9 @@
                                     @include('pages.shared.struktur-organisasi.tree', ['orgUnits' => $treeUnits])
                                 @endif
                             </div>
-                        </div>
                     </div>
                     <!-- Legend / Detail Panel -->
-                    <div class="col-lg-7">
+                    <div class="col-lg-4">
                         <div id="detail-panel-container">
                             <div class="card">
                                 <div class="card-header">
@@ -84,38 +76,50 @@
 
             <!-- TAB 2: MANAGE (DATATABLE) -->
             <div class="tab-pane" id="tabs-manage">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex gap-2">
-                        <x-tabler.datatable-filter :dataTableId="'table-org-units'" :useCollapse="false">
-                            <div class="d-flex gap-2">
-                                <x-tabler.form-select id="filter-type" name="type" label="Filter Tipe" class="form-select-sm mb-0" style="width: 180px;">
-                                    <option value="all">Semua Tipe</option>
-                                    @foreach($types as $key => $label)
-                                        <option value="{{ $key }}">{{ $label }}</option>
-                                    @endforeach
-                                </x-tabler.form-select>
-                                <x-tabler.form-select id="filter-status" name="status" label="Filter Status" class="form-select-sm mb-0" style="width: 150px;">
-                                    <option value="all">Semua Status</option>
-                                    <option value="active">Aktif</option>
-                                    <option value="inactive">Nonaktif</option>
-                                </x-tabler.form-select>
+                <div class="card border-0 shadow-none mb-0">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div>
+                                <x-tabler.datatable-page-length :dataTableId="'table-org-units'" />
                             </div>
-                        </x-tabler.datatable-filter>
+                            <div>
+                                <x-tabler.datatable-search :dataTableId="'table-org-units'" />
+                            </div>
+                            <div>
+                                <x-tabler.datatable-filter :dataTableId="'table-org-units'">
+                                    <div class="d-flex gap-2">
+                                        <x-tabler.form-select id="filter-type" name="type" placeholder="Filter Tipe" class="form-select-sm mb-0" style="width: 180px;">
+                                            <option value="">Semua Tipe</option>
+                                            @foreach($types as $key => $label)
+                                                <option value="{{ $key }}">{{ $label }}</option>
+                                            @endforeach
+                                        </x-tabler.form-select>
+                                        <x-tabler.form-select id="filter-status" name="status" placeholder="Filter Status" class="form-select-sm mb-0" style="width: 150px;">
+                                            <option value="">Semua Status</option>
+                                            <option value="active">Aktif</option>
+                                            <option value="inactive">Nonaktif</option>
+                                        </x-tabler.form-select>
+                                    </div>
+                                </x-tabler.datatable-filter>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 mt-3 border-top">
+                        <x-tabler.datatable
+                            id="table-org-units"
+                            route="{{ route('shared.struktur-organisasi.index') }}"
+                            :columns="[
+                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%', 'class' => 'text-center'],
+                                ['data' => 'name', 'name' => 'name', 'title' => 'Nama Unit'],
+                                ['data' => 'type', 'name' => 'type', 'title' => 'Tipe'],
+                                ['data' => 'parent_id', 'name' => 'parent_id', 'title' => 'Parent'],
+                                ['data' => 'level', 'name' => 'level', 'title' => 'Level', 'width' => '8%', 'class' => 'text-center'],
+                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '8%'],
+                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
+                            ]"
+                        />
                     </div>
                 </div>
-                <x-tabler.datatable
-                    id="table-org-units"
-                    route="{{ route('shared.struktur-organisasi.index') }}"
-                    :columns="[
-                        ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%', 'class' => 'text-center'],
-                        ['data' => 'name', 'name' => 'name', 'title' => 'Nama Unit'],
-                        ['data' => 'type', 'name' => 'type', 'title' => 'Tipe'],
-                        ['data' => 'parent_id', 'name' => 'parent_id', 'title' => 'Parent'],
-                        ['data' => 'level', 'name' => 'level', 'title' => 'Level', 'width' => '8%', 'class' => 'text-center'],
-                        ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '8%'],
-                        ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
-                    ]"
-                />
             </div>
         </div>
     </div>

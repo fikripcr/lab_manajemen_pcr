@@ -251,6 +251,14 @@
                 });
             });
         }
+
+        if (window.loadHugeRTE) {
+            window.loadHugeRTE('#ed_analisis', {
+                height: 250, menubar: false, statusbar: false,
+                plugins: 'lists link table',
+                toolbar: 'bold italic underline | bullist numlist | link table'
+            });
+        }
     }, 100);
 </script>
 

@@ -18,6 +18,20 @@
         <form action="{{ route('login') }}" method="POST" autocomplete="off" novalidate>
             @csrf
 
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    <div class="d-flex">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l0 4" /><path d="M12 16l.01 0" /></svg>
+                        </div>
+                        <div>
+                            <h4 class="alert-title">Login Failed</h4>
+                            <div class="text-secondary">{{ $errors->first() }}</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <x-tabler.form-input 
                 name="email" 
                 label="Email address" 
@@ -37,7 +51,7 @@
                     </span>
                     @endif
                 </label>
-                <div class="input-group input-group-flat">
+                <div class="input-group input-group-flat @error('password') has-validation @enderror">
                     <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Your password" autocomplete="off" value="password">
                     <span class="input-group-text">
                         <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
@@ -45,7 +59,7 @@
                         </a>
                     </span>
                     @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
             </div>

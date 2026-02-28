@@ -6,20 +6,6 @@
     {{-- Summary Cards --}}
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('pemutu.indikator-summary.standar') }}">
-                            <i class="ti ti-book me-2"></i>Indikator Standar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pemutu.indikator-summary.performa') }}">
-                            <i class="ti ti-chart-bar me-2"></i>Indikator Performa (KPI)
-                        </a>
-                    </li>
-                </ul>
-            </div>
             <div class="card-body">
                 {{-- Summary Cards --}}
                 <div class="row mb-3">
@@ -27,12 +13,12 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="subheader">Total Indikator Standar</div>
+                                    <div class="subheader" title="Total penugasan indikator ke unit" data-bs-toggle="tooltip">Total Indikator Standar Unit</div>
                                 </div>
-                                <div class="h1 mb-3">{{ number_format($totalIndikatorActive) }}</div>
-                                <div class="d-flex mb-2">
-                                    <div class="text-muted">Dari {{ $totalIndikator }} total</div>
-                                </div>
+                                <div class="h1 mb-0">{{ number_format($edTotalUnits) }}</div>
+                                    <div class="text-muted small">
+                                        <br>(dari total <b>{{ number_format($uniqueAssignedStandar) }} </b>indikator unik)
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -41,7 +27,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="subheader">ED Filled</div>
+                                    <div class="subheader">Isi Evaluasi Diri</div>
                                 </div>
                                 <div class="h1 mb-3 text-success">{{ number_format($edFilledUnits) }}</div>
                                 <div class="progress progress-sm">
@@ -57,7 +43,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="subheader">AMI Assessed</div>
+                                    <div class="subheader">Pelaksanaan AMI</div>
                                 </div>
                                 <div class="h1 mb-3 text-primary">{{ number_format($amiAssessed) }}</div>
                                 <div class="d-flex gap-2">
@@ -128,7 +114,7 @@
                         ['data' => 'labels', 'name' => 'label_details', 'title' => 'Label', 'width' => '10%'],
                         ['data' => 'ed_detail', 'name' => 'ed_capaian', 'title' => 'Capaian', 'width' => '10%', 'class' => 'text-center'],
                         ['data' => 'ed_analisis', 'name' => 'ed_analisis', 'title' => 'Analisis', 'width' => '15%'],
-                        ['data' => 'ami_detail', 'name' => 'ami_hasil_label', 'title' => 'AMI Hasil', 'width' => '15%'],
+                        ['data' => 'ami_detail', 'name' => 'ami_hasil_label', 'title' => 'AMI Hasil', 'width' => '15%', 'class' => 'text-left'],
                         ['data' => 'pengend_detail', 'name' => 'pengend_status', 'title' => 'Pengendalian', 'width' => '12%'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '5%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"
@@ -153,14 +139,14 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Standar page ready');
-        
+
         // Use delegation for read more buttons
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('btn-read-more')) {
                 const targetId = e.target.getAttribute('data-target');
                 const excerpt = document.getElementById(targetId + '-excerpt');
                 const full = document.getElementById(targetId + '-full');
-                
+
                 if (excerpt && full) {
                     if (full.classList.contains('d-none')) {
                         full.classList.remove('d-none');
@@ -175,7 +161,7 @@
             }
         });
     });
-    
+
     function exportExcel() {
         const params = new URLSearchParams();
         const form = document.getElementById('table-standar-filter');

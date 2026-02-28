@@ -1,16 +1,13 @@
-<div class="modal-header">
-    <h5 class="modal-title">
-        <i class="ti ti-settings-check me-2 text-teal"></i>
-        Pengendalian — {{ $indOrg->indikator->no_indikator ?? '' }}
-    </h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-
-<form action="{{ route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id) }}"
-      method="POST" class="ajax-form">
-    @csrf
-    <div class="modal-body">
-
+<x-tabler.modal-form 
+    id="modalAction" 
+    title="Pengendalian — {{ $indOrg->indikator->no_indikator ?? '' }}" 
+    icon="ti-settings-check" 
+    iconColor="teal" 
+    action="{{ route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id) }}" 
+    method="POST" 
+    :isAjax="true">
+    
+    <x-slot:body>
         {{-- Info Singkat Indikator --}}
         <div class="alert alert-info p-2 mb-3">
             <div class="fw-bold">{{ $indOrg->indikator->no_indikator }}</div>
@@ -24,7 +21,6 @@
 
         {{-- Hasil AMI --}}
         @php
-            $hasilMap = \App\Models\Pemutu\IndikatorOrgUnit::$hasilAkhirLabels;
             $hasilAmi = $indOrg->ami_hasil_akhir !== null ? ($hasilMap[$indOrg->ami_hasil_akhir] ?? null) : null;
         @endphp
         @if($hasilAmi)
@@ -40,21 +36,21 @@
             <div class="form-selectgroup">
                 <label class="form-selectgroup-item">
                     <input type="radio" name="pengend_status" value="tetap" class="form-selectgroup-input"
-                           @checked(old('pengend_status', $indOrg->pengend_status) === 'tetap')>
+                           @checked(old('pengend_status', $indOrg->pengend_status) === 'tetap') required>
                     <span class="form-selectgroup-label">
                         <i class="ti ti-check me-1 text-success"></i> Tetap
                     </span>
                 </label>
                 <label class="form-selectgroup-item">
                     <input type="radio" name="pengend_status" value="penyesuaian" class="form-selectgroup-input"
-                           @checked(old('pengend_status', $indOrg->pengend_status) === 'penyesuaian')>
+                           @checked(old('pengend_status', $indOrg->pengend_status) === 'penyesuaian') required>
                     <span class="form-selectgroup-label">
                         <i class="ti ti-edit me-1 text-warning"></i> Penyesuaian
                     </span>
                 </label>
                 <label class="form-selectgroup-item">
                     <input type="radio" name="pengend_status" value="nonaktif" class="form-selectgroup-input"
-                           @checked(old('pengend_status', $indOrg->pengend_status) === 'nonaktif')>
+                           @checked(old('pengend_status', $indOrg->pengend_status) === 'nonaktif') required>
                     <span class="form-selectgroup-label">
                         <i class="ti ti-ban me-1 text-danger"></i> Nonaktifkan
                     </span>
@@ -109,14 +105,13 @@
 
         {{-- Analisis --}}
         <div class="mb-3">
-            <label class="form-label required fw-semibold">Deskripsi Analisis</label>
-            <textarea id="pengend_analisis" name="pengend_analisis" class="form-control" rows="5">{{ old('pengend_analisis', $indOrg->pengend_analisis) }}</textarea>
+            <x-tabler.form-textarea
+                name="pengend_analisis"
+                label="Deskripsi Analisis"
+                rows="5"
+                required="true"
+                :value="$indOrg->pengend_analisis ?? ''"
+            />
         </div>
-
-
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-        <x-tabler.button type="submit" icon="ti ti-device-floppy" text="Simpan" class="btn-primary" />
-    </div>
-</form>
+    </x-slot:body>
+</x-tabler.modal-form>

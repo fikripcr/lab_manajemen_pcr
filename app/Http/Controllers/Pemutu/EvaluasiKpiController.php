@@ -6,7 +6,6 @@ use App\Http\Requests\Pemutu\EvaluasiKpiRequest;
 use App\Models\Pemutu\IndikatorPegawai;
 use App\Models\Pemutu\PeriodeKpi;
 use App\Services\Pemutu\EvaluasiKpiService;
-
 use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiKpiController extends Controller
@@ -32,12 +31,14 @@ class EvaluasiKpiController extends Controller
     {
         $user = auth()->user();
 
-        $query = IndikatorPegawai::with('indikator')
-            ->where('periode_kpi_id', $periode->periode_kpi_id)
-            ->where('pegawai_id', $user->pegawai?->pegawai_id);
+        $query = IndikatorPegawai::with(['indikator', 'pegawai'])
+            ->where('periode_kpi_id', $periode->periode_kpi_id);
 
         return DataTables::of($query)
             ->addIndexColumn()
+            ->addColumn('pegawai', function ($row) {
+                return $row->pegawai->nama ?? '-';
+            })
             ->addColumn('indikator_full', function ($row) {
                 return '<strong>' . ($row->indikator->no_indikator ?? '-') . '</strong><br>' . $row->indikator->indikator;
             })
@@ -49,7 +50,7 @@ class EvaluasiKpiController extends Controller
             })
             ->addColumn('analisis', function ($row) {
                 $text = $row->kpi_analisis ?? '-';
-                $html = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . nl2br(e($text)) . '</div>';
+                $html = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . $text . '</div>';
 
                 // Evidence items
                 $evidenceHtml = '';
@@ -76,11 +77,12 @@ class EvaluasiKpiController extends Controller
             ->addColumn('action', function ($row) {
                 return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"
                     data-url="' . route('pemutu.evaluasi-kpi.edit', $row->encrypted_indikator_pegawai_id) . '"
-                    data-modal-title="Isi Evaluasi KPI">
+                    data-modal-title="Isi Evaluasi KPI"
+                    data-modal-size="modal-xl">
                     Isi KPI
                     </button>';
             })
-            ->rawColumns(['indikator_full', 'target', 'capaian', 'file', 'action'])
+            ->rawColumns(['pegawai', 'indikator_full', 'target', 'capaian', 'file', 'action', 'analisis'])
             ->make(true);
     }
 
@@ -108,4 +110,3 @@ class EvaluasiKpiController extends Controller
         return downloadStorageFile($indikatorPegawai->attachment, $filename, logActivity: true);
     }
 }
-

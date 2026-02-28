@@ -30,7 +30,6 @@
         class="{{ $selectClasses }}" 
         id="{{ $id }}" 
         name="{{ $name . ($multiple ? '[]' : '') }}" 
-        @if($required) required="required"@endif
         @if($disabled) disabled="disabled"@endif
         @if($multiple) multiple="multiple"@endif
         {{ $attributes->except(['class', 'options', 'selected', 'id']) }}

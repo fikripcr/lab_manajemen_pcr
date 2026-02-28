@@ -79,18 +79,18 @@ class EvaluasiDiriController extends Controller
             ->addColumn('analisis', function ($row) {
                 $pivot = $row->orgUnits->first()->pivot ?? null;
                 $text  = $pivot->ed_analisis ?? '-';
-                $html  = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . nl2br(e($text)) . '</div>';
+                $html  = '<div style="max-height: 200px; overflow-y: auto;" class="mb-2">' . $text . '</div>';
 
                 // Evidence items
                 $evidenceHtml = '';
                 if ($pivot) {
-                    $hasFile = !empty($pivot->ed_attachment);
-                    $hasLinks = !empty(json_decode($pivot->ed_links, true));
+                    $hasFile  = ! empty($pivot->ed_attachment);
+                    $hasLinks = ! empty(json_decode($pivot->ed_links, true));
 
                     // 1. Show Skala first
                     if (isset($pivot->ed_skala) && $pivot->ed_skala !== null && $pivot->ed_skala !== '') {
                         $evidenceHtml .= '<span class="badge bg-primary text-white me-2 mb-1" title="Nilai Skala Capaian" data-bs-toggle="tooltip">Skala [' . e($pivot->ed_skala) . ']</span>';
-                        
+
                         // Add pipeline if there are subsequent attachments/links
                         if ($hasFile || $hasLinks) {
                             $evidenceHtml .= '<span class="text-muted mx-1 mb-1">|</span>';
@@ -99,7 +99,7 @@ class EvaluasiDiriController extends Controller
 
                     // 2. Show File Attachment
                     if ($hasFile) {
-                        $url = route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id));
+                        $url           = route('pemutu.evaluasi-diri.download', encryptId($pivot->indikorgunit_id));
                         $evidenceHtml .= '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-ghost-primary me-1 mb-1" title="Unduh File Pendukung" data-bs-toggle="tooltip"><i class="ti ti-file-download fs-3"></i></a>';
                     }
 
@@ -122,9 +122,16 @@ class EvaluasiDiriController extends Controller
 
                 return $html;
             })
-            ->addColumn('action', function ($row) {
+            ->addColumn('action', function ($row) use ($unitId) {
+                // If a specific unit is filtered, pass it. Otherwise try to get it from the pivot.
+                $targetUnit = $unitId ?? ($row->orgUnits->first()->pivot->org_unit_id ?? '');
+                $url        = route('pemutu.evaluasi-diri.edit', $row->encrypted_indikator_id);
+                if ($targetUnit) {
+                    $url .= '?unit_id=' . $targetUnit;
+                }
+
                 return '<button type="button" class="btn btn-sm btn-primary ajax-modal-btn"
-                    data-url="' . route('pemutu.evaluasi-diri.edit', $row->encrypted_indikator_id) . '"
+                    data-url="' . $url . '"
                     data-modal-title="Isi Evaluasi Diri"
                     data-modal-size="modal-xl">
                     Isi ED
@@ -134,19 +141,23 @@ class EvaluasiDiriController extends Controller
             ->make(true);
     }
 
-    public function edit(Indikator $indikator)
+    public function edit(Request $request, Indikator $indikator)
     {
         $user = auth()->user();
 
-        $userUnitIds = [];
-        if ($user->pegawai) {
-            $userUnitIds = TimMutu::where('pegawai_id', $user->pegawai->pegawai_id)->pluck('org_unit_id')->toArray();
-        }
-
-        if (! empty($userUnitIds)) {
-            $targetUnitId = $userUnitIds[0];
+        if ($request->filled('unit_id')) {
+            $targetUnitId = $request->input('unit_id');
         } else {
-            $targetUnitId = StrukturOrganisasi::first()->orgunit_id ?? 0;
+            $userUnitIds = [];
+            if ($user->pegawai) {
+                $userUnitIds = TimMutu::where('pegawai_id', $user->pegawai->pegawai_id)->pluck('org_unit_id')->toArray();
+            }
+
+            if (! empty($userUnitIds)) {
+                $targetUnitId = $userUnitIds[0];
+            } else {
+                $targetUnitId = StrukturOrganisasi::first()->orgunit_id ?? 0;
+            }
         }
 
         $pivot = DB::table('pemutu_indikator_orgunit')
@@ -224,7 +235,6 @@ class EvaluasiDiriController extends Controller
             'ed_skala'    => $request->filled('ed_skala') ? (int) $request->ed_skala : null,
             'updated_at'  => now(),
         ];
-
 
         // Handle Links JSON
         $linksArray = [];

@@ -6,20 +6,6 @@
     {{-- Summary Cards --}}
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pemutu.indikator-summary.standar') }}">
-                            <i class="ti ti-book me-2"></i>Indikator Standar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('pemutu.indikator-summary.performa') }}">
-                            <i class="ti ti-chart-bar me-2"></i>Indikator Performa (KPI)
-                        </a>
-                    </li>
-                </ul>
-            </div>
             <div class="card-body">
                 {{-- Summary Cards --}}
                 <div class="row mb-3">
@@ -78,9 +64,25 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
+                            <select class="form-select form-select-sm" name="pegawai_id" id="performa-filter-pegawai">
+                                <option value="">Semua Pegawai</option>
+                                @foreach($pegawais as $pegawai)
+                                    <option value="{{ $pegawai->pegawai_id }}">{{ $pegawai->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select form-select-sm" name="unit_id" id="performa-filter-unit">
+                                <option value="">Semua Unit</option>
+                                @foreach($units as $unit)
+                                    <option value="{{ $unit->orgunit_id }}">{{ $unit->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="search" placeholder="Cari: No. Indikator / Nama Pegawai..." id="table-performa-search">
+                                <input type="text" class="form-control" name="search" placeholder="Cari..." id="table-performa-search">
                                 <button class="btn btn-outline-secondary" type="button" id="table-performa-clear-search" style="display: none;">
                                     <i class="ti ti-x"></i>
                                 </button>
@@ -104,8 +106,8 @@
                         ['data' => 'indikator_full', 'name' => 'indikator', 'title' => 'Indikator Performa', 'width' => '30%'],
                         ['data' => 'parent_info', 'name' => 'parent_no_indikator', 'title' => 'Parent', 'width' => '10%'],
                         ['data' => 'labels', 'name' => 'all_labels', 'title' => 'Label', 'width' => '12%'],
-                        ['data' => 'kpi_detail', 'name' => 'kpi_avg_score', 'title' => 'KPI Pegawai', 'width' => '20%'],
-                        ['data' => 'kpi_score', 'name' => 'kpi_avg_score', 'title' => 'Avg Score', 'width' => '10%', 'class' => 'text-center'],
+                        ['data' => 'kpi_detail', 'name' => 'pegawai_name', 'title' => 'Pegawai (Unit)', 'width' => '20%'],
+                        ['data' => 'kpi_score', 'name' => 'kpi_score', 'title' => 'Score', 'width' => '10%', 'class' => 'text-center'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '8%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
                     ]"
                     :options="[
@@ -123,6 +125,15 @@
 
 @push('scripts')
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.initOfflineSelect2) {
+            window.initOfflineSelect2('#performa-filter-pegawai');
+            window.initOfflineSelect2('#performa-filter-unit');
+        } else if ($.fn.select2) {
+            $('#performa-filter-pegawai').select2({ theme: 'bootstrap-5' });
+            $('#performa-filter-unit').select2({ theme: 'bootstrap-5' });
+        }
+    });
     function exportExcel() {
         const params = new URLSearchParams();
         const form = document.getElementById('table-performa-filter');

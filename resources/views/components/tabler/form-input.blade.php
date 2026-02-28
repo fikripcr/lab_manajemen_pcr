@@ -49,7 +49,6 @@
             name="{{ $name }}"
             value="{{ old($name, $value) }}"
             {{ $attributes->merge(['class' => implode(' ', $inputClasses)])->except(['label', 'type', 'required', 'readonly', 'disabled', 'value']) }}
-            @if($required) required @endif
             @if($readonly) readonly @endif
             @if($disabled) disabled @endif
             @if($placeholder) placeholder="{{ $placeholder }}" @endif

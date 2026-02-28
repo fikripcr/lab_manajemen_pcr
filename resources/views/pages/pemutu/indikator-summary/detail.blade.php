@@ -166,14 +166,14 @@
                     </div>
                     <div class="col-md-3">
                         <div class="mb-3">
-                            <div class="text-muted">ED Filled</div>
+                            <div class="text-muted">Isi Evaluasi Diri</div>
                             <div class="h2 mb-0 text-success">{{ $indikator->ed_filled_units ?? 0 }}</div>
                             <small class="text-muted">dari {{ $indikator->total_org_units ?? 0 }} unit</small>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="mb-3">
-                            <div class="text-muted">AMI Assessed</div>
+                            <div class="text-muted">Pelaksanaan AMI</div>
                             <div class="h2 mb-0 text-primary">{{ $indikator->ami_assessed_units ?? 0 }}</div>
                             <small class="text-muted">
                                 <span class="text-danger">{{ $indikator->ami_kts_units ?? 0 }}</span> KTS |

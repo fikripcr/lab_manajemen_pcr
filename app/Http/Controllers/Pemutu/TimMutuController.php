@@ -62,9 +62,9 @@ class TimMutuController extends Controller
     }
 
     /**
-     * Show modal to edit Tim Mutu for a specific Unit.
+     * Show modal to edit Tim Auditee for a specific Unit.
      */
-    public function editUnit(PeriodeSpmi $periode, StrukturOrganisasi $unit)
+    public function editAuditee(PeriodeSpmi $periode, StrukturOrganisasi $unit)
     {
         $periodeId = $periode->periodespmi_id;
         $unitId    = $unit->orgunit_id;
@@ -74,41 +74,68 @@ class TimMutuController extends Controller
             ->with('pegawai')
             ->get();
 
-        $auditee      = $assignments->where('role', 'auditee')->first();
-        $ketuaAuditor = $assignments->where('role', 'ketua_auditor')->first();
-        $auditor      = $assignments->where('role', 'auditor');
-        $anggota      = $assignments->where('role', 'anggota');
+        $auditee = $assignments->where('role', 'auditee')->first();
+        $anggota = $assignments->where('role', 'anggota');
 
-        return view('pages.pemutu.tim-mutu.edit-ajax', compact('periode', 'unit', 'auditee', 'ketuaAuditor', 'auditor', 'anggota'));
+        return view('pages.pemutu.tim-mutu.edit-auditee-ajax', compact('periode', 'unit', 'auditee', 'anggota'));
     }
 
     /**
-     * Store — save assignments for a single OrgUnit (called via AJAX from modal).
+     * Store — save auditee assignments for a single OrgUnit.
      */
-    public function storeUnit(StoreTimMutuRequest $request, PeriodeSpmi $periode, StrukturOrganisasi $unit)
+    public function storeAuditee(StoreTimMutuRequest $request, PeriodeSpmi $periode, StrukturOrganisasi $unit)
     {
         $validated = $request->validated();
         $periodeId = $periode->periodespmi_id;
         $unitId    = $unit->orgunit_id;
 
-        // Decrypt encrypted pegawai IDs from the form
-        $auditeeId      = $validated['auditee_id'] ? decryptId($validated['auditee_id']) : null;
-        $ketuaAuditorId = $validated['ketua_auditor_id'] ? decryptId($validated['ketua_auditor_id']) : null;
+        $auditeeId  = isset($validated['auditee_id']) ? decryptId($validated['auditee_id']) : null;
+        $anggotaIds = collect($validated['anggota_ids'] ?? [])->filter()->map(fn($id) => decryptId($id))->toArray();
+
+        // Pass nulls for auditor side to a theoretical updateUnitTimMutuPart
+        // or just use existing updateUnitTimMutu if it supports partial updates.
+        // Actually, existing updateUnitTimMutu rewrites EVERYTHING. We must use a separate service method, which I will add next.
+        $this->timMutuService->updateAuditee($periodeId, $unitId, $auditeeId, $anggotaIds);
+
+        logActivity('pemutu', "Memperbarui Tim Auditee untuk unit: {$unit->name} pada periode: {$periode->periode}");
+        return jsonSuccess('Tim Auditee berhasil disimpan.', route('pemutu.tim-mutu.manage', $periode->encrypted_periodespmi_id));
+    }
+
+    /**
+     * Show modal to edit Tim Auditor for a specific Unit.
+     */
+    public function editAuditor(PeriodeSpmi $periode, StrukturOrganisasi $unit)
+    {
+        $periodeId = $periode->periodespmi_id;
+        $unitId    = $unit->orgunit_id;
+
+        $assignments = TimMutu::forPeriode($periodeId)
+            ->forUnit($unitId)
+            ->with('pegawai')
+            ->get();
+
+        $ketuaAuditor = $assignments->where('role', 'ketua_auditor')->first();
+        $auditor      = $assignments->where('role', 'auditor');
+
+        return view('pages.pemutu.tim-mutu.edit-auditor-ajax', compact('periode', 'unit', 'ketuaAuditor', 'auditor'));
+    }
+
+    /**
+     * Store — save auditor assignments for a single OrgUnit.
+     */
+    public function storeAuditor(StoreTimMutuRequest $request, PeriodeSpmi $periode, StrukturOrganisasi $unit)
+    {
+        $validated = $request->validated();
+        $periodeId = $periode->periodespmi_id;
+        $unitId    = $unit->orgunit_id;
+
+        $ketuaAuditorId = isset($validated['ketua_auditor_id']) ? decryptId($validated['ketua_auditor_id']) : null;
         $auditorIds     = collect($validated['auditor_ids'] ?? [])->filter()->map(fn($id) => decryptId($id))->toArray();
-        $anggotaIds     = collect($validated['anggota_ids'] ?? [])->filter()->map(fn($id) => decryptId($id))->toArray();
 
-        $this->timMutuService->updateUnitTimMutu(
-            $periodeId,
-            $unitId,
-            $auditeeId,
-            $ketuaAuditorId,
-            $auditorIds,
-            $anggotaIds
-        );
+        $this->timMutuService->updateAuditor($periodeId, $unitId, $ketuaAuditorId, $auditorIds);
 
-        logActivity('pemutu', "Memperbarui Tim Mutu untuk unit: {$unit->name} pada periode: {$periode->periode}");
-
-        return jsonSuccess('Tim Mutu berhasil disimpan.', route('pemutu.tim-mutu.manage', $periode->encrypted_periodespmi_id));
+        logActivity('pemutu', "Memperbarui Tim Auditor untuk unit: {$unit->name} pada periode: {$periode->periode}");
+        return jsonSuccess('Tim Auditor berhasil disimpan.', route('pemutu.tim-mutu.manage', $periode->encrypted_periodespmi_id));
     }
 
     /**

@@ -10,19 +10,27 @@ class IndikatorSummaryPerforma extends Model
     use HashidBinding;
 
     protected $table      = 'vw_pemutu_summary_indikator_performa';
-    protected $primaryKey = 'indikator_id';
+    protected $primaryKey = 'indikator_pegawai_id';
     public $incrementing  = false;
     public $timestamps    = false;
 
-    protected $appends = ['encrypted_indikator_id'];
+    protected $appends = ['encrypted_indikator_pegawai_id', 'encrypted_indikator_id'];
 
     protected $casts = [
+        'indikator_pegawai_id' => 'integer',
         'indikator_id' => 'integer',
+        'pegawai_id' => 'integer',
+        'unit_id' => 'integer',
     ];
 
     /**
-     * Get the encrypted indikator ID for hashid binding.
+     * Get the encrypted indikator pegawai ID for hashid binding.
      */
+    public function getEncryptedIndikatorPegawaiIdAttribute()
+    {
+        return encryptId($this->indikator_pegawai_id);
+    }
+    
     public function getEncryptedIndikatorIdAttribute()
     {
         return encryptId($this->indikator_id);
@@ -46,20 +54,19 @@ class IndikatorSummaryPerforma extends Model
     }
 
     /**
-     * Get KPI scores summary.
+     * Scope untuk filter berdasarkan pegawai.
      */
-    public function getKpiScoreSummaryAttribute(): array
+    public function scopeOfPegawai($query, $pegawaiId)
     {
-        return [
-            'total_pegawai' => $this->total_pegawai_with_kpi ?? 0,
-            'avg_score'     => round($this->kpi_avg_score ?? 0, 2),
-            'min_score'     => $this->kpi_min_score ?? 0,
-            'max_score'     => $this->kpi_max_score ?? 0,
-            'draft'         => $this->kpi_draft_count ?? 0,
-            'submitted'     => $this->kpi_submitted_count ?? 0,
-            'approved'      => $this->kpi_approved_count ?? 0,
-            'rejected'      => $this->kpi_rejected_count ?? 0,
-        ];
+        return $query->where('pegawai_id', $pegawaiId);
+    }
+
+    /**
+     * Scope untuk filter berdasarkan unit.
+     */
+    public function scopeOfUnit($query, $unitId)
+    {
+        return $query->where('unit_id', $unitId);
     }
 
     /**
@@ -79,13 +86,15 @@ class IndikatorSummaryPerforma extends Model
     }
 
     /**
-     * Scope untuk search berdasarkan no_indikator atau indikator text.
+     * Scope untuk search berdasarkan no_indikator, indikator text, atau nama pegawai.
      */
     public function scopeSearch($query, string $search)
     {
         return $query->where(function ($q) use ($search) {
             $q->where('no_indikator', 'LIKE', "%{$search}%")
                 ->orWhere('indikator', 'LIKE', "%{$search}%")
+                ->orWhere('pegawai_name', 'LIKE', "%{$search}%")
+                ->orWhere('pegawai_nip', 'LIKE', "%{$search}%")
                 ->orWhere('all_labels', 'LIKE', "%{$search}%");
         });
     }

@@ -29,7 +29,6 @@
         name="{{ $name }}" 
         rows="{{ $rows }}"
         placeholder="{{ $placeholder }}"
-        @if($required) required="true"@endif
         @if($disabled) disabled="true"@endif
         @if($readonly) readonly="true"@endif
         {{ $attributes->except(['class', 'value', 'rows']) }}
