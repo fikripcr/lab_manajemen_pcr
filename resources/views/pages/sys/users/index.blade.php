@@ -1,11 +1,11 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-    <x-tabler.page-header title="User Management" pretitle="Tables / User Management">
+    <x-tabler.page-header title="User Management" pretitle="Sys / Pengguna">
         <x-slot:actions>
-            <x-tabler.button :href="route('lab.users.import.show')" icon="ti ti-file-import" text="Import" class="btn-secondary d-none d-sm-inline-block" />
-            <x-tabler.button :href="route('lab.users.export')" icon="ti ti-file-export" text="Export" class="btn-secondary d-none d-sm-inline-block" />
-            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('lab.users.create')" modal-title="Create User" />
+            <x-tabler.button :href="route('sys.users.import.show')" icon="ti ti-file-import" text="Import" class="btn-secondary d-none d-sm-inline-block" />
+            <x-tabler.button :href="route('sys.users.export')" icon="ti ti-file-export" text="Export" class="btn-secondary d-none d-sm-inline-block" />
+            <x-tabler.button type="create" class="ajax-modal-btn" :modal-url="route('sys.users.create')" modal-title="Create User" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection
@@ -37,7 +37,7 @@
             <x-tabler.flash-message />
 
             <x-tabler.datatable
-                id="users-table" route="{{ route('lab.users.data') }}" :columns="[
+                id="users-table" route="{{ route('sys.users.data') }}" :columns="[
                 [
                     'title' => 'Name',
                     'data' => 'name',

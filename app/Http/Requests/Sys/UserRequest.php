@@ -1,8 +1,8 @@
 <?php
-namespace App\Http\Requests\Lab;
+namespace App\Http\Requests\Sys;
 
-use Illuminate\Validation\Rule;
 use App\Http\Requests\BaseRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends BaseRequest
 {

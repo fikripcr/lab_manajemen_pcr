@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header title="Import Pengguna" pretitle="Pengguna">
         <x-slot:actions>
-            <x-tabler.button type="back" :href="route('lab.users.index')" />
+            <x-tabler.button type="back" :href="route('sys.users.index')" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection
@@ -31,7 +31,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('lab.users.import.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('sys.users.import.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <x-tabler.form-input type="file" name="file" label="Pilih File" class="filepond-input" accept=".xlsx,.xls,.csv" required help="Format yang didukung: .xlsx, .xls, .csv" />
@@ -60,7 +60,7 @@
 
                         <div class="mb-3">
                             <x-tabler.button type="import" text="Import Users" />
-                            <x-tabler.button type="cancel" :href="route('lab.users.index')" />
+                            <x-tabler.button type="cancel" :href="route('sys.users.index')" />
                         </div>
                     </form>
                 </div>

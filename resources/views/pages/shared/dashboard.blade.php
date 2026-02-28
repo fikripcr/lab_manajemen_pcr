@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-4 mt-4">
+            <div class="col-lg-5 mt-4">
                 <div class="d-flex align-items-center mb-3">
                     <h3 class="m-0 fw-bold"><i class="ti ti-speakerphone me-2 text-primary"></i> Pengumuman</h3>
                 </div>
@@ -97,7 +97,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-8 mt-4">
+            <div class="col-lg-7 mt-4">
                 <div class="d-flex align-items-center mb-3">
                     <h3 class="m-0 fw-bold"><i class="ti ti-news me-2 text-primary"></i> Berita Terbaru</h3>
                 </div>

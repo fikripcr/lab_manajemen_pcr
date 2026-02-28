@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Http\Requests\Lab;
+namespace App\Http\Requests\Sys;
 
 use App\Http\Requests\BaseRequest;
 

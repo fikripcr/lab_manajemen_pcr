@@ -11,18 +11,39 @@ use App\Http\Controllers\Sys\PermissionController;
 use App\Http\Controllers\Sys\RoleController;
 use App\Http\Controllers\Sys\SysGlobalSearchController;
 use App\Http\Controllers\Sys\TestController;
+use App\Http\Controllers\Sys\UserController;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 // 🔹 Public System Routes (Accessible by Guest)
 
 Route::middleware(['auth', 'check.expired'])->group(function () {
+    // 🔹 Unified Profile Route (Accessible by any authenticated user)
+    Route::get('/profile', [UserController::class, 'show'])->name('sys.profile');
+    Route::get('/profile/edit', [UserController::class, 'editProfileAjax'])->name('sys.profile.edit');
+    Route::put('/profile/update', [UserController::class, 'updateProfileAjax'])->name('sys.profile.update');
+
     // ==========================
     // 🔹 System Management Routes (require authentication)
     // All routes are prefixed with /sys/
     // ==========================
     Route::prefix('sys')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('sys.dashboard');
+
+        // Users Management
+        Route::prefix('users')->name('sys.users.')->group(function () {
+            Route::get('api', [UserController::class, 'paginate'])->name('data');
+            Route::get('export', [UserController::class, 'export'])->name('export');
+            Route::get('export-pdf', [UserController::class, 'exportPdf'])->name('export.pdf');
+            Route::get('export-pdf/{id}', [UserController::class, 'exportPdf'])->name('export.pdf.detail');
+            Route::get('import', [UserController::class, 'showImport'])->name('import.show');
+            Route::post('import', [UserController::class, 'import'])->name('import.store');
+            Route::get('change-password', [UserController::class, 'changePassword'])->name('change-password');
+        });
+        Route::resource('users', UserController::class, ['as' => 'sys']);
+        Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('sys.users.login.as');
+        Route::get('/switch-back', [UserController::class, 'switchBack'])->name('sys.users.switch-back');
+        Route::post('/users/switch-role/{role?}', [UserController::class, 'switchRole'])->name('sys.users.switch-role');
 
         // Layout & Theme Settings Routes (via AppConfig)
         // Moved to public scope (see top of file) for Auth pages access

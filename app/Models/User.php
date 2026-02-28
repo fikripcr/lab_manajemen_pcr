@@ -8,10 +8,10 @@ use App\Models\Lab\LogPenggunaanPc;
 use App\Models\Lab\PcAssignment;
 use App\Models\Lab\RequestSoftware;
 use App\Models\Pmb\Camaba;
-use App\Models\Sys\Notification;
-use App\Models\Shared\Pegawai;
 use App\Models\Shared\Mahasiswa;
+use App\Models\Shared\Pegawai;
 use App\Models\Shared\Personil;
+use App\Models\Sys\Notification;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -79,6 +79,7 @@ class User extends Authenticatable implements HasMedia, Searchable
         'avatar',
         'email_verified_at',
         'expired_at',
+        'last_login_at',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -104,6 +105,7 @@ class User extends Authenticatable implements HasMedia, Searchable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'expired_at'        => 'datetime',
+        'last_login_at'     => 'datetime',
         'password'          => 'hashed',
         'id'                => 'string', // Ensure id is treated as string for encryption purposes
     ];

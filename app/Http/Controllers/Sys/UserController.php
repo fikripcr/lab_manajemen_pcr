@@ -1,10 +1,10 @@
 <?php
-namespace App\Http\Controllers\Lab;
+namespace App\Http\Controllers\Sys;
 
 use App\Exports\UserExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lab\UserImportRequest;
-use App\Http\Requests\Lab\UserRequest;
+use App\Http\Requests\Sys\UserImportRequest;
+use App\Http\Requests\Sys\UserRequest;
 use App\Imports\UserImport;
 use App\Models\User;
 use App\Services\Sys\UserService;
@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('pages.lab.users.index');
+        return view('pages.sys.users.index');
     }
 
     /**
@@ -33,7 +33,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('pages.lab.users.create', compact('roles'));
+        return view('pages.sys.users.create', compact('roles'));
     }
 
     /**
@@ -97,12 +97,12 @@ class UserController extends Controller
             ->addColumn('action', function ($user) {
                 $encryptedId = encryptId($user->id);
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'     => route('lab.users.edit', $encryptedId),
+                    'editUrl'     => route('sys.users.edit', $encryptedId),
                     'editModal'   => true,
-                    'viewUrl'     => route('lab.users.show', $encryptedId),
-                    'loginAsUrl'  => route('lab.users.login.as', $encryptedId),
+                    'viewUrl'     => route('sys.users.show', $encryptedId),
+                    'loginAsUrl'  => route('sys.users.login.as', $encryptedId),
                     'loginAsName' => addslashes($user->name),
-                    'deleteUrl'   => route('lab.users.destroy', $encryptedId),
+                    'deleteUrl'   => route('sys.users.destroy', $encryptedId),
                 ])->render();
             })
             ->rawColumns(['name', 'roles', 'expired_at', 'action'])
@@ -122,20 +122,21 @@ class UserController extends Controller
         }
 
         $this->userService->createUser($validated);
-        return jsonSuccess('Pengguna berhasil dibuat.', route('lab.users.index'));
+        return jsonSuccess('Pengguna berhasil dibuat.', route('sys.users.index'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $user = null)
     {
-        return view('pages.lab.users.show', compact('user'));
+        $user = $user ?: auth()->user();
+        return view('pages.sys.users.show', compact('user'));
     }
 
     public function changePassword()
     {
-        return view('pages.lab.users.ajax.change-password');
+        return view('pages.sys.users.ajax.change-password');
     }
 
     /**
@@ -144,7 +145,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('pages.lab.users.edit', compact('user', 'roles'));
+        return view('pages.sys.users.edit', compact('user', 'roles'));
     }
 
     /**
@@ -162,13 +163,36 @@ class UserController extends Controller
         return jsonSuccess('Pengguna berhasil diperbarui.');
     }
 
+    public function editProfileAjax(User $user = null)
+    {
+        $user = $user ?: auth()->user();
+        return view('pages.sys.users.edit-profile-ajax', compact('user'));
+    }
+
+    public function updateProfileAjax(Request $request, User $user = null)
+    {
+        $user      = $user ?: auth()->user();
+        $validated = $request->validate([
+            'name'   => 'required|string|max:255',
+            'avatar' => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            $validated['avatar'] = $request->file('avatar');
+        }
+
+        $this->userService->updateUser($user->id, $validated);
+
+        return jsonSuccess('Profil berhasil diperbarui.', route('sys.profile'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(User $user)
     {
         $this->userService->deleteUser($user->id);
-        return jsonSuccess('Data berhasil dihapus.', route('lab.users.index'));
+        return jsonSuccess('Data berhasil dihapus.', route('sys.users.index'));
     }
 
     /**
@@ -199,7 +223,7 @@ class UserController extends Controller
                 'reportDate' => now()->format('d M Y H:i'),
             ];
 
-            $pdf = Pdf::loadView('pages.lab.users.pdf.detail', $data);
+            $pdf = Pdf::loadView('pages.sys.users.pdf.detail', $data);
             return $pdf->download('user-detail-' . $user->name . '-' . now()->format('Y-m-d-H-i') . '.pdf');
         } else {
             // Summary report for all users
@@ -217,7 +241,7 @@ class UserController extends Controller
                 'filters'     => $filters,
             ];
 
-            $pdf = Pdf::loadView('pages.lab.users.pdf.export', $data);
+            $pdf = Pdf::loadView('pages.sys.users.pdf.export', $data);
             return $pdf->download('users-report-' . $type . '-' . now()->format('Y-m-d-H-i') . '.pdf');
         }
     }
@@ -228,7 +252,7 @@ class UserController extends Controller
     public function showImport()
     {
         $roles = Role::all();
-        return view('pages.lab.users.import', compact('roles'));
+        return view('pages.sys.users.import', compact('roles'));
     }
 
     /**
@@ -246,7 +270,7 @@ class UserController extends Controller
 
         logActivity('user', 'Import users from file.');
 
-        return redirect()->route('lab.users.index')
+        return redirect()->route('sys.users.index')
             ->with('success', "Import completed successfully. Users have been added to the database.");
     }
 
@@ -279,7 +303,7 @@ class UserController extends Controller
 
         logActivity('impersonation', 'User impersonated ' . $targetUser->name . ' (ID: ' . $targetUser->id . ')', $targetUser);
 
-        return jsonSuccess('Impersonation successful', route('lab.dashboard'), [
+        return jsonSuccess('Impersonation successful', url('/'), [
             'user_id' => $targetUser->id,
         ]);
     }
@@ -290,7 +314,7 @@ class UserController extends Controller
     public function switchBack()
     {
         if (! app('impersonate')->isImpersonating()) {
-            return redirect()->route('lab.dashboard')->with('error', 'Not currently impersonating anyone.');
+            return redirect(url('/'))->with('error', 'Not currently impersonating anyone.');
         }
 
         $impersonator = app('impersonate')->getImpersonator();
@@ -301,7 +325,7 @@ class UserController extends Controller
             logActivity('impersonation', 'User switched back from impersonation to original account', $impersonator);
         }
 
-        return redirect()->route('lab.dashboard')->with('success', 'Successfully switched back to original account.');
+        return redirect(url('/'))->with('success', 'Successfully switched back to original account.');
     }
 
     /**

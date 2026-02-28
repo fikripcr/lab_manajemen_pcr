@@ -19,7 +19,6 @@ use App\Http\Controllers\Lab\PersonilController;
 use App\Http\Controllers\Lab\SemesterController;
 use App\Http\Controllers\Lab\SoftwareRequestController;
 use App\Http\Controllers\Lab\SuratBebasLabController;
-use App\Http\Controllers\Lab\UserController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================
@@ -33,21 +32,7 @@ Route::prefix('lab')->name('lab.')->middleware(['auth', 'check.expired'])->group
         ->name('dashboard');
 
     // Users
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('api', [UserController::class, 'paginate'])->name('data');
-        Route::get('export', [UserController::class, 'export'])->name('export');
-        Route::get('export-pdf', [UserController::class, 'exportPdf'])->name('export.pdf');
-        Route::get('export-pdf/{id}', [UserController::class, 'exportPdf'])->name('export.pdf.detail');
-        Route::get('import', [UserController::class, 'showImport'])->name('import.show');
-        Route::post('import', [UserController::class, 'import'])->name('import.store');
-        Route::get('change-password', [UserController::class, 'changePassword'])->name('change-password');
-    });
-    Route::resource('users', UserController::class);
-    Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('users.login.as');
-    Route::get('/switch-back', [UserController::class, 'switchBack'])->name('users.switch-back');
-
-    // Role Switching
-    Route::post('/users/switch-role/{role?}', [UserController::class, 'switchRole'])->name('users.switch-role');
+    // User routes moved to sys.php
 
     // Labs
     Route::get('api/labs', [LabController::class, 'paginate'])->name('labs.data');

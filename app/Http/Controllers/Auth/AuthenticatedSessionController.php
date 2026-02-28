@@ -29,6 +29,10 @@ class AuthenticatedSessionController extends Controller
 
         // Log the login activity
         $user = $request->user();
+
+        $user->last_login_at = now();
+        $user->save();
+
         logActivity('auth', 'User logged in', $user);
 
         return redirect()->intended(route('dashboard', absolute: false));

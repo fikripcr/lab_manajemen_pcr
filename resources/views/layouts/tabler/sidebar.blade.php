@@ -29,7 +29,7 @@
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ?? false ? ' data-bs-theme="light"' : '' }}>
                     <span class="dropdown-header">Notifications</span>
                     <div class="dropdown-divider"></div>
-                    <a href="{{ route('notifications.index') }}" class="dropdown-item">View all</a>
+                    <a href="{{ route('sys.profile') }}#tabs-notification" class="dropdown-item">View all</a>
                 </div>
             </div>
 
@@ -39,7 +39,7 @@
                     <span class="avatar avatar-sm" style="background-image: url('{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5' }}')"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ?? false ? ' data-bs-theme="light"' : '' }}>
-                    <a href="{{ route('lab.users.show', auth()->user()->encrypted_id) }}" class="dropdown-item">Profile</a>
+                    <a href="{{ route('sys.profile') }}" class="dropdown-item">Profile</a>
                     <a href="#" class="dropdown-item">Settings</a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form-sidebar').submit();">Logout</a>

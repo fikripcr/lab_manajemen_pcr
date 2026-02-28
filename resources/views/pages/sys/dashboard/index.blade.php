@@ -5,12 +5,12 @@
 @section('header')
 <x-tabler.page-header title="Dashboard" pretitle="Overview">
     <x-slot:actions>
-        <div class="d-flex gap-2">
+        <div class="d-flex align-items-center gap-2">
             <div class="input-icon">
                 <span class="input-icon-addon">
-                    <i class="ti ti-search text-muted"></i>
+                    <i class="ti ti-search bg-transparent"></i>
                 </span>
-                <x-tabler.form-input name="search" placeholder="Search..." aria-label="Search" onclick="openGlobalSearchModal('{{ route('sys-search') }}')" />
+                <input type="text" class="form-control" name="search" placeholder="Search..." aria-label="Search" onclick="openGlobalSearchModal('{{ route('sys-search') }}')">
             </div>
             <x-tabler.button type="button" class="btn-primary" onclick="window.location.reload();" icon="ti ti-refresh" text="Refresh" />
         </div>
@@ -71,53 +71,7 @@
             </div>
         </div>
 
-        <!-- News Timeline -->
-        @if(isset($recentNews) && $recentNews->count() > 0)
-        <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Pengumuman Terbaru</h3>
-                </div>
-                <div class="card-body">
-                    <ul class="timeline">
-                        @foreach($recentNews as $news)
-                        <li class="timeline-event">
-                            <div class="timeline-event-icon bg-primary-lt">
-                                <i class="ti ti-bell"></i>
-                            </div>
-                            <div class="card timeline-event-card shadow-sm">
-                                <div class="card-body">
-                                    <div class="text-muted float-end">{{ \Carbon\Carbon::parse($news->published_at)->diffForHumans() }}</div>
-                                    <h4 class="h3 mb-1">{{ $news->judul }}</h4>
-                                    <div class="text-muted mb-2">
-                                        <small>
-                                            <i class="ti ti-calendar me-1"></i> {{ \Carbon\Carbon::parse($news->published_at)->translatedFormat('d F Y') }}
-                                            &nbsp;&bull;&nbsp;
-                                            <i class="ti ti-user me-1"></i> {{ $news->penulis ? $news->penulis->name : 'System' }}
-                                        </small>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-{{ $news->cover_url ? '9' : '12' }}">
-                                            <p class="text-secondary">
-                                                {{ Str::limit(strip_tags($news->isi), 200) }}
-                                            </p>
-                                            <a href="{{ route('shared.pengumuman.show', $news->encrypted_pengumuman_id) }}" class="btn btn-sm btn-outline-primary">Baca Selengkapnya</a>
-                                        </div>
-                                        @if($news->cover_url)
-                                        <div class="col-md-3">
-                                            <img src="{{ $news->cover_url }}" class="d-block w-100 rounded" alt="{{ $news->judul }}" style="max-height: 120px; object-fit: cover;">
-                                        </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
-        @endif
+
 
         <!-- Disk Space and Database Size -->
         <div class="col-12 mb-4">

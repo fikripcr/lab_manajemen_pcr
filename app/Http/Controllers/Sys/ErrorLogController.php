@@ -77,12 +77,20 @@ class ErrorLogController extends Controller
             ->editColumn('created_at', function ($log) {
                 return formatTanggalIndo($log->created_at);
             })
-            ->addColumn('actions', function ($log) {
+            ->addColumn('code', function ($log) {
+                return $log->context['code'] ?? '-';
+            })
+            ->addColumn('file_short', function ($log) {
+                // Return short file path with line number
+                $shortFile = basename($log->file ?? '');
+                return '<span title="' . e($log->file) . '">' . e($shortFile) . ':' . e($log->line) . '</span>';
+            })
+            ->addColumn('action', function ($log) {
                 return view('components.tabler.datatables-actions', [
                     'viewUrl' => route('sys.error-log.show', encryptId($log->id)),
                 ])->render();
             })
-            ->rawColumns(['message', 'error_type', 'user_info', 'actions'])
+            ->rawColumns(['message', 'error_type', 'user_info', 'file_short', 'action'])
             ->make(true);
     }
 

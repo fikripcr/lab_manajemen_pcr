@@ -61,6 +61,13 @@
                     'active_routes' => ['shared.personil.*'],
                     'icon'  => 'ti ti-user-check',
                 ],
+                [
+                    'title' => 'Users / Pengguna',
+                    'route' => 'sys.users.index',
+                    'active_routes' => ['sys.users.*'],
+                    'icon'  => 'ti ti-users-group',
+                    'can'   => 'admin',
+                ],
             ],
         ],
 

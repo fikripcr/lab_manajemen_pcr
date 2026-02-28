@@ -265,7 +265,18 @@ window.loadFilePond = async function () {
         const FilePondPluginImagePreview = (await import('filepond-plugin-image-preview')).default;
         await import('filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css');
 
-        FilePond.registerPlugin(FilePondPluginImagePreview);
+        const FilePondPluginImageCrop = (await import('filepond-plugin-image-crop')).default;
+        const FilePondPluginImageTransform = (await import('filepond-plugin-image-transform')).default;
+        const FilePondPluginFileValidateType = (await import('filepond-plugin-file-validate-type')).default;
+        const FilePondPluginFileValidateSize = (await import('filepond-plugin-file-validate-size')).default;
+
+        FilePond.registerPlugin(
+            FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview,
+            FilePondPluginImageCrop,
+            FilePondPluginImageTransform
+        );
         window.FilePond = FilePond;
         return FilePond;
     } catch (error) {
@@ -415,10 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 window.toggleTheme = function (mode) {
     const previousMode = document.documentElement.getAttribute('data-bs-theme');
-    
+
     // Optimistic UI update (for better UX, but we'll rollback if server fails)
     document.documentElement.setAttribute('data-bs-theme', mode);
-    
+
     // Sync with ThemeTabler if available
     if (window.themeTabler) {
         window.themeTabler.refresh();
@@ -430,33 +441,33 @@ window.toggleTheme = function (mode) {
             mode: 'tabler',
             theme: mode
         })
-        .then(() => {
-            // Server confirmed - save to localStorage
-            localStorage.setItem('tabler-theme', mode);
-        })
-        .catch((error) => {
-            console.error('Failed to save theme preference, rolling back...', error);
-            // Rollback: Restore previous theme
-            document.documentElement.setAttribute('data-bs-theme', previousMode);
-            localStorage.setItem('tabler-theme', previousMode);
-            
-            if (window.themeTabler) {
-                window.themeTabler.refresh();
-            }
-            
-            // Notify user of the failure
-            if (window.Swal) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Theme Sync Failed',
-                    text: 'Unable to save theme preference. Your local view has been restored.',
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-            }
-        });
+            .then(() => {
+                // Server confirmed - save to localStorage
+                localStorage.setItem('tabler-theme', mode);
+            })
+            .catch((error) => {
+                console.error('Failed to save theme preference, rolling back...', error);
+                // Rollback: Restore previous theme
+                document.documentElement.setAttribute('data-bs-theme', previousMode);
+                localStorage.setItem('tabler-theme', previousMode);
+
+                if (window.themeTabler) {
+                    window.themeTabler.refresh();
+                }
+
+                // Notify user of the failure
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Theme Sync Failed',
+                        text: 'Unable to save theme preference. Your local view has been restored.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+            });
     } else {
         // No axios available - just update locally
         localStorage.setItem('tabler-theme', mode);
