@@ -119,9 +119,13 @@
     
     // Smart Back/Cancel Logic
     // If type is back or cancel, and no specific onclick is provided, try to use history.back()
-    // We check document.referrer to ensure we are staying within the app.
-    if (($type === 'back' || $type === 'cancel') && !$onclick && $href) {
-         $onclick = "if(document.referrer.indexOf(window.location.host) !== -1) { history.back(); return false; }";
+    // We check document.referrer to ensure we are staying within the app, unless there is no href.
+    if (($type === 'back' || $type === 'cancel') && !$onclick) {
+        if (!$href) {
+            $onclick = "history.back(); return false;";
+        } else {
+            $onclick = "if(document.referrer.indexOf(window.location.host) !== -1) { history.back(); return false; }";
+        }
     }
 
     // Props for tag
