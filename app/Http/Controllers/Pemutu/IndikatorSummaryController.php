@@ -9,6 +9,7 @@ use App\Models\Pemutu\PeriodeSpmi;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pemutu\IndikatorSummary;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -160,28 +161,10 @@ class IndikatorSummaryController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('indikator_full', function ($row) {
-                    $html = '<div class="row">';
-                    $html .= '<div class="col-12 mb-2">';
-                    $html .= '<strong class="text-primary fs-5">' . e($row->no_indikator ?? '-') . '</strong>';
-                    $html .= '</div>';
-                    $html .= '<div class="col-12 mb-2">';
-                    $html .= '<p class="mb-0">' . e($row->indikator ?? '-') . '</p>';
-                    $html .= '</div>';
-                    
-                    // Unit Badges
-                    if ($row->all_unit_names && $row->all_unit_names !== '-') {
-                        $units = explode(' ;; ', $row->all_unit_names);
-                        $html .= '<div class="col-12 mt-2">';
-                        $html .= '<div class="d-flex flex-wrap gap-1">';
-                        foreach (array_unique($units) as $unit) {
-                            if ($unit) {
-                                $html .= '<span class="badge bg-azure-lt text-azure-fg">' . e($unit) . '</span>';
-                            }
-                        }
-                        $html .= '</div>';
-                        $html .= '</div>';
-                    }
-                    
+                    $html = '<div class="d-flex flex-column">';
+                    $html .= '<strong class="text-primary">' . e($row->no_indikator ?? '-') . '</strong>';
+                    $html .= '<p class="mb-1">' . e($row->indikator ?? '-') . '</p>';
+                    $html .= '<div><span class="badge bg-azure-lt text-azure-fg">' . e($row->unit_name ?? $row->unit_code ?? '-') . '</span></div>';
                     $html .= '</div>';
                     return $html;
                 })
@@ -189,7 +172,7 @@ class IndikatorSummaryController extends Controller
                     if ($row->parent_no_indikator) {
                         return '<span class="badge bg-azure-lt text-azure-fg">' . e($row->parent_no_indikator) . '</span>';
                     }
-                    return '<span class="text-muted">-</span>';
+                    return '<span class="text-muted fst-italic">-</span>';
                 })
                 ->addColumn('labels', function ($row) {
                     if (empty($row->label_details) || $row->label_details === '-') {
@@ -198,178 +181,72 @@ class IndikatorSummaryController extends Controller
 
                     $labels = explode(', ', $row->label_details);
                     $html    = '<div class="d-flex flex-wrap gap-1">';
-
                     foreach ($labels as $label) {
                         if (strpos($label, '|') !== false) {
                             [$name, $color] = explode('|', $label);
                             $html .= '<span class="badge bg-' . e($color) . '-lt text-' . e($color) . '-fg">' . e($name) . '</span>';
                         }
                     }
-
                     $html .= '</div>';
                     return $html;
                 })
                 ->addColumn('ed_detail', function ($row) {
-                    if (empty($row->ed_capaian_detail) || $row->ed_capaian_detail === '-') {
-                        return '<span class="text-muted fst-italic small">Belum diisi</span>';
-                    }
-
-                    $html = '<div class="d-flex flex-column gap-2">';
-                    $items = explode(' ;; ', $row->ed_capaian_detail);
+                    $capaian = $row->ed_capaian ?? '-';
+                    $skala = $row->ed_skala !== null ? '[' . $row->ed_skala . ']' : '';
                     
-                    foreach ($items as $item) {
-                        if (strpos($item, '|') !== false) {
-                            [$unit, $capaian] = explode('|', $item, 2);
-                            $html .= '<div class="card card-sm border-start border-success border-2">';
-                            $html .= '<div class="card-body p-2">';
-                            $html .= '<div class="row">';
-                            $html .= '<div class="col-12">';
-                            $html .= '<small class="text-muted d-block">' . e($unit) . '</small>';
-                            $html .= '<strong class="text-success">' . e($capaian) . '</strong>';
-                            $html .= '</div>';
-                            $html .= '</div>';
-                            $html .= '</div>';
-                            $html .= '</div>';
-                        }
-                    }
-                    
-                    $html .= '</div>';
-                    return $html;
+                    return '<div class="text-center"><strong class="text-success fs-3 d-block">' . e($capaian) . '</strong><span class="text-muted small">' . $skala . '</span></div>';
                 })
                 ->addColumn('ed_analisis', function ($row) {
-                    if (empty($row->ed_analisis_detail) || $row->ed_analisis_detail === '-') {
-                        return '<span class="text-muted">-</span>';
-                    }
-
-                    $html = '<div class="d-flex flex-column gap-2">';
-                    $items = explode(' ;; ', $row->ed_analisis_detail);
-                    
-                    foreach ($items as $item) {
-                        if (strpos($item, '|') !== false) {
-                            [$unit, $analisis] = explode('|', $item, 2);
-                            $html .= '<div class="card card-sm border-start border-info border-2">';
-                            $html .= '<div class="card-body p-2">';
-                            $html .= '<small class="text-muted d-block">' . e($unit) . '</small>';
-                            $html .= '<p class="mb-0 small">' . e($analisis) . '</p>';
-                            $html .= '</div>';
-                            $html .= '</div>';
-                        }
-                    }
-                    
-                    $html .= '</div>';
-                    return $html;
+                    return $this->renderTruncatedText($row->ed_analisis, 'text-info');
                 })
                 ->addColumn('ami_detail', function ($row) {
-                    if (empty($row->ami_hasil_detail) || $row->ami_hasil_detail === '-') {
+                    if (!$row->ami_hasil_label) {
                         return '<span class="text-muted fst-italic small">Belum dinilai</span>';
                     }
-
-                    $html = '<div class="d-flex flex-column gap-2">';
-                    $items = explode(' ;; ', $row->ami_hasil_detail);
                     
-                    foreach ($items as $item) {
-                        if (strpos($item, '|') !== false) {
-                            $parts = explode('|', $item);
-                            $unit = $parts[0] ?? '-';
-                            $hasil = $parts[1] ?? '-';
-                            $temuan = $parts[2] ?? '-';
-                            
-                            $badgeColor = match($hasil) {
-                                'KTS' => 'danger',
-                                'Terpenuhi' => 'success',
-                                'Terlampaui' => 'info',
-                                default => 'secondary',
-                            };
-                            
-                            $html .= '<div class="card card-sm border-start border-' . $badgeColor . ' border-2">';
-                            $html .= '<div class="card-body p-2">';
-                            $html .= '<div class="d-flex justify-content-between align-items-center mb-1">';
-                            $html .= '<small class="text-muted">' . e($unit) . '</small>';
-                            $html .= '<span class="badge bg-' . $badgeColor . '-lt">' . e($hasil) . '</span>';
-                            $html .= '</div>';
-                            if ($temuan && $temuan !== '-') {
-                                $html .= '<p class="mb-0 small text-muted">' . e($temuan) . '</p>';
-                            }
-                            $html .= '</div>';
-                            $html .= '</div>';
-                        }
+                    $badgeColor = match($row->ami_hasil_label) {
+                        'KTS' => 'danger',
+                        'Terpenuhi' => 'success',
+                        'Terlampaui' => 'info',
+                        default => 'secondary',
+                    };
+                    
+                    $html = '<div class="text-center mb-2"><span class="badge bg-' . $badgeColor . '-lt">' . e($row->ami_hasil_label) . '</span></div>';
+                    if ($row->ami_hasil_temuan && $row->ami_hasil_temuan !== '-') {
+                        $html .= $this->renderTruncatedText($row->ami_hasil_temuan, 'text-muted small');
                     }
                     
-                    $html .= '</div>';
                     return $html;
                 })
                 ->addColumn('ami_rekomendasi', function ($row) {
-                    if (empty($row->ami_rekomendasi_detail) || $row->ami_rekomendasi_detail === '-') {
-                        return '<span class="text-muted">-</span>';
-                    }
-
-                    $html = '<div class="d-flex flex-column gap-2">';
-                    $items = explode(' ;; ', $row->ami_rekomendasi_detail);
-                    
-                    foreach ($items as $item) {
-                        if (strpos($item, '|') !== false) {
-                            [$unit, $rekom] = explode('|', $item, 2);
-                            $html .= '<div class="card card-sm border-start border-warning border-2">';
-                            $html .= '<div class="card-body p-2">';
-                            $html .= '<small class="text-muted d-block">' . e($unit) . '</small>';
-                            $html .= '<p class="mb-0 small">' . e($rekom) . '</p>';
-                            $html .= '</div>';
-                            $html .= '</div>';
-                        }
-                    }
-                    
-                    $html .= '</div>';
-                    return $html;
+                    return $this->renderTruncatedText($row->ami_hasil_temuan_rekom, 'text-muted');
                 })
                 ->addColumn('pengend_detail', function ($row) {
-                    if (empty($row->pengend_status_detail) || $row->pengend_status_detail === '-') {
+                    if (!$row->pengend_status) {
                         return '<span class="text-muted fst-italic small">Belum ada</span>';
                     }
-
-                    $html = '<div class="d-flex flex-column gap-2">';
-                    $items = explode(' ;; ', $row->pengend_status_detail);
                     
-                    foreach ($items as $item) {
-                        if (strpos($item, '|') !== false) {
-                            $parts = explode('|', $item);
-                            $unit = $parts[0] ?? '-';
-                            $status = $parts[1] ?? '-';
-                            $analisis = $parts[2] ?? '-';
-                            
-                            $badgeColor = match(strtolower($status)) {
-                                'selesai' => 'success',
-                                'proses' => 'warning',
-                                'belum' => 'danger',
-                                default => 'secondary',
-                            };
-                            
-                            $html .= '<div class="card card-sm border-start border-' . $badgeColor . ' border-2">';
-                            $html .= '<div class="card-body p-2">';
-                            $html .= '<div class="d-flex justify-content-between align-items-center mb-1">';
-                            $html .= '<small class="text-muted">' . e($unit) . '</small>';
-                            $html .= '<span class="badge bg-' . $badgeColor . '-lt">' . e($status) . '</span>';
-                            $html .= '</div>';
-                            if ($analisis && $analisis !== '-') {
-                                $html .= '<p class="mb-0 small text-muted">' . e($analisis) . '</p>';
-                            }
-                            $html .= '</div>';
-                            $html .= '</div>';
-                        }
+                    $badgeColor = match(strtolower($row->pengend_status)) {
+                        'selesai' => 'success',
+                        'proses' => 'warning',
+                        'belum' => 'danger',
+                        'penyesuaian' => 'azure',
+                        default => 'secondary',
+                    };
+                    
+                    $html = '<div class="text-center mb-2"><span class="badge bg-' . $badgeColor . '-lt">' . e($row->pengend_status) . '</span></div>';
+                    if ($row->pengend_analisis && $row->pengend_analisis !== '-') {
+                        $html .= $this->renderTruncatedText($row->pengend_analisis, 'text-muted small');
                     }
                     
-                    $html .= '</div>';
                     return $html;
                 })
                 ->addColumn('action', function ($row) {
                     $html = '<div class="btn-group btn-group-sm" role="group">';
-                    $html .= '<a href="' . route('pemutu.indikator-summary.detail', $row->encrypted_indikator_id) . '" class="btn btn-primary" title="Lihat Detail">';
+                    $html .= '<a href="' . route('pemutu.indikators.show', encryptId($row->indikator_id)) . '" class="btn btn-ghost-primary" title="Detail Indikator">';
                     $html .= '<i class="ti ti-eye"></i>';
                     $html .= '</a>';
-                    $html .= '<a href="' . route('pemutu.indikators.show', $row->encrypted_indikator_id) . '" class="btn btn-ghost-secondary" title="Kelola Indikator">';
-                    $html .= '<i class="ti ti-settings"></i>';
-                    $html .= '</a>';
                     $html .= '</div>';
-
                     return $html;
                 })
                 ->rawColumns([
@@ -509,7 +386,7 @@ class IndikatorSummaryController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $html = '<div class="btn-group btn-group-sm" role="group">';
-                    $html .= '<a href="' . route('pemutu.indikator-summary.detail', $row->encrypted_indikator_id) . '" class="btn btn-primary" title="Lihat Detail">';
+                    $html .= '<a href="' . route('pemutu.indikators.show', encryptId($row->indikator_id)) . '" class="btn btn-ghost-primary" title="Detail Indikator">';
                     $html .= '<i class="ti ti-eye"></i>';
                     $html .= '</a>';
                     $html .= '<a href="' . route('pemutu.evaluasi-kpi.index') . '" class="btn btn-ghost-success" title="Kelola KPI">';
@@ -609,10 +486,27 @@ class IndikatorSummaryController extends Controller
     /**
      * Export data to Excel.
      */
-    public function export(Request $request)
+    /**
+     * Helper to render truncated text with "Read More" button.
+     */
+    protected function renderTruncatedText($text, $extraClass = '')
     {
-        $filters = $request->only(['type', 'kelompok_indikator', 'year', 'search']);
+        if (empty($text) || $text === '-') return '<span class="text-muted">-</span>';
         
-        return Excel::download(new \App\Exports\IndikatorSummaryExport($filters), 'indikator-summary-' . now()->format('Y-m-d') . '.xlsx');
+        $plainText = strip_tags($text);
+        $excerpt = mb_strimwidth($plainText, 0, 100, '...');
+        
+        if (mb_strlen($plainText) <= 100) {
+            return '<div class="summary-text ' . $extraClass . '">' . e($text) . '</div>';
+        }
+        
+        $id = 'text-' . uniqid();
+        $html = '<div class="summary-wrapper">';
+        $html .= '<div id="' . $id . '-excerpt" class="summary-text-excerpt ' . $extraClass . '">' . e($excerpt) . '</div>';
+        $html .= '<div id="' . $id . '-full" class="summary-text-full ' . $extraClass . ' d-none">' . e($text) . '</div>';
+        $html .= '<a href="javascript:void(0)" class="text-primary small btn-read-more" data-target="' . $id . '">Selengkapnya</a>';
+        $html .= '</div>';
+        
+        return $html;
     }
 }

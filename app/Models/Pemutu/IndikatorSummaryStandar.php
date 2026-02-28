@@ -10,74 +10,23 @@ class IndikatorSummaryStandar extends Model
     use HashidBinding;
 
     protected $table      = 'vw_pemutu_summary_indikator_standar';
-    protected $primaryKey = 'indikator_id';
+    protected $primaryKey = 'indikorgunit_id';
     public $incrementing  = false;
     public $timestamps    = false;
 
-    protected $appends = ['encrypted_indikator_id'];
+    protected $appends = ['encrypted_indikorgunit_id'];
 
     protected $casts = [
-        'indikator_id' => 'integer',
+        'indikorgunit_id' => 'integer',
+        'indikator_id'   => 'integer',
     ];
 
     /**
-     * Get the encrypted indikator ID for hashid binding.
+     * Get the encrypted ID for hashid binding.
      */
-    public function getEncryptedIndikatorIdAttribute()
+    public function getEncryptedIndikorgunitIdAttribute()
     {
-        return encryptId($this->indikator_id);
-    }
-
-    /**
-     * Get labels as array from aggregated string.
-     */
-    public function getLabelsArrayAttribute(): array
-    {
-        if (empty($this->all_labels)) {
-            return [];
-        }
-
-        $names  = explode(', ', $this->all_labels ?? '');
-        $colors = explode(', ', $this->all_label_colors ?? '');
-
-        return array_map(function ($name, $color) {
-            return ['name' => $name, 'color' => $color];
-        }, $names, $colors);
-    }
-
-    /**
-     * Get ED capaian per unit as array.
-     */
-    public function getEdCapaianPerUnitAttribute(): array
-    {
-        if (empty($this->ed_capaian_all_units)) {
-            return [];
-        }
-
-        $result = [];
-        $items  = explode(' || ', $this->ed_capaian_all_units);
-
-        foreach ($items as $item) {
-            if (strpos($item, ': ') !== false) {
-                [$unit, $capaian] = explode(': ', $item, 2);
-                $result[$unit]    = $capaian;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get AMI hasil akhir summary.
-     */
-    public function getAmiHasilSummaryAttribute(): array
-    {
-        return [
-            'total_assessed' => $this->ami_assessed_units ?? 0,
-            'kts'            => $this->ami_kts_units ?? 0,
-            'terpenuhi'      => $this->ami_terpenuhi_units ?? 0,
-            'terlampaui'     => $this->ami_terlampaui_units ?? 0,
-        ];
+        return encryptId($this->indikorgunit_id);
     }
 
     /**
