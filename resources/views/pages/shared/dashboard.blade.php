@@ -1,12 +1,7 @@
 @extends('layouts.tabler.app')
 
-@section('title', 'Dashboard')
-
-@section('header')
-    <x-tabler.page-header title="Dashboard" pretitle="Overview" />
-@endsection
-
 @section('content')
+        <div class="row row-cards">
             @if(isset($slideshows) && $slideshows->count() > 0)
             <div class="col-12">
                 <div id="carousel-slideshow" class="carousel slide card shadow-sm border-0" data-bs-ride="carousel" style="border-radius: 12px; overflow: hidden;">
@@ -74,7 +69,9 @@
                         <ul class="timeline">
                             @forelse($recentAnnouncements as $announcement)
                             <li class="timeline-event">
-                                <div class="timeline-event-icon bg-danger"></div>
+                                <div class="timeline-event-icon bg-transparent border-0">
+                                    <i class="ti ti-speakerphone text-danger fs-2"></i>
+                                </div>
                                 <div class="timeline-event-card shadow-none border-0 p-0">
                                     <div class="fw-bold fs-3 text-dark mb-1">
                                         <a href="{{ route('shared.pengumuman.show', $announcement->pengumuman_id) }}" class="text-reset text-decoration-none">{{ $announcement->judul }}</a>
@@ -145,4 +142,5 @@
                 </div>
             </div>
         </div>
+    </div>
 @endsection

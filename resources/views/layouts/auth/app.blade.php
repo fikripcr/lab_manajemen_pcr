@@ -43,6 +43,7 @@
                             <img src="{{ asset('images/logo-apps.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
                         </a>
                     </div>
+                <x-tabler.flash-message />
                 @yield('content')
             </div>
         </main>
@@ -66,6 +67,7 @@
                             <img src="{{ asset('images/logo-apps.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
                         </a>
                     </div>
+                <x-tabler.flash-message />
                     @yield('content')
                 </div>
             </div>
@@ -124,6 +126,7 @@
                                     <img src="{{ asset('images/logo-apps.png') }}" width="200" height="36" alt="{{ config('app.name') }}">
                                 </a>
                             </div>
+                        <x-tabler.flash-message />
                             @yield('content')
                         </div>
                     </div>
