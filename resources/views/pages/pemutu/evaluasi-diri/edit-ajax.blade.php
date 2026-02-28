@@ -103,13 +103,13 @@
                     <div class="col-12">
                         <div class="card mb-0 skala-card border cursor-pointer {{ $isChosen ? 'border-primary bg-primary-lt border-2' : 'border' }}"
                              data-level="{{ $level }}" role="button">
-                            <div class="card-body p-3">
+                            <div class="card-body p-2">
                                 <div class="row align-items-center">
                                     <div class="col-auto pe-3 border-end">
-                                        <div class="fs-1 fw-bold {{ $isChosen ? 'text-primary' : 'text-muted' }} mb-0">{{ $level }}</div>
+                                        <div class="fs-2 fw-bold {{ $isChosen ? 'text-primary' : 'text-muted' }} mb-0">{{ $level }}</div>
                                     </div>
                                     <div class="col ps-3">
-                                        <div class="skala-desc {{ $isChosen ? 'text-primary fw-semibold' : 'text-muted' }}">
+                                        <div class="skala-desc small {{ $isChosen ? 'text-primary fw-semibold' : 'text-muted' }}">
                                             {!! $desc !!}
                                         </div>
                                     </div>
