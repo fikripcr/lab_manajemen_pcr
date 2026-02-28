@@ -56,7 +56,6 @@ class FormPlayerService
                     'nilai_angka'   => null,
                     'nilai_json'    => null,
                     'nilai_tanggal' => null,
-                    'dibuat_pada'   => $now,
                     'created_at'    => $now,
                     'updated_at'    => $now,
                 ];

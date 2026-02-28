@@ -31,6 +31,9 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('survei_halaman', function (Blueprint $table) {
@@ -41,6 +44,9 @@ return new class extends Migration
             $table->text('deskripsi_halaman')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('survei_pertanyaan', function (Blueprint $table) {
@@ -72,6 +78,10 @@ return new class extends Migration
             $table->integer('urutan')->default(0);
             $table->foreignId('next_pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('set null');
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('survei_opsi', function (Blueprint $table) {
@@ -85,6 +95,10 @@ return new class extends Migration
             $table->integer('urutan')->default(0);
             $table->foreignId('next_pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('set null');
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 2. LOGIKA & KONTEKS
@@ -102,6 +116,10 @@ return new class extends Migration
             $table->foreignId('target_pertanyaan_id')->nullable()->references('pertanyaan_id')->on('survei_pertanyaan')->onDelete('set null');
 
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('survei_relasi_konteks', function (Blueprint $table) {
@@ -116,6 +134,10 @@ return new class extends Migration
 
             $table->string('keterangan')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 3. DATA PENGISIAN (TRANSAKSI)
@@ -133,6 +155,10 @@ return new class extends Migration
             $table->string('ip_address')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('survei_jawaban', function (Blueprint $table) {
@@ -148,8 +174,11 @@ return new class extends Migration
 
             $table->foreignId('opsi_id')->nullable()->references('opsi_id')->on('survei_opsi')->onDelete('set null');
 
-            $table->timestamp('dibuat_pada')->useCurrent();
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
     }
 

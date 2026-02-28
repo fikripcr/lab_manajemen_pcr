@@ -20,6 +20,9 @@ return new class extends Migration
             $table->boolean('is_aktif')->default(true);
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('pmb_jalur', function (Blueprint $table) {
@@ -29,6 +32,9 @@ return new class extends Migration
             $table->boolean('is_aktif')->default(true);
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('pmb_jenis_dokumen', function (Blueprint $table) {
@@ -38,6 +44,9 @@ return new class extends Migration
             $table->integer('max_size_kb')->default(2048);
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('pmb_syarat_dokumen_jalur', function (Blueprint $table) {
@@ -48,6 +57,9 @@ return new class extends Migration
             $table->text('keterangan_khusus')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('jalur_id')->references('jalur_id')->on('pmb_jalur')->onDelete('cascade');
             $table->foreign('jenis_dokumen_id')->references('jenis_dokumen_id')->on('pmb_jenis_dokumen')->onDelete('cascade');
@@ -70,6 +82,9 @@ return new class extends Migration
             $table->string('nama_ibu_kandung')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         // 3. TRANSAKSI PENDAFTARAN
@@ -96,6 +111,9 @@ return new class extends Migration
             $table->timestamp('waktu_daftar')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('periode_id')->references('periode_id')->on('pmb_periode')->onDelete('cascade');
             $table->foreign('jalur_id')->references('jalur_id')->on('pmb_jalur')->onDelete('cascade');
@@ -109,6 +127,9 @@ return new class extends Migration
             $table->foreignId('user_pelaku_id')->constrained('users');
             $table->timestamp('waktu_kejadian')->useCurrent();
             $table->timestamps();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
         });
@@ -123,6 +144,9 @@ return new class extends Migration
             $table->enum('keputusan_admin', ['Disetujui', 'Ditolak', 'Cadangan'])->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
         });
@@ -140,6 +164,9 @@ return new class extends Migration
             $table->timestamp('waktu_upload')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
             $table->foreign('jenis_dokumen_id')->references('jenis_dokumen_id')->on('pmb_jenis_dokumen')->onDelete('cascade');
@@ -156,6 +183,9 @@ return new class extends Migration
             $table->timestamp('waktu_bayar')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');
         });
@@ -171,6 +201,9 @@ return new class extends Migration
             $table->integer('kuota')->default(0);
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('periode_id')->references('periode_id')->on('pmb_periode')->onDelete('cascade');
         });
@@ -185,6 +218,9 @@ return new class extends Migration
             $table->boolean('status_kehadiran')->default(false);
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->unique('pendaftaran_id');
             $table->foreign('pendaftaran_id')->references('pendaftaran_id')->on('pmb_pendaftaran')->onDelete('cascade');

@@ -20,6 +20,9 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('cbt_soal', function (Blueprint $table) {
@@ -33,6 +36,9 @@ return new class extends Migration
             $table->foreignId('dibuat_oleh')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('mata_uji_id')->references('mata_uji_id')->on('cbt_mata_uji')->onDelete('cascade');
         });
@@ -47,6 +53,9 @@ return new class extends Migration
             $table->integer('bobot_nilai')->default(0);
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('soal_id')->references('soal_id')->on('cbt_soal')->onDelete('cascade');
         });
@@ -64,6 +73,9 @@ return new class extends Migration
             $table->foreignId('dibuat_oleh')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('cbt_komposisi_paket', function (Blueprint $table) {
@@ -88,6 +100,9 @@ return new class extends Migration
             $table->boolean('is_token_aktif')->default(false);
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('paket_id')->references('paket_ujian_id')->on('cbt_paket_ujian')->onDelete('cascade');
         });
@@ -115,6 +130,9 @@ return new class extends Migration
             $table->string('browser_info')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
             $table->foreign('jadwal_id')->references('jadwal_ujian_id')->on('cbt_jadwal_ujian')->onDelete('cascade');
         });

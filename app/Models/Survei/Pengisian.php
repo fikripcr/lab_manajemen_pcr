@@ -10,6 +10,7 @@ class Pengisian extends Model
     use HasFactory;
 
     protected $table = 'survei_pengisian';
+    protected $primaryKey = 'pengisian_id';
 
     protected $fillable = [
         'survei_id',

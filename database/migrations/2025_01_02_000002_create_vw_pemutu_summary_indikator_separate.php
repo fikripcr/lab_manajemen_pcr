@@ -149,7 +149,7 @@ return new class extends Migration
                 SELECT 
                     ip.indikator_id,
                     GROUP_CONCAT(DISTINCT CONCAT(
-                        COALESCE(p_pegawai.nama, CONCAT('Pegawai ID:', ip.pegawai_id)), '|',
+                        COALESCE(rd.nama, CONCAT('Pegawai ID:', ip.pegawai_id)), '|',
                         ip.status, '|',
                         COALESCE(ip.score, 0), '|',
                         COALESCE(ip.realization, '-')
@@ -164,6 +164,7 @@ return new class extends Migration
                     MAX(ip.score) AS kpi_max_score
                 FROM pemutu_indikator_pegawai ip
                 LEFT JOIN pegawai p_pegawai ON ip.pegawai_id = p_pegawai.pegawai_id
+                LEFT JOIN hr_riwayat_datadiri rd ON p_pegawai.latest_riwayatdatadiri_id = rd.riwayatdatadiri_id
                 GROUP BY ip.indikator_id
             ),
             label_data AS (
