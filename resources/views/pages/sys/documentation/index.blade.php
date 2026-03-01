@@ -5,7 +5,7 @@
 @section('header')
 <x-tabler.page-header title="Documentation" pretitle="System">
     <x-slot:actions>
-        <x-tabler.button type="back" href="javascript:history.back()" class="me-2" icon="ti ti-arrow-left" text="Back" />
+        <x-tabler.button href="{{ route('sys.dashboard') }}" class="me-2 btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

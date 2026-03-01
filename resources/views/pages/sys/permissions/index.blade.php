@@ -6,6 +6,7 @@
 {{-- Page Header Content --}}
     <x-tabler.page-header title="Hak Akses" pretitle="Access Control">
         <x-slot:actions>
+            <x-tabler.button href="{{ route('sys.dashboard') }}" text="Kembali" icon="ti ti-arrow-left" class="btn-outline-secondary me-2" />
             <x-tabler.button type="create" :modal-url="route('sys.permissions.create')" modal-title="Tambah Hak Akses" />
         </x-slot:actions>
     </x-tabler.page-header>

@@ -3,7 +3,11 @@
 @section('title', 'Activity Log')
 
 @section('header')
-<x-tabler.page-header title="Activity Log" pretitle="System Log" />
+<x-tabler.page-header title="Activity Log" pretitle="System Log">
+    <x-slot:actions>
+        <x-tabler.button href="{{ route('sys.dashboard') }}" text="Kembali" icon="ti ti-arrow-left" class="btn-outline-secondary" />
+    </x-slot:actions>
+</x-tabler.page-header>
 @endsection
 
 @section('content')

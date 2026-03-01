@@ -5,6 +5,7 @@
 @section('header')
     <x-tabler.page-header title="Error Log" pretitle="System Log">
         <x-slot:actions>
+            <x-tabler.button href="{{ route('sys.dashboard') }}" text="Kembali" icon="ti ti-arrow-left" class="btn-outline-secondary me-2" />
             <x-tabler.button type="button" class="btn-danger" onclick="confirmClearAll()" text="Clear All" title="Clear All Error Logs" icon="ti ti-trash" />
         </x-slot:actions>
     </x-tabler.page-header>
@@ -57,8 +58,8 @@
             ],
             [
                 'title' => 'Actions',
-                'data' => 'actions',
-                'name' => 'actions',
+                'data' => 'action',
+                'name' => 'action',
                 'orderable' => false,
                 'searchable' => false,
             ],

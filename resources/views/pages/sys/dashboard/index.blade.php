@@ -432,8 +432,9 @@
                 <!-- Combined Recent Activity Card -->
                 <div class="col-lg-6 mb-4">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Recent Activity</h3>
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">Recent Activity</h3>
+                            <a href="{{ route('activity-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
                         </div>
                         <div class="card-body">
                             <!-- Summary stats ommitted for brevity in replacement search matches -->
@@ -497,8 +498,9 @@
                 <!-- Combined Recent Error Card -->
                 <div class="col-lg-6 mb-4">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Recent Errors</h3>
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">Recent Errors</h3>
+                            <a href="{{ route('sys.error-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
                         </div>
                         <div class="card-body">
                             <!-- Summary Stats -->

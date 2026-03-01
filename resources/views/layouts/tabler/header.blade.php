@@ -11,7 +11,6 @@
     // Apply sticky-top directly to the header if enabled
     $headerStickyClass = $sticky ? 'sticky-top' : '';
 
-    $menuGroup = request()->is('sys*') ? 'sys' : 'admin';
 @endphp
 
     {{-- Primary Header --}}
@@ -26,7 +25,7 @@
             {{-- Brand/Logo --}}
             @unless($hideBrand)
             <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                <a href="{{ $menuGroup === 'sys' ? route('sys.dashboard') : route('lab.dashboard') }}">
+                <a href="{{ route('dashboard') }}">
                     <img src="{{  asset('images/logo-apps.png') }}" width="120" height="22" alt="{{ config('app.name') }}" class="navbar-brand-image">
                 </a>
             </div>
@@ -130,7 +129,7 @@
                 <div class="nav-item dropdown me-3 dropdown-notification">
                     <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
-                        <span class="badge bg-red notification-count" style="display: none;"></span>
+                        <span class="badge bg-red badge-notification badge-pill notification-count" style="display: none;"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-card"{{ $dark ? ' data-bs-theme="light"' : '' }}>
                         <div class="card">
@@ -232,11 +231,11 @@
                 @if($hideMenu)
                     {{-- Vertical Layout Mobile Menu (Hidden on Desktop) --}}
                     <div class="d-lg-none">
-                        <x-tabler.menu-renderer type="navbar" :group="$menuGroup" />
+                        <x-tabler.menu-renderer type="navbar" group="admin" />
                     </div>
                 @else
                     {{-- Condensed Layout Menu --}}
-                    <x-tabler.menu-renderer type="navbar" :group="$menuGroup" />
+                    <x-tabler.menu-renderer type="navbar" group="admin" />
                 @endif
             </div>
             @endif
@@ -253,7 +252,7 @@
             <div class="navbar"{{ isset($darkSecondary) && $darkSecondary ? ' data-bs-theme="dark"' : '' }}>
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
-                        <x-tabler.menu-renderer type="navbar" :group="$menuGroup" />
+                        <x-tabler.menu-renderer type="navbar" group="admin" />
                     </div>
                 </div>
             </div>

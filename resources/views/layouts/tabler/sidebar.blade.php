@@ -1,7 +1,3 @@
-@php
-    $menuGroup = request()->is('sys*') ? 'sys' : 'admin';
-@endphp
-
 <aside class="navbar navbar-vertical d-none d-lg-flex navbar-expand-lg overflow-y-auto">
     <div class="container-fluid">
         {{-- 1. NAVBAR TOGGLER (for mobile collapse) --}}
@@ -12,7 +8,7 @@
 
         {{-- 2. NAVBAR BRAND (logo) --}}
         <div class="navbar-brand navbar-brand-autodark">
-            <a href="{{ $menuGroup === 'sys' ? route('sys.dashboard') : route('lab.dashboard') }}" class="navbar-brand navbar-brand-autodark">
+            <a href="{{ route('lab.dashboard') }}" class="navbar-brand navbar-brand-autodark">
                 <img src="{{ asset('images/logo-apps.png') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
             </a>
         </div>
@@ -24,7 +20,7 @@
             <div class="nav-item dropdown me-2">
                 <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
-                    <span class="badge bg-red badge-notification badge-blink notification-count">0</span>
+                    <span class="badge bg-red badge-notification badge-pill badge-blink notification-count" style="display: none;">0</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"{{ $dark ?? false ? ' data-bs-theme="light"' : '' }}>
                     <span class="dropdown-header">Notifications</span>
@@ -50,7 +46,7 @@
 
         {{-- 4. COLLAPSE with NAVBAR MENU --}}
         <div class="collapse navbar-collapse overflow-y-auto" id="sidebar-menu">
-            <x-tabler.menu-renderer type="sidebar" :group="$menuGroup" />
+            <x-tabler.menu-renderer type="sidebar" group="admin" />
         </div>
     </div>
 </aside>
