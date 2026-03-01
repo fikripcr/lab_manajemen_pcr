@@ -87,7 +87,7 @@ class ActivityLogController extends Controller
             return view('pages.sys.activity-log.ajax.detail', compact('activity'));
         }
 
-        return redirect()->route('activity-log.index');
+        return redirect()->route('sys.activity-log.index');
     }
 
     /**

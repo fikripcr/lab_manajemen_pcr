@@ -81,7 +81,7 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
 <script>
-    $(function () {
+    document.addEventListener('DOMContentLoaded', function () {
         // --- Signature Pad Logic ---
         const canvasSig = document.getElementById('signature-pad');
         const signaturePad = new SignaturePad(canvasSig, {
@@ -97,7 +97,7 @@
             canvasSig.getContext("2d").scale(ratio, ratio);
             signaturePad.clear();
         }
-        $(window).on('resize', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
         $('#btn-clear-sig').on('click', function () {
@@ -179,49 +179,31 @@
             // Set signature data
             $('#input-ttd').val(signaturePad.toDataURL());
 
-            const form = $(this);
-            const data = form.serialize();
-
-            if (typeof showLoadingMessage === 'function') {
-                showLoadingMessage('Mohon tunggu...', 'Sedang menyimpan data Anda.');
-            } else {
-                Swal.fire({
-                    title: 'Mohon tunggu...',
-                    allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
-                });
+            const form = document.getElementById('form-registration');
+            const formData = new FormData(form);
+            formData.set('ttd', signaturePad.toDataURL());
+            if (document.getElementById('input-foto').value) {
+                formData.set('foto', document.getElementById('input-foto').value);
             }
 
-            $.ajax({
-                url: form.attr('action'),
-                method: 'POST',
-                data: data,
-                success: function (response) {
-                    if (typeof handleAjaxResponse === 'function') {
-                        handleAjaxResponse(response, function() {
-                            window.location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: response.message,
-                            timer: 3000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    }
-                },
-                error: function (xhr) {
-                    const message = xhr.responseJSON?.message || 'Terjadi kesalahan pada sistem.';
+            axios.post(form.action, formData)
+                .then(function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: response.data.message,
+                        timer: 3000,
+                        showConfirmButton: false
+                    }).then(() => window.location.reload());
+                })
+                .catch(function(error) {
+                    const message = error.response?.data?.message || 'Terjadi kesalahan pada sistem.';
                     if (typeof showErrorMessage === 'function') {
                         showErrorMessage('Oops!', message);
                     } else {
                         Swal.fire('Oops!', message, 'error');
                     }
-                }
-            });
+                });
         });
     });
 </script>

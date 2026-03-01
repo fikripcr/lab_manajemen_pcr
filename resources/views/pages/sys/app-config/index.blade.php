@@ -15,12 +15,12 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('activity-log.index') }}">
+                <a class="nav-link {{ Route::is('activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.activity-log.index') }}">
                     <i class="ti ti-activity me-1"></i> Activity Log
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('notifications.*') ? 'active fw-bold' : '' }}" href="{{ route('notifications.index') }}">
+                <a class="nav-link {{ Route::is('notifications.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.notifications.index') }}">
                     <i class="ti ti-bell me-1"></i> Notifications
                 </a>
             </li>

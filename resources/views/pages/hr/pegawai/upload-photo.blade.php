@@ -88,7 +88,7 @@
 let stream = null;
 let faceEncoding = null;
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     setupFormHandlers();
     setupWebcam();
     setupFaceDetection();
@@ -273,27 +273,21 @@ function uploadPhoto() {
         formData.append('face_encoding', JSON.stringify(faceEncoding));
     }
     
-    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-    
-    $.ajax({
-        url: '{{ route("hr.pegawai.upload-photo") }}',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.success) {
-                alert('Foto berhasil diupload!');
+    axios.post('{{ route("hr.pegawai.upload-photo") }}', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    })
+        .then(function(response) {
+            if (response.data.success) {
+                toastr.success('Foto berhasil diupload!');
                 window.location.href = '{{ route("hr.pegawai.index") }}';
             } else {
-                alert('Error: ' + response.message);
+                toastr.error('Error: ' + response.data.message);
             }
-        },
-        error: function(xhr) {
-            const message = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi kesalahan';
-            alert('Error: ' + message);
-        }
-    });
+        })
+        .catch(function(error) {
+            const message = error.response?.data?.message || 'Terjadi kesalahan';
+            toastr.error('Error: ' + message);
+        });
 }
 
 function dataURLtoBlob(dataURL) {

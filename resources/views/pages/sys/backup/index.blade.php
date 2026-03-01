@@ -94,9 +94,11 @@
             window.createBackup = createBackup;
 
             // Delete backup with confirmation
-            $(document).on('click', '.delete-backup', function(e) {
+            document.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.delete-backup');
+                if (!deleteBtn) return;
                 e.preventDefault();
-                const filename = $(this).data('filename');
+                const filename = deleteBtn.dataset.filename;
 
                 Swal.fire({
                     title: 'Are you sure?',

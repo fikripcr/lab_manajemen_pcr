@@ -106,8 +106,10 @@ $(document).ready(function() {
     });
 
     // Handle modal size reset when hidden (best practice for global modal)
-    $(document).on('hidden.bs.modal', '#modalAction', function () {
-        $(this).find('.modal-dialog').removeClass('modal-sm modal-lg modal-xl');
+    document.addEventListener('hidden.bs.modal', function(e) {
+        if (e.target && e.target.id === 'modalAction') {
+            e.target.querySelector('.modal-dialog')?.classList.remove('modal-sm', 'modal-lg', 'modal-xl');
+        }
     });
 });
 </script>

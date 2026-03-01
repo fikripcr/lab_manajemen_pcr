@@ -14,25 +14,30 @@ class RolePermissionEofficeSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissionData = [
+            // ── DASHBOARD ─────────────────────────────────────────────────────
             ['name' => 'eoffice.dashboard.view', 'category' => 'E-Office', 'sub_category' => 'Dashboard', 'description' => 'Melihat dashboard korespondensi digital'],
 
-            ['name' => 'eoffice.jenis-layanan.view', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Melihat daftar jenis layanan'],
-            ['name' => 'eoffice.jenis-layanan.data', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Mengambil data jenis layanan (DataTables)'],
-            ['name' => 'eoffice.jenis-layanan.create', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Menambah jenis layanan baru'],
-            ['name' => 'eoffice.jenis-layanan.update', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Mengubah jenis layanan'],
-            ['name' => 'eoffice.jenis-layanan.delete', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Menghapus jenis layanan'],
+            // ── MASTER DATA ── Jenis Layanan ──────────────────────────────────
+            ['name' => 'eoffice.jenis-layanan.view', 'category' => 'E-Office', 'sub_category' => 'Master Data – Jenis Layanan', 'description' => 'Melihat daftar jenis layanan'],
+            ['name' => 'eoffice.jenis-layanan.data', 'category' => 'E-Office', 'sub_category' => 'Master Data – Jenis Layanan', 'description' => 'Mengambil data jenis layanan (DataTables)'],
+            ['name' => 'eoffice.jenis-layanan.create', 'category' => 'E-Office', 'sub_category' => 'Master Data – Jenis Layanan', 'description' => 'Menambah jenis layanan baru'],
+            ['name' => 'eoffice.jenis-layanan.update', 'category' => 'E-Office', 'sub_category' => 'Master Data – Jenis Layanan', 'description' => 'Mengubah jenis layanan'],
+            ['name' => 'eoffice.jenis-layanan.delete', 'category' => 'E-Office', 'sub_category' => 'Master Data – Jenis Layanan', 'description' => 'Menghapus jenis layanan'],
 
-            ['name' => 'eoffice.kategori-isian.view', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Melihat daftar kategori isian'],
-            ['name' => 'eoffice.kategori-isian.data', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Mengambil data kategori isian (DataTables)'],
-            ['name' => 'eoffice.kategori-isian.create', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Menambah kategori isian baru'],
-            ['name' => 'eoffice.kategori-isian.update', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Mengubah kategori isian'],
-            ['name' => 'eoffice.kategori-isian.delete', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Menghapus kategori isian'],
+            // ── MASTER DATA ── Master Isian ───────────────────────────────────
+            ['name' => 'eoffice.kategori-isian.view', 'category' => 'E-Office', 'sub_category' => 'Master Data – Master Isian', 'description' => 'Melihat daftar kategori isian'],
+            ['name' => 'eoffice.kategori-isian.data', 'category' => 'E-Office', 'sub_category' => 'Master Data – Master Isian', 'description' => 'Mengambil data kategori isian (DataTables)'],
+            ['name' => 'eoffice.kategori-isian.create', 'category' => 'E-Office', 'sub_category' => 'Master Data – Master Isian', 'description' => 'Menambah kategori isian baru'],
+            ['name' => 'eoffice.kategori-isian.update', 'category' => 'E-Office', 'sub_category' => 'Master Data – Master Isian', 'description' => 'Mengubah kategori isian'],
+            ['name' => 'eoffice.kategori-isian.delete', 'category' => 'E-Office', 'sub_category' => 'Master Data – Master Isian', 'description' => 'Menghapus kategori isian'],
 
-            ['name' => 'eoffice.layanan.view', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Melihat daftar pengajuan layanan'],
-            ['name' => 'eoffice.layanan.data', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Mengambil data pengajuan (DataTables)'],
-            ['name' => 'eoffice.layanan.create', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Membuat pengajuan layanan baru'],
-            ['name' => 'eoffice.layanan.update', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Mengubah status/detil pengajuan'],
+            // ── LAYANAN SAYA / PENGAJUAN ──────────────────────────────────────
+            ['name' => 'eoffice.layanan.view', 'category' => 'E-Office', 'sub_category' => 'Layanan Saya', 'description' => 'Melihat daftar pengajuan layanan milik sendiri'],
+            ['name' => 'eoffice.layanan.data', 'category' => 'E-Office', 'sub_category' => 'Layanan Saya', 'description' => 'Mengambil data pengajuan (DataTables)'],
+            ['name' => 'eoffice.layanan.create', 'category' => 'E-Office', 'sub_category' => 'Layanan Saya', 'description' => 'Membuat pengajuan layanan baru (Buat Pengajuan)'],
+            ['name' => 'eoffice.layanan.update', 'category' => 'E-Office', 'sub_category' => 'Layanan Saya', 'description' => 'Memproses / mengubah status pengajuan'],
 
+            // ── FEEDBACK ──────────────────────────────────────────────────────
             ['name' => 'eoffice.feedback.view', 'category' => 'E-Office', 'sub_category' => 'Feedback', 'description' => 'Melihat daftar feedback layanan'],
             ['name' => 'eoffice.feedback.data', 'category' => 'E-Office', 'sub_category' => 'Feedback', 'description' => 'Mengambil data feedback (DataTables)'],
         ];

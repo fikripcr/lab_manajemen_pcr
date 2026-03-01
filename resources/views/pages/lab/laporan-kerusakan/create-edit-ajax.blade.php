@@ -74,31 +74,37 @@
 
     @push('js')
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
             window.loadSelect2();
-            
-            $('#select-lab').on('change', function() {
-                var labId = $(this).val();
-                var invSelect = $('#select-inventaris');
-                
+
+            document.getElementById('select-lab')?.addEventListener('change', function() {
+                const labId = this.value;
+                const invSelect = document.getElementById('select-inventaris');
+
                 if (labId) {
-                    invSelect.prop('disabled', true).html('<option>Loading...</option>');
-                    
-                    $.ajax({
-                        url: '{{ route("lab.laporan-kerusakan.inventaris") }}',
-                        data: { lab_id: labId },
-                        success: function(response) {
-                            invSelect.empty().append('<option value="">Pilih Inventaris</option>');
-                            if(response.data) {
-                                response.data.forEach(function(item) {
-                                    invSelect.append(new Option(item.text, item.id));
+                    invSelect.disabled = true;
+                    invSelect.innerHTML = '<option>Loading...</option>';
+
+                    axios.get('{{ route("lab.laporan-kerusakan.inventaris") }}', { params: { lab_id: labId } })
+                        .then(function(response) {
+                            invSelect.innerHTML = '<option value="">Pilih Inventaris</option>';
+                            if (response.data.data) {
+                                response.data.data.forEach(function(item) {
+                                    const opt = new Option(item.text, item.id);
+                                    invSelect.add(opt);
                                 });
                             }
-                            invSelect.prop('disabled', false);
-                        }
-                    });
+                            invSelect.disabled = false;
+                            // Re-init Select2 if loaded
+                            if (window.$) $(invSelect).trigger('change.select2');
+                        })
+                        .catch(function() {
+                            invSelect.innerHTML = '<option value="">Gagal memuat inventaris</option>';
+                            invSelect.disabled = false;
+                        });
                 } else {
-                    invSelect.prop('disabled', true).html('<option value="">Pilih Lab Terlebih Dahulu</option>');
+                    invSelect.disabled = true;
+                    invSelect.innerHTML = '<option value="">Pilih Lab Terlebih Dahulu</option>';
                 }
             });
         });

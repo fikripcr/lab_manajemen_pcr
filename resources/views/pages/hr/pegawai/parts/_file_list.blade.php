@@ -76,7 +76,7 @@
 
 @push('js')
 <script>
-    $(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('ajax-form:success', function() {
             location.reload();
         });
@@ -93,19 +93,19 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('hr.pegawai.files.destroy', [$pegawai->encrypted_pegawai_id, ':id']) }}".replace(':id', encrypted_id),
-                        type: 'DELETE',
-                        data: { _token: "{{ csrf_token() }}" },
-                        success: function(res) {
-                            if (res.success) {
-                                location.reload(); // Reload to update list
-                                toastr.success(res.message);
+                    const url = "{{ route('hr.pegawai.files.destroy', [$pegawai->encrypted_pegawai_id, ':id']) }}".replace(':id', encrypted_id);
+                    axios.delete(url)
+                        .then(function(res) {
+                            if (res.data.success) {
+                                toastr.success(res.data.message);
+                                location.reload();
                             } else {
-                                toastr.error(res.message);
+                                toastr.error(res.data.message);
                             }
-                        }
-                    });
+                        })
+                        .catch(function(error) {
+                            toastr.error('Gagal menghapus file.');
+                        });
                 }
             });
         };

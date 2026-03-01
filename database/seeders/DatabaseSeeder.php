@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionCbtSeeder::class,
             RolePermissionSurveiSeeder::class,
             RolePermissionProjectSeeder::class,
+            RolePermissionKegiatanSeeder::class,
 
             // Modules
             MainHrSeeder::class,

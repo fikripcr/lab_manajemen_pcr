@@ -283,7 +283,7 @@
 
                 <!-- System Management Hub (Logs, Notifs, Config) -->
                 <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('activity-log.index') }}" class="card card-link text-decoration-none h-100">
+                    <a href="{{ route('sys.activity-log.index') }}" class="card card-link text-decoration-none h-100">
                         <div class="card-body d-flex align-items-center p-3">
                             <div class="avatar me-3 bg-primary-lt text-primary">
                                 <i class="ti ti-settings"></i>
@@ -356,7 +356,7 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0">Recent Activity</h3>
-                            <a href="{{ route('activity-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
+                            <a href="{{ route('sys.activity-log.index') }}" class="text-primary text-decoration-none small fw-bold">View All <i class="ti ti-chevron-right ms-1"></i></a>
                         </div>
                         <div class="card-body">
                             <!-- Summary stats ommitted for brevity in replacement search matches -->

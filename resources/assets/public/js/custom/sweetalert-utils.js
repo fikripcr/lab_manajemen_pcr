@@ -97,7 +97,7 @@ function showLoadingMessage(title = 'Processing...', text = 'Please wait') {
 // Form error display (for validation errors)
 function showFormErrors(errors) {
     let errorText = '';
-    
+
     if (typeof errors === 'string') {
         errorText = errors;
     } else if (Array.isArray(errors)) {
@@ -107,7 +107,7 @@ function showFormErrors(errors) {
     } else {
         errorText = 'An error occurred while processing your request.';
     }
-    
+
     return Swal.fire({
         title: 'Validation Error!',
         html: errorText,
@@ -155,20 +155,14 @@ function confirmAction(title, text, confirmText = 'Yes', callback) {
     });
 }
 
-// Delete confirmation with AJAX (for use with controller-generated links)
+// Delete confirmation with axios (for use with controller-generated links)
 function confirmDelete(url, title = 'Delete this item?', text = 'Are you sure you want to delete this item? This action cannot be undone.') {
     showDeleteConfirmation(title, text).then((result) => {
         if (result.isConfirmed) {
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: {
-                    '_method': 'DELETE',
-                    '_token': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        showSuccessMessage(response.message || 'Item deleted successfully!');
+            axios.post(url, { _method: 'DELETE' })
+                .then(function (response) {
+                    if (response.data.success) {
+                        showSuccessMessage(response.data.message || 'Item deleted successfully!');
                         // Reload the DataTable if it exists
                         if (typeof table !== 'undefined' && table.ajax) {
                             table.ajax.reload();
@@ -176,15 +170,11 @@ function confirmDelete(url, title = 'Delete this item?', text = 'Are you sure yo
                             location.reload();
                         }
                     }
-                },
-                error: function(xhr) {
-                    let errorMessage = 'An error occurred while deleting the item.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    }
+                })
+                .catch(function (error) {
+                    const errorMessage = error.response?.data?.message || 'An error occurred while deleting the item.';
                     showErrorMessage('Error!', errorMessage);
-                }
-            });
+                });
         }
     });
 }

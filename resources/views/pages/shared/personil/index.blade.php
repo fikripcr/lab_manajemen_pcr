@@ -30,53 +30,31 @@
 
 @push('scripts')
 <script>
-$(document).on('click', '.generate-user', function(e) {
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.generate-user');
+    if (!btn) return;
     e.preventDefault();
 
-    const $button = $(this);
-    const url = $button.data('url');
+    const url = btn.dataset.url;
 
     if (!confirm('Apakah Anda yakin ingin membuat user untuk personil ini?\n\nDefault password: password123')) {
         return;
     }
 
-    $.ajax({
-        url: url,
-        method: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-            if (response.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    html: response.message
-                });
-
-                // Reload datatable
+    axios.post(url)
+        .then(function(response) {
+            if (response.data.success) {
+                Swal.fire({ icon: 'success', title: 'Berhasil!', html: response.data.message });
                 $('#table-personil').DataTable().ajax.reload();
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    html: response.message
-                });
+                Swal.fire({ icon: 'error', title: 'Gagal!', html: response.data.message });
             }
-        },
-        error: function(xhr) {
-            let message = 'Terjadi kesalahan saat membuat user.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                message = xhr.responseJSON.message;
-            }
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: message
-            });
-        }
-    });
+        })
+        .catch(function(error) {
+            const message = error.response?.data?.message || 'Terjadi kesalahan saat membuat user.';
+            Swal.fire({ icon: 'error', title: 'Error!', text: message });
+        });
 });
 </script>
 @endpush
+

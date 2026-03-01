@@ -29,25 +29,30 @@
 
 @push('scripts')
 <script>
-    $(document).on('click', '.btn-jadwal-action', function() {
-        const btn = $(this);
-        const url = btn.data('url');
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-jadwal-action');
+    if (!btn) return;
 
-        btn.prop('disabled', true);
-        $.post(url, { _token: '{{ csrf_token() }}' }, function(res) {
-            if (res.success || res.status === 'success') {
-                toastr.success(res.message || 'Berhasil');
+    const url = btn.dataset.url;
+    btn.disabled = true;
+
+    axios.post(url)
+        .then(function(res) {
+            if (res.data.success || res.data.status === 'success') {
+                toastr.success(res.data.message || 'Berhasil');
                 $('#table-jadwal').DataTable().ajax.reload(null, false);
             } else {
-                toastr.error(res.message || 'Terjadi kesalahan');
+                toastr.error(res.data.message || 'Terjadi kesalahan');
             }
-        }).fail(function(xhr) {
-            let errorMsg = 'Terjadi kesalahan';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMsg = xhr.responseJSON.message;
-            }
+        })
+        .catch(function(error) {
+            const errorMsg = error.response?.data?.message || 'Terjadi kesalahan';
             toastr.error(errorMsg);
-        }).always(() => btn.prop('disabled', false));
-    });
+        })
+        .finally(function() {
+            btn.disabled = false;
+        });
+});
 </script>
 @endpush
+

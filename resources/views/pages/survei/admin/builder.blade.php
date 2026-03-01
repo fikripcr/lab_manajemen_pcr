@@ -166,12 +166,9 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.ajax({
-                    url: routeFor('pertanyaanDestroy', id),
-                    type: 'DELETE',
-                    data: { _token: csrfToken },
-                    success: function(res) {
-                        if (res.success) {
+                axios.delete(routeFor('pertanyaanDestroy', id))
+                    .then(function(res) {
+                        if (res.data.success) {
                             let $card = $(`.card-pertanyaan[data-id="${id}"]`);
                             let $list = $card.closest('.pertanyaan-list');
                             $card.remove();
@@ -181,12 +178,10 @@
                             renumberPertanyaan($list[0]);
                             updateHalamanCount(currentHalamanId);
                             showSuccessMessage('Pertanyaan dihapus.');
-
                         } else {
-                            showErrorMessage('Error', res.message);
+                            showErrorMessage('Error', res.data.message);
                         }
-                    }
-                });
+                    });
             }
         });
     };
@@ -238,7 +233,7 @@
                     $('#list-halaman .list-group-item').each(function() {
                         order.push($(this).data('id'));
                     });
-                    $.post(ROUTES.halamanReorder, { _token: csrfToken, order: order });
+                    axios.post(ROUTES.halamanReorder, { order: order });
                 }
             });
         }
@@ -262,7 +257,7 @@
                     $(evt.to).find('.card-pertanyaan').each(function() {
                         order.push($(this).data('id'));
                     });
-                    $.post(ROUTES.pertanyaanReorder, { _token: csrfToken, order: order });
+                    axios.post(ROUTES.pertanyaanReorder, { order: order });
                     renumberPertanyaan(evt.to);
                 }
             });
@@ -273,11 +268,13 @@
         $('#btn-add-halaman').click(function() {
             let $btn = $(this);
             $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status"></span>');
-            $.post(ROUTES.halamanStore, { _token: csrfToken }, function(res) {
-                if (res.success) location.reload();
-            }).fail(function() {
-                $btn.prop('disabled', false).html('<i class="ti ti-plus"></i>');
-            });
+            axios.post(ROUTES.halamanStore)
+                .then(function(res) {
+                    if (res.data.success) location.reload();
+                })
+                .catch(function() {
+                    $btn.prop('disabled', false).html('<i class="ti ti-plus"></i>');
+                });
         });
 
         // selectHalaman already declared globally above (no jQuery needed for it)
@@ -295,15 +292,11 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.ajax({
-                        url: routeFor('halamanDestroy', id),
-                        type: 'DELETE',
-                        data: { _token: csrfToken },
-                        success: function(res) {
-                            if (res.success) location.reload();
-                            else showErrorMessage('Gagal', res.message);
-                        }
-                    });
+                    axios.delete(routeFor('halamanDestroy', id))
+                        .then(function(res) {
+                            if (res.data.success) location.reload();
+                            else showErrorMessage('Gagal', res.data.message);
+                        });
                 }
             });
         };
