@@ -32,8 +32,9 @@ class UserController extends Controller
      */
     public function create()
     {
+        $user  = new User();
         $roles = Role::all();
-        return view('pages.sys.users.create', compact('roles'));
+        return view('pages.sys.users.create-edit-ajax', compact('user', 'roles'));
     }
 
     /**
@@ -97,12 +98,20 @@ class UserController extends Controller
             ->addColumn('action', function ($user) {
                 $encryptedId = encryptId($user->id);
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'     => route('sys.users.edit', $encryptedId),
-                    'editModal'   => true,
-                    'viewUrl'     => route('sys.users.show', $encryptedId),
-                    'loginAsUrl'  => route('sys.users.login.as', $encryptedId),
-                    'loginAsName' => addslashes($user->name),
-                    'deleteUrl'   => route('sys.users.destroy', $encryptedId),
+                    'editUrl'      => route('sys.users.edit', $encryptedId),
+                    'editModal'    => true,
+                    'viewUrl'      => route('sys.users.show', $encryptedId),
+                    'loginAsUrl'   => route('sys.users.login.as', $encryptedId),
+                    'loginAsName'  => addslashes($user->name),
+                    'deleteUrl'    => route('sys.users.destroy', $encryptedId),
+                    'extraActions' => [
+                        [
+                            'icon'       => 'ti-lock',
+                            'text'       => 'Reset Password',
+                            'class'      => 'ajax-modal-btn',
+                            'attributes' => 'data-url="' . route('sys.users.reset-password', $encryptedId) . '" data-modal-title="Reset Password: ' . addslashes($user->name) . '"',
+                        ],
+                    ],
                 ])->render();
             })
             ->rawColumns(['name', 'roles', 'expired_at', 'action'])
@@ -139,13 +148,33 @@ class UserController extends Controller
         return view('pages.sys.users.ajax.change-password');
     }
 
+    public function resetPassword(User $user)
+    {
+        return view('pages.sys.users.ajax.reset-password-ajax', compact('user'));
+    }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $this->userService->updateUser($user->id, [
+            'password' => $request->password,
+            'name'     => $user->name,
+            'email'    => $user->email,
+        ]);
+
+        return jsonSuccess('Password berhasil diperbarui.');
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('pages.sys.users.edit', compact('user', 'roles'));
+        return view('pages.sys.users.create-edit-ajax', compact('user', 'roles'));
     }
 
     /**

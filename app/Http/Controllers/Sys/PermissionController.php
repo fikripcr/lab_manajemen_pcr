@@ -74,10 +74,32 @@ class PermissionController extends Controller
      */
     public function store(PermissionRequest $request)
     {
-        $data = $request->validated();
-        $this->permissionService->createPermission($data);
+        $data  = $request->validated();
+        $names = preg_split('/[,\n\r]+/', $data['name']);
+        $count = 0;
 
-        return jsonSuccess('Izin berhasil dibuat.');
+        foreach ($names as $name) {
+            $name = trim($name);
+            if (empty($name)) {
+                continue;
+            }
+
+            // Check if permission already exists
+            if (Permission::where('name', $name)->exists()) {
+                continue;
+            }
+
+            $singleData         = $data;
+            $singleData['name'] = $name;
+            $this->permissionService->createPermission($singleData);
+            $count++;
+        }
+
+        if ($count === 0) {
+            return jsonError('Tidak ada izin baru yang dibuat (kemungkinan sudah ada).');
+        }
+
+        return jsonSuccess($count . ' izin berhasil dibuat.');
     }
 
     /**

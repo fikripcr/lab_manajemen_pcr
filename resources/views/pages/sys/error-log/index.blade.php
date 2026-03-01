@@ -12,10 +12,35 @@
 @endsection
 
 @section('content')
-
 <div class="card">
     <div class="card-header">
-        <div class="d-flex flex-wrap justify-content-between">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('activity-log.index') }}">
+                    <i class="ti ti-activity me-1"></i> Activity Log
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('notifications.*') ? 'active fw-bold' : '' }}" href="{{ route('notifications.index') }}">
+                    <i class="ti ti-bell me-1"></i> Notifications
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('sys.error-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.error-log.index') }}">
+                    <i class="ti ti-bug me-1"></i> Error Log
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('app-config') ? 'active fw-bold' : '' }}" href="{{ route('app-config') }}">
+                    <i class="ti ti-settings me-1"></i> App Configuration
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="card shadow-none border">
+            <div class="card-header border-bottom-0">
+                <div class="d-flex flex-wrap justify-content-between p-2 w-100">
             <div class="d-flex flex-wrap gap-2 mb-2 mb-sm-0">
                 <div>
                     <x-tabler.datatable-page-length :dataTableId="'error-logs-table'" />
@@ -64,9 +89,10 @@
                 'searchable' => false,
             ],
         ]" :order="[[4, 'desc']]" />
+        </div>
     </div>
 </div>
-
+</div>
 @endsection
 
 @push('scripts')

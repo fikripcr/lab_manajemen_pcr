@@ -42,6 +42,8 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         });
         Route::resource('users', UserController::class, ['as' => 'sys']);
         Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('sys.users.login.as');
+        Route::get('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('sys.users.reset-password');
+        Route::put('/users/{user}/reset-password', [UserController::class, 'updatePassword'])->name('sys.users.update-password');
         Route::get('/switch-back', [UserController::class, 'switchBack'])->name('sys.users.switch-back');
         Route::post('/users/switch-role/{role?}', [UserController::class, 'switchRole'])->name('sys.users.switch-role');
 
@@ -99,9 +101,10 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Roles Management - accessible via /sys/roles
         Route::prefix('roles')->name('sys.roles.')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/matrix', [RoleController::class, 'matrix'])->name('matrix');
+            Route::post('/matrix', [RoleController::class, 'updateMatrix'])->name('update-matrix');
             Route::get('/create', [RoleController::class, 'create'])->name('create');
             Route::post('/', [RoleController::class, 'store'])->name('store');
-            Route::get('/{role}', [RoleController::class, 'show'])->name('show');
             Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
             Route::put('/{role}', [RoleController::class, 'update'])->name('update');
             Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');

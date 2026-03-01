@@ -27,7 +27,7 @@ class PermissionRequest extends BaseRequest
         }
 
         return [
-            'name' => $permissionId ? 'required|unique:sys_permissions,name,' . $permissionId : 'required|unique:sys_permissions,name',
+            'name' => $permissionId ? 'required|unique:sys_permissions,name,' . $permissionId : 'required|string',
         ];
     }
 

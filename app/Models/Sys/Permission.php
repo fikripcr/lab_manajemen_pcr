@@ -18,6 +18,7 @@ class Permission extends SpatiePermission implements Searchable
         'guard_name',
         'category',
         'sub_category',
+        'description',
         'created_by',
         'updated_by',
         'deleted_by',

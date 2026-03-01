@@ -132,7 +132,7 @@ class MainPmbSeeder extends Seeder
         for ($i = 0; $i < 300; $i++) {
             // Create User
             $email = 'camaba' . ($i + 1) . '@pmb.test';
-            $name = $faker->name.'-'.($i + 1);
+            $name  = $faker->name . '-' . ($i + 1);
             $user  = \App\Models\User::firstOrCreate(
                 ['email' => $email],
                 [
@@ -141,7 +141,7 @@ class MainPmbSeeder extends Seeder
                     'email_verified_at' => now(),
                 ]
             );
-            $user->assignRole('mahasiswa'); // Assuming 'mahasiswa' role implies student/candidate
+            $user->assignRole('Mahasiswa'); // Standardized PascalCase
 
             // Create Camaba with user_id relationship
             $existingCamaba = Camaba::where('user_id', $user->id)->first();

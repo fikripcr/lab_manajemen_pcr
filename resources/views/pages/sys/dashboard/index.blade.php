@@ -250,69 +250,16 @@
         <!-- System Management Menu -->
         <div class="col-12 mb-4">
             <h3 class="card-title mb-4 text-center">System Management Functions</h3>
-            <div class="row g-4">
-                <!-- Activity Log -->
-                <!-- Activity Log -->
+            <div class="row g-4 justify-content-center">
+                <!-- Role & Permissions -->
                 <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('activity-log.index') }}" class="card card-link text-decoration-none">
+                    <a href="{{ route('sys.roles.index') }}" class="card card-link text-decoration-none h-100">
                         <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-primary-lt">
-                                <i class="ti ti-activity"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Activity Log</h4>
-                                <small class="text-muted">Track all system activities and user actions</small>
-                            </div>
-                            <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Roles -->
-                <!-- Roles -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('sys.roles.index') }}" class="card card-link text-decoration-none">
-                        <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-green-lt">
+                            <div class="avatar me-3 bg-green-lt text-green">
                                 <i class="ti ti-shield-lock"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">User Roles</h4>
-                                <small class="text-muted">Manage user roles and permissions</small>
-                            </div>
-                            <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Permissions -->
-                <!-- Permissions -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('sys.permissions.index') }}" class="card card-link text-decoration-none">
-                        <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-yellow-lt">
-                                <i class="ti ti-lock"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Permissions</h4>
-                                <small class="text-muted">Manage system permissions</small>
-                            </div>
-                            <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- App Configuration -->
-                <!-- App Configuration -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('app-config') }}" class="card card-link text-decoration-none">
-                        <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-orange-lt">
-                                <i class="ti ti-settings"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">App Configuration</h4>
-                                <small class="text-muted">Configure application settings</small>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">Role & Permissions</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
@@ -320,67 +267,29 @@
                 </div>
 
                 <!-- Backup Management -->
-                <!-- Backup Management -->
                 <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('sys.backup.index') }}" class="card card-link text-decoration-none">
+                    <a href="{{ route('sys.backup.index') }}" class="card card-link text-decoration-none h-100">
                         <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-cyan-lt">
+                            <div class="avatar me-3 bg-cyan-lt text-cyan">
                                 <i class="ti ti-database"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h4 class="mb-0 text-reset h3 card-title fs-4">Backup Management</h4>
-                                <small class="text-muted">Create and manage system backups</small>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
                     </a>
                 </div>
 
-                <!-- Notifications -->
-                <!-- Notifications -->
+                <!-- System Management Hub (Logs, Notifs, Config) -->
                 <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('notifications.index') }}" class="card card-link text-decoration-none">
+                    <a href="{{ route('activity-log.index') }}" class="card card-link text-decoration-none h-100">
                         <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-red-lt">
-                                <i class="ti ti-bell"></i>
+                            <div class="avatar me-3 bg-primary-lt text-primary">
+                                <i class="ti ti-settings"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Notifications</h4>
-                                <small class="text-muted">Manage system notifications</small>
-                            </div>
-                            <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Error Log -->
-                <!-- Error Log -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('sys.error-log.index') }}" class="card card-link text-decoration-none">
-                        <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-red-lt">
-                                <i class="ti ti-bug"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Error Log</h4>
-                                <small class="text-muted">View and manage system errors</small>
-                            </div>
-                            <i class="ti ti-chevron-right text-muted"></i>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Testing -->
-                <!-- Testing -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('sys.test.index') }}" class="card card-link text-decoration-none">
-                        <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-purple-lt">
-                                <i class="ti ti-flask"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Test Features</h4>
-                                <small class="text-muted">Test system functionality</small>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">System Hub</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>
@@ -388,16 +297,29 @@
                 </div>
 
                 <!-- Documentation -->
-                <!-- Documentation -->
                 <div class="col-md-6 col-lg-4">
-                    <a href="{{ route('sys.documentation.index') }}" class="card card-link text-decoration-none">
+                    <a href="{{ route('sys.documentation.index') }}" class="card card-link text-decoration-none h-100">
                         <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar me-3 bg-gray-lt">
-                                <i class="ti ti-file-text"></i>
+                            <div class="avatar me-3 bg-azure-lt text-azure">
+                                <i class="ti ti-book"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h4 class="mb-0 text-reset h3 card-title fs-4">Documentation</h4>
-                                <small class="text-muted">System documentation and guides</small>
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">System Documentation</h4>
+                            </div>
+                            <i class="ti ti-chevron-right text-muted"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- System Utilities Hub -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="{{ route('sys.test.index') }}" class="card card-link text-decoration-none h-100">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <div class="avatar me-3 bg-purple-lt text-purple">
+                                <i class="ti ti-browser-check"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h4 class="mb-0 text-reset h3 card-title fs-4">System Utilities</h4>
                             </div>
                             <i class="ti ti-chevron-right text-muted"></i>
                         </div>

@@ -12,7 +12,10 @@ use Yajra\DataTables\DataTables;
 class DokumenSpmiController extends Controller
 {
     public function __construct(protected DokumenSpmiService $dokumenSpmiService)
-    {}
+    {
+        $this->authorizeResourcePermissions('pemutu.dokumen');
+        $this->middleware('permission:pemutu.dokumen.view')->only(['childrenData']);
+    }
 
     /**
      * MAIN WORKSPACE PAGE

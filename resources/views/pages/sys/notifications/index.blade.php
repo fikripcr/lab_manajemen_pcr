@@ -12,6 +12,32 @@
 @endsection
 
 @section('content')
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('activity-log.index') }}">
+                    <i class="ti ti-activity me-1"></i> Activity Log
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('notifications.*') ? 'active fw-bold' : '' }}" href="{{ route('notifications.index') }}">
+                    <i class="ti ti-bell me-1"></i> Notifications
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('sys.error-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.error-log.index') }}">
+                    <i class="ti ti-bug me-1"></i> Error Log
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('app-config') ? 'active fw-bold' : '' }}" href="{{ route('app-config') }}">
+                    <i class="ti ti-settings me-1"></i> App Configuration
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
 
     <div class="row mb-4">
         <div class="col-md-4">
@@ -222,4 +248,5 @@
             }
         });
     </script>
+</div>
 @endpush

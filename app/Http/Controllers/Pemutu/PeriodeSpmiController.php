@@ -12,7 +12,9 @@ class PeriodeSpmiController extends Controller
 {
     public function __construct(
         protected PeriodeSpmiService $periodeSpmiService
-    ) {}
+    ) {
+        $this->authorizeResourcePermissions('pemutu.periode');
+    }
 
     public function index()
     {

@@ -17,6 +17,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // Core System
             MainSysSeeder::class,
+            RolePermissionSysSeeder::class,
+            RolePermissionPemutuSeeder::class,
+            RolePermissionHrSeeder::class,
+            RolePermissionLabSeeder::class,
+            RolePermissionEofficeSeeder::class,
+            RolePermissionPmbSeeder::class,
+            RolePermissionCbtSeeder::class,
+            RolePermissionSurveiSeeder::class,
+            RolePermissionProjectSeeder::class,
 
             // Modules
             MainHrSeeder::class,

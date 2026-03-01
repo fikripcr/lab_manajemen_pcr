@@ -15,7 +15,10 @@ class TimMutuController extends Controller
     public function __construct(
         protected TimMutuService $timMutuService,
         protected PeriodeSpmiService $PeriodeSpmiService,
-    ) {}
+    ) {
+        $this->authorizeResourcePermissions('pemutu.tim-mutu');
+        $this->middleware('permission:pemutu.tim-mutu.update')->only(['editAuditee', 'storeAuditee', 'editAuditor', 'storeAuditor', 'manage']);
+    }
 
     /**
      * Index — select a Periode SPMI to manage.

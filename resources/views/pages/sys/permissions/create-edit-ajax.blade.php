@@ -3,14 +3,25 @@
     :route="$permission->exists ? route('sys.permissions.update', $permission->encryptedId) : route('sys.permissions.store')" 
     :method="$permission->exists ? 'PUT' : 'POST'" 
 >
-    <x-tabler.form-input 
-        name="name" 
-        label="Nama Izin (Slug)" 
-        required="true" 
-        :value="old('name', $permission->name)" 
-        placeholder="Contoh: sys.permissions.index" 
-        help="Gunakan format dot notation (module.feature.action)"
-    />
+    @if(!$permission->exists)
+        <x-tabler.form-textarea 
+            name="name" 
+            label="Nama Izin (Slug)" 
+            required="true" 
+            placeholder="Contoh: sys.roles.index&#10;sys.roles.create&#10;sys.roles.edit" 
+            help="Bisa memasukkan banyak nama izin sekaligus, pisahkan dengan baris baru (Enter) atau koma. Gunakan format dot notation (module.feature.action)."
+            rows="3"
+        >{{ old('name') }}</x-tabler.form-textarea>
+    @else
+        <x-tabler.form-input 
+            name="name" 
+            label="Nama Izin (Slug)" 
+            required="true" 
+            :value="old('name', $permission->name)" 
+            placeholder="Contoh: sys.permissions.index" 
+            help="Gunakan format dot notation (module.feature.action)"
+        />
+    @endif
     
     <div class="row">
         <div class="col-md-6">

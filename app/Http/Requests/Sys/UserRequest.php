@@ -37,7 +37,7 @@ class UserRequest extends BaseRequest
             'role'       => ['required', 'array'],
             'role.*'     => ['exists:sys_roles,name'],
             'password'   => [
-                $this->isMethod('post') ? 'required' : 'nullable', // required for create (POST), optional for update (PUT/PATCH)
+                $userId ? 'nullable' : 'required',
                 'string',
                 'min:8',
                 'confirmed',

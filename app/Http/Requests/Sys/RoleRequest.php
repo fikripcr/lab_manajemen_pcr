@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Sys;
 
 use App\Http\Requests\BaseRequest;
@@ -21,8 +20,8 @@ class RoleRequest extends BaseRequest
     {
         $roleId = $this->route('role'); // Get the role ID from the route for update operations
         return [
-            'name' => $roleId ? 'required|unique:sys_roles,name,' . decryptId($roleId) : 'required|unique:sys_roles,name',
-            'permissions' => 'nullable|array',
+            'name'              => $roleId ? 'required|unique:sys_roles,name,' . decryptId($roleId) : 'required|string',
+            'permissions'       => 'nullable|array',
             'sys.permissions.*' => 'exists:sys_permissions,name',
         ];
     }
@@ -33,8 +32,8 @@ class RoleRequest extends BaseRequest
     public function attributes(): array
     {
         return [
-            'name' => 'Nama Role',
-            'permissions' => 'Permissions',
+            'name'              => 'Nama Role',
+            'permissions'       => 'Permissions',
             'sys.permissions.*' => 'Permissions',
         ];
     }

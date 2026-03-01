@@ -67,12 +67,12 @@ class MainLabSeeder extends Seeder
         $this->command->info('Seeding Student and Personnel Profiles...');
         foreach ($users as $user) {
             $roleNames = $user->getRoleNames();
-            
+
             // Check if already has profile
             $existingMahasiswa = Mahasiswa::where('user_id', $user->id)->first();
-            $existingPersonil = Personil::where('user_id', $user->id)->first();
-            
-            if ($roleNames->contains('mahasiswa') && !$existingMahasiswa) {
+            $existingPersonil  = Personil::where('user_id', $user->id)->first();
+
+            if ($roleNames->contains('Mahasiswa') && ! $existingMahasiswa) {
                 // Get valid Prodi OrgUnits
                 $prodiIds = OrgUnit::where('type', 'Prodi')->pluck('orgunit_id')->toArray();
 
@@ -84,9 +84,9 @@ class MainLabSeeder extends Seeder
                     'orgunit_id' => ! empty($prodiIds) ? $prodiIds[array_rand($prodiIds)] : null,
                     'created_by' => $users->first()->id,
                 ]);
-                
+
                 $this->command->info("    ✓ Created Mahasiswa: {$user->name}");
-            } elseif (!$roleNames->contains('mahasiswa') && !$existingPersonil) {
+            } elseif (! $roleNames->contains('Mahasiswa') && ! $existingPersonil) {
                 Personil::create([
                     'user_id'    => $user->id,
                     'nama'       => $user->name,
@@ -94,7 +94,7 @@ class MainLabSeeder extends Seeder
                     'posisi'     => $roleNames->first() ?? 'Staff',
                     'created_by' => $users->first()->id,
                 ]);
-                
+
                 $this->command->info("    ✓ Created Personil: {$user->name}");
             }
         }
@@ -139,10 +139,10 @@ class MainLabSeeder extends Seeder
         $this->command->info('Seeding Surat Bebas Lab...');
         for ($i = 0; $i < 50; $i++) {
             SuratBebasLab::create([
-                'student_id'  => $users->random()->id,
-                'status'      => fake()->randomElement(['pending', 'approved', 'rejected']),
-                'file_path'   => null,
-                'created_by'  => $users->random()->id,
+                'student_id' => $users->random()->id,
+                'status'     => fake()->randomElement(['pending', 'approved', 'rejected']),
+                'file_path'  => null,
+                'created_by' => $users->random()->id,
             ]);
         }
 
