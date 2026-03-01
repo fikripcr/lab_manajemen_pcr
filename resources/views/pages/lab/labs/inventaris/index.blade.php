@@ -19,7 +19,7 @@
                     <x-tabler.flash-message />
             <x-tabler.datatable
                 id="inventaris-table"
-                route="{{ route('lab.labs.inventaris.paginate', $lab->encrypted_lab_id) }}"
+                route="{{ route('lab.labs.inventaris.data', $lab->encrypted_lab_id) }}"
                 :columns="[
                     ['title' => '#', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ['title' => 'Kode Inventaris', 'data' => 'kode_inventaris', 'name' => 'kode_inventaris'],

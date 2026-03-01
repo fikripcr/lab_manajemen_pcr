@@ -19,7 +19,7 @@ class PeriodSoftRequestController extends Controller
         return view('pages.lab.periode-request.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->periodSoftRequestService->getFilteredQuery($request->all());
 

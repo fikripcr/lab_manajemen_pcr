@@ -107,7 +107,7 @@
                     <div class="card-body p-0 mt-3 border-top">
                         <x-tabler.datatable
                             id="table-org-units"
-                            route="{{ route('shared.struktur-organisasi.index') }}"
+                            route="{{ route('shared.struktur-organisasi.data') }}"
                             :columns="[
                                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%', 'class' => 'text-center'],
                                 ['data' => 'name', 'name' => 'name', 'title' => 'Nama Unit'],

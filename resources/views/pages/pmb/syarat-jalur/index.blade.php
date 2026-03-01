@@ -19,15 +19,12 @@
                             @csrf
                             <input type="hidden" name="jalur_id" value="{{ $jalur->encrypted_jalur_id }}">
 
-                            <div class="mb-3">
-                                <label class="form-label required">Jenis Dokumen</label>
-                                <select name="jenis_dokumen_id" class="form-select" required>
+                            <x-tabler.form-select name="jenis_dokumen_id" label="Jenis Dokumen" required="true">
                                     <option value="">-- Pilih Dokumen --</option>
                                     @foreach($jenisDokumen as $jd)
                                         <option value="{{ $jd->encrypted_jenis_dokumen_id }}">{{ $jd->nama_dokumen }}</option>
                                     @endforeach
-                                </select>
-                            </div>
+                            </x-tabler.form-select>
 
                             <x-tabler.form-checkbox name="is_required" label="Wajib Diupload" checked="true" />
 

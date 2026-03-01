@@ -22,7 +22,7 @@
                         ['data' => 'deskripsi', 'name' => 'deskripsi', 'title' => 'Deskripsi'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('cbt.mata-uji.paginate')"
+                    :url="route('cbt.mata-uji.data')"
                 />
             </div>
         </div>

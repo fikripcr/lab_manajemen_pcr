@@ -16,7 +16,7 @@ class JalurController extends Controller
         return view('pages.pmb.jalur.index');
     }
 
-    public function paginate(\Illuminate\Http\Request $request)
+    public function data(\Illuminate\Http\Request $request)
     {
         return datatables()->of($this->jalurService->getPaginateData($request->all()))
             ->addIndexColumn()

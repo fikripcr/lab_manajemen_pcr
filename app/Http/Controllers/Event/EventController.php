@@ -19,7 +19,7 @@ class EventController extends Controller
         return view('pages.event.kegiatans.index', compact('pageTitle'));
     }
 
-    public function paginate()
+    public function data()
     {
         $query = Event::query()->with(['pic']);
         return DataTables::of($query)

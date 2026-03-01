@@ -102,7 +102,7 @@ class PengumumanController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         // Determine the type based on the route name
         $routeName = $request->route()->getName();

@@ -16,12 +16,12 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('activity-log.index') }}">
+                <a class="nav-link {{ Route::is('sys.activity-log.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.activity-log.index') }}">
                     <i class="ti ti-activity me-1"></i> Activity Log
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('notifications.*') ? 'active fw-bold' : '' }}" href="{{ route('notifications.index') }}">
+                <a class="nav-link {{ Route::is('sys.notifications.*') ? 'active fw-bold' : '' }}" href="{{ route('sys.notifications.index') }}">
                     <i class="ti ti-bell me-1"></i> Notifications
                 </a>
             </li>
@@ -104,7 +104,7 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <x-tabler.datatable id="notifications-table" route="{{ route('notifications.data') }}" checkbox="true"
+            <x-tabler.datatable id="notifications-table" route="{{ route('sys.notifications.data') }}" checkbox="true"
             :columns="[
                 [
                     'title' => 'Status',
@@ -181,7 +181,7 @@
                     'Ya, tandai sebagai telah dibaca'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                        axios.post('{{ route('notifications.mark-selected-as-read') }}', {
+                        axios.post('{{ route('sys.notifications.mark-selected-as-read') }}', {
                                 ids: selectedIds
                             })
                             .then(function(response) {
@@ -216,7 +216,7 @@
                     $('#totalNotifications').text(cachedCount); // This is a simplification
 
                     // For detailed stats, we still need to call the specific endpoint
-                    axios.get('{{ route('notifications.counts') }}')
+                    axios.get('{{ route('sys.notifications.counts') }}')
                         .then(function(response) {
                             if (response.data.success) {
                                 const counts = response.data.counts;
@@ -231,7 +231,7 @@
                         });
                 } else {
                     // If no global state, make direct request
-                    axios.get('{{ route('notifications.counts') }}')
+                    axios.get('{{ route('sys.notifications.counts') }}')
                         .then(function(response) {
                             if (response.data.success) {
                                 const counts = response.data.counts;

@@ -10,7 +10,6 @@ use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
 use App\Models\Shared\Pegawai;
 use App\Services\Pemutu\IndikatorService;
-
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -29,7 +28,7 @@ class IndikatorController extends Controller
         return view('pages.pemutu.indikators.index', compact('dokumens', 'labelTypes', 'types'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->indikatorService->getFilteredQuery($request->all());
 
@@ -42,7 +41,7 @@ class IndikatorController extends Controller
             })
             ->addColumn('tipe', function ($row) {
                 $typeInfo = pemutuIndikatorTypeInfo($row->type);
-                $html = '<span class="badge bg-' . $typeInfo['color'] . '-lt" title="' . $typeInfo['label'] . '">' . $typeInfo['short-label'] . '</span>';
+                $html     = '<span class="badge bg-' . $typeInfo['color'] . '-lt" title="' . $typeInfo['label'] . '">' . $typeInfo['short-label'] . '</span>';
 
                 // If Performa, show Parent Code
                 if ($row->type === 'performa' && $row->parent) {

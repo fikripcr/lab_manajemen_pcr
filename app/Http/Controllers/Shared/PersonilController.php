@@ -19,7 +19,7 @@ class PersonilController extends Controller
         return view('pages.shared.personil.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->personilService->getFilteredQuery($request->all());
 
@@ -39,15 +39,15 @@ class PersonilController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('shared.personil.edit-modal.show', $row->encrypted_personil_id),
-                    'editModal' => true,
-                    'viewUrl'   => route('shared.personil.show', $row->encrypted_personil_id),
-                    'deleteUrl' => route('shared.personil.destroy', $row->encrypted_personil_id),
-                    'extraActions' => !$row->user_id ? [
+                    'editUrl'      => route('shared.personil.edit-modal.show', $row->encrypted_personil_id),
+                    'editModal'    => true,
+                    'viewUrl'      => route('shared.personil.show', $row->encrypted_personil_id),
+                    'deleteUrl'    => route('shared.personil.destroy', $row->encrypted_personil_id),
+                    'extraActions' => ! $row->user_id ? [
                         [
-                            'icon' => 'ti ti-user-plus',
-                            'text' => 'Generate Data User',
-                            'class' => 'dropdown-item generate-user',
+                            'icon'    => 'ti ti-user-plus',
+                            'text'    => 'Generate Data User',
+                            'class'   => 'dropdown-item generate-user',
                             'dataUrl' => route('shared.personil.generate-user', $row->encrypted_personil_id),
                         ],
                     ] : [],
@@ -148,15 +148,15 @@ class PersonilController extends Controller
      */
     private function generateEmailFromNama($nama)
     {
-        $base = \Str::slug($nama);
-        $email = "{$base}@pcr.ac.id";
+        $base    = \Str::slug($nama);
+        $email   = "{$base}@pcr.ac.id";
         $counter = 1;
-        
+
         while (\App\Models\User::where('email', $email)->exists()) {
             $email = "{$base}{$counter}@pcr.ac.id";
             $counter++;
         }
-        
+
         return $email;
     }
 
@@ -166,7 +166,7 @@ class PersonilController extends Controller
     private function determineRoleFromPosisi($posisi)
     {
         $posisi = strtolower($posisi ?? '');
-        
+
         if (str_contains($posisi, 'security')) {
             return 'security';
         } elseif (str_contains($posisi, 'cleaning')) {
@@ -174,7 +174,7 @@ class PersonilController extends Controller
         } elseif (str_contains($posisi, 'driver')) {
             return 'driver';
         }
-        
+
         return 'admin'; // Default role
     }
 }

@@ -137,11 +137,9 @@
                                     </td>
                                     <td class="text-center">
                                         @if($pelanggaranCount > 0)
-                                            <button class="btn btn-sm btn-{{ $pelanggaranCount >= 3 ? 'danger' : ($pelanggaranCount >= 2 ? 'warning' : 'azure') }}-lt"
-                                                    onclick="showPelanggaranModal('{{ $riwayat->encrypted_riwayat_ujian_id }}', '{{ addslashes($riwayat->user->name) }}')">
-                                                <i class="ti ti-alert-triangle me-1"></i>
-                                                {{ $pelanggaranCount }}
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-sm btn-{{ $pelanggaranCount >= 3 ? 'danger' : ($pelanggaranCount >= 2 ? 'warning' : 'azure') }}-lt"
+                                                onclick="showPelanggaranModal('{{ $riwayat->encrypted_riwayat_ujian_id }}', '{{ addslashes($riwayat->user->name) }}')"
+                                                icon="ti ti-alert-triangle" text="{{ $pelanggaranCount }}" />
                                         @else
                                             <span class="badge bg-secondary-lt text-secondary">
                                                 <i class="ti ti-check"></i>
@@ -168,31 +166,24 @@
         </div>
 
         {{-- Modal Detail Pelanggaran --}}
-        <div class="modal modal-blur fade" id="modalPelanggaran" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="ti ti-alert-triangle text-danger me-2"></i>
-                            Detail Pelanggaran - <span id="peserta-nama"></span>
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="pelanggaran-content">
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        <x-tabler.form-modal id="modalPelanggaran" size="modal-lg" method="none">
+            <x-slot:title>
+                <i class="ti ti-alert-triangle text-danger me-2"></i>
+                Detail Pelanggaran - <span id="peserta-nama"></span>
+            </x-slot:title>
+            
+            <div id="pelanggaran-content">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </div>
-        </div>
+            
+            <x-slot:footer>
+                <x-tabler.button type="button" class="btn-secondary ms-auto" data-bs-dismiss="modal" text="Tutup" />
+            </x-slot:footer>
+        </x-tabler.form-modal>
 @endsection
 
 @push('scripts')

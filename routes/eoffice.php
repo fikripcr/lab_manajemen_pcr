@@ -32,7 +32,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // 🔹 Jenis Layanan Master
         Route::prefix('jenis-layanan')->name('jenis-layanan.')->group(function () {
             Route::get('/', [JenisLayananController::class, 'index'])->name('index');
-            Route::get('/data', [JenisLayananController::class, 'paginate'])->name('data');
+            Route::get('/data', [JenisLayananController::class, 'data'])->name('data');
             Route::get('/create', [JenisLayananController::class, 'create'])->name('create');
             Route::post('/', [JenisLayananController::class, 'store'])->name('store');
             Route::get('/{jenis_layanan}', [JenisLayananController::class, 'show'])->name('show');
@@ -44,7 +44,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('/{jenis_layanan}/pic/create', [JenisLayananController::class, 'createPic'])->name('create-pic');
             Route::post('/{jenis_layanan}/pic', [JenisLayananController::class, 'storePic'])->name('store-pic');
             Route::delete('/pic/{pic}', [JenisLayananController::class, 'destroyPic'])->name('destroy-pic');
-            
+
             Route::get('/{jenis_layanan}/isian/create', [JenisLayananController::class, 'createIsian'])->name('create-isian');
             Route::post('/{jenis_layanan}/isian', [JenisLayananController::class, 'storeIsian'])->name('store-isian');
             Route::get('/isian/{isian}/rule', [JenisLayananController::class, 'editIsianRule'])->name('edit-isian-rule');
@@ -80,7 +80,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // 🔹 Kategori Isian Master
         Route::prefix('kategori-isian')->name('kategori-isian.')->group(function () {
             Route::get('/', [KategoriIsianController::class, 'index'])->name('index');
-            Route::get('/data', [KategoriIsianController::class, 'paginate'])->name('data');
+            Route::get('/data', [KategoriIsianController::class, 'data'])->name('data');
             Route::get('/create', [KategoriIsianController::class, 'create'])->name('create');
             Route::post('/', [KategoriIsianController::class, 'store'])->name('store');
             Route::get('/{kategori_isian}/edit', [KategoriIsianController::class, 'edit'])->name('edit');

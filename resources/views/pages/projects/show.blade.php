@@ -296,9 +296,7 @@
                                         {{ ucfirst($member->role) }}
                                     </span>
                                     <div class="dropdown">
-                                        <button class="btn btn-sm btn-icon border-0 shadow-none text-muted" data-bs-toggle="dropdown">
-                                            <i class="ti ti-dots-vertical"></i>
-                                        </button>
+                                        <x-tabler.button type="button" class="btn-icon shadow-none text-muted border-0" data-bs-toggle="dropdown" icon="ti ti-dots-vertical" iconOnly="true" />
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item text-danger ajax-delete" 
                                                href="javascript:void(0)" 

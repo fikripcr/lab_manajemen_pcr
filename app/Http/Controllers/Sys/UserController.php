@@ -40,7 +40,7 @@ class UserController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         // Reuse Service Query
         $users = $this->userService->getFilteredQuery($request->all());
@@ -101,7 +101,7 @@ class UserController extends Controller
                     'editUrl'      => route('sys.users.edit', $encryptedId),
                     'editModal'    => true,
                     'viewUrl'      => route('sys.users.show', $encryptedId),
-                    'loginAsUrl'   => route('sys.users.login.as', $encryptedId),
+                    'loginAsUrl'   => route('sys.users.impersonate', $encryptedId),
                     'loginAsName'  => addslashes($user->name),
                     'deleteUrl'    => route('sys.users.destroy', $encryptedId),
                     'extraActions' => [
@@ -306,7 +306,7 @@ class UserController extends Controller
     /**
      * Login as a specific user using laravel-impersonate.
      */
-    public function loginAs(Request $request, User $user)
+    public function impersonate(Request $request, User $user)
     {
         $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan'];
 

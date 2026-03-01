@@ -166,10 +166,7 @@
                     <div class="card-body p-4">
                         <form action="{{ route('cbt.execute.start', $jadwal->hashid) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 mb-3">
-                                <i class="ti ti-player-play me-2"></i>
-                                {{ ($existing && $existing->status === 'Sedang_Mengerjakan') ? 'Lanjutkan Ujian' : 'Mulai Ujian Sekarang' }}
-                            </button>
+                            <x-tabler.button type="submit" class="btn-primary btn-lg w-100 py-3 mb-3" icon="ti ti-player-play" text="{{ ($existing && $existing->status === 'Sedang_Mengerjakan') ? 'Lanjutkan Ujian' : 'Mulai Ujian Sekarang' }}" />
                         </form>
                         
                         @if(auth()->user()->hasRole('admin'))

@@ -17,7 +17,7 @@ class SesiUjianController extends Controller
         return view('pages.pmb.sesi-ujian.index');
     }
 
-    public function paginate(\Illuminate\Http\Request $request)
+    public function data(\Illuminate\Http\Request $request)
     {
         return datatables()->of($this->sesiUjianService->getPaginateQuery())
             ->addIndexColumn()

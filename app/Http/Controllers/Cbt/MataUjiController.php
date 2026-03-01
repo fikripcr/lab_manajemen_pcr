@@ -18,7 +18,7 @@ class MataUjiController extends Controller
         return view('pages.cbt.mata-uji.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->MataUjiService->getFilteredQuery($request->all())
             ->withCount([

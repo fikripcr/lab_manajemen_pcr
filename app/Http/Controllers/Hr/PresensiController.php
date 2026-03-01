@@ -24,7 +24,7 @@ class PresensiController extends Controller
 
     public function checkIn(PresensiCheckInRequest $request)
     {
-        $data = $request->validated();
+        $data   = $request->validated();
         $result = $this->presensiService->checkIn($data);
 
         return jsonSuccess('Check-in berhasil!', null, $result);
@@ -32,7 +32,7 @@ class PresensiController extends Controller
 
     public function checkOut(PresensiCheckOutRequest $request)
     {
-        $data = $request->validated();
+        $data   = $request->validated();
         $result = $this->presensiService->checkOut($data);
 
         return jsonSuccess('Check-out berhasil!', null, $result);
@@ -40,7 +40,7 @@ class PresensiController extends Controller
 
     public function getCurrentLocation(PresensiLocationRequest $request)
     {
-        $data = $request->validated();
+        $data     = $request->validated();
         $location = $this->presensiService->getLocationFromCoordinates($data['latitude'], $data['longitude']);
 
         return response()->json([
@@ -80,7 +80,7 @@ class PresensiController extends Controller
         return view('pages.hr.presensi.history');
     }
 
-    public function historyData(Request $request)
+    public function data(Request $request)
     {
         $data = $this->presensiService->getPresensiHistory($request->all());
         return response()->json($data);
@@ -91,15 +91,15 @@ class PresensiController extends Controller
         // Mock data for now since we don't have a specific service method for one date detail
         // In real app, this would query by date and auth user
         $data = [
-            'date' => $date,
-            'check_in' => '08:15:00',
-            'check_out' => '17:30:00',
-            'status' => 'on_time',
-            'duration' => '9 jam 15 menit',
-            'shift' => 'Reguler (08:00 - 17:00)',
-            'check_in_location' => 'Jakarta, Indonesia',
+            'date'               => $date,
+            'check_in'           => '08:15:00',
+            'check_out'          => '17:30:00',
+            'status'             => 'on_time',
+            'duration'           => '9 jam 15 menit',
+            'shift'              => 'Reguler (08:00 - 17:00)',
+            'check_in_location'  => 'Jakarta, Indonesia',
             'check_out_location' => 'Jakarta, Indonesia',
-            'notes' => '-'
+            'notes'              => '-',
         ];
 
         return view('pages.hr.presensi.ajax.detail', compact('data'));

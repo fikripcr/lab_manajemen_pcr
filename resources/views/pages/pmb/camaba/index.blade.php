@@ -21,7 +21,7 @@
                 ['data' => 'no_hp', 'name' => 'no_hp', 'title' => 'No HP'],
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
-            :route="route('pmb.camaba.paginate')"
+            :route="route('pmb.camaba.data')"
         />
     </div>
 </div>

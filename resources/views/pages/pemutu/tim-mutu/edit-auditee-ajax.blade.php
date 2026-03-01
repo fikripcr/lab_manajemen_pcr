@@ -4,32 +4,24 @@
     method="POST"
 >
     {{-- Auditee --}}
-    <div class="mb-3">
-        <label class="form-label">Auditee</label>
-        <select name="auditee_id" id="auditee_id" class="form-select">
-            @if($auditee && $auditee->pegawai)
-                <option value="{{ encryptId($auditee->pegawai_id) }}" selected>
-                    {{ $auditee->pegawai->nama }} ({{ $auditee->pegawai->nip ?? '-' }})
-                </option>
-            @endif
-        </select>
-        <div class="form-text">Cari pegawai untuk dijadikan Auditee.</div>
-    </div>
+    <x-tabler.form-select name="auditee_id" id="auditee_id" label="Auditee" help="Cari pegawai untuk dijadikan Auditee.">
+        @if($auditee && $auditee->pegawai)
+            <option value="{{ encryptId($auditee->pegawai_id) }}" selected>
+                {{ $auditee->pegawai->nama }} ({{ $auditee->pegawai->nip ?? '-' }})
+            </option>
+        @endif
+    </x-tabler.form-select>
 
     {{-- Anggota --}}
-    <div class="mb-3">
-        <label class="form-label">Anggota Tim Mutu</label>
-        <select name="anggota_ids[]" id="anggota_ids" class="form-select" multiple>
-            @foreach($anggota as $member)
-                @if($member->pegawai)
-                    <option value="{{ encryptId($member->pegawai_id) }}" selected>
-                        {{ $member->pegawai->nama }} ({{ $member->pegawai->nip ?? '-' }})
-                    </option>
-                @endif
-            @endforeach
-        </select>
-        <div class="form-text">Anda dapat memilih lebih dari satu anggota.</div>
-    </div>
+    <x-tabler.form-select name="anggota_ids" id="anggota_ids" multiple="true" label="Anggota Tim Mutu" help="Anda dapat memilih lebih dari satu anggota.">
+        @foreach($anggota as $member)
+            @if($member->pegawai)
+                <option value="{{ encryptId($member->pegawai_id) }}" selected>
+                    {{ $member->pegawai->nama }} ({{ $member->pegawai->nip ?? '-' }})
+                </option>
+            @endif
+        @endforeach
+    </x-tabler.form-select>
 
 </x-tabler.form-modal>
 

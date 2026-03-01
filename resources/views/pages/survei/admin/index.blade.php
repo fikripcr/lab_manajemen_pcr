@@ -25,7 +25,7 @@
                     ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
                     ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                 ]"
-                :url="route('survei.paginate')" />
+                :url="route('survei.data')" />
             </div>
         </div>
 @endsection

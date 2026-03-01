@@ -1,9 +1,5 @@
 @if(request()->ajax() || request()->has('ajax'))
-    <div class="modal-header">
-        <h5 class="modal-title">Mata Kuliah Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
+    <x-tabler.form-modal title="Mata Kuliah Details" method="none">
         <div class="datagrid">
             <div class="datagrid-item">
                 <div class="datagrid-title">Kode MK</div>
@@ -18,11 +14,12 @@
                 <div class="datagrid-content">{{ $mataKuliah->sks }}</div>
             </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-        <x-tabler.button type="edit" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" />
-    </div>
+        
+        <x-slot:footer>
+            <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+            <x-tabler.button type="edit" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" class="ms-auto" />
+        </x-slot:footer>
+    </x-tabler.form-modal>
 @else
     @extends('layouts.tabler.app')
 

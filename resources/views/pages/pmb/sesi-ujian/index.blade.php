@@ -24,7 +24,7 @@
                         ['data' => 'kuota', 'name' => 'kuota', 'title' => 'Kuota'],
                             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ]"
-                    :url="route('pmb.sesi-ujian.paginate')"
+                    :url="route('pmb.sesi-ujian.data')"
                 />
             </div>
         </div>

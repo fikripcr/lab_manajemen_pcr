@@ -38,8 +38,8 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         return redirect()->route('hr.dashboard');
     });
 
-                                                                                          // Pegawai Routes
-    Route::get('pegawai/data', [PegawaiController::class, 'data'])->name('pegawai.data'); // Ensure this exists if used, but PegawaiController uses index() for json.
+    // Pegawai Routes
+    Route::get('pegawai/data', [PegawaiController::class, 'data'])->name('pegawai.data');
     Route::get('pegawai/select2-search', [PegawaiController::class, 'select2Search'])->name('pegawai.select2-search');
     Route::get('pegawai/upload-photo', [PresensiController::class, 'showUploadPhoto'])->name('pegawai.upload-photo');
     Route::post('pegawai/upload-photo', [PresensiController::class, 'storeUploadPhoto'])->name('pegawai.upload-photo.store');
@@ -185,7 +185,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::post('approval/{id}/reject', [ApprovalController::class, 'reject'])->name('approval.reject');
 
     // Presensi Routes
-    Route::prefix('presensi')->name('hr.presensi.')->group(function () {
+    Route::prefix('presensi')->name('presensi.')->group(function () {
         Route::get('/', [PresensiController::class, 'index'])->name('index');
         Route::get('/settings', [PresensiController::class, 'settings'])->name('settings');
         Route::post('/settings', [PresensiController::class, 'updateSettings'])->name('update-settings');
@@ -194,7 +194,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::post('/checkout', [PresensiController::class, 'checkOut'])->name('checkout');
         Route::get('/employee-face-data', [PresensiController::class, 'getEmployeeFaceData'])->name('employee-face-data');
         Route::get('/history', [PresensiController::class, 'history'])->name('history');
-        Route::post('/history', [PresensiController::class, 'historyData'])->name('history.data');
+        Route::get('/data', [PresensiController::class, 'data'])->name('data');
     });
 
     Route::prefix('pegawai')->name('pegawai.')->group(function () {
@@ -210,7 +210,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::get('presensi/get-settings', [PresensiController::class, 'getSettings'])->name('presensi.get-settings');
     Route::post('presensi/update-settings', [PresensiController::class, 'updateSettings'])->name('presensi.update-settings');
     Route::get('presensi/history', [PresensiController::class, 'history'])->name('presensi.history');
-    Route::get('presensi/history-data', [PresensiController::class, 'historyData'])->name('presensi.history-data');
+    Route::get('presensi/data', [PresensiController::class, 'data'])->name('presensi.data');
     Route::get('presensi/history/{date}', [PresensiController::class, 'show'])->name('presensi.history.show');
     Route::get('presensi/employee-face-data', [PresensiController::class, 'getEmployeeFaceData'])->name('presensi.employee-face-data');
 });

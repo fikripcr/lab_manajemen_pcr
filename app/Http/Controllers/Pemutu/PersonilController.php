@@ -19,7 +19,7 @@ class PersonilController extends Controller
         return view('pages.pemutu.personils.index');
     }
 
-    public function paginate()
+    public function data()
     {
         $query = $this->personilService->getFilteredQuery();
 

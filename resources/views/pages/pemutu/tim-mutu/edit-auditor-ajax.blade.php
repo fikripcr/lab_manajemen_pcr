@@ -4,32 +4,24 @@
     method="POST"
 >
     {{-- Ketua Auditor --}}
-    <div class="mb-3">
-        <label class="form-label">Ketua Auditor</label>
-        <select name="ketua_auditor_id" id="ketua_auditor_id" class="form-select">
-            @if($ketuaAuditor && $ketuaAuditor->pegawai)
-                <option value="{{ encryptId($ketuaAuditor->pegawai_id) }}" selected>
-                    {{ $ketuaAuditor->pegawai->nama }} ({{ $ketuaAuditor->pegawai->nip ?? '-' }})
-                </option>
-            @endif
-        </select>
-        <div class="form-text">Pilih Ketua Auditor untuk unit ini.</div>
-    </div>
+    <x-tabler.form-select name="ketua_auditor_id" id="ketua_auditor_id" label="Ketua Auditor" help="Pilih Ketua Auditor untuk unit ini.">
+        @if($ketuaAuditor && $ketuaAuditor->pegawai)
+            <option value="{{ encryptId($ketuaAuditor->pegawai_id) }}" selected>
+                {{ $ketuaAuditor->pegawai->nama }} ({{ $ketuaAuditor->pegawai->nip ?? '-' }})
+            </option>
+        @endif
+    </x-tabler.form-select>
 
     {{-- Auditor --}}
-    <div class="mb-3">
-        <label class="form-label">Auditor</label>
-        <select name="auditor_ids[]" id="auditor_ids" class="form-select" multiple>
-            @foreach($auditor as $member)
-                @if($member->pegawai)
-                    <option value="{{ encryptId($member->pegawai_id) }}" selected>
-                        {{ $member->pegawai->nama }} ({{ $member->pegawai->nip ?? '-' }})
-                    </option>
-                @endif
-            @endforeach
-        </select>
-        <div class="form-text">Pilih satu atau lebih Auditor.</div>
-    </div>
+    <x-tabler.form-select name="auditor_ids" id="auditor_ids" multiple="true" label="Auditor" help="Pilih satu atau lebih Auditor.">
+        @foreach($auditor as $member)
+            @if($member->pegawai)
+                <option value="{{ encryptId($member->pegawai_id) }}" selected>
+                    {{ $member->pegawai->nama }} ({{ $member->pegawai->nip ?? '-' }})
+                </option>
+            @endif
+        @endforeach
+    </x-tabler.form-select>
 
 </x-tabler.form-modal>
 

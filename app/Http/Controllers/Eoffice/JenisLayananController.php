@@ -25,7 +25,7 @@ class JenisLayananController extends Controller
         return view('pages.eoffice.jenis_layanan.index', compact('pageTitle'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->jenisLayananService->getFilteredQuery($request);
 

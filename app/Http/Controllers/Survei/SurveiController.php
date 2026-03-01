@@ -17,7 +17,7 @@ class SurveiController extends Controller
         return view('pages.survei.admin.index');
     }
 
-    public function paginate()
+    public function data()
     {
         $query = Survei::latest();
         return datatables()->of($query)

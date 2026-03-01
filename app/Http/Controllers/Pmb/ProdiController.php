@@ -10,7 +10,7 @@ class ProdiController extends Controller
         return view('pages.pmb.prodi.index');
     }
 
-    public function paginate()
+    public function data()
     {
         // Placeholder for DataTables
         return datatables()->of(collect([]))->make(true);

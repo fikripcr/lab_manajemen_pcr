@@ -261,13 +261,11 @@
                                         <div class="input-group input-group-sm" style="max-width:500px">
                                             <input type="text" class="form-control font-monospace text-muted"
                                                 value="{{ $attendanceUrl }}" readonly id="attendance-url">
-                                            <button class="btn btn-outline-secondary" type="button"
+                                            <x-tabler.button type="button" class="btn-outline-secondary"
                                                 onclick="navigator.clipboard.writeText('{{ $attendanceUrl }}').then(()=>{
-                                                    this.innerHTML='<i class=\'ti ti-check\'></i> Tersalin';
-                                                    setTimeout(()=>this.innerHTML='<i class=\'ti ti-copy\'></i> Salin',2000)
-                                                })">
-                                                <i class="ti ti-copy"></i> Salin
-                                            </button>
+                                                    this.querySelector('span').innerHTML='Tersalin';
+                                                })"
+                                                icon="ti ti-copy" text="Salin" />
                                             <a href="{{ $attendanceUrl }}" target="_blank" class="btn btn-outline-primary">
                                                 <i class="ti ti-external-link"></i>
                                             </a>

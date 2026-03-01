@@ -55,14 +55,12 @@
                                         <div class="text-body">{!! strip_tags(substr($item->soal->konten_pertanyaan, 0, 120)) !!}...</div>
                                     </td>
                                     <td>
-                                        <button type="button"
-                                            class="btn btn-icon btn-sm btn-outline-danger ajax-delete"
+                                        <x-tabler.button type="button" class="btn-icon btn-sm btn-outline-danger ajax-delete"
                                             data-url="{{ route('cbt.paket.remove-soal', [$paket->encrypted_paket_ujian_id, $item->encrypted_komposisi_paket_id]) }}"
                                             data-title="Hapus soal dari paket?"
                                             data-text="Soal hanya dihapus dari paket ini, tidak dari Bank Soal."
-                                            title="Hapus dari paket">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                            title="Hapus dari paket"
+                                            iconOnly="true" icon="ti ti-trash" />
                                     </td>
                                 </tr>
                                 @endforeach
@@ -111,14 +109,10 @@
                             </x-tabler.form-select>
                         </div>
                         <div class="col-auto">
-                            <x-tabler.button type="button" class="btn btn-outline-primary" onclick="selectAllVisible()">
-                                <i class="ti ti-checks me-1"></i>Semua
-                            </x-tabler.button>
+                            <x-tabler.button type="button" class="btn-outline-primary" onclick="selectAllVisible()" icon="ti ti-checks" text="Semua" />
                         </div>
                         <div class="col-auto">
-                            <x-tabler.button type="button"  class="btn btn-outline-secondary" onclick="clearAll()">
-                                <i class="ti ti-x me-1"></i>Reset
-                            </x-tabler.button>
+                            <x-tabler.button type="button" class="btn-outline-secondary" onclick="clearAll()" icon="ti ti-x" text="Reset" />
                         </div>
                     </div>
 
@@ -163,9 +157,7 @@
 
                 {{-- Submit --}}
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-primary w-100" id="btn-tambahkan">
-                        <i class="ti ti-plus me-2"></i>Tambahkan ke Paket
-                    </button>
+                    <x-tabler.button type="submit" class="btn-primary w-100" id="btn-tambahkan" icon="ti ti-plus" text="Tambahkan ke Paket" />
                 </div>
 
             </form>

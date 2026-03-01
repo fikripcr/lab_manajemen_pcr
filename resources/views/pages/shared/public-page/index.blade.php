@@ -37,7 +37,7 @@
                     <div class="table-responsive">
                         <x-tabler.datatable
                             id="table-public-pages"
-                            route="{{ route('shared.public-page.index') }}"
+                            route="{{ route('shared.public-page.data') }}"
                             :columns="[
                                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                                 ['data' => 'title', 'name' => 'title', 'title' => 'Judul'],

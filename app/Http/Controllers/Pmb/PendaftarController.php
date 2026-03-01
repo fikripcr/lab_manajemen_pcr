@@ -2,9 +2,9 @@
 namespace App\Http\Controllers\Pmb;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pmb\Pendaftaran;
-use App\Models\Pmb\DokumenUpload;
 use App\Http\Requests\Pmb\VerifySingleDocumentRequest;
+use App\Models\Pmb\DokumenUpload;
+use App\Models\Pmb\Pendaftaran;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -21,7 +21,7 @@ class PendaftarController extends Controller
     /**
      * Paginate pendaftar data
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = Pendaftaran::with(['camaba.user', 'jalur', 'dokumenUpload']);
 
@@ -44,42 +44,42 @@ class PendaftarController extends Controller
                 return '<span class="badge bg-info text-white">' . $total . ' Berkas</span>';
             })
             ->addColumn('total_verif', function ($row) {
-                $total = $row->dokumenUpload->count();
+                $total    = $row->dokumenUpload->count();
                 $verified = $row->dokumenUpload->where('status_verifikasi', 'Valid')->count();
-                
+
                 if ($total == 0) {
                     return '-';
                 }
-                
-                $verifiedIcon = $verified > 0 
-                    ? '<i class="ti ti-circle-check text-success fs-4" title="Terverifikasi: '.$verified.'"></i>' 
+
+                $verifiedIcon = $verified > 0
+                    ? '<i class="ti ti-circle-check text-success fs-4" title="Terverifikasi: ' . $verified . '"></i>'
                     : '';
-                $pendingIcon = ($total - $verified) > 0 
-                    ? '<i class="ti ti-circle-x text-danger fs-4" title="Belum Verifikasi: '.($total - $verified).'"></i>' 
+                $pendingIcon = ($total - $verified) > 0
+                    ? '<i class="ti ti-circle-x text-danger fs-4" title="Belum Verifikasi: ' . ($total - $verified) . '"></i>'
                     : '';
-                
+
                 return "<span class='ms-1'>{$verifiedIcon} {$pendingIcon}</span>";
             })
             ->addColumn('action', function ($row) {
                 $buttons = [];
-                
+
                 // Detail button
                 $buttons[] = '<a href="' . route('pmb.pendaftaran.show', $row->encrypted_pendaftaran_id) . '" class="btn btn-sm btn-primary" title="Lihat Detail">
                     <i class="ti ti-eye"></i> Detail
                 </a>';
-                
+
                 // Verifikasi Berkas button (only if has documents and not all verified)
-                $total = $row->dokumenUpload->count();
+                $total    = $row->dokumenUpload->count();
                 $verified = $row->dokumenUpload->where('status_verifikasi', 'Valid')->count();
-                
+
                 if ($total > 0 && $verified < $total) {
-                    $buttons[] = '<button type="button" class="btn btn-sm btn-success btn-verify-docs" 
+                    $buttons[] = '<button type="button" class="btn btn-sm btn-success btn-verify-docs"
                         data-pendaftaran-id="' . $row->encrypted_pendaftaran_id . '"
                         title="Verifikasi Berkas">
                         <i class="ti ti-file-check"></i> Verif Berkas
                     </button>';
                 }
-                
+
                 return implode(' ', $buttons);
             })
             ->rawColumns(['no_pendaftaran', 'nama', 'tanggal_daftar', 'status_upload', 'total_verif', 'action'])
@@ -92,12 +92,12 @@ class PendaftarController extends Controller
     public function loadBerkas(Request $request)
     {
         $pendaftaranId = decryptIdIfEncrypted($request->pendaftaran_id);
-        
+
         $pendaftaran = Pendaftaran::with(['dokumenUpload.jenisDokumen', 'camaba.user'])
             ->findOrFail($pendaftaranId);
-        
+
         $html = view('pages.pmb.pendaftar._modal_verifikasi', compact('pendaftaran'))->render();
-        
+
         return response()->json(['html' => $html]);
     }
 
@@ -110,7 +110,7 @@ class PendaftarController extends Controller
         $dokumen = DokumenUpload::findOrFail($request->dokumen_id);
         $dokumen->update([
             'status_verifikasi' => $request->status,
-            'verifikator_id' => auth()->id(),
+            'verifikator_id'    => auth()->id(),
         ]);
 
         // Check if all documents verified

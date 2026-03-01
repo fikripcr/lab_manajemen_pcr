@@ -232,9 +232,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-link" data-bs-toggle="collapse" data-bs-target="#ed-analisis-{{ $loop->index }}">
-                                            Lihat Analisis
-                                        </button>
+                                        <x-tabler.button type="button" class="btn-link btn-sm"
+                                            data-bs-toggle="collapse" data-bs-target="#ed-analisis-{{ $loop->index }}"
+                                            text="Lihat Analisis" />
                                         <div class="collapse" id="ed-analisis-{{ $loop->index }}">
                                             <div class="card card-body small bg-light">
                                                 {{ $ed->ed_analisis ?? '-' }}
@@ -312,9 +312,9 @@
                                     </td>
                                     <td>
                                         @if($ami->ami_hasil_temuan)
-                                            <button type="button" class="btn btn-sm btn-link" data-bs-toggle="collapse" data-bs-target="#ami-temuan-{{ $loop->index }}">
-                                                Lihat Temuan
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-link btn-sm"
+                                                data-bs-toggle="collapse" data-bs-target="#ami-temuan-{{ $loop->index }}"
+                                                text="Lihat Temuan" />
                                             <div class="collapse" id="ami-temuan-{{ $loop->index }}">
                                                 <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan }}</div>
                                             </div>
@@ -324,9 +324,9 @@
                                     </td>
                                     <td>
                                         @if($ami->ami_hasil_temuan_sebab)
-                                            <button type="button" class="btn btn-sm btn-link" data-bs-toggle="collapse" data-bs-target="#ami-sebab-{{ $loop->index }}">
-                                                Lihat Sebab
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-link btn-sm"
+                                                data-bs-toggle="collapse" data-bs-target="#ami-sebab-{{ $loop->index }}"
+                                                text="Lihat Sebab" />
                                             <div class="collapse" id="ami-sebab-{{ $loop->index }}">
                                                 <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan_sebab }}</div>
                                             </div>
@@ -336,9 +336,9 @@
                                     </td>
                                     <td>
                                         @if($ami->ami_hasil_temuan_akibat)
-                                            <button type="button" class="btn btn-sm btn-link" data-bs-toggle="collapse" data-bs-target="#ami-akibat-{{ $loop->index }}">
-                                                Lihat Akibat
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-link btn-sm"
+                                                data-bs-toggle="collapse" data-bs-target="#ami-akibat-{{ $loop->index }}"
+                                                text="Lihat Akibat" />
                                             <div class="collapse" id="ami-akibat-{{ $loop->index }}">
                                                 <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan_akibat }}</div>
                                             </div>
@@ -348,9 +348,9 @@
                                     </td>
                                     <td>
                                         @if($ami->ami_hasil_temuan_rekom)
-                                            <button type="button" class="btn btn-sm btn-link" data-bs-toggle="collapse" data-bs-target="#ami-rekom-{{ $loop->index }}">
-                                                Lihat Rekom
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-link btn-sm"
+                                                data-bs-toggle="collapse" data-bs-target="#ami-rekom-{{ $loop->index }}"
+                                                text="Lihat Rekom" />
                                             <div class="collapse" id="ami-rekom-{{ $loop->index }}">
                                                 <div class="card card-body small bg-light">{{ $ami->ami_hasil_temuan_rekom }}</div>
                                             </div>
@@ -416,9 +416,9 @@
                                     <td>{{ $pengend->pengend_target ?? '-' }}</td>
                                     <td>
                                         @if($pengend->pengend_analisis)
-                                            <button type="button" class="btn btn-sm btn-link" data-bs-toggle="collapse" data-bs-target="#pengend-analisis-{{ $loop->index }}">
-                                                Lihat Analisis
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-link btn-sm"
+                                                data-bs-toggle="collapse" data-bs-target="#pengend-analisis-{{ $loop->index }}"
+                                                text="Lihat Analisis" />
                                             <div class="collapse" id="pengend-analisis-{{ $loop->index }}">
                                                 <div class="card card-body small bg-light">{{ $pengend->pengend_analisis }}</div>
                                             </div>
@@ -428,9 +428,9 @@
                                     </td>
                                     <td>
                                         @if($pengend->pengend_penyesuaian)
-                                            <button type="button" class="btn btn-sm btn-link" data-bs-toggle="collapse" data-bs-target="#pengend-penyesuaian-{{ $loop->index }}">
-                                                Lihat Penyesuaian
-                                            </button>
+                                            <x-tabler.button type="button" class="btn-link btn-sm"
+                                                data-bs-toggle="collapse" data-bs-target="#pengend-penyesuaian-{{ $loop->index }}"
+                                                text="Lihat Penyesuaian" />
                                             <div class="collapse" id="pengend-penyesuaian-{{ $loop->index }}">
                                                 <div class="card card-body small bg-light">{{ $pengend->pengend_penyesuaian }}</div>
                                             </div>

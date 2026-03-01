@@ -25,7 +25,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
     // Mata Uji
     Route::prefix('mata-uji')->name('mata-uji.')->group(function () {
         Route::get('/', [MataUjiController::class, 'index'])->name('index');
-        Route::get('/paginate', [MataUjiController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [MataUjiController::class, 'data'])->name('data');
         Route::get('/create', [MataUjiController::class, 'create'])->name('create');
         Route::post('/', [MataUjiController::class, 'store'])->name('store');
         Route::get('/{mata_uji}', [MataUjiController::class, 'show'])->name('show');
@@ -46,7 +46,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
     // Paket Ujian
     Route::prefix('paket')->name('paket.')->group(function () {
         Route::get('/', [App\Http\Controllers\Cbt\PaketUjianController::class, 'index'])->name('index');
-        Route::get('/paginate', [App\Http\Controllers\Cbt\PaketUjianController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Cbt\PaketUjianController::class, 'data'])->name('data');
         Route::get('/create', [App\Http\Controllers\Cbt\PaketUjianController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\Cbt\PaketUjianController::class, 'store'])->name('store');
         Route::get('/{paket}', [App\Http\Controllers\Cbt\PaketUjianController::class, 'show'])->name('show');
@@ -61,7 +61,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('cbt')->name('cbt.')->group
     // Jadwal Ujian
     Route::prefix('jadwal')->name('jadwal.')->group(function () {
         Route::get('/', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'index'])->name('index');
-        Route::get('/paginate', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'data'])->name('data');
         Route::get('/create', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'store'])->name('store');
         Route::get('/{jadwal}/edit', [App\Http\Controllers\Cbt\JadwalUjianController::class, 'edit'])->name('edit');

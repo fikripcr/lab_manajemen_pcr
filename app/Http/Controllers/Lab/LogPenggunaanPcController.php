@@ -22,7 +22,7 @@ class LogPenggunaanPcController extends Controller
         return view('pages.lab.log-pc.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $logs = $this->logPenggunaanPcService->getFilteredQuery($request->all());
 

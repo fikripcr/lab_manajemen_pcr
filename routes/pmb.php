@@ -11,7 +11,7 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
     // Pendaftar List with Verification
     Route::prefix('pendaftar')->name('pendaftar.')->group(function () {
         Route::get('/', [App\Http\Controllers\Pmb\PendaftarController::class, 'index'])->name('index');
-        Route::get('/paginate', [App\Http\Controllers\Pmb\PendaftarController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\PendaftarController::class, 'data'])->name('data');
         Route::get('/load-berkas', [App\Http\Controllers\Pmb\PendaftarController::class, 'loadBerkas'])->name('load-berkas');
         Route::post('/verify-document', [App\Http\Controllers\Pmb\PendaftarController::class, 'verifyDocument'])->name('verify-document');
     });
@@ -19,7 +19,7 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
     // Pendaftaran Management
     Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
         Route::get('/', [App\Http\Controllers\Pmb\PendaftaranController::class, 'index'])->name('index');
-        Route::get('/paginate', [App\Http\Controllers\Pmb\PendaftaranController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\PendaftaranController::class, 'data'])->name('data');
 
         // Admin: update status (form + action)
         Route::get('/{pendaftaran}/update-status', [App\Http\Controllers\Pmb\PendaftaranController::class, 'updateStatusForm'])->name('update-status-form');
@@ -35,25 +35,25 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
 
     // Master Data: Periode
     Route::prefix('periode')->name('periode.')->group(function () {
-        Route::get('/paginate', [App\Http\Controllers\Pmb\PeriodeController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\PeriodeController::class, 'data'])->name('data');
     });
     Route::resource('periode', App\Http\Controllers\Pmb\PeriodeController::class)->parameters(['periode' => 'periode']);
 
     // Master Data: Jalur
     Route::prefix('jalur')->name('jalur.')->group(function () {
-        Route::get('/paginate', [App\Http\Controllers\Pmb\JalurController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\JalurController::class, 'data'])->name('data');
     });
     Route::resource('jalur', App\Http\Controllers\Pmb\JalurController::class)->parameters(['jalur' => 'jalur']);
 
     // Master Data: Prodi
     Route::prefix('prodi')->name('prodi.')->group(function () {
-        Route::get('/paginate', [App\Http\Controllers\Pmb\ProdiController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\ProdiController::class, 'data'])->name('data');
     });
     Route::resource('prodi', App\Http\Controllers\Pmb\ProdiController::class)->parameters(['prodi' => 'prodi']);
 
     // Master Data: Jenis Dokumen
     Route::prefix('jenis-dokumen')->name('jenis-dokumen.')->group(function () {
-        Route::get('/paginate', [App\Http\Controllers\Pmb\JenisDokumenController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\JenisDokumenController::class, 'data'])->name('data');
     });
     Route::resource('jenis-dokumen', App\Http\Controllers\Pmb\JenisDokumenController::class)->parameters(['jenis-dokumen' => 'jenis_dokumen']);
 
@@ -74,7 +74,7 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
 
         // Admin: List of Camaba
         Route::get('/', [App\Http\Controllers\Pmb\CamabaController::class, 'index'])->name('index');
-        Route::get('/paginate', [App\Http\Controllers\Pmb\CamabaController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\CamabaController::class, 'data'])->name('data');
         Route::get('/{camaba}', [App\Http\Controllers\Pmb\CamabaController::class, 'show'])->name('show');
         Route::get('/{camaba}/edit', [App\Http\Controllers\Pmb\CamabaController::class, 'edit'])->name('edit');
         Route::put('/{camaba}', [App\Http\Controllers\Pmb\CamabaController::class, 'update'])->name('update');
@@ -101,7 +101,7 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
     // Verification Flow (Admin)
     Route::prefix('verification')->name('verification.')->group(function () {
         Route::get('/payments', [App\Http\Controllers\Pmb\VerificationController::class, 'payments'])->name('payments');
-        Route::get('/payments/paginate', [App\Http\Controllers\Pmb\VerificationController::class, 'paginatePayments'])->name('paginate-payments');
+        Route::get('/payments/data', [App\Http\Controllers\Pmb\VerificationController::class, 'dataPayments'])->name('payments.data');
         Route::get('/payments/{pembayaran}/form', [App\Http\Controllers\Pmb\VerificationController::class, 'paymentForm'])->name('payment-form');
         Route::post('/payments/{pembayaran}/verify', [App\Http\Controllers\Pmb\VerificationController::class, 'verifyPayment'])->name('verify-payment');
     });
@@ -109,7 +109,7 @@ Route::middleware(['auth'])->prefix('pmb')->name('pmb.')->group(function () {
     // CBT Session Management
     Route::prefix('sesi-ujian')->name('sesi-ujian.')->group(function () {
         Route::get('/', [App\Http\Controllers\Pmb\SesiUjianController::class, 'index'])->name('index');
-        Route::get('/paginate', [App\Http\Controllers\Pmb\SesiUjianController::class, 'paginate'])->name('paginate');
+        Route::get('/data', [App\Http\Controllers\Pmb\SesiUjianController::class, 'data'])->name('data');
         Route::get('/create', [App\Http\Controllers\Pmb\SesiUjianController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\Pmb\SesiUjianController::class, 'store'])->name('store');
         Route::get('/{sesi}/edit', [App\Http\Controllers\Pmb\SesiUjianController::class, 'edit'])->name('edit');

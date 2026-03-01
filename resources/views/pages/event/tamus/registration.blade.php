@@ -47,9 +47,7 @@
                 </span>
                 <h3 class="fw-bold mb-1">Terima Kasih!</h3>
                 <p class="text-muted mb-4">Kehadiran Anda telah berhasil dicatat.<br>Selamat menikmati acara.</p>
-                <button class="btn btn-outline-primary px-5" onclick="window.location.reload()">
-                    <i class="ti ti-user-plus me-2"></i>Daftarkan Tamu Lain
-                </button>
+                <x-tabler.button type="button" class="btn-outline-primary px-5" onclick="window.location.reload()" icon="ti ti-user-plus" text="Daftarkan Tamu Lain" />
             </div>
 
             @else
@@ -81,33 +79,27 @@
 
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Instansi</label>
-                        <input type="text" name="instansi" class="form-control"
-                            placeholder="Asal instansi" value="{{ old('instansi') }}">
+                        <x-tabler.form-input name="instansi" label="Instansi" placeholder="Asal instansi" value="{{ old('instansi') }}" />
                     </div>
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Jabatan</label>
-                        <input type="text" name="jabatan" class="form-control"
-                            placeholder="Jabatan" value="{{ old('jabatan') }}">
+                        <x-tabler.form-input name="jabatan" label="Jabatan" placeholder="Jabatan" value="{{ old('jabatan') }}" />
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">No. HP / WhatsApp</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="ti ti-device-mobile"></i></span>
-                        <input type="text" name="kontak" class="form-control"
-                            placeholder="08xxxxxxxxxx" value="{{ old('kontak') }}">
+                        <x-tabler.form-input name="kontak" label="No. HP / WhatsApp" placeholder="08xxxxxxxxxx" value="{{ old('kontak') }}" />
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold" id="btn-submit">
+                <x-tabler.button type="submit" class="btn-primary btn-lg w-100 fw-semibold" id="btn-submit">
                     <i class="ti ti-send me-2" id="btn-icon"></i>
                     <span id="btn-text">Daftar Sekarang</span>
                     <span id="btn-spinner" class="d-none">
                         <span class="spinner-border spinner-border-sm me-1"></span>Menyimpan...
                     </span>
-                </button>
+                </x-tabler.button>
             </form>
             @endif
 

@@ -18,7 +18,7 @@ class PegawaiController extends Controller
         return view('pages.pemutu.pegawai.index');
     }
 
-    public function paginate()
+    public function data()
     {
         $query = $this->pegawaiService->getFilteredQuery();
 

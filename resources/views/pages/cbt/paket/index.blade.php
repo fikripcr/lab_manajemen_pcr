@@ -22,7 +22,7 @@
                         ['data' => 'pembuat.name', 'name' => 'pembuat.name', 'title' => 'Dibuat Oleh', 'class' => 'text-center'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('cbt.paket.paginate')"
+                    :url="route('cbt.paket.data')"
                 />
             </div>
         </div>

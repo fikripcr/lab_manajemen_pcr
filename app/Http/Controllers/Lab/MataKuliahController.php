@@ -24,7 +24,7 @@ class MataKuliahController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $mataKuliahs = $this->mataKuliahService->getFilteredQuery($request->all());
 

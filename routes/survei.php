@@ -18,7 +18,7 @@ Route::prefix('survei')->name('survei.')->group(function () {
 Route::middleware(['auth'])->prefix('survei')->name('survei.')->group(function () {
     // Survei CRUD
     Route::get('/', [SurveiController::class, 'index'])->name('index');
-    Route::get('/paginate', [SurveiController::class, 'paginate'])->name('paginate');
+    Route::get('/data', [SurveiController::class, 'data'])->name('data');
     Route::get('/create', [SurveiController::class, 'create'])->name('create');
     Route::post('/', [SurveiController::class, 'store'])->name('store');
     Route::get('/{survei}/edit', [SurveiController::class, 'edit'])->name('edit');

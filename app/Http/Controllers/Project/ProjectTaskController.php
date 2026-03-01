@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Project;
 
 use App\Http\Controllers\Controller;
@@ -32,7 +31,7 @@ class ProjectTaskController extends Controller
     /**
      * Display a listing of tasks for DataTables
      */
-    public function paginate(Project $project)
+    public function data(Project $project)
     {
         $query = $this->taskService->getPaginatedTasks($project->project_id);
 
@@ -50,7 +49,7 @@ class ProjectTaskController extends Controller
                 return '<span class="badge ' . $item->priority_badge_class . '">' . ucfirst($item->priority) . '</span>';
             })
             ->addColumn('assignee', function ($item) {
-                if (!$item->assignee) {
+                if (! $item->assignee) {
                     return '<span class="text-muted">Unassigned</span>';
                 }
                 return view('components.project.assignee-avatar', [
@@ -76,7 +75,7 @@ class ProjectTaskController extends Controller
      */
     public function store(ProjectTaskRequest $request, Project $project)
     {
-        $data = $request->validated();
+        $data               = $request->validated();
         $data['project_id'] = $project->project_id;
         $this->taskService->createTask($data);
 
@@ -127,15 +126,15 @@ class ProjectTaskController extends Controller
      */
     public function editModal(Request $request, Project $project, ?ProjectTask $task = null)
     {
-        $users = User::all();
-        $phases = $project->phases;
+        $users   = User::all();
+        $phases  = $project->phases;
         $sprints = $project->sprints;
-        
+
         // Create new instance if not editing
-        if (!$task) {
-            $task = new ProjectTask();
+        if (! $task) {
+            $task             = new ProjectTask();
             $task->project_id = $project->project_id;
-            
+
             // Set default status from query parameter if provided
             if ($request->has('status')) {
                 $task->status = $request->query('status');
@@ -151,12 +150,12 @@ class ProjectTaskController extends Controller
     public function kanbanData(Project $project)
     {
         $tasks = $this->taskService->getTasksGroupedByStatus($project->project_id);
-        
+
         // Reformat tasks for jKanban
         $formattedTasks = [
-            'todo' => collect($tasks['todo'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
+            'todo'        => collect($tasks['todo'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
             'in_progress' => collect($tasks['in_progress'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
-            'done' => collect($tasks['done'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
+            'done'        => collect($tasks['done'] ?? [])->map(fn($t) => $this->formatForKanban($t))->toArray(),
         ];
 
         return jsonSuccess('Data retrieved', null, $formattedTasks);
@@ -168,17 +167,17 @@ class ProjectTaskController extends Controller
     protected function formatForKanban($task)
     {
         $borderColor = match ($task->priority) {
-            'low' => 'secondary',
+            'low'    => 'secondary',
             'medium' => 'blue',
-            'high' => 'orange',
+            'high'   => 'orange',
             'urgent' => 'red',
-            default => 'transparent'
+            default  => 'transparent'
         };
 
         return [
-            'id' => $task->encrypted_project_task_id,
+            'id'    => $task->encrypted_project_task_id,
             'title' => view('components.project.kanban-task-card', ['task' => $task])->render(),
-            'class' => ['kanban-task-' . $task->encrypted_project_task_id, 'border-start', 'border-start-wide', 'border-' . $borderColor]
+            'class' => ['kanban-task-' . $task->encrypted_project_task_id, 'border-start', 'border-start-wide', 'border-' . $borderColor],
         ];
     }
 }

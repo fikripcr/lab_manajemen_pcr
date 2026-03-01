@@ -21,7 +21,7 @@ class MahasiswaController extends Controller
         return view('pages.lab.mahasiswa.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->mahasiswaService->getFilteredQuery($request->all());
 
@@ -42,15 +42,15 @@ class MahasiswaController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('lab.mahasiswa.edit', $row->encrypted_mahasiswa_id),
-                    'editModal' => true,
-                    'viewUrl'   => route('lab.mahasiswa.show', $row->encrypted_mahasiswa_id),
-                    'deleteUrl' => route('lab.mahasiswa.destroy', $row->encrypted_mahasiswa_id),
-                    'extraActions' => !$row->user_id ? [
+                    'editUrl'      => route('lab.mahasiswa.edit', $row->encrypted_mahasiswa_id),
+                    'editModal'    => true,
+                    'viewUrl'      => route('lab.mahasiswa.show', $row->encrypted_mahasiswa_id),
+                    'deleteUrl'    => route('lab.mahasiswa.destroy', $row->encrypted_mahasiswa_id),
+                    'extraActions' => ! $row->user_id ? [
                         [
-                            'icon' => 'ti ti-user-plus',
-                            'text' => 'Generate Data User',
-                            'class' => 'dropdown-item generate-user',
+                            'icon'    => 'ti ti-user-plus',
+                            'text'    => 'Generate Data User',
+                            'class'   => 'dropdown-item generate-user',
                             'dataUrl' => route('lab.mahasiswa.generate-user', $row->encrypted_mahasiswa_id),
                         ],
                     ] : [],

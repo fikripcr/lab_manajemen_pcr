@@ -1,9 +1,5 @@
 @if(request()->ajax() || request()->has('ajax'))
-    <div class="modal-header">
-        <h5 class="modal-title">{{ $lab->name }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
+    <x-tabler.form-modal title="{{ $lab->name }}" method="none">
         <div class="row g-2 mb-3">
             <div class="col-6 col-sm-3">
                 <div class="card card-sm">
@@ -74,11 +70,12 @@
                 </div>
             </div>
         @endif
-    </div>
-    <div class="modal-footer">
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-        <x-tabler.button :href="route('lab.labs.show', $lab->encrypted_lab_id)" text="Detail Lengkap" />
-    </div>
+        
+        <x-slot:footer>
+            <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+            <x-tabler.button :href="route('lab.labs.show', $lab->encrypted_lab_id)" text="Detail Lengkap" class="ms-auto" />
+        </x-slot:footer>
+    </x-tabler.form-modal>
 @else
     @extends('layouts.tabler.app')
 

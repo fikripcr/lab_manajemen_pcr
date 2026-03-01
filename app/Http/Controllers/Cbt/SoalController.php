@@ -20,7 +20,7 @@ class SoalController extends Controller
         return view('pages.cbt.soal.index', compact('mataUji'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->SoalService->getFilteredQuery($request->all());
 

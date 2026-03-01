@@ -15,15 +15,20 @@ class RolePermissionProjectSeeder extends Seeder
 
         $permissionData = [
             ['name' => 'project.dashboard.view', 'category' => 'Manajemen Proyek', 'sub_category' => 'Dashboard', 'description' => 'Melihat statistik progres proyek'],
+            ['name' => 'project.dashboard.data', 'category' => 'Manajemen Proyek', 'sub_category' => 'Dashboard', 'description' => 'Mengambil data dashboard (DataTables)'],
+
             ['name' => 'project.board.view', 'category' => 'Manajemen Proyek', 'sub_category' => 'Board', 'description' => 'Melihat papan tugas proyek'],
+            ['name' => 'project.board.data', 'category' => 'Manajemen Proyek', 'sub_category' => 'Board', 'description' => 'Mengambil data board (DataTables)'],
             ['name' => 'project.board.update', 'category' => 'Manajemen Proyek', 'sub_category' => 'Board', 'description' => 'Mengubah konfigurasi papan proyek'],
 
             ['name' => 'project.task.view', 'category' => 'Manajemen Proyek', 'sub_category' => 'Task', 'description' => 'Melihat detail tugas proyek'],
+            ['name' => 'project.task.data', 'category' => 'Manajemen Proyek', 'sub_category' => 'Task', 'description' => 'Mengambil data tugas (DataTables)'],
             ['name' => 'project.task.create', 'category' => 'Manajemen Proyek', 'sub_category' => 'Task', 'description' => 'Menambah tugas baru'],
             ['name' => 'project.task.update', 'category' => 'Manajemen Proyek', 'sub_category' => 'Task', 'description' => 'Mengubah status atau detail tugas'],
             ['name' => 'project.task.delete', 'category' => 'Manajemen Proyek', 'sub_category' => 'Task', 'description' => 'Menghapus tugas'],
 
             ['name' => 'project.repository.view', 'category' => 'Manajemen Proyek', 'sub_category' => 'Repository', 'description' => 'Melihat daftar aset proyek'],
+            ['name' => 'project.repository.data', 'category' => 'Manajemen Proyek', 'sub_category' => 'Repository', 'description' => 'Mengambil data repository (DataTables)'],
             ['name' => 'project.repository.export', 'category' => 'Manajemen Proyek', 'sub_category' => 'Repository', 'description' => 'Mengekspor dokumentasi proyek'],
         ];
 

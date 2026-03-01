@@ -18,50 +18,55 @@ class RolePermissionSysSeeder extends Seeder
 
         // System Permissions (Generalized)
         $permissionData = [
+            // Dashboard
             ['name' => 'sys.dashboard.view', 'category' => 'System Management', 'sub_category' => 'Dashboard', 'description' => 'Melihat ringkasan statistik sistem pada dashboard'],
-            ['name' => 'sys.error-log.view', 'category' => 'System Management', 'sub_category' => 'Error Log', 'description' => 'Melihat daftar catatan kesalahan (error) aplikasi'],
-            ['name' => 'sys.error-log.create', 'category' => 'System Management', 'sub_category' => 'Error Log', 'description' => 'Menambah catatan error baru secara manual'],
-            ['name' => 'sys.error-log.update', 'category' => 'System Management', 'sub_category' => 'Error Log', 'description' => 'Mengubah detail catatan error'],
-            ['name' => 'sys.error-log.delete', 'category' => 'System Management', 'sub_category' => 'Error Log', 'description' => 'Menghapus catatan error dari sistem'],
 
-            ['name' => 'sys.activity-log.view', 'category' => 'System Management', 'sub_category' => 'Activity Log', 'description' => 'Melihat log aktivitas seluruh pengguna'],
-            ['name' => 'sys.activity-log.create', 'category' => 'System Management', 'sub_category' => 'Activity Log', 'description' => 'Menambah entri log aktivitas'],
-            ['name' => 'sys.activity-log.update', 'category' => 'System Management', 'sub_category' => 'Activity Log', 'description' => 'Mengubah entri log aktivitas'],
+            // Users
+            ['name' => 'sys.users.view', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Melihat daftar pengguna'],
+            ['name' => 'sys.users.data', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Mengambil data pengguna (DataTables)'],
+            ['name' => 'sys.users.create', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Menambah pengguna baru'],
+            ['name' => 'sys.users.update', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Mengubah data pengguna'],
+            ['name' => 'sys.users.delete', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Menghapus pengguna'],
+            ['name' => 'sys.users.export', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Mengekspor data pengguna'],
+            ['name' => 'sys.users.import', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Mengimpor data pengguna'],
 
-            ['name' => 'sys.backup.view', 'category' => 'System Management', 'sub_category' => 'Backup', 'description' => 'Melihat daftar cadangan data sistem'],
-            ['name' => 'sys.backup.create', 'category' => 'System Management', 'sub_category' => 'Backup', 'description' => 'Membuat cadangan data baru'],
-            ['name' => 'sys.backup.update', 'category' => 'System Management', 'sub_category' => 'Backup', 'description' => 'Mengubah konfigurasi cadangan data'],
-            ['name' => 'sys.backup.delete', 'category' => 'System Management', 'sub_category' => 'Backup', 'description' => 'Menghapus file cadangan data'],
+            // Roles & Permissions
+            ['name' => 'sys.roles.view', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Melihat daftar peran (role)'],
+            ['name' => 'sys.roles.create', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Menambah peran baru'],
+            ['name' => 'sys.roles.update', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Mengubah detail peran'],
+            ['name' => 'sys.roles.delete', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Menghapus peran'],
+            ['name' => 'sys.permissions.view', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Melihat daftar perizinan (permission)'],
+            ['name' => 'sys.permissions.data', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Mengambil data perizinan (DataTables)'],
+            ['name' => 'sys.permissions.create', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Menambah perizinan baru'],
+            ['name' => 'sys.permissions.update', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Mengubah detail perizinan'],
+            ['name' => 'sys.permissions.delete', 'category' => 'System Management', 'sub_category' => 'Role & Hak Akses', 'description' => 'Menghapus perizinan'],
 
-            ['name' => 'sys.app-config.view', 'category' => 'System Management', 'sub_category' => 'Konfigurasi', 'description' => 'Melihat pengaturan global aplikasi'],
-            ['name' => 'sys.app-config.update', 'category' => 'System Management', 'sub_category' => 'Konfigurasi', 'description' => 'Mengubah pengaturan global aplikasi'],
+            // Logs
+            ['name' => 'sys.error-log.view', 'category' => 'System Management', 'sub_category' => 'Logs', 'description' => 'Melihat daftar catatan kesalahan'],
+            ['name' => 'sys.error-log.data', 'category' => 'System Management', 'sub_category' => 'Logs', 'description' => 'Mengambil data error log (DataTables)'],
+            ['name' => 'sys.error-log.delete', 'category' => 'System Management', 'sub_category' => 'Logs', 'description' => 'Menghapus catatan kesalahan'],
+            ['name' => 'sys.activity-log.view', 'category' => 'System Management', 'sub_category' => 'Logs', 'description' => 'Melihat log aktivitas'],
+            ['name' => 'sys.activity-log.data', 'category' => 'System Management', 'sub_category' => 'Logs', 'description' => 'Mengambil data activity log (DataTables)'],
 
-            ['name' => 'sys.server-monitor.view', 'category' => 'System Management', 'sub_category' => 'Monitor', 'description' => 'Melihat status kesehatan server'],
+            // Config & Utilities
+            ['name' => 'sys.app-config.view', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Melihat pengaturan global'],
+            ['name' => 'sys.app-config.update', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Mengubah pengaturan global'],
+            ['name' => 'sys.backup.view', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Melihat daftar cadangan data'],
+            ['name' => 'sys.backup.create', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Membuat cadangan data'],
+            ['name' => 'sys.backup.delete', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Menghapus file cadangan'],
+            ['name' => 'sys.notifications.view', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Melihat daftar notifikasi'],
+            ['name' => 'sys.notifications.data', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Mengambil data notifikasi (DataTables)'],
+            ['name' => 'sys.notifications.create', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Mengirim notifikasi'],
+            ['name' => 'sys.documentation.view', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Melihat panduan penggunaan'],
 
-            ['name' => 'sys.notifications.view', 'category' => 'System Management', 'sub_category' => 'Notifikasi', 'description' => 'Melihat daftar notifikasi sistem'],
-            ['name' => 'sys.notifications.create', 'category' => 'System Management', 'sub_category' => 'Notifikasi', 'description' => 'Mengirim notifikasi ke pengguna'],
-            ['name' => 'sys.notifications.update', 'category' => 'System Management', 'sub_category' => 'Notifikasi', 'description' => 'Mengubah pesan notifikasi'],
-            ['name' => 'sys.notifications.delete', 'category' => 'System Management', 'sub_category' => 'Notifikasi', 'description' => 'Menghapus notifikasi'],
-
-            ['name' => 'sys.documentation.view', 'category' => 'System Management', 'sub_category' => 'Dokumentasi', 'description' => 'Melihat panduan penggunaan sistem'],
-
-            ['name' => 'sys.permissions.view', 'category' => 'System Management', 'sub_category' => 'Hak Akses', 'description' => 'Melihat daftar permission sistem'],
-            ['name' => 'sys.permissions.create', 'category' => 'System Management', 'sub_category' => 'Hak Akses', 'description' => 'Menambah permission baru'],
-            ['name' => 'sys.permissions.update', 'category' => 'System Management', 'sub_category' => 'Hak Akses', 'description' => 'Mengubah detail permission'],
-            ['name' => 'sys.permissions.delete', 'category' => 'System Management', 'sub_category' => 'Hak Akses', 'description' => 'Menghapus permission'],
-
-            ['name' => 'sys.roles.view', 'category' => 'System Management', 'sub_category' => 'Role', 'description' => 'Melihat daftar peran (role) pengguna'],
-            ['name' => 'sys.roles.create', 'category' => 'System Management', 'sub_category' => 'Role', 'description' => 'Menambah role baru'],
-            ['name' => 'sys.roles.update', 'category' => 'System Management', 'sub_category' => 'Role', 'description' => 'Mengubah detail role'],
-            ['name' => 'sys.roles.delete', 'category' => 'System Management', 'sub_category' => 'Role', 'description' => 'Menghapus role'],
-
-            ['name' => 'sys.sys.test.email', 'category' => 'System Management', 'sub_category' => 'Testing', 'description' => 'Mengirim email uji coba'],
-            ['name' => 'sys.sys.test.notification', 'category' => 'System Management', 'sub_category' => 'Testing', 'description' => 'Mengirim notifikasi uji coba'],
-            ['name' => 'sys.sys.test.pdf-export', 'category' => 'System Management', 'sub_category' => 'Testing', 'description' => 'Menguji ekspor PDF'],
+            // Testing
+            ['name' => 'sys.test.email', 'category' => 'System Management', 'sub_category' => 'Testing', 'description' => 'Mengirim email uji coba'],
+            ['name' => 'sys.test.notification', 'category' => 'System Management', 'sub_category' => 'Testing', 'description' => 'Mengirim notifikasi uji coba'],
+            ['name' => 'sys.test.pdf-export', 'category' => 'System Management', 'sub_category' => 'Testing', 'description' => 'Menguji ekspor PDF'],
 
             // Impersonation
-            ['name' => 'impersonate.login-as', 'category' => 'System Management', 'sub_category' => 'User Impersonation', 'description' => 'Login sebagai pengguna lain (Impersonasi)'],
-            ['name' => 'impersonate.switch-back', 'category' => 'System Management', 'sub_category' => 'User Impersonation', 'description' => 'Kembali ke akun administrator asal'],
+            ['name' => 'sys.users.impersonate', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Login sebagai pengguna lain'],
+            ['name' => 'sys.users.reset-password', 'category' => 'System Management', 'sub_category' => 'User', 'description' => 'Mereset password pengguna'],
         ];
 
         foreach ($permissionData as $permission) {

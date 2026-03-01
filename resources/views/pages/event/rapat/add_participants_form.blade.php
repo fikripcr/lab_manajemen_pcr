@@ -46,9 +46,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary mt-1" id="btn-add-luar">
-                <i class="ti ti-plus me-1"></i> Tambah Baris
-            </button>
+            <x-tabler.button type="button" id="btn-add-luar" class="btn-outline-secondary btn-sm mt-1" icon="ti ti-plus" text="Tambah Baris" />
         </div>
     </div>
 
@@ -64,7 +62,7 @@
                 <div class="col"><input type="email" name="peserta_luar[${idx}][email]" class="form-control" placeholder="Email"></div>
                 <div class="col"><input type="text" name="peserta_luar[${idx}][jabatan]" class="form-control" placeholder="Jabatan/Peran"></div>
                 <div class="col-auto d-flex align-items-center">
-                    <button type="button" class="btn btn-sm btn-ghost-danger btn-remove-luar" title="Hapus baris"><i class="ti ti-x"></i></button>
+                    <x-tabler.button type="button" class="btn-ghost-danger btn-remove-luar" title="Hapus baris" iconOnly="true" icon="ti ti-x" />
                 </div>`;
             list.appendChild(row);
             row.querySelector('.btn-remove-luar').addEventListener('click', () => row.remove());

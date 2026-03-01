@@ -18,7 +18,7 @@
                         ['data' => 'bank_asal', 'name' => 'bank_asal', 'title' => 'Bank'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('pmb.verification.paginate-payments')"
+                    :url="route('pmb.verification.payments.data')"
                 />
             </div>
         </div>

@@ -34,23 +34,17 @@
                     </div>
                     <div class="card-actions">
                         <div class="dropdown">
-                            <button type="button" class="btn btn-sm px-2 py-1 btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ti ti-settings me-1"></i> Set Tim
-                            </button>
+                            <x-tabler.button type="button" class="btn-sm px-2 py-1 btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-settings" text="Set Tim" />
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <button type="button" class="dropdown-item ajax-modal-btn"
-                                            data-url="{{ route('pemutu.tim-mutu.edit-auditee', [$periode->encrypted_periodespmi_id, $unitId]) }}"
-                                            data-modal-title="Set Tim Auditee">
+                                    <x-tabler.button type="button" class="dropdown-item ajax-modal-btn" data-url="{{ route('pemutu.tim-mutu.edit-auditee', [$periode->encrypted_periodespmi_id, $unitId]) }}" data-modal-title="Set Tim Auditee">
                                         <i class="ti ti-users me-2 text-warning"></i> Set Tim Auditee
-                                    </button>
+                                    </x-tabler.button>
                                 </li>
                                 <li>
-                                    <button type="button" class="dropdown-item ajax-modal-btn"
-                                            data-url="{{ route('pemutu.tim-mutu.edit-auditor', [$periode->encrypted_periodespmi_id, $unitId]) }}"
-                                            data-modal-title="Set Tim Auditor">
+                                    <x-tabler.button type="button" class="dropdown-item ajax-modal-btn" data-url="{{ route('pemutu.tim-mutu.edit-auditor', [$periode->encrypted_periodespmi_id, $unitId]) }}" data-modal-title="Set Tim Auditor">
                                         <i class="ti ti-crown me-2 text-primary"></i> Set Tim Auditor
-                                    </button>
+                                    </x-tabler.button>
                                 </li>
                             </ul>
                         </div>

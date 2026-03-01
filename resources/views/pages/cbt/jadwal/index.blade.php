@@ -21,7 +21,7 @@
                     ['data' => 'peserta', 'name' => 'peserta', 'title' => 'Peserta', 'orderable' => false, 'class' => 'text-center'],
                     ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'width' => '150px', 'class' => 'text-center']
                 ]"
-                :url="route('cbt.jadwal.paginate')"
+                :url="route('cbt.jadwal.data')"
             />
         </div>
     </div>

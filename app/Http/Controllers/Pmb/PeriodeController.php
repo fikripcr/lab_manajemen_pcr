@@ -16,7 +16,7 @@ class PeriodeController extends Controller
         return view('pages.pmb.periode.index');
     }
 
-    public function paginate(\Illuminate\Http\Request $request)
+    public function data(\Illuminate\Http\Request $request)
     {
         return datatables()->of($this->periodeService->getPaginateData($request->all()))
             ->addIndexColumn()

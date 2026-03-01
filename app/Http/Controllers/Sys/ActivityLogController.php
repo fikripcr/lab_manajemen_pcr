@@ -25,7 +25,7 @@ class ActivityLogController extends Controller
     /**
      * Process datatables ajax request for activity logs.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         // Build filters from request
         $filters = $this->activityLogService->buildFiltersFromRequest($request);
@@ -82,7 +82,7 @@ class ActivityLogController extends Controller
     public function show($id)
     {
         $activity = $this->activityLogService->getActivityLogById($id);
-        
+
         if (request()->ajax()) {
             return view('pages.sys.activity-log.ajax.detail', compact('activity'));
         }

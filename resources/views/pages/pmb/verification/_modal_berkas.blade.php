@@ -66,10 +66,8 @@
             </div>
         </div>
         <div class="mt-3 text-end">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            <button type="submit" class="btn btn-primary btn-submit-verifikasi">
-                <i class="ti ti-check"></i> Simpan Verifikasi
-            </button>
+            <x-tabler.button type="button" class="btn-secondary" data-bs-dismiss="modal" text="Tutup" />
+            <x-tabler.button type="submit" class="btn-primary btn-submit-verifikasi" icon="ti ti-check" text="Simpan Verifikasi" />
         </div>
     </div>
     @endif

@@ -46,66 +46,67 @@ class PegawaiController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $query = $this->pegawaiService->getFilteredQuery($request);
-            return DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    return view('components.tabler.datatables-actions', [
-                        'viewUrl'    => route('hr.pegawai.show', $row->hashid),
-                        'editUrl'    => route('hr.pegawai.edit', $row->hashid),
-                        'deleteUrl'  => route('hr.pegawai.destroy', $row->hashid),
-                        'deleteName' => $row->nama,
-                        'extraActions' => !$row->user_id ? [
-                            [
-                                'icon' => 'ti ti-user-plus',
-                                'text' => 'Generate Data User',
-                                'class' => 'dropdown-item generate-user',
-                                'dataUrl' => route('hr.pegawai.generate-user', $row->hashid),
-                            ],
-                        ] : [],
-                    ])->render();
-                })
-                ->addColumn('nama_lengkap', function ($row) {
-                    return $row->nama;
-                })
-                ->addColumn('status_kepegawaian', function ($row) {
-                    return $row->latestStatusPegawai?->statusPegawai?->nama ?? '-';
-                })
-                ->addColumn('email', function ($row) {
-                    return $row->latestDataDiri?->email ?? '-';
-                })
-                ->addColumn('posisi', function ($row) {
-                    return $row->latestDataDiri?->posisi?->name ?? '-';
-                })
-                ->addColumn('unit', function ($row) {
-                    return $row->latestDataDiri?->departemen?->name ?? '-';
-                })
-            // Prodi column removed as it is redundant/broken
-                ->addColumn('penyelia', function ($row) {
-                    $atasan1 = $row->atasanSatu?->nama ?? null;
-                    $atasan2 = $row->atasanDua?->nama ?? null;
-
-                    if (! $atasan1 && ! $atasan2) {
-                        return '-';
-                    }
-
-                    $html = '';
-                    if ($atasan1) {
-                        $html .= '<div><small class="text-muted">1:</small> ' . $atasan1 . '</div>';
-                    }
-
-                    if ($atasan2) {
-                        $html .= '<div><small class="text-muted">2:</small> ' . $atasan2 . '</div>';
-                    }
-
-                    return $html;
-                })
-                ->rawColumns(['action', 'penyelia'])
-                ->make(true);
-        }
-
         return view('pages.hr.data-diri.index');
+    }
+
+    public function data(Request $request)
+    {
+        $query = $this->pegawaiService->getFilteredQuery($request);
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                return view('components.tabler.datatables-actions', [
+                    'viewUrl'      => route('hr.pegawai.show', $row->hashid),
+                    'editUrl'      => route('hr.pegawai.edit', $row->hashid),
+                    'deleteUrl'    => route('hr.pegawai.destroy', $row->hashid),
+                    'deleteName'   => $row->nama,
+                    'extraActions' => ! $row->user_id ? [
+                        [
+                            'icon'    => 'ti ti-user-plus',
+                            'text'    => 'Generate Data User',
+                            'class'   => 'dropdown-item generate-user',
+                            'dataUrl' => route('hr.pegawai.generate-user', $row->hashid),
+                        ],
+                    ] : [],
+                ])->render();
+            })
+            ->addColumn('nama_lengkap', function ($row) {
+                return $row->nama;
+            })
+            ->addColumn('status_kepegawaian', function ($row) {
+                return $row->latestStatusPegawai?->statusPegawai?->nama ?? '-';
+            })
+            ->addColumn('email', function ($row) {
+                return $row->latestDataDiri?->email ?? '-';
+            })
+            ->addColumn('posisi', function ($row) {
+                return $row->latestDataDiri?->posisi?->name ?? '-';
+            })
+            ->addColumn('unit', function ($row) {
+                return $row->latestDataDiri?->departemen?->name ?? '-';
+            })
+        // Prodi column removed as it is redundant/broken
+            ->addColumn('penyelia', function ($row) {
+                $atasan1 = $row->atasanSatu?->nama ?? null;
+                $atasan2 = $row->atasanDua?->nama ?? null;
+
+                if (! $atasan1 && ! $atasan2) {
+                    return '-';
+                }
+
+                $html = '';
+                if ($atasan1) {
+                    $html .= '<div><small class="text-muted">1:</small> ' . $atasan1 . '</div>';
+                }
+
+                if ($atasan2) {
+                    $html .= '<div><small class="text-muted">2:</small> ' . $atasan2 . '</div>';
+                }
+
+                return $html;
+            })
+            ->rawColumns(['action', 'penyelia'])
+            ->make(true);
     }
 
     /**
@@ -213,7 +214,7 @@ class PegawaiController extends Controller
         // Get email from latest data diri
         $email = $pegawai->latestDataDiri?->email;
 
-        if (!$email) {
+        if (! $email) {
             return jsonError('Email tidak ditemukan pada data diri pegawai.');
         }
 
@@ -253,7 +254,7 @@ class PegawaiController extends Controller
     private function determineRoleFromPosisi($posisi)
     {
         $posisi = strtolower($posisi ?? '');
-        
+
         if (str_contains($posisi, 'dosen')) {
             return 'dosen';
         } elseif (str_contains($posisi, 'teknisi')) {
@@ -261,7 +262,7 @@ class PegawaiController extends Controller
         } elseif (str_contains($posisi, 'kepala lab')) {
             return 'penanggung_jawab_lab';
         }
-        
+
         return 'admin'; // Default role
     }
 }

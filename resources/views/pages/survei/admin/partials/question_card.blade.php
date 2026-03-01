@@ -17,13 +17,9 @@
                             </span>
                         </div>
                         <div class="d-flex align-items-center gap-1">
-                            <button type="button" class="btn btn-sm btn-icon btn-ghost-primary border-0" title="Edit"
-                                    onclick="$('.static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').removeClass('d-none');">
-                                <i class="ti ti-pencil icon"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-icon btn-ghost-danger border-0" title="Hapus" onclick="deletePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')">
-                                <i class="ti ti-trash icon"></i>
-                            </button>
+                            <x-tabler.button type="button" class="btn-icon btn-ghost-primary border-0" title="Edit"
+                                onclick="$('.static-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').addClass('d-none'); $('.edit-view-{{ $pertanyaan->encrypted_pertanyaan_id }}').removeClass('d-none');" iconOnly="true" icon="ti ti-pencil" />
+                            <x-tabler.button type="button" class="btn-icon btn-ghost-danger border-0" title="Hapus" onclick="deletePertanyaan('{{ $pertanyaan->encrypted_pertanyaan_id }}')" iconOnly="true" icon="ti ti-trash" />
                         </div>
 
                     </div>
@@ -117,10 +113,8 @@
                                         </select>
                                     @endif
 
-                                    <button type="button" class="btn btn-sm btn-icon btn-ghost-danger" title="Hapus Opsi"
-                                            onclick="$(this).closest('.opsi-item').remove(); debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}');">
-                                        <i class="ti ti-x icon"></i>
-                                    </button>
+                                    <x-tabler.button type="button" class="btn-icon btn-ghost-danger" title="Hapus Opsi"
+                                        onclick="$(this).closest('.opsi-item').remove(); debounceSave('{{ $pertanyaan->encrypted_pertanyaan_id }}');" iconOnly="true" icon="ti ti-x" />
                                 </div>
                             @endforeach
                         </div>

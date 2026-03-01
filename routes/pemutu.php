@@ -12,6 +12,7 @@ use App\Http\Controllers\Pemutu\PegawaiController;
 use App\Http\Controllers\Pemutu\PeriodeKpiController;
 use App\Http\Controllers\Pemutu\PeriodeSpmiController;
 use App\Http\Controllers\Pemutu\RenopController;
+use App\Http\Controllers\Pemutu\StandarController;
 use App\Http\Controllers\Pemutu\TimMutuController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,11 +32,11 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::resource('label-types', LabelTypeController::class)->except(['index', 'show']);
 
     // Labels
-    Route::get('api/labels', [LabelController::class, 'paginate'])->name('labels.data');
+    Route::get('api/labels', [LabelController::class, 'data'])->name('labels.data');
     Route::resource('labels', LabelController::class);
 
     // Pegawai
-    Route::get('api/pegawai', [PegawaiController::class, 'paginate'])->name('pegawai.data');
+    Route::get('api/pegawai', [PegawaiController::class, 'data'])->name('pegawai.data');
     Route::match(['get', 'post'], 'pegawai/import', [PegawaiController::class, 'import'])->name('pegawai.import');
     Route::resource('pegawai', PegawaiController::class);
 
@@ -55,7 +56,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Route::resource('dok-subs', DokSubController::class);
 
     // Indikators
-    Route::get('api/indikators', [IndikatorController::class, 'paginate'])->name('indikators.data');
+    Route::get('api/indikators', [IndikatorController::class, 'data'])->name('indikators.data');
     Route::resource('indikators', IndikatorController::class);
 
     // Indikator Summary (NEW - with separate routes for Standar and Performa)
@@ -74,7 +75,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('indikator-summary/{indikator}', [IndikatorSummaryController::class, 'detail'])->name('indikator-summary.detail');
 
     // Standar (Indikator Standar)
-    Route::get('api/standar', [App\Http\Controllers\Pemutu\StandarController::class, 'paginate'])->name('standar.data');
+    Route::get('api/standar', [StandarController::class, 'data'])->name('standar.data');
     // ...
     Route::get('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'assign'])->name('standar.assign');
     Route::post('standar/{id}/assign', [App\Http\Controllers\Pemutu\StandarController::class, 'storeAssignment'])->name('standar.assign.store');
@@ -87,7 +88,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::delete('dokumens/approval/{approval}', [DokumenApprovalController::class, 'destroy'])->name('dokumens.approval.destroy');
 
     // Period SPMI (PEPP Cycle)
-    Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'paginate'])->name('periode-spmis.data');
+    Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'data'])->name('periode-spmis.data');
     Route::resource('periode-spmis', PeriodeSpmiController::class);
 
     // Tim Mutu

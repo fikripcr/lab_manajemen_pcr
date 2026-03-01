@@ -15,7 +15,7 @@
     </div>
     
     <div class="mb-3 text-center">
-        <input type="text" name="token_ujian" class="form-control form-control-lg text-center fw-bold" maxlength="6" placeholder="******" style="font-size: 2rem; letter-spacing: 5px;" required autofocus>
+        <x-tabler.form-input type="text" name="token_ujian" class="form-control-lg text-center fw-bold" maxlength="6" placeholder="******" style="font-size: 2rem; letter-spacing: 5px;" required="true" autofocus="true" />
     </div>
 
     <div class="alert alert-info py-2 small">

@@ -9,9 +9,7 @@
     submitText="{{ $isEdit ? 'Simpan Perubahan' : 'Simpan Sesi' }}"
     data-redirect="true"
 >
-    <div class="mb-3">
-        <label class="form-label required">Periode</label>
-        <select name="periode_id" class="form-select" required>
+    <x-tabler.form-select name="periode_id" label="Periode" required="true">
             <option value="">-- Pilih Periode --</option>
             @foreach($periode as $p)
                 <option value="{{ $p->encrypted_periode_id }}" 
@@ -19,8 +17,7 @@
                     {{ $p->nama_periode }}
                 </option>
             @endforeach
-        </select>
-    </div>
+    </x-tabler.form-select>
 
     <x-tabler.form-input name="nama_sesi" label="Nama Sesi" 
         :value="$isEdit ? $sesi->nama_sesi : ''" 

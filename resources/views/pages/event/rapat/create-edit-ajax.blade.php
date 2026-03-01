@@ -139,9 +139,7 @@
                                                         <x-tabler.form-input name="agendas[{{ $index }}][judul_agenda]" value="{{ $agenda->judul_agenda }}" placeholder="Judul Agenda" required="true" />
                                                     </div>
                                                     <div class="col-auto">
-                                                        <button type="button" class="btn btn-icon btn-sm btn-danger remove-agenda" title="Hapus Agenda">
-                                                            <i class="ti ti-x"></i>
-                                                        </button>
+                                                        <x-tabler.button type="button" class="btn-danger remove-agenda" title="Hapus Agenda" iconOnly="true" icon="ti ti-x" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -162,9 +160,7 @@
                                                            required>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <button type="button" class="btn btn-icon btn-sm btn-danger remove-agenda" title="Hapus Agenda">
-                                                        <i class="ti ti-x"></i>
-                                                    </button>
+                                                    <x-tabler.button type="button" class="btn-danger remove-agenda" title="Hapus Agenda" iconOnly="true" icon="ti ti-x" />
                                                 </div>
                                             </div>
                                         </div>
@@ -172,9 +168,7 @@
                                 @endif
                             </div>
 
-                            <button type="button" id="add-agenda-btn" class="btn btn-sm btn-secondary mt-2">
-                                <i class="ti ti-plus me-1"></i> Tambah Agenda
-                            </button>
+                            <x-tabler.button type="button" id="add-agenda-btn" class="btn-secondary mt-2" icon="ti ti-plus" text="Tambah Agenda" />
                         </div>
                     </div>
 
@@ -259,13 +253,11 @@
                                                             @endif
                                                         </td>
                                                         <td class="text-end">
-                                                            <button type="button" 
-                                                                    class="btn btn-icon btn-sm btn-primary resend-invite-btn"
+                                                            <x-tabler.button type="button" class="btn-primary resend-invite-btn"
                                                                     data-peserta-id="{{ $peserta->encrypted_rapatpeserta_id }}"
                                                                     data-peserta-name="{{ $peserta->user->name }}"
-                                                                    title="Kirim ulang undangan">
-                                                                <i class="ti ti-mail"></i>
-                                                            </button>
+                                                                    title="Kirim ulang undangan"
+                                                                    iconOnly="true" icon="ti ti-mail" />
                                                         </td>
                                                     </tr>
                                                 @endforeach

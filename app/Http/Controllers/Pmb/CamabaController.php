@@ -25,7 +25,7 @@ class CamabaController extends Controller
     /**
      * Paginate camaba data
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = Camaba::with(['user']);
 
@@ -63,7 +63,7 @@ class CamabaController extends Controller
         $camaba->load(['user', 'pendaftaran' => function ($q) {
             $q->with(['jalur', 'periode', 'pilihanProdi.orgUnit', 'orgUnitDiterima', 'dokumenUpload.jenisDokumen', 'pembayaran']);
         }]);
-        
+
         return view('pages.pmb.camaba.show', compact('camaba'));
     }
 

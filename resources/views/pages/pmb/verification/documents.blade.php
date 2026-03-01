@@ -17,7 +17,7 @@
                         ['data' => 'jalur.nama_jalur', 'name' => 'jalur.nama_jalur', 'title' => 'Jalur'],
                             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('pmb.verification.paginate-documents')"
+                    :url="route('pmb.verification.documents.data')"
                 />
             </div>
         </div>

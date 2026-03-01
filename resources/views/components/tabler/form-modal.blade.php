@@ -1,12 +1,13 @@
 @props([
     'title' => 'Modal Title',
     'route' => '#',
-    'method' => 'POST',
+    'method' => 'POST', // Use method="none" for purely view-based modals
     'id' => null,
     'id_form' => null,
     'size' => '', // modal-lg, modal-sm, etc.
     'submitText' => 'Simpan',
-    'submitIcon' => 'ti-device-floppy'
+    'submitIcon' => 'ti-device-floppy',
+    'hideFooter' => false // Set to true to hide the default footer buttons completely
 ])
 
 @if($id)
@@ -19,19 +20,35 @@
                 <h5 class="modal-title">{{ $title }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ $route }}" method="POST" class="ajax-form" novalidate @if($id_form) id="{{ $id_form }}" @endif {{ $attributes }}>
+            
+            @if(strtolower($method) !== 'none')
+            <form action="{{ $route }}" method="POST" class="ajax-form" @if(!in_array(strtolower($method), ['get', 'none'])) novalidate @endif @if($id_form) id="{{ $id_form }}" @endif {{ $attributes }}>
                 @csrf
                 @if(in_array(strtoupper($method), ['PUT', 'PATCH', 'DELETE']))
                     @method($method)
                 @endif
-                <div class="modal-body">
+            @endif
+
+                <div class="modal-body {{ $attributes->get('modal-body-class') }}">
                     {{ $slot }}
                 </div>
-                <div class="modal-footer">
-                    <x-tabler.button type="cancel" data-bs-dismiss="modal" />
-                    <x-tabler.button type="submit" :icon="$submitIcon ? 'ti ' . $submitIcon : null" :text="$submitText" class="ms-auto" />
-                </div>
+                
+                @if(!$hideFooter)
+                    <div class="modal-footer">
+                        @if(isset($footer))
+                            {{ $footer }}
+                        @else
+                            <x-tabler.button type="cancel" data-bs-dismiss="modal" />
+                            @if(strtolower($method) !== 'none')
+                                <x-tabler.button type="submit" :icon="$submitIcon ? 'ti ' . $submitIcon : null" :text="$submitText" class="ms-auto" />
+                            @endif
+                        @endif
+                    </div>
+                @endif
+
+            @if(strtolower($method) !== 'none')
             </form>
+            @endif
 
 @if($id)
         </div>

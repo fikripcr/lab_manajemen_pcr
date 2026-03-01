@@ -41,9 +41,9 @@ class SoftwareRequestController extends Controller
             // or just notify that no active period is open.
             return \view('pages.lab.software-requests.create-edit-ajax', [
                 'softwareRequest' => new RequestSoftware(),
-                'mataKuliahs'  => \collect(),
-                'activePeriod' => null,
-                'error'        => 'Tidak ada periode pengajuan software yang aktif saat ini.',
+                'mataKuliahs'     => \collect(),
+                'activePeriod'    => null,
+                'error'           => 'Tidak ada periode pengajuan software yang aktif saat ini.',
             ]);
         }
 
@@ -67,7 +67,7 @@ class SoftwareRequestController extends Controller
         return jsonSuccess('Permintaan software berhasil dibuat.', \route('lab.software-requests.index'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $softwareRequests = $this->softwareRequestService->getFilteredQuery($request->all());
 

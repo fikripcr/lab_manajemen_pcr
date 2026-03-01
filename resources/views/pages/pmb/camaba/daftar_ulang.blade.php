@@ -47,9 +47,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="ti ti-check"></i> Proses Daftar Ulang
-                        </button>
+                        <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-check" text="Proses Daftar Ulang" />
                     </div>
                 </form>
             </div>

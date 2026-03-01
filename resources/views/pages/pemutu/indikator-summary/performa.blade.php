@@ -50,48 +50,44 @@
                 <form id="table-performa-filter" class="mb-3">
                     <div class="row g-2">
                         <div class="col-md-2">
-                            <select class="form-select form-select-sm" name="kelompok_indikator" id="performa-filter-kelompok">
+                            <x-tabler.form-select name="kelompok_indikator" id="performa-filter-kelompok" class="form-select-sm">
                                 <option value="">Semua Kelompok</option>
                                 <option value="Akademik">Akademik</option>
                                 <option value="Non Akademik">Non Akademik</option>
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                         <div class="col-md-2">
-                            <select class="form-select form-select-sm" name="year" id="performa-filter-year">
+                            <x-tabler.form-select name="year" id="performa-filter-year" class="form-select-sm">
                                 <option value="">Semua Tahun</option>
                                 @foreach($periodes as $periode)
                                     <option value="{{ $periode->tahun }}">{{ $periode->periode }}</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                         <div class="col-md-2">
-                            <select class="form-select form-select-sm" name="pegawai_id" id="performa-filter-pegawai">
+                            <x-tabler.form-select name="pegawai_id" id="performa-filter-pegawai" class="form-select-sm">
                                 <option value="">Semua Pegawai</option>
                                 @foreach($pegawais as $pegawai)
                                     <option value="{{ $pegawai->pegawai_id }}">{{ $pegawai->nama }}</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                         <div class="col-md-2">
-                            <select class="form-select form-select-sm" name="unit_id" id="performa-filter-unit">
+                            <x-tabler.form-select name="unit_id" id="performa-filter-unit" class="form-select-sm">
                                 <option value="">Semua Unit</option>
                                 @foreach($units as $unit)
                                     <option value="{{ $unit->orgunit_id }}">{{ $unit->name }}</option>
                                 @endforeach
-                            </select>
+                            </x-tabler.form-select>
                         </div>
                         <div class="col-md-2">
                             <div class="input-group input-group-sm">
                                 <input type="text" class="form-control" name="search" placeholder="Cari..." id="table-performa-search">
-                                <button class="btn btn-outline-secondary" type="button" id="table-performa-clear-search" style="display: none;">
-                                    <i class="ti ti-x"></i>
-                                </button>
+                                <x-tabler.button type="button" class="btn-outline-secondary" id="table-performa-clear-search" style="display: none;" iconOnly="true" icon="ti ti-x" />
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-success btn-sm w-100" onclick="exportExcel()">
-                                <i class="ti ti-file-export me-1"></i> Export
-                            </button>
+                            <x-tabler.button type="button" class="btn-success btn-sm w-100" onclick="exportExcel()" icon="ti ti-file-export" text="Export" />
                         </div>
                     </div>
                     <div id="table-performa-active-filters" class="mt-2"></div>

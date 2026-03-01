@@ -19,7 +19,7 @@ class KategoriIsianController extends Controller
         return view('pages.eoffice.kategori_isian.index', compact('pageTitle'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->KategoriIsianService->getPaginateData($request);
 

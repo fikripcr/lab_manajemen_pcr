@@ -45,7 +45,7 @@
                             <h1 class="display-6 fw-bold mb-2">Selamat Datang, {{ explode(' ', auth()->user()->name)[0] }}! 👋</h1>
                             <p class="fs-4 opacity-75 mb-4">Sistem Informasi Manajemen Terpadu Politeknik Caltex Riau</p>
                             <div class="d-flex flex-wrap gap-2 mt-3">
-                                <a href="{{ route('notifications.index') }}" class="btn btn-light px-4 py-2 shadow-sm">
+                                <a href="{{ route('sys.notifications.index') }}" class="btn btn-light px-4 py-2 shadow-sm">
                                     <i class="ti ti-bell me-2"></i> Notifikasi
                                 </a>
                                 <a href="{{ route('shared.pengumuman.index') }}" class="btn btn-outline-light px-4 py-2">

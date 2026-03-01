@@ -22,7 +22,7 @@
                         ['data' => 'is_aktif', 'name' => 'is_aktif', 'title' => 'Status'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('pmb.jalur.paginate')"
+                    :url="route('pmb.jalur.data')"
                 />
             </div>
         </div>

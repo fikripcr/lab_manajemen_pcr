@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')->group(function () {
 
     // Rapat (Meeting) Sub-module
-    Route::get('rapat/data', [App\Http\Controllers\Event\RapatController::class, 'paginate'])->name('rapat.data');
+    Route::get('rapat/data', [App\Http\Controllers\Event\RapatController::class, 'data'])->name('rapat.data');
     Route::post('rapat/{rapat}/attendance', [App\Http\Controllers\Event\RapatController::class, 'updateAttendance'])->name('rapat.update-attendance');
     Route::post('rapat/{rapat}/agenda', [App\Http\Controllers\Event\RapatController::class, 'updateAgenda'])->name('rapat.update-agenda');
     Route::post('rapat/{rapat}/agenda/store', [App\Http\Controllers\Event\RapatController::class, 'storeAgenda'])->name('rapat.agenda.store');
@@ -37,7 +37,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
 
     // --- Global Buku Tamu (All Events) ---
     Route::get('tamus', [App\Http\Controllers\Event\EventTamuController::class, 'index'])->name('tamus.index');
-    Route::get('tamus/data', [App\Http\Controllers\Event\EventTamuController::class, 'paginate'])->name('tamus.data');
+    Route::get('tamus/data', [App\Http\Controllers\Event\EventTamuController::class, 'data'])->name('tamus.data');
     Route::get('tamus/create', [App\Http\Controllers\Event\EventTamuController::class, 'create'])->name('tamus.create');
     Route::post('tamus', [App\Http\Controllers\Event\EventTamuController::class, 'store'])->name('tamus.store');
     Route::get('tamus/{tamu}/edit', [App\Http\Controllers\Event\EventTamuController::class, 'edit'])->name('tamus.edit');
@@ -51,7 +51,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
     Route::delete('events/{event}/buku-tamu/revoke', [App\Http\Controllers\Event\EventTamuController::class, 'revokeToken'])->name('Kegiatans.buku-tamu.revoke');
 
     // Kegiatan (Event)
-    Route::get('events/data', [App\Http\Controllers\Event\EventController::class, 'paginate'])->name('Kegiatans.data');
+    Route::get('events/data', [App\Http\Controllers\Event\EventController::class, 'data'])->name('Kegiatans.data');
     Route::resource('events', App\Http\Controllers\Event\EventController::class)->names('Kegiatans');
 
     // Event Team (AJAX Only) - Nested under events

@@ -165,10 +165,7 @@
                     <div class="card-body p-4">
                         <form action="{{ route('survei.public.start', $survei->slug) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-success btn-lg w-100 py-3 mb-3">
-                                <i class="ti ti-player-play me-2"></i>
-                                Mulai Isi Survei
-                            </button>
+                            <x-tabler.button type="submit" class="btn-success btn-lg w-100 py-3 mb-3" icon="ti ti-player-play" text="Mulai Isi Survei" />
                         </form>
                         
                         <hr class="my-3">

@@ -19,7 +19,7 @@
                         ['data' => 'waktu_daftar', 'name' => 'waktu_daftar', 'title' => 'Tanggal Daftar'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('pmb.pendaftaran.paginate')"
+                    :url="route('pmb.pendaftaran.data')"
                 />
             </div>
         </div>

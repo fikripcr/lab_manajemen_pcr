@@ -22,7 +22,7 @@
                         ['data' => 'status_aktif', 'name' => 'status_aktif', 'title' => 'Status'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                     ]"
-                    :route="route('shared.personil.paginate')"
+                    :route="route('shared.personil.data')"
                 />
             </div>
         </div>

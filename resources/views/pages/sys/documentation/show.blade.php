@@ -1,9 +1,5 @@
 @if(request()->ajax() || request()->has('ajax'))
-    <div class="modal-header">
-        <h5 class="modal-title">Documentation: {{ $fileName }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
+    <x-tabler.form-modal title="Documentation: {{ $fileName }}" method="none">
         <div class="documentation-content p-2" id="doc-content-modal" style="max-height: 400px; overflow-y: auto;">
             {!! $htmlContent !!}
         </div>
@@ -13,14 +9,15 @@
                 Last updated: {{ formatTanggalIndo($lastUpdated) }}
             </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-        <div class="d-flex gap-2">
-            <x-tabler.button :href="route('sys.documentation.edit', $fileName)" class="btn-outline-primary" icon="ti ti-pencil" text="Edit" />
-            <x-tabler.button :href="route('sys.documentation.show', $fileName)" icon="ti ti-external-link" text="View Full Page" />
-        </div>
-    </div>
+        
+        <x-slot:footer>
+            <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+            <div class="d-flex gap-2 ms-auto">
+                <x-tabler.button :href="route('sys.documentation.edit', $fileName)" class="btn-outline-primary" icon="ti ti-pencil" text="Edit" />
+                <x-tabler.button :href="route('sys.documentation.show', $fileName)" icon="ti ti-external-link" text="View Full Page" />
+            </div>
+        </x-slot:footer>
+    </x-tabler.form-modal>
 @else
     @extends('layouts.tabler.app')
 

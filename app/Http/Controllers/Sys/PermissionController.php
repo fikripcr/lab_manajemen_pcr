@@ -28,7 +28,7 @@ class PermissionController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         // Get all request parameters and use them as filters
         $filters = $request->all();

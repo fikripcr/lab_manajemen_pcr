@@ -18,31 +18,21 @@
                 ['data' => 'total_verif', 'name' => 'total_verif', 'title' => 'Verif', 'orderable' => false, 'class' => 'text-center'],
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ]"
-            :route="route('pmb.pendaftar.paginate')"
+            :route="route('pmb.pendaftar.data')"
         />
     </div>
 </div>
 
 <!-- Modal Verifikasi Berkas dengan Toggle -->
-<div class="modal modal-blur fade" id="modalVerifikasiBerkas" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Verifikasi Berkas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="verifikasiContent">
-                    <div class="text-center py-5">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                </div>
+<x-tabler.form-modal id="modalVerifikasiBerkas" size="modal-lg" title="Verifikasi Berkas" method="none" data-bs-backdrop="static" hideFooter="true">
+    <div id="verifikasiContent">
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
     </div>
-</div>
+</x-tabler.form-modal>
 @endsection
 
 @push('scripts')

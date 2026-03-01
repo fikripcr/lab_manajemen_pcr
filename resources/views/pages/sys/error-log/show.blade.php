@@ -1,9 +1,5 @@
 @if(request()->ajax() || request()->has('ajax'))
-    <div class="modal-header">
-        <h5 class="modal-title">Error Log Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
+    <x-tabler.form-modal title="Error Log Details" method="none">
         <div class="table-responsive border rounded mb-3">
             <table class="table table-sm table-borderless table-vcenter mb-0">
                 <tr>
@@ -67,11 +63,12 @@
                 </div>
             </div>
         @endif
-    </div>
-    <div class="modal-footer">
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-        <x-tabler.button :href="route('sys.error-log.show', $errorLog->id)" icon="ti ti-external-link" text="View Full Page" />
-    </div>
+        
+        <x-slot:footer>
+            <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+            <x-tabler.button :href="route('sys.error-log.show', $errorLog->id)" icon="ti ti-external-link" text="View Full Page" class="ms-auto" />
+        </x-slot:footer>
+    </x-tabler.form-modal>
 @else
     @extends('layouts.tabler.app')
 

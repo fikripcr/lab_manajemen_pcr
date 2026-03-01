@@ -38,7 +38,7 @@ class PendaftaranController extends Controller
     /**
      * DataTables pagination for registrations
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         return \datatables()->of($this->pendaftaranService->getFilteredQuery($request->all()))
             ->addIndexColumn()

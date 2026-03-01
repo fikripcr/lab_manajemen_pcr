@@ -9,7 +9,7 @@
             <div class="card-body">
                 <x-tabler.datatable
                     id="table-pegawai"
-                    route="{{ route('shared.pegawai.index') }}"
+                    route="{{ route('shared.pegawai.data') }}"
                     :columns="[
                         ['data' => 'DT_RowIndex', 'name' => 'pegawai_id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                         ['data' => 'nip', 'name' => 'nip', 'title' => 'NIP'],

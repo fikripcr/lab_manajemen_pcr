@@ -15,7 +15,9 @@ class RolePermissionHrSeeder extends Seeder
 
         $permissionData = [
             ['name' => 'hr.dashboard.view', 'category' => 'SDM (HR)', 'sub_category' => 'Dashboard', 'description' => 'Melihat dashboard statistik kepegawaian'],
+
             ['name' => 'hr.pegawai.view', 'category' => 'SDM (HR)', 'sub_category' => 'Pegawai', 'description' => 'Melihat daftar profil pegawai di unit sendiri'],
+            ['name' => 'hr.pegawai.data', 'category' => 'SDM (HR)', 'sub_category' => 'Pegawai', 'description' => 'Mengambil data pegawai (DataTables)'],
             ['name' => 'hr.pegawai.view-all', 'category' => 'SDM (HR)', 'sub_category' => 'Pegawai', 'description' => 'Melihat data seluruh pegawai perusahaan'],
             ['name' => 'hr.pegawai.view-own', 'category' => 'SDM (HR)', 'sub_category' => 'Pegawai', 'description' => 'Melihat profil diri sendiri'],
             ['name' => 'hr.pegawai.create', 'category' => 'SDM (HR)', 'sub_category' => 'Pegawai', 'description' => 'Menambah data pegawai baru'],
@@ -25,13 +27,16 @@ class RolePermissionHrSeeder extends Seeder
             ['name' => 'hr.pegawai.import', 'category' => 'SDM (HR)', 'sub_category' => 'Pegawai', 'description' => 'Mengimpor data pegawai dari file'],
 
             ['name' => 'hr.presensi.view', 'category' => 'SDM (HR)', 'sub_category' => 'Presensi', 'description' => 'Melihat rekap kehadiran pegawai'],
+            ['name' => 'hr.presensi.data', 'category' => 'SDM (HR)', 'sub_category' => 'Presensi', 'description' => 'Mengambil data presensi (DataTables)'],
             ['name' => 'hr.presensi.view-own', 'category' => 'SDM (HR)', 'sub_category' => 'Presensi', 'description' => 'Melihat riwayat kehadiran pribadi'],
             ['name' => 'hr.presensi.update', 'category' => 'SDM (HR)', 'sub_category' => 'Presensi', 'description' => 'Melakukan koreksi data presensi'],
 
             ['name' => 'hr.cuti.view', 'category' => 'SDM (HR)', 'sub_category' => 'Cuti', 'description' => 'Melihat daftar pengajuan cuti'],
+            ['name' => 'hr.cuti.data', 'category' => 'SDM (HR)', 'sub_category' => 'Cuti', 'description' => 'Mengambil data cuti (DataTables)'],
             ['name' => 'hr.cuti.update', 'category' => 'SDM (HR)', 'sub_category' => 'Cuti', 'description' => 'Menyetujui atau menolak permohonan cuti'],
 
             ['name' => 'hr.gaji.view', 'category' => 'SDM (HR)', 'sub_category' => 'Penggajian', 'description' => 'Melihat rekapitulasi gaji pegawai'],
+            ['name' => 'hr.gaji.data', 'category' => 'SDM (HR)', 'sub_category' => 'Penggajian', 'description' => 'Mengambil data gaji (DataTables)'],
             ['name' => 'hr.gaji.view-own', 'category' => 'SDM (HR)', 'sub_category' => 'Penggajian', 'description' => 'Melihat slip gaji pribadi'],
             ['name' => 'hr.gaji.update', 'category' => 'SDM (HR)', 'sub_category' => 'Penggajian', 'description' => 'Memproses data penggajian'],
         ];

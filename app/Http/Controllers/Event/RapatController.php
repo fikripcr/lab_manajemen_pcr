@@ -3,10 +3,10 @@ namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\RapatAttendanceRequest;
+use App\Http\Requests\Event\RapatBulkAgendaRequest;
 use App\Http\Requests\Event\RapatBulkPesertaRequest;
 use App\Http\Requests\Event\RapatOfficialsRequest;
 use App\Http\Requests\Event\RapatRequest;
-use App\Http\Requests\Event\RapatBulkAgendaRequest;
 use App\Http\Requests\Event\RapatStoreAgendaRequest;
 use App\Models\Event\Rapat;
 use App\Models\Event\RapatPeserta;
@@ -27,7 +27,7 @@ class RapatController extends Controller
         return view('pages.event.rapat.index', compact('pageTitle'));
     }
 
-    public function paginate()
+    public function data()
     {
         $query = Rapat::query()->with(['ketua_user', 'notulen_user']);
         return DataTables::of($query)

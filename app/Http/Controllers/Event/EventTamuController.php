@@ -22,7 +22,7 @@ class EventTamuController extends Controller
         return view('pages.event.tamus.index', compact('pageTitle'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = EventTamu::query()
             ->with(['event'])

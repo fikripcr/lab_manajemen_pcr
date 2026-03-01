@@ -186,27 +186,19 @@
             {{-- Page Navigation --}}
             <div class="d-flex justify-content-between mt-4 mb-2">
                 @if($hIndex > 0)
-                <button type="button" class="btn btn-outline-secondary btn-prev-halaman" data-current="{{ $hIndex }}">
-                    <i class="ti ti-chevron-left me-1"></i> Sebelumnya
-                </button>
+                <x-tabler.button type="button" class="btn-outline-secondary btn-prev-halaman" data-current="{{ $hIndex }}" icon="ti ti-chevron-left" text=" Sebelumnya" />
                 @else
                 <div></div>
                 @endif
 
                 @if($hIndex < $totalHalaman - 1)
-                <button type="button" class="btn btn-primary btn-next-halaman" data-current="{{ $hIndex }}">
-                    Lanjutkan <i class="ti ti-chevron-right ms-1"></i>
-                </button>
+                <x-tabler.button type="button" class="btn-primary btn-next-halaman" data-current="{{ $hIndex }}" text="Lanjutkan " icon="ti ti-chevron-right" iconPosition="right" />
                 @else
                 {{-- Last page: submit button --}}
                 @if(!isset($isPreview) || !$isPreview)
-                <button type="submit" class="btn btn-success" id="btn-submit">
-                    <i class="ti ti-send me-1"></i> Kirim Jawaban
-                </button>
+                <x-tabler.button type="submit" class="btn-success" id="btn-submit" icon="ti ti-send" text=" Kirim Jawaban" />
                 @else
-                <button type="button" class="btn btn-success" disabled>
-                    <i class="ti ti-send me-1"></i> Kirim Jawaban (Preview)
-                </button>
+                <x-tabler.button type="button" class="btn-success" disabled="true" icon="ti ti-send" text=" Kirim Jawaban (Preview)" />
                 @endif
                 @endif
             </div>

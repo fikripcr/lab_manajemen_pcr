@@ -259,7 +259,7 @@
                                                             <x-tabler.form-input name="kpi_assign[{{$index}}][unit_ukuran]" placeholder="%, org, dll (Satuan)" value="{{ $kpi->unit_ukuran ?? '' }}" />
                                                         </td>
                                                         <td class="text-center">
-                                                            <button type="button" class="btn btn-icon btn-danger btn-sm btn-remove-row" title="Hapus"><i class="ti ti-trash"></i></button>
+                                                            <x-tabler.button type="button" class="btn-danger btn-sm btn-remove-row" title="Hapus" iconOnly="true" icon="ti ti-trash" />
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -268,9 +268,7 @@
                                     </table>
                                 </div>
 
-                                <button type="button" class="btn btn-outline-danger btn-sm w-100" id="btn-add-kpi">
-                                    <i class="ti ti-plus me-1"></i> Tambah Sasaran
-                                </button>
+                                <x-tabler.button type="button" id="btn-add-kpi" class="btn-outline-danger btn-sm w-100" icon="ti ti-plus" text="Tambah Sasaran" />
                             </div>
                         </div>
                     </div>

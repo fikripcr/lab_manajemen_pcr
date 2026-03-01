@@ -17,32 +17,33 @@ class StrukturOrganisasiController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $filters = $request->only(['type', 'status']);
-            $query   = $this->strukturOrganisasiService->getFilteredQuery($filters);
-
-            return DataTables::of($query)
-                ->addIndexColumn()
-                ->editColumn('parent_id', function ($row) {
-                    return $row->parent->name ?? '-';
-                })
-                ->editColumn('is_active', function ($row) {
-                    return $row->is_active ? '<span class="badge bg-success text-white">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
-                })
-                ->addColumn('action', function ($row) {
-                    return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('shared.struktur-organisasi.edit', $row->encrypted_org_unit_id),
-                        'deleteUrl' => route('shared.struktur-organisasi.destroy', $row->encrypted_org_unit_id),
-                        'showUrl'   => route('shared.struktur-organisasi.show', $row->encrypted_org_unit_id),
-                        'editModal' => true,
-                    ])->render();
-                })
-                ->rawColumns(['is_active', 'action'])
-                ->make(true);
-        }
-
         $types = $this->strukturOrganisasiService->getTypes();
         return view('pages.shared.struktur-organisasi.index', compact('types'));
+    }
+
+    public function data(Request $request)
+    {
+        $filters = $request->only(['type', 'status']);
+        $query   = $this->strukturOrganisasiService->getFilteredQuery($filters);
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->editColumn('parent_id', function ($row) {
+                return $row->parent->name ?? '-';
+            })
+            ->editColumn('is_active', function ($row) {
+                return $row->is_active ? '<span class="badge bg-success text-white">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
+            })
+            ->addColumn('action', function ($row) {
+                return view('components.tabler.datatables-actions', [
+                    'editUrl'   => route('shared.struktur-organisasi.edit', $row->encrypted_org_unit_id),
+                    'deleteUrl' => route('shared.struktur-organisasi.destroy', $row->encrypted_org_unit_id),
+                    'showUrl'   => route('shared.struktur-organisasi.show', $row->encrypted_org_unit_id),
+                    'editModal' => true,
+                ])->render();
+            })
+            ->rawColumns(['is_active', 'action'])
+            ->make(true);
     }
 
     public function tree()

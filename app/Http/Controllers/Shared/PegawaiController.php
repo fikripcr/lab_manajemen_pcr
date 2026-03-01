@@ -10,18 +10,20 @@ class PegawaiController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = Pegawai::with(['unitKerja', 'unitKerja.parent'])->select('*');
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('shared.pegawai.show', $row->pegawai_id) . '" class="edit btn btn-info btn-sm">View</a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
         return view('pages.shared.pegawai.index');
+    }
+
+    public function data(Request $request)
+    {
+        $data = Pegawai::with(['unitKerja', 'unitKerja.parent'])->select('*');
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="' . route('shared.pegawai.show', $row->pegawai_id) . '" class="edit btn btn-info btn-sm">View</a>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function show(Pegawai $pegawai)

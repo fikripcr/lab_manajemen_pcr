@@ -49,12 +49,11 @@
                     @if($isAuthMode)
                     {{-- Auth Layout Mode --}}
                     <div class="col-12">
-                        <label class="form-label">Auth Layout</label>
-                        <select name="auth-layout" class="form-select">
+                        <x-tabler.form-select name="auth-layout" label="Auth Layout">
                             <option value="basic">Basic (Centered)</option>
                             <option value="cover">Cover (With Image)</option>
                             <option value="illustration">Illustration (With SVG)</option>
-                        </select>
+                        </x-tabler.form-select>
                     </div>
 
                     {{-- Form Position --}}
@@ -91,26 +90,23 @@
 
                     {{-- Theme Base & Radius --}}
                     <div class="col-6">
-                        <label class="form-label">Theme Base</label>
-                        <select name="theme-base" class="form-select">
+                        <x-tabler.form-select name="theme-base" label="Theme Base">
                             @foreach(['slate', 'gray', 'zinc', 'neutral', 'stone'] as $base)
                             <option value="{{ $base }}" {{ ($themeData['themeBase'] ?? 'gray') === $base ? 'selected' : '' }}>{{ ucfirst($base) }}</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
                     <div class="col-6">
-                        <label class="form-label">Corner Radius</label>
-                         <select name="theme-radius" class="form-select">
+                        <x-tabler.form-select name="theme-radius" label="Corner Radius">
                             @foreach(['0', '0.25', '0.5', '0.75', '1'] as $radius)
                             <option value="{{ $radius }}" {{ ($themeData['themeRadius'] ?? '1') === $radius ? 'selected' : '' }}>{{ $radius }}rem</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
 
                     {{-- Card Style --}}
                     <div class="col-6">
-                        <label class="form-label">Card Style</label>
-                        <select name="theme-card-style" class="form-select">
+                        <x-tabler.form-select name="theme-card-style" label="Card Style">
                             @foreach([
                                 'flat' => 'Flat (Minimalist)',
                                 'shadow' => 'Shadow (Floating)',
@@ -119,22 +115,20 @@
                             ] as $val => $label)
                             <option value="{{ $val }}" {{ ($themeData['themeCardStyle'] ?? 'flat') === $val ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
 
                     {{-- UI Density --}}
                     <div class="col-12">
-                        <label class="form-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-layout-grid me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4h6v6h-6z" /><path d="M14 4h6v6h-6z" /><path d="M4 14h6v6h-6z" /><path d="M14 14h6v6h-6z" /></svg>
-                            UI Density
-                        </label>
-                        <select name="theme-density" class="form-select">
+                        @php
+                            $densityLabel = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-layout-grid me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4h6v6h-6z" /><path d="M14 4h6v6h-6z" /><path d="M4 14h6v6h-6z" /><path d="M14 14h6v6h-6z" /></svg> UI Density';
+                        @endphp
+                        <x-tabler.form-select name="theme-density" :label="$densityLabel" help="Controls spacing and padding throughout the UI">
                             <option value="compact" {{ ($themeData['themeDensity'] ?? 'standard') === 'compact' ? 'selected' : '' }}>Compact (High Density)</option>
                             <option value="standard" {{ ($themeData['themeDensity'] ?? 'standard') === 'standard' ? 'selected' : '' }}>Standard (Default)</option>
                             <option value="spacious" {{ ($themeData['themeDensity'] ?? 'standard') === 'spacious' ? 'selected' : '' }}>Spacious (Low Density)</option>
                             <option value="ultra-spacious" {{ ($themeData['themeDensity'] ?? 'standard') === 'ultra-spacious' ? 'selected' : '' }}>Ultra Spacious</option>
-                        </select>
-                        <small class="form-hint">Controls spacing and padding throughout the UI</small>
+                        </x-tabler.form-select>
                     </div>
 
                     {{-- Base Font Size --}}
@@ -145,51 +139,46 @@
                         </label>
                         <div class="row g-2">
                             <div class="col-6">
-                                <select name="theme-font" class="form-select">
+                                <x-tabler.form-select name="theme-font" help="Font Family">
                                     <option value="inter" {{ ($themeData['themeFont'] ?? 'inter') === 'inter' ? 'selected' : '' }}>Inter</option>
                                     <option value="roboto" {{ ($themeData['themeFont'] ?? 'inter') === 'roboto' ? 'selected' : '' }}>Roboto</option>
                                     <option value="poppins" {{ ($themeData['themeFont'] ?? 'inter') === 'poppins' ? 'selected' : '' }}>Poppins</option>
                                     <option value="public-sans" {{ ($themeData['themeFont'] ?? 'inter') === 'public-sans' ? 'selected' : '' }}>Public Sans</option>
                                     <option value="nunito" {{ ($themeData['themeFont'] ?? 'inter') === 'nunito' ? 'selected' : '' }}>Nunito</option>
                                     <option value="sarabun" {{ ($themeData['themeFont'] ?? 'inter') === 'sarabun' ? 'selected' : '' }}>Sarabun</option>
-                                </select>
-                                <small class="form-hint text-muted">Font Family</small>
+                                </x-tabler.form-select>
                             </div>
                             <div class="col-6">
-                                <select name="theme-font-size" class="form-select">
+                                <x-tabler.form-select name="theme-font-size" help="Font Size">
                                     <option value="13px" {{ ($themeData['themeFontSize'] ?? '14px') === '13px' ? 'selected' : '' }}>13px</option>
                                     <option value="14px" {{ ($themeData['themeFontSize'] ?? '14px') === '14px' ? 'selected' : '' }}>14px (Default)</option>
                                     <option value="15px" {{ ($themeData['themeFontSize'] ?? '14px') === '15px' ? 'selected' : '' }}>15px</option>
                                     <option value="16px" {{ ($themeData['themeFontSize'] ?? '14px') === '16px' ? 'selected' : '' }}>16px</option>
-                                </select>
-                                <small class="form-hint text-muted">Font Size</small>
+                                </x-tabler.form-select>
                             </div>
                         </div>
                     </div>
 
                     {{-- Icon Stroke Weight --}}
                     <div class="col-12">
-                        <label class="form-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h6z" /><path d="M12 9m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M9 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M15 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg>
-                            Icon Weight
-                        </label>
-                        <select name="theme-icon-weight" class="form-select">
+                        @php
+                            $iconWeightLabel = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h6z" /><path d="M12 9m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M9 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M15 15m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg> Icon Weight';
+                        @endphp
+                        <x-tabler.form-select name="theme-icon-weight" :label="$iconWeightLabel" help="Stroke width for all icons">
                             <option value="1" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1' ? 'selected' : '' }}>Light (1.0)</option>
                             <option value="1.25" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.25' ? 'selected' : '' }}>Medium Light (1.25)</option>
                             <option value="1.5" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.5' ? 'selected' : '' }}>Regular (1.5 - Default)</option>
                             <option value="1.75" {{ ($themeData['themeIconWeight'] ?? '1.5') === '1.75' ? 'selected' : '' }}>Medium Bold (1.75)</option>
                             <option value="2" {{ ($themeData['themeIconWeight'] ?? '1.5') === '2' ? 'selected' : '' }}>Bold (2.0)</option>
-                        </select>
-                        <small class="form-hint">Stroke width for all icons</small>
+                        </x-tabler.form-select>
                     </div>
 
                     {{-- Background Texture --}}
                     <div class="col-12">
-                        <label class="form-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-background me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 15l3 3l3 -3l-3 -3z" /><path d="M6 6l3 3l-3 3l-3 -3z" /><path d="M15 6l3 3l-3 3l-3 -3z" /><path d="M6 15l3 3l-3 3l-3 -3z" /><path d="M9 9l6 6" /><path d="M15 9l-6 6" /></svg>
-                            Background Texture
-                        </label>
-                        <select name="theme-texture" class="form-select">
+                        @php
+                            $textureLabel = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-background me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 15l3 3l3 -3l-3 -3z" /><path d="M6 6l3 3l-3 3l-3 -3z" /><path d="M15 6l3 3l-3 3l-3 -3z" /><path d="M6 15l3 3l-3 3l-3 -3z" /><path d="M9 9l6 6" /><path d="M15 9l-6 6" /></svg> Background Texture';
+                        @endphp
+                        <x-tabler.form-select name="theme-texture" :label="$textureLabel">
                             <option value="none" {{ ($themeData['themeTexture'] ?? 'none') === 'none' ? 'selected' : '' }}>None (Plain)</option>
                             <option value="dots-light" {{ ($themeData['themeTexture'] ?? 'none') === 'dots-light' ? 'selected' : '' }}>Dots Light (8px)</option>
                             <option value="dots-dense" {{ ($themeData['themeTexture'] ?? 'none') === 'dots-dense' ? 'selected' : '' }}>Dots Dense (5px)</option>
@@ -202,14 +191,13 @@
                             <option value="waves" {{ ($themeData['themeTexture'] ?? 'none') === 'waves' ? 'selected' : '' }}>Waves</option>
                             <option value="crosshatch" {{ ($themeData['themeTexture'] ?? 'none') === 'crosshatch' ? 'selected' : '' }}>Crosshatch</option>
                             <option value="circles" {{ ($themeData['themeTexture'] ?? 'none') === 'circles' ? 'selected' : '' }}>Circles</option>
-                        </select>
+                        </x-tabler.form-select>
                     </div>
 
                     @unless($isAuthMode)
                     {{-- Page Layout (Moved UI) --}}
                     <div class="col-12">
-                        <label class="form-label">Page Layout</label>
-                        <select name="layout" class="form-select">
+                        <x-tabler.form-select name="layout" label="Page Layout">
                             @foreach([
                                 'vertical' => 'Vertical (Sidebar + Header)',
                                 'horizontal' => 'Horizontal (Top Navbar)',
@@ -217,7 +205,7 @@
                             ] as $value => $label)
                             <option value="{{ $value }}" {{ ($layoutData['layout'] ?? 'vertical') === $value ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach
-                        </select>
+                        </x-tabler.form-select>
                     </div>
 
 

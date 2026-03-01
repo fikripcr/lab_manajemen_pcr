@@ -4,17 +4,14 @@
     :method="$menu->exists ? 'PUT' : 'POST'"
 >
     
-    <div class="mb-3">
-        <label class="form-label">Parent Menu</label>
-        <select class="form-select" name="parent_id">
+    <x-tabler.form-select name="parent_id" label="Parent Menu">
             <option value="">-- Menu Utama (Root) --</option>
             @foreach($parents as $parent)
                 <option value="{{ $parent->encrypted_menu_id }}" {{ (old('parent_id') ?? ($menu->parent_id ? $menu->parent->encrypted_menu_id : '')) == $parent->encrypted_menu_id ? 'selected' : '' }}>
                     {{ $parent->title }}
                 </option>
             @endforeach
-        </select>
-    </div>
+    </x-tabler.form-select>
 
     <x-tabler.form-input 
         name="title" 
@@ -23,14 +20,11 @@
         required
     />
 
-    <div class="mb-3">
-        <label class="form-label required">Tipe Menu</label>
-        <select class="form-select" name="type" id="menu-type-select">
+    <x-tabler.form-select name="type" id="menu-type-select" label="Tipe Menu" required="true">
             <option value="url" {{ $menu->type == 'url' ? 'selected' : '' }}>URL Eksternal / Link Biasa</option>
             <option value="page" {{ $menu->type == 'page' ? 'selected' : '' }}>Halaman CMS (Public Page)</option>
             <option value="route" {{ $menu->type == 'route' ? 'selected' : '' }}>Route Internal App</option>
-        </select>
-    </div>
+    </x-tabler.form-select>
 
     <div id="type-url-group" class="mb-3" style="display: none;">
         <x-tabler.form-input 
@@ -42,37 +36,30 @@
     </div>
 
     <div id="type-page-group" class="mb-3" style="display: none;">
-        <label class="form-label required">Pilih Halaman</label>
-        <select class="form-select" name="page_id">
+        <x-tabler.form-select name="page_id" label="Pilih Halaman" required="true">
             <option value="">-- Pilih Halaman --</option>
             @foreach($pages as $page)
                 <option value="{{ $page->encrypted_page_id }}" {{ $menu->page_id == $page->page_id ? 'selected' : '' }}>
                     {{ $page->title }}
                 </option>
             @endforeach
-        </select>
+        </x-tabler.form-select>
     </div>
     
     <div class="row">
         <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label required">Posisi</label>
-                <select class="form-select" name="position">
+            <x-tabler.form-select name="position" label="Posisi" required="true">
                     <option value="header" {{ $menu->position == 'header' ? 'selected' : '' }}>Header (Navbar)</option>
                     <option value="footer_col_1" {{ $menu->position == 'footer_col_1' ? 'selected' : '' }}>Footer Kolom 1</option>
                     <option value="footer_col_2" {{ $menu->position == 'footer_col_2' ? 'selected' : '' }}>Footer Kolom 2</option>
                     <option value="footer_col_3" {{ $menu->position == 'footer_col_3' ? 'selected' : '' }}>Footer Kolom 3</option>
-                </select>
-            </div>
+            </x-tabler.form-select>
         </div>
         <div class="col-md-6">
-             <div class="mb-3">
-                <label class="form-label required">Target</label>
-                <select class="form-select" name="target">
+             <x-tabler.form-select name="target" label="Target" required="true">
                     <option value="_self" {{ $menu->target == '_self' ? 'selected' : '' }}>Tab Sama (_self)</option>
                     <option value="_blank" {{ $menu->target == '_blank' ? 'selected' : '' }}>Tab Baru (_blank)</option>
-                </select>
-            </div>
+             </x-tabler.form-select>
         </div>
     </div>
 

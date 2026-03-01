@@ -9,7 +9,7 @@
             <div class="card-body">
                 <x-tabler.datatable
                     id="table-mahasiswa"
-                    route="{{ route('shared.mahasiswa.index') }}"
+                    route="{{ route('shared.mahasiswa.data') }}"
                     :columns="[
                         ['data' => 'DT_RowIndex', 'name' => 'mahasiswa_id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                         ['data' => 'nim', 'name' => 'nim', 'title' => 'NIM'],

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Project;
 
 use App\Http\Controllers\Controller;
@@ -16,8 +15,7 @@ class ProjectController extends Controller
     public function __construct(
         protected ProjectService $projectService,
         protected ProjectTaskService $taskService
-    )
-    {
+    ) {
     }
 
     /**
@@ -31,7 +29,7 @@ class ProjectController extends Controller
     /**
      * Display a listing of projects for DataTables
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->projectService->getPaginatedProjects();
 
@@ -77,7 +75,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        $users = User::all();
+        $users   = User::all();
         $project = new Project();
 
         return view('pages.projects.create-edit', compact('project', 'users'));
@@ -88,7 +86,7 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-        $data = $request->validated();
+        $data    = $request->validated();
         $project = $this->projectService->createProject($data);
 
         return redirect()->route('projects.show', $project)
@@ -101,8 +99,8 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $statistics = $this->projectService->getProjectStatistics($project);
-        $tasks = $project->tasks()->with('assignee')->ordered()->get();
-        $members = $project->members()->with('user')->get();
+        $tasks      = $project->tasks()->with('assignee')->ordered()->get();
+        $members    = $project->members()->with('user')->get();
 
         return view('pages.projects.show', compact('project', 'statistics', 'tasks', 'members'));
     }

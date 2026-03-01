@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\LabelRequest;
 use App\Services\Pemutu\LabelService;
-
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -19,7 +18,7 @@ class LabelController extends Controller
         return view('pages.pemutu.labels.index', compact('types'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->labelService->getLabelFilteredQuery($request->all());
 

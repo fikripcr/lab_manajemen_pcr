@@ -8,9 +8,7 @@
             <x-tabler.button href="{{ route('sys.roles.index') }}" text="Kembali" icon="ti ti-arrow-left" class="btn-outline-secondary shadow-sm" />
 
             <div class="dropdown d-none d-sm-inline-block">
-                <button type="button" class="btn btn-primary dropdown-toggle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="ti ti-plus me-1"></i> Aksi Tambah
-                </button>
+                <x-tabler.button type="button" class="btn-primary dropdown-toggle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text="Aksi Tambah" />
                 <div class="dropdown-menu dropdown-menu-end shadow-lg" style="border-radius: 12px; border: none;">
                     <a class="dropdown-item ajax-modal-btn py-2" href="javascript:void(0)" data-url="{{ route('sys.roles.create') }}" data-title="Tambah Peran Baru">
                         <i class="ti ti-shield-plus me-2 text-primary"></i> Tambah Role
@@ -22,9 +20,7 @@
             </div>
             
             <div class="dropdown d-none d-sm-inline-block">
-                <button class="btn btn-azure dropdown-toggle shadow-sm px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="ti ti-category me-1"></i> Ganti Sistem
-                </button>
+                <x-tabler.button type="button" class="btn-azure dropdown-toggle shadow-sm px-3" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-category" text="Ganti Sistem" />
                 <div class="dropdown-menu dropdown-menu-end shadow-lg" style="min-width: 250px; border-radius: 12px; border: none;">
                     <div class="dropdown-header text-muted small text-uppercase fw-bold p-3">Pilih Modul / Sistem</div>
                     <div class="dropdown-divider m-0"></div>

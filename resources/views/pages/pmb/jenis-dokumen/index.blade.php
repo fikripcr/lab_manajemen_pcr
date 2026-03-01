@@ -22,7 +22,7 @@
                         ['data' => 'max_size_kb', 'name' => 'max_size_kb', 'title' => 'Ukuran Maksimal'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('pmb.jenis-dokumen.paginate')"
+                    :url="route('pmb.jenis-dokumen.data')"
                 />
             </div>
         </div>

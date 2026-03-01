@@ -1,9 +1,5 @@
 @if(request()->ajax() || request()->has('ajax'))
-    <div class="modal-header">
-        <h5 class="modal-title">Inventory Details: {{ $inventory->nama_alat }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
+    <x-tabler.form-modal title="Inventory Details: {{ $inventory->nama_alat }}" method="none">
         <div class="datagrid">
             <div class="datagrid-item">
                 <div class="datagrid-title">Equipment Name</div>
@@ -30,11 +26,12 @@
                 <div class="datagrid-content">{{ $inventory->tanggal_pengecekan->format('d M Y') }}</div>
             </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-        <x-tabler.button type="edit" :href="route('lab.inventaris.edit', $inventory)" />
-    </div>
+        
+        <x-slot:footer>
+            <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
+            <x-tabler.button type="edit" :href="route('lab.inventaris.edit', $inventory)" class="ms-auto" />
+        </x-slot:footer>
+    </x-tabler.form-modal>
 @else
     @extends('layouts.tabler.app')
 

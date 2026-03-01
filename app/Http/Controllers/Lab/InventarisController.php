@@ -26,7 +26,7 @@ class InventarisController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         // Use Service Query
         $inventaris = $this->inventarisService->getFilteredQuery($request->all());

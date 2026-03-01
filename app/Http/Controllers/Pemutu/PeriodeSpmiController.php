@@ -23,7 +23,7 @@ class PeriodeSpmiController extends Controller
         return view('pages.pemutu.periode_spmis.index', compact('pageTitle', 'periodes'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->periodeSpmiService->getBaseQuery();
 

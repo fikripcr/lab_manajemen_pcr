@@ -16,7 +16,7 @@ class JenisDokumenController extends Controller
         return view('pages.pmb.jenis-dokumen.index');
     }
 
-    public function paginate(\Illuminate\Http\Request $request)
+    public function data(\Illuminate\Http\Request $request)
     {
         return datatables()->of($this->jenisDokumenService->getPaginateData($request->all()))
             ->addIndexColumn()

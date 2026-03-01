@@ -18,7 +18,7 @@ class JadwalUjianController extends Controller
         return view('pages.cbt.jadwal.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->JadwalUjianService->getFilteredQuery($request->all());
         return datatables()->of($query)

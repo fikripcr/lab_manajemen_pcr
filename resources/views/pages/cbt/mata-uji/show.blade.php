@@ -5,9 +5,7 @@
     <x-slot:actions>
         <x-tabler.button href="{{ route('cbt.mata-uji.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
         <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="ti ti-plus me-2"></i> Tambah Soal
-            </button>
+            <x-tabler.button type="button" class="btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text=" Tambah Soal" />
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', $mu->encrypted_mata_uji_id) }}?tipe_soal=Pilihan_Ganda" data-modal-size="modal-lg"><i class="ti ti-list-check me-2"></i> Pilihan Ganda</a></li>
                 <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', $mu->encrypted_mata_uji_id) }}?tipe_soal=Esai" data-modal-size="modal-lg"><i class="ti ti-file-description me-2"></i> Esai</a></li>
@@ -84,9 +82,7 @@
                                         <a href="{{ route('cbt.soal.edit', $soal->encrypted_soal_id) }}" class="btn btn-primary ajax-modal-btn" data-modal-size="modal-lg" title="Edit">
                                             <i class="ti ti-pencil"></i>
                                         </a>
-                                        <button type="button" class="btn btn-danger ajax-delete" data-url="{{ route('cbt.soal.destroy', $soal->encrypted_soal_id) }}" title="Hapus">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                        <x-tabler.button type="button" class="btn-danger ajax-delete" data-url="{{ route('cbt.soal.destroy', $soal->encrypted_soal_id) }}" title="Hapus" iconOnly="true" icon="ti ti-trash" />
                                     </div>
                                 </td>
                             </tr>

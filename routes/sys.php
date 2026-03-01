@@ -32,7 +32,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
 
         // Users Management
         Route::prefix('users')->name('sys.users.')->group(function () {
-            Route::get('api', [UserController::class, 'paginate'])->name('data');
+            Route::get('data', [UserController::class, 'data'])->name('data');
             Route::get('export', [UserController::class, 'export'])->name('export');
             Route::get('export-pdf', [UserController::class, 'exportPdf'])->name('export.pdf');
             Route::get('export-pdf/{id}', [UserController::class, 'exportPdf'])->name('export.pdf.detail');
@@ -41,7 +41,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
             Route::get('change-password', [UserController::class, 'changePassword'])->name('change-password');
         });
         Route::resource('users', UserController::class, ['as' => 'sys']);
-        Route::post('/users/{user}/login-as', [UserController::class, 'loginAs'])->name('sys.users.login.as');
+        Route::post('/users/{user}/impersonate', [UserController::class, 'impersonate'])->name('sys.users.impersonate');
         Route::get('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('sys.users.reset-password');
         Route::put('/users/{user}/reset-password', [UserController::class, 'updatePassword'])->name('sys.users.update-password');
         Route::get('/switch-back', [UserController::class, 'switchBack'])->name('sys.users.switch-back');
@@ -51,16 +51,16 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Moved to public scope (see top of file) for Auth pages access
 
         // Activity Log Routes - accessible via /sys/activity-log
-        Route::prefix('activity-log')->name('activity-log.')->group(function () {
+        Route::prefix('activity-log')->name('sys.activity-log.')->group(function () {
             Route::get('/', [ActivityLogController::class, 'index'])->name('index');
-            Route::get('/data', [ActivityLogController::class, 'paginate'])->name('data');
+            Route::get('/data', [ActivityLogController::class, 'data'])->name('data');
             Route::get('/{id?}', [ActivityLogController::class, 'show'])->name('show');
         });
 
         // Notifications Management - accessible via /sys/notifications
-        Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::prefix('notifications')->name('sys.notifications.')->group(function () {
             Route::get('/', [NotificationsController::class, 'index'])->name('index');
-            Route::get('/data', [NotificationsController::class, 'paginate'])->name('data');
+            Route::get('/data', [NotificationsController::class, 'data'])->name('data');
             Route::get('/dropdown-data', [NotificationsController::class, 'getDropdownData'])->name('dropdown-data');
             Route::get('/mark-as-read/{id}', [NotificationsController::class, 'markAsRead'])->name('mark-as-read');
             Route::post('/mark-all-as-read', [NotificationsController::class, 'markAllAsRead'])->name('mark-all-as-read');
@@ -92,7 +92,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Error Log Management - accessible via /sys/error-log
         Route::prefix('error-log')->name('sys.error-log.')->group(function () {
             Route::get('/', [ErrorLogController::class, 'index'])->name('index');
-            Route::get('data', [ErrorLogController::class, 'paginate'])->name('data');
+            Route::get('data', [ErrorLogController::class, 'data'])->name('data');
             Route::get('{id}', [ErrorLogController::class, 'show'])->name('show');
             Route::post('clear-all', [ErrorLogController::class, 'clearAll'])->name('clear-all');
             Route::get('test', [ErrorLogController::class, 'testErrorLog'])->name('test');
@@ -114,7 +114,7 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Permissions Management - accessible via /sys/permissions
         Route::prefix('permissions')->name('sys.permissions.')->group(function () {
             Route::get('/', [PermissionController::class, 'index'])->name('index');
-            Route::get('/api', [PermissionController::class, 'paginate'])->name('data');
+            Route::get('/data', [PermissionController::class, 'data'])->name('data');
             Route::get('/create', [PermissionController::class, 'create'])->name('create');
             Route::post('/', [PermissionController::class, 'store'])->name('store');
             Route::get('/{id}/edit', [PermissionController::class, 'edit'])->name('edit');

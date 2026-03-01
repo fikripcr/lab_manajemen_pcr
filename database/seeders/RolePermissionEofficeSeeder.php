@@ -15,19 +15,26 @@ class RolePermissionEofficeSeeder extends Seeder
 
         $permissionData = [
             ['name' => 'eoffice.dashboard.view', 'category' => 'E-Office', 'sub_category' => 'Dashboard', 'description' => 'Melihat dashboard korespondensi digital'],
-            ['name' => 'eoffice.surat-masuk.view', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Melihat daftar surat masuk ke unit'],
-            ['name' => 'eoffice.surat-masuk.create', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Mencatat surat masuk baru'],
-            ['name' => 'eoffice.surat-masuk.update', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Mengubah detail data surat masuk'],
-            ['name' => 'eoffice.surat-masuk.delete', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Menghapus catatan surat masuk'],
-            ['name' => 'eoffice.surat-masuk.export', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Mengekspor agenda surat masuk'],
 
-            ['name' => 'eoffice.surat-keluar.view', 'category' => 'E-Office', 'sub_category' => 'Surat Keluar', 'description' => 'Melihat daftar surat keluar unit'],
-            ['name' => 'eoffice.surat-keluar.create', 'category' => 'E-Office', 'sub_category' => 'Surat Keluar', 'description' => 'Membuat draf surat keluar'],
-            ['name' => 'eoffice.surat-keluar.update', 'category' => 'E-Office', 'sub_category' => 'Surat Keluar', 'description' => 'Mengubah detail surat keluar'],
+            ['name' => 'eoffice.jenis-layanan.view', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Melihat daftar jenis layanan'],
+            ['name' => 'eoffice.jenis-layanan.data', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Mengambil data jenis layanan (DataTables)'],
+            ['name' => 'eoffice.jenis-layanan.create', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Menambah jenis layanan baru'],
+            ['name' => 'eoffice.jenis-layanan.update', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Mengubah jenis layanan'],
+            ['name' => 'eoffice.jenis-layanan.delete', 'category' => 'E-Office', 'sub_category' => 'Jenis Layanan', 'description' => 'Menghapus jenis layanan'],
 
-            ['name' => 'eoffice.disposisi.view', 'category' => 'E-Office', 'sub_category' => 'Disposisi', 'description' => 'Melihat daftar disposisi surat'],
-            ['name' => 'eoffice.disposisi.create', 'category' => 'E-Office', 'sub_category' => 'Disposisi', 'description' => 'Membuat instruksi disposisi baru'],
-            ['name' => 'eoffice.disposisi.update', 'category' => 'E-Office', 'sub_category' => 'Disposisi', 'description' => 'Mengubah instruksi disposisi'],
+            ['name' => 'eoffice.kategori-isian.view', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Melihat daftar kategori isian'],
+            ['name' => 'eoffice.kategori-isian.data', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Mengambil data kategori isian (DataTables)'],
+            ['name' => 'eoffice.kategori-isian.create', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Menambah kategori isian baru'],
+            ['name' => 'eoffice.kategori-isian.update', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Mengubah kategori isian'],
+            ['name' => 'eoffice.kategori-isian.delete', 'category' => 'E-Office', 'sub_category' => 'Kategori Isian', 'description' => 'Menghapus kategori isian'],
+
+            ['name' => 'eoffice.layanan.view', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Melihat daftar pengajuan layanan'],
+            ['name' => 'eoffice.layanan.data', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Mengambil data pengajuan (DataTables)'],
+            ['name' => 'eoffice.layanan.create', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Membuat pengajuan layanan baru'],
+            ['name' => 'eoffice.layanan.update', 'category' => 'E-Office', 'sub_category' => 'Pengajuan', 'description' => 'Mengubah status/detil pengajuan'],
+
+            ['name' => 'eoffice.feedback.view', 'category' => 'E-Office', 'sub_category' => 'Feedback', 'description' => 'Melihat daftar feedback layanan'],
+            ['name' => 'eoffice.feedback.data', 'category' => 'E-Office', 'sub_category' => 'Feedback', 'description' => 'Mengambil data feedback (DataTables)'],
         ];
 
         foreach ($permissionData as $permission) {

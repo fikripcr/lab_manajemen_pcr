@@ -130,37 +130,31 @@
                     @forelse($edLinks as $link)
                         <div class="kpi-link-item row gap-2 mb-2 g-0 align-items-center">
                             <div class="col-5">
-                                <input type="text" name="kpi_links_name[]" class="form-control" placeholder="Nama Dokumen (Contoh: Laporan PKM)" value="{{ $link['name'] }}">
+                                <x-tabler.form-input type="text" name="kpi_links_name[]" placeholder="Nama Dokumen (Contoh: Laporan PKM)" value="{{ $link['name'] }}" />
                             </div>
                             <div class="col">
-                                <input type="url" name="kpi_links_url[]" class="form-control" placeholder="https://..." value="{{ $link['url'] }}">
+                                <x-tabler.form-input type="url" name="kpi_links_url[]" placeholder="https://..." value="{{ $link['url'] }}" />
                             </div>
                             <div class="col-auto">
-                                <button type="button" class="btn btn-icon btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1">
-                                    <i class="ti ti-trash"></i>
-                                </button>
+                                <x-tabler.button type="button" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" icon="ti ti-trash" />
                             </div>
                         </div>
                     @empty
                         <div class="kpi-link-item row gap-2 mb-2 g-0 align-items-center">
                             <div class="col-5">
-                                <input type="text" name="kpi_links_name[]" class="form-control" placeholder="Nama Dokumen (Contoh: Laporan PKM)">
+                                <x-tabler.form-input type="text" name="kpi_links_name[]" placeholder="Nama Dokumen (Contoh: Laporan PKM)" />
                             </div>
                             <div class="col">
-                                <input type="url" name="kpi_links_url[]" class="form-control" placeholder="https://...">
+                                <x-tabler.form-input type="url" name="kpi_links_url[]" placeholder="https://..." />
                             </div>
                             <div class="col-auto">
-                                <button type="button" class="btn btn-icon btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1">
-                                    <i class="ti ti-trash"></i>
-                                </button>
+                                <x-tabler.button type="button" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" icon="ti ti-trash" />
                             </div>
                         </div>
                     @endforelse
                 </div>
                 
-                <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-kpi-link-btn">
-                    <i class="ti ti-plus me-2"></i> Tambah Link
-                </button>
+                <x-tabler.button type="button" id="add-kpi-link-btn" class="btn-outline-primary btn-sm mt-2" icon="ti ti-plus" text="Tambah Link" />
             </div>
         </div>
     </div>

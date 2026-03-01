@@ -1,13 +1,8 @@
-<x-tabler.modal-form 
+<x-tabler.form-modal 
     id="modalAction" 
     title="Pengendalian — {{ $indOrg->indikator->no_indikator ?? '' }}" 
-    icon="ti-settings-check" 
-    iconColor="teal" 
-    action="{{ route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id) }}" 
-    method="POST" 
-    :isAjax="true">
-    
-    <x-slot:body>
+    route="{{ route('pemutu.pengendalian.update', $indOrg->encrypted_indorgunit_id) }}" 
+    method="PUT">
         {{-- Info Singkat Indikator --}}
         <div class="alert alert-info p-2 mb-3">
             <div class="fw-bold">{{ $indOrg->indikator->no_indikator }}</div>
@@ -113,5 +108,4 @@
                 :value="$indOrg->pengend_analisis ?? ''"
             />
         </div>
-    </x-slot:body>
-</x-tabler.modal-form>
+</x-tabler.form-modal>

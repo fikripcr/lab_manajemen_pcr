@@ -21,7 +21,7 @@ class SemesterController extends Controller
         return view('pages.lab.semesters.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $semesters = $this->semesterService->getFilteredQuery($request->all());
 

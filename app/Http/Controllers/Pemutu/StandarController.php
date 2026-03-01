@@ -28,7 +28,7 @@ class StandarController extends Controller
         return view('pages.pemutu.standar.index', compact('dokumens'));
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $filters         = $request->all();
         $filters['type'] = 'standar';

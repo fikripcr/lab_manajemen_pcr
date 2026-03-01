@@ -26,7 +26,7 @@ class NotificationsController extends Controller
     /**
      * Process datatables ajax request.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $filters = [
             'read_status' => $request->get('read_status'),
@@ -193,7 +193,7 @@ class NotificationsController extends Controller
                 $recipient = $userId;
             } else {
                 $decryptedId = decryptIdIfEncrypted($userId);
-                $recipient = User::findOrFail($decryptedId);
+                $recipient   = User::findOrFail($decryptedId);
             }
         } else {
             // Use authenticated user if no user_id provided

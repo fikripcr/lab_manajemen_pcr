@@ -20,7 +20,7 @@ class PaketUjianController extends Controller
         return view('pages.cbt.paket.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->PaketUjianService->getFilteredQuery($request->all())
             ->with(['komposisi.soal.mataUji', 'pembuat']);

@@ -22,7 +22,7 @@
                         ['data' => 'is_aktif', 'name' => 'is_aktif', 'title' => 'Status'],
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
                     ]"
-                    :url="route('pmb.periode.paginate')"
+                    :url="route('pmb.periode.data')"
                 />
             </div>
         </div>

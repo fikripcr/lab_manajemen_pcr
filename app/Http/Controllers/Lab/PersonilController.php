@@ -18,7 +18,7 @@ class PersonilController extends Controller
         return view('pages.lab.personil.index');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->personilService->getFilteredQuery($request->all());
 

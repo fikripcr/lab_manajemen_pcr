@@ -25,7 +25,7 @@ class ErrorLogController extends Controller
     /**
      * Process datatables ajax request for error logs.
      */
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $filters = [
             'level'      => $request->get('level'),

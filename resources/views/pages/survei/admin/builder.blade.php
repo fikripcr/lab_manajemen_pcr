@@ -64,9 +64,7 @@
                                 </div>
                                 <div class="card-actions">
                                     <div class="dropdown">
-                                        <button type="button" class="btn bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-plus me-1"></i>Tambah
-                                        </button>
+                                        <x-tabler.button type="button" class="bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text="Tambah" />
                                         <div class="dropdown-menu dropdown-menu-end">
                                             @foreach(['Teks_Singkat' => 'ti-text-size', 'Esai' => 'ti-align-left', 'Angka' => 'ti-123', 'Pilihan_Ganda' => 'ti-circle-dot', 'Kotak_Centang' => 'ti-checkbox', 'Dropdown' => 'ti-select', 'Skala_Linear' => 'ti-adjustments-horizontal', 'Tanggal' => 'ti-calendar', 'Upload_File' => 'ti-upload'] as $tipe => $icon)
                                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); addPertanyaan('{{ $halaman->encrypted_halaman_id }}', '{{ $tipe }}')">
@@ -326,9 +324,7 @@
                 <div class="input-group input-group-sm mb-1 opsi-item border-0">
                     <span class="input-group-text bg-transparent border-end-0"><i class="ti ti-circle"></i></span>
                     <input type="text" class="form-control opsi-label shadow-none border-start-0" value="Opsi Baru" onchange="debounceSave('${pertanyaanId}')">
-                    <button class="btn btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave('${pertanyaanId}');">
-                        <i class="ti ti-x"></i>
-                    </button>
+                    <x-tabler.button type="button" class="btn-icon btn-ghost-danger" onclick="$(this).closest('.opsi-item').remove(); debounceSave('${pertanyaanId}');" iconOnly="true" icon="ti ti-x" />
                 </div>`;
             wrapper.append(html);
             window.debounceSave(pertanyaanId);

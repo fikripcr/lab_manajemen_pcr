@@ -30,7 +30,7 @@ class SlideshowController extends Controller
         return jsonError('Data urutan tidak valid.');
     }
 
-    public function paginate(Request $request)
+    public function data(Request $request)
     {
         $query = $this->slideshowService->getFilteredQuery($request->all());
         return DataTables::of($query)

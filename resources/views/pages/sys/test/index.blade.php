@@ -512,8 +512,8 @@
                         <p>Click "Test" to make API calls using axios.</p>
                     </div>
                     <div class="d-flex justify-content-center gap-2 mt-3">
-                        <button id="testCountBtn" class="btn btn-primary">Test Count</button>
-                        <button id="testListBtn" class="btn btn-info">Test List</button>
+                        <x-tabler.button id="testCountBtn" type="button" class="btn-primary" text="Test Count" />
+                        <x-tabler.button id="testListBtn" type="button" class="btn-info" text="Test List" />
                     </div>
                     <div id="apiResults" class="mt-3" style="max-height: 200px; overflow-y: auto;"></div>
                 `,

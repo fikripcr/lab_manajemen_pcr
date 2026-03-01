@@ -324,15 +324,13 @@
 
                             <div class="row g-2 align-items-center">
                                 <div class="col-8">
-                                    <select name="jenis_pengirim" class="form-select form-select-sm w-auto" required>
+                                    <x-tabler.form-select name="jenis_pengirim" class="form-select-sm w-auto" required="true">
                                         <option value="auditor" selected>Kirim sebagai: Auditor</option>
                                         <option value="auditee">Kirim sebagai: Auditee</option>
-                                    </select>
+                                    </x-tabler.form-select>
                                 </div>
                                 <div class="col-4 text-end">
-                                    <button type="submit" class="btn btn-primary btn-sm w-100">
-                                        <i class="ti ti-send me-1"></i>Kirim
-                                    </button>
+                                    <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-send" text="Kirim" />
                                 </div>
                             </div>
                         </form>

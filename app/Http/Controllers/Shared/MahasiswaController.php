@@ -10,21 +10,23 @@ class MahasiswaController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = Mahasiswa::with('prodi');
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('prodi_nama', function ($row) {
-                    return $row->prodi->nama_prodi ?? '-';
-                })
-                ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('mahasiswa.show', $row->encrypted_mahasiswa_id) . '" class="edit btn btn-info btn-sm">View</a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
         return view('pages.shared.mahasiswa.index');
+    }
+
+    public function data(Request $request)
+    {
+        $data = Mahasiswa::with('prodi');
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('prodi_nama', function ($row) {
+                return $row->prodi->nama_prodi ?? '-';
+            })
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="' . route('shared.mahasiswa.show', $row->encrypted_mahasiswa_id) . '" class="edit btn btn-info btn-sm">View</a>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function show(Mahasiswa $mahasiswa)
