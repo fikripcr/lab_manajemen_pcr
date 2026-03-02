@@ -39,15 +39,18 @@
             @foreach($slideshows as $slide)
                 <div class="col-md-6 col-lg-4" data-id="{{ $slide->encrypted_slideshow_id }}">
                     <div class="card card-sm">
-                        <div class="d-block">
-                            @if($slide->hasMedia('slideshow_image'))
+                        <div class="d-block position-relative">
+                            @if($slide->has_image)
                                 <img src="{{ $slide->thumb_url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ $slide->title }}">
+                                @if($slide->is_external_image)
+                                    <a href="{{ $slide->image_url }}" target="_blank" class="position-absolute top-0 end-0 m-2 btn btn-sm btn-primary btn-icon rounded-circle shadow" title="Buka Link Gambar">
+                                        <i class="ti ti-link"></i>
+                                    </a>
+                                @endif
                             @else
-                                <x-tabler.empty-state
-                                    title=""
-                                    icon="ti ti-photo-off"
-                                    class="card-img-top bg-muted-lt"
-                                />
+                                <div class="card-img-top bg-muted-lt d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="ti ti-photo-off fs-1 text-muted"></i>
+                                </div>
                             @endif
                         </div>
                         <div class="card-body">
@@ -126,7 +129,7 @@
         })
         .then(function (response) {
             if(window.Swal) Swal.close();
-            
+            console.log(response.data.status)
             if(response.data.status === 'success'){
                 if(typeof showSuccessMessage === 'function') {
                     showSuccessMessage(response.data.message);

@@ -9,11 +9,22 @@
     <div class="mb-3">
         <x-tabler.form-input 
             name="slideshow_image" 
-            label="Gambar Slideshow" 
+            label="Upload Gambar" 
             type="file" 
-            :required="!$slideshow->exists"
+            :required="!$slideshow->exists && empty($slideshow->image_url)"
             accept="image/*"
             help="Ukuran yang disarankan 1200x600 px."
+        />
+    </div>
+
+    <div class="mb-3">
+        <div class="hr-text my-2">ATAU</div>
+        <x-tabler.form-input 
+            name="image_url" 
+            label="Image URL (Opsional)" 
+            value="{{ $slideshow->image_url && filter_var($slideshow->image_url, FILTER_VALIDATE_URL) ? $slideshow->image_url : '' }}"
+            placeholder="https://example.com/image.jpg"
+            help="Gunakan URL jika gambar tidak ingin diunggah secara lokal."
         />
     </div>
 

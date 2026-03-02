@@ -65,6 +65,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Indikator Standar (ED, AMI, Pengendalian)
     Route::get('indikator-summary/standar', [IndikatorSummaryController::class, 'standar'])->name('indikator-summary.standar');
     Route::get('indikator-summary/standar/data', [IndikatorSummaryController::class, 'dataStandar'])->name('indikator-summary.data-standar');
+    Route::get('indikator-summary/standar/count', [IndikatorSummaryController::class, 'summaryCount'])->name('indikator-summary.summary-count');
 
     // Indikator Performa (KPI)
     Route::get('indikator-summary/performa', [IndikatorSummaryController::class, 'performa'])->name('indikator-summary.performa');

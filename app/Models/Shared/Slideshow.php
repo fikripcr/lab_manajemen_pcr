@@ -15,11 +15,23 @@ class Slideshow extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
 
-    protected $appends = ['encrypted_slideshow_id'];
+    protected $appends = ['encrypted_slideshow_id', 'has_image', 'is_external_image'];
 
     public function getEncryptedSlideshowIdAttribute()
     {
         return encryptId($this->id);
+    }
+
+    public function getHasImageAttribute()
+    {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        return ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) || $this->hasMedia('slideshow_image');
+    }
+
+    public function getIsExternalImageAttribute()
+    {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        return $imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL);
     }
 
     protected $fillable = [
@@ -57,19 +69,31 @@ class Slideshow extends Model implements HasMedia
 
     public function getImageUrlAttribute()
     {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return $imageUrl;
+        }
         $media = $this->getFirstMedia('slideshow_image');
-        return $media ? $media->getUrl() : asset('static/img/default-slideshow.jpg');
+        return $media ? $media->getUrl() : 'https://via.placeholder.com/1200x600?text=No+Image';
     }
 
     public function getThumbUrlAttribute()
     {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return $imageUrl;
+        }
         $media = $this->getFirstMedia('slideshow_image');
-        return $media ? $media->getUrl('thumb') : asset('static/img/default-slideshow.jpg');
+        return $media ? $media->getUrl('thumb') : 'https://via.placeholder.com/400x400?text=No+Image';
     }
 
     public function getLargeUrlAttribute()
     {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return $imageUrl;
+        }
         $media = $this->getFirstMedia('slideshow_image');
-        return $media ? $media->getUrl('large') : asset('static/img/default-slideshow.jpg');
+        return $media ? $media->getUrl('large') : 'https://via.placeholder.com/1200x600?text=No+Image';
     }
 }

@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Exports\Pemutu;
 
 use App\Models\Pemutu\IndikatorSummaryStandar;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -24,24 +23,55 @@ class IndikatorSummaryExport implements FromCollection, WithHeadings, WithMappin
         $query = IndikatorSummaryStandar::query();
 
         // Filter by kelompok indikator
-        if (!empty($this->filters['kelompok_indikator'])) {
+        if (! empty($this->filters['kelompok_indikator'])) {
             $query->where('kelompok_indikator', $this->filters['kelompok_indikator']);
         }
 
         // Filter by year
-        if (!empty($this->filters['year'])) {
+        if (! empty($this->filters['year'])) {
             $query->whereYear('periode_mulai', $this->filters['year']);
         }
 
+        // Filter by ED Status
+        if (! empty($this->filters['ed_status'])) {
+            if ($this->filters['ed_status'] === 'filled') {
+                $query->whereNotNull('ed_capaian')->where('ed_capaian', '!=', '');
+            } elseif ($this->filters['ed_status'] === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('ed_capaian')->orWhere('ed_capaian', '');
+                });
+            }
+        }
+
+        // Filter by AMI Hasil
+        if (isset($this->filters['ami_hasil']) && $this->filters['ami_hasil'] !== '') {
+            if ($this->filters['ami_hasil'] === 'empty') {
+                $query->whereNull('ami_hasil_akhir');
+            } else {
+                $query->where('ami_hasil_akhir', $this->filters['ami_hasil']);
+            }
+        }
+
+        // Filter by Pengendalian Status
+        if (! empty($this->filters['pengend_status'])) {
+            if ($this->filters['pengend_status'] === 'filled') {
+                $query->whereNotNull('pengend_status')->where('pengend_status', '!=', '');
+            } elseif ($this->filters['pengend_status'] === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('pengend_status')->orWhere('pengend_status', '');
+                });
+            }
+        }
+
         // Search
-        if (!empty($this->filters['search'])) {
+        if (! empty($this->filters['search'])) {
             $search = $this->filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('no_indikator', 'LIKE', "%{$search}%")
-                  ->orWhere('indikator', 'LIKE', "%{$search}%")
-                  ->orWhere('parent_no_indikator', 'LIKE', "%{$search}%")
-                  ->orWhere('label_details', 'LIKE', "%{$search}%")
-                  ->orWhere('all_unit_names', 'LIKE', "%{$search}%");
+                    ->orWhere('indikator', 'LIKE', "%{$search}%")
+                    ->orWhere('parent_no_indikator', 'LIKE', "%{$search}%")
+                    ->orWhere('label_details', 'LIKE', "%{$search}%")
+                    ->orWhere('all_unit_names', 'LIKE', "%{$search}%");
             });
         }
 

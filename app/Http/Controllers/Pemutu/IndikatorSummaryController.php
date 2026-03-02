@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Pemutu;
 use App\Http\Controllers\Controller;
 use App\Models\Pemutu\IndikatorSummary;
 use App\Models\Pemutu\IndikatorSummaryPerforma;
-use App\Models\Pemutu\IndikatorSummaryStandar;
 use App\Models\Pemutu\PeriodeSpmi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -145,30 +144,66 @@ class IndikatorSummaryController extends Controller
      */
     public function dataStandar(Request $request)
     {
-        $filters = $request->only(['kelompok_indikator', 'year', 'search']);
+        $query = DB::table('pemutu_indikator_orgunit as io')
+            ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
+            ->leftJoin('struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id')
+            ->select('io.*', 'v.*', 'so.name as unit_name', 'so.code as unit_code');
 
-        $query = IndikatorSummaryStandar::query();
-
-        // Filter by kelompok indikator
-        if (! empty($filters['kelompok_indikator'])) {
-            $query->where('kelompok_indikator', $filters['kelompok_indikator']);
+        // Filter by Kelompok
+        if ($request->filled('kelompok_indikator')) {
+            $query->where('v.kelompok_indikator', $request->kelompok_indikator);
         }
 
-        // Filter by year
-        if (! empty($filters['year'])) {
-            $query->whereYear('periode_mulai', $filters['year']);
+        // Filter by Year
+        if ($request->filled('year')) {
+            $query->whereYear('v.periode_mulai', $request->year);
         }
 
-        // Search - integrated with DataTable search
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('no_indikator', 'LIKE', "%{$search}%")
-                    ->orWhere('indikator', 'LIKE', "%{$search}%")
-                    ->orWhere('parent_no_indikator', 'LIKE', "%{$search}%")
-                    ->orWhere('label_details', 'LIKE', "%{$search}%")
-                    ->orWhere('all_unit_names', 'LIKE', "%{$search}%");
-            });
+        // Filter by ED Status
+        if ($request->filled('ed_status')) {
+            if ($request->ed_status === 'filled') {
+                $query->whereNotNull('io.ed_capaian')->where('io.ed_capaian', '!=', '');
+            } elseif ($request->ed_status === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('io.ed_capaian')->orWhere('io.ed_capaian', '');
+                });
+            }
+        }
+
+        // Filter by AMI Hasil
+        if ($request->filled('ami_hasil')) {
+            if ($request->ami_hasil === 'empty') {
+                $query->whereNull('io.ami_hasil_akhir');
+            } else {
+                $query->where('io.ami_hasil_akhir', $request->ami_hasil);
+            }
+        }
+
+        // Filter by Pengendalian Status
+        if ($request->filled('pengend_status')) {
+            if ($request->pengend_status === 'filled') {
+                $query->whereNotNull('io.pengend_status')->where('io.pengend_status', '!=', '');
+            } elseif ($request->pengend_status === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('io.pengend_status')->orWhere('io.pengend_status', '');
+                });
+            }
+        }
+
+        // Search Handled by DataTables, but for specific columns we might need custom logic if using Raw SQL
+        // However, DataTables usually handles basic search on returned columns.
+        // For dynamic summary count, we need the search applied to the query.
+        if ($request->filled('search')) {
+            $search = $request->input('search.value') ?? $request->input('search');
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('v.no_indikator', 'LIKE', "%{$search}%")
+                        ->orWhere('v.indikator', 'LIKE', "%{$search}%")
+                        ->orWhere('v.parent_no_indikator', 'LIKE', "%{$search}%")
+                        ->orWhere('so.name', 'LIKE', "%{$search}%")
+                        ->orWhere('so.code', 'LIKE', "%{$search}%");
+                });
+            }
         }
 
         return DataTables::of($query)
@@ -217,14 +252,14 @@ class IndikatorSummaryController extends Controller
                     return '<span class="text-muted fst-italic small">Belum dinilai</span>';
                 }
 
-                $badgeColor = match ($row->ami_hasil_label) {
+                $statusColor = match ($row->ami_hasil_label) {
                     'KTS'        => 'danger',
                     'Terpenuhi'  => 'success',
                     'Terlampaui' => 'info',
                     default      => 'secondary',
                 };
 
-                $html = '<div class="mb-2"><span class="badge bg-' . $badgeColor . '-lt">' . e($row->ami_hasil_label) . '</span></div>';
+                $html = '<div class="mb-2"><span class="status status-' . $statusColor . '">' . e($row->ami_hasil_label) . '</span></div>';
                 if ($row->ami_hasil_temuan && $row->ami_hasil_temuan !== '-') {
                     $html .= $this->renderTruncatedText($row->ami_hasil_temuan, 'text-muted small');
                 }
@@ -239,7 +274,7 @@ class IndikatorSummaryController extends Controller
                     return '<span class="text-muted fst-italic small">Belum ada</span>';
                 }
 
-                $badgeColor = match (strtolower($row->pengend_status)) {
+                $statusColor = match (strtolower($row->pengend_status)) {
                     'selesai'     => 'success',
                     'proses'      => 'warning',
                     'belum'       => 'danger',
@@ -247,7 +282,7 @@ class IndikatorSummaryController extends Controller
                     default       => 'secondary',
                 };
 
-                $html = '<div class="text-center mb-2"><span class="badge bg-' . $badgeColor . '-lt">' . e($row->pengend_status) . '</span></div>';
+                $html = '<div class="text-center mb-2"><span class="status status-' . $statusColor . '">' . e($row->pengend_status) . '</span></div>';
                 if ($row->pengend_analisis && $row->pengend_analisis !== '-') {
                     $html .= $this->renderTruncatedText($row->pengend_analisis, 'text-muted small');
                 }
@@ -480,7 +515,7 @@ class IndikatorSummaryController extends Controller
      */
     public function export(Request $request)
     {
-        $filters  = $request->only(['kelompok_indikator', 'year', 'search']);
+        $filters  = $request->only(['kelompok_indikator', 'year', 'search', 'ed_status', 'ami_hasil', 'pengend_status']);
         $fileName = 'summary_indikator_standar_' . date('Ymd_His') . '.xlsx';
 
         return Excel::download(new \App\Exports\Pemutu\IndikatorSummaryExport($filters), $fileName);
@@ -509,5 +544,76 @@ class IndikatorSummaryController extends Controller
         $html .= '</div>';
 
         return $html;
+    }
+
+    /**
+     * Get summary counts for Standar cards based on filters.
+     */
+    public function summaryCount(Request $request)
+    {
+        $query = DB::table('pemutu_indikator_orgunit as io')
+            ->join('vw_pemutu_summary_indikator_standar as v', 'io.indikator_id', '=', 'v.indikator_id')
+            ->leftJoin('struktur_organisasi as so', 'io.org_unit_id', '=', 'so.orgunit_id');
+
+        // Apply same filters as dataStandar
+        if ($request->filled('kelompok_indikator')) {
+            $query->where('v.kelompok_indikator', $request->kelompok_indikator);
+        }
+        if ($request->filled('year')) {
+            $query->whereYear('v.periode_mulai', $request->year);
+        }
+        if ($request->filled('ed_status')) {
+            if ($request->ed_status === 'filled') {
+                $query->whereNotNull('io.ed_capaian')->where('io.ed_capaian', '!=', '');
+            } elseif ($request->ed_status === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('io.ed_capaian')->orWhere('io.ed_capaian', '');
+                });
+            }
+        }
+        if ($request->filled('ami_hasil')) {
+            if ($request->ami_hasil === 'empty') {
+                $query->whereNull('io.ami_hasil_akhir');
+            } else {
+                $query->where('io.ami_hasil_akhir', $request->ami_hasil);
+            }
+        }
+        if ($request->filled('pengend_status')) {
+            if ($request->pengend_status === 'filled') {
+                $query->whereNotNull('io.pengend_status')->where('io.pengend_status', '!=', '');
+            } elseif ($request->pengend_status === 'empty') {
+                $query->where(function ($q) {
+                    $q->whereNull('io.pengend_status')->orWhere('io.pengend_status', '');
+                });
+            }
+        }
+        if ($request->filled('search')) {
+            $search = $request->input('search.value') ?? $request->input('search');
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('v.no_indikator', 'LIKE', "%{$search}%")
+                        ->orWhere('v.indikator', 'LIKE', "%{$search}%")
+                        ->orWhere('v.parent_no_indikator', 'LIKE', "%{$search}%")
+                        ->orWhere('so.name', 'LIKE', "%{$search}%")
+                        ->orWhere('so.code', 'LIKE', "%{$search}%");
+                });
+            }
+        }
+
+        $allData = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'edTotalUnits'          => $allData->count(),
+                'uniqueAssignedStandar' => $allData->pluck('indikator_id')->unique()->count(),
+                'edFilledUnits'         => $allData->filter(fn($r) => ! empty($r->ed_capaian))->count(),
+                'amiAssessed'           => $allData->filter(fn($r) => $r->ami_hasil_akhir !== null)->count(),
+                'amiKts'                => $allData->filter(fn($r) => $r->ami_hasil_akhir == 0 && $r->ami_hasil_akhir !== null)->count(),
+                'amiTerpenuhi'          => $allData->filter(fn($r) => $r->ami_hasil_akhir == 1)->count(),
+                'amiTerlampaui'         => $allData->filter(fn($r) => $r->ami_hasil_akhir == 2)->count(),
+                'pengendFilled'         => $allData->filter(fn($r) => ! empty($r->pengend_status))->count(),
+            ],
+        ]);
     }
 }

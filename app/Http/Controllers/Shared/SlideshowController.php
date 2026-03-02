@@ -36,7 +36,15 @@ class SlideshowController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('image_url', function ($row) {
-                return '<img src="' . $row->thumb_url . '" class="img-fluid rounded shadow-sm" style="max-height: 50px;" />';
+                $html  = '<div class="position-relative d-inline-block">';
+                $html .= '<img src="' . $row->thumb_url . '" class="img-fluid rounded shadow-sm" style="max-height: 50px;" />';
+                if ($row->is_external_image) {
+                    $html .= '<a href="' . $row->image_url . '" target="_blank" class="position-absolute top-0 end-0 bg-primary text-white p-1 rounded-circle flex align-items-center justify-content-center shadow-sm" style="margin: -5px -5px 0 0; width: 18px; height: 18px;" title="Buka Link Gambar">';
+                    $html .= '<i class="ti ti-link fs-6"></i>';
+                    $html .= '</a>';
+                }
+                $html .= '</div>';
+                return $html;
             })
             ->editColumn('is_active', function ($row) {
                 return $row->is_active

@@ -35,7 +35,7 @@
             </div>
             @endif
 
-            <div class="col-12">
+            <div class="col-12 d-none">
                 <div class="card card-md border-0 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #1e3a5f 0%, #2c3e50 50%, #34495e 100%); color: white; border-radius: 12px;">
                     <div class="card-body d-flex align-items-center py-5 position-relative">
                         <div class="me-4 d-none d-md-block">

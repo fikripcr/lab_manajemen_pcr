@@ -10,9 +10,18 @@
 
 @section('content')
     <div class="card">
-            <div class="card-body">
-                <x-tabler.datatable 
-                    id="table-paket" 
+        <div class="card-header border-bottom">
+            <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+                <h3 class="card-title mb-0">Daftar Paket Ujian</h3>
+                <div class="ms-auto d-flex flex-wrap gap-2">
+                    <x-tabler.datatable-page-length dataTableId="table-paket" />
+                    <x-tabler.datatable-search dataTableId="table-paket" />
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <x-tabler.datatable 
+                id="table-paket" 
                     :columns="[
                         ['data' => 'DT_RowIndex', 'name' => 'id', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
                         ['data' => 'nama_paket', 'name' => 'nama_paket', 'title' => 'Nama Paket'],
