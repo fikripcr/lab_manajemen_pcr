@@ -362,26 +362,6 @@ return new class extends Migration
             $table->string('deleted_by')->nullable();
         });
 
-        Schema::create('hr_riwayat_penugasan', function (Blueprint $table) {
-            $table->id('riwayatpenugasan_id');
-            $table->unsignedBigInteger('pegawai_id')->index();
-            $table->unsignedBigInteger('org_unit_id')->nullable();
-            $table->date('tgl_mulai');
-            $table->date('tgl_selesai')->nullable();
-            $table->date('tgl_sk')->nullable();
-            $table->string('no_sk', 100)->nullable();
-            $table->string('jabatan', 100)->nullable();
-            $table->text('keterangan')->nullable();
-            $table->string('status', 20)->default('approved');
-            $table->unsignedBigInteger('approved_by')->nullable();
-            $table->timestamp('approved_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->string('created_by')->nullable();
-            $table->string('updated_by')->nullable();
-            $table->string('deleted_by')->nullable();
-        });
-
         Schema::create('hr_presensi', function (Blueprint $table) {
             $table->id('presensi_id');
             $table->unsignedBigInteger('pegawai_id')->nullable();
@@ -493,7 +473,6 @@ return new class extends Migration
         Schema::dropIfExists('hr_lembur');
         Schema::dropIfExists('hr_file_pegawai');
         Schema::dropIfExists('hr_presensi');
-        Schema::dropIfExists('hr_riwayat_penugasan');
         Schema::dropIfExists('hr_riwayat_inpassing');
         Schema::dropIfExists('hr_pengembangan_diri');
 

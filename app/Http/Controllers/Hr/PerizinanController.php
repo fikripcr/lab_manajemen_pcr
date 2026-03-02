@@ -68,10 +68,10 @@ class PerizinanController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl'       => route('hr.perizinan.show', $row->encrypted_perizinan_id),
-                    'viewModal'     => false,
-                    'viewTitle'     => 'Detail Perizinan',
-                    'editUrl'       => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.edit', $row->encrypted_perizinan_id) : null,
+                    'viewUrl'   => route('hr.perizinan.show', $row->encrypted_perizinan_id),
+                    'viewModal' => false,
+                    'viewTitle' => 'Detail Perizinan',
+                    'editUrl'   => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.edit', $row->encrypted_perizinan_id) : null,
                     'editModal' => true,
                     'editTitle' => 'Edit Perizinan',
                     'deleteUrl' => in_array($row->status, ['Draft', 'Diajukan']) ? route('hr.perizinan.destroy', $row->encrypted_perizinan_id) : null,
@@ -112,7 +112,7 @@ class PerizinanController extends Controller
 
     public function update(PerizinanRequest $request, Perizinan $perizinan)
     {
-        if (!in_array($perizinan->status, ['Draft', 'Diajukan'])) {
+        if (! in_array($perizinan->status, ['Draft', 'Diajukan'])) {
             return jsonError('Perizinan tidak dapat diubah karena sudah diproses.');
         }
 
@@ -122,7 +122,7 @@ class PerizinanController extends Controller
 
     public function destroy(Perizinan $perizinan)
     {
-        if (!in_array($perizinan->status, ['Draft', 'Diajukan'])) {
+        if (! in_array($perizinan->status, ['Draft', 'Diajukan'])) {
             return jsonError('Perizinan tidak dapat dihapus karena sudah diproses.');
         }
 
@@ -144,6 +144,6 @@ class PerizinanController extends Controller
             'Pending'  => 'ditangguhkan',
         ];
 
-        return jsonSuccess('Perizinan berhasil di-' . ($statusText[$request->status] ?? 'proses'));
+        return jsonSuccess('Perizinan berhasil di-' . ($statusText[$request->status] ?? 'proses'), route('hr.perizinan.show', $perizinan->encrypted_perizinan_id));
     }
 }

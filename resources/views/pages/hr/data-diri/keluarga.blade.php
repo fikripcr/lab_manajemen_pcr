@@ -1,10 +1,18 @@
-<div class="card-body border-bottom py-3">
-    <div class="d-flex flex-wrap gap-2">
+<div class="card-header border-bottom">
+    <div class="d-flex flex-wrap gap-2 w-100">
         <div>
-            <x-tabler.datatable-page-length :dataTableId="'keluarga-table'" />
+            <x-tabler.datatable-page-length dataTableId="keluarga-table" />
         </div>
-        <div class="ms-auto text-muted">
-            <x-tabler.datatable-search :dataTableId="'keluarga-table'" />
+        <div>
+            <x-tabler.datatable-search dataTableId="keluarga-table" />
+        </div>
+        <div>
+            <x-tabler.datatable-filter dataTableId="keluarga-table">
+                <div style="min-width: 150px;">
+                    <x-tabler.form-select name="hubungan" placeholder="Semua Hubungan" class="mb-0"
+                        :options="['Suami' => 'Suami', 'Istri' => 'Istri', 'Anak' => 'Anak', 'Orang Tua' => 'Orang Tua']" />
+                </div>
+            </x-tabler.datatable-filter>
         </div>
     </div>
 </div>

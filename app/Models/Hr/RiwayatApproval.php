@@ -36,7 +36,6 @@ class RiwayatApproval extends Model
         'pejabat',
         'jenis_jabatan',
         'keterangan',
-        'created_by_email',
         'created_by',
         'updated_by',
         'deleted_by',

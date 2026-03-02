@@ -3,9 +3,9 @@ namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
-class EndPenugasanRequest extends BaseRequest
+class EndStrukturalRequest extends BaseRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -13,14 +13,14 @@ class EndPenugasanRequest extends BaseRequest
     public function rules()
     {
         return [
-            'tgl_selesai' => 'required|date',
+            'tgl_akhir' => 'required|date',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'tgl_selesai' => 'Tanggal Selesai',
+            'tgl_akhir' => 'Tanggal Akhir',
         ];
     }
 }

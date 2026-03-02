@@ -6,6 +6,16 @@
 
 @section('content')
 <div class="card">
+    <div class="card-header">
+        <div class="d-flex flex-wrap gap-2">
+            <div>
+                <x-tabler.datatable-page-length :dataTableId="'table-pendaftar'" />
+            </div>
+            <div class="ms-auto">
+                <x-tabler.datatable-search :dataTableId="'table-pendaftar'" />
+            </div>
+        </div>
+    </div>
     <div class="card-body">
         <x-tabler.datatable
             id="table-pendaftar"
@@ -22,6 +32,7 @@
         />
     </div>
 </div>
+
 
 <!-- Modal Verifikasi Berkas dengan Toggle -->
 <x-tabler.form-modal id="modalVerifikasiBerkas" size="modal-lg" title="Verifikasi Berkas" method="none" data-bs-backdrop="static" hideFooter="true">

@@ -27,8 +27,7 @@
         </div>
 
         <div class="col-md-6 mb-3">
-            <label class="form-label required">Bidang Ilmu / Jurusan</label>
-            <x-tabler.form-input name="bidang_ilmu" label="Bidang Ilmu" value="{{ $pendidikan->bidang_ilmu ?? '' }}" />
+            <x-tabler.form-input name="bidang_ilmu" label="Bidang Ilmu / Jurusan" value="{{ $pendidikan->bidang_ilmu ?? '' }}" />
         </div>
 
         <div class="col-md-6 mb-3">
@@ -36,13 +35,11 @@
         </div>
 
         <div class="col-md-6 mb-3">
-            <label class="form-label">Kota Asal PT</label>
-            <x-tabler.form-input name="kotaasal_pt" label="Kota PT" value="{{ $pendidikan->kotaasal_pt ?? '' }}" />
+            <x-tabler.form-input name="kotaasal_pt" label="Kota Asal PT" value="{{ $pendidikan->kotaasal_pt ?? '' }}" />
         </div>
-        
+
         <div class="col-md-6 mb-3">
-            <label class="form-label">Negara Asal PT</label>
-            <x-tabler.form-input name="kodenegara_pt" label="Negara PT" value="{{ $pendidikan->kodenegara_pt ?? '' }}" placeholder="Indonesia" />
+            <x-tabler.form-input name="kodenegara_pt" label="Negara Asal PT" value="{{ $pendidikan->kodenegara_pt ?? '' }}" placeholder="Indonesia" />
         </div>
     </div>
 </x-tabler.form-modal>

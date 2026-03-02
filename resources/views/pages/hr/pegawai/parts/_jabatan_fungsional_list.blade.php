@@ -1,72 +1,30 @@
-<div class="card mb-4">
-    <div class="card-header">
-        <h3 class="card-title">Riwayat Jabatan Fungsional</h3>
-        <div class="card-actions">
-            <x-tabler.button 
-                style="primary" 
-                class="ajax-modal-btn" 
-                data-url="{{ route('hr.pegawai.jabatan-fungsional.create', $pegawai->encrypted_pegawai_id) }}" 
-                data-modal-title="Ubah Jabatan Fungsional"
-                icon="ti ti-edit"
-                text="Ubah Jafung" />
-        </div>
-    </div>
-    <div class="card-body">
-        @forelse($pegawai->historyJabFungsional->sortByDesc('tmt') as $item)
-        <div class="timeline">
-            <div class="timeline-item {{ $loop->first ? 'timeline-item-active' : '' }}">
-                <div class="timeline-badge {{ $loop->first ? 'bg-primary' : 'bg-secondary' }}">
-                    <i class="ti ti-award"></i>
-                </div>
-                <div class="timeline-content">
-                    <div class="card card-sm">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h4 class="card-title mb-1">
-                                        {{ $item->jabatanFungsional->jabfungsional ?? '-' }}
-                                    </h4>
-                                    <div class="text-muted small">
-                                        <i class="ti ti-calendar me-1"></i>
-                                        TMT: {{ $item->tmt ? $item->tmt->format('d F Y') : '-' }}
-                                    </div>
-                                </div>
-                                @if($pegawai->latest_riwayatjabfungsional_id == $item->riwayatjabfungsional_id)
-                                <div class="col-auto">
-                                    <span class="badge bg-success">Aktif Saat Ini</span>
-                                </div>
-                                @endif
-                            </div>
-                            
-                            <div class="mt-3">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="text-muted small">No. SK Internal</div>
-                                        <div>{{ $item->no_sk_internal ?? '-' }}</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="text-muted small">No. SK Kopertis</div>
-                                        <div>{{ $item->no_sk_kopertis ?? '-' }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            @if($item->approval)
-                            <div class="mt-2">
-                                {!! getApprovalBadge($item->approval->status) !!}
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+<div class="card mb-3">
+    <div class="card-header border-bottom">
+        <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+            <h3 class="card-title mb-0">Riwayat Jabatan Fungsional</h3>
+            <div class="ms-auto d-flex gap-2">
+                <x-tabler.datatable-page-length dataTableId="jabatan-fungsional-table" />
+                <x-tabler.datatable-search dataTableId="jabatan-fungsional-table" />
+                <x-tabler.button 
+                    style="primary" 
+                    class="ajax-modal-btn" 
+                    data-url="{{ route('hr.pegawai.jabatan-fungsional.create', $pegawai->encrypted_pegawai_id) }}" 
+                    data-modal-title="Ubah Jabatan Fungsional"
+                    icon="ti ti-edit"
+                    text="Ubah Jafung" />
             </div>
         </div>
-        @empty
-        <x-tabler.empty-state 
-            icon="ti ti-award-off"
-            title="Belum Ada Riwayat Jabatan Fungsional"
-            description="Klik tombol di atas untuk menambahkan riwayat jabatan fungsional."
-        />
-        @endforelse
     </div>
+    <x-tabler.datatable
+        id="jabatan-fungsional-table"
+        route="{{ route('hr.jabatan-fungsional-history.data', ['pegawai_id' => $pegawai->encrypted_pegawai_id]) }}"
+        :columns="[
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+            ['data' => 'jabatan_nama', 'name' => 'jabatanFungsional.nama', 'title' => 'Jabatan'],
+            ['data' => 'tmt', 'name' => 'tmt', 'title' => 'TMT', 'class' => 'text-center'],
+            ['data' => 'no_sk_internal', 'name' => 'no_sk_internal', 'title' => 'SK Internal'],
+            ['data' => 'no_sk_kopertis', 'name' => 'no_sk_kopertis', 'title' => 'SK Kopertis'],
+            ['data' => 'approval_status', 'name' => 'approval_status', 'title' => 'Status', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
+        ]"
+    />
 </div>

@@ -2,7 +2,7 @@
 
 @section('title', 'Detail Pengajuan Izin')
 
-@section('content')
+@section('header')
 <x-tabler.page-header title="Detail Pengajuan Izin" pretitle="HR & Kepegawaian">
     <x-slot:actions>
         <div class="btn-list">
@@ -10,6 +10,9 @@
         </div>
     </x-slot:actions>
 </x-tabler.page-header>
+@endsection
+
+@section('content')
 
 <div class="row row-cards">
     <div class="col-lg-7">
@@ -76,36 +79,29 @@
             <div class="card-header">
                 <h3 class="card-title">Riwayat Approval</h3>
             </div>
-            <div class="list-group list-group-flush list-group-hoverable">
+            <div class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
                 @forelse ($perizinan->approvalHistory as $history)
-                    <div class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                @php
-                                    $statusIcons = [
-                                        'Approved' => 'ti-check text-success',
-                                        'Rejected' => 'ti-x text-danger',
-                                        'Pending' => 'ti-clock text-warning',
-                                        'Diajukan' => 'ti-file-text text-secondary',
-                                        'Draft' => 'ti-file-pencil text-secondary'
-                                    ];
-                                    $icon = $statusIcons[$history->status] ?? 'ti-info-circle';
-                                @endphp
-                                <i class="ti {{ $icon }} fs-2"></i>
-                            </div>
-                            <div class="col">
-                                <div class="font-weight-medium">{{ $history->status }}</div>
-                                <div class="text-muted small">
-                                    @if($history->pejabat)
-                                        Oleh: {{ $history->pejabat }} ({{ $history->jenis_jabatan }})
-                                    @else
-                                        Dibuat oleh System
-                                    @endif
-                                    <br>
-                                    <span class="text-secondary">{{ $history->created_at->format('d/m/Y H:i') }}</span>
+                    @php
+                        $statusIcons = [
+                            'Approved' => ['icon' => 'ti-check', 'color' => 'text-success'],
+                            'Rejected' => ['icon' => 'ti-x',     'color' => 'text-danger'],
+                            'Pending'  => ['icon' => 'ti-clock', 'color' => 'text-warning'],
+                            'Diajukan' => ['icon' => 'ti-file-text', 'color' => 'text-secondary'],
+                            'Draft'    => ['icon' => 'ti-file-pencil', 'color' => 'text-muted'],
+                        ];
+                        $ic = $statusIcons[$history->status] ?? ['icon' => 'ti-info-circle', 'color' => 'text-muted'];
+                    @endphp
+                    <div class="list-group-item py-2">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="ti {{ $ic['icon'] }} {{ $ic['color'] }} mt-1" style="font-size: 1rem; flex-shrink:0"></i>
+                            <div class="flex-fill">
+                                <div class="fw-medium text-sm">{{ $history->status }}</div>
+                                <div class="text-muted" style="font-size: 0.78rem;">
+                                    @if($history->pejabat) Oleh: {{ $history->pejabat }} ({{ $history->jenis_jabatan }}) &bull; @endif
+                                    {{ $history->created_at->format('d/m/Y H:i') }}
                                 </div>
                                 @if($history->keterangan)
-                                    <div class="mt-2 p-2 bg-light rounded-2 small text-secondary italic">
+                                    <div class="mt-1 px-2 py-1 bg-light rounded small text-secondary fst-italic">
                                         "{{ $history->keterangan }}"
                                     </div>
                                 @endif
@@ -113,7 +109,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="list-group-item text-center py-4 text-muted small italic">Belum ada riwayat approval.</div>
+                    <div class="list-group-item text-center py-3 text-muted small fst-italic">Belum ada riwayat approval.</div>
                 @endforelse
             </div>
         </div>

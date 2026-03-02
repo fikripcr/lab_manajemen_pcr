@@ -10,6 +10,16 @@
 
 @section('content')
         <div class="card">
+            <div class="card-header">
+                <div class="d-flex flex-wrap gap-2">
+                    <div>
+                        <x-tabler.datatable-page-length :dataTableId="'table-Kegiatans'" />
+                    </div>
+                    <div class="ms-auto">
+                        <x-tabler.datatable-search :dataTableId="'table-Kegiatans'" />
+                    </div>
+                </div>
+            </div>
             <div class="card-body">
                 <x-tabler.datatable
                     id="table-Kegiatans"

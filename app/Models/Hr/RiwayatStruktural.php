@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class RiwayatPenugasan extends Model
+class RiwayatStruktural extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
@@ -16,14 +16,14 @@ class RiwayatPenugasan extends Model
     protected $primaryKey = 'riwayatpenugasan_id';
     protected $guarded    = ['riwayatpenugasan_id'];
 
-    protected $appends = ['encrypted_riwayatpenugasan_id'];
+    protected $appends = ['encrypted_riwayatstruktural_id'];
 
     public function getRouteKeyName()
     {
         return 'riwayatpenugasan_id';
     }
 
-    public function getEncryptedRiwayatpenugasanIdAttribute()
+    public function getEncryptedRiwayatstrukturalIdAttribute()
     {
         return encryptId($this->riwayatpenugasan_id);
     }

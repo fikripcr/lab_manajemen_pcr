@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Shared;
 
-use App\Models\Hr\RiwayatPenugasan;
+use App\Models\Hr\RiwayatJabStruktural;
 use App\Models\Pemutu\Indikator;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
@@ -81,11 +81,10 @@ class StrukturOrganisasi extends Model
 
     public function pegawai()
     {
-        // For compatibility with the shared Pegawai model which doesn't have a direct org_unit_id column,
-        // we bridge through RiwayatPenugasan.
+        // Bridge through RiwayatJabStruktural (hr_riwayat_jabstruktural)
         return $this->hasManyThrough(
             Pegawai::class,
-            RiwayatPenugasan::class,
+            RiwayatJabStruktural::class,
             'org_unit_id',
             'pegawai_id',
             'orgunit_id',

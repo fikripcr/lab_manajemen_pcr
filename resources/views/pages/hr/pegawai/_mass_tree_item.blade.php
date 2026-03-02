@@ -1,5 +1,5 @@
 <li class="list-group-item p-0 border-0">
-    <a href="#" class="org-unit-item d-flex align-items-center py-2 px-3 text-decoration-none text-body" data-id="{{ $unit->org_unit_id }}">
+    <a href="#" class="org-unit-item d-flex align-items-center py-2 px-3 text-decoration-none text-body" data-id="{{ $unit->orgunit_id }}">
         <span class="me-2">
             @if($unit->children->count() > 0)
                 <i class="ti ti-folder text-primary"></i>

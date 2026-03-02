@@ -29,14 +29,14 @@
                     <td>{{ $asn->tgl_mulai?->format('d M Y') }}</td>
                     <td>
                         @if($asn->is_active)
-                            <span class="badge bg-success text-white">Aktif</span>
+                            <span class="status status-success"><span class="status-dot status-dot-animated"></span> Aktif</span>
                         @else
-                            <span class="badge bg-secondary text-white">Selesai</span>
+                            <span class="status status-secondary"><span class="status-dot"></span> Selesai</span>
                         @endif
                     </td>
                     <td class="text-end">
                         <x-tabler.button type="button" class="btn-sm btn-ghost-danger btn-remove-assignment" 
-                                data-url="{{ route('hr.pegawai.penugasan.destroy', [$asn->pegawai_id, $asn->riwayatpenugasan_id]) }}" icon="ti ti-trash" icon-only />
+                                data-url="{{ route('hr.pegawai.struktural.destroy', [encryptId($asn->pegawai_id), $asn->encrypted_riwayatstruktural_id]) }}" icon="ti ti-trash" icon-only />
                     </td>
                 </tr>
                 @endforeach
@@ -49,11 +49,11 @@
 
     <hr class="my-4">
 
-    {{-- Add New Assignment --}}
-    <h4 class="mb-3">Tambah Penugasan Baru</h4>
-    <form id="form-assign-pegawai" action="{{ route('hr.pegawai.mass-penugasan.assign') }}" method="POST">
+    {{-- Add New Struktural --}}
+    <h4 class="mb-3">Tambah Struktural Baru</h4>
+    <form id="form-assign-pegawai" action="{{ route('hr.pegawai.mass-struktural.assign') }}" method="POST">
         @csrf
-        <input type="hidden" name="org_unit_id" value="{{ $unit->org_unit_id }}">
+        <input type="hidden" name="org_unit_id" value="{{ $unit->orgunit_id }}">
         
         <div class="row g-3">
             <div class="col-md-6">
@@ -71,7 +71,7 @@
             </div>
         </div>
         <div class="mt-3">
-            <x-tabler.button type="submit" class="btn-primary" icon="ti ti-plus" text="Tambah Penugasan" />
+            <x-tabler.button type="submit" class="btn-primary" icon="ti ti-plus" text="Tambah Struktural" />
         </div>
     </form>
 </div>

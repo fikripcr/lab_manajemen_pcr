@@ -19,9 +19,9 @@ use App\Http\Controllers\Hr\RiwayatInpassingController;
 use App\Http\Controllers\Hr\RiwayatJabFungsionalController;
 use App\Http\Controllers\Hr\RiwayatJabStrukturalController;
 use App\Http\Controllers\Hr\RiwayatPendidikanController;
-use App\Http\Controllers\Hr\RiwayatPenugasanController;
 use App\Http\Controllers\Hr\RiwayatStatAktifitasController;
 use App\Http\Controllers\Hr\RiwayatStatPegawaiController;
+use App\Http\Controllers\Hr\RiwayatStrukturalController;
 use App\Http\Controllers\Hr\StatusAktifitasController;
 use App\Http\Controllers\Hr\StatusPegawaiController;
 use App\Http\Controllers\Hr\TanggalLiburController;
@@ -66,7 +66,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
     Route::get('jabatan-fungsional', [RiwayatJabFungsionalController::class, 'index'])->name('jabatan-fungsional.index');
     Route::get('jabatan-struktural', [RiwayatJabStrukturalController::class, 'index'])->name('jabatan-struktural.index');
     Route::get('pengembangan', [PengembanganDiriController::class, 'index'])->name('pengembangan.index');
-    Route::get('penugasan', [RiwayatPenugasanController::class, 'index'])->name('penugasan.index');
+    Route::get('struktural', [RiwayatStrukturalController::class, 'index'])->name('struktural.index');
     Route::get('inpassing', [RiwayatInpassingController::class, 'index'])->name('inpassing.index');
     Route::get('inpassing/data', [RiwayatInpassingController::class, 'data'])->name('inpassing.data');
 
@@ -95,25 +95,15 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::get('jabatan-fungsional/change', [RiwayatJabFungsionalController::class, 'create'])->name('jabatan-fungsional.create');
         Route::post('jabatan-fungsional/change', [RiwayatJabFungsionalController::class, 'store'])->name('jabatan-fungsional.store');
 
-        // Jabatan Struktural (Replacing with Penugasan Index? Or keeping custom view?)
-        // User said "Struktural harusnya ke riwayat penugasan".
-        // So I will point "jabatan-struktural" tab to RiwayatPenugasanController::index ?
-        // Or should I just route it to penugasan.index?
-        // Let's create a route for 'penugasan' index first.
-        Route::get('penugasan', [RiwayatPenugasanController::class, 'index'])->name('penugasan.index');
-
-        // Jabatan Struktural legacy/specific route if needed, otherwise we rely on Penugasan.
-        // I will keep the change routes but maybe Redirect index?
-        Route::get('jabatan-struktural/change', [RiwayatJabStrukturalController::class, 'create'])->name('jabatan-struktural.create');
-        Route::post('jabatan-struktural/change', [RiwayatJabStrukturalController::class, 'store'])->name('jabatan-struktural.store');
-
-        // Penugasan (Kepala Prodi, Wadir, Direktur, etc.)
-        Route::get('penugasan/create', [RiwayatPenugasanController::class, 'create'])->name('penugasan.create');
-        Route::post('penugasan', [RiwayatPenugasanController::class, 'store'])->name('penugasan.store');
-        Route::get('penugasan/{penugasan}/edit', [RiwayatPenugasanController::class, 'edit'])->name('penugasan.edit');
-        Route::put('penugasan/{penugasan}', [RiwayatPenugasanController::class, 'update'])->name('penugasan.update');
-        Route::delete('penugasan/{penugasan}', [RiwayatPenugasanController::class, 'destroy'])->name('penugasan.destroy');
-        Route::post('penugasan/{penugasan}/end', [RiwayatPenugasanController::class, 'endAssignment'])->name('penugasan.end');
+        // Struktural (Kepala Prodi, Wadir, Direktur, etc.)
+        Route::get('struktural', [RiwayatStrukturalController::class, 'index'])->name('struktural.index');
+        Route::get('struktural/data', [RiwayatStrukturalController::class, 'data'])->name('struktural.data');
+        Route::get('struktural/create', [RiwayatStrukturalController::class, 'create'])->name('struktural.create');
+        Route::post('struktural', [RiwayatStrukturalController::class, 'store'])->name('struktural.store');
+        Route::get('struktural/{struktural}/edit', [RiwayatStrukturalController::class, 'edit'])->name('struktural.edit');
+        Route::put('struktural/{struktural}', [RiwayatStrukturalController::class, 'update'])->name('struktural.update');
+        Route::delete('struktural/{struktural}', [RiwayatStrukturalController::class, 'destroy'])->name('struktural.destroy');
+        Route::post('struktural/{struktural}/end', [RiwayatStrukturalController::class, 'endAssignment'])->name('struktural.end');
 
         // Riwayat Pengajuan (Approval History)
         Route::get('pengajuan', [ApprovalController::class, 'employeeHistory'])->name('pengajuan.index');
@@ -124,10 +114,10 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
         Route::resource('files', FilePegawaiController::class)->only(['store', 'destroy']);
     });
 
-    // Mass Penugasan Routes
-    Route::get('pegawai/mass-penugasan', [RiwayatPenugasanController::class, 'massIndex'])->name('pegawai.mass-penugasan.index');
-    Route::get('pegawai/mass-penugasan/{unit}', [RiwayatPenugasanController::class, 'massDetail'])->name('pegawai.mass-penugasan.detail');
-    Route::post('pegawai/mass-penugasan/assign', [RiwayatPenugasanController::class, 'massAssign'])->name('pegawai.mass-penugasan.assign');
+    // Mass Struktural Routes
+    Route::get('pegawai/mass-struktural', [RiwayatStrukturalController::class, 'massIndex'])->name('pegawai.mass-struktural.index');
+    Route::get('pegawai/mass-struktural/{unitId}', [RiwayatStrukturalController::class, 'massDetail'])->name('pegawai.mass-struktural.detail');
+    Route::post('pegawai/mass-struktural/assign', [RiwayatStrukturalController::class, 'massAssign'])->name('pegawai.mass-struktural.assign');
 
     // Tanggal Libur (Holidays)
     Route::resource('tanggal-libur', TanggalLiburController::class);
@@ -181,8 +171,8 @@ Route::middleware(['auth', 'verified'])->prefix('hr')->name('hr.')->group(functi
 
     // Approval Management
     Route::get('approval', [ApprovalController::class, 'index'])->name('approval.index');
-    Route::post('approval/{id}/approve', [ApprovalController::class, 'approve'])->name('approval.approve');
-    Route::post('approval/{id}/reject', [ApprovalController::class, 'reject'])->name('approval.reject');
+    Route::get('approval/{id}/show', [ApprovalController::class, 'show'])->name('approval.show');
+    Route::post('approval/{id}/process', [ApprovalController::class, 'process'])->name('approval.process');
 
     // Presensi Routes
     Route::prefix('presensi')->name('presensi.')->group(function () {

@@ -3,9 +3,9 @@ namespace App\Http\Requests\Hr;
 
 use App\Http\Requests\BaseRequest;
 
-class MassPenugasanRequest extends BaseRequest
+class MassStrukturalRequest extends BaseRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }

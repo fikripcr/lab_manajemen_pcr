@@ -1,41 +1,67 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Persetujuan Perubahan Data" pretitle="Human Resources">
-    <x-slot:actions>
-        <div class="d-flex gap-2">
-            <x-tabler.datatable-filter dataTableId="approval-table" :useCollapse="true">
-                <div class="col-12">
-                    <x-tabler.form-select name="status" label="Status Approval" class="mb-0">
-                        <option value="Pending" selected>Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                        <option value="all">Semua</option>
-                    </x-tabler.form-select>
-                </div>
-            </x-tabler.datatable-filter>
-        </div>
-    </x-slot:actions>
-</x-tabler.page-header>
+<x-tabler.page-header title="Persetujuan Perubahan Data" pretitle="Human Resources" />
 @endsection
 
 @section('content')
 <div class="card overflow-hidden">
     <div class="card-header">
-        <h3 class="card-title">Daftar Pengajuan (Pending)</h3>
+        <div class="d-flex flex-wrap gap-2">
+            <div>
+                <x-tabler.datatable-page-length dataTableId="approval-table" />
+            </div>
+            <div>
+                <x-tabler.datatable-search dataTableId="approval-table" />
+            </div>
+            <div>
+                <x-tabler.datatable-filter dataTableId="approval-table">
+                    <div style="min-width: 160px;">
+                        <x-tabler.form-select name="status" placeholder="Semua Status" class="mb-0"
+                            :options="['Pending' => 'Pending', 'Approved' => 'Disetujui', 'Rejected' => 'Ditolak', 'Tangguhkan' => 'Tangguhkan']" />
+                    </div>
+                </x-tabler.datatable-filter>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         <x-tabler.datatable
             id="approval-table"
-            route="{{ route('hr.approval.index') }}?status=Pending"
+            route="{{ route('hr.approval.index') }}"
             :columns="[
-                ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Tanggal Pengajuan', 'class' => 'text-center w-1'],
-                ['data' => 'pegawai_nama', 'name' => 'pegawai.nama', 'title' => 'Pegawai'],
-                ['data' => 'tipe_request', 'name' => 'model_type', 'title' => 'Tipe Perubahan'],
-                ['data' => 'keterangan', 'name' => 'keterangan', 'title' => 'Keterangan'],
-                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center']
+                ['data' => 'created_at',   'name' => 'created_at', 'title' => 'Tanggal', 'class' => 'text-center', 'width' => '110px'],
+                ['data' => 'pegawai_nama', 'name' => 'pegawai_nama', 'title' => 'Pegawai'],
+                ['data' => 'tipe_request', 'name' => 'tipe_request', 'title' => 'Tipe Perubahan'],
+                ['data' => 'keterangan',   'name' => 'keterangan', 'title' => 'Keterangan'],
+                ['data' => 'status',       'name' => 'status', 'title' => 'Status', 'class' => 'text-center', 'orderable' => false, 'searchable' => false, 'width' => '120px'],
+                ['data' => 'action',       'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '160px'],
             ]"
         />
+    </div>
+</div>
+
+{{-- Modal Keterangan (Tolak / Tangguhkan) --}}
+<div class="modal fade" id="modalKeterangan" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalKeteranganTitle">Keterangan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-0">
+                    <label class="form-label">Keterangan / Alasan</label>
+                    <textarea class="form-control" id="inputKeterangan" rows="4" placeholder="Masukkan keterangan atau alasan..."></textarea>
+                    <div class="invalid-feedback" id="keteranganError">Keterangan harus diisi.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn" id="btnConfirmProcess">
+                    <span id="btnConfirmText">Proses</span>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -43,72 +69,76 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Handle Approve
-    document.addEventListener('click', function(e) {
-        const btn = e.target.closest('.btn-approve');
+    let _pendingUrl    = null;
+    let _pendingStatus = null;
+
+    function reloadTable() {
+        if ($.fn.DataTable.isDataTable('#approval-table')) {
+            $('#approval-table').DataTable().ajax.reload(null, false);
+        }
+    }
+
+    function doProcess(url, status, reason) {
+        return axios.post(url, { status: status, reason: reason ?? '' });
+    }
+
+    function showResult(success, message) {
+        Swal.fire({
+            icon: success ? 'success' : 'error',
+            title: success ? 'Berhasil' : 'Gagal',
+            text: message,
+            timer: success ? 2000 : null,
+            showConfirmButton: !success,
+        });
+        if (success) reloadTable();
+    }
+
+    // ── Unified: btn-process (both from DataTable action and from modal in show.blade.php)
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-process');
         if (!btn) return;
 
-        const url = btn.dataset.url;
-        if (confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')) {
-            axios.post(url)
-                .then(function(res) {
-                    if (res.data.status === 'success') {
-                        Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Pengajuan berhasil disetujui', timer: 2000, showConfirmButton: false });
-                        $('#approval-table').DataTable().ajax.reload();
-                    } else {
-                        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal: ' + res.data.message });
-                    }
-                })
-                .catch(function() {
-                    Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem.' });
-                });
+        const url        = btn.dataset.url;
+        const status     = btn.dataset.status;
+        const needReason = btn.dataset.needReason === '1' || status === 'Tangguhkan';
+
+        if (needReason) {
+            _pendingUrl    = url;
+            _pendingStatus = status;
+
+            document.getElementById('modalKeteranganTitle').textContent =
+                status === 'Rejected' ? 'Alasan Penolakan' : 'Keterangan Penangguhan';
+            document.getElementById('btnConfirmText').textContent =
+                status === 'Rejected' ? 'Tolak' : 'Tangguhkan';
+            document.getElementById('btnConfirmProcess').className =
+                'btn ' + (status === 'Rejected' ? 'btn-danger' : 'btn-warning');
+            document.getElementById('inputKeterangan').value = '';
+            document.getElementById('inputKeterangan').classList.remove('is-invalid');
+
+            new bootstrap.Modal(document.getElementById('modalKeterangan')).show();
+        } else {
+            doProcess(url, status, null)
+                .then(r => showResult(r.data.success, r.data.message))
+                .catch(() => showResult(false, 'Terjadi kesalahan sistem.'));
         }
     });
 
-    // Handle Reject
-    document.addEventListener('click', function(e) {
-        const btn = e.target.closest('.btn-reject');
-        if (!btn) return;
+    // ── Confirm inside modal
+    document.getElementById('btnConfirmProcess').addEventListener('click', function () {
+        const reason = document.getElementById('inputKeterangan').value.trim();
+        if (_pendingStatus === 'Rejected' && !reason) {
+            document.getElementById('inputKeterangan').classList.add('is-invalid');
+            return;
+        }
 
-        const url = btn.dataset.url;
+        bootstrap.Modal.getInstance(document.getElementById('modalKeterangan')).hide();
 
-        Swal.fire({
-            title: 'Tolak Pengajuan',
-            text: 'Apakah Anda yakin ingin menolak pengajuan ini?',
-            input: 'textarea',
-            inputLabel: 'Alasan Penolakan',
-            inputPlaceholder: 'Masukkan alasan penolakan...',
-            inputAttributes: { 'aria-label': 'Alasan Penolakan' },
-            showCancelButton: true,
-            confirmButtonText: 'Tolak',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#dc3545',
-            showLoaderOnConfirm: true,
-            preConfirm: (reason) => {
-                if (!reason) {
-                    Swal.showValidationMessage('Alasan penolakan harus diisi');
-                    return false;
-                }
-                return reason;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios.post(url, { reason: result.value })
-                    .then(function(res) {
-                        if (res.data.status === 'success') {
-                            Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Pengajuan berhasil ditolak', timer: 2000, showConfirmButton: false });
-                            $('#approval-table').DataTable().ajax.reload();
-                        } else {
-                            Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal: ' + res.data.message });
-                        }
-                    })
-                    .catch(function() {
-                        Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem.' });
-                    });
-            }
-        });
+        doProcess(_pendingUrl, _pendingStatus, reason)
+            .then(r => showResult(r.data.success, r.data.message))
+            .catch(() => showResult(false, 'Terjadi kesalahan sistem.'));
+
+        _pendingUrl = _pendingStatus = null;
     });
 });
 </script>
 @endpush
-

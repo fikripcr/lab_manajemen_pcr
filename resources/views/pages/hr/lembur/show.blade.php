@@ -94,34 +94,28 @@
                 <div class="card-header">
                     <h3 class="card-title">Riwayat Approval</h3>
                 </div>
-                <div class="list-group list-group-flush list-group-hoverable">
+                <div class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
                     @forelse($lembur->approvals as $approval)
-                        <div class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    @php
-                                        $hStatus = strtolower($approval->status);
-                                        $statusIcons = [
-                                            'approved' => 'ti-check text-success',
-                                            'rejected' => 'ti-x text-danger',
-                                            'pending'  => 'ti-clock text-warning',
-                                            'diajukan' => 'ti-file-text text-secondary'
-                                        ];
-                                        $icon = $statusIcons[$hStatus] ?? 'ti-info-circle';
-                                    @endphp
-                                    <i class="ti {{ $icon }} fs-2"></i>
-                                </div>
-                                <div class="col">
-                                    <div class="font-weight-medium">
-                                        {{ ucfirst($approval->status) }}
-                                    </div>
-                                    <div class="text-muted small">
-                                        {{ $approval->pejabat ?? 'System' }} 
-                                        <br>
-                                        <span class="text-secondary">{{ $approval->created_at->format('d/m/Y H:i') }}</span>
+                        @php
+                            $hStatus = strtolower($approval->status);
+                            $statusIcons = [
+                                'approved' => ['icon' => 'ti-check', 'color' => 'text-success'],
+                                'rejected' => ['icon' => 'ti-x',     'color' => 'text-danger'],
+                                'pending'  => ['icon' => 'ti-clock', 'color' => 'text-warning'],
+                                'diajukan' => ['icon' => 'ti-file-text', 'color' => 'text-secondary'],
+                            ];
+                            $ic = $statusIcons[$hStatus] ?? ['icon' => 'ti-info-circle', 'color' => 'text-muted'];
+                        @endphp
+                        <div class="list-group-item py-2">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="ti {{ $ic['icon'] }} {{ $ic['color'] }} mt-1" style="font-size: 1rem; flex-shrink:0"></i>
+                                <div class="flex-fill">
+                                    <div class="fw-medium text-sm">{{ ucfirst($approval->status) }}</div>
+                                    <div class="text-muted" style="font-size: 0.78rem;">
+                                        {{ $approval->pejabat ?? 'System' }} &bull; {{ $approval->created_at->format('d/m/Y H:i') }}
                                     </div>
                                     @if($approval->keterangan)
-                                        <div class="mt-2 p-2 bg-light rounded-2 small text-secondary italic">
+                                        <div class="mt-1 px-2 py-1 bg-light rounded small text-secondary fst-italic">
                                             "{{ $approval->keterangan }}"
                                         </div>
                                     @endif
@@ -129,7 +123,7 @@
                             </div>
                         </div>
                     @empty
-                        <div class="list-group-item text-center py-4 text-muted small italic">
+                        <div class="list-group-item text-center py-3 text-muted small fst-italic">
                             Belum ada riwayat approval
                         </div>
                     @endforelse

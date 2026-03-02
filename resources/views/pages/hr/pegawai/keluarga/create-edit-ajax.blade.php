@@ -2,7 +2,7 @@
     $isEdit = $keluarga->exists;
     $title  = $isEdit ? 'Edit Riwayat Keluarga' : 'Tambah Riwayat Keluarga';
     $route  = $isEdit 
-        ? route('hr.pegawai.keluarga.update', [$pegawai->encrypted_pegawai_id, $keluarga->keluarga_id]) 
+        ? route('hr.pegawai.keluarga.update', [$pegawai->encrypted_pegawai_id, $keluarga->encrypted_keluarga_id]) 
         : route('hr.pegawai.keluarga.store', $pegawai->encrypted_pegawai_id);
     $method = $isEdit ? 'PUT' : 'POST';
 @endphp

@@ -1,10 +1,17 @@
-<div class="card-body border-bottom py-3">
-    <div class="d-flex flex-wrap gap-2">
+<div class="card-header border-bottom">
+    <div class="d-flex flex-wrap gap-2 w-100">
         <div>
-            <x-tabler.datatable-page-length :dataTableId="'fungsional-table'" />
+            <x-tabler.datatable-page-length dataTableId="fungsional-table" />
         </div>
-        <div class="ms-auto text-muted">
-            <x-tabler.datatable-search :dataTableId="'fungsional-table'" />
+        <div>
+            <x-tabler.datatable-search dataTableId="fungsional-table" />
+        </div>
+        <div>
+            <x-tabler.datatable-filter dataTableId="fungsional-table">
+                <div style="min-width: 150px;">
+                    <x-tabler.form-select name="jabatan_fungsional_id" placeholder="Semua Jabatan" class="mb-0" :options="[]" />
+                </div>
+            </x-tabler.datatable-filter>
         </div>
     </div>
 </div>

@@ -41,6 +41,15 @@
                     <a href="#section-kepegawaian" class="nav-link" data-section="kepegawaian">
                         <i class="ti ti-briefcase me-2"></i> Kepegawaian
                     </a>
+                    <a href="#section-inpassing" class="nav-link" data-section="inpassing">
+                        <i class="ti ti-trending-up me-2"></i> Inpassing
+                    </a>
+                    <a href="#section-fungsional" class="nav-link" data-section="fungsional">
+                        <i class="ti ti-award me-2"></i> Fungsional
+                    </a>
+                    <a href="#section-struktural" class="nav-link" data-section="struktural">
+                        <i class="ti ti-id-badge me-2"></i> Struktural
+                    </a>
                     <a href="#section-pendidikan" class="nav-link" data-section="pendidikan">
                         <i class="ti ti-school me-2"></i> Pendidikan
                     </a>
@@ -48,7 +57,7 @@
                         <i class="ti ti-users me-2"></i> Keluarga
                     </a>
                     <a href="#section-pengembangan" class="nav-link" data-section="pengembangan">
-                        <i class="ti ti-certificate me-2"></i> Sertifikat
+                        <i class="ti ti-certificate me-2"></i> Pengembangan Diri
                     </a>
                     <a href="#section-files" class="nav-link" data-section="files">
                         <i class="ti ti-file-text me-2"></i> File
@@ -183,11 +192,29 @@
 
         {{-- Section: Kepegawaian --}}
         <div id="section-kepegawaian" class="content-section">
-            @include('pages.hr.pegawai.parts._status_pegawai_list')
-            @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
-            @include('pages.hr.data-diri.penugasan')
-            @include('pages.hr.pegawai.parts._status_aktifitas_list')
+            <div class="row">
+                <div class="col-md-6">
+                    @include('pages.hr.pegawai.parts._status_pegawai_list')
+                </div>
+                <div class="col-md-6">
+                    @include('pages.hr.pegawai.parts._status_aktifitas_list')
+                </div>
+            </div>
+        </div>
+
+        {{-- Section: Inpassing --}}
+        <div id="section-inpassing" class="content-section">
             @include('pages.hr.pegawai.parts._inpassing_list')
+        </div>
+
+        {{-- Section: Fungsional --}}
+        <div id="section-fungsional" class="content-section">
+            @include('pages.hr.pegawai.parts._jabatan_fungsional_list')
+        </div>
+
+        {{-- Section: Struktural --}}
+        <div id="section-struktural" class="content-section">
+            @include('pages.hr.data-diri.struktural')
         </div>
 
         {{-- Section: Pendidikan --}}

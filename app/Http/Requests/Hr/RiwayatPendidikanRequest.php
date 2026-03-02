@@ -5,7 +5,7 @@ use App\Http\Requests\BaseRequest;
 
 class RiwayatPendidikanRequest extends BaseRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -17,6 +17,7 @@ class RiwayatPendidikanRequest extends BaseRequest
             'nama_pt'            => 'required|string|max:100',
             'bidang_ilmu'        => 'nullable|string|max:100',
             'tgl_ijazah'         => 'required|date',
+            'kotaasal_pt'        => 'nullable|string|max:100',
             'kodenegara_pt'      => 'nullable|string|max:100',
         ];
     }

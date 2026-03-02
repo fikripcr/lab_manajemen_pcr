@@ -124,7 +124,7 @@
                         </div>
                         <div class="alert alert-info py-2">
                             <i class="ti ti-info-circle me-1"></i>
-                            Penugasan ke unit/jabatan dapat dilakukan setelah pegawai tersimpan melalui menu <strong>Penugasan</strong>.
+                            Struktural pegawai dapat dilakukan setelah pegawai tersimpan melalui menu <strong>Struktural</strong>.
                         </div>
                     </div>
                 </div>

@@ -14,7 +14,7 @@
 <div class="table-responsive">
     <x-tabler.datatable
         id="pegawai-table"
-        route="{{ route('hr.pegawai.index') }}"
+        route="{{ route('hr.pegawai.data') }}"
         :columns="[
             ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
             ['data' => 'nama_lengkap', 'name' => 'nama', 'title' => 'Nama'],

@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers\Hr;
 
-use App\Models\Hr\Pegawai;
-use App\Models\Hr\FilePegawai;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hr\FilePegawaiStoreRequest;
+use App\Models\Hr\FilePegawai;
+use App\Models\Hr\Pegawai;
 use App\Services\Hr\FilePegawaiService;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -40,7 +40,17 @@ class FilePegawaiController extends Controller
                 return $media ? formatBytes($media->size) : '-';
             })
             ->addColumn('action', function ($row) {
-                return view('pages.hr.file_pegawai._action', compact('row'))->render();
+                $media       = $row->getFirstMedia('file_pegawai');
+                $downloadBtn = $media ? '<a href="' . $media->getUrl() . '" target="_blank" class="btn btn-sm btn-icon btn-ghost-primary" title="Download"><i class="ti ti-download"></i></a>' : '';
+
+                return '<div class="btn-list justify-content-end">
+                            ' . $downloadBtn . '
+                            <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete"
+                                data-url="' . route('hr.pegawai.files.destroy', [$row->pegawai->encrypted_pegawai_id, $row->encrypted_filepegawai_id]) . '"
+                                title="Hapus">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -54,7 +64,7 @@ class FilePegawaiController extends Controller
         $pegawaiId = decryptIdIfEncrypted($request->pegawai_id);
         $this->filePegawaiService->storeFile($pegawaiId, $request->only(['jenisfile_id', 'keterangan']), $request->file('file'));
 
-        return jsonSuccess('File berhasil diunggah');
+        return jsonSuccess('File berhasil diunggah', route('hr.pegawai.show', $request->pegawai_id) . '#section-files');
     }
 
     /**
@@ -64,6 +74,6 @@ class FilePegawaiController extends Controller
     {
         $this->filePegawaiService->deleteFile($file->filepegawai_id);
 
-        return jsonSuccess('File berhasil dihapus');
+        return jsonSuccess('File berhasil dihapus', route('hr.pegawai.show', $file->pegawai->encrypted_pegawai_id) . '#section-files');
     }
 }

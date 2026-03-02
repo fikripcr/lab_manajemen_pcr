@@ -1,10 +1,12 @@
 <?php
 namespace App\Providers;
 
+use App\Models\Hr\RiwayatJabStruktural;
 use App\Models\Notification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -40,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
         // Set locale for Carbon (Native Localization)
         Carbon::setLocale(env('APP_LOCALE', 'en'));
 
+        // Custom Route Model Binding: {struktural} → RiwayatJabStruktural
+        Route::model('struktural', RiwayatJabStruktural::class);
+
         Relation::morphMap([
             'Perizinan'                => \App\Models\Hr\Perizinan::class,
             'Lembur'                   => \App\Models\Hr\Lembur::class,
@@ -48,8 +53,8 @@ class AppServiceProvider extends ServiceProvider
             'RiwayatPendidikan'        => \App\Models\Hr\RiwayatPendidikan::class,
             'RiwayatJabatanFungsional' => \App\Models\Hr\RiwayatJabfungsional::class,
             'RiwayatJabatanStruktural' => \App\Models\Hr\RiwayatJabstruktural::class,
-            'RiwayatPangkat'           => \App\Models\Hr\RiwayatInpassing::class, // Assuming Pangkat is Inpassing based on schema
-            'RiwayatPenugasan'         => \App\Models\Hr\RiwayatPenugasan::class,
+            'RiwayatPangkat'           => \App\Models\Hr\RiwayatInpassing::class,
+            'RiwayatStruktural'        => \App\Models\Hr\RiwayatJabStruktural::class,
             'PengembanganDiri'         => \App\Models\Hr\PengembanganDiri::class,
         ]);
     }

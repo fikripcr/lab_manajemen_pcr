@@ -6,13 +6,14 @@ use App\Http\Requests\Hr\RiwayatJabFungsionalRequest;
 use App\Models\Hr\JabatanFungsional;
 use App\Models\Hr\RiwayatJabFungsional;
 use App\Models\Shared\Pegawai;
-use App\Services\Hr\PegawaiService;
+use App\Services\Hr\RiwayatJabFungsionalService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatJabFungsionalController extends Controller
 {
-    public function __construct(protected PegawaiService $pegawaiService)
+    public function __construct(protected RiwayatJabFungsionalService $fungsionalService)
     {}
 
     public function index()
@@ -29,13 +30,17 @@ class RiwayatJabFungsionalController extends Controller
 
     public function store(RiwayatJabFungsionalRequest $request, Pegawai $pegawai)
     {
-        $this->pegawaiService->requestChange($pegawai, RiwayatJabFungsional::class, $request->validated(), 'latest_riwayatjabfungsional_id');
-        return jsonSuccess('Perubahan Jabatan Fungsional berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
+        $this->fungsionalService->requestChange($pegawai, $request->validated());
+        return jsonSuccess('Perubahan Jabatan Fungsional berhasil diajukan.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-fungsional');
     }
 
-    public function data()
+    public function data(Request $request)
     {
         $query = RiwayatJabFungsional::with(['pegawai', 'jabatanFungsional'])->select('hr_riwayat_jabfungsional.*');
+
+        if ($request->has('pegawai_id')) {
+            $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));
+        }
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -48,6 +53,16 @@ class RiwayatJabFungsionalController extends Controller
             ->editColumn('tmt', function ($row) {
                 return $row->tmt ? Carbon::parse($row->tmt)->format('d-m-Y') : '-';
             })
+            ->addColumn('approval_status', function ($row) {
+                if ($row->approval) {
+                    return getApprovalStatus($row->approval->status);
+                }
+                return '<span class="status status-success"><span class="status-dot"></span> Aktif</span>';
+            })
+            ->addColumn('action', function ($row) {
+                return '';
+            })
+            ->rawColumns(['approval_status', 'action'])
             ->make(true);
     }
 }

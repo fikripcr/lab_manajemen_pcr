@@ -1,11 +1,18 @@
-
-<div class="card-body border-bottom py-3">
-    <div class="d-flex flex-wrap gap-2">
+<div class="card-header border-bottom">
+    <div class="d-flex flex-wrap gap-2 w-100">
         <div>
-            <x-tabler.datatable-page-length :dataTableId="'pengembangan-table'" />
+            <x-tabler.datatable-page-length dataTableId="pengembangan-table" />
         </div>
-        <div class="ms-auto text-muted">
-            <x-tabler.datatable-search :dataTableId="'pengembangan-table'" />
+        <div>
+            <x-tabler.datatable-search dataTableId="pengembangan-table" />
+        </div>
+        <div>
+            <x-tabler.datatable-filter dataTableId="pengembangan-table">
+                <div style="min-width: 150px;">
+                    <x-tabler.form-select name="jenis_kegiatan" placeholder="Semua Jenis" class="mb-0" 
+                        :options="['Diklat' => 'Diklat', 'Bimtek' => 'Bimtek', 'Seminar/Workshop' => 'Seminar/Workshop', 'Lainnya' => 'Lainnya']" />
+                </div>
+            </x-tabler.datatable-filter>
         </div>
     </div>
 </div>

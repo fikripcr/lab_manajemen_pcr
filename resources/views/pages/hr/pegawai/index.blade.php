@@ -14,10 +14,18 @@
     <div class="card-header">
         <div class="d-flex flex-wrap gap-2">
             <div>
-                <x-tabler.datatable-page-length :dataTableId="'pegawai-table'" />
+                <x-tabler.datatable-page-length dataTableId="pegawai-table" />
             </div>
             <div>
-                <x-tabler.datatable-search :dataTableId="'pegawai-table'" />
+                <x-tabler.datatable-search dataTableId="pegawai-table" />
+            </div>
+            <div>
+                <x-tabler.datatable-filter dataTableId="pegawai-table">
+                    <div style="min-width: 150px;">
+                        <x-tabler.form-select name="status" placeholder="Semua Status" class="mb-0"
+                            :options="['Aktif' => 'Aktif', 'Non-Aktif' => 'Non-Aktif']" />
+                    </div>
+                </x-tabler.datatable-filter>
             </div>
         </div>
     </div>

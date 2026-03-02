@@ -9,13 +9,16 @@ use App\Models\Hr\StatusAktifitas;
 use App\Models\Hr\StatusPegawai;
 use App\Models\Shared\Pegawai;
 use App\Services\Hr\PegawaiService;
+use App\Services\Hr\RiwayatDataDiriService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class PegawaiController extends Controller
 {
-    public function __construct(protected PegawaiService $pegawaiService)
-    {}
+    public function __construct(
+        protected PegawaiService $pegawaiService,
+        protected RiwayatDataDiriService $dataDiriService
+    ) {}
 
     /**
      * Search pegawai for Select2 AJAX.
@@ -188,8 +191,8 @@ class PegawaiController extends Controller
      */
     public function update(PegawaiRequest $request, Pegawai $pegawai)
     {
-        // Request Change Logic
-        $this->pegawaiService->requestDataDiriChange($pegawai, $request->validated());
+        // Request Change Logic via dedicated service
+        $this->dataDiriService->requestChange($pegawai, $request->validated());
         return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }
 

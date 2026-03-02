@@ -5,24 +5,35 @@
 @section('header')
 <x-tabler.page-header title="Data Perizinan" pretitle="HR & Kepegawaian">
     <x-slot:actions>
-        <div class="d-flex gap-2">
-            <x-tabler.datatable-filter dataTableId="table-perizinan" :useCollapse="true">
-                <div class="col-12">
-                    <x-tabler.form-select name="year" label="Filter Tahun" class="mb-0">
-                        @foreach ($years as $year)
-                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
-                        @endforeach
-                    </x-tabler.form-select>
-                </div>
-            </x-tabler.datatable-filter>
-            <x-tabler.button type="button" icon="ti ti-plus" text="Ajukan Izin" class="ajax-modal-btn" data-url="{{ route('hr.perizinan.create') }}" data-modal-title="Form Pengajuan Izin" />
-        </div>
+        <x-tabler.button type="button" icon="ti ti-plus" text="Ajukan Izin" class="ajax-modal-btn" data-url="{{ route('hr.perizinan.create') }}" data-modal-title="Form Pengajuan Izin" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
-<div class="card">
+<div class="card overflow-hidden">
+    <div class="card-header border-bottom">
+        <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+            <h3 class="card-title mb-0">Data Perizinan</h3>
+            <div class="ms-auto d-flex gap-2 align-items-center">
+                <x-tabler.datatable-page-length dataTableId="table-perizinan" />
+                <x-tabler.datatable-search dataTableId="table-perizinan" />
+                <x-tabler.datatable-filter dataTableId="table-perizinan">
+                    <div style="min-width: 120px;">
+                        <x-tabler.form-select name="year" placeholder="Tahun" class="mb-0">
+                            @foreach ($years as $year)
+                                <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                            @endforeach
+                        </x-tabler.form-select>
+                    </div>
+                    <div style="min-width: 150px;">
+                        <x-tabler.form-select name="status" placeholder="Semua Status" class="mb-0"
+                            :options="['Diajukan' => 'Diajukan', 'Approved' => 'Disetujui', 'Rejected' => 'Ditolak']" />
+                    </div>
+                </x-tabler.datatable-filter>
+            </div>
+        </div>
+    </div>
     <div class="card-body">
         <x-tabler.datatable
             id="table-perizinan"

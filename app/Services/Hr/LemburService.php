@@ -7,13 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 class LemburService
 {
+    public function __construct(protected ApprovalService $approvalService)
+    {}
+
     /**
-     * Store new lembur
+     * Simpan pengajuan lembur baru.
+     * Alur: Insert Lembur + attach pegawai → ApprovalService.createRequest → update latest_riwayatapproval_id
      */
     public function store(array $data): Lembur
     {
         return DB::transaction(function () use ($data) {
-            // 1. Create lembur
+            // 1. Insert Lembur — latest_riwayatapproval_id = null dulu
             $lembur = Lembur::create([
                 'pengusul_id'      => $data['pengusul_id'],
                 'judul'            => $data['judul'],
@@ -24,39 +28,37 @@ class LemburService
                 'jam_selesai'      => $data['jam_selesai'],
             ]);
 
-            // 2. Attach pegawai
+            // 2. Attach pegawai ke lembur
             if (! empty($data['pegawai_ids'])) {
                 foreach ($data['pegawai_ids'] as $pegawaiId) {
                     $lembur->pegawais()->attach($pegawaiId, [
-                        'catatan'          => $data['catatan_pegawai'][$pegawaiId] ?? null,
+                        'catatan' => $data['catatan_pegawai'][$pegawaiId] ?? null,
                     ]);
                 }
             }
 
-            // 3. Create approval record
-            $approval = RiwayatApproval::create([
-                'model'         => Lembur::class,
-                'model_id'      => $lembur->lembur_id,
-                'status'        => 'Diajukan',
-                'jenis_jabatan' => 'Kepala Bagian',
-                'keterangan'    => 'Menunggu persetujuan',
-            ]);
+            // 3. ApprovalService buat approval record, return approval dengan riwayatapproval_id
+            $approval = $this->approvalService->createRequest(
+                Lembur::class,
+                $lembur->lembur_id,
+                'Pengajuan Lembur'
+            );
 
+            // 4. Update lembur agar tunjuk ke approval yang baru
             $lembur->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
 
-            logActivity('hr', "Menambahkan pengajuan lembur: {$lembur->judul}", $lembur);
+            logActivity('hr', "Mengajukan lembur: {$lembur->judul}", $lembur);
 
             return $lembur->fresh(['pegawais', 'latestApproval']);
         });
     }
 
     /**
-     * Update existing lembur
+     * Update data lembur.
      */
     public function update(Lembur $lembur, array $data): Lembur
     {
         return DB::transaction(function () use ($lembur, $data) {
-            // 1. Update lembur
             $lembur->update([
                 'pengusul_id'      => $data['pengusul_id'],
                 'judul'            => $data['judul'],
@@ -67,42 +69,49 @@ class LemburService
                 'jam_selesai'      => $data['jam_selesai'],
             ]);
 
-            // 2. Sync pegawai
             $syncData = [];
             if (! empty($data['pegawai_ids'])) {
                 foreach ($data['pegawai_ids'] as $pegawaiId) {
                     $syncData[$pegawaiId] = [
-                        'catatan'          => $data['catatan_pegawai'][$pegawaiId] ?? null,
+                        'catatan' => $data['catatan_pegawai'][$pegawaiId] ?? null,
                     ];
                 }
             }
             $lembur->pegawais()->sync($syncData);
 
-            logActivity('hr', "Mengupdate pengajuan lembur: {$lembur->judul}", $lembur);
+            logActivity('hr', "Mengupdate lembur: {$lembur->judul}", $lembur);
 
             return $lembur->fresh(['pegawais', 'latestApproval']);
         });
     }
 
     /**
-     * Approve or reject lembur
+     * Proses approval lembur (Approved / Rejected / Tangguhkan).
+     * Terintegrasi dengan ApprovalService.
+     */
+    public function processApproval(int $approvalId, string $status, ?string $reason = null, ?string $pejabat = null): RiwayatApproval
+    {
+        return DB::transaction(function () use ($approvalId, $status, $reason, $pejabat) {
+            $approval = $this->approvalService->processApproval($approvalId, $status, $reason, $pejabat);
+
+            $lembur = Lembur::findOrFail($approval->model_id);
+
+            logActivity('hr', "Memproses approval lembur ({$status}): {$lembur->judul}", $lembur);
+
+            return $approval;
+        });
+    }
+
+    /**
+     * Legacy/Local handler for approval from Lembur detail page.
      */
     public function approve(Lembur $lembur, array $data): void
     {
-        DB::transaction(function () use ($lembur, $data) {
-            // Create NEW approval record to maintain history
-            $approval = RiwayatApproval::create([
-                'model'      => Lembur::class,
-                'model_id'   => $lembur->lembur_id,
-                'status'     => $data['status'],
-                'pejabat'    => $data['pejabat'], // Nama pejabat yang melakukan approval
-                'keterangan' => $data['keterangan'] ?? null,
-            ]);
-
-            // Update lembur status pointer
+        if (! $lembur->latest_riwayatapproval_id) {
+            $approval = $this->approvalService->createRequest(Lembur::class, $lembur->lembur_id);
             $lembur->update(['latest_riwayatapproval_id' => $approval->riwayatapproval_id]);
+        }
 
-            logActivity('hr', "Memproses approval lembur ({$data['status']}): {$lembur->judul}", $lembur);
-        });
+        $this->processApproval($lembur->latest_riwayatapproval_id, $data['status'], $data['keterangan'] ?? null, $data['pejabat'] ?? null);
     }
 }

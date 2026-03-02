@@ -1,7 +1,7 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="Penugasan Massal" pretitle="Kelola penugasan pegawai berdasarkan struktur organisasi" />
+<x-tabler.page-header title="Struktural Massal" pretitle="Kelola data struktural pegawai berdasarkan struktur organisasi" />
 @endsection
 
 @section('content')
@@ -23,12 +23,12 @@
                 </div>
             </div>
 
-            {{-- Right Panel: Assignment Form --}}
+            {{-- Right Panel: Assignment Panel --}}
             <div class="col-lg-7">
                 <div class="card" id="assignment-panel">
                     <div class="card-body text-center py-5 text-muted">
                         <i class="ti ti-hand-click" style="font-size: 3rem;"></i>
-                        <p class="mt-3">Pilih unit/jabatan di sebelah kiri untuk mengelola penugasan</p>
+                        <p class="mt-3">Pilih unit/jabatan di sebelah kiri untuk mengelola struktural</p>
                     </div>
                 </div>
             </div>
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $(this).addClass('active');
         
         const unitId = $(this).data('id');
-        const url = "{{ route('hr.pegawai.mass-penugasan.detail', ':id') }}".replace(':id', unitId);
+        const url = "{{ route('hr.pegawai.mass-struktural.detail', ':id') }}".replace(':id', unitId);
         
         $('#assignment-panel').html('<div class="card-body text-center py-5"><div class="spinner-border text-primary"></div></div>');
         
@@ -72,14 +72,14 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(err => {
                 console.error(err);
-                toastr.error('Gagal menambahkan penugasan');
+                toastr.error('Gagal menambahkan struktural');
             });
     });
 
-    // Remove assignment
+    // Remove struktural
     $(document).on('click', '.btn-remove-assignment', function(e) {
         e.preventDefault();
-        if(!confirm('Hapus penugasan ini?')) return;
+        if(!confirm('Hapus struktural ini?')) return;
         
         const url = $(this).data('url');
         axios.delete(url)
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(err => {
                 console.error(err);
-                toastr.error('Gagal menghapus penugasan');
+                toastr.error('Gagal menghapus struktural');
             });
     });
 });

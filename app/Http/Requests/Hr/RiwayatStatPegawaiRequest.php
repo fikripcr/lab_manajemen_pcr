@@ -5,7 +5,7 @@ use App\Http\Requests\BaseRequest;
 
 class RiwayatStatPegawaiRequest extends BaseRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }

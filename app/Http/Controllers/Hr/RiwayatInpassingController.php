@@ -6,12 +6,13 @@ use App\Http\Requests\Hr\RiwayatInpassingRequest;
 use App\Models\Hr\GolonganInpassing;
 use App\Models\Hr\RiwayatInpassing;
 use App\Models\Shared\Pegawai;
-use App\Services\Hr\PegawaiService;
+use App\Services\Hr\RiwayatInpassingService;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class RiwayatInpassingController extends Controller
 {
-    public function __construct(protected PegawaiService $pegawaiService)
+    public function __construct(protected RiwayatInpassingService $inpassingService)
     {}
 
     public function index(Pegawai $pegawai = null)
@@ -31,8 +32,8 @@ class RiwayatInpassingController extends Controller
 
     public function store(RiwayatInpassingRequest $request, Pegawai $pegawai)
     {
-        $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id');
-        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
+        $this->inpassingService->requestChange($pegawai, $request->validated());
+        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-inpassing');
     }
 
     public function edit(Pegawai $pegawai, RiwayatInpassing $inpassing)
@@ -43,8 +44,8 @@ class RiwayatInpassingController extends Controller
 
     public function update(RiwayatInpassingRequest $request, Pegawai $pegawai, RiwayatInpassing $inpassing)
     {
-        $this->pegawaiService->requestChange($pegawai, RiwayatInpassing::class, $request->validated(), 'latest_riwayatinpassing_id', $inpassing);
-        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
+        $this->inpassingService->requestChange($pegawai, $request->validated(), $inpassing);
+        return jsonSuccess('Perubahan Inpassing berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) . '#section-inpassing');
     }
 
     public function destroy(Pegawai $pegawai, RiwayatInpassing $inpassing)
@@ -53,10 +54,13 @@ class RiwayatInpassingController extends Controller
         return jsonSuccess('Riwayat Inpassing berhasil dihapus.');
     }
 
-    public function data()
+    public function data(Request $request)
     {
-        // Global data
         $query = RiwayatInpassing::with(['pegawai', 'golonganInpassing'])->select('hr_riwayat_inpassing.*');
+
+        if ($request->has('pegawai_id')) {
+            $query->where('pegawai_id', decryptIdIfEncrypted($request->pegawai_id));
+        }
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -72,6 +76,30 @@ class RiwayatInpassingController extends Controller
             ->editColumn('tgl_sk', function ($row) {
                 return $row->tgl_sk ? $row->tgl_sk->format('d-m-Y') : '-';
             })
+            ->addColumn('approval_status', function ($row) {
+                if ($row->approval) {
+                    return getApprovalStatus($row->approval->status);
+                }
+                return '<span class="status status-success"><span class="status-dot"></span> Aktif</span>';
+            })
+            ->addColumn('action', function ($row) {
+                $pegawaiId   = encryptId($row->pegawai_id);
+                $inpassingId = $row->encrypted_riwayatinpassing_id;
+
+                return '<div class="btn-list justify-content-end">
+                            <button type="button" class="btn btn-sm btn-icon btn-ghost-primary ajax-modal-btn"
+                                data-url="' . route('hr.pegawai.inpassing.edit', [$pegawaiId, $inpassingId]) . '"
+                                data-modal-title="Edit Inpassing" title="Edit">
+                                <i class="ti ti-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-icon btn-ghost-danger ajax-delete"
+                                data-url="' . route('hr.pegawai.inpassing.destroy', [$pegawaiId, $inpassingId]) . '"
+                                title="Hapus">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>';
+            })
+            ->rawColumns(['approval_status', 'action'])
             ->make(true);
     }
 }

@@ -12,6 +12,15 @@
 
 @section('content')
         <div class="card">
+            <div class="card-header border-bottom">
+                <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
+                    <h3 class="card-title mb-0">Peminjaman Lab (Kegiatan)</h3>
+                    <div class="ms-auto d-flex gap-2">
+                        <x-tabler.datatable-page-length :dataTableId="'table-kegiatan'" />
+                        <x-tabler.datatable-search :dataTableId="'table-kegiatan'" />
+                    </div>
+                </div>
+            </div>
             <div class="card-body">
                 <x-tabler.datatable
                     id="table-kegiatan"

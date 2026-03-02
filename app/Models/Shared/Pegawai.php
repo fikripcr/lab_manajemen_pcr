@@ -10,7 +10,6 @@ use App\Models\Hr\RiwayatInpassing;
 use App\Models\Hr\RiwayatJabFungsional;
 use App\Models\Hr\RiwayatJabStruktural;
 use App\Models\Hr\RiwayatPendidikan;
-use App\Models\Hr\RiwayatPenugasan;
 use App\Models\Hr\RiwayatStatAktifitas;
 use App\Models\Hr\RiwayatStatPegawai;
 use App\Models\User;
@@ -44,7 +43,7 @@ class Pegawai extends Model
         'latest_riwayatjabfungsional_id',
         'latest_riwayatjabstruktural_id',
         'latest_riwayatinpassing_id',
-        'latest_riwayatpenugasan_id',
+        'latest_riwayatjabstruktural_id',
         'atasan1',
         'atasan2',
         'photo',
@@ -106,19 +105,19 @@ class Pegawai extends Model
         return $this->belongsTo(RiwayatJabStruktural::class, 'latest_riwayatjabstruktural_id', 'riwayatjabstruktural_id');
     }
 
-    public function latestPenugasan()
+    public function latestStruktural()
     {
-        return $this->belongsTo(RiwayatPenugasan::class, 'latest_riwayatpenugasan_id', 'riwayatpenugasan_id');
+        return $this->belongsTo(RiwayatJabStruktural::class, 'latest_riwayatjabstruktural_id', 'riwayatjabstruktural_id');
     }
 
     public function orgUnit()
     {
         return $this->hasOneThrough(
             \App\Models\Shared\StrukturOrganisasi::class,
-            \App\Models\Hr\RiwayatPenugasan::class,
-            'riwayatpenugasan_id',
+            \App\Models\Hr\RiwayatJabStruktural::class,
+            'riwayatjabstruktural_id',
             'orgunit_id',
-            'latest_riwayatpenugasan_id',
+            'latest_riwayatjabstruktural_id',
             'org_unit_id'
         );
     }
@@ -143,9 +142,9 @@ class Pegawai extends Model
     // History Relations
     // ----------------------------------------------------------------
 
-    public function historyPenugasan()
+    public function historyStruktural()
     {
-        return $this->hasMany(RiwayatPenugasan::class, 'pegawai_id', 'pegawai_id')->orderBy('tgl_mulai', 'desc');
+        return $this->hasMany(RiwayatJabStruktural::class, 'pegawai_id', 'pegawai_id')->orderBy('tgl_awal', 'desc');
     }
 
     public function historyDataDiri()
