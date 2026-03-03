@@ -7,12 +7,7 @@
 <x-tabler.page-header :title="$project->project_name" pretitle="Overview">
     <x-slot:actions>
         <div class="btn-list">
-            <x-tabler.button 
-                href="javascript:history.back()" 
-                class="btn-outline-secondary" 
-                icon="ti ti-arrow-left" 
-                text="Kembali" 
-            />
+            <x-tabler.button href="javascript:history.back()" type="back" />
             <x-tabler.button 
                 href="{{ route('projects.edit', $project) }}" 
                 class="btn-primary" 

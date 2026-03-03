@@ -41,29 +41,23 @@
 </div>
 
 {{-- Modal Keterangan (Tolak / Tangguhkan) --}}
-<div class="modal fade" id="modalKeterangan" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalKeteranganTitle">Keterangan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-0">
-                    <label class="form-label">Keterangan / Alasan</label>
-                    <textarea class="form-control" id="inputKeterangan" rows="4" placeholder="Masukkan keterangan atau alasan..."></textarea>
-                    <div class="invalid-feedback" id="keteranganError">Keterangan harus diisi.</div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn" id="btnConfirmProcess">
-                    <span id="btnConfirmText">Proses</span>
-                </button>
-            </div>
-        </div>
+<x-tabler.form-modal 
+    id="modalKeterangan" 
+    title="Keterangan" 
+    :hide-footer="false"
+>
+    <div class="mb-0">
+        <label class="form-label">Keterangan / Alasan</label>
+        <textarea class="form-control" id="inputKeterangan" rows="4" placeholder="Masukkan keterangan atau alasan..."></textarea>
+        <div class="invalid-feedback" id="keteranganError">Keterangan harus diisi.</div>
     </div>
-</div>
+    <x-slot:footer>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn" id="btnConfirmProcess">
+            <span id="btnConfirmText">Proses</span>
+        </button>
+    </x-slot:footer>
+</x-tabler.form-modal>
 @endsection
 
 @push('scripts')
@@ -106,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
             _pendingUrl    = url;
             _pendingStatus = status;
 
-            document.getElementById('modalKeteranganTitle').textContent =
+            document.querySelector('#modalKeterangan .modal-title').textContent =
                 status === 'Rejected' ? 'Alasan Penolakan' : 'Keterangan Penangguhan';
             document.getElementById('btnConfirmText').textContent =
                 status === 'Rejected' ? 'Tolak' : 'Tangguhkan';

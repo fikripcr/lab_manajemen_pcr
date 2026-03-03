@@ -17,7 +17,13 @@
 @endif
 
             <div class="modal-header">
-                <h5 class="modal-title">{{ $title }}</h5>
+                <div class="modal-title w-100">
+                    @if(isset($titleSlot))
+                        {{ $titleSlot }}
+                    @else
+                        <h5 class="m-0">{{ $title }}</h5>
+                    @endif
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             

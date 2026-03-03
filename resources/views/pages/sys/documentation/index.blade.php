@@ -5,7 +5,7 @@
 @section('header')
 <x-tabler.page-header title="Documentation" pretitle="System">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('sys.dashboard') }}" class="me-2 btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ url()->previous() }}" type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

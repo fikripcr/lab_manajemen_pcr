@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header :title="$page->exists ? 'Edit Halaman' : 'Buat Halaman Baru'" pretitle="CMS">
     <x-slot:actions>
-        <a href="javascript:void(0)" onclick="history.back()" class="btn btn-secondary d-none d-sm-inline-block">
-            <i class="ti ti-arrow-left"></i> Kembali
-        </a>
+        <x-tabler.button type="back" class="d-none d-sm-inline-block" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -100,8 +98,7 @@
                             <div class="mt-4">
                                 <x-tabler.button
                                     type="submit"
-                                    class="w-100 btn-primary"
-                                    icon="ti ti-device-floppy"
+                                    class="w-100"
                                     text="Simpan Halaman"
                                 />
                             </div>

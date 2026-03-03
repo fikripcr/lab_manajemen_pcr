@@ -93,10 +93,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a href="{{ route('Kegiatan.rapat.show', $rapat) }}" class="btn btn-secondary">
-                                <i class="ti ti-arrow-left me-1"></i>
-                                Batal
-                            </a>
+                            <x-tabler.button :href="route('Kegiatan.rapat.show', $rapat)" type="back" text="Batal" />
                             <x-tabler.button type="submit" text="Simpan Agenda" />
                         </div>
                     </form>

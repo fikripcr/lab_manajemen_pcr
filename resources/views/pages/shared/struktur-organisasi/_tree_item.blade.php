@@ -7,7 +7,7 @@
         @else
             <span class="me-1" style="width: 20px;"></span>
         @endif
-        <a href="#" class="tree-item-link" data-id="{{ $unit->orgunit_id }}" data-url="{{ route('shared.struktur-organisasi.show', ['struktur_organisasi' => $unit->orgunit_id]) }}">
+        <a href="#" class="tree-item-link" data-id="{{ $unit->orgunit_id }}" data-url="{{ route('shared.struktur-organisasi.show', $unit) }}">
             {{ $unit->name }}
             <span class="badge bg-secondary-lt ms-1" style="font-size: 0.7em;">{{ $unit->type }}</span>
             @if($unit->code)

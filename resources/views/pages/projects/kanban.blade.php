@@ -8,10 +8,8 @@
     <x-slot:actions>
         <div class="btn-list">
             <x-tabler.button
-                href="{{ route('projects.show', $project) }}"
-                class="btn-secondary"
-                icon="ti ti-arrow-left"
-                text="Back to Dashboard"
+                href="{{ route('projects.show', $project->encrypted_project_id) }}"
+                type="back"
             />
             <x-tabler.button
                 href="javascript:void(0)"

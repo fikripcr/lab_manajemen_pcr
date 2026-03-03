@@ -5,17 +5,21 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Lab\PersonilRequest;
 use App\Models\Lab\Personil;
 use App\Services\Lab\PersonilService;
+use App\Services\Shared\StrukturOrganisasiService;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 class PersonilController extends Controller
 {
-    public function __construct(protected PersonilService $personilService)
-    {}
+    public function __construct(
+        protected PersonilService $personilService,
+        protected StrukturOrganisasiService $strukturOrganisasiService
+    ) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('pages.lab.personil.index');
+        $units = $this->strukturOrganisasiService->getAllUnits();
+        return view('pages.lab.personil.index', compact('units'));
     }
 
     public function data(Request $request)
@@ -53,8 +57,9 @@ class PersonilController extends Controller
 
     public function create()
     {
+        $units    = $this->strukturOrganisasiService->getHierarchicalList();
         $personil = new Personil();
-        return view('pages.lab.personil.create-edit-ajax', compact('personil'));
+        return view('pages.lab.personil.create-edit-ajax', compact('personil', 'units'));
     }
 
     public function store(PersonilRequest $request)
@@ -67,7 +72,8 @@ class PersonilController extends Controller
 
     public function edit(Personil $personil)
     {
-        return view('pages.lab.personil.create-edit-ajax', compact('personil'));
+        $units = $this->strukturOrganisasiService->getHierarchicalList();
+        return view('pages.lab.personil.create-edit-ajax', compact('personil', 'units'));
     }
 
     public function update(PersonilRequest $request, Personil $personil)

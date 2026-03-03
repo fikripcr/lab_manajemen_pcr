@@ -25,6 +25,7 @@ class MahasiswaRequest extends BaseRequest
         return [
             'nim'        => 'required|string|max:50|unique:mahasiswa,nim,' . $id . ',mahasiswa_id',
             'nama'       => 'required|string|max:255',
+            'email'      => 'required|email|max:255|unique:mahasiswa,email,' . $id . ',mahasiswa_id',
             'orgunit_id' => 'required|exists:struktur_organisasi,orgunit_id',
         ];
     }

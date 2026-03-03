@@ -14,7 +14,7 @@
     @section('header')
         <x-tabler.page-header title="Edit Documentation: {{ $page }}">
             <x-slot:actions>
-                <x-tabler.button type="back" :href="route('sys.documentation.show', $page)" class="me-2" />
+                <x-tabler.button type="back" :href="route('sys.documentation.show', $page)" />
             </x-slot:actions>
         </x-tabler.page-header>
     @endsection

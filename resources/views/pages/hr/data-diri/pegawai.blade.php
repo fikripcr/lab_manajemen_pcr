@@ -1,12 +1,32 @@
-<div class="card-body border-bottom py-3">
-    <div class="d-flex flex-wrap gap-2">
+<div class="card-header border-bottom py-3">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
         <div>
             <x-tabler.datatable-page-length :dataTableId="'pegawai-table'" />
         </div>
-        <div class="ms-auto text-muted">
+        <div>
             <x-tabler.datatable-search :dataTableId="'pegawai-table'" />
         </div>
         <div>
+            <x-tabler.datatable-filter :dataTableId="'pegawai-table'">
+                <div class="col-12">
+                    <x-tabler.form-select id="filter-posisi" name="posisi_id" label="Filter Posisi" placeholder="Semua Posisi" class="mb-0">
+                        <option value="">Semua Posisi</option>
+                        @foreach($posisi as $p)
+                            <option value="{{ $p->orgunit_id }}">{{ $p->name }}</option>
+                        @endforeach
+                    </x-tabler.form-select>
+                </div>
+                <div class="col-12 mt-2">
+                    <x-tabler.form-select id="filter-unit" name="orgunit_id" label="Filter Unit" placeholder="Semua Unit" class="mb-0">
+                        <option value="">Semua Unit</option>
+                        @foreach($units as $u)
+                            <option value="{{ $u->orgunit_id }}">{{ $u->name }}</option>
+                        @endforeach
+                    </x-tabler.form-select>
+                </div>
+            </x-tabler.datatable-filter>
+        </div>
+        <div class="ms-auto d-flex gap-2">
             <x-tabler.button class="btn-outline-success w-100 w-sm-auto" icon="ti ti-file-spreadsheet" text="Export Excel" />
         </div>
     </div>

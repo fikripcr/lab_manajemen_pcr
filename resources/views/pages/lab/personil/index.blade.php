@@ -18,6 +18,18 @@
                 <div>
                     <x-tabler.datatable-search :dataTableId="'personil-table'" />
                 </div>
+                <div>
+                    <x-tabler.datatable-filter :dataTableId="'personil-table'">
+                        <div style="min-width: 180px;">
+                            <x-tabler.form-select id="filter-unit" name="orgunit_id" placeholder="Filter Unit/Dept" class="mb-0">
+                                <option value="">Semua Unit</option>
+                                @foreach($units as $unit)
+                                    <option value="{{ $unit->orgunit_id }}">{{ $unit->name_display ?? $unit->name }}</option>
+                                @endforeach
+                            </x-tabler.form-select>
+                        </div>
+                    </x-tabler.datatable-filter>
+                </div>
             </div>
         </div>
         <div class="card-body">

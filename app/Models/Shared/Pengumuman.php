@@ -25,6 +25,7 @@ class Pengumuman extends Model implements HasMedia
         'jenis',
         'penulis_id',
         'is_published',
+        'image_url',
         'published_at',
         'created_by',
         'updated_by',
@@ -80,18 +81,42 @@ class Pengumuman extends Model implements HasMedia
         }
     }
 
+    public function getHasImageAttribute()
+    {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        return ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) || $this->hasMedia('cover');
+    }
+
+    public function getIsExternalImageAttribute()
+    {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        return $imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL);
+    }
+
     public function getCoverUrlAttribute()
     {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return $imageUrl;
+        }
         return $this->getFirstMediaUrl('cover');
     }
 
     public function getCoverSmallUrlAttribute()
     {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return $imageUrl;
+        }
         return $this->getFirstMediaUrl('cover', 'small');
     }
 
     public function getCoverMediumUrlAttribute()
     {
+        $imageUrl = $this->attributes['image_url'] ?? null;
+        if ($imageUrl && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return $imageUrl;
+        }
         return $this->getFirstMediaUrl('cover', 'medium');
     }
 

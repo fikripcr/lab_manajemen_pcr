@@ -1,7 +1,7 @@
 <x-tabler.form-modal
     id_form="{{ $log->exists ? 'editLogLabForm' : 'createLogLabForm' }}"
     title="{{ $log->exists ? 'Update Log Penggunaan Lab' : 'Isi Log Penggunaan Lab' }}"
-    route="{{ $log->exists ? route('lab.log-lab.update', $log->encrypted_log_penggunaan_lab_id) : route('lab.log-lab.store') }}"
+    route="{{ route('lab.log-lab.store') }}"
     method="{{ $log->exists ? 'PUT' : 'POST' }}"
 >
     @if(!$log->exists)
@@ -74,6 +74,7 @@
                 name="catatan_umum" 
                 label="Catatan Tambahan (Opsional)" 
                 rows="2" 
+                value="{{ $log->catatan_umum }}"
             />
         </div>
     @else
@@ -99,6 +100,7 @@
             name="catatan_umum" 
             label="Catatan" 
             rows="3"
-        >{{ old('catatan_umum', $log->catatan_umum) }}</x-tabler.form-textarea>
+            value="{{ $log->catatan_umum }}"
+        />
     @endif
 </x-tabler.form-modal>

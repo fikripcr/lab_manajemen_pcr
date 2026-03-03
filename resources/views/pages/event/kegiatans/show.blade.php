@@ -10,9 +10,7 @@
     <x-slot:actions>
         <x-tabler.button
             href="{{ route('Kegiatan.Kegiatans.index') }}"
-            class="btn-secondary"
-            icon="ti ti-arrow-left"
-            text="Kembali"
+            type="back"
         />
         <x-tabler.button
             href="{{ route('Kegiatan.Kegiatans.edit', $event->encrypted_event_id) }}"

@@ -4,7 +4,7 @@
 @section('pretitle', 'Konfigurasi lokasi kantor and radius presensi online')
 
 @section('actions')
-    <x-tabler.button href="{{ route('hr.presensi.index') }}" class="btn-ghost-secondary" icon="ti ti-arrow-left" text="Kembali" />
+    <x-tabler.button href="{{ route('hr.presensi.index') }}" type="back" />
 @endsection
 
 @section('content')

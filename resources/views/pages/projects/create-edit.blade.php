@@ -6,9 +6,7 @@
 @section('header')
 <x-tabler.page-header :title="$project->exists ? 'Edit Project' : 'Create New Project'" pretitle="Projects">
     <x-slot:actions>
-        <a href="javascript:void(0)" onclick="history.back()" class="btn btn-secondary">
-            <i class="ti ti-arrow-left"></i> Back
-        </a>
+        <x-tabler.button href="javascript:history.back()" type="back" text="Batal" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -91,7 +89,6 @@
                 <x-tabler.button
                     type="submit"
                     class="btn-primary"
-                    icon="ti ti-device-floppy"
                     text="{{ $project->exists ? 'Update Project' : 'Create Project' }}"
                 />
             </div>

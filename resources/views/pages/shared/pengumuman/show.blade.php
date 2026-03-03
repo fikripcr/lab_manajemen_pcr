@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $pengumuman->judul }}" pretitle="Detail Data">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('shared.pengumuman.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('shared.pengumuman.index') }}" type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

@@ -5,7 +5,7 @@
 @section('header')
 <x-tabler.page-header title="Komposisi Paket: {{ $paket->nama_paket }}" pretitle="CBT Engine">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('cbt.paket.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('cbt.paket.index') }}" type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

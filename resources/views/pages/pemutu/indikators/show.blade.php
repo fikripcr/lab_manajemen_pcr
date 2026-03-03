@@ -74,7 +74,7 @@
     @section('header')
     <x-tabler.page-header title="Detail Indikator" pretitle="SPMI">
         <x-slot:actions>
-            <x-tabler.button href="javascript:history.back()" icon="ti ti-arrow-left" text="Kembali" class="btn-secondary" />
+            <x-tabler.button type="back" />
             <x-tabler.button href="{{ route('pemutu.indikators.edit', $indikator->encrypted_indikator_id) }}" icon="ti ti-pencil" text="Edit Indikator" class="btn-primary" />
         </x-slot:actions>
     </x-tabler.page-header>

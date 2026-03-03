@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Daftar Ulang" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pmb.camaba.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('pmb.camaba.index') }}" type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-check" text="Proses Daftar Ulang" />
+                        <x-tabler.button type="submit" icon="ti ti-check" text="Proses Daftar Ulang" />
                     </div>
                 </form>
             </div>

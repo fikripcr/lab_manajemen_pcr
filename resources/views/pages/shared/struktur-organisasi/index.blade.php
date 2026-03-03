@@ -104,7 +104,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body p-0 mt-3 border-top">
+                    <div class="card-body p-0 mt-3">
                         <x-tabler.datatable
                             id="table-org-units"
                             route="{{ route('shared.struktur-organisasi.data') }}"

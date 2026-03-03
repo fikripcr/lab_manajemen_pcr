@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ isset($pegawai) && $pegawai->exists ? 'Edit Data Pegawai' : 'Tambah Pegawai' }}" pretitle="Manajemen Kepegawaian">
     <x-slot:actions>
-        <x-tabler.button href="{{ isset($pegawai) && $pegawai->exists ? route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) : route('hr.pegawai.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ isset($pegawai) && $pegawai->exists ? route('hr.pegawai.show', $pegawai->encrypted_pegawai_id) : route('hr.pegawai.index') }}" type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -132,7 +132,7 @@
 
         </div>
         <div class="card-footer text-end">
-            <x-tabler.button type="submit" style="primary" icon="{{ isset($pegawai) && $pegawai->exists ? 'ti ti-check' : 'ti ti-device-floppy' }}" text="{{ isset($pegawai) && $pegawai->exists ? 'Ajukan Perubahan' : 'Simpan Pegawai' }}" />
+            <x-tabler.button type="submit" icon="{{ isset($pegawai) && $pegawai->exists ? 'ti ti-check' : null }}" text="{{ isset($pegawai) && $pegawai->exists ? 'Ajukan Perubahan' : 'Simpan Pegawai' }}" />
         </div>
     </div>
 </form>

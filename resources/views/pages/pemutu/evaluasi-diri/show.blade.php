@@ -4,9 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Isi Evaluasi Diri" pretitle="Periode {{ $periode->periode }}">
     <x-slot:actions>
-        <a href="{{ route('pemutu.evaluasi-diri.index') }}" class="btn btn-outline-secondary">
-            <i class="ti ti-arrow-left me-2"></i> Kembali
-        </a>
+        <x-tabler.button type="back" :href="route('pemutu.evaluasi-diri.index')" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

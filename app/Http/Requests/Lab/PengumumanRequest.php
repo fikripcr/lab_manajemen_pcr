@@ -25,6 +25,7 @@ class PengumumanRequest extends BaseRequest
             'isi'           => ['required', 'string'],
             'jenis'         => ['required', 'in:pengumuman,berita'],
             'is_published'  => ['boolean'],
+            'image_url'     => ['nullable', 'url', 'max:255'],
             'cover'         => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],         // max 2MB
             'attachments.*' => ['nullable', 'file', 'mimes:pdf,doc,docx,zip,xls,xlsx', 'max:5120'], // max 5
         ];
@@ -38,12 +39,12 @@ class PengumumanRequest extends BaseRequest
     public function messages(): array
     {
         return array_merge(parent::messages(), [
-            'cover.image'          => 'Cover harus berupa gambar.',
-            'cover.mimes'          => 'Cover harus berupa file JPEG, PNG, JPG, atau GIF.',
-            'cover.max'            => 'Ukuran cover tidak boleh lebih dari 2MB.',
+            'cover.image'         => 'Cover harus berupa gambar.',
+            'cover.mimes'         => 'Cover harus berupa file JPEG, PNG, JPG, atau GIF.',
+            'cover.max'           => 'Ukuran cover tidak boleh lebih dari 2MB.',
 
-            'attachments.*.file'   => 'Lampiran harus berupa file.',
-            'attachments.*.mimes'  => 'Lampiran harus berupa file PDF, DOC, DOCX, ZIP, XLS, atau XLSX.',
+            'attachments.*.file'  => 'Lampiran harus berupa file.',
+            'attachments.*.mimes' => 'Lampiran harus berupa file PDF, DOC, DOCX, ZIP, XLS, atau XLSX.',
         ]);
     }
 
@@ -54,6 +55,7 @@ class PengumumanRequest extends BaseRequest
             'isi'           => 'Isi',
             'jenis'         => 'Jenis',
             'is_published'  => 'Status Publikasi',
+            'image_url'     => 'URL Gambar',
             'cover'         => 'Cover',
             'attachments'   => 'Lampiran',
             'attachments.*' => 'Lampiran',

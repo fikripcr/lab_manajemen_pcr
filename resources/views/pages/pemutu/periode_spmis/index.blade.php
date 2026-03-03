@@ -129,15 +129,6 @@
                         </li>
                     </ul>
                 </div>
-                
-                {{-- Card Footer --}}
-                <div class="card-footer">
-                   <div class="row align-items-center">
-                      <div class="col-auto">
-                         <span class="text-muted small">Dibuat: {{ $periode->created_at->diffForHumans() }}</span>
-                      </div>
-                   </div>
-                </div>
             </div>
         </div>
     @empty

@@ -8,7 +8,13 @@ class PersonilService
 {
     public function getFilteredQuery(array $filters = [])
     {
-        return Personil::with(['orgUnit', 'user.roles']);
+        $query = Personil::with(['orgUnit', 'user.roles']);
+
+        if (! empty($filters['org_unit_id'])) {
+            $query->where('org_unit_id', $filters['org_unit_id']);
+        }
+
+        return $query;
     }
 
     public function createPersonil(array $data): Personil

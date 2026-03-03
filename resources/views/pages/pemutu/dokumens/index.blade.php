@@ -35,7 +35,7 @@
 @section('content')
 <div class="row row-cards">
     <!-- Tree View Sidebar -->
-    <div class="col-lg-4">
+    <div class="col-lg-5">
         <div class="card">
             @if($activeTab === 'kebijakan')
                 <div class="card-body border-bottom bg-transparent py-3">
@@ -108,7 +108,7 @@
     </div>
 
     <!-- Detail Panel -->
-    <div class="col-lg-8">
+    <div class="col-lg-7">
         <div id="document-detail-panel">
             <div class="card">
                 <div class="card-body text-center py-5">

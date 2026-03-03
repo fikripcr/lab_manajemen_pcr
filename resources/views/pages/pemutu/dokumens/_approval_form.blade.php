@@ -3,7 +3,6 @@
     route="{{ route('pemutu.dokumens.approve', $dokumen) }}"
     method="POST"
     submitText="Simpan Approval"
-    submitIcon="ti ti-device-floppy"
 >
     <div class="mb-3">
         <x-tabler.form-select name="personil_id" label="Approver (Pegawai)" required="true" class="select2" data-dropdown-parent="#modalAction">

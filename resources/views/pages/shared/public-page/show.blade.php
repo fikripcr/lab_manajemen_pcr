@@ -6,9 +6,7 @@
         <a href="{{ route('shared.public-page.edit', $page->encrypted_page_id) }}" class="btn btn-primary d-none d-sm-inline-block">
             <i class="ti ti-edit"></i> Edit Halaman
         </a>
-        <a href="javascript:void(0)" onclick="history.back()" class="btn btn-secondary d-none d-sm-inline-block">
-            <i class="ti ti-arrow-left"></i> Kembali
-        </a>
+        <x-tabler.button type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

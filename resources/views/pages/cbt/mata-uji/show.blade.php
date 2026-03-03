@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Detail Mata Uji: {{ $mu->nama_mata_uji }}" pretitle="CBT">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('cbt.mata-uji.index') }}" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button type="back" />
         <div class="dropdown">
             <x-tabler.button type="button" class="btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text=" Tambah Soal" />
             <ul class="dropdown-menu">

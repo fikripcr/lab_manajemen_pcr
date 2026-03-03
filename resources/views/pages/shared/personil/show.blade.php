@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Detail Personil: {{ $personil->nama }}" pretitle="Detail Data">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('shared.personil.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('shared.personil.index') }}" type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

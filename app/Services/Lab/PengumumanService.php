@@ -39,6 +39,7 @@ class PengumumanService
                 'jenis'        => $data['jenis'],
                 'penulis_id'   => Auth::id(),
                 'is_published' => $isPublished,
+                'image_url'    => $data['image_url'] ?? null,
                 'published_at' => $isPublished ? now() : null,
             ]);
 
@@ -68,6 +69,7 @@ class PengumumanService
                 'judul'        => $data['judul'],
                 'isi'          => $data['isi'],
                 'is_published' => $isPublished,
+                'image_url'    => $data['image_url'] ?? $pengumuman->image_url,
                 'published_at' => $isPublished ? now() : $pengumuman->published_at,
             ]);
 

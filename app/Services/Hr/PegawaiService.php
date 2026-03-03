@@ -70,7 +70,21 @@ class PegawaiService
             ]);
 
         // Add filtering if needed
-        // if ($request->filled('status_pegawai')) { ... }
+        if ($request->filled('orgunit_id')) {
+            $query->whereHas('latestDataDiri', function ($q) use ($request) {
+                $q->where('orgunit_id', $request->orgunit_id);
+            });
+        }
+
+        if ($request->filled('posisi_id')) {
+            $query->whereHas('latestDataDiri', function ($q) use ($request) {
+                $q->where('posisi_id', $request->posisi_id);
+            });
+        }
+
+        if ($request->filled('status')) {
+            // Status logic if applicable
+        }
 
         return $query;
     }

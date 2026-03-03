@@ -8,7 +8,7 @@ use App\Http\Requests\Shared\StrukturOrganisasiRequest;
 use App\Models\Shared\StrukturOrganisasi;
 use App\Services\Shared\StrukturOrganisasiService;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 class StrukturOrganisasiController extends Controller
 {
@@ -65,29 +65,34 @@ class StrukturOrganisasiController extends Controller
         return jsonSuccess('Unit Organisasi berhasil ditambahkan.', route('shared.struktur-organisasi.index'));
     }
 
-    public function show(StrukturOrganisasi $orgUnit)
+    public function show(StrukturOrganisasi $struktur_organisasi)
     {
-        $orgUnit->load(['parent', 'children', 'personils.user', 'successor', 'auditee']);
-        return view('pages.shared.struktur-organisasi.show', compact('orgUnit'));
+        $struktur_organisasi->load(['parent', 'children', 'personils.user', 'successor', 'auditee']);
+
+        if (request()->ajax()) {
+            return view('pages.shared.struktur-organisasi.show-partial', ['orgUnit' => $struktur_organisasi]);
+        }
+
+        return view('pages.shared.struktur-organisasi.show', ['orgUnit' => $struktur_organisasi]);
     }
 
-    public function edit(StrukturOrganisasi $orgUnit)
+    public function edit(StrukturOrganisasi $struktur_organisasi)
     {
         $parents = $this->strukturOrganisasiService->getHierarchicalList();
         $types   = $this->strukturOrganisasiService->getTypes();
 
-        return view('pages.shared.struktur-organisasi.create-edit-ajax', compact('orgUnit', 'parents', 'types'));
+        return view('pages.shared.struktur-organisasi.create-edit-ajax', ['orgUnit' => $struktur_organisasi, 'parents' => $parents, 'types' => $types]);
     }
 
-    public function update(StrukturOrganisasiRequest $request, StrukturOrganisasi $orgUnit)
+    public function update(StrukturOrganisasiRequest $request, StrukturOrganisasi $struktur_organisasi)
     {
-        $this->strukturOrganisasiService->updateOrgUnit($orgUnit, $request->validated());
+        $this->strukturOrganisasiService->updateOrgUnit($struktur_organisasi, $request->validated());
         return jsonSuccess('Unit Organisasi berhasil diperbarui.', route('shared.struktur-organisasi.index'));
     }
 
-    public function destroy(StrukturOrganisasi $orgUnit)
+    public function destroy(StrukturOrganisasi $struktur_organisasi)
     {
-        $this->strukturOrganisasiService->deleteOrgUnit($orgUnit);
+        $this->strukturOrganisasiService->deleteOrgUnit($struktur_organisasi);
         return jsonSuccess('Unit Organisasi berhasil dihapus.', route('shared.struktur-organisasi.index'));
     }
 
@@ -101,16 +106,16 @@ class StrukturOrganisasiController extends Controller
         return jsonError('Data urutan tidak valid.');
     }
 
-    public function toggleStatus(StrukturOrganisasi $orgUnit)
+    public function toggleStatus(StrukturOrganisasi $struktur_organisasi)
     {
-        $unit = $this->strukturOrganisasiService->toggleStatus($orgUnit);
+        $unit = $this->strukturOrganisasiService->toggleStatus($struktur_organisasi);
         return jsonSuccess('Status berhasil diubah.', null, ['is_active' => $unit->is_active]);
     }
 
-    public function setAuditee(SetAuditeeRequest $request, StrukturOrganisasi $orgUnit)
+    public function setAuditee(SetAuditeeRequest $request, StrukturOrganisasi $struktur_organisasi)
     {
         $validated = $request->validated();
-        $this->strukturOrganisasiService->setAuditee($orgUnit, $validated['auditee_user_id']);
+        $this->strukturOrganisasiService->setAuditee($struktur_organisasi, $validated['auditee_user_id']);
         return jsonSuccess('Auditee berhasil diset.');
     }
 }

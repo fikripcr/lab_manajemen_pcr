@@ -115,117 +115,6 @@
             'type'  => 'header',
             'title' => 'Modul',
         ],
-        [
-            'type'          => 'dropdown',
-            'title'         => 'Layanan Lab',
-            'id'            => 'navbar-services',
-            'icon'          => 'ti ti-activity',
-            'active_routes' => [
-                'lab.labs.*',
-                'lab.inventaris.*',
-                'lab.kegiatan.*',
-                'lab.log-lab.*',
-                'lab.surat-bebas.*',
-                'lab.laporan-kerusakan.*',
-                'lab.log-pc.*',
-                'lab.software-requests.*',
-                'lab.pengumuman.*',
-                'lab.semesters.*',
-                'lab.mata-kuliah.*',
-                'lab.jadwal.*',
-                'lab.periode-request.*'
-            ],
-            'children'      => [
-                [
-                    'title'         => 'Master Data',
-                    'id'            => 'navbar-lab-master',
-                    'icon'          => 'ti ti-database',
-                    'active_routes' => ['lab.labs.*', 'lab.inventaris.*', 'lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*'],
-                    'children'      => [
-                        [
-                            'title'         => 'Data Lab',
-                            'route'         => 'lab.labs.index',
-                            'active_routes' => ['lab.labs.*'],
-                            'icon'          => 'ti ti-flask',
-                        ],
-                        [
-                            'title'         => 'Data Inventaris',
-                            'route'         => 'lab.inventaris.index',
-                            'active_routes' => ['lab.inventaris.*'],
-                            'icon'          => 'ti ti-package',
-                        ],
-                        [
-                            'title'         => 'Data Semester',
-                            'route'         => 'lab.semesters.index',
-                            'active_routes' => ['lab.semesters.*'],
-                            'icon'          => 'ti ti-calendar-stats',
-                        ],
-                        [
-                            'title'         => 'Data Mata Kuliah',
-                            'route'         => 'lab.mata-kuliah.index',
-                            'active_routes' => ['lab.mata-kuliah.*'],
-                            'icon'          => 'ti ti-book',
-                        ],
-                        [
-                            'title'         => 'Jadwal Perkuliahan',
-                            'route'         => 'lab.jadwal.index',
-                            'active_routes' => ['lab.jadwal.*'],
-                            'icon'          => 'ti ti-calendar-event',
-                        ],
-                    ],
-                ],
-                [
-                    'title'         => 'Peminjaman Lab',
-                    'route'         => 'lab.kegiatan.index',
-                    'active_routes' => ['lab.kegiatan.*'],
-                    'icon'          => 'ti ti-calendar',
-                ],
-                [
-                    'title'         => 'Log Penggunaan Lab',
-                    'route'         => 'lab.log-lab.index',
-                    'active_routes' => ['lab.log-lab.*'],
-                    'icon'          => 'ti ti-file-time',
-                ],
-                [
-                    'title'         => 'Log Penggunaan PC',
-                    'route'         => 'lab.log-pc.index',
-                    'active_routes' => ['lab.log-pc.*'],
-                    'icon'          => 'ti ti-device-desktop-analytics',
-                ],
-                [
-                    'title'         => 'Surat Bebas Lab',
-                    'route'         => 'lab.surat-bebas.index',
-                    'active_routes' => ['lab.surat-bebas.*'],
-                    'icon'          => 'ti ti-certificate',
-                ],
-                [
-                    'title'         => 'Laporan Kerusakan',
-                    'route'         => 'lab.laporan-kerusakan.index',
-                    'active_routes' => ['lab.laporan-kerusakan.*'],
-                    'icon'          => 'ti ti-report-medical',
-                ],
-                [
-                    'title'         => 'Software Requests',
-                    'id'            => 'navbar-software-nested',
-                    'icon'          => 'ti ti-device-laptop',
-                    'active_routes' => ['lab.software-requests.*', 'lab.periode-request.*'],
-                    'children'      => [
-                        [
-                            'title'         => 'Daftar Pengajuan',
-                            'route'         => 'lab.software-requests.index',
-                            'active_routes' => ['lab.software-requests.index'],
-                            'icon'          => 'ti ti-list',
-                        ],
-                        [
-                            'title'         => 'Periode Pengajuan',
-                            'route'         => 'lab.periode-request.index',
-                            'active_routes' => ['lab.periode-request.*'],
-                            'icon'          => 'ti ti-calendar-stats',
-                        ],
-                    ],
-                ],
-            ],
-        ],
 
         [
             'type' => 'dropdown',
@@ -346,6 +235,119 @@
                     ],
                 ],
 
+            ],
+        ],
+
+                [
+            'type'          => 'dropdown',
+            'title'         => 'Layanan Lab',
+            'id'            => 'navbar-services',
+            'icon'          => 'ti ti-activity',
+            'active_routes' => [
+                'lab.labs.*',
+                'lab.inventaris.*',
+                'lab.kegiatan.*',
+                'lab.log-lab.*',
+                'lab.surat-bebas.*',
+                'lab.laporan-kerusakan.*',
+                'lab.log-pc.*',
+                'lab.software-requests.*',
+                'lab.pengumuman.*',
+                'lab.semesters.*',
+                'lab.mata-kuliah.*',
+                'lab.jadwal.*',
+                'lab.periode-request.*',
+                'lab.personil.*'
+            ],
+            'children'      => [
+                [
+                    'title'         => 'Master Data',
+                    'id'            => 'navbar-lab-master',
+                    'icon'          => 'ti ti-database',
+                    'active_routes' => ['lab.labs.*', 'lab.inventaris.*', 'lab.semesters.*', 'lab.mata-kuliah.*', 'lab.jadwal.*', 'lab.personil.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Data Lab',
+                            'route'         => 'lab.labs.index',
+                            'active_routes' => ['lab.labs.*'],
+                            'icon'          => 'ti ti-flask',
+                        ],
+                        [
+                            'title'         => 'Data Inventaris',
+                            'route'         => 'lab.inventaris.index',
+                            'active_routes' => ['lab.inventaris.*'],
+                            'icon'          => 'ti ti-package',
+                        ],
+                        [
+                            'title'         => 'Data Semester',
+                            'route'         => 'lab.semesters.index',
+                            'active_routes' => ['lab.semesters.*'],
+                            'icon'          => 'ti ti-calendar-stats',
+                        ],
+                        [
+                            'title'         => 'Data Mata Kuliah',
+                            'route'         => 'lab.mata-kuliah.index',
+                            'active_routes' => ['lab.mata-kuliah.*'],
+                            'icon'          => 'ti ti-book',
+                        ],
+                        [
+                            'title'         => 'Jadwal Perkuliahan',
+                            'route'         => 'lab.jadwal.index',
+                            'active_routes' => ['lab.jadwal.*'],
+                            'icon'          => 'ti ti-calendar-event',
+                        ],
+                    ],
+                ],
+                [
+                    'title'         => 'Peminjaman Lab',
+                    'route'         => 'lab.kegiatan.index',
+                    'active_routes' => ['lab.kegiatan.*'],
+                    'icon'          => 'ti ti-calendar',
+                ],
+                [
+                    'title'         => 'Log Penggunaan Lab',
+                    'route'         => 'lab.log-lab.index',
+                    'active_routes' => ['lab.log-lab.*'],
+                    'icon'          => 'ti ti-file-time',
+                ],
+                [
+                    'title'         => 'Log Penggunaan PC',
+                    'route'         => 'lab.log-pc.index',
+                    'active_routes' => ['lab.log-pc.*'],
+                    'icon'          => 'ti ti-device-desktop-analytics',
+                ],
+                [
+                    'title'         => 'Surat Bebas Lab',
+                    'route'         => 'lab.surat-bebas.index',
+                    'active_routes' => ['lab.surat-bebas.*'],
+                    'icon'          => 'ti ti-certificate',
+                ],
+                [
+                    'title'         => 'Laporan Kerusakan',
+                    'route'         => 'lab.laporan-kerusakan.index',
+                    'active_routes' => ['lab.laporan-kerusakan.*'],
+                    'icon'          => 'ti ti-report-medical',
+                ],
+                [
+                    'title'         => 'Software Requests',
+                    'id'            => 'navbar-software-nested',
+                    'icon'          => 'ti ti-device-laptop',
+                    'active_routes' => ['lab.software-requests.*', 'lab.periode-request.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Daftar Pengajuan',
+                            'route'         => 'lab.software-requests.index',
+                            'active_routes' => ['lab.software-requests.*'],
+                            'icon'          => 'ti ti-list',
+                        ],
+                        [
+                            'title'         => 'Periode Pengajuan',
+                            'route'         => 'lab.periode-request.index',
+                            'active_routes' => ['lab.periode-request.*'],
+                            'icon'          => 'ti ti-calendar-stats',
+                        ],
+                    ],
+                ],
             ],
         ],
 

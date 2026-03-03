@@ -27,7 +27,7 @@
         <x-tabler.page-header title="Mata Kuliah Details" pretitle="Mata Kuliah">
             <x-slot:actions>
                 <x-tabler.button type="a" :href="route('mata-kuliah.edit', $mataKuliah->encrypted_mata_kuliah_id)" icon="ti ti-pencil" class="btn-warning" text="Edit" />
-                <x-tabler.button type="a" :href="route('mata-kuliah.index')" icon="ti ti-arrow-left" class="btn-secondary" text="Kembali" />
+                <x-tabler.button :href="route('mata-kuliah.index')" type="back" />
             </x-slot:actions>
         </x-tabler.page-header>
     @endsection

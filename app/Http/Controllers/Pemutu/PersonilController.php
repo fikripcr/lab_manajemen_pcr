@@ -7,7 +7,7 @@ use App\Http\Requests\Pemutu\PersonilRequest;
 use App\Models\Pemutu\OrgUnit;
 use App\Models\Shared\Personil; // Import Service
 use App\Services\Pemutu\PersonilService;
-use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 class PersonilController extends Controller
 {

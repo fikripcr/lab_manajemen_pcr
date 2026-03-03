@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Riwayat Presensi" pretitle="HR Module">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('hr.presensi.index') }}" class="btn-outline-primary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('hr.presensi.index') }}" type="back" />
         <x-tabler.button class="btn-outline-success" id="btn-export" icon="ti ti-download" text="Export" />
         
         <x-tabler.datatable-filter :dataTableId="'presensi-history-table'">
@@ -157,7 +157,7 @@ const presensiColumnDefs = [
             const detailUrl = '{{ route("hr.presensi.history.show", ":date") }}'.replace(':date', row.date);
             return `
                 <div class="btn-list">
-                    <x-tabler.button class="btn-sm btn-outline-primary ajax-modal-btn" data-url="${detailUrl}" icon="ti ti-eye" />
+                    <x-tabler.button class="ajax-modal-btn" data-url="${detailUrl}" icon="ti ti-eye" />
                 </div>
             `;
         }

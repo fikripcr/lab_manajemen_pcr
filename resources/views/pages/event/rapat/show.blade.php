@@ -259,7 +259,7 @@
 
                 @if($rapat->agendas->count() > 0)
                 <div class="mt-3 text-end">
-                    <x-tabler.button type="submit" class="btn-primary" icon="ti ti-device-floppy" text="Simpan Manual" />
+                    <x-tabler.button type="submit" class="btn-primary" text="Simpan Manual" />
                 </div>
                 @endif
             </form>

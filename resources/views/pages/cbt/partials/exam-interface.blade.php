@@ -60,9 +60,7 @@
                                             {{ $session->waktu_mulai->format('d M Y H:i') }}
                                         </td>
                                         <td>
-                                            <a href="{{ route('cbt.execute.test-exam', $session->encrypted_jadwal_ujian_id) }}" class="btn btn-primary btn-sm">
-                                                <i class="ti ti-player-play me-1"></i> Mulai Test
-                                            </a>
+                                            <x-tabler.button href="{{ route('cbt.execute.test-exam', $session->encrypted_jadwal_ujian_id) }}" class="btn-sm" icon="ti ti-player-play" text="Mulai Test" />
                                         </td>
                                     </tr>
                                 @empty
@@ -233,11 +231,11 @@
                 <div class="card-footer">
                     <div class="row align-items-center">
                         <div class="col-md-6">
-                            <x-tabler.button type="button" class="btn-secondary" id="prev-question" onclick="CBT.navigateQuestion('prev')" icon="ti ti-arrow-left" text="Sebelumnya" />
+                            <x-tabler.button type="button" id="prev-question" onclick="CBT.navigateQuestion('prev')" type="back" />
                         </div>
                         <div class="col-md-6 text-end">
-                            <x-tabler.button type="button" class="btn-primary" id="next-question" onclick="CBT.navigateQuestion('next')" text="Selanjutnya" icon="ti ti-arrow-right" trailing-icon />
-                            <x-tabler.button type="button" class="btn-success ms-2" onclick="CBT.submitExam()" icon="ti ti-check" text="Selesai Ujian" />
+                            <x-tabler.button type="button" id="next-question" onclick="CBT.navigateQuestion('next')" text="Selanjutnya" icon="ti ti-arrow-right" trailing-icon />
+                            <x-tabler.button type="button" onclick="CBT.submitExam()" icon="ti ti-check" text="Selesai Ujian" />
                         </div>
                     </div>
                 </div>

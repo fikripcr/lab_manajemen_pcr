@@ -3,7 +3,6 @@
     :route="isset($pendidikan) && $pendidikan->exists ? route('hr.pegawai.pendidikan.update', [$pegawai->encrypted_pegawai_id, $pendidikan->riwayatpendidikan_id]) : route('hr.pegawai.pendidikan.store', $pegawai->encrypted_pegawai_id)"
     :method="isset($pendidikan) && $pendidikan->exists ? 'PUT' : 'POST'"
     :submitText="isset($pendidikan) && $pendidikan->exists ? 'Simpan Perubahan' : 'Simpan'"
-    submitIcon="ti ti-device-floppy"
 >
     <div class="alert alert-info">
         <i class="ti ti-info-circle me-2"></i>

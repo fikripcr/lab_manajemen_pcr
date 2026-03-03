@@ -25,7 +25,7 @@
         <x-tabler.page-header title="{{ $pageTitle }}" pretitle="Documentation">
             <x-slot:actions>
                 <div class="btn-group">
-                    <x-tabler.button type="back" :href="route('sys.documentation.index')" class="me-2" icon="ti ti-arrow-left" />
+                    <x-tabler.button type="back" :href="route('sys.documentation.index')" />
                     <x-tabler.button type="button" class="btn-outline-primary" icon="ti ti-pencil" :href="route('sys.documentation.edit', $fileName)" text="Edit" />
                 </div>
             </x-slot:actions>
@@ -79,7 +79,7 @@
 
                 <!-- Footer Actions -->
                 <div class="mt-4 d-flex justify-content-between">
-                    <x-tabler.button type="back" :href="route('sys.documentation.index')" icon="ti ti-arrow-left" text="Back to Index" />
+                    <x-tabler.button type="back" :href="route('sys.documentation.index')" />
                     <x-tabler.button type="button" class="btn-outline-primary" icon="ti ti-pencil" :href="route('sys.documentation.edit', $fileName)" text="Edit This Page" />
                 </div>
             </div>

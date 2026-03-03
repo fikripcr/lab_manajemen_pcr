@@ -16,7 +16,7 @@
                             <div class="card-actions">
                                 <x-tabler.button :href="route('lab.jadwal.edit', encryptId($jadwal->jadwal_kuliah_id))" class="btn-primary" icon="ti ti-edit" text="Edit" />
                                 <x-tabler.button :href="route('lab.jadwal.assignments.index', encryptId($jadwal->jadwal_kuliah_id))" class="btn-info ms-2" icon="ti ti-desktop" text="Atur PC" />
-                                <x-tabler.button :href="route('lab.jadwal.index')" class="btn-light ms-2" text="Kembali" />
+                                <x-tabler.button :href="route('lab.jadwal.index')" class="btn-light ms-2" type="back" />
                             </div>
                         </div>
                         <div class="card-body">

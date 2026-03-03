@@ -3,8 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $layanan->nama_layanan }}" pretitle="Manage Konfigurasi Layanan">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-arrow-left" text="Kembali" class="btn-link"
-            onclick="window.location.href='{{ route('eoffice.jenis-layanan.index') }}'" />
+        <x-tabler.button type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

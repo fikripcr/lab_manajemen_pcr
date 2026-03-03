@@ -32,7 +32,7 @@
         @if($disabled) disabled="true"@endif
         @if($readonly) readonly="true"@endif
         {{ $attributes->except(['class', 'value', 'rows']) }}
-    >{{ $value }}</textarea>
+    >{{ $value ?? $slot }}</textarea>
     
     @if($help)
         <div class="form-text">{{ $help }}</div>

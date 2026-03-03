@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Kartu Peserta Ujian PMB" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" href="{{ route('pmb.camaba.dashboard') }}" />
+        <x-tabler.button type="back" href="{{ route('pmb.camaba.dashboard') }}" />
         <x-tabler.button type="button" class="btn-primary" onclick="window.print();" icon="ti ti-printer" text="Cetak Kartu" />
     </x-slot:actions>
 </x-tabler.page-header>

@@ -3,9 +3,7 @@
 @section('header')
 <x-tabler.page-header :title="$pengumuman->exists ? 'Edit ' . ucfirst($type) : 'Buat ' . ucfirst($type) . ' Baru'" :pretitle="ucfirst($type)">
     <x-slot:actions>
-        <a href="javascript:void(0)" onclick="history.back()" class="btn btn-secondary d-none d-sm-inline-block">
-            <i class="ti ti-arrow-left"></i> Kembali
-        </a>
+        <x-tabler.button type="back" class="d-none d-sm-inline-block" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -31,11 +29,12 @@
                             />
 
                             <div class="mb-3">
-                                    <x-tabler.form-textarea
-                                        name="isi"
-                                        id="isi"
-                                        label="Konten"
-                                        rows="20"
+                                <x-tabler.form-textarea
+                                    name="isi"
+                                    id="isi"
+                                    label="Konten"
+                                    type="editor"
+                                    rows="20"
                                     :value="old('isi', $pengumuman->isi ?? '')"
                                 />
                             </div>
@@ -66,15 +65,25 @@
 
                             <div class="mb-3">
                                 <x-tabler.form-input
+                                    name="image_url"
+                                    label="URL Gambar (Cover)"
+                                    :value="old('image_url', $pengumuman->image_url ?? '')"
+                                    placeholder="https://example.com/image.jpg"
+                                    help="Opsional. Jika diisi, gambar ini akan diprioritaskan daripada upload file."
+                                />
+                            </div>
+
+                            <div class="mb-3">
+                                <x-tabler.form-input
                                     name="cover"
                                     type="file"
                                     label="Gambar Utama (Cover)"
                                     accept="image/*"
                                     help="Maksimal 5MB. Format: JPG, PNG, WEBP."
                                 />
-                                @if($pengumuman->cover_url)
+                                @if($pengumuman->has_image)
                                     <div class="mt-2 text-center">
-                                        <img src="{{ $pengumuman->cover_url }}" class="rounded" style="max-height: 100px;">
+                                        <img src="{{ $pengumuman->cover_url }}" class="rounded shadow-sm border" style="max-height: 120px; width: 100%; object-fit: cover;">
                                     </div>
                                 @endif
                             </div>
@@ -95,9 +104,7 @@
                             <div class="mt-4">
                                 <x-tabler.button
                                     type="submit"
-                                    class="w-100 btn-primary"
-                                    icon="ti ti-device-floppy"
-                                    text="Simpan"
+                                    class="w-100"
                                 />
                             </div>
                         </div>
@@ -109,8 +116,6 @@
 
 @push('scripts')
 <script>
-    if (window.loadHugeRTE) {
-        window.loadHugeRTE('#isi', { height: 600 });
-    }
+    // HugeRTE is auto-initialized by x-tabler.form-textarea with type="editor"
 </script>
 @endpush

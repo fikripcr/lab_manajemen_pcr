@@ -49,7 +49,9 @@ class PegawaiController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pages.hr.data-diri.index');
+        $posisi = OrgUnit::where('type', 'posisi')->get();
+        $units  = OrgUnit::whereIn('type', ['Bagian', 'Jurusan', 'Prodi', 'Unit'])->get();
+        return view('pages.hr.data-diri.index', compact('posisi', 'units'));
     }
 
     public function data(Request $request)

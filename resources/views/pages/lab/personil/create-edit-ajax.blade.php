@@ -44,4 +44,15 @@
             required 
         />
     </div>
+
+    <div class="mb-3">
+        <x-tabler.form-select 
+            name="org_unit_id" 
+            label="Unit / Departemen" 
+            :options="collect($units)->mapWithKeys(fn($u) => [$u->orgunit_id => $u->name_display ?? $u->name])->toArray()" 
+            selected="{{ $personil->org_unit_id }}"
+            placeholder="-- Pilih Unit --" 
+            required 
+        />
+    </div>
 </x-tabler.form-modal>

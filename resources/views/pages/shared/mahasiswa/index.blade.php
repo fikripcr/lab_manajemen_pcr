@@ -6,6 +6,16 @@
 
 @section('content')
         <div class="card">
+            <div class="card-header border-bottom py-3">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <div>
+                        <x-tabler.datatable-page-length :dataTableId="'table-mahasiswa'" />
+                    </div>
+                    <div>
+                        <x-tabler.datatable-search :dataTableId="'table-mahasiswa'" />
+                    </div>
+                </div>
+            </div>
             <div class="card-body">
                 <x-tabler.datatable
                     id="table-mahasiswa"

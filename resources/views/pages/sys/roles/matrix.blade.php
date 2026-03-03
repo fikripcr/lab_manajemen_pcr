@@ -5,7 +5,7 @@
 @section('header')
     <x-tabler.page-header title="Matriks Hak Akses" pretitle="System Management">
         <x-slot:actions>
-            <x-tabler.button href="{{ route('sys.roles.index') }}" text="Kembali" icon="ti ti-arrow-left" class="btn-outline-secondary shadow-sm" />
+            <x-tabler.button href="{{ route('sys.roles.index') }}" type="back" />
 
             <div class="dropdown d-none d-sm-inline-block">
                 <x-tabler.button type="button" class="btn-primary dropdown-toggle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text="Aksi Tambah" />
@@ -139,7 +139,7 @@
                         <i class="ti ti-info-circle me-1"></i> Centang kotak untuk memberikan hak akses. 
                         <strong>Memory usage optimized (Loaded by system).</strong>
                     </div>
-                    <x-tabler.button type="submit" text="Simpan Perubahan Matriks" icon="ti ti-device-floppy" />
+                    <x-tabler.button type="submit" text="Simpan Perubahan Matriks" />
                 </div>
             </form>
         </div>

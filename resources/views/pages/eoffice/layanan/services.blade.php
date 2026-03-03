@@ -166,7 +166,7 @@
                         <p class="empty-subtitle text-muted mb-4">
                             Silakan hubungi admin untuk informasi lebih lanjut.
                         </p>
-                        <x-tabler.button href="{{ route('eoffice.dashboard') }}" icon="ti ti-arrow-left" text="Kembali ke Dashboard" />
+                        <x-tabler.button href="{{ route('eoffice.dashboard') }}" type="back" />
                     </div>
                 </div>
             </div>

@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 mt-3">
         <label class="form-check form-switch">
             <input class="form-check-input" type="checkbox" name="is_active" {{ $menu->exists ? ($menu->is_active ? 'checked' : '') : 'checked' }}>
             <span class="form-check-label">Menu Aktif</span>

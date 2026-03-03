@@ -43,7 +43,7 @@
                     
                     <div class="mb-3">
                         <x-tabler.button type="submit" class="btn-primary" icon="ti ti-upload" text="Upload Foto" />
-                        <x-tabler.button href="{{ route('hr.pegawai.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+                        <x-tabler.button href="{{ route('hr.pegawai.index') }}" type="back" />
                     </div>
                 </form>
             </div>

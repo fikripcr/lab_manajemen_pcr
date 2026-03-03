@@ -126,7 +126,7 @@
                             <x-tabler.form-textarea type="editor" id="editorContent" name="isi" label="Content" :value="old('isi')" height="250" required="true" />
                         </div>
                         <div class="btn-list">
-                            <x-tabler.button type="submit" text="Submit" icon="ti ti-device-floppy" />
+                            <x-tabler.button type="submit" text="Submit" />
                             <x-tabler.button type="button" class="btn-secondary" id="getContentBtn" icon="ti ti-eye" text="Get Content" />
                         </div>
                     </form>

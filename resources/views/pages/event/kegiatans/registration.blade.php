@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="form-footer">
-                    <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-device-floppy" text="Simpan Data & Masuk" />
+                    <x-tabler.button type="submit" class="btn-primary w-100" text="Simpan Data & Masuk" />
                 </div>
             </form>
         </div>

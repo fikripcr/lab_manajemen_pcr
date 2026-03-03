@@ -12,7 +12,6 @@
     :route="$route"
     :method="$method"
     :submitText="$isEdit ? 'Simpan Perubahan' : 'Simpan Pengajuan'"
-    submitIcon="ti ti-device-floppy"
 >
     <div class="alert alert-info">
         <i class="ti ti-info-circle me-2"></i>

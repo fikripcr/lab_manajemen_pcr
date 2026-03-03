@@ -16,7 +16,8 @@ class PersonilController extends Controller
 
     public function index()
     {
-        return view('pages.shared.personil.index');
+        $units = StrukturOrganisasi::orderBy('name')->get();
+        return view('pages.shared.personil.index', compact('units'));
     }
 
     public function data(Request $request)
@@ -68,7 +69,9 @@ class PersonilController extends Controller
 
     public function create()
     {
-        return view('pages.shared.personil.create-edit-ajax', compact('units'));
+        $units    = StrukturOrganisasi::orderBy('name')->get();
+        $personil = new Personil();
+        return view('pages.shared.personil.create-edit-ajax', compact('personil', 'units'));
     }
 
     public function store(PersonilRequest $request)

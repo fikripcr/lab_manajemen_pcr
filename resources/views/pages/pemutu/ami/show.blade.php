@@ -4,17 +4,15 @@
 @section('header')
 <x-tabler.page-header title="Daftar Indikator AMI" pretitle="Periode {{ $periode->periode }}">
     <x-slot:actions>
-        <a href="{{ route('pemutu.ami.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i> Kembali
-        </a>
+        <x-tabler.button type="back" :href="route('pemutu.ami.index')" size="sm" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
 <div class="card">
-    <div class="card-header py-3" style="background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white;">
-        <h3 class="card-title text-white mb-0">
+    <div class="card-header py-3">
+        <h3 class="card-title mb-0">
             <i class="ti ti-shield-check me-2"></i>
             AMI — {{ $periode->periode }}
             <span class="badge bg-white text-primary ms-2 fw-normal">{{ $periode->jenis }}</span>

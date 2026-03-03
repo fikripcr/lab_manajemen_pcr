@@ -20,7 +20,7 @@
     @section('header')
     <x-tabler.page-header :title="$title" pretitle="SPMI / Indikator">
         <x-slot:actions>
-            <x-tabler.button href="javascript:history.back()" class="btn-outline-secondary" icon="ti ti-arrow-left" text="Kembali" />
+            <x-tabler.button href="javascript:history.back()" type="back" />
         </x-slot:actions>
     </x-tabler.page-header>
     @endsection
@@ -340,7 +340,7 @@
                 <!-- Submit Button moved to bottom of right col or as a separate card -->
                 <div class="card mt-3">
                     <div class="card-body">
-                        <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-device-floppy" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" />
+                        <x-tabler.button type="submit" :text="$isEdit ? 'Update Indikator' : 'Simpan Indikator'" />
                     </div>
                 </div>
             </div>

@@ -21,8 +21,6 @@ class Controller extends BaseController
     {
         $this->middleware("permission:{$prefix}.view")->only(['index', 'show']);
         $this->middleware("permission:{$prefix}.data")->only(['data']);
-        $this->middleware("permission:{$prefix}.view-all")->only(['index', 'show', 'data']);
-        $this->middleware("permission:{$prefix}.view-own")->only(['index', 'show', 'data']);
         $this->middleware("permission:{$prefix}.create")->only(['create', 'store']);
         $this->middleware("permission:{$prefix}.update")->only(['edit', 'update']);
         $this->middleware("permission:{$prefix}.delete")->only(['destroy']);

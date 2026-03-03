@@ -6,7 +6,7 @@
 <x-tabler.page-header title="Detail Pengajuan Izin" pretitle="HR & Kepegawaian">
     <x-slot:actions>
         <div class="btn-list">
-            <x-tabler.button type="button" icon="ti ti-arrow-left" text="Kembali" href="{{ route('hr.perizinan.index') }}" class="btn-secondary" />
+            <x-tabler.button type="back" href="{{ route('hr.perizinan.index') }}" />
         </div>
     </x-slot:actions>
 </x-tabler.page-header>

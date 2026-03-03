@@ -4,9 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Detail Audit Mutu Internal" pretitle="AMI / {{ $indikator->no_indikator }}">
     <x-slot:actions>
-        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i> Kembali
-        </a>
+        <x-tabler.button type="back" size="sm" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -330,7 +328,7 @@
                                     </x-tabler.form-select>
                                 </div>
                                 <div class="col-4 text-end">
-                                    <x-tabler.button type="submit" class="btn-primary w-100" icon="ti ti-send" text="Kirim" />
+                                    <x-tabler.button type="submit" class="w-100" icon="ti ti-send" text="Kirim" />
                                 </div>
                             </div>
                         </form>
@@ -396,9 +394,7 @@
 
                             <x-tabler.button
                                 type="submit"
-                                class="btn-primary w-100"
-                                icon="ti ti-device-floppy"
-                                text="Simpan"
+                                class="w-100"
                             />
                         </form>
                     </div>

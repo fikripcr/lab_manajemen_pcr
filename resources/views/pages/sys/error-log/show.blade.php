@@ -77,7 +77,7 @@
     @section('header')
         <x-tabler.page-header title="Error Log" pretitle="System Log">
             <x-slot:actions>
-                <x-tabler.button type="back" url="{{ route('sys.error-log.index') }}" />
+                <x-tabler.button type="back" href="{{ route('sys.error-log.index') }}" />
             </x-slot:actions>
         </x-tabler.page-header>
     @endsection

@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="{{ $Kegiatan->exists ? 'Edit Kegiatan' : 'Tambah Kegiatan' }}" pretitle="Kegiatan">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('Kegiatan.Kegiatans.index') }}" class="btn-secondary" icon="ti ti-arrow-left" text="Kembali" />
+        <x-tabler.button href="{{ route('Kegiatan.Kegiatans.index') }}" type="back" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

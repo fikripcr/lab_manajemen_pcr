@@ -4,9 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Pengendalian Indikator" pretitle="Periode {{ $periode->periode }}">
     <x-slot:actions>
-        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i> Kembali
-        </a>
+        <x-tabler.button type="back" size="sm" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
