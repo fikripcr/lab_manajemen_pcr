@@ -9,6 +9,7 @@
 @endsection
 
 @section('content')
+    <div class="card">
         <div class="card-header border-bottom py-3">
             <div class="d-flex flex-wrap gap-2 align-items-center">
                 <div>
@@ -46,7 +47,7 @@
                 :route="route('shared.personil.data')"
             />
         </div>
-        </div>
+    </div>
 @endsection
 
 @push('scripts')

@@ -71,10 +71,6 @@ class StrukturOrganisasiController extends Controller
     {
         $struktur_organisasi->load(['parent', 'children', 'personils.user', 'successor', 'auditee']);
 
-        if (request()->ajax()) {
-            return view('pages.shared.struktur-organisasi.show-partial', ['orgUnit' => $struktur_organisasi]);
-        }
-
         return view('pages.shared.struktur-organisasi.show', ['orgUnit' => $struktur_organisasi]);
     }
 

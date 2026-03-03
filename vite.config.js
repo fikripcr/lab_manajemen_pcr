@@ -3,8 +3,11 @@ import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     server: {
-        host: 'localhost',
-        port: 3010,
+        host: '0.0.0.0', // Agar bisa diakses dari luar container
+        port: 5173,      // Paksa kembali ke 5173 agar sesuai Docker Compose
+        hmr: {
+            host: 'localhost',
+        },
     },
     resolve: {
         alias: {
