@@ -1,4 +1,3 @@
-{{-- STATUS TRACKER PARTIAL --}}
 @php
     $statusSteps = [
         'Draft' => [

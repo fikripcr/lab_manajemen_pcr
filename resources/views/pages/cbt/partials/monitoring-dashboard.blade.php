@@ -1,6 +1,3 @@
-{{-- MONITORING DASHBOARD FOR ADMIN --}}
-
-{{-- Monitoring Stats --}}
 <div class="row row-cards mb-4">
     <div class="col-sm-6 col-lg-3">
         <div class="card">

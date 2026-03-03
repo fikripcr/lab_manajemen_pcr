@@ -122,7 +122,6 @@
                     </div>
                 </div>
 
-                {{-- DataTable --}}
                 <x-tabler.datatable
                     id="table-standar"
                     route="{{ route('pemutu.indikator-summary.data-standar') }}"

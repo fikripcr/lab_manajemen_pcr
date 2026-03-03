@@ -90,7 +90,6 @@ class PegawaiController extends Controller
             ->addColumn('unit', function ($row) {
                 return $row->latestDataDiri?->departemen?->name ?? '-';
             })
-        // Prodi column removed as it is redundant/broken
             ->addColumn('penyelia', function ($row) {
                 $atasan1 = $row->atasanSatu?->nama ?? null;
                 $atasan2 = $row->atasanDua?->nama ?? null;
@@ -193,7 +192,6 @@ class PegawaiController extends Controller
      */
     public function update(PegawaiRequest $request, Pegawai $pegawai)
     {
-        // Request Change Logic via dedicated service
         $this->dataDiriService->requestChange($pegawai, $request->validated());
         return jsonSuccess('Permintaan perubahan berhasil diajukan. Menunggu persetujuan admin.', route('hr.pegawai.show', $pegawai->encrypted_pegawai_id));
     }

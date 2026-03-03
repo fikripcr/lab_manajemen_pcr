@@ -93,7 +93,6 @@
                     <div id="table-performa-active-filters" class="mt-2"></div>
                 </form>
 
-                {{-- DataTable --}}
                 <x-tabler.datatable
                     id="table-performa"
                     route="{{ route('pemutu.indikator-summary.data-performa') }}"

@@ -103,7 +103,6 @@ class SoftwareRequestController extends Controller
                 }
                 return '<span class="badge ' . $badgeClass . '">' . $statusText . '</span>';
             })
-        // ... (rest of editColumn/addColumn logic same as before, just confirming context) ...
             ->editColumn('mata_kuliah', function ($request) {
                 $mataKuliahNames = $request->mataKuliahs->map(function ($mk) {
                     return $mk->kode_mk . ' - ' . $mk->nama_mk;

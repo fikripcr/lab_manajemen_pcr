@@ -1,7 +1,4 @@
-{{-- CAMABA DASHBOARD PARTIAL --}}
-
 @if(!$pendaftaran)
-    {{-- NO REGISTRATION YET --}}
     <div class="row row-cards">
         <div class="col-12">
             <div class="card card-md">

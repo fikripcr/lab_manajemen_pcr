@@ -15,7 +15,6 @@ class ThemeTablerController extends Controller
     {
         $config = $this->loadConfig($mode);
 
-        // Return formatted data for Blade views
         return [
             'theme'                => $config['theme'] ?? 'light',
             'themePrimary'         => $config['primary_color'] ?? '#206bc4',
@@ -68,7 +67,6 @@ class ThemeTablerController extends Controller
 
         $validated = $request->validated();
 
-        // Remove mode from data
         unset($validated['mode']);
 
         // Map dashed keys to internal config keys
@@ -346,12 +344,10 @@ class ThemeTablerController extends Controller
                     return array_merge($this->getDefaultConfig(), $config);
                 }
             } catch (Exception $e) {
-                // Log error and return defaults
                 \Log::warning("Failed to load theme config for {$mode}: " . $e->getMessage());
             }
         }
 
-        // Return defaults and create file
         $defaults = $this->getDefaultConfig();
         $this->saveConfig($mode, $defaults);
         return $defaults;
@@ -364,7 +360,6 @@ class ThemeTablerController extends Controller
     {
         $filename = "theme-{$mode}.json";
 
-        // Remove null values
         $data = array_filter($data, fn($value) => $value !== null);
 
         Storage::put($filename, json_encode($data, JSON_PRETTY_PRINT));
@@ -477,7 +472,6 @@ class ThemeTablerController extends Controller
      */
     private function extractRgb(string $color): array
     {
-        // Handle RGB/RGBA using simple string cleanup
         if (str_contains($color, ',')) {
             $parts = explode(',', preg_replace('/[^0-9,]/', '', $color));
             return [
@@ -487,7 +481,6 @@ class ThemeTablerController extends Controller
             ];
         }
 
-        // Handle Hex (3 or 6 chars)
         $hex = ltrim($color, '#');
 
         if (strlen($hex) === 3) {

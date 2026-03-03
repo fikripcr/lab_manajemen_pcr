@@ -190,8 +190,6 @@ class IndikatorSummaryController extends Controller
             }
         }
 
-        // Search Handled by DataTables, but for specific columns we might need custom logic if using Raw SQL
-        // However, DataTables usually handles basic search on returned columns.
         // For dynamic summary count, we need the search applied to the query.
         if ($request->filled('search')) {
             $search = $request->input('search.value') ?? $request->input('search');

@@ -54,7 +54,6 @@ class PublicController extends Controller
     {
         $mataKuliahs = MataKuliah::all(); // For old values display
 
-        // Standardize: Resolve old selected mata kuliah items
         $oldSelectedMataKuliahs = collect();
         if (old('mata_kuliah_ids')) {
             $oldSelectedMataKuliahs = MataKuliah::whereIn('mata_kuliah_id', old('mata_kuliah_ids'))->get();

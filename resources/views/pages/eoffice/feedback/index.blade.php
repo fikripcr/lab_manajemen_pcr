@@ -46,6 +46,5 @@
 
 @push('scripts')
 <script>
-    // Manual filtering JS removed. Standardized component handles it.
 </script>
 @endpush

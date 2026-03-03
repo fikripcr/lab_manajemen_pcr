@@ -42,7 +42,6 @@ class UserController extends Controller
      */
     public function data(Request $request)
     {
-        // Reuse Service Query
         $users = $this->userService->getFilteredQuery($request->all());
 
         return DataTables::of($users)
@@ -50,7 +49,6 @@ class UserController extends Controller
             ->order(function ($query) {
                 $query->latest('created_at');
             })
-        // Filter Column logic usually handled by Service query, but if DataTables sends specific column search:
             ->filterColumn('roles', function ($query, $keyword) {
                 $query->whereHas('roles', function ($q) use ($keyword) {
                     $q->where('name', 'like', "%{$keyword}%");
@@ -125,7 +123,6 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        // Add avatar file to data if exists (handled by service)
         if ($request->hasFile('avatar')) {
             $validated['avatar'] = $request->file('avatar');
         }
@@ -310,9 +307,6 @@ class UserController extends Controller
     {
         $allowedRoles = ['admin', 'kepala_lab', 'ketua_jurusan'];
 
-        // Permission check logic
-        // This is Access Control, fits in Controller or Middleware or Policy.
-        // Service handles Business Logic.
         $hasPermission = false;
         foreach ($allowedRoles as $role) {
             if (auth()->user()->hasRole($role)) {

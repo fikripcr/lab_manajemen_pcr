@@ -1,6 +1,3 @@
-{{-- ADMIN DASHBOARD PARTIAL --}}
-
-{{-- KPI Cards --}}
 <div class="row row-cards mb-4">
     <div class="col-sm-6 col-lg-3">
         <a href="{{ route('pmb.pendaftaran.index') }}" class="card card-link">

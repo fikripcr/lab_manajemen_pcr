@@ -43,7 +43,6 @@ class VerificationService
 
             $stdStatus = ($status == 'Verified' ? 'Approved' : 'Rejected');
 
-            // Record Standardized Approval
             RiwayatApproval::create([
                 'model'    => Pendaftaran::class,
                 'model_id' => $pembayaran->pendaftaran_id,
@@ -72,7 +71,6 @@ class VerificationService
 
             $stdStatus = ($status == 'Verified' ? 'Approved' : 'Rejected');
 
-            // Record Standardized Approval
             RiwayatApproval::create([
                 'model'    => Pendaftaran::class,
                 'model_id' => $pendaftaran->pendaftaran_id,

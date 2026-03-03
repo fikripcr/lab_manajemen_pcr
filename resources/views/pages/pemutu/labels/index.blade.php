@@ -17,7 +17,6 @@
             <div class="card-header">
                 <h3 class="card-title">Tipe Label</h3>
                 <div class="card-actions">
-                    {{-- User reported button invisible. Removing btn-icon might help if size is issue, or ensuring it has content if icon-only --}}
                     <x-tabler.button type="button" icon="ti ti-plus" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-types.create') }}" data-modal-title="Tambah Tipe Label" />
                 </div>
             </div>
@@ -112,28 +111,11 @@
         addBtn.attr('data-url', addUrl);
     }
 
-    // Creating a listener for global modal success events to reload this page/list
-    // If the unified layout handles 'form-success' event, we can listen to it.
+    // Unified layout handles 'form-success' event
     document.addEventListener('form-success', function(e) {
-        // If a LabelType was modified, we should reload the whole page to refresh the sidebar list
-        // If a Label was modified, we just reload the table.
-        // How to distinguish? maybe check the URL or response?
-        // Simple approach: Reload page if it's a LabelType operation.
-        // Or simpler: Just reload page for everything here since it's Master data and not frequent.
-        // But user asked "jika menghapus tipe label jgn lupa reload".
-        
-        // Let's reload page if the modal title contained "Tipe" or we can just reload page always for simplicity in this specific view
-        // to ensure sidebar counts and descriptions update.
-        // Or we can be smarter.
-        
         if (e.detail && e.detail.redirect) {
             // If response has redirect, it might handle it.
         } else {
-             // If manual control needed
-             // For now, let's reload window if we can't be sure, or just reload table.
-             // But for LabelType, we need to reload the DOM list. 
-             // Simplest: location.reload() for LabelType changes.
-             // We can check if the form action url contained 'label-types'.
              if(e.detail.url && e.detail.url.includes('label-types')) {
                  location.reload();
              } else {

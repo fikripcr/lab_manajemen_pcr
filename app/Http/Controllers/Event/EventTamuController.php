@@ -112,7 +112,7 @@ class EventTamuController extends Controller
             ->with('attendance_sukses', true);
     }
 
-    // ─── Legacy ──────────────────────────────────────────────────
+    // Public methods
     public function registration($hashid)
     {
         $kegiatan = Event::findOrFailByHashid($hashid);

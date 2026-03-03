@@ -75,7 +75,6 @@
                 />
             @endif
         @else
-            {{-- Update logic for admin maybe? --}}
             <div class="mb-3">
                 <x-tabler.form-select 
                     name="status_pc" 
