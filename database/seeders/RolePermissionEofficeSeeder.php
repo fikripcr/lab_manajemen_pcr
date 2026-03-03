@@ -40,6 +40,15 @@ class RolePermissionEofficeSeeder extends Seeder
             // ── FEEDBACK ──────────────────────────────────────────────────────
             ['name' => 'eoffice.feedback.view', 'category' => 'E-Office', 'sub_category' => 'Feedback', 'description' => 'Melihat daftar feedback layanan'],
             ['name' => 'eoffice.feedback.data', 'category' => 'E-Office', 'sub_category' => 'Feedback', 'description' => 'Mengambil data feedback (DataTables)'],
+
+            // ── SURAT MASUK ──────────────────────────────────────────────────
+            ['name' => 'eoffice.surat-masuk.view', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Melihat daftar surat masuk'],
+            ['name' => 'eoffice.surat-masuk.data', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Mengambil data surat masuk (DataTables)'],
+            ['name' => 'eoffice.surat-masuk.create', 'category' => 'E-Office', 'sub_category' => 'Surat Masuk', 'description' => 'Mendaftarkan surat masuk baru'],
+
+            // ── DISPOSISI ─────────────────────────────────────────────────────
+            ['name' => 'eoffice.disposisi.view', 'category' => 'E-Office', 'sub_category' => 'Disposisi', 'description' => 'Melihat daftar disposisi'],
+            ['name' => 'eoffice.disposisi.create', 'category' => 'E-Office', 'sub_category' => 'Disposisi', 'description' => 'Membuat lembar disposisi baru'],
         ];
 
         foreach ($permissionData as $permission) {

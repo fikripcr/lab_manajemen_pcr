@@ -109,10 +109,35 @@ return new class extends Migration
             -- KPI Pegawai
             LEFT JOIN pemutu_indikator_pegawai ip ON i.indikator_id = ip.indikator_id
 
-            GROUP BY i.indikator_id
-            ORDER BY i.seq ASC
-        ");
+            -- BAGIAN YANG DIPERBAIKI: Menambahkan semua kolom non-agregat ke GROUP BY
+            GROUP BY
+                i.indikator_id,
+                i.parent_id,
+                i.type,
+                i.kelompok_indikator,
+                i.no_indikator,
+                i.indikator,
+                i.target,
+                i.jenis_indikator,
+                i.seq,
+                i.jenis_data,
+                i.periode_jenis,
+                i.periode_mulai,
+                i.periode_selesai,
+                i.unit_ukuran,
+                i.level_risk,
+                i.origin_from,
+                i.hash,
+                i.skala,
+                i.keterangan,
+                i.created_at,
+                i.updated_at,
+                pi.no_indikator,
+                pi.indikator
 
+            -- Catatan: ORDER BY dalam sebuah VIEW seringkali diabaikan oleh MariaDB/MySQL saat view tersebut dipanggil,
+            -- namun tetap aman dibiarkan di sini untuk dokumentasi urutan default.
+            ORDER BY i.seq ASC;        ");
 
     }
 
