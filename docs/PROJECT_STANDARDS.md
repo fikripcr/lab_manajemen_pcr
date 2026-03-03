@@ -608,168 +608,167 @@ npm run build  # Production (minified)
 
 ### C. Blade Components (x-tabler)
 
+Sistem ini menggunakan **Blade Components** sebagai lapisan abstraksi UI. Arsitektur ini bertujuan untuk menjamin konsistensi visual di seluruh modul, mengurangi redundansi kode HTML, dan mengotomatisasi integrasi library pihak ketiga (Select2, Flatpickr, FilePond).
+
 **🔴 ATURAN EMAS - WAJIB DIPATUHI:**
-
-> **DILARANG KERAS** membuat elemen UI HTML manual (seperti `<button>`, `<input>`, `<select>`, `<form>`, `<table>`) jika komponen `<x-tabler.*>` sudah tersedia. 
+> **DILARANG KERAS** menggunakan tag HTML manual seperti `<button>`, `<input>`, `<select>`, atau manual bootstrap classes (`class="btn btn-primary"`) jika komponen `<x-tabler.*>` tersedia. 
 > 
-> **Selalu gunakan komponen x-tabler** untuk konsistensi UI, fitur otomatis (Flatpickr, Select2, FilePond), dan maintainability.
+> Jika Anda menemukan keterbatasan pada komponen, **perbarui komponen tersebut** di `resources/views/components/tabler/` daripada menulis HTML ad-hoc.
 
-Hampir seluruh elemen UI dibungkus dalam komponen Blade untuk konsistensi.
+---
 
-#### Daftar Komponen WAJIB
+#### 1. Page Header (`<x-tabler.page-header>`)
+Digunakan secara wajib di bagian atas setiap halaman konten. Mengatur hierarki judul dan menstandarkan peletakan tombol aksi.
 
-| Komponen | Kegunaan | WAJIB Untuk |
-|----------|----------|-------------|
-| `<x-tabler.page-header>` | Judul halaman dan breadcrumb | **SEMUA** halaman |
-| `<x-tabler.button>` | Tombol standar (type: submit, back, delete, modal) | **SEMUA** tombol |
-| `<x-tabler.form-input>` | Input teks, date (Flatpickr), password (eye toggle), file (FilePond) | **SEMUA** input |
-| `<x-tabler.form-select>` | Select dropdown, otomatis mendukung Select2 (offline) | **SEMUA** select/option |
-| `<x-tabler.form-textarea>` | Textarea teks atau Rich Text Editor (`type="editor"`) | **SEMUA** textarea |
-| `<x-tabler.form-checkbox>` | Checkbox input | **SEMUA** checkbox |
-| `<x-tabler.form-radio>` | Radio input | **SEMUA** radio |
-| `<x-tabler.form-modal>` | Modal wrapper untuk form | **SEMUA** modal form |
-| `<x-tabler.empty-state>` | UI placeholder jika data tabel/list kosong | **SEMUA** empty state |
-| `<x-tabler.flash-message>` | Menampilkan notifikasi error/sukses dari session flash | **SEMUA** flash message |
-| `<x-tabler.datatable>` | Server-side DataTables component | **SEMUA** tabel data |
-| `<x-tabler.datatables-actions>` | Standard action buttons untuk DataTable | **SEMUA** action buttons |
-
-#### Komponen Tambahan (Opsional)
-
-| Komponen | Kegunaan |
-|----------|----------|
-| `<x-tabler.modal-global-search>` | Modal pencarian global |
-| `<x-tabler.approval-history>` | History approval |
-| `<x-tabler.theme-settings>` | Theme customization panel |
-| `<x-tabler.button-group>` | Group tombol |
-| `<x-tabler.datatable-checkbox>` | Checkbox untuk DataTable |
-| `<x-tabler.datatable-filter>` | Filter DataTable |
-| `<x-tabler.datatable-info>` | Info DataTable |
-| `<x-tabler.datatable-pagination>` | Pagination DataTable |
-| `<x-tabler.datatable-page-length>` | Page length selector |
-| `<x-tabler.datatable-search>` | Search input DataTable |
-
-**CATATAN PENTING**: 
-- ✅ **Gunakan ALWAYS komponen x-tabler** jika tersedia
-- ❌ **JANGAN PERNAH** buat HTML manual: `<button class="btn">`, `<input class="form-control">`, `<select class="form-select">`
-- ⚠️ **Jika komponen belum ada**, buat komponen baru di `resources/views/components/tabler/` jangan buat HTML manual
-
-#### Example: Form Input (WAJIB pakai x-tabler)
-
+**Usage Patterns:**
 ```blade
-{{-- ✅ BENAR - Gunakan x-tabler.form-input --}}
-<x-tabler.form-input
-    type="date"
-    name="tanggal"
-    label="Pilih Tanggal"
-    required="true"
-    help="Format: DD MMMM YYYY"
-/>
-
-<x-tabler.form-input
-    type="password"
-    name="password"
-    label="Kata Sandi"
-    placeholder="Minimal 8 karakter"
-/>
-
-{{-- ❌ SALAH - JANGAN buat HTML manual --}}
-<div class="mb-3">
-    <label class="form-label">Pilih Tanggal</label>
-    <input type="date" name="tanggal" class="form-control" required>
-    <small class="form-text">Format: DD MMMM YYYY</small>
-</div>
+<x-tabler.page-header 
+    title="Daftar Pegawai" 
+    pretitle="Kepegawaian"
+>
+    <x-slot:actions>
+        <x-tabler.button type="create" :href="route('pegawai.create')" />
+        <x-tabler.button type="export" :href="route('pegawai.export')" />
+    </x-slot:actions>
+</x-tabler.page-header>
 ```
 
-#### Example: Button (WAJIB pakai x-tabler.button)
+**Penting Diketahui:**
+- **Pretitle**: Gunakan untuk nama modul atau kategori besar.
+- **Actions Slot**: Semua tombol di dalam slot ini akan otomatis dibungkus dengan `.btn-list` untuk jarak yang rapi.
 
+---
+
+#### 2. Buttons (`<x-tabler.button>`)
+Komponen pintar yang mengelola icon, warna, dan perilaku standar berdasarkan atribut `type`.
+
+**Konfigurasi Tipe Standar:**
+| Type | Color | Icon | Default Text | Behavior |
+|------|-------|------|--------------|----------|
+| `create` | `primary` | `plus` | Tambah | Render `<a>` jika ada `href` |
+| `back` | `outline-secondary` | `arrow-left` | Kembali | Auto `history.back()` jika tanpa `href` |
+| `submit` | `primary` | `device-floppy`| Simpan | `type="submit"` |
+| `cancel` | `outline-secondary` | `x` | Batal | Auto `history.back()` / close modal |
+| `delete` | `danger` | `trash` | Hapus | Terintegrasi dengan `ajax-delete` |
+| `edit` | `primary` | `edit` | Ubah | |
+
+**🔴 Anti-pattern vs ✅ Best Practice:**
 ```blade
-{{-- ✅ BENAR - Gunakan x-tabler.button --}}
-<x-tabler.button type="submit" text="Simpan" icon="ti ti-device-floppy" />
-<x-tabler.button type="back" href="{{ route('users.index') }}" />
-<x-tabler.button type="delete" url="{{ route('users.destroy', $user) }}" />
+{{-- ❌ SALAH: Menentukan icon dan class manual --}}
+<x-tabler.button type="back" class="btn-secondary" icon="ti ti-chevron-left" text="Balik" />
 
-{{-- ❌ SALAH - JANGAN buat button manual --}}
-<button class="btn btn-primary">
-    <i class="ti ti-device-floppy"></i> Simpan
-</button>
-<a href="{{ route('users.index') }}" class="btn btn-secondary">Kembali</a>
+{{-- ✅ BENAR: Percayakan pada default komponen --}}
+<x-tabler.button type="back" />
 ```
 
-#### Example: DataTable (WAJIB pakai x-tabler.datatable)
+**Props Utama:**
+- `iconOnly`: Set `true` untuk tombol tanpa teks (`btn-icon`).
+- `modalUrl` & `modalTitle`: Otomatis mengaktifkan `ajax-modal-btn`.
 
+---
+
+#### 3. DataTables (`<x-tabler.datatable>`)
+Standardisasi penampilan data dalam jumlah besar dengan fitur server-side rendering.
+
+**Usage Patterns:**
 ```blade
-{{-- ✅ BENAR - Gunakan x-tabler.datatable --}}
 <x-tabler.datatable
+    id="userTable"
+    :url="route('admin.users.paginate')"
     :columns="[
         ['data' => 'name', 'title' => 'Nama'],
         ['data' => 'email', 'title' => 'Email'],
         ['data' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false]
     ]"
-    :url="route('admin.users.paginate')"
+    :checkbox="true"
 />
-
-{{-- ❌ SALAH - JANGAN buat table manual --}}
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nama</th>
-            <th>Email</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($users as $user)
-        <tr>
-            <td>{{ $user->name }}</td>
-            <td>{{ $user->email }}</td>
-            <td>
-                <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-primary">Edit</a>
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
 ```
 
-#### Example: DataTable Actions
-
+**Integrasi Controller (`datatables-actions`):**
+Untuk kolom aksi, **WAJIB** menggunakan component view di dalam Service/Controller.
 ```php
-// In Controller - WAJIB gunakan component view
 ->addColumn('action', function ($row) {
     return view('components.tabler.datatables-actions', [
-        'editUrl'   => route('module.sub.edit', $row->encrypted_id),
-        'editModal' => true, // Use true if edit uses AJAX modal
-        'deleteUrl' => route('module.sub.destroy', $row->encrypted_id),
+        'editUrl'   => route('users.edit', $row->encrypted_id),
+        'editModal' => true,
+        'deleteUrl' => route('users.destroy', $row->encrypted_id),
+        'extraActions' => [
+             ['text' => 'Reset Password', 'url' => '#', 'icon' => 'ti-key', 'class' => 'reset-btn']
+        ]
     ])->render();
 })
 ```
 
-#### Example: Form Modal (WAJIB pakai x-tabler.form-modal)
+---
 
+#### 4. Form Modal (`<x-tabler.form-modal>`)
+Wrapper untuk modal yang mendukung pengiriman form via AJAX secara otomatis.
+
+**Usage Patterns:**
 ```blade
-{{-- ✅ BENAR - Gunakan x-tabler.form-modal --}}
-<x-tabler.form-modal
-    id="formModal"
-    title="{{ $user->exists ? 'Edit User' : 'Tambah User' }}"
-    data-redirect="{{ $user->exists ? 'false' : 'true' }}"
+<x-tabler.form-modal 
+    id="modalPegawai" 
+    title="Input Data Pegawai" 
+    :route="route('pegawai.store')"
+    size="lg"
 >
-    <form action="{{ $user->exists ? route('users.update', $user) : route('users.store') }}"
-          method="POST"
-          class="ajax-form"
-    >
-        @csrf
-        @if($user->exists) @method('PUT') @endif
-
-        <x-tabler.form-input name="name" label="Nama" :value="$user->name" required="true" />
-        <x-tabler.form-input name="email" label="Email" type="email" :value="$user->email" required="true" />
-
-        <div class="modal-footer">
-            <x-tabler.button type="back" text="Batal" />
-            <x-tabler.button type="submit" text="{{ $user->exists ? 'Update' : 'Simpan' }}" />
-        </div>
-    </form>
+    <x-tabler.form-input name="name" label="Nama" required="true" />
+    <x-tabler.form-select name="jabatan" label="Jabatan" :options="$jabatanOptions" />
 </x-tabler.form-modal>
 ```
+
+**Fitur Canggih:**
+- **Automatic AJAX**: Jika `:route` disediakan, modal akan otomatis menggunakan `class="ajax-form"`.
+- **Slot Kustom**: Gunakan `<x-slot:titleSlot>` untuk mengubah seluruh area header modal.
+- **Redirect Logic**: Atur `data-redirect="true"` untuk merefresh halaman setelah sukses simpan.
+
+---
+
+#### 5. Form Fields (`x-tabler.form-*`)
+
+**A. Form Input & Flatpickr**
+Mengelola label, validasi error, dan integrasi datepicker.
+- `type="date/datetime/range"`: Otomatis memicu Flatpickr.
+- `type="password"`: Menyertakan toggle "eye" (visibility) secara otomatis.
+- `type="file"`: Terintegrasi dengan FilePond (jika diaktifkan).
+
+**B. Form Select & Select2**
+Gunakan `type="select2"` untuk pencarian dropdown yang canggih.
+```blade
+<x-tabler.form-select 
+    name="unit_id" 
+    label="Unit Kerja" 
+    :options="$units" 
+    type="select2"
+/>
+```
+
+**C. Form Textarea & HugeRTE**
+Dua mode penggunaan:
+- **Normal**: Untuk input teks panjang biasa.
+- **Editor**: Gunakan `type="editor"` untuk mengaktifkan Rich Text Editor (HugeRTE).
+
+**D. Checkbox & Radio**
+Mendukung array naming dan state `checked` berbasis `old()` input.
+- `<x-tabler.form-checkbox switch="true" />`: Mengubah tampilan menjadi toggle switch.
+
+---
+
+#### 6. Flash Message & Empty State
+Komponen pemberi feedback kepada pengguna.
+
+- **Flash Message**: **WAJIB** diletakkan di setiap halaman index/create/edit (biasanya sudah ada di `app.blade.php`). Menangani session `success`, `error`, dan `$errors`.
+- **Empty State**: **WAJIB** ditampilkan jika data tabel/list kosong untuk menjaga estetika UI.
+
+```blade
+@if($items->isEmpty())
+    <x-tabler.empty-state 
+        title="Belum Ada Data" 
+        subtitle="Klik tombol Tambah untuk memulai." 
+    />
+@endif
+```
+
 
 ### D. JavaScript Libraries
 

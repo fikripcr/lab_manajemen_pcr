@@ -91,10 +91,7 @@
                     <div class="mt-3">
                         @switch($statusKey)
                             @case('Menunggu_Verifikasi_Bayar')
-                                <a href="{{ route('pmb.camaba.payment') }}" class="btn btn-primary btn-sm">
-                                    <i class="ti ti-upload me-1"></i>
-                                    Upload Bukti Pembayaran
-                                </a>
+                                <x-tabler.button href="{{ route('pmb.camaba.payment') }}" size="sm" style="primary" text="Bayar Sekarang" />
                                 @break
                             
                             @case('Menunggu_Verifikasi_Berkas')
@@ -105,17 +102,11 @@
                                 @break
                             
                             @case('Revisi_Berkas')
-                                <a href="{{ route('pmb.camaba.upload') }}" class="btn btn-warning btn-sm">
-                                    <i class="ti ti-edit me-1"></i>
-                                    Perbaiki Berkas
-                                </a>
+                                <x-tabler.button href="{{ route('pmb.camaba.upload') }}" size="sm" style="warning" text="Perbaiki Berkas" />
                                 @break
                             
                             @case('Siap_Ujian')
-                                <a href="{{ route('pmb.camaba.exam-card') }}" class="btn btn-info btn-sm">
-                                    <i class="ti ti-id me-1"></i>
-                                    Lihat Kartu Ujian
-                                </a>
+                                <x-tabler.button href="{{ route('pmb.camaba.exam-card') }}" size="sm" style="info" text="Cetak Kartu Ujian" icon="ti ti-printer" />
                                 @break
                             
                             @case('Lulus')

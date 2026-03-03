@@ -48,9 +48,7 @@
                     </div>
                     <h3 class="card-title">JS Library Features</h3>
                     <p class="text-secondary small">Test various JS library features such as Flatpicker, TinyMCE, etc.</p>
-                    <a href="{{ route('sys.test.features') }}" class="btn btn-info w-100">
-                        <i class="ti ti-eye me-2"></i> View Features
-                    </a>
+                    <x-tabler.button href="{{ route('sys.test.features') }}" class="w-100" style="info" text="Test Functional Features" icon="ti ti-settings" />
                 </div>
             </div>
         </div>
@@ -126,9 +124,7 @@
                         </a>
                     </h3>
                     <p class="text-secondary small">Generate QR codes with system data</p>
-                    <a href="{{ route('sys.test.qrcode') }}" class="btn btn-secondary w-100">
-                        <i class="ti ti-qrcode me-2"></i> Test QR Codes
-                    </a>
+                    <x-tabler.button href="{{ route('sys.test.qrcode') }}" class="w-100" style="secondary" text="Test QR Code Display" icon="ti ti-qrcode" />
                 </div>
             </div>
         </div>

@@ -146,9 +146,7 @@
                                 text="Ajukan Layanan" 
                             />
                         @else
-                            <button class="btn w-100 btn-secondary" disabled>
-                                <i class="ti ti-lock me-1"></i>Layanan Tidak Aktif
-                            </button>
+                            <x-tabler.button class="w-100" style="secondary" disabled="true" text="Layanan Tidak Aktif" />
                         @endif
                     </div>
                 </div>

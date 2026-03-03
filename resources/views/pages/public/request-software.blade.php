@@ -28,13 +28,13 @@
                                     @enderror
                                 </div>
 
-                                <div class="mb-4">
-                                    <label for="alasan" class="form-label fw-bold">Alasan / Keperluan <span class="text-danger">*</span></label>
-                                    <textarea class="form-control @error('alasan') is-invalid @enderror" id="alasan" name="alasan" rows="4" placeholder="Jelaskan alasan atau keperluan penggunaan software ini">{{ old('alasan') }}</textarea>
-                                    @error('alasan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                <x-tabler.form-textarea 
+                                    name="alasan" 
+                                    label="Alasan / Keperluan" 
+                                    placeholder="Jelaskan alasan atau keperluan penggunaan software ini" 
+                                    rows="4" 
+                                    required="true"
+                                />
 
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">Mata Kuliah Terkait</label>

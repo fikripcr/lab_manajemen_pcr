@@ -81,17 +81,13 @@
                     <div class="card border-0 shadow-sm rounded-3">
                         <div class="card-body p-2">
                             <div class="d-flex align-items-center justify-content-between gap-2">
-                                <button class="btn btn-white px-md-4 border shadow-sm" id="btn-prev" onclick="goPrev()">
-                                    <i class="ti ti-chevron-left me-1"></i><span class="d-none d-sm-inline">Sebelumnya</span>
-                                </button>
+                                <x-tabler.button id="btn-prev" onclick="goPrev()" style="ghost-secondary" text="Sebelumnya" icon="ti ti-arrow-left" />
 
                                 <button type="button" id="doubt-btn" class="btn btn-outline-warning px-md-4 shadow-sm fw-bold border-2" onclick="toggleDoubt()">
                                     <i class="ti ti-flag shadow-sm me-1"></i>Ragu-Ragu
                                 </button>
 
-                                <button class="btn btn-primary px-md-4 shadow-sm border-0" id="btn-next" onclick="goNext()">
-                                    <span class="d-none d-sm-inline">Selanjutnya</span><i class="ti ti-chevron-right ms-1"></i>
-                                </button>
+                                <x-tabler.button id="btn-next" onclick="goNext()" style="primary" text="Selanjutnya" icon="ti ti-arrow-right" trailing-icon="true" />
                             </div>
                         </div>
                     </div>
@@ -134,9 +130,7 @@
                     {{-- Action Card --}}
                     <div class="card border-0 shadow-sm rounded-3 sticky-top" style="top: 550px; z-index: 10;">
                         <div class="card-body p-3">
-                            <button class="btn btn-success w-100 btn-lg py-3 fw-bold shadow-sm" onclick="finishExam()">
-                                <i class="ti ti-circle-check me-2"></i>Selesaikan Ujian
-                            </button>
+                            <x-tabler.button onclick="finishExam()" style="success" size="lg" class="w-100 fw-bold" text="Selesai & Kumpulkan Jawaban" icon="ti ti-check" />
                         </div>
                     </div>
 

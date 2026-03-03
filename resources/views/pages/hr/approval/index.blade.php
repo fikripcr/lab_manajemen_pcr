@@ -48,7 +48,13 @@
 >
     <div class="mb-0">
         <label class="form-label">Keterangan / Alasan</label>
-        <textarea class="form-control" id="inputKeterangan" rows="4" placeholder="Masukkan keterangan atau alasan..."></textarea>
+        <x-tabler.form-textarea 
+            id="inputKeterangan" 
+            name="keterangan" 
+            label="Keterangan / Alasan" 
+            rows="4" 
+            placeholder="Masukkan keterangan atau alasan..." 
+        />
         <div class="invalid-feedback" id="keteranganError">Keterangan harus diisi.</div>
     </div>
     <x-slot:footer>

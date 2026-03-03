@@ -378,18 +378,30 @@
                                     <strong><i class="ti ti-alert-triangle me-1"></i> Wajib diisi (KTS).</strong>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label required fw-semibold small">Sebab Ketidaksesuaian</label>
-                                    <textarea id="ami_sebab" name="ami_hasil_temuan_sebab" class="form-control" rows="2">{{ $indOrg->ami_hasil_temuan_sebab ?? '' }}</textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label required fw-semibold small">Akibat Ketidaksesuaian</label>
-                                    <textarea id="ami_akibat" name="ami_hasil_temuan_akibat" class="form-control" rows="2">{{ $indOrg->ami_hasil_temuan_akibat ?? '' }}</textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label required fw-semibold small">Rekomendasi Tindak Lanjut</label>
-                                    <textarea id="ami_rekom" name="ami_hasil_temuan_rekom" class="form-control" rows="2">{{ $indOrg->ami_hasil_temuan_rekom ?? '' }}</textarea>
-                                </div>
+                                <x-tabler.form-textarea 
+                                    name="ami_hasil_temuan_sebab" 
+                                    label="Sebab Ketidaksesuaian" 
+                                    :value="$indOrg->ami_hasil_temuan_sebab ?? ''" 
+                                    rows="2" 
+                                    required="true"
+                                    class="fw-semibold small"
+                                />
+                                <x-tabler.form-textarea 
+                                    name="ami_hasil_temuan_akibat" 
+                                    label="Akibat Ketidaksesuaian" 
+                                    :value="$indOrg->ami_hasil_temuan_akibat ?? ''" 
+                                    rows="2" 
+                                    required="true"
+                                    class="fw-semibold small"
+                                />
+                                <x-tabler.form-textarea 
+                                    name="ami_hasil_temuan_rekom" 
+                                    label="Rekomendasi Tindak Lanjut" 
+                                    :value="$indOrg->ami_hasil_temuan_rekom ?? ''" 
+                                    rows="2" 
+                                    required="true"
+                                    class="fw-semibold small"
+                                />
                             </div>
 
                             <x-tabler.button

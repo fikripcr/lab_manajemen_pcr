@@ -241,9 +241,7 @@
                                     </td>
                                     <td>
                                         @if($ed->ed_attachment)
-                                            <a href="#" class="btn btn-sm btn-ghost-primary">
-                                                <i class="ti ti-file"></i> File
-                                            </a>
+                                            <x-tabler.button size="sm" style="ghost-primary" text="Detail" />
                                         @endif
                                         @if($ed->ed_links)
                                             @php $links = json_decode($ed->ed_links, true) ?? []; @endphp

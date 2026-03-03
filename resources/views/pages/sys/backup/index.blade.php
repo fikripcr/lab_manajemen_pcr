@@ -44,11 +44,7 @@
                         <td>{{ $backup['formatted_size'] }}</td>
                         <td>{{ $backup['formatted_date'] }}</td>
                         <td>
-                            <a href="{{ route('sys.backup.download', $backup['name']) }}"
-                                class="btn btn-action text-primary"
-                                title="Download">
-                                <i class="ti ti-download fs-2"></i>
-                            </a>
+                            <x-tabler.button href="{{ route('sys.backup.download', $backup['name']) }}" style="ghost-primary" icon="ti ti-download" icon-only="true" title="Download Backup" />
                             <x-tabler.button type="button" class="btn-action text-danger delete-backup" icon="ti ti-trash fs-2" icon-only="true" title="Delete" data-filename="{{ $backup['name'] }}" />
                         </td>
                     </tr>
