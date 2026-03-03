@@ -2,11 +2,11 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Public\PublicSoftwareRequest;
 use App\Models\Lab\MataKuliah;
 use App\Models\Lab\Pengumuman;
 use App\Models\Lab\RequestSoftware;
 use App\Models\Shared\Slideshow;
-use App\Http\Requests\Public\PublicSoftwareRequest;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -53,7 +53,14 @@ class PublicController extends Controller
     public function requestSoftware()
     {
         $mataKuliahs = MataKuliah::all(); // For old values display
-        return view('pages.public.request-software', compact('mataKuliahs'));
+
+        // Standardize: Resolve old selected mata kuliah items
+        $oldSelectedMataKuliahs = collect();
+        if (old('mata_kuliah_ids')) {
+            $oldSelectedMataKuliahs = MataKuliah::whereIn('mata_kuliah_id', old('mata_kuliah_ids'))->get();
+        }
+
+        return view('pages.public.request-software', compact('mataKuliahs', 'oldSelectedMataKuliahs'));
     }
 
     public function storeSoftwareRequest(PublicSoftwareRequest $request)

@@ -1,32 +1,4 @@
 {{-- EXAM INTERFACE FOR CAMABA --}}
-@php
-    $user = auth()->user();
-    $pendaftaran = App\Models\Pmb\Pendaftaran::with(['pesertaUjian.sesiUjian'])
-        ->where('user_id', $user->id)
-        ->where('status_terkini', 'Siap_Ujian')
-        ->first();
-    
-    // For testing/admin bypass, we allow viewing even without Pendaftaran
-    $hasPendaftaran = (bool)$pendaftaran;
-    
-    if ($hasPendaftaran) {
-        $pesertaUjian = $pendaftaran->pesertaUjian;
-        $sesiUjian = $pesertaUjian->sesiUjian;
-        $paketUjian = $sesiUjian->paket;
-        
-        // Get questions
-        $questions = App\Models\Cbt\KomposisiPaket::with(['soal.opsiJawaban'])
-            ->where('paket_id', $paketUjian->paket_ujian_id)
-            ->orderBy('urutan_tampil')
-            ->get();
-    } else {
-        // Find active/upcoming sessions for testing
-        $activeSessions = App\Models\Cbt\JadwalUjian::with('paket')
-            ->where('waktu_selesai', '>=', now())
-            ->orderBy('waktu_mulai')
-            ->get();
-    }
-@endphp
 
 @if(!$hasPendaftaran)
     <div class="row">

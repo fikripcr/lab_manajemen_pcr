@@ -9,7 +9,7 @@
     <div class="mb-3">
         <x-tabler.form-select name="jenisfile_id" label="Kategori File" required="true">
             <option value="">Pilih Kategori...</option>
-            @foreach(\App\Models\Hr\JenisFile::where('is_active', 1)->get() as $jenis)
+            @foreach($jenisFiles as $jenis)
                 <option value="{{ $jenis->jenisfile_id }}">{{ $jenis->jenisfile }}</option>
             @endforeach
         </x-tabler.form-select>

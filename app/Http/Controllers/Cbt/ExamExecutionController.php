@@ -24,7 +24,18 @@ class ExamExecutionController extends Controller
      */
     public function dashboard()
     {
-        return view('pages.cbt.dashboard.index');
+        $user = auth()->user();
+
+        if ($user->hasRole('camaba')) {
+            $data = $this->examExecutionService->getExamInterfaceData($user->id);
+            return view('pages.cbt.dashboard.index', $data);
+        }
+
+        $stats            = $this->examExecutionService->getMonitoringStats();
+        $activeExams      = $this->examExecutionService->getActiveExams();
+        $recentViolations = $this->examExecutionService->getRecentViolations(10);
+
+        return view('pages.cbt.dashboard.index', compact('stats', 'activeExams', 'recentViolations'));
     }
 
     /**
@@ -310,7 +321,7 @@ class ExamExecutionController extends Controller
     public function getViolationsByRiwayat(RiwayatUjianSiswa $riwayat)
     {
         $violations = $riwayat->pelanggaran()->latest('waktu_kejadian')->get();
-        
+
         return jsonSuccess($violations);
     }
 }

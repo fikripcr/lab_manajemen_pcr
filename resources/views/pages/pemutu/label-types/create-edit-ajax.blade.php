@@ -1,7 +1,7 @@
 @php
     $item = $labelType ?? new \stdClass();
     $method = isset($labelType) ? 'PUT' : 'POST';
-    $route = isset($labelType) ? route('pemutu.label-types.update', $labelType->labeltype_id) : route('pemutu.label-types.store');
+    $route = isset($labelType) ? route('pemutu.label-types.update', $labelType->encrypted_labeltype_id) : route('pemutu.label-types.store');
     $title = isset($labelType) ? 'Edit Tipe Label' : 'Tambah Tipe Label';
     $submitText = isset($labelType) ? 'Update' : 'Simpan';
 @endphp

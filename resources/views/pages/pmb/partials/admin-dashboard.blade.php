@@ -1,25 +1,4 @@
 {{-- ADMIN DASHBOARD PARTIAL --}}
-@php
-    // Statistics for admin dashboard
-    $stats = [
-        'total_pendaftar' => App\Models\Pmb\Pendaftaran::count(),
-        'pendaftar_hari_ini' => App\Models\Pmb\Pendaftaran::whereDate('waktu_daftar', today())->count(),
-        'menunggu_verifikasi' => App\Models\Pmb\Pendaftaran::whereIn('status_terkini', ['Menunggu_Verifikasi_Bayar', 'Menunggu_Verifikasi_Berkas'])->count(),
-        'siap_ujian' => App\Models\Pmb\Pendaftaran::where('status_terkini', 'Siap_Ujian')->count(),
-        'lulus' => App\Models\Pmb\Pendaftaran::where('status_terkini', 'Lulus')->count(),
-        'tidak_lulus' => App\Models\Pmb\Pendaftaran::where('status_terkini', 'Tidak_Lulus')->count(),
-    ];
-
-    $recentPendaftar = App\Models\Pmb\Pendaftaran::with(['user', 'periode', 'jalur'])
-        ->latest('waktu_daftar')
-        ->limit(10)
-        ->get();
-
-    $statsByJalur = App\Models\Pmb\Pendaftaran::join('pmb_jalur', 'pmb_pendaftaran.jalur_id', '=', 'pmb_jalur.jalur_id')
-        ->selectRaw('pmb_jalur.nama_jalur, COUNT(*) as total')
-        ->groupBy('pmb_jalur.nama_jalur')
-        ->get();
-@endphp
 
 {{-- KPI Cards --}}
 <div class="row row-cards mb-4">

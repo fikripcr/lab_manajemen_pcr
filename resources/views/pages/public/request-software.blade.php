@@ -40,8 +40,8 @@
                                     <label class="form-label fw-bold">Mata Kuliah Terkait</label>
                                     <select class="form-select select2 @error('mata_kuliah_ids') is-invalid @enderror" name="mata_kuliah_ids[]" multiple="multiple" id="mata_kuliah_select2">
                                         <!-- Options will be loaded via AJAX -->
-                                        @foreach (old('mata_kuliah_ids', []) as $id)
-                                            <option value="{{ $id }}" selected>{{ \App\Models\MataKuliah::find($id)?->kode ?? 'Unknown' }} - {{ \App\Models\MataKuliah::find($id)?->nama ?? 'Unknown' }}</option>
+                                        @foreach ($oldSelectedMataKuliahs as $mk)
+                                            <option value="{{ $mk->mata_kuliah_id }}" selected>{{ $mk->kode_mk }} - {{ $mk->nama_mk }}</option>
                                         @endforeach
                                     </select>
                                     @error('mata_kuliah_ids')

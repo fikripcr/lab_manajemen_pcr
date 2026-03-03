@@ -23,8 +23,18 @@ class PendaftaranController extends Controller
      */
     public function dashboard()
     {
-        $periodeAktif = $this->periodeService->getActivePeriode();
-        return \view('pages.pmb.dashboard.index', compact('periodeAktif'));
+        $user = auth()->user();
+
+        if ($user->hasRole('camaba')) {
+            $data = $this->pendaftaranService->getCamabaDashboardData($user->id);
+            return view('pages.pmb.dashboard.index', $data);
+        }
+
+        $stats               = $this->pendaftaranService->getDashboardStats();
+        $recentRegistrations = $this->pendaftaranService->getRecentRegistrations(10);
+        $jalurStats          = $this->pendaftaranService->getStatsByJalur();
+
+        return view('pages.pmb.dashboard.index', compact('stats', 'recentRegistrations', 'jalurStats'));
     }
 
     /**

@@ -1,7 +1,7 @@
 @php
     $item = $label ?? new \stdClass();
     $method = isset($label) ? 'PUT' : 'POST';
-    $route = isset($label) ? route('pemutu.labels.update', $label->label_id) : route('pemutu.labels.store');
+    $route = isset($label) ? route('pemutu.labels.update', $label->encrypted_label_id) : route('pemutu.labels.store');
     $title = isset($label) ? 'Ubah Label' : 'Tambah Label';
     $submitText = isset($label) ? 'Update' : 'Simpan';
 @endphp
@@ -16,7 +16,7 @@
         <x-tabler.form-select id="type_id" name="type_id" label="Tipe" required="true">
             <option value="">Pilih Tipe</option>
             @foreach($types as $type)
-                <option value="{{ $type->labeltype_id }}" {{ (old('type_id', $item->type_id ?? '') == $type->labeltype_id) || (request('type_id') == $type->labeltype_id) ? 'selected' : '' }}>
+                <option value="{{ $type->encrypted_labeltype_id }}" {{ (old('type_id', $item->type_id ?? '') == $type->labeltype_id) || (request('type_id') == $type->labeltype_id) ? 'selected' : '' }}>
                     {{ $type->name }}
                 </option>
             @endforeach

@@ -272,6 +272,17 @@ class StrukturOrganisasiService
     }
 
     /**
+     * Get root units (where parent_id is null)
+     */
+    public function getRootUnits()
+    {
+        return StrukturOrganisasi::whereNull('parent_id')
+            ->orderBy('sort_order')
+            ->orderBy('seq')
+            ->get();
+    }
+
+    /**
      * Get available types for dropdown
      */
     public function getTypes(): array

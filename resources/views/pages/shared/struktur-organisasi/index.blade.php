@@ -34,9 +34,6 @@
                     <div class="col-lg-8">
 
                             <div class="overflow-auto" style="max-height: 70vh;">
-                                @php
-                                    $treeUnits = \App\Models\Shared\StrukturOrganisasi::whereNull('parent_id')->orderBy('sort_order')->orderBy('seq')->get();
-                                @endphp
                                 @if($treeUnits->isEmpty())
                                     <x-tabler.empty-state
                                         title="Belum ada Unit"

@@ -109,6 +109,39 @@ class DashboardService
     }
 
     /**
+     * Get yesterday's activity count
+     */
+    public function getYesterdayActivityCount(): int
+    {
+        return Activity::whereBetween('created_at', [
+            now()->subDay()->startOfDay(),
+            now()->subDay()->endOfDay(),
+        ])->count();
+    }
+
+    /**
+     * Get yesterday's error count
+     */
+    public function getYesterdayErrorCount(): int
+    {
+        return ErrorLog::whereBetween('created_at', [
+            now()->subDay()->startOfDay(),
+            now()->subDay()->endOfDay(),
+        ])->count();
+    }
+
+    /**
+     * Get recent errors
+     */
+    public function getRecentErrors(int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    {
+        return ErrorLog::with('user')
+            ->latest()
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
      * Get server monitoring data
      */
     /**

@@ -1,11 +1,4 @@
 {{-- CAMABA DASHBOARD PARTIAL --}}
-@php
-    $user = auth()->user();
-    $pendaftaran = App\Models\Pmb\Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'orgUnitDiterima', 'dokumenUpload.jenisDokumen', 'pembayaran'])
-        ->where('user_id', $user->id)
-        ->latest()
-        ->first();
-@endphp
 
 @if(!$pendaftaran)
     {{-- NO REGISTRATION YET --}}

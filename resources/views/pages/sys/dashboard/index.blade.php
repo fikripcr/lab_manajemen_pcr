@@ -362,8 +362,7 @@
                             <!-- Summary stats ommitted for brevity in replacement search matches -->
                             @php
                                 $todayCount = $recentLogs->where('created_at', '>=', now()->startOfDay())->count();
-                                $yesterdayCount = \App\Models\Sys\Activity::whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])->count();
-                                $percentChange = $yesterdayCount > 0 ? round((($todayCount - $yesterdayCount) / $yesterdayCount) * 100) : 0;
+                                $percentChange = $yesterdayActivityCount > 0 ? round((($todayCount - $yesterdayActivityCount) / $yesterdayActivityCount) * 100) : 0;
                             @endphp
                             <div class="mb-3">
                                 <div class="text-muted">Today's Activity</div>
@@ -427,9 +426,7 @@
                         <div class="card-body">
                             <!-- Summary Stats -->
                             @php
-                                $recentErrors = \App\Models\Sys\ErrorLog::with('user')->latest()->limit(10)->get();
                                 $todayErrorCount = $recentErrors->where('created_at', '>=', now()->startOfDay())->count();
-                                $yesterdayErrorCount = \App\Models\Sys\ErrorLog::whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])->count();
                                 $errorPercentChange = $yesterdayErrorCount > 0 ? round((($todayErrorCount - $yesterdayErrorCount) / $yesterdayErrorCount) * 100) : 0;
                             @endphp
                             <div class="mb-3">

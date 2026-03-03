@@ -2371,6 +2371,23 @@ Check `sys_error_log` table or `storage/logs/laravel.log`
 - [ ] Apakah saya TIDAK menggunakan HTML manual (`<button>`, `<input>`, `<table>`)?
 - [ ] Apakah semua class menggunakan komponen x-tabler?
 - [ ] Apakah fitur otomatis (Flatpickr, Select2, FilePond) sudah terintegrasi?
+
+### B. View Layer Standardization
+
+**DILARANG KERAS** melakukan pemanggilan model langsung di dalam file Blade (misal: `@php App\Models\User::count() @endphp` atau `{{ \App\Models\Category::all() }}`).
+
+**Aturan Penyaluran Data:**
+1. **Controller-First**: Semua data harus dikirim dari Controller melalui method `compact()` atau array data.
+2. **Service Delegation**: Controller harus memanggil Service untuk mengambil data, bukan query model langsung.
+3. **Partial Logic**: Jika sebuah partial membutuhkan data kompleks, data tersebut harus disiapkan di Controller utama yang memanggil partial tersebut.
+
+**Contoh Refactor:**
+```diff
+{{-- ❌ SALAH --}}
+@php $stats = App\Models\Sys\Activity::count(); @endphp
+
+{{-- ✅ BENAR --}}
+{{ $totalActivity }} <!-- Dikirim dari Controller -->
 ```
 
 ### B. Documentation
@@ -2758,11 +2775,17 @@ ProjectTaskRequest
 Untuk pertanyaan atau clarifications, refer ke dokumen ini atau cek existing implementations di codebase.
 
 **Last Updated:** Februari 2026
-**Version:** 3.0 (Major Update - Added Service Delegation, JS Re-init, Global Search, Approval System, Theme Toggle, State Persistence, Custom Events)
+**Version:** 3.2 (Added View Layer Standardization)
 
 ---
 
 ## Changelog
+
+### Version 3.2 - Maret 2026 (View Layer Standardization)
+
+#### Added
+- **Section 8.B**: View Layer Standardization - Aturan pelarangan pemanggilan model langsung di Blade.
+- **Architectural Rule**: Seluruh data wajib dikirim dari Controller/Service ke View (Grep verification passed).
 
 ### Version 3.1 - Februari 2026 (x-tabler Components Update)
 

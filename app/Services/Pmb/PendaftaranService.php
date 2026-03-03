@@ -1,10 +1,10 @@
 <?php
 namespace App\Services\Pmb;
 
+use App\Models\Pmb\Camaba;
 use App\Models\Pmb\DokumenUpload;
 use App\Models\Pmb\Pendaftaran;
 use App\Models\Pmb\PilihanProdi;
-use App\Models\Pmb\Camaba;
 use App\Models\Pmb\RiwayatPendaftaran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -183,5 +183,63 @@ class PendaftaranService
 
             return $doc;
         });
+    }
+
+    /**
+     * Get dashboard statistics
+     */
+    public function getDashboardStats(): array
+    {
+        return [
+            'total_pendaftar'     => Pendaftaran::count(),
+            'pendaftar_hari_ini'  => Pendaftaran::whereDate('waktu_daftar', today())->count(),
+            'menunggu_verifikasi' => Pendaftaran::whereIn('status_terkini', ['Menunggu_Verifikasi_Bayar', 'Menunggu_Verifikasi_Berkas'])->count(),
+            'siap_ujian'          => Pendaftaran::where('status_terkini', 'Siap_Ujian')->count(),
+            'lulus'               => Pendaftaran::where('status_terkini', 'Lulus')->count(),
+            'tidak_lulus'         => Pendaftaran::where('status_terkini', 'Tidak_Lulus')->count(),
+        ];
+    }
+
+    /**
+     * Get recent registrations
+     */
+    public function getRecentRegistrations(int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    {
+        return Pendaftaran::with(['user', 'periode', 'jalur'])
+            ->latest('waktu_daftar')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get statistics grouped by jalur
+     */
+    public function getStatsByJalur(): \Illuminate\Support\Collection
+    {
+        return Pendaftaran::join('pmb_jalur', 'pmb_pendaftaran.jalur_id', '=', 'pmb_jalur.jalur_id')
+            ->selectRaw('pmb_jalur.nama_jalur, COUNT(*) as total')
+            ->groupBy('pmb_jalur.nama_jalur')
+            ->get();
+    }
+
+    /**
+     * Get dashboard data for Camaba
+     */
+    public function getCamabaDashboardData($userId): array
+    {
+        $pendaftaran = Pendaftaran::with(['periode', 'jalur', 'pilihanProdi.orgUnit', 'orgUnitDiterima', 'dokumenUpload.jenisDokumen', 'pembayaran'])
+            ->where('user_id', $userId)
+            ->latest()
+            ->first();
+
+        $periodeAktif = null;
+        if (! $pendaftaran) {
+            $periodeAktif = \App\Models\Pmb\Periode::where('is_active', 1)->first();
+        }
+
+        return [
+            'pendaftaran'  => $pendaftaran,
+            'periodeAktif' => $periodeAktif,
+        ];
     }
 }

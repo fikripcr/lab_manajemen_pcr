@@ -47,4 +47,12 @@ class FilePegawaiService
             return $filePegawai->delete();
         });
     }
+
+    /**
+     * Get active file categories.
+     */
+    public function getActiveJenisFiles()
+    {
+        return \App\Models\Hr\JenisFile::where('is_active', 1)->get();
+    }
 }

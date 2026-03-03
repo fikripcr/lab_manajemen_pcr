@@ -81,4 +81,87 @@ class ExamExecutionService
             return $riwayat;
         });
     }
+
+    /**
+     * Get monitoring statistics for dashboard
+     */
+    public function getMonitoringStats(): array
+    {
+        return [
+            'active_exams'          => JadwalUjian::where('waktu_mulai', '<=', now())
+                ->where('waktu_selesai', '>=', now())
+                ->count(),
+            'total_exams_today'     => JadwalUjian::whereDate('waktu_mulai', today())->count(),
+            'students_taking_exam'  => RiwayatUjianSiswa::where('status', 'Sedang_Mengerjakan')->count(),
+            'completed_exams_today' => RiwayatUjianSiswa::whereDate('waktu_selesai', today())->count(),
+        ];
+    }
+
+    /**
+     * Get active exams for dashboard
+     */
+    public function getActiveExams(): \Illuminate\Database\Eloquent\Collection
+    {
+        return JadwalUjian::with(['paket', 'riwayatSiswa.user'])
+            ->where('waktu_mulai', '<=', now())
+            ->where('waktu_selesai', '>=', now())
+            ->get();
+    }
+
+    /**
+     * Get recent violations for dashboard
+     */
+    public function getRecentViolations(int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    {
+        return \App\Models\Cbt\LogPelanggaran::with(['riwayatUjianSiswa.user'])
+            ->latest('waktu_kejadian')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get exam interface data for Camaba
+     */
+    public function getExamInterfaceData($userId): array
+    {
+        $pendaftaran = \App\Models\Pmb\Pendaftaran::with(['pesertaUjian.sesiUjian'])
+            ->where('user_id', $userId)
+            ->where('status_terkini', 'Siap_Ujian')
+            ->first();
+
+        $hasPendaftaran = (bool) $pendaftaran;
+        $questions      = collect();
+        $activeSessions = collect();
+        $sesiUjian      = null;
+        $paketUjian     = null;
+
+        if ($hasPendaftaran) {
+            $pesertaUjian = $pendaftaran->pesertaUjian;
+            if ($pesertaUjian && $pesertaUjian->sesiUjian) {
+                $sesiUjian  = $pesertaUjian->sesiUjian;
+                $paketUjian = $sesiUjian->paket;
+
+                if ($paketUjian) {
+                    $questions = \App\Models\Cbt\KomposisiPaket::with(['soal.opsiJawaban'])
+                        ->where('paket_id', $paketUjian->paket_ujian_id)
+                        ->orderBy('urutan_tampil')
+                        ->get();
+                }
+            }
+        } else {
+            $activeSessions = JadwalUjian::with('paket')
+                ->where('waktu_selesai', '>=', now())
+                ->orderBy('waktu_mulai')
+                ->get();
+        }
+
+        return [
+            'pendaftaran'    => $pendaftaran,
+            'hasPendaftaran' => $hasPendaftaran,
+            'questions'      => $questions,
+            'activeSessions' => $activeSessions,
+            'sesiUjian'      => $sesiUjian,
+            'paketUjian'     => $paketUjian,
+        ];
+    }
 }

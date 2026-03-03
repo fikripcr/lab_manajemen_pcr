@@ -17,8 +17,10 @@ class StrukturOrganisasiController extends Controller
 
     public function index(Request $request)
     {
-        $types = $this->strukturOrganisasiService->getTypes();
-        return view('pages.shared.struktur-organisasi.index', compact('types'));
+        $types     = $this->strukturOrganisasiService->getTypes();
+        $treeUnits = $this->strukturOrganisasiService->getRootUnits();
+
+        return view('pages.shared.struktur-organisasi.index', compact('types', 'treeUnits'));
     }
 
     public function data(Request $request)

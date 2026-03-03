@@ -1,25 +1,4 @@
 {{-- MONITORING DASHBOARD FOR ADMIN --}}
-@php
-    // Statistics for monitoring
-    $stats = [
-        'active_exams' => App\Models\Cbt\JadwalUjian::where('waktu_mulai', '<=', now())
-            ->where('waktu_selesai', '>=', now())
-            ->count(),
-        'total_exams_today' => App\Models\Cbt\JadwalUjian::whereDate('waktu_mulai', today())->count(),
-        'students_taking_exam' => App\Models\Cbt\RiwayatUjianSiswa::where('status', 'Sedang_Mengerjakan')->count(),
-        'completed_exams_today' => App\Models\Cbt\RiwayatUjianSiswa::whereDate('waktu_selesai', today())->count(),
-    ];
-
-    $activeExams = App\Models\Cbt\JadwalUjian::with(['paket', 'riwayatSiswa.user'])
-        ->where('waktu_mulai', '<=', now())
-        ->where('waktu_selesai', '>=', now())
-        ->get();
-
-    $recentViolations = App\Models\Cbt\LogPelanggaran::with(['riwayatUjianSiswa.user'])
-        ->latest('waktu_kejadian')
-        ->limit(10)
-        ->get();
-@endphp
 
 {{-- Monitoring Stats --}}
 <div class="row row-cards mb-4">

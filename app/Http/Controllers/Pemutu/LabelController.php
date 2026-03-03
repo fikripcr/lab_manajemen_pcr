@@ -14,8 +14,10 @@ class LabelController extends Controller
 
     public function index()
     {
-        $types = $this->labelService->getAllLabelTypes();
-        return view('pages.pemutu.labels.index', compact('types'));
+        $types       = $this->labelService->getAllLabelTypes();
+        $totalLabels = $this->labelService->getTotalLabels();
+
+        return view('pages.pemutu.labels.index', compact('types', 'totalLabels'));
     }
 
     public function data(Request $request)

@@ -74,6 +74,11 @@ class DashboardController extends Controller
         // Get recent news
         $recentNews = $this->dashboardService->getRecentNews(5);
 
+        // Standardize: get yesterday's counts and recent errors
+        $yesterdayActivityCount = $this->dashboardService->getYesterdayActivityCount();
+        $yesterdayErrorCount    = $this->dashboardService->getYesterdayErrorCount();
+        $recentErrors           = $this->dashboardService->getRecentErrors(10);
+
         return view('pages.sys.dashboard.index', compact(
             'totalUsers',
             'totalRoles',
@@ -90,7 +95,10 @@ class DashboardController extends Controller
             'activityChartData',
             'errorChartData',
             'serverMonitoringData',
-            'recentNews'
+            'recentNews',
+            'yesterdayActivityCount',
+            'yesterdayErrorCount',
+            'recentErrors'
         ));
     }
 }

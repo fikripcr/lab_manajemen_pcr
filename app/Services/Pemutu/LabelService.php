@@ -23,6 +23,11 @@ class LabelService
         return $query;
     }
 
+    public function getTotalLabels(): int
+    {
+        return Label::count();
+    }
+
     public function getLabelById(int $id): ?Label
     {
         return Label::with('type')->find($id);

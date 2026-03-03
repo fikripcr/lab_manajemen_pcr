@@ -18,16 +18,16 @@
                 <h3 class="card-title">Tipe Label</h3>
                 <div class="card-actions">
                     {{-- User reported button invisible. Removing btn-icon might help if size is issue, or ensuring it has content if icon-only --}}
-                    <x-tabler.button type="button" icon="ti ti-plus" class="btn-sm ajax-modal-btn" data-url="{{ route('pemutu.label-types.create') }}" data-modal-title="Tambah Tipe Label" />
+                    <x-tabler.button type="button" icon="ti ti-plus" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-types.create') }}" data-modal-title="Tambah Tipe Label" />
                 </div>
             </div>
             <div class="list-group list-group-flush" id="label-type-list">
                 <a href="#" class="list-group-item list-group-item-action active d-flex align-items-center" data-type-id="" onclick="filterLabels(this, '')">
                     All Labels
-                    <span class="ms-auto badge bg-secondary-lt">{{ \App\Models\Pemutu\Label::count() }}</span>
+                    <span class="ms-auto badge bg-secondary-lt">{{ $totalLabels }}</span>
                 </a>
                 @foreach($types as $type)
-                    <div class="list-group-item list-group-item-action flex-column align-items-start label-type-item py-2" data-type-id="{{ $type->labeltype_id }}" onclick="filterLabels(this, '{{ $type->labeltype_id }}', event)">
+                    <div class="list-group-item list-group-item-action flex-column align-items-start label-type-item py-2" data-type-id="{{ $type->encrypted_labeltype_id }}" onclick="filterLabels(this, '{{ $type->encrypted_labeltype_id }}', event)">
                         <div class="d-flex w-100 justify-content-between align-items-center">
                             <span class="d-flex align-items-center gap-2 text-truncate fw-bold" style="cursor: pointer;">
                                 <span class="avatar avatar-xs rounded bg-{{ $type->color ?? 'blue' }}"></span>
@@ -35,10 +35,10 @@
                             </span>
                             <div class="d-flex gap-1">
                                  <x-tabler.button type="button" iconOnly class="btn-ghost-secondary ajax-modal-btn" 
-                                    data-url="{{ route('pemutu.label-types.edit', $type->labeltype_id) }}" 
+                                    data-url="{{ route('pemutu.label-types.edit', $type->encrypted_labeltype_id) }}" 
                                     data-modal-title="Edit Tipe" icon="ti ti-pencil" />
                                  <x-tabler.button type="button" iconOnly class="btn-ghost-danger ajax-delete" 
-                                    data-url="{{ route('pemutu.label-types.destroy', $type->labeltype_id) }}" 
+                                    data-url="{{ route('pemutu.label-types.destroy', $type->encrypted_labeltype_id) }}" 
                                     data-title="Hapus Tipe?" 
                                     data-text="Menghapus tipe akan menghapus semua label di dalamnya." icon="ti ti-trash" />
                             </div>
