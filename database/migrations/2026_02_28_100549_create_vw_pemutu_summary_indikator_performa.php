@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement('DROP VIEW IF EXISTS vw_pemutu_summary_indikator_performa;');
-        
+
         DB::statement("
             CREATE OR REPLACE VIEW vw_pemutu_summary_indikator_performa AS
-            SELECT 
+            SELECT
                 pip.indikator_pegawai_id,
                 pi.indikator_id,
                 pip.pegawai_id,
@@ -24,17 +23,17 @@ return new class extends Migration
                 rd.nip AS pegawai_nip,
                 so.orgunit_id AS unit_id,
                 so.name AS unit_name,
-                
+
                 pi.periode_jenis,
                 pi.periode_mulai,
                 pi.periode_selesai,
                 pi.kelompok_indikator,
                 pi.no_indikator,
                 pi.indikator,
-                
+
                 -- Parent Indikator (if any)
                 (SELECT parent.no_indikator FROM pemutu_indikator parent WHERE parent.indikator_id = pi.parent_id LIMIT 1) as parent_no_indikator,
-                
+
                 -- Labels Aggregation
                 (
                     SELECT GROUP_CONCAT(l.name SEPARATOR ', ')
@@ -55,12 +54,12 @@ return new class extends Migration
                 pip.realization AS kpi_realization,
                 pip.target_value AS kpi_target,
                 pip.weight AS kpi_weight
-                
+
             FROM pemutu_indikator_pegawai pip
             JOIN pemutu_indikator pi ON pip.indikator_id = pi.indikator_id
             LEFT JOIN pegawai p ON pip.pegawai_id = p.pegawai_id
             LEFT JOIN hr_riwayat_datadiri rd ON p.latest_riwayatdatadiri_id = rd.riwayatdatadiri_id
-            LEFT JOIN hr_riwayat_penugasan rp ON p.latest_riwayatpenugasan_id = rp.riwayatpenugasan_id
+            LEFT JOIN hr_riwayat_jabstruktural rp ON p.latest_riwayatjabstruktural_id = rp.riwayatjabstruktural_id
             LEFT JOIN struktur_organisasi so ON rp.org_unit_id = so.orgunit_id
             WHERE pi.type = 'performa' AND pi.deleted_at IS NULL AND pip.deleted_at IS NULL
         ");

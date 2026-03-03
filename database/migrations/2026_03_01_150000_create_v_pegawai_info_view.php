@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVPegawaiInfoView extends Migration
+return new class extends Migration
 {
     public function up(): void
     {
@@ -12,7 +12,7 @@ class CreateVPegawaiInfoView extends Migration
 
         $ddCols  = Schema::getColumnListing('hr_riwayat_datadiri');
         $jfCols  = Schema::getColumnListing('hr_riwayat_jabfungsional');
-        $penCols = Schema::getColumnListing('hr_riwayat_penugasan');
+        $penCols = Schema::getColumnListing('hr_riwayat_jabstruktural');
 
         $selects = [
             'p.pegawai_id', 'p.user_id', 'p.photo', 'p.latest_riwayatdatadiri_id',
@@ -38,7 +38,7 @@ class CreateVPegawaiInfoView extends Migration
         $jfNama       = in_array('nama_jabatan', $jfCols) ? 'jf.nama_jabatan' : (in_array('nama', $jfCols) ? 'jf.nama' : 'NULL');
         $penOrgUnitId = in_array('org_unit_id', $penCols) ? 'pen.org_unit_id' : 'NULL';
         $penJabatan   = in_array('jabatan', $penCols) ? 'pen.jabatan' : (in_array('nama_jabatan', $penCols) ? 'pen.nama_jabatan' : 'NULL');
-        $penTglMulai  = in_array('tgl_mulai', $penCols) ? 'pen.tgl_mulai' : 'NULL';
+        $penTglMulai  = in_array('tgl_awal', $penCols) ? 'pen.tgl_awal' : 'NULL';
 
         array_push($selects,
             "{$jfNama} AS jabatan_fungsional",
@@ -57,7 +57,7 @@ class CreateVPegawaiInfoView extends Migration
             LEFT JOIN hr_status_pegawai msp ON msp.statuspegawai_id = sp.statuspegawai_id
             LEFT JOIN hr_riwayat_stataktifitas sa ON sa.riwayatstataktifitas_id = p.latest_riwayatstataktifitas_id AND sa.deleted_at IS NULL
             LEFT JOIN hr_riwayat_jabfungsional jf ON jf.riwayatjabfungsional_id = p.latest_riwayatjabfungsional_id AND jf.deleted_at IS NULL
-            LEFT JOIN hr_riwayat_penugasan pen ON pen.riwayatpenugasan_id = p.latest_riwayatpenugasan_id AND pen.deleted_at IS NULL
+            LEFT JOIN hr_riwayat_jabstruktural pen ON pen.riwayatjabstruktural_id = p.latest_riwayatjabstruktural_id AND pen.deleted_at IS NULL
             WHERE p.deleted_at IS NULL
         ";
 
@@ -69,4 +69,4 @@ class CreateVPegawaiInfoView extends Migration
     {
         DB::statement('DROP VIEW IF EXISTS v_pegawai_info');
     }
-}
+};

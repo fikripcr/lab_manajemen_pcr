@@ -12,20 +12,20 @@ class RiwayatStruktural extends Model
 {
     use HasFactory, SoftDeletes, Blameable, HashidBinding;
 
-    protected $table      = 'hr_riwayat_penugasan';
-    protected $primaryKey = 'riwayatpenugasan_id';
-    protected $guarded    = ['riwayatpenugasan_id'];
+    protected $table      = 'hr_riwayat_jabstruktural';
+    protected $primaryKey = 'riwayatjabstruktural_id';
+    protected $guarded    = ['riwayatjabstruktural_id'];
 
     protected $appends = ['encrypted_riwayatstruktural_id'];
 
     public function getRouteKeyName()
     {
-        return 'riwayatpenugasan_id';
+        return 'riwayatjabstruktural_id';
     }
 
     public function getEncryptedRiwayatstrukturalIdAttribute()
     {
-        return encryptId($this->riwayatpenugasan_id);
+        return encryptId($this->riwayatjabstruktural_id);
     }
 
     protected $casts = [

@@ -43,7 +43,6 @@ class Pegawai extends Model
         'latest_riwayatjabfungsional_id',
         'latest_riwayatjabstruktural_id',
         'latest_riwayatinpassing_id',
-        'latest_riwayatjabstruktural_id',
         'atasan1',
         'atasan2',
         'photo',

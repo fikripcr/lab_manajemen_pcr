@@ -54,7 +54,6 @@ return new class extends Migration
             $table->unsignedBigInteger('latest_riwayatpendidikan_id')->nullable();
             $table->unsignedBigInteger('latest_riwayatjabfungsional_id')->nullable();
             $table->unsignedBigInteger('latest_riwayatjabstruktural_id')->nullable();
-            $table->unsignedBigInteger('latest_riwayatpenugasan_id')->nullable();
             $table->unsignedBigInteger('atasan1')->nullable();
             $table->unsignedBigInteger('atasan2')->nullable();
             $table->string('photo', 255)->nullable()->comment('Employee photo for face recognition');
