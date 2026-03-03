@@ -1509,21 +1509,23 @@ app/
 └── Providers/              # Service providers
 
 resources/
+├── tabler-core/
+│   ├── js/
+│   │   ├── tabler.js          # Main entry point
+│   │   ├── ThemeTabler.js     # Theme management
+│   │   ├── FormHandlerAjax.js # AJAX form handlers
+│   │   ├── CustomDataTables.js # DataTables wrapper
+│   │   ├── Notification.js    # Notification system
+│   │   └── GlobalSearch.js    # Global search
+│   └── css/
+│       ├── tabler.css         # Main stylesheet
+│       └── ThemeTabler.css    # Custom overrides
 ├── js/
-│   ├── tabler.js          # Main entry point
-│   ├── global.js          # Shared dependencies
-│   └── assets/
-│       └── tabler/
-│           ├── js/
-│           │   ├── ThemeTabler.js
-│           │   ├── FormHandlerAjax.js
-│           │   ├── CustomDataTables.js
-│           │   ├── Notification.js
-│           │   └── GlobalSearch.js
-│           └── css/
+│   ├── auth.js                # Auth entry point
+│   └── public.js              # Public entry point
 ├── css/
-│   ├── admin.css          # Admin styles
-│   └── sys.css            # System styles
+│   ├── auth.css               # Auth styles
+│   └── public.css             # Public styles
 └── views/
     ├── layouts/
     │   ├── admin/

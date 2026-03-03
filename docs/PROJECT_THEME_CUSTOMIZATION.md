@@ -28,7 +28,7 @@ Dokumen ini menjelaskan arsitektur, komponen, dan cara kerja kustomisasi tema Ta
 ### A. Entry Point & Bundle Structure
 
 ```
-resources/js/tabler.js  → Main entry point
+resources/tabler-core/js/tabler.js  → Main entry point
 ├── Core Libraries
 │   ├── jQuery 3.7.1 (DataTables dependency)
 │   ├── Axios (HTTP requests)
@@ -60,8 +60,8 @@ export default {
     plugins: [
         laravel({
             input: [
-                'resources/js/tabler.js',
-                'resources/css/tabler.css'
+                'resources/tabler-core/js/tabler.js',
+                'resources/tabler-core/css/tabler.css'
             ],
             refresh: true,
         }),
@@ -78,29 +78,26 @@ npm run build # Production build (minified)
 ### C. File Structure
 
 ```
-resources/
+resources/tabler-core/
 ├── js/
 │   ├── tabler.js                    # Main entry point
-│   └── assets/
-│       └── tabler/
-│           ├── js/
-│           │   ├── ThemeTabler.js        # Theme management
-│           │   ├── FormHandlerAjax.js    # AJAX form handlers
-│           │   ├── CustomDataTables.js   # DataTables wrapper
-│           │   ├── CustomSweetAlerts.js  # Alert utilities
-│           │   ├── Notification.js       # Notification system
-│           │   └── GlobalSearch.js       # Global search
-│           └── css/
+│   ├── ThemeTabler.js               # Theme management
+│   ├── FormHandlerAjax.js           # AJAX form handlers
+│   ├── CustomDataTables.js          # DataTables wrapper
+│   ├── CustomSweetAlerts.js         # Alert utilities
+│   ├── Notification.js              # Notification system
+│   └── GlobalSearch.js              # Global search
 ├── css/
-│   └── tabler.css                   # Main stylesheet
+│   ├── tabler.css                   # Main stylesheet
+│   └── ThemeTabler.css              # Custom overrides
 └── views/
-    ├── layouts/
-    │   └── tabler/
-    │       ├── app.blade.php        # Main layout
-    │       ├── header.blade.php     # Top navigation
-    │       ├── sidebar.blade.php    # Sidebar menu
-    │       ├── footer.blade.php     # Footer
-    │       └── empty.blade.php      # Blank layout
+    └── layouts/
+        └── tabler/
+            ├── app.blade.php        # Main layout
+            ├── header.blade.php     # Top navigation
+            ├── sidebar.blade.php    # Sidebar menu
+            ├── footer.blade.php     # Footer
+            └── empty.blade.php      # Blank layout
     └── components/
         └── tabler/                  # Blade components
             ├── button.blade.php
@@ -121,7 +118,7 @@ ThemeTabler menggunakan pattern **"Unified State"** dengan server sebagai **Sing
 ### B. Class Structure
 
 ```javascript
-// resources/assets/tabler/js/ThemeTabler.js
+// resources/tabler-core/js/ThemeTabler.js
 class ThemeTabler {
     constructor(mode = 'tabler')  // 'tabler' atau 'auth'
     

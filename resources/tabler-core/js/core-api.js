@@ -1,4 +1,4 @@
-// resources/js/api.js
+// resources/tabler-core/js/core-api.js
 // Centralized API helper without exposing route names in JavaScript
 // Using axios to maintain compatibility with existing code
 // Routes are defined in a mapping that can be populated server-side if needed later

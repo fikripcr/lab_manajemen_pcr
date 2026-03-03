@@ -24,7 +24,7 @@
     
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     
-    @vite(['resources/css/tabler.css'])
+    @vite(['resources/tabler-core/css/tabler.css'])
 
     {{-- Theme Custom Styles --}}
     {!! $themeController->getStyleBlock('tabler') !!}

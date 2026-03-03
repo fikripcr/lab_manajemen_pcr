@@ -29,7 +29,7 @@
 
     {{-- CSS Files --}}
     @yield('css')
-    @vite(['resources/css/tabler.css'])
+    @vite(['resources/tabler-core/css/tabler.css'])
 
 
     {{-- Theme Custom Styles --}}
@@ -75,7 +75,7 @@
     </div>
 
     @vite([
-        'resources/js/tabler.js'
+        'resources/tabler-core/js/tabler.js'
     ])
 
     @stack('scripts')

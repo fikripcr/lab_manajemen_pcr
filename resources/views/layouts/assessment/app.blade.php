@@ -22,14 +22,14 @@
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
     </style>
     
-    @vite(['resources/css/tabler.css'])
+    @vite(['resources/tabler-core/css/tabler.css'])
     {!! $themeController->getStyleBlock('tabler') !!}
     @stack('css')
 </head>
 <body class="antialiased" data-theme-density="{{ $themeData['themeDensity'] ?? 'standard' }}">
     @yield('assessment-header')
     @yield('content')
-    @vite(['resources/js/tabler.js'])
+    @vite(['resources/tabler-core/js/tabler.js'])
     @stack('scripts')
 </body>
 </html>

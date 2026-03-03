@@ -35,11 +35,11 @@ export default defineConfig({
         laravel({
             input: [
                 // CSS Entry Points
-                'resources/css/tabler.css',      // Admin/System layout
+                'resources/tabler-core/css/tabler.css',      // Admin/System layout
                 'resources/css/auth.css',        // Authentication pages
                 'resources/css/public.css',      // Public website
                 // JS Entry Points
-                'resources/js/tabler.js',
+                'resources/tabler-core/js/tabler.js',
                 'resources/js/auth.js',
                 'resources/js/public.js'
             ],
@@ -52,16 +52,13 @@ export default defineConfig({
 ### B. Entry Point Structure
 
 ```
-resources/css/
-├── tabler.css          # Main admin layout (imports Tabler + custom)
-├── auth.css            # Authentication pages (login, register)
-└── public.css          # Public website (TheProperty template)
-
-resources/assets/
-├── tabler/
-│   ├── css/
-│   │   └── ThemeTabler.css    # Custom Tabler overrides
-│   └── js/
+resources/tabler-core/
+├── css/
+│   └── tabler.css          # Main admin layout (imports Tabler + custom)
+│   └── ThemeTabler.css    # Custom Tabler overrides
+├── js/
+│   └── tabler.js          # Main entry point
+│   └── ThemeTabler.js     # Theme management
 └── public/
     └── css/
         └── main.css           # TheProperty template styles (9211 lines)
@@ -72,7 +69,7 @@ resources/assets/
 ```blade
 <!-- Admin Layout -->
 <x-layouts.tabler.app>
-    @vite(['resources/css/tabler.css', 'resources/js/tabler.js'])
+    @vite(['resources/tabler-core/css/tabler.css', 'resources/tabler-core/js/tabler.js'])
 </x-layouts.tabler.app>
 
 <!-- Auth Layout -->
@@ -98,7 +95,7 @@ resources/css/tabler.css
 ├── datatables.net-bs5/css/dataTables.bootstrap5.css  # DataTables
 ├── @tabler/core/dist/css/tabler-themes.css      # Tabler theme variants
 ├── @tabler/icons-webfont/dist/tabler-icons.min.css   # Icons
-└── resources/assets/tabler/css/ThemeTabler.css  # Custom overrides
+└── resources/tabler-core/css/ThemeTabler.css  # Custom overrides
 ```
 
 ### B. Tabler Core CSS
@@ -138,7 +135,7 @@ resources/css/tabler.css
 
 ## 3. Theme Customization (ThemeTabler.css)
 
-**File:** `resources/assets/tabler/css/ThemeTabler.css`
+**File:** `resources/tabler-core/css/ThemeTabler.css`
 
 **Total Lines:** ~500+ lines of custom CSS
 
@@ -871,7 +868,7 @@ resources/
 │   ├── auth.css            # Auth entry point
 │   └── public.css          # Public entry point
 └── assets/
-    └── tabler/
+    └── tabler-core/
         └── css/
             └── ThemeTabler.css  # ALL custom overrides here
 ```
