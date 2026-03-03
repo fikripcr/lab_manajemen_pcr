@@ -173,19 +173,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         axios.post('{{ route("shared.public-menu.reorder") }}', { hierarchy: hierarchy })
             .then(response => {
-                if(typeof showSuccessMessage === 'function') {
-                    showSuccessMessage('Urutan menu berhasil diperbarui');
-                } else {
-                    Swal.fire('Berhasil', 'Urutan menu berhasil diperbarui', 'success');
-                }
+                showSuccessMessage('Urutan menu berhasil diperbarui');
             })
             .catch(error => {
                 console.error('Failed to save hierarchy', error);
-                if(typeof showErrorMessage === 'function') {
-                    showErrorMessage('Gagal menyimpan urutan');
-                } else {
-                    Swal.fire('Gagal', 'Gagal menyimpan urutan', 'error');
-                }
+                showErrorMessage('Gagal menyimpan urutan');
             });
     }
 

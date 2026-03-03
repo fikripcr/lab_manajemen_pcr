@@ -386,19 +386,13 @@ window.finishExam = (isAuto = false) => {
     if (isAuto) {
         performSubmit();
     } else {
-        Swal.fire({
-            title: 'Selesaikan Ujian?',
-            text: unanswered > 0 
+        showConfirmation(
+            'Selesaikan Ujian?',
+            unanswered > 0 
                 ? `Masih ada ${unanswered} soal yang belum dijawab. Apakah Anda yakin ingin mengakhiri sesi ujian ini?` 
                 : 'Apakah Anda yakin ingin menyelesaikan ujian ini?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#2fb344',
-            cancelButtonColor: '#d63939',
-            confirmButtonText: '<i class="ti ti-check me-1"></i>Ya, Selesaikan',
-            cancelButtonText: 'Batal',
-            reverseButtons: true
-        }).then((result) => {
+            'Ya, Selesaikan'
+        ).then((result) => {
             if (result.isConfirmed) {
                 performSubmit();
             }
@@ -417,20 +411,15 @@ window.finishExam = (isAuto = false) => {
         .then(r => r.json()).then(res => {
             if (res.success || res.status === 'success') {
                 localStorage.removeItem('cbt_ans_' + RIWAYAT_ID);
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: 'Jawaban Anda telah berhasil dikirim.',
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    window.location.href = res.redirect || res.url || '/cbt';
-                });
+                showSuccessMessage('Berhasil!', 'Jawaban Anda telah berhasil dikirim.')
+                    .then(() => {
+                        window.location.href = res.redirect || res.url || '/cbt';
+                    });
             } else {
-                Swal.fire('Gagal!', res.message || 'Terjadi kesalahan saat mengirim jawaban.', 'error');
+                showErrorMessage('Gagal!', res.message || 'Terjadi kesalahan saat mengirim jawaban.');
             }
         }).catch(err => {
-            Swal.fire('Terputus!', 'Koneksi gagal. Pastikan internet aktif dan coba lagi.', 'error');
+            showErrorMessage('Terputus!', 'Koneksi gagal. Pastikan internet aktif dan coba lagi.');
         });
     }
 };
@@ -572,13 +561,7 @@ function logViolation(type, keterangan) {
 }
 
 function showWarning(msg) {
-    Swal.fire({
-        title: 'Anti-Cheat System',
-        text: msg,
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Saya Mengerti'
-    });
+    showWarningMessage('Anti-Cheat System', msg);
 }
 
 // Global flag to prevent warning on normal submit

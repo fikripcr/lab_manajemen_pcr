@@ -331,11 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 agendaItem.remove();
                 updateAgendaNumbers();
             } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Minimal 1 Agenda',
-                    text: 'Rapat harus memiliki minimal 1 agenda',
-                });
+                showWarningMessage('Minimal 1 Agenda', 'Rapat harus memiliki minimal 1 agenda');
             }
         }
     });
@@ -354,34 +350,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const pesertaId = this.dataset.pesertaId;
             const pesertaName = this.dataset.pesertaName;
             
-            Swal.fire({
-                title: 'Kirim Ulang Undangan?',
-                text: `Kirim ulang undangan email ke ${pesertaName}?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Kirim',
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#206bc4',
-            }).then((result) => {
+            showConfirmation('Kirim Ulang Undangan?', `Kirim ulang undangan email ke ${pesertaName}?`, 'Ya, Kirim').then((result) => {
                 if (result.isConfirmed) {
+                    showLoadingMessage('Mengirim...', 'Sedang mengirim ulang undangan');
                     axios.post(`{{ route('Kegiatan.rapat.peserta.resend-invite', '__ID__') }}`.replace('__ID__', pesertaId))
                         .then((response) => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil',
-                                text: response.data.message || 'Undangan berhasil dikirim ulang',
-                                toast: true,
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 2000,
-                            });
+                            showSuccessMessage('Berhasil', response.data.message || 'Undangan berhasil dikirim ulang');
                         })
                         .catch((error) => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal',
-                                text: error.response?.data?.message || 'Gagal mengirim ulang undangan',
-                            });
+                            showErrorMessage('Gagal', error.response?.data?.message || 'Gagal mengirim ulang undangan');
                         });
                 }
             });

@@ -144,17 +144,14 @@
 
         // Function to login as a specific user
         function loginAsUser(url, userName) {
-            Swal.fire({
-                title: 'Konfirmasi Login As',
-                text: 'Apakah Anda yakin ingin login sebagai ' + userName + '?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, login sebagai dia',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
+            showConfirmation(
+                'Konfirmasi Login As',
+                'Apakah Anda yakin ingin login sebagai ' + userName + '?',
+                'Ya, login sebagai dia'
+            ).then((result) => {
                 if (result.isConfirmed) {
+                    showLoadingMessage('Processing...', 'Logging in as ' + userName);
+
                     fetch(url, {
                             method: 'POST',
                             headers: {
@@ -165,32 +162,17 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                Swal.fire({
-                                    title: 'Sukses!',
-                                    text: data.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
+                                showSuccessMessage('Sukses!', data.message).then(() => {
                                     // Redirect to dashboard
                                     window.location.href = data.redirect;
                                 });
                             } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Gagal login sebagai ' + userName,
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
+                                showErrorMessage('Error!', 'Gagal login sebagai ' + userName);
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Terjadi kesalahan saat login sebagai user',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
+                            showErrorMessage('Error!', 'Terjadi kesalahan saat login sebagai user');
                         });
                 }
             });

@@ -82,30 +82,23 @@ document.addEventListener('change', function(e) {
     const dokumenId = target.dataset.dokumenId;
     const status = target.checked ? 'Valid' : 'Pending';
 
-    fetch('{{ route("pmb.pendaftar.verify-document") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ dokumen_id: dokumenId, status: status })
+    axios.post('{{ route("pmb.pendaftar.verify-document") }}', { 
+        dokumen_id: dokumenId, 
+        status: status 
     })
     .then(function(response) {
-        return response.json().then(function(data) {
-            if (!response.ok || !data.success) {
-                const message = data?.message || 'Terjadi kesalahan saat verifikasi.';
-                Swal.fire({ icon: 'error', title: 'Gagal!', text: message });
-                target.checked = !target.checked;
-            }
-        }).catch(function() {
-            // JSON parse failed
-            Swal.fire({ icon: 'error', title: 'Error!', text: 'Terjadi kesalahan saat verifikasi.' });
+        if (!response.data.success) {
+            const message = response.data.message || 'Terjadi kesalahan saat verifikasi.';
+            showErrorMessage('Gagal!', message);
             target.checked = !target.checked;
-        });
+        }
     })
     .catch(function(error) {
-        const message = error?.message || 'Terjadi kesalahan saat verifikasi.';
-        Swal.fire({ icon: 'error', title: 'Error!', text: message });
+        let message = 'Terjadi kesalahan saat verifikasi.';
+        if (error.response && error.response.data && error.response.data.message) {
+            message = error.response.data.message;
+        }
+        showErrorMessage('Error!', message);
         target.checked = !target.checked;
     });
 });

@@ -156,15 +156,7 @@
 
 
     window.deletePertanyaan = function(id) {
-        Swal.fire({
-            title: 'Hapus pertanyaan ini?',
-            text: 'Pertanyaan akan dihapus permanen.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d63939',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
+        showDeleteConfirmation('Hapus pertanyaan ini?', 'Pertanyaan akan dihapus permanen.', 'Ya, hapus!').then((result) => {
             if (result.isConfirmed) {
                 axios.delete(routeFor('pertanyaanDestroy', id))
                     .then(function(res) {
@@ -282,15 +274,7 @@
         // window.editHalaman and window.saveHalaman are now handled by AJAX modal system
 
         window.deleteHalaman = function(id) {
-            Swal.fire({
-                title: 'Hapus halaman ini?',
-                text: 'Semua pertanyaan di halaman ini juga akan dihapus!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d63939',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
+            showDeleteConfirmation('Hapus halaman ini?', 'Semua pertanyaan di halaman ini juga akan dihapus!', 'Ya, hapus!').then((result) => {
                 if (result.isConfirmed) {
                     axios.delete(routeFor('halamanDestroy', id))
                         .then(function(res) {

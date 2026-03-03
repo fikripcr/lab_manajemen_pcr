@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .catch(() => {
                     // Revert on failure
                     this.checked = !isChecked;
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal memperbarui absensi.', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                    showErrorMessage('Gagal', 'Gagal memperbarui absensi.');
                 });
         });
     });

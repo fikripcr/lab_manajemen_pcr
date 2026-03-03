@@ -1,0 +1,26 @@
+version: '3.7'
+
+networks:
+  mariadb_net:
+    external:
+      name: mariadb_mariadb_net
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: diglab-jti
+    restart: unless-stopped
+    ports:
+      - '9028:80'
+    tty: true
+    volumes:
+      - '.:/var/www/html'
+      # Untuk production (seperti contoh anda):
+      # - '/home/fmi/docker-apps/9028-diglab-jti/www-diglab-jti:/var/www/html'
+    networks:
+      - mariadb_net
+
+# Notes:
+# Database Host in .env should be changed to the name of the database container in the 'mariadb_net' network.

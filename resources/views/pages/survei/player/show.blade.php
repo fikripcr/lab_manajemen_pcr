@@ -426,11 +426,7 @@ function handleSubmit(e) {
     })
     .catch(err => {
         const msg = err.response?.data?.message || 'Terjadi kesalahan. Silakan coba lagi.';
-        if (typeof Swal !== 'undefined') {
-            Swal.fire('Gagal', msg, 'error');
-        } else {
-            alert('Error: ' + msg);
-        }
+        showErrorMessage('Gagal', msg);
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="ti ti-send me-1"></i> Kirim Jawaban';

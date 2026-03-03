@@ -83,14 +83,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showResult(success, message) {
-        Swal.fire({
-            icon: success ? 'success' : 'error',
-            title: success ? 'Berhasil' : 'Gagal',
-            text: message,
-            timer: success ? 2000 : null,
-            showConfirmButton: !success,
-        });
-        if (success) reloadTable();
+        if (success) {
+            showSuccessMessage('Berhasil', message);
+            reloadTable();
+        } else {
+            showErrorMessage('Gagal', message);
+        }
     }
 
     // ── Unified: btn-process (both from DataTable action and from modal in show.blade.php)

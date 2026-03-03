@@ -129,11 +129,7 @@
                 btnCapture.show();
             } catch (err) {
                 console.error("Error accessing webcam: ", err);
-                if (typeof showErrorMessage === 'function') {
-                    showErrorMessage('Error', 'Gagal mengakses kamera: ' + err.message);
-                } else {
-                    Swal.fire('Error', 'Gagal mengakses kamera: ' + err.message, 'error');
-                }
+                showErrorMessage('Error', 'Gagal mengakses kamera: ' + err.message);
             }
         });
 
@@ -168,11 +164,7 @@
             e.preventDefault();
 
             if (signaturePad.isEmpty()) {
-                if (typeof showWarningMessage === 'function') {
-                    showWarningMessage('Peringatan', 'Silakan isi tanda tangan Anda.');
-                } else {
-                    Swal.fire('Peringatan', 'Silakan isi tanda tangan Anda.', 'warning');
-                }
+                showWarningMessage('Peringatan', 'Silakan isi tanda tangan Anda.');
                 return;
             }
 
@@ -188,21 +180,12 @@
 
             axios.post(form.action, formData)
                 .then(function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: response.data.message,
-                        timer: 3000,
-                        showConfirmButton: false
-                    }).then(() => window.location.reload());
+                    showSuccessMessage('Berhasil!', response.data.message)
+                        .then(() => window.location.reload());
                 })
                 .catch(function(error) {
                     const message = error.response?.data?.message || 'Terjadi kesalahan pada sistem.';
-                    if (typeof showErrorMessage === 'function') {
-                        showErrorMessage('Oops!', message);
-                    } else {
-                        Swal.fire('Oops!', message, 'error');
-                    }
+                    showErrorMessage('Oops!', message);
                 });
         });
     });

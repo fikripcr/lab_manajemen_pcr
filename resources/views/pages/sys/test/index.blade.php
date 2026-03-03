@@ -154,94 +154,37 @@
 @push('scripts')
     <script>
         function testEmail() {
-            Swal.fire({
-                title: 'Send Test Email?',
-                text: 'Are you sure you want to send a test email to your account?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, send it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
+            showConfirmation('Send Test Email?', 'Are you sure you want to send a test email to your account?', 'Yes, send it!')
+                .then((result) => {
                 if (result.isConfirmed) {
                     showLoadingMessage('Sending email...');
 
                     axios.post('{{ route('sys.test.email') }}')
                         .then(function(response) {
-                            Swal.close();
-
                             if (response.data.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Email Sent!',
-                                    text: response.data.message,
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    // Auto-reload after success
-                                    location.reload();
-                                });
+                                showSuccessMessage('Email Sent!', response.data.message)
+                                    .then(() => {
+                                        location.reload();
+                                    });
                             } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: response.data.message
-                                });
+                                showErrorMessage('Error!', response.data.message);
                             }
                         })
                         .catch(function(error) {
-                            Swal.close();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: 'An error occurred while sending the email.'
-                            });
+                            showErrorMessage('Error!', 'An error occurred while sending the email.');
                         });
                 }
             });
         }
 
         function testNotification() {
-            Swal.fire({
-                title: 'Send Test Notification?',
-                text: 'Are you sure you want to send a test notification to your account?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, send it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
+            showConfirmation('Send Test Notification?', 'Are you sure you want to send a test notification to your account?', 'Yes, send it!')
+                .then((result) => {
                 if (result.isConfirmed) {
                     showLoadingMessage('Sending notification...');
 
                     axios.post('{{ route('sys.test.notification') }}')
                         .then(function(response) {
-                            Swal.close();
-
-                            if (response.data.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Notification Sent!',
-                                    text: response.data.message,
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    // Auto-reload after success
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: response.data.message
-                                });
-                            }
-                        })
-                        .catch(function(error) {
-                            Swal.close();
-                            Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
                                 text: 'An error occurred while sending the notification.'
@@ -252,16 +195,8 @@
         }
 
         function testPdfExport() {
-            Swal.fire({
-                title: 'Generate Test PDF?',
-                text: 'Are you sure you want to generate a test PDF with system data?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, generate it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
+            showConfirmation('Generate Test PDF?', 'Are you sure you want to generate a test PDF with system data?', 'Yes, generate it!')
+                .then((result) => {
                 if (result.isConfirmed) {
                     showLoadingMessage('Generating PDF...');
 
@@ -282,18 +217,10 @@
                         window.URL.revokeObjectURL(url);
                         document.body.removeChild(a);
 
-                        Swal.close();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'PDF Generated!',
-                            text: 'Your test PDF has been downloaded successfully.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // Auto-reload after success
-                            location.reload();
-                        });
+                        showSuccessMessage('PDF Generated!', 'Your test PDF has been downloaded successfully.')
+                            .then(() => {
+                                location.reload();
+                            });
                     })
                     .catch(function(error) {
                         // Check if error response is available
@@ -302,30 +229,15 @@
                             if (error.response.headers['content-type'] && error.response.headers['content-type'].includes('application/json')) {
                                 error.response.data.text().then(function(text) {
                                     const jsonData = JSON.parse(text);
-                                    Swal.close();
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error!',
-                                        text: jsonData.message
-                                    });
+                                    showErrorMessage('Error!', jsonData.message);
                                 });
                             } else {
                                 // For other error responses
-                                Swal.close();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: 'An error occurred while generating the PDF.'
-                                });
+                                showErrorMessage('Error!', 'An error occurred while generating the PDF.');
                             }
                         } else {
                             // For network errors
-                            Swal.close();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: 'An error occurred while generating the PDF.'
-                            });
+                            showErrorMessage('Error!', 'An error occurred while generating the PDF.');
                         }
                     });
                 }
@@ -333,16 +245,8 @@
         }
 
         function testExcelExport() {
-            Swal.fire({
-                title: 'Generate Test Excel?',
-                text: 'Are you sure you want to generate a test Excel with system data (Activity Logs)?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, generate it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
+            showConfirmation('Generate Test Excel?', 'Are you sure you want to generate a test Excel with system data (Activity Logs)?', 'Yes, generate it!')
+                .then((result) => {
                 if (result.isConfirmed) {
                     showLoadingMessage('Generating Excel...');
 
@@ -363,18 +267,10 @@
                         window.URL.revokeObjectURL(url);
                         document.body.removeChild(a);
 
-                        Swal.close();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Excel Generated!',
-                            text: 'Your test Excel has been downloaded successfully.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // Auto-reload after success
-                            location.reload();
-                        });
+                        showSuccessMessage('Excel Generated!', 'Your test Excel has been downloaded successfully.')
+                            .then(() => {
+                                location.reload();
+                            });
                     })
                     .catch(function(error) {
                         // Check if error response is available
@@ -383,30 +279,15 @@
                             if (error.response.headers['content-type'] && error.response.headers['content-type'].includes('application/json')) {
                                 error.response.data.text().then(function(text) {
                                     const jsonData = JSON.parse(text);
-                                    Swal.close();
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error!',
-                                        text: jsonData.message
-                                    });
+                                    showErrorMessage('Error!', jsonData.message);
                                 });
                             } else {
                                 // For other error responses
-                                Swal.close();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: 'An error occurred while generating the Excel.'
-                                });
+                                showErrorMessage('Error!', 'An error occurred while generating the Excel.');
                             }
                         } else {
                             // For network errors
-                            Swal.close();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: 'An error occurred while generating the Excel.'
-                            });
+                            showErrorMessage('Error!', 'An error occurred while generating the Excel.');
                         }
                     });
                 }
@@ -414,16 +295,8 @@
         }
 
         function testWordExport() {
-            Swal.fire({
-                title: 'Generate Test Word?',
-                text: 'Are you sure you want to generate a test Word document with system data and QR code?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#007bff',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, generate it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
+            showConfirmation('Generate Test Word?', 'Are you sure you want to generate a test Word document with system data and QR code?', 'Yes, generate it!')
+                .then((result) => {
                 if (result.isConfirmed) {
                     showLoadingMessage('Generating Word...');
 
@@ -444,18 +317,10 @@
                         window.URL.revokeObjectURL(url);
                         document.body.removeChild(a);
 
-                        Swal.close();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Word Document Generated!',
-                            text: 'Your test Word document has been downloaded successfully.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // Auto-reload after success
-                            location.reload();
-                        });
+                        showSuccessMessage('Word Document Generated!', 'Your test Word document has been downloaded successfully.')
+                            .then(() => {
+                                location.reload();
+                            });
                     })
                     .catch(function(error) {
                         // Check if error response is available
@@ -464,30 +329,15 @@
                             if (error.response.headers['content-type'] && error.response.headers['content-type'].includes('application/json')) {
                                 error.response.data.text().then(function(text) {
                                     const jsonData = JSON.parse(text);
-                                    Swal.close();
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error!',
-                                        text: jsonData.message
-                                    });
+                                    showErrorMessage('Error!', jsonData.message);
                                 });
                             } else {
                                 // For other error responses
-                                Swal.close();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: 'An error occurred while generating the Word document.'
-                                });
+                                showErrorMessage('Error!', 'An error occurred while generating the Word document.');
                             }
                         } else {
                             // For network errors
-                            Swal.close();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: 'An error occurred while generating the Word document.'
-                            });
+                            showErrorMessage('Error!', 'An error occurred while generating the Word document.');
                         }
                     });
                 }
@@ -657,25 +507,13 @@
                         }
                     })
                     .then(response => {
-                        Swal.close();
-
-                        // Show success message with download link
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'DOCX Processed!',
-                            html: 'Your DOCX document has been processed successfully.<br>' +
-                                  '<a href="' + response.data.data.download_url + '" target="_blank" class="btn btn-primary mt-2">Download Document</a>',
-                            showConfirmButton: false,
-                            timer: 5000
-                        });
+                        showSuccessMessage('DOCX Processed!', 'Your DOCX document has been processed successfully.')
+                            .then(() => {
+                                window.open(response.data.data.download_url, '_blank');
+                            });
                     })
                     .catch(error => {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: error.response?.data?.message || 'An error occurred while processing the DOCX document.'
-                        });
+                        showErrorMessage('Error!', error.response?.data?.message || 'An error occurred while processing the DOCX document.');
                     });
                 }
             });

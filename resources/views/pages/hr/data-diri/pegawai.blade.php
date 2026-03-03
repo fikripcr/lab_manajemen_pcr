@@ -58,23 +58,29 @@ document.addEventListener('click', function(e) {
 
     const url = btn.dataset.url;
 
-    if (!confirm('Apakah Anda yakin ingin membuat user untuk pegawai ini?\n\nDefault password: password123')) {
-        return;
-    }
+    showConfirmation(
+        'Konfirmasi Pembuatan User',
+        'Apakah Anda yakin ingin membuat user untuk pegawai ini?\n\nDefault password: password123',
+        'Ya, Buat User'
+    ).then((result) => {
+        if (result.isConfirmed) {
+            showLoadingMessage('Memproses...', 'Sedang membuat akun pegawai');
 
-    axios.post(url)
-        .then(function(response) {
-            if (response.data.success) {
-                Swal.fire({ icon: 'success', title: 'Berhasil!', html: response.data.message });
-                $('#pegawai-table').DataTable().ajax.reload();
-            } else {
-                Swal.fire({ icon: 'error', title: 'Gagal!', html: response.data.message });
-            }
-        })
-        .catch(function(error) {
-            const message = error.response?.data?.message || 'Terjadi kesalahan saat membuat user.';
-            Swal.fire({ icon: 'error', title: 'Error!', text: message });
-        });
+            axios.post(url)
+                .then(function(response) {
+                    if (response.data.success) {
+                        showSuccessMessage('Berhasil!', response.data.message);
+                        $('#pegawai-table').DataTable().ajax.reload();
+                    } else {
+                        showErrorMessage('Gagal!', response.data.message);
+                    }
+                })
+                .catch(function(error) {
+                    const message = error.response?.data?.message || 'Terjadi kesalahan saat membuat user.';
+                    showErrorMessage('Error!', message);
+                });
+        }
+    });
 });
 </script>
 @endpush

@@ -6,8 +6,10 @@ use App\Models\Notification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\ServiceProvider;
+use Illuminate\Support\Facades\View;
 use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+
+        // Register Tabler Core view location (allows layouts.tabler.app to work as-is)
+        View::addLocation(resource_path('tabler-core/views'));
+        // Register Tabler Core Blade Components (x-tabler)
+        Blade::anonymousComponentPath(resource_path('tabler-core/views/components/tabler'), 'tabler');
 
         // Register the custom Notification model
         $this->app->bind('Illuminate\Notifications\DatabaseNotification', function () {

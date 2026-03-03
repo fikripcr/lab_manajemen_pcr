@@ -100,22 +100,20 @@
                 e.preventDefault();
                 const url = this.dataset.url;
                 
-                Swal.fire({
-                    title: 'Aktifkan Periode?',
-                    text: 'Periode aktif lainnya akan otomatis dinonaktifkan.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Aktifkan',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
+                showConfirmation(
+                    'Aktifkan Periode?',
+                    'Periode aktif lainnya akan otomatis dinonaktifkan.',
+                    'Ya, Aktifkan'
+                ).then((result) => {
                     if (result.isConfirmed) {
+                        showLoadingMessage('Memproses...', 'Sedang mengaktifkan periode');
                         axios.post(url)
                             .then(response => {
-                                Swal.fire('Berhasil!', response.data.message, 'success')
+                                showSuccessMessage('Berhasil!', response.data.message)
                                     .then(() => window.location.reload());
                             })
                             .catch(error => {
-                                Swal.fire('Gagal!', error.response?.data?.message || 'Terjadi kesalahan', 'error');
+                                showErrorMessage('Gagal!', error.response?.data?.message || 'Terjadi kesalahan');
                             });
                     }
                 });

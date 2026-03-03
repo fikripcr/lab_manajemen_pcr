@@ -2,9 +2,9 @@
 @import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
 @import '@tabler/core/dist/css/tabler-themes.css';
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
-@import '../assets/tabler/css/ThemeTabler.css';
-@import '../assets/tabler/css/ThemeTabler_Advanced.css';
+@import './core-theme.css';
+@import './core-advanced.css';
 
 /* --- Module Components --- */
-@import './components/pemutu-tree.css';
-@import './components/projects-kanban.css';
+@import '../../css/components/pemutu-tree.css';
+@import '../../css/components/projects-kanban.css';

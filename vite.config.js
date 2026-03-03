@@ -6,6 +6,11 @@ export default defineConfig({
         host: 'localhost',
         port: 3010,
     },
+    resolve: {
+        alias: {
+            '@tabler-core': '/resources/tabler-core',
+        },
+    },
     optimizeDeps: {
         // Paksa Vite pre-bundle jKanban (CommonJS/UMD) agar resolvable sebagai ESM module
         include: ['jkanban'],
@@ -14,11 +19,11 @@ export default defineConfig({
         laravel({
             input: [
                 // CSS Entry Points
-                'resources/css/tabler.css',
+                'resources/tabler-core/css/tabler.css',
                 'resources/css/auth.css',
                 'resources/css/public.css',
                 // JS Entry Points
-                'resources/js/tabler.js',
+                'resources/tabler-core/js/tabler.js',
                 'resources/js/auth.js',
                 'resources/js/public.js'
             ],

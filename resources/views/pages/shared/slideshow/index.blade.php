@@ -122,36 +122,21 @@
             order.push(el.getAttribute('data-id'));
         });
 
+        showLoadingMessage('Menyimpan urutan...', 'Harap tunggu');
 
         axios.post('{{ route('shared.slideshow.reorder') }}', {
             order: order,
             _token: '{{ csrf_token() }}'
         })
         .then(function (response) {
-            if(window.Swal) Swal.close();
-            console.log(response.data.status)
             if(response.data.status === 'success'){
-                if(typeof showSuccessMessage === 'function') {
-                    showSuccessMessage(response.data.message);
-                } else {
-                    // Fallback
-                    console.log('Success:', response.data.message);
-                }
+                showSuccessMessage(response.data.message);
             } else {
-                if(typeof showErrorMessage === 'function') {
-                    showErrorMessage(response.data.message);
-                } else {
-                    alert('Gagal: ' + response.data.message);
-                }
+                showErrorMessage('Gagal!', response.data.message);
             }
         })
         .catch(function (error) {
-            if(window.Swal) Swal.close();
-            if(typeof showErrorMessage === 'function') {
-                showErrorMessage('Error!', 'Terjadi kesalahan saat menyimpan urutan.');
-            } else {
-                alert('Error processing request');
-            }
+            showErrorMessage('Error!', 'Terjadi kesalahan saat menyimpan urutan.');
             console.error(error);
         });
     }

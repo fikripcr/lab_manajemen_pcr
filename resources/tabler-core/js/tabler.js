@@ -31,16 +31,16 @@ import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 // --- Shared Components ---
-import ThemeTabler from '../assets/tabler/js/ThemeTabler.js';
-import '../assets/tabler/js/CustomSweetAlerts.js';
-import '../assets/tabler/js/Notification.js';
-import '../assets/tabler/js/FormHandlerAjax.js';
+import ThemeTabler from './core-theme.js';
+import './core-alerts.js';
+import './core-notification.js';
+import './core-ajax.js';
 
 // --- Module Helpers ---
-import './helpers/pemutu-workspace.js';
-import './helpers/pemutu-indikator.js';
-import './helpers/projects-kanban.js';
-import './helpers/hr-pegawai.js';
+import '../../js/helpers/pemutu-workspace.js';
+import '../../js/helpers/pemutu-indikator.js';
+import '../../js/helpers/projects-kanban.js';
+import '../../js/helpers/hr-pegawai.js';
 
 
 /**
@@ -159,7 +159,7 @@ window.loadDataTables = function () {
     if (window.DataTablesLoaded) return Promise.resolve(window.CustomDataTables);
 
     return import('datatables.net-bs5')
-        .then(() => import('../assets/tabler/js/CustomDataTables.js'))
+        .then(() => import('./core-datatable.js'))
         .then(({ default: CustomDataTables }) => {
             window.CustomDataTables = CustomDataTables;
             window.DataTablesLoaded = true;
@@ -197,7 +197,7 @@ window.loadApexCharts = function () {
  * @returns {Promise} - Resolves with GlobalSearch class
  */
 window.loadGlobalSearch = function () {
-    return import('../assets/tabler/js/GlobalSearch.js')
+    return import('./core-search.js')
         .then(({ GlobalSearch }) => {
             if (!window.GlobalSearch) {
                 window.GlobalSearch = GlobalSearch;

@@ -68,45 +68,32 @@ document.addEventListener('DOMContentLoaded', function() {
         const $button = window.jQuery(this);
         const url = $button.data('url');
         
-        if (!confirm('Apakah Anda yakin ingin membuat user untuk mahasiswa ini?\n\nDefault password: password123')) {
-            return;
-        }
-        
-        window.jQuery.ajax({
-            url: url,
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        html: response.message
-                    });
-                    
-                    // Reload datatable
-                    window.jQuery('#mahasiswa-table').DataTable().ajax.reload();
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        html: response.message
-                    });
-                }
-            },
-            error: function(xhr) {
-                let message = 'Terjadi kesalahan saat membuat user.';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    message = xhr.responseJSON.message;
-                }
+        showConfirmation(
+            'Konfirmasi Pembuatan User',
+            'Apakah Anda yakin ingin membuat user untuk mahasiswa ini?\n\nDefault password: password123',
+            'Ya, Buat User'
+        ).then((result) => {
+            if (result.isConfirmed) {
+                showLoadingMessage('Memproses...', 'Sedang membuat akun mahasiswa');
                 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: message
-                });
+                axios.post(url)
+                    .then(function(response) {
+                        if (response.data.success) {
+                            showSuccessMessage('Berhasil!', response.data.message);
+                            
+                            // Reload datatable
+                            window.jQuery('#mahasiswa-table').DataTable().ajax.reload();
+                        } else {
+                            showErrorMessage('Gagal!', response.data.message);
+                        }
+                    })
+                    .catch(function(error) {
+                        let message = 'Terjadi kesalahan saat membuat user.';
+                        if (error.response && error.response.data && error.response.data.message) {
+                            message = error.response.data.message;
+                        }
+                        showErrorMessage('Error!', message);
+                    });
             }
         });
     });

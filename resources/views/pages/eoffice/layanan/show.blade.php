@@ -395,15 +395,7 @@
             let title = $(this).data('title') || 'Konfirmasi';
             let text = $(this).data('text') || 'Apakah Anda yakin?';
 
-            Swal.fire({
-                title: title,
-                text: text,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Lanjutkan!'
-            }).then((result) => {
+            showConfirmation(title, text, 'Ya, Lanjutkan!').then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = url;
                 }

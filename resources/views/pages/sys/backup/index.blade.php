@@ -74,13 +74,13 @@
 
                 axios.post('{{ route('sys.backup.store') }}', { type })
                     .then(({ data }) => {
-                        Swal.close();
-                        data.success
-                            ? showSuccessMessage('Success!', data.message).then(() => location.reload())
-                            : showErrorMessage('Error!', data.message);
+                        if (data.success) {
+                            showSuccessMessage('Success!', data.message).then(() => location.reload());
+                        } else {
+                            showErrorMessage('Error!', data.message);
+                        }
                     })
                     .catch((error) => {
-                        Swal.close();
                         console.error('Error creating backup:', error);
                         showErrorMessage('Error!', 'An error occurred while creating the backup');
                     });
@@ -96,24 +96,20 @@
                 e.preventDefault();
                 const filename = deleteBtn.dataset.filename;
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then(({ isConfirmed }) => {
+                showDeleteConfirmation('Are you sure?', "You won't be able to revert this!").then(({ isConfirmed }) => {
                     if (!isConfirmed) return;
 
                     const deleteUrl = '{{ route('sys.backup.destroy', ':filename') }}'.replace(':filename', encodeURIComponent(filename));
 
+                    showLoadingMessage('Deleting...', 'Please wait');
+
                     axios.delete(deleteUrl)
                         .then(({ data }) => {
-                            data.success
-                                ? showSuccessMessage('Deleted!', data.message).then(() => location.reload())
-                                : showErrorMessage('Error!', data.message);
+                            if (data.success) {
+                                showSuccessMessage('Deleted!', data.message).then(() => location.reload());
+                            } else {
+                                showErrorMessage('Error!', data.message);
+                            }
                         })
                         .catch((error) => {
                             console.error('Error deleting backup:', error);

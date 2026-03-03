@@ -63,15 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const ids = Array.from(dt.selectedIds);
 
-        Swal.fire({
-            title: 'Duplikasi survei terpilih?',
-            text: `Seluruh struktur (${ids.length} survei) akan diduplikasi.`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Duplikasi',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#206bc4',
-        }).then((result) => {
+        showBulkActionConfirmation('Duplicate', ids.length, 'survei').then((result) => {
             if (result.isConfirmed) {
                 showLoadingMessage('Menduplikasi...', 'Harap tunggu');
 
@@ -100,13 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const url = $(this).data('url');
 
-        Swal.fire({
-            title: 'Duplikasi survei ini?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Duplikasi',
-            cancelButtonText: 'Batal',
-        }).then((result) => {
+        showConfirmation('Duplikasi survei ini?', '', 'Ya, Duplikasi').then((result) => {
             if (result.isConfirmed) {
                 showLoadingMessage('Menduplikasi...', 'Harap tunggu');
                 axios.post(url).then(response => {
@@ -126,14 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const url = $btn.data('url');
         const title = $btn.data('title') || 'Ubah status survei?';
 
-        Swal.fire({
-            title: title,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, lanjutkan',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#206bc4',
-        }).then((result) => {
+        showConfirmation(title, '', 'Ya, lanjutkan').then((result) => {
             if (result.isConfirmed) {
                 showLoadingMessage('Memproses...', 'Harap tunggu');
                 axios.post(url)
