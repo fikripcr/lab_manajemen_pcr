@@ -1,6 +1,6 @@
 <x-tabler.form-modal
     title="Persetujuan Dokumen"
-    route="{{ route('pemutu.dokumens.approve', $dokumen) }}"
+    route="{{ route('pemutu.dokumen.approve', $dokumen) }}"
     method="POST"
     submitText="Simpan Approval"
 >

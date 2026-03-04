@@ -11,7 +11,7 @@ class LabelType extends Model
 {
     use HasFactory, Blameable, HashidBinding, SoftDeletes;
 
-    protected $table      = 'pemutu_label_types';
+    protected $table      = 'pemutu_label_type';
     protected $primaryKey = 'labeltype_id';
     protected $appends    = ['encrypted_labeltype_id'];
 

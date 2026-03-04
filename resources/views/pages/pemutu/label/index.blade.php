@@ -17,7 +17,7 @@
             <div class="card-header">
                 <h3 class="card-title">Tipe Label</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" icon="ti ti-plus" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-types.create') }}" data-modal-title="Tambah Tipe Label" />
+                    <x-tabler.button type="button" icon="ti ti-plus" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-type.create') }}" data-modal-title="Tambah Tipe Label" />
                 </div>
             </div>
             <div class="list-group list-group-flush" id="label-type-list">
@@ -34,10 +34,10 @@
                             </span>
                             <div class="d-flex gap-1">
                                  <x-tabler.button type="button" iconOnly class="btn-ghost-secondary ajax-modal-btn" 
-                                    data-url="{{ route('pemutu.label-types.edit', $type->encrypted_labeltype_id) }}" 
+                                    data-url="{{ route('pemutu.label-type.edit', $type->encrypted_labeltype_id) }}" 
                                     data-modal-title="Edit Tipe" icon="ti ti-pencil" />
                                  <x-tabler.button type="button" iconOnly class="btn-ghost-danger ajax-delete" 
-                                    data-url="{{ route('pemutu.label-types.destroy', $type->encrypted_labeltype_id) }}" 
+                                    data-url="{{ route('pemutu.label-type.destroy', $type->encrypted_labeltype_id) }}" 
                                     data-title="Hapus Tipe?" 
                                     data-text="Menghapus tipe akan menghapus semua label di dalamnya." icon="ti ti-trash" />
                             </div>
@@ -57,13 +57,13 @@
             <div class="card-header">
                 <h3 class="card-title" id="labels-title">Daftar Label</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Label" class="btn-primary ajax-modal-btn" id="btn-add-label" data-url="{{ route('pemutu.labels.create') }}" data-modal-title="Tambah Label Baru" />
+                    <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Label" class="btn-primary ajax-modal-btn" id="btn-add-label" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
                 </div>
             </div>
             <div class="card-body p-0">
                 <x-tabler.datatable
                     id="table-labels"
-                    route="{{ route('pemutu.labels.data') }}"
+                    route="{{ route('pemutu.label.data') }}"
                     :columns="[
                         ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%', 'class' => 'text-center'],
                         ['data' => 'name', 'name' => 'name', 'title' => 'Nama Label', 'class' => 'text-center'],
@@ -99,12 +99,12 @@
         
         // Reload DataTable
         const table = $('#table-labels').DataTable();
-        const url = "{{ route('pemutu.labels.data') }}?type_id=" + typeId;
+        const url = "{{ route('pemutu.label.data') }}?type_id=" + typeId;
         table.ajax.url(url).load();
 
         // Update Add Label Button URL
         const addBtn = $('#btn-add-label');
-        let addUrl = "{{ route('pemutu.labels.create') }}";
+        let addUrl = "{{ route('pemutu.label.create') }}";
         if(typeId) {
             addUrl += "?type_id=" + typeId;
         }

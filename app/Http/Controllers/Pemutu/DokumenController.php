@@ -36,7 +36,7 @@ class DokumenController extends Controller
             $dokumentByJenis[$jenis] = $this->dokumenService->getDokumenByJenis($jenis, $request->periode);
         }
 
-        return view('pages.pemutu.dokumens.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
+        return view('pages.pemutu.dokumen.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
     }
 
     public function create(Request $request)
@@ -85,13 +85,13 @@ class DokumenController extends Controller
             $pageTitle = 'Tambah Dokumen Kebijakan';
         }
 
-        return view('pages.pemutu.dokumens.create', compact('dokumens', 'parent', 'allowedTypes', 'pageTitle', 'parentDokSub', 'fixedJenis'));
+        return view('pages.pemutu.dokumen.create', compact('dokumens', 'parent', 'allowedTypes', 'pageTitle', 'parentDokSub', 'fixedJenis'));
     }
 
     public function createStandar()
     {
         $pageTitle = 'Tambah Dokumen Standar';
-        return view('pages.pemutu.dokumens.create_standar', compact('pageTitle'));
+        return view('pages.pemutu.dokumen.create_standar', compact('pageTitle'));
     }
 
     public function createDokSubAjax(Request $request)
@@ -157,7 +157,7 @@ class DokumenController extends Controller
         }
 
         // 4. Handle Full Page Load
-        return \view('pages.pemutu.dokumens.detail', array_merge($data, [
+        return \view('pages.pemutu.dokumen.detail', array_merge($data, [
             'dokumen' => $dokumen,
         ]));
     }
@@ -172,7 +172,7 @@ class DokumenController extends Controller
         }
 
         $pageTitle = 'Indikator untuk: ' . $dokumen->judul;
-        return view('pages.pemutu.dokumens.renop_with_indicators', compact('dokumen', 'indicators', 'pageTitle'));
+        return view('pages.pemutu.dokumen.renop_with_indicators', compact('dokumen', 'indicators', 'pageTitle'));
     }
 
     public function edit(Dokumen $dokumen)
@@ -200,7 +200,7 @@ class DokumenController extends Controller
             ];
         }
 
-        return view('pages.pemutu.dokumens.edit', compact('dokumen', 'dokumens', 'allowedTypes'));
+        return view('pages.pemutu.dokumen.edit', compact('dokumen', 'dokumens', 'allowedTypes'));
     }
 
     public function update(DokumenRequest $request, Dokumen $dokumen)
@@ -345,6 +345,6 @@ class DokumenController extends Controller
     private function getIndexUrlByJenis($jenis)
     {
         $tab = pemutuTabByJenis($jenis);
-        return route('pemutu.dokumens.index', ['tabs' => $tab]);
+        return route('pemutu.dokumen.index', ['tabs' => $tab]);
     }
 }

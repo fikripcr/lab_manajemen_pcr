@@ -25,7 +25,7 @@ class IndikatorController extends Controller
         $labelTypes = LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
         $types      = ['standar' => 'Standar', 'renop' => 'Renop', 'performa' => 'Performa'];
 
-        return view('pages.pemutu.indikators.index', compact('dokumens', 'labelTypes', 'types'));
+        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelTypes', 'types'));
     }
 
     public function data(Request $request)
@@ -61,10 +61,10 @@ class IndikatorController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'viewUrl'   => route('pemutu.indikators.show', $row->encrypted_indikator_id),
-                    'editUrl'   => route('pemutu.indikators.edit', $row->encrypted_indikator_id),
+                    'viewUrl'   => route('pemutu.indikator.show', $row->encrypted_indikator_id),
+                    'editUrl'   => route('pemutu.indikator.edit', $row->encrypted_indikator_id),
                     'editModal' => false,
-                    'deleteUrl' => route('pemutu.indikators.destroy', $row->encrypted_indikator_id),
+                    'deleteUrl' => route('pemutu.indikator.destroy', $row->encrypted_indikator_id),
                 ])->render();
             })
             ->rawColumns(['tipe', 'labels', 'action'])
@@ -130,7 +130,7 @@ class IndikatorController extends Controller
         }
 
         $indikator = new Indikator(); // Empty for create
-        return view('pages.pemutu.indikators.create-edit-ajax', compact(
+        return view('pages.pemutu.indikator.create-edit-ajax', compact(
             'labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais',
             'parentDok', 'selectedDokSubs', 'indikator', 'isRenopContext'
         ));
@@ -185,9 +185,9 @@ class IndikatorController extends Controller
 
         logActivity('pemutu', "Menambah indikator baru: {$indikator->no_indikator}");
 
-        $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.index'));
+        $redirectUrl = $request->get('redirect_to', route('pemutu.indikator.index'));
         if (! $request->has('redirect_to') && $request->has('parent_dok_id')) {
-            $redirectUrl = route('pemutu.dokumens.show-renop-with-indicators', $request->parent_dok_id);
+            $redirectUrl = route('pemutu.dokumen.show-renop-with-indicators', $request->parent_dok_id);
         }
 
         return jsonSuccess('Indikator created successfully.', $redirectUrl);
@@ -195,7 +195,7 @@ class IndikatorController extends Controller
 
     public function show(Indikator $indikator)
     {
-        return view('pages.pemutu.indikators.show', compact('indikator'));
+        return view('pages.pemutu.indikator.show', compact('indikator'));
     }
 
     public function edit(Indikator $indikator)
@@ -218,7 +218,7 @@ class IndikatorController extends Controller
 
         $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
 
-        return view('pages.pemutu.indikators.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais'));
+        return view('pages.pemutu.indikator.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais'));
     }
 
     public function update(IndikatorRequest $request, Indikator $indikator)
@@ -269,7 +269,7 @@ class IndikatorController extends Controller
 
         logActivity('pemutu', "Memperbarui indikator: {$indikator->no_indikator}");
 
-        $redirectUrl = $request->get('redirect_to', route('pemutu.indikators.show', $indikator->encrypted_indikator_id));
+        $redirectUrl = $request->get('redirect_to', route('pemutu.indikator.show', $indikator->encrypted_indikator_id));
 
         return jsonSuccess('Indikator updated successfully.', $redirectUrl);
     }
@@ -281,6 +281,6 @@ class IndikatorController extends Controller
 
         logActivity('pemutu', "Menghapus indikator: {$noIndikator}");
 
-        return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikators.index'));
+        return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikator.index'));
     }
 }

@@ -131,7 +131,7 @@
                             ['name' => 'Aksi', 'sortable' => false]
                         ]"
                     >
-                        @forelse($activeExams as $exam)
+                        @foreach($activeExams as $exam)
                             <tr>
                                 <td>
                                     <div>
@@ -163,9 +163,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            {{-- Handled by component --}}
-                        @endforelse
+                        @endforeach
                     </x-tabler.datatable-client>
                 @endif
             </div>

@@ -289,7 +289,7 @@ class IndikatorSummaryController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $html  = '<div class="btn-group btn-group-sm" role="group">';
-                $html .= '<a href="' . route('pemutu.indikators.show', encryptId($row->indikator_id)) . '" class="btn btn-ghost-primary" title="Detail Indikator">';
+                $html .= '<a href="' . route('pemutu.indikator.show', encryptId($row->indikator_id)) . '" class="btn btn-ghost-primary" title="Detail Indikator">';
                 $html .= '<i class="ti ti-eye"></i>';
                 $html .= '</a>';
                 $html .= '</div>';

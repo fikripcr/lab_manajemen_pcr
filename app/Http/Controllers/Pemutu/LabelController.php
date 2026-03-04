@@ -17,7 +17,7 @@ class LabelController extends Controller
         $types       = $this->labelService->getAllLabelTypes();
         $totalLabels = $this->labelService->getTotalLabels();
 
-        return view('pages.pemutu.labels.index', compact('types', 'totalLabels'));
+        return view('pages.pemutu.label.index', compact('types', 'totalLabels'));
     }
 
     public function data(Request $request)
@@ -38,9 +38,9 @@ class LabelController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.labels.edit', $row->encrypted_label_id),
+                    'editUrl'   => route('pemutu.label.edit', $row->encrypted_label_id),
                     'editModal' => true,
-                    'deleteUrl' => route('pemutu.labels.destroy', $row->encrypted_label_id),
+                    'deleteUrl' => route('pemutu.label.destroy', $row->encrypted_label_id),
                 ])->render();
             })
             ->rawColumns(['name', 'action'])
@@ -50,7 +50,7 @@ class LabelController extends Controller
     public function create()
     {
         $types = $this->labelService->getAllLabelTypes();
-        return view('pages.pemutu.labels.create-edit-ajax', compact('types'));
+        return view('pages.pemutu.label.create-edit-ajax', compact('types'));
     }
 
     public function store(LabelRequest $request)
@@ -66,7 +66,7 @@ class LabelController extends Controller
     {
         $types = $this->labelService->getAllLabelTypes();
 
-        return view('pages.pemutu.labels.create-edit-ajax', compact('label', 'types'));
+        return view('pages.pemutu.label.create-edit-ajax', compact('label', 'types'));
     }
 
     public function update(LabelRequest $request, \App\Models\Pemutu\Label $label)

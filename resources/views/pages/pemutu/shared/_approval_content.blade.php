@@ -3,7 +3,7 @@
     <x-tabler.button 
         type="button" 
         class="btn-primary btn-sm ajax-modal-btn" 
-        data-url="{{ route('pemutu.dokumens.approve.create', $dokumen) }}" 
+        data-url="{{ route('pemutu.dokumen.approve.create', $dokumen) }}" 
         data-modal-title="Submit Approval & Legalitas" 
         icon="ti ti-checkup-list" 
         text="Submit Approval" 
@@ -45,7 +45,7 @@
                             <x-tabler.button 
                                 type="button" 
                                 class="btn-icon btn-sm btn-ghost-danger ajax-delete" 
-                                data-url="{{ route('pemutu.dokumens.approval.destroy', $approval->encrypted_dokapproval_id) }}" 
+                                data-url="{{ route('pemutu.dokumen.approval.destroy', $approval->encrypted_dokapproval_id) }}" 
                                 data-title="Hapus Approval?" 
                                 data-text="Data approval ini akan dihapus permanen."
                                 icon="ti ti-trash" 

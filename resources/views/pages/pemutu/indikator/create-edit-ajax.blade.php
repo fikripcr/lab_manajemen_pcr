@@ -1,7 +1,7 @@
 ﻿@php
     $isEdit = $indikator->exists;
     $title = $isEdit ? 'Edit Indikator' : 'Tambah Indikator Baru';
-    $route = $isEdit ? route('pemutu.indikators.update', $indikator) : route('pemutu.indikators.store');
+    $route = $isEdit ? route('pemutu.indikator.update', $indikator) : route('pemutu.indikator.store');
     $method = $isEdit ? 'PUT' : 'POST';
 
     // Determine context for pre-selection (Create case)
