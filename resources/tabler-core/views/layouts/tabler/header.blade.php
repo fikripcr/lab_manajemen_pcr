@@ -154,7 +154,7 @@
                                         </a>
                                     </div>
                                     <div class="col">
-                                        <a href="{{ route('sys.profile') }}#tabs-notification" class="btn btn-primary w-100">
+                                        <a href="{{ route('sys.profile') }}#tabs-notification" class="btn btn-primary font-white    w-100">
                                             View all
                                         </a>
                                     </div>

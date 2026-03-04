@@ -101,7 +101,7 @@ class SysGlobalSearchService
                     'name'        => $model->description,
                     'description' => $model->log_name . ' | ' . $model->event,
                     'type'        => 'activity',
-                    'url'         => route('activity-log.show', $model->id),
+                    'url'         => route('sys.activity-log.show', $model->id),
                 ]);
             } elseif ($model instanceof ErrorLog && $error_logs->count() < 5) {
                 $error_logs->push([

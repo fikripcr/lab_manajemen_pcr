@@ -200,7 +200,7 @@
                                     </div>
                                     <x-tabler.datatable
                                         id="dt-activity" 
-                                        route="{{ route('activity-log.data', ['causer_id' => $user->id]) }}" 
+                                        route="{{ route('sys.activity-log.data', ['causer_id' => $user->id]) }}" 
                                         :search="true"
                                         :columns="[
                                             ['title' => 'No', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
@@ -221,7 +221,7 @@
                                     </div>
                                     <x-tabler.datatable
                                         id="dt-notification" 
-                                        route="{{ route('notifications.data', ['notifiable_id' => $user->id]) }}" 
+                                        route="{{ route('sys.notifications.data', ['notifiable_id' => $user->id]) }}" 
                                         :search="true"
                                         :columns="[
                                             ['title' => 'No', 'data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false, 'class' => 'text-center'],
