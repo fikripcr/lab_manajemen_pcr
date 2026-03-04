@@ -113,60 +113,60 @@
                 </div>
             </div>
             <div class="card-table">
-                <x-tabler.datatable-client
-                    id="table-active-exams"
-                    :columns="[
-                        ['name' => 'Nama Ujian'],
-                        ['name' => 'Paket'],
-                        ['name' => 'Peserta'],
-                        ['name' => 'Waktu'],
-                        ['name' => 'Status'],
-                        ['name' => 'Aksi', 'sortable' => false]
-                    ]"
-                >
-                    @forelse($activeExams as $exam)
-                        <tr>
-                            <td>
-                                <div>
-                                    <div class="font-weight-bold">{{ $exam->nama_kegiatan }}</div>
-                                    @if($exam->is_token_aktif)
-                                        <span class="badge bg-success-lt mt-1">Token Aktif</span>
-                                    @endif
-                                </div>
-                            </td>
-                            <td>{{ $exam->paket->nama_paket }}</td>
-                            <td>
-                                <span class="badge bg-blue-lt">{{ $exam->riwayatSiswa->count() }} peserta</span>
-                            </td>
-                            <td>
-                                <div class="text-muted small">
-                                    {{ $exam->waktu_mulai->format('H:i') }} - {{ $exam->waktu_selesai->format('H:i') }}
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge bg-green text-green-fg">Berlangsung</span>
-                            </td>
-                            <td>
-                                <div class="btn-list flex-nowrap">
-                                    <a href="{{ route('cbt.execute.test-exam', $exam->hashid) }}" class="btn btn-icon btn-sm btn-primary" title="Tes Ujian">
-                                        <i class="ti ti-player-play"></i>
-                                    </a>
-                                    <x-tabler.button type="button" class="btn-icon btn-sm btn-info" onclick="monitorExam('{{ $exam->hashid }}')" title="Monitor" iconOnly="true" icon="ti ti-eye" />
-                                    <x-tabler.button type="button" class="btn-icon btn-sm btn-secondary" onclick="toggleToken('{{ $exam->hashid }}')" title="Toggle Token" iconOnly="true" icon="ti ti-key" />
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        {{-- Handled by component --}}
-                    @endforelse
-                </x-tabler.datatable-client>
-                
                 @if($activeExams->isEmpty())
                     <div class="empty">
                         <div class="empty-img"><img src="{{ asset('images/illustrations/undraw_empty_xct9.svg') }}" height="128" alt=""></div>
                         <p class="empty-title">Tidak ada ujian aktif</p>
                         <p class="empty-subtitle text-muted">Tidak ada ujian yang sedang berlangsung saat ini.</p>
                     </div>
+                @else
+                    <x-tabler.datatable-client
+                        id="table-active-exams"
+                        :columns="[
+                            ['name' => 'Nama Ujian'],
+                            ['name' => 'Paket'],
+                            ['name' => 'Peserta'],
+                            ['name' => 'Waktu'],
+                            ['name' => 'Status'],
+                            ['name' => 'Aksi', 'sortable' => false]
+                        ]"
+                    >
+                        @forelse($activeExams as $exam)
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div class="font-weight-bold">{{ $exam->nama_kegiatan }}</div>
+                                        @if($exam->is_token_aktif)
+                                            <span class="badge bg-success-lt mt-1">Token Aktif</span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td>{{ $exam->paket->nama_paket }}</td>
+                                <td>
+                                    <span class="badge bg-blue-lt">{{ $exam->riwayatSiswa->count() }} peserta</span>
+                                </td>
+                                <td>
+                                    <div class="text-muted small">
+                                        {{ $exam->waktu_mulai->format('H:i') }} - {{ $exam->waktu_selesai->format('H:i') }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-green text-green-fg">Berlangsung</span>
+                                </td>
+                                <td>
+                                    <div class="btn-list flex-nowrap">
+                                        <a href="{{ route('cbt.execute.test-exam', $exam->hashid) }}" class="btn btn-icon btn-sm btn-primary" title="Tes Ujian">
+                                            <i class="ti ti-player-play"></i>
+                                        </a>
+                                        <x-tabler.button type="button" class="btn-icon btn-sm btn-info" onclick="monitorExam('{{ $exam->hashid }}')" title="Monitor" iconOnly="true" icon="ti ti-eye" />
+                                        <x-tabler.button type="button" class="btn-icon btn-sm btn-secondary" onclick="toggleToken('{{ $exam->hashid }}')" title="Toggle Token" iconOnly="true" icon="ti ti-key" />
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            {{-- Handled by component --}}
+                        @endforelse
+                    </x-tabler.datatable-client>
                 @endif
             </div>
         </div>

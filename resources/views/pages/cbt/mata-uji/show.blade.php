@@ -18,7 +18,7 @@
 
 @section('content')
         <div class="row row-cards">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Informasi Mata Uji</h3>
@@ -40,7 +40,7 @@
                 </div>
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <h3 class="card-title">Daftar Soal</h3>
@@ -78,11 +78,9 @@
                                     <span class="badge bg-{{ $badgeColor }}-lt">{{ $soal->tingkat_kesulitan }}</span>
                                 </td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('cbt.soal.edit', $soal->encrypted_soal_id) }}" class="btn btn-primary ajax-modal-btn" data-modal-size="modal-lg" title="Edit">
-                                            <i class="ti ti-pencil"></i>
-                                        </a>
-                                        <x-tabler.button type="button" class="btn-danger ajax-delete" data-url="{{ route('cbt.soal.destroy', $soal->encrypted_soal_id) }}" title="Hapus" iconOnly="true" icon="ti ti-trash" />
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <x-tabler.button type="button" class="btn-info ajax-modal-btn" data-url="{{ route('cbt.soal.edit', $soal->encrypted_soal_id) }}" data-modal-size="modal-lg" title="Lihat Detail"  icon="ti ti-eye" />
+                                        <x-tabler.button type="button" class="btn-danger ajax-delete" data-url="{{ route('cbt.soal.destroy', $soal->encrypted_soal_id) }}" title="Hapus"  icon="ti ti-trash" />
                                     </div>
                                 </td>
                             </tr>
