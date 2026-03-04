@@ -60,7 +60,7 @@
                     </button>
                 </div>
             </div>
-            <div class="col-md-9 pt-3 pt-md-0 border-start">
+            <div class="col-md-9 pt-3 pt-md-0 border-start pl-3 ">
                 <div class="tab-content" id="v-pills-tabContent">
                     <!-- General Settings -->
                     <div class="tab-pane fade show active" id="v-pills-general" role="tabpanel" aria-labelledby="v-pills-general-tab">

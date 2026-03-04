@@ -4,7 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Data Indikator" pretitle="SPMI / Monitoring">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.indikators.create') }}" class="btn-primary" icon="ti ti-plus" text="Tambah Indikator" />
+        <x-tabler.button href="#" class="btn-primary ajax-modal-btn" data-url="{{ route('pemutu.indikator.create') }}" data-modal-title="Tambah Indikator" data-modal-size="modal-xl" icon="ti ti-plus" text="Tambah Indikator" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -34,7 +34,7 @@
     <div class="card-body p-0">
         <x-tabler.datatable
             id="indikator-table"
-            route="{{ route('pemutu.indikators.data') }}"
+            data-url="{{ route('pemutu.indikator.data') }}"
             :columns="[
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '5%'],
                 ['data' => 'tipe', 'name' => 'type', 'title' => 'Tipe', 'width' => '10%'],

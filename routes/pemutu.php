@@ -24,16 +24,16 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Periode KPI
-    Route::get('periode-kpis/data', [PeriodeKpiController::class, 'data'])->name('periode-kpis.data');
-    Route::post('periode-kpis/{periodeKpi}/activate', [PeriodeKpiController::class, 'activate'])->name('periode-kpis.activate');
-    Route::resource('periode-kpis', PeriodeKpiController::class);
+    Route::get('periode-kpi/data', [PeriodeKpiController::class, 'data'])->name('periode-kpi.data');
+    Route::post('periode-kpi/{periodeKpi}/activate', [PeriodeKpiController::class, 'activate'])->name('periode-kpi.activate');
+    Route::resource('periode-kpi', PeriodeKpiController::class);
 
-    // Label Types (modal forms only - no index page)
-    Route::resource('label-types', LabelTypeController::class)->except(['index', 'show']);
+    // Label Type (modal forms only - no index page)
+    Route::resource('label-type', LabelTypeController::class)->except(['index', 'show']);
 
-    // Labels
-    Route::get('api/labels', [LabelController::class, 'data'])->name('labels.data');
-    Route::resource('labels', LabelController::class);
+    // Label
+    Route::get('api/label', [LabelController::class, 'data'])->name('label.data');
+    Route::resource('label', LabelController::class);
 
     // Pegawai
     Route::get('api/pegawai', [PegawaiController::class, 'data'])->name('pegawai.data');
@@ -41,8 +41,8 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::resource('pegawai', PegawaiController::class);
 
     // Dokumen & Structure (REFACTORED WORKSPACE)
-    Route::post('dokumens/reorder', [DokumenController::class, 'reorder'])->name('dokumens.reorder');
-    Route::get('dokumen-spmi', [DokumenSpmiController::class, 'index'])->name('dokumens.index');
+    Route::post('dokumen/reorder', [DokumenController::class, 'reorder'])->name('dokumen.reorder');
+    Route::get('dokumen-spmi', [DokumenSpmiController::class, 'index'])->name('dokumen.index');
     Route::get('dokumen-spmi/create', [DokumenSpmiController::class, 'create'])->name('dokumen-spmi.create');
     Route::post('dokumen-spmi/store', [DokumenSpmiController::class, 'store'])->name('dokumen-spmi.store');
     Route::get('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'show'])->name('dokumen-spmi.show');
@@ -55,9 +55,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Route::get('dok-subs/{dokumen}/data', [DokSubController::class, 'data'])->name('dok-subs.data');
     // Route::resource('dok-subs', DokSubController::class);
 
-    // Indikators
-    Route::get('api/indikators', [IndikatorController::class, 'data'])->name('indikators.data');
-    Route::resource('indikators', IndikatorController::class);
+    // Indikator
+    Route::get('api/indikator', [IndikatorController::class, 'data'])->name('indikator.data');
+    Route::resource('indikator', IndikatorController::class);
 
     // Indikator Summary (NEW - with separate routes for Standar and Performa)
     Route::get('indikator-summary', [IndikatorSummaryController::class, 'index'])->name('indikator-summary.index');
@@ -83,14 +83,14 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::resource('standar', App\Http\Controllers\Pemutu\StandarController::class);
 
     // Document Approvals
-    Route::get('dokumens/{dokumen}/approve', [DokumenApprovalController::class, 'create'])->name('dokumens.approve.create');
+    Route::get('dokumen/{dokumen}/approve', [DokumenApprovalController::class, 'create'])->name('dokumen.approve.create');
     // ...
-    Route::post('dokumens/{dokumen}/approve', [DokumenApprovalController::class, 'store'])->name('dokumens.approve');
-    Route::delete('dokumens/approval/{approval}', [DokumenApprovalController::class, 'destroy'])->name('dokumens.approval.destroy');
+    Route::post('dokumen/{dokumen}/approve', [DokumenApprovalController::class, 'store'])->name('dokumen.approve');
+    Route::delete('dokumen/approval/{approval}', [DokumenApprovalController::class, 'destroy'])->name('dokumen.approval.destroy');
 
     // Period SPMI (PEPP Cycle)
-    Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'data'])->name('periode-spmis.data');
-    Route::resource('periode-spmis', PeriodeSpmiController::class);
+    Route::get('api/periode-spmi', [PeriodeSpmiController::class, 'data'])->name('periode-spmi.data');
+    Route::resource('periode-spmi', PeriodeSpmiController::class);
 
     // Tim Mutu
     Route::get('tim-mutu', [TimMutuController::class, 'index'])->name('tim-mutu.index');

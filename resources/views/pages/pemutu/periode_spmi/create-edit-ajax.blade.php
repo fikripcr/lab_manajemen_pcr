@@ -2,8 +2,8 @@
     $isEdit = isset($periodeSpmi) && $periodeSpmi->exists;
     $title  = $isEdit ? 'Edit Periode SPMI' : 'Tambah Periode SPMI';
     $route  = $isEdit 
-        ? route('pemutu.periode-spmis.update', $periodeSpmi->encrypted_periodespmi_id) 
-        : route('pemutu.periode-spmis.store');
+        ? route('pemutu.periode-spmi.update', $periodeSpmi->encrypted_periodespmi_id) 
+        : route('pemutu.periode-spmi.store');
     $method = $isEdit ? 'PUT' : 'POST';
 @endphp
 

@@ -1,8 +1,8 @@
 @php
     $item = $periodeKpi ?? new \App\Models\Pemutu\PeriodeKpi();
-    $route = $item->exists 
-        ? route('pemutu.periode-kpis.update', $item->encrypted_periode_kpi_id) 
-        : route('pemutu.periode-kpis.store');
+    $route  = $isEdit 
+        ? route('pemutu.periode-kpi.update', $periodeKpi->encrypted_period_id) 
+        : route('pemutu.periode-kpi.store');
     $method = $item->exists ? 'PUT' : 'POST';
     $title = $item->exists ? 'Edit Periode KPI' : 'Tambah Periode KPI';
 @endphp

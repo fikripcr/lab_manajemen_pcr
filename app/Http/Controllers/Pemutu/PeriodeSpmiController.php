@@ -20,7 +20,7 @@ class PeriodeSpmiController extends Controller
     {
         $pageTitle = 'Periode SPMI';
         $periodes  = $this->periodeSpmiService->getAll();
-        return view('pages.pemutu.periode_spmis.index', compact('pageTitle', 'periodes'));
+        return view('pages.pemutu.periode_spmi.index', compact('pageTitle', 'periodes'));
     }
 
     public function data(Request $request)
@@ -51,8 +51,8 @@ class PeriodeSpmiController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('pemutu.periode-spmis.edit', $row->encrypted_periodespmi_id),
-                    'deleteUrl' => route('pemutu.periode-spmis.destroy', $row->encrypted_periodespmi_id),
+                    'editUrl'   => route('pemutu.periode-spmi.edit', $row->encrypted_periodespmi_id),
+                    'deleteUrl' => route('pemutu.periode-spmi.destroy', $row->encrypted_periodespmi_id),
                 ])->render();
             })
             ->make(true);
@@ -61,29 +61,29 @@ class PeriodeSpmiController extends Controller
     public function create()
     {
         $periodeSpmi = new PeriodeSpmi();
-        return view('pages.pemutu.periode_spmis.create-edit-ajax', compact('periodeSpmi'));
+        return view('pages.pemutu.periode_spmi.create-edit-ajax', compact('periodeSpmi'));
     }
 
     public function store(PeriodeSpmiRequest $request)
     {
         $this->periodeSpmiService->store($request->validated());
-        return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmis.index'));
+        return jsonSuccess('Periode SPMI berhasil ditambahkan', route('pemutu.periode-spmi.index'));
     }
 
     public function edit(PeriodeSpmi $periodeSpmi)
     {
-        return view('pages.pemutu.periode_spmis.create-edit-ajax', compact('periodeSpmi'));
+        return view('pages.pemutu.periode_spmi.create-edit-ajax', compact('periodeSpmi'));
     }
 
     public function update(PeriodeSpmiRequest $request, PeriodeSpmi $periodeSpmi)
     {
         $this->periodeSpmiService->update($periodeSpmi, $request->validated());
-        return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmis.index'));
+        return jsonSuccess('Periode SPMI berhasil diperbarui', route('pemutu.periode-spmi.index'));
     }
 
     public function destroy(PeriodeSpmi $periodeSpmi)
     {
         $this->periodeSpmiService->delete($periodeSpmi);
-        return jsonSuccess('Periode SPMI berhasil dihapus.', route('pemutu.periode-spmis.index'));
+        return jsonSuccess('Periode SPMI berhasil dihapus.', route('pemutu.periode-spmi.index'));
     }
 }

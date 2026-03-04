@@ -104,7 +104,7 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <x-tabler.datatable id="notifications-table" route="{{ route('sys.sys.notifications.data') }}" checkbox="true"
+            <x-tabler.datatable id="notifications-table" route="{{ route('sys.notifications.data') }}" checkbox="true"
             :columns="[
                 [
                     'title' => 'Status',

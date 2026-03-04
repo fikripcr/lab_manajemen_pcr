@@ -55,7 +55,7 @@ class RolePermissionSysSeeder extends Seeder
             ['name' => 'sys.backup.create', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Membuat cadangan data'],
             ['name' => 'sys.backup.delete', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Menghapus file cadangan'],
             ['name' => 'sys.notifications.view', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Melihat daftar notifikasi'],
-            ['name' => 'sys.sys.notifications.data', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Mengambil data notifikasi (DataTables)'],
+            ['name' => 'sys.notifications.data', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Mengambil data notifikasi (DataTables)'],
             ['name' => 'sys.notifications.create', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Mengirim notifikasi'],
             ['name' => 'sys.documentation.view', 'category' => 'System Management', 'sub_category' => 'Utilities', 'description' => 'Melihat panduan penggunaan'],
 

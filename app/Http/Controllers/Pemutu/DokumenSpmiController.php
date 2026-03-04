@@ -42,7 +42,7 @@ class DokumenSpmiController extends Controller
             $dokumentByJenis[$jenis] = $this->dokumenSpmiService->getDokumenByJenis($jenis, $request->periode);
         }
 
-        return view('pages.pemutu.dokumens.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
+        return view('pages.pemutu.dokumen.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
     }
 
     /**
@@ -55,10 +55,10 @@ class DokumenSpmiController extends Controller
             $parentJenis   = strtolower(trim($item->jenis));
             $childLabel    = pemutuChildLabel($parentJenis);
             $isDokSubBased = pemutuIsDokSubBased($parentJenis);
-            return view('pages.pemutu.dokumens._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased'));
+            return view('pages.pemutu.dokumen._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased'));
         } elseif ($type === 'poin') {
             $item = DokSub::with('dokumen')->findOrFail(decryptIdIfEncrypted($id));
-            return view('pages.pemutu.dokumens._workspace', compact('type', 'item'));
+            return view('pages.pemutu.dokumen._workspace', compact('type', 'item'));
         }
 
         return abort(404, 'Invalid type');
@@ -101,14 +101,14 @@ class DokumenSpmiController extends Controller
 
         // Additional variables based on type
         if ($type === 'dokumen') {
-            return view('pages.pemutu.dokumens.create-edit-ajax', compact('type', 'dokumens', 'allowedTypes', 'fixedJenis', 'parent', 'parentDokSub'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumens', 'allowedTypes', 'fixedJenis', 'parent', 'parentDokSub'));
         } elseif ($type === 'poin') {
             if ($request->filled('parent_id')) {
                 $dokumen = Dokumen::find(decryptIdIfEncrypted($request->parent_id));
-                return view('pages.pemutu.dokumens.create-edit-ajax', compact('type', 'dokumen'));
+                return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen'));
             }
         } elseif ($type === 'indikator') {
-            return view('pages.pemutu.dokumens.create-edit-ajax', compact('type', 'parentDokSub', 'parentDok'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'parentDokSub', 'parentDok'));
         }
 
         return abort(404);
@@ -167,13 +167,13 @@ class DokumenSpmiController extends Controller
         if ($type === 'dokumen') {
             $dokumen  = Dokumen::findOrFail($decryptedId);
             $dokumens = $this->dokumenSpmiService->getHierarchicalDokumens()->filter(fn($d) => $d->dok_id != $dokumen->dok_id);
-            return view('pages.pemutu.dokumens.create-edit-ajax', compact('type', 'dokumen', 'dokumens'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokumen', 'dokumens'));
         } elseif ($type === 'poin') {
             $dokSub = DokSub::findOrFail($decryptedId);
-            return view('pages.pemutu.dokumens.create-edit-ajax', compact('type', 'dokSub'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'dokSub'));
         } elseif ($type === 'indikator') {
             $indikator = Indikator::findOrFail($decryptedId);
-            return view('pages.pemutu.dokumens.create-edit-ajax', compact('type', 'indikator'));
+            return view('pages.pemutu.dokumen.create-edit-ajax', compact('type', 'indikator'));
         }
 
         return abort(404);

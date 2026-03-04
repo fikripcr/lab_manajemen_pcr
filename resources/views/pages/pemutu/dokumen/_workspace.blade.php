@@ -41,7 +41,7 @@
                 <div class="btn-group">
                     @if($type === 'dokumen')
                         <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
-                            data-url="{{ route('pemutu.dokumens.approve.create', $item->encrypted_dok_id) }}"
+                            data-url="{{ route('pemutu.dokumen.approve.create', $item->encrypted_dok_id) }}"
                             data-modal-title="Form Approval Dokumen" />
                         <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
                             data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
@@ -60,7 +60,7 @@
                         @if($showIndikatorSection)
                             @if($isRenopPoint)
                                 <x-tabler.button class="btn-success"
-                                    href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
+                                    href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
                                     icon="ti ti-plus" text="Tambah Indikator" />
                             @else
                                 <x-tabler.button class="btn-success ajax-modal-btn"
@@ -141,8 +141,8 @@
                                     <span class="badge bg-muted-lt ms-2">{{ $item->indikators->count() }}</span>
                                 </h2>
                                 @if($isRenopPoint)
-                                    <x-tabler.button class="btn-danger"
-                                        href="{{ route('pemutu.indikators.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
+                                    <x-tabler.button class="btn-success"
+                                        href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
                                         icon="ti ti-plus" text="Tambah Indikator" size="sm" />
                                 @else
                                     <x-tabler.button class="ajax-modal-btn"

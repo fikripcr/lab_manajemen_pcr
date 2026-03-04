@@ -62,7 +62,7 @@ class StandarController extends Controller
             })
             ->addColumn('action', function ($row) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'       => route('pemutu.indikators.edit', $row->encrypted_indikator_id),
+                    'editUrl'       => route('pemutu.indikator.edit', $row->encrypted_indikator_id),
                     'editModal'     => false,
                     'deleteUrl'     => route('pemutu.standar.destroy', $row->encrypted_indikator_id),
                     'customActions' => [

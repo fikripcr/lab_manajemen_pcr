@@ -4,7 +4,7 @@
 @section('header')
 <x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="#" class="ajax-modal-btn btn-primary" data-url="{{ route('pemutu.periode-kpis.create') }}" data-modal-title="Tambah Periode KPI" icon="ti ti-plus" text="Tambah Periode" />
+        <x-tabler.button href="#" class="ajax-modal-btn btn-primary" data-url="{{ route('pemutu.periode-kpi.create') }}" data-modal-title="Tambah Periode KPI" icon="ti ti-plus" text="Tambah Periode" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -33,7 +33,7 @@
                                 <i class="ti ti-dots-vertical"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('pemutu.periode-kpis.edit', $periode->encrypted_periode_kpi_id) }}">
+                                <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('pemutu.periode-kpi.edit', $periode->encrypted_period_id) }}">
                                     <i class="ti ti-pencil me-2"></i> Edit
                                 </a>
                                 @if(!$periode->is_active)

@@ -38,7 +38,7 @@
         @if($hasChildDocs)
             @foreach($dok->children as $child)
                 @if(empty($child->parent_doksub_id))
-                    @include('pages.pemutu.dokumens._tree_item', ['dok' => $child, 'level' => $level + 1, 'collapsed' => true])
+                    @include('pages.pemutu.dokumen._tree_item', ['dok' => $child, 'level' => $level + 1, 'collapsed' => true])
                 @endif
             @endforeach
         @endif

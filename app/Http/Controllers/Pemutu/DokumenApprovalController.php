@@ -13,7 +13,7 @@ class DokumenApprovalController extends Controller
     public function create(Dokumen $dokumen)
     {
         $pegawais = Personil::orderBy('nama')->get();
-        return view('pages.pemutu.dokumens._approval_form', compact('dokumen', 'pegawais'));
+        return view('pages.pemutu.dokumen._approval_form', compact('dokumen', 'pegawais'));
     }
 
     public function store(DokumenApprovalRequest $request, Dokumen $dokumen)

@@ -64,7 +64,7 @@
         
         <x-slot:footer>
             <x-tabler.button type="cancel" data-bs-dismiss="modal" text="Tutup" />
-            <x-tabler.button :href="route('pemutu.indikators.show', $indikator->encrypted_indikator_id)" text="Detail Lengkap" class="ms-auto" />
+            <x-tabler.button :href="route('pemutu.indikator.show', $indikator->encrypted_indikator_id)" text="Detail Lengkap" class="ms-auto" />
         </x-slot:footer>
     </x-tabler.form-modal>
 @else
@@ -75,7 +75,7 @@
     <x-tabler.page-header title="Detail Indikator" pretitle="SPMI">
         <x-slot:actions>
             <x-tabler.button type="back" />
-            <x-tabler.button href="{{ route('pemutu.indikators.edit', $indikator->encrypted_indikator_id) }}" icon="ti ti-pencil" text="Edit Indikator" class="btn-primary" />
+            <x-tabler.button href="{{ route('pemutu.indikator.edit', $indikator->encrypted_indikator_id) }}" icon="ti ti-pencil" text="Edit Indikator" class="btn-primary" />
         </x-slot:actions>
     </x-tabler.page-header>
     @endsection
@@ -138,7 +138,7 @@
                             <label class="form-label text-muted small mb-1">Indikator Induk</label>
                             <div class="fw-medium text-truncate">
                                 @if($indikator->parent)
-                                    <a href="{{ route('pemutu.indikators.show', $indikator->parent->encrypted_indikator_id) }}" title="{{ $indikator->parent->indikator }}">
+                                    <a href="{{ route('pemutu.indikator.show', $indikator->parent->encrypted_indikator_id) }}" title="{{ $indikator->parent->indikator }}">
                                         [{{ $indikator->parent->no_indikator }}] {{ \Str::limit($indikator->parent->indikator, 30) }}
                                     </a>
                                 @else
@@ -288,7 +288,7 @@
                         @php
                             $tabName = pemutuTabByJenis($relSub->dokumen->jenis) ?? 'kebijakan';
                         @endphp
-                        <a href="{{ route('pemutu.dokumens.index', ['tabs' => $tabName]) }}#tree-node-sub-{{ $relSub->encrypted_doksub_id }}" class="list-group-item list-group-item-action d-flex flex-column align-items-start py-3">
+                        <a href="{{ route('pemutu.dokumen.index', ['tabs' => $tabName]) }}#tree-node-sub-{{ $relSub->encrypted_doksub_id }}" class="list-group-item list-group-item-action d-flex flex-column align-items-start py-3">
                             <span class="badge bg-purple-lt mb-2">{{ pemutuJenisLabel($relSub->dokumen->jenis) }}</span>
                             <div class="d-block w-100 text-truncate text-dark fw-medium">
                                 {{ $relSub->dokumen->judul }}

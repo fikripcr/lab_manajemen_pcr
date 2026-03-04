@@ -10,7 +10,7 @@
 <x-tabler.page-header title="Dokumen {{ $pageLabel }}" pretitle="Penetapan">
     <x-slot:actions>
         <div class="d-flex justify-content-between align-items-center gap-2">
-            <x-tabler.form-select name="periode" class="mb-0 filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumens.index', ['tabs' => $activeTab]) }}">
+            <x-tabler.form-select name="periode" class="mb-0 filter-sync-param" data-param="periode" data-base-url="{{ route('pemutu.dokumen.index', ['tabs' => $activeTab]) }}">
                 <option value="">Semua Periode</option>
                 @foreach($periods as $p)
                     <option value="{{ $p }}" {{ request('periode') == $p ? 'selected' : '' }}>{{ $p }}</option>
@@ -66,7 +66,7 @@
                         <div class="tab-pane {{ request('jenis') == $jenis ? 'active show' : '' }}" id="tab-{{ $jenis }}">
                            <ul class="list-unstyled nested-sortable mb-0">
                                @forelse($dokumentByJenis[$jenis] ?? [] as $dok)
-                                   @include('pages.pemutu.dokumens._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
+                                   @include('pages.pemutu.dokumen._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
                                @empty
                                    <li class="text-muted text-center py-3">Tidak ada dokumen {{ strtoupper($jenis) }}.</li>
                                @endforelse
@@ -124,7 +124,7 @@
 <script type="module">
     if (typeof window.initPemutuWorkspace === 'function') {
         window.initPemutuWorkspace({
-            reorderUrl: '{{ route("pemutu.dokumens.reorder") }}'
+            reorderUrl: '{{ route("pemutu.dokumen.reorder") }}'
         });
     }
 </script>

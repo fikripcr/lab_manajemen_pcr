@@ -16,7 +16,7 @@ class PeriodeKpiController extends Controller
     {
         $pageTitle = 'Periode KPI';
         $periodes  = $this->periodeService->getAll();
-        return view('pages.pemutu.periode_kpis.index', compact('pageTitle', 'periodes'));
+        return view('pages.pemutu.periode_kpi.index', compact('pageTitle', 'periodes'));
     }
 
     public function data()
@@ -30,35 +30,35 @@ class PeriodeKpiController extends Controller
     public function create()
     {
         $periodeKpi = new PeriodeKpi();
-        return view('pages.pemutu.periode_kpis.create-edit-ajax', compact('periodeKpi'));
+        return view('pages.pemutu.periode_kpi.create-edit-ajax', compact('periodeKpi'));
     }
 
     public function store(PeriodeKpiRequest $request)
     {
         $this->periodeService->store($request->validated());
-        return jsonSuccess('Periode KPI berhasil disimpan.', route('pemutu.periode-kpis.index'));
+        return jsonSuccess('Periode KPI berhasil disimpan.', route('pemutu.periode-kpi.index'));
     }
 
     public function edit(PeriodeKpi $periodeKpi)
     {
-        return view('pages.pemutu.periode_kpis.create-edit-ajax', compact('periodeKpi'));
+        return view('pages.pemutu.periode_kpi.create-edit-ajax', compact('periodeKpi'));
     }
 
     public function update(PeriodeKpiRequest $request, PeriodeKpi $periodeKpi)
     {
         $this->periodeService->update($periodeKpi, $request->validated());
-        return jsonSuccess('Periode KPI berhasil diupdate.', route('pemutu.periode-kpis.index'));
+        return jsonSuccess('Periode KPI berhasil diupdate.', route('pemutu.periode-kpi.index'));
     }
 
     public function destroy(PeriodeKpi $periodeKpi)
     {
         $this->periodeService->destroy($periodeKpi);
-        return jsonSuccess('Periode KPI berhasil dihapus.', route('pemutu.periode-kpis.index'));
+        return jsonSuccess('Periode KPI berhasil dihapus.', route('pemutu.periode-kpi.index'));
     }
 
     public function activate(PeriodeKpi $periodeKpi)
     {
         $this->periodeService->activate($periodeKpi);
-        return jsonSuccess('Periode KPI berhasil diaktifkan.', route('pemutu.periode-kpis.index'));
+        return jsonSuccess('Periode KPI berhasil diaktifkan.', route('pemutu.periode-kpi.index'));
     }
 }
