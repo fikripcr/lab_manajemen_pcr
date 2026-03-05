@@ -9,47 +9,56 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         border: 1px solid #eef2f6;
         height: 100%;
+        transition: transform 0.2s;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
     }
     .metric-card .card-body {
-        padding: 1rem;
+        padding: 0.85rem;
     }
     .metric-value {
-        font-size: 2rem;
+        font-size: 1.5rem;
         font-weight: 700;
         line-height: 1.2;
         color: #1e293b;
     }
     .metric-title {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         color: #64748b;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .metric-trend {
-        font-size: 0.75rem;
-        margin-top: 0.5rem;
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
     }
     .eisenhower-box {
         color: white;
         text-align: center;
-        padding: 1rem 0.5rem;
+        padding: 1.5rem 0.5rem;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        border-radius: 4px;
     }
     .eisenhower-box .title {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
         opacity: 0.9;
+        font-weight: 600;
     }
     .eisenhower-box .value {
-        font-size: 1.75rem;
+        font-size: 2.25rem;
         font-weight: bold;
         line-height: 1.2;
     }
     .eisenhower-box .subtitle {
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         opacity: 0.8;
     }
     .form-col-filter label {
@@ -61,11 +70,11 @@
     .hbar-row {
         display: flex;
         align-items: center;
-        margin-bottom: 0.25rem;
-        font-size: 0.7rem;
+        margin-bottom: 0.4rem;
+        font-size: 0.75rem;
     }
     .hbar-label {
-        width: 40px;
+        width: 60px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -75,50 +84,48 @@
     .hbar-wrapper {
         flex: 1;
         display: flex;
-        height: 14px;
+        height: 18px;
         background-color: #f1f5f9;
-        border-radius: 2px;
+        border-radius: 3px;
         overflow: hidden;
     }
     .hbar-fill {
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        padding-right: 4px;
+        padding-right: 6px;
         color: white;
-        font-size: 0.65rem;
+        font-size: 0.7rem;
         font-weight: bold;
         line-height: 1;
+    }
+    /* Custom divider */
+    .v-divider {
+        width: 1px;
+        background-color: #eef2f6;
+        margin: 0 0.5rem;
     }
 </style>
 @endpush
 
 @section('header')
-<div class="container-xl mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-0">
-        <h2 class="page-title text-primary fw-bold" style="font-size: 1.5rem; letter-spacing: -0.5px;">
-            <span class="fst-italic me-2" style="color:#0f3f61;">SPMI</span> 
-            <span class="text-secondary fw-normal">| Dashboard - Overview</span>
-        </h2>
-        <div class="btn-list">
-            <button type="button" class="btn btn-primary d-none d-sm-inline-block">Overview</button>
-            <button type="button" class="btn btn-outline-secondary">Penetapan</button>
-            <button type="button" class="btn btn-outline-secondary">Pelaksanaan</button>
-            <button type="button" class="btn btn-outline-secondary">Evaluasi</button>
-            <button type="button" class="btn btn-outline-secondary">Pengendalian</button>
-            <button type="button" class="btn btn-outline-secondary">Peningkatan</button>
-        </div>
-    </div>
-</div>
+<x-tabler.page-header title="Dashboard Pemutu">
+    <x-slot:actions>
+        <button type="button" class="btn btn-primary d-none d-sm-inline-block">Overview</button>
+        <button type="button" class="btn btn-outline-secondary">Penetapan</button>
+        <button type="button" class="btn btn-outline-secondary">Pelaksanaan</button>
+        <button type="button" class="btn btn-outline-secondary">Evaluasi</button>
+        <button type="button" class="btn btn-outline-secondary">Pengendalian</button>
+        <button type="button" class="btn btn-outline-secondary">Peningkatan</button>
+    </x-slot:actions>
+</x-tabler.page-header>
+
 @endsection
 
 @section('content')
-<div class="container-xl">
-    
     {{-- FILTERS ROW --}}
     <div class="card mb-3 metric-card">
         <div class="card-body py-2">
-            <h5 class="card-title mb-2 text-dark fs-5 fw-bold">Filters</h5>
             <form method="GET" action="{{ route('pemutu.dashboard') }}" class="row g-3" id="filter-form">
                 <div class="col-md-3 form-col-filter">
                     <label class="form-label mb-1">Tahun</label>
@@ -154,182 +161,201 @@
         </div>
     </div>
 
-    <div class="row g-3">
-        {{-- LEFT COLUMN: 6 KPI Cards --}}
-        <div class="col-lg-4">
-            <div class="row g-3">
-                @php
-                    $cards = [
-                        ['id' => 'tercapai', 'title' => 'Indikator Tercapai (1 Tahun)'],
-                        ['id' => 'tidak_tercapai', 'title' => 'Indikator Tidak Tercapai (1 Tahun)'],
-                        ['id' => 'tingkatkan', 'title' => 'Status Tingkatkan'],
-                        ['id' => 'penyesuaian', 'title' => 'Status Penyesuaian'],
-                        ['id' => 'tetap', 'title' => 'Status Tetap'],
-                        ['id' => 'nonaktif', 'title' => 'Status Nonaktif'],
-                    ];
-                @endphp
-                @foreach($cards as $c)
-                @php $m = $metrics[$c['id']]; @endphp
-                <div class="col-6">
-                    <div class="card metric-card">
-                        <div class="card-body">
-                            <div class="metric-title">{{ $c['title'] }}</div>
-                            <div class="metric-value">{{ number_format($m['val']) }}</div>
-                            <div class="metric-trend text-{{ $m['color'] }}">
-                                @if($m['trend'] == 'up') <i class="ti ti-arrow-up"></i>
-                                @elseif($m['trend'] == 'down') <i class="ti ti-arrow-down"></i>
-                                @endif
-                                {{ $m['pct'] }}% <span class="text-muted ms-1">From Last Year</span>
-                            </div>
-                        </div>
+    {{-- TOP ROW: 8 KPI CARDS (2 rows of 4) --}}
+    <div class="row g-3 mb-3">
+        {{-- Row 1: Totals & Primary Metrics --}}
+        <div class="col-md-3">
+            <div class="card metric-card">
+                <div class="card-body d-flex flex-column">
+                    <div class="metric-title">Total Indikator</div>
+                    <div class="d-flex align-items-center mb-1">
+                        <div class="metric-value me-3">{{ end($trendData['indikator']) }}</div>
+                    </div>
+                    <div class="mt-auto">
+                        <div id="sparkline-indikator" style="min-height: 35px;"></div>
                     </div>
                 </div>
-                @endforeach
             </div>
         </div>
-
-        {{-- MIDDLE COLUMN: Sparklines & Donut --}}
-        <div class="col-lg-4">
-            <div class="row g-3 mb-3">
-                <div class="col-6">
-                    <div class="card metric-card">
-                        <div class="card-body d-flex flex-column">
-                            <div class="metric-title">Total Indikator</div>
-                            <div class="d-flex align-items-center mb-2">
-                                <div class="metric-value me-3">{{ end($trendData['indikator']) }}</div>
-                            </div>
-                            <div class="mt-auto">
-                                <div id="sparkline-indikator" style="min-height: 40px;"></div>
-                            </div>
-                        </div>
+        <div class="col-md-3">
+            <div class="card metric-card">
+                <div class="card-body d-flex flex-column">
+                    <div class="metric-title">Total Standar SPMI</div>
+                    <div class="d-flex align-items-center mb-1">
+                        <div class="metric-value me-3">{{ end($trendData['standar']) }}</div>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="card metric-card">
-                        <div class="card-body d-flex flex-column">
-                            <div class="metric-title">Total Standar SPMI</div>
-                            <div class="d-flex align-items-center mb-2">
-                                <div class="metric-value me-3">{{ end($trendData['standar']) }}</div>
-                            </div>
-                            <div class="mt-auto">
-                                <div id="sparkline-standar" style="min-height: 40px;"></div>
-                            </div>
-                        </div>
+                    <div class="mt-auto">
+                        <div id="sparkline-standar" style="min-height: 35px;"></div>
                     </div>
                 </div>
             </div>
-            
+        </div>
+        @php
+            $topMetrics = [
+                ['id' => 'tercapai', 'title' => 'Indikator Tercapai (1 Thn)'],
+                ['id' => 'tidak_tercapai', 'title' => 'Indikator Tidak Tercapai (1 Thn)'],
+            ];
+        @endphp
+        @foreach($topMetrics as $c)
+        @php $m = $metrics[$c['id']]; @endphp
+        <div class="col-md-3">
             <div class="card metric-card">
                 <div class="card-body">
-                    <h5 class="fw-bold mb-3">Penetapan Jenis Kriteria</h5>
-                    <div id="chart-kriteria" style="min-height: 250px;"></div>
+                    <div class="metric-title">{{ $c['title'] }}</div>
+                    <div class="metric-value">{{ number_format($m['val']) }}</div>
+                    <div class="metric-trend text-{{ $m['color'] }}">
+                        @if($m['trend'] == 'up') <i class="ti ti-arrow-up"></i>
+                        @elseif($m['trend'] == 'down') <i class="ti ti-arrow-down"></i>
+                        @endif
+                        {{ $m['pct'] }}% <span class="text-muted ms-1">vs Last Year</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
+
+        {{-- Row 2: Status States --}}
+        @php
+            $statusMetrics = [
+                ['id' => 'tingkatkan', 'title' => 'Status Tingkatkan'],
+                ['id' => 'penyesuaian', 'title' => 'Status Penyesuaian'],
+                ['id' => 'tetap', 'title' => 'Status Tetap'],
+                ['id' => 'nonaktif', 'title' => 'Status Nonaktif'],
+            ];
+        @endphp
+        @foreach($statusMetrics as $c)
+        @php $m = $metrics[$c['id']]; @endphp
+        <div class="col-md-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-title">{{ $c['title'] }}</div>
+                    <div class="metric-value">{{ number_format($m['val']) }}</div>
+                    <div class="metric-trend text-{{ $m['color'] }}">
+                        @if($m['trend'] == 'up') <i class="ti ti-arrow-up"></i>
+                        @elseif($m['trend'] == 'down') <i class="ti ti-arrow-down"></i>
+                        @endif
+                        {{ $m['pct'] }}% <span class="text-muted ms-1">vs Last Year</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
+    {{-- MIDDLE ROW: Charts & Rankings --}}
+    <div class="row g-3 mb-3">
+        {{-- Donut Chart Column --}}
+        <div class="col-lg-4">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Penetapan Jenis Kriteria</h6>
+                    <div id="chart-kriteria" style="min-height: 280px;"></div>
                 </div>
             </div>
         </div>
 
-        {{-- RIGHT COLUMN: Top/Bottom Bars & Eisenhower --}}
+        {{-- Unit Rankings Column --}}
         <div class="col-lg-4">
-            <div class="card metric-card mb-3">
-                <div class="card-body p-2">
-                    <div class="row g-2">
-                        {{-- Top/Bottom Units --}}
-                        <div class="col-6">
-                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Unit/Prodi Tertinggi</h6>
-                            @foreach($top3Units as $u)
-                                <div class="hbar-row">
-                                    <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
-                                    <div class="hbar-wrapper">
-                                        <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($u->avg_skala, 1) }}</div>
-                                    </div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Top 3 Unit/Prodi</h6>
+                    <div class="mb-4">
+                        <div class="text-success fw-bold mb-2Small" style="font-size: 0.7rem;">TERTINGGI</div>
+                        @foreach($top3Units as $u)
+                            <div class="hbar-row">
+                                <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
+                                <div class="hbar-wrapper">
+                                    <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($u->avg_skala, 1) }}</div>
                                 </div>
-                            @endforeach
-                        </div>
-                        <div class="col-6">
-                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Unit/Prodi Terendah</h6>
-                            @foreach($bottom3Units as $u)
-                                <div class="hbar-row">
-                                    <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
-                                    <div class="hbar-wrapper">
-                                        <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($u->avg_skala, 1) }}</div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @endforeach
                     </div>
-                    
-                    <hr class="my-2">
-                    
-                    <div class="row g-2">
-                        {{-- Top/Bottom Standar --}}
-                        <div class="col-6">
-                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Standar Tertinggi</h6>
-                            @foreach($top3Standar as $s)
-                                <div class="hbar-row">
-                                    <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 7) }}..</div>
-                                    <div class="hbar-wrapper">
-                                        <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($s->avg_skala, 1) }}</div>
-                                    </div>
+                    <div>
+                        <div class="text-danger fw-bold mb-2" style="font-size: 0.7rem;">TERENDAH</div>
+                        @foreach($bottom3Units as $u)
+                            <div class="hbar-row">
+                                <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
+                                <div class="hbar-wrapper">
+                                    <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($u->avg_skala, 1) }}</div>
                                 </div>
-                            @endforeach
-                        </div>
-                        <div class="col-6">
-                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Standar Terendah</h6>
-                            @foreach($bottom3Standar as $s)
-                                <div class="hbar-row">
-                                    <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 7) }}..</div>
-                                    <div class="hbar-wrapper">
-                                        <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($s->avg_skala, 1) }}</div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
+        </div>
 
-            {{-- Eisenhower Matrix --}}
+        {{-- Standar Rankings Column --}}
+        <div class="col-lg-4">
             <div class="card metric-card">
-                <div class="card-body p-2">
-                    <div class="row g-1 text-center border-bottom pb-1 mb-1" style="font-size: 0.7rem; font-weight: bold;">
-                        <div class="col-3"></div>
-                        <div class="col-4">Important</div>
-                        <div class="col-5">Not Important</div>
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Top 3 Standar</h6>
+                    <div class="mb-4">
+                        <div class="text-success fw-bold mb-2" style="font-size: 0.7rem;">TERTINGGI</div>
+                        @foreach($top3Standar as $s)
+                            <div class="hbar-row">
+                                <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 10) }}..</div>
+                                <div class="hbar-wrapper">
+                                    <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($s->avg_skala, 1) }}</div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="row g-1 text-center" style="font-size: 0.7rem; font-weight: bold;">
-                        <div class="col-3 d-flex flex-column">
-                            <div class="flex-grow-1 border-end border-bottom d-flex align-items-center justify-content-center">Urgent</div>
-                            <div class="flex-grow-1 border-end d-flex align-items-center justify-content-center">Not Urgent</div>
-                        </div>
-                        <div class="col-9">
-                            <div class="row g-1 mb-1">
+                    <div>
+                        <div class="text-danger fw-bold mb-2" style="font-size: 0.7rem;">TERENDAH</div>
+                        @foreach($bottom3Standar as $s)
+                            <div class="hbar-row">
+                                <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 10) }}..</div>
+                                <div class="hbar-wrapper">
+                                    <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($s->avg_skala, 1) }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- BOTTOM ROW: Eisenhower Matrix --}}
+    <div class="row">
+        <div class="col-12">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Prioritas Pengendalian (Eisenhower Matrix)</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="row g-2">
                                 <div class="col-6">
                                     <div class="eisenhower-box" style="background-color: #e63946;">
                                         <div class="title">Important / Urgent</div>
                                         <div class="value">{{ number_format($eisenhowerCount['important_urgent']) }}</div>
-                                        <div class="subtitle">Indikator</div>
+                                        <div class="subtitle">Indikator Terdeteksi</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="eisenhower-box" style="background-color: #457b9d;">
-                                        <div class="title">Important / Not...</div>
+                                        <div class="title">Important / Not Urgent</div>
                                         <div class="value">{{ number_format($eisenhowerCount['important_not_urgent']) }}</div>
-                                        <div class="subtitle">Indikator</div>
+                                        <div class="subtitle">Indikator Terdeteksi</div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row g-1">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row g-2">
                                 <div class="col-6">
                                     <div class="eisenhower-box" style="background-color: #fca311;">
-                                        <div class="title">Not Important /...</div>
+                                        <div class="title">Not Important / Urgent</div>
                                         <div class="value">{{ number_format($eisenhowerCount['not_important_urgent']) }}</div>
-                                        <div class="subtitle">Indikator</div>
+                                        <div class="subtitle">Indikator Terdeteksi</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="eisenhower-box" style="background-color: #a8dadc; color: #1d3557;">
-                                        <div class="title">Not Important /...</div>
+                                        <div class="title">Not Important / Not Urgent</div>
                                         <div class="value">{{ number_format($eisenhowerCount['not_important_not_urgent']) }}</div>
-                                        <div class="subtitle">Indikator</div>
+                                        <div class="subtitle">Indikator Terdeteksi</div>
                                     </div>
                                 </div>
                             </div>
@@ -337,10 +363,9 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-</div>
+
 @endsection
 
 @push('scripts')
