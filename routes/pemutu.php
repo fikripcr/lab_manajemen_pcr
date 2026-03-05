@@ -146,4 +146,14 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('pengendalian/{periode}/rtm', [App\Http\Controllers\Pemutu\PengendalianController::class, 'storeRtm'])->name('pengendalian.rtm.store');
     Route::get('pengendalian/{periode}/rtm/{rapat}/edit', [App\Http\Controllers\Pemutu\PengendalianController::class, 'editRtm'])->name('pengendalian.rtm.edit');
     Route::put('pengendalian/{periode}/rtm/{rapat}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'updateRtm'])->name('pengendalian.rtm.update');
+
+    // Peningkatan
+    Route::get('peningkatan', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'index'])->name('peningkatan.index');
+    Route::get('peningkatan/{periode}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'show'])->name('peningkatan.show');
+
+    // Peningkatan RTM (Rapat Tinjauan Manajemen)
+    Route::get('peningkatan/{periode}/rtm/create', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'createRtm'])->name('peningkatan.rtm.create');
+    Route::post('peningkatan/{periode}/rtm', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'storeRtm'])->name('peningkatan.rtm.store');
+    Route::get('peningkatan/{periode}/rtm/{rapat}/edit', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'editRtm'])->name('peningkatan.rtm.edit');
+    Route::put('peningkatan/{periode}/rtm/{rapat}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'updateRtm'])->name('peningkatan.rtm.update');
 });

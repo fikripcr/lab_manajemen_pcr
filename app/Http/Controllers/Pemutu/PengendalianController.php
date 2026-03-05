@@ -38,7 +38,7 @@ class PengendalianController extends Controller
         $unitId = $request->input('unit_id');
 
         // Load the latest RTM rapat (if exists) with its relations
-        $rapat = $periode->latest_rtm;
+        $rapat = $periode->latest_rtm_pengendalian;
         if ($rapat) {
             $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
         }

@@ -65,12 +65,27 @@ class PeriodeSpmi extends Model
     }
 
     /**
-     * Get the latest (current) RTM rapat for this periode.
+     * Get the latest RTM Pengendalian rapat for this periode.
      */
-    public function getLatestRtmAttribute(): ?Rapat
+    public function getLatestRtmPengendalianAttribute(): ?Rapat
     {
         $entitas = RapatEntitas::where('model', 'PeriodeSpmi')
             ->where('model_id', $this->periodespmi_id)
+            ->where('keterangan', 'like', 'RTM Pengendalian%')
+            ->latest('created_at')
+            ->first();
+
+        return $entitas ? Rapat::find($entitas->rapat_id) : null;
+    }
+
+    /**
+     * Get the latest RTM Peningkatan rapat for this periode.
+     */
+    public function getLatestRtmPeningkatanAttribute(): ?Rapat
+    {
+        $entitas = RapatEntitas::where('model', 'PeriodeSpmi')
+            ->where('model_id', $this->periodespmi_id)
+            ->where('keterangan', 'like', 'RTM Peningkatan%')
             ->latest('created_at')
             ->first();
 

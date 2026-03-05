@@ -214,6 +214,12 @@
                     'icon'          => 'ti ti-settings-check',
                 ],
                 [
+                    'title'         => 'Peningkatan',
+                    'route'         => 'pemutu.peningkatan.index',
+                    'active_routes' => ['pemutu.peningkatan.*'],
+                    'icon'          => 'ti ti-trending-up',
+                ],
+                [
                     'title'         => 'Summary Indikator',
                     'id'            => 'navbar-summary-indikator',
                     'icon'          => 'ti ti-table-share',
