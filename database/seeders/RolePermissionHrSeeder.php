@@ -18,10 +18,10 @@ class RolePermissionHrSeeder extends Seeder
             ['name' => 'hr.dashboard.view', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Dashboard', 'description' => 'Melihat dashboard statistik kepegawaian'],
 
             // ── MASTER DATA ───────────────────────────────────────────────────
-            ['name' => 'hr.master-status-pegawai.view', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Melihat master status pegawai'],
-            ['name' => 'hr.master-status-pegawai.create', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Menambah status pegawai'],
-            ['name' => 'hr.master-status-pegawai.update', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Mengubah status pegawai'],
-            ['name' => 'hr.master-status-pegawai.delete', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Menghapus status pegawai'],
+            ['name' => 'hr.status-pegawai.view', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Melihat master status pegawai'],
+            ['name' => 'hr.status-pegawai.create', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Menambah status pegawai'],
+            ['name' => 'hr.status-pegawai.update', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Mengubah status pegawai'],
+            ['name' => 'hr.status-pegawai.delete', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Menghapus status pegawai'],
             ['name' => 'hr.jabatan-fungsional.view', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Melihat jabatan fungsional'],
             ['name' => 'hr.jabatan-fungsional.create', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Menambah jabatan fungsional'],
             ['name' => 'hr.jabatan-fungsional.update', 'category' => 'HR & Kepegawaian', 'sub_category' => 'Master Data', 'description' => 'Mengubah jabatan fungsional'],

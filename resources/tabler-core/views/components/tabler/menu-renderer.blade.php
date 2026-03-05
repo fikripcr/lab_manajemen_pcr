@@ -388,8 +388,8 @@
             'children'      => [
                 [
                     'title'         => 'Master Data',
-                    'route'         => 'hr.master-status-pegawai.index',
-                    'active_routes' => ['hr.master-status-pegawai.*', 'hr.master-status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
+                    'route'         => 'hr.status-pegawai.index',
+                    'active_routes' => ['hr.status-pegawai.*', 'hr.master-status-aktifitas.*', 'hr.jabatan-fungsional.*', 'hr.jenis-izin.*', 'hr.jenis-indisipliner.*', 'hr.jenis-shift.*'],
                     'icon'          => 'ti ti-database',
                 ],
                 [
