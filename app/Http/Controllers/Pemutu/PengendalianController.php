@@ -1,14 +1,16 @@
 <?php
-
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\PengendalianRequest;
+use App\Http\Requests\Pemutu\RtmRequest;
+use App\Http\Requests\Pemutu\UpdateMatrixRequest;
+use App\Models\Event\Rapat;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
+use App\Models\User;
 use App\Services\Pemutu\PengendalianService;
 use App\Services\Pemutu\PeriodeSpmiService;
-use App\Http\Requests\Pemutu\UpdateMatrixRequest;
 use Illuminate\Http\Request;
 
 class PengendalianController extends Controller
@@ -29,13 +31,21 @@ class PengendalianController extends Controller
     }
 
     /**
-     * Halaman list indikator dalam satu periode untuk Pengendalian.
+     * Halaman RTM + Pengendalian Standar (tabbed view).
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
         $unitId = $request->input('unit_id');
 
-        return view('pages.pemutu.pengendalian.show', compact('periode', 'unitId'));
+        // Load the latest RTM rapat (if exists) with its relations
+        $rapat = $periode->latest_rtm;
+        if ($rapat) {
+            $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
+        }
+
+        $users = User::with('pegawai.latestDataDiri')->get();
+
+        return view('pages.pemutu.pengendalian.show', compact('periode', 'unitId', 'rapat', 'users'));
     }
 
     /**
@@ -51,7 +61,7 @@ class PengendalianController extends Controller
             ->addColumn('indikator_info', function ($row) {
                 $kode   = $row->no_indikator ?? '-';
                 $nama   = $row->indikator ?? '-';
-                $labels = $row->labels->map(fn ($l) => '<span class="badge bg-' . ($l->color ?? 'secondary') . '-lt text-' . ($l->color ?? 'secondary') . '">' . e($l->name) . '</span>')->implode(' ');
+                $labels = $row->labels->map(fn($l) => '<span class="badge bg-' . ($l->color ?? 'secondary') . '-lt text-' . ($l->color ?? 'secondary') . '">' . e($l->name) . '</span>')->implode(' ');
 
                 return '<div>
                     <div class="fw-bold text-primary">' . e($kode) . '</div>
@@ -73,7 +83,7 @@ class PengendalianController extends Controller
                 return '<span class="badge bg-secondary-lt text-secondary">Belum AMI</span>';
             })
             ->addColumn('status_pengend', function ($row) {
-                $pivot = $row->orgUnits->first()?->pivot;
+                $pivot  = $row->orgUnits->first()?->pivot;
                 $status = $pivot?->pengend_status;
 
                 $map = [
@@ -94,12 +104,12 @@ class PengendalianController extends Controller
                 $important = $pivot?->pengend_important_matrix;
                 $urgent    = $pivot?->pengend_urgent_matrix;
 
-                $importantBadge = match($important) {
+                $importantBadge = match ($important) {
                     'important'     => '<span class="badge bg-red-lt text-red">Important</span>',
                     'not_important' => '<span class="badge bg-secondary-lt text-secondary">Not Imp.</span>',
                     default         => '<span class="badge bg-light text-muted">-</span>',
                 };
-                $urgentBadge = match($urgent) {
+                $urgentBadge = match ($urgent) {
                     'urgent'     => '<span class="badge bg-orange-lt text-orange">Urgent</span>',
                     'not_urgent' => '<span class="badge bg-secondary-lt text-secondary">Not Urgent</span>',
                     default      => '<span class="badge bg-light text-muted">-</span>',
@@ -108,13 +118,13 @@ class PengendalianController extends Controller
                 return '<div class="d-flex flex-column gap-1">' . $importantBadge . $urgentBadge . '</div>';
             })
             ->addColumn('analisis', function ($row) {
-                $pivot   = $row->orgUnits->first()?->pivot;
+                $pivot    = $row->orgUnits->first()?->pivot;
                 $analisis = $pivot?->pengend_analisis;
-                if (!$analisis) {
+                if (! $analisis) {
                     return '<span class="text-muted small fst-italic">Belum diisi</span>';
                 }
                 // Strip HTML tags dan truncate
-                $plain = strip_tags($analisis);
+                $plain   = strip_tags($analisis);
                 $preview = mb_strlen($plain) > 80 ? mb_substr($plain, 0, 80) . '…' : $plain;
                 return '<span class="small text-muted" title="' . e($plain) . '">' . e($preview) . '</span>';
             })
@@ -133,7 +143,7 @@ class PengendalianController extends Controller
             ->filterColumn('indikator_info', function ($query, $keyword) {
                 $query->where(function ($q) use ($keyword) {
                     $q->where('indikator', 'like', "%{$keyword}%")
-                      ->orWhere('no_indikator', 'like', "%{$keyword}%");
+                        ->orWhere('no_indikator', 'like', "%{$keyword}%");
                 });
             })
             ->rawColumns(['indikator_info', 'status_ami', 'status_pengend', 'eisenhower_matrix', 'analisis', 'action'])
@@ -169,5 +179,47 @@ class PengendalianController extends Controller
         $this->PengendalianService->updateMatrix($indOrg, $request->only(['pengend_important_matrix', 'pengend_urgent_matrix']));
 
         return jsonSuccess('Matrix berhasil diperbarui.');
+    }
+
+    // ─── RTM Methods ──────────────────────────────────────────────
+
+    /**
+     * Form AJAX modal untuk membuat RTM baru.
+     */
+    public function createRtm(PeriodeSpmi $periode)
+    {
+        $users = User::with('pegawai.latestDataDiri')->get();
+
+        return view('pages.pemutu.pengendalian.rtm-form', compact('periode', 'users'));
+    }
+
+    /**
+     * Store RTM baru (membuat Rapat + link via RapatEntitas + default agendas).
+     */
+    public function storeRtm(RtmRequest $request, PeriodeSpmi $periode)
+    {
+        $this->PengendalianService->createRtm($periode, $request->validated());
+
+        return jsonSuccess('RTM berhasil dibuat dengan agenda default.', route('pemutu.pengendalian.show', $periode->encrypted_periodespmi_id));
+    }
+
+    /**
+     * Form AJAX modal untuk edit data umum RTM.
+     */
+    public function editRtm(PeriodeSpmi $periode, Rapat $rapat)
+    {
+        $users = User::with('pegawai.latestDataDiri')->get();
+
+        return view('pages.pemutu.pengendalian.rtm-form', compact('periode', 'rapat', 'users'));
+    }
+
+    /**
+     * Update data umum RTM.
+     */
+    public function updateRtm(RtmRequest $request, PeriodeSpmi $periode, Rapat $rapat)
+    {
+        $this->PengendalianService->updateRtm($rapat, $request->validated());
+
+        return jsonSuccess('Data RTM berhasil diperbarui.', route('pemutu.pengendalian.show', $periode->encrypted_periodespmi_id));
     }
 }

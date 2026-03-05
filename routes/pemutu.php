@@ -140,4 +140,10 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('pengendalian/modal/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'editModal'])->name('pengendalian.edit-modal');
     Route::post('pengendalian/update/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'update'])->name('pengendalian.update');
     Route::post('pengendalian/matrix/{indOrg}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'updateMatrix'])->name('pengendalian.update-matrix');
+
+    // Pengendalian RTM (Rapat Tinjauan Manajemen)
+    Route::get('pengendalian/{periode}/rtm/create', [App\Http\Controllers\Pemutu\PengendalianController::class, 'createRtm'])->name('pengendalian.rtm.create');
+    Route::post('pengendalian/{periode}/rtm', [App\Http\Controllers\Pemutu\PengendalianController::class, 'storeRtm'])->name('pengendalian.rtm.store');
+    Route::get('pengendalian/{periode}/rtm/{rapat}/edit', [App\Http\Controllers\Pemutu\PengendalianController::class, 'editRtm'])->name('pengendalian.rtm.edit');
+    Route::put('pengendalian/{periode}/rtm/{rapat}', [App\Http\Controllers\Pemutu\PengendalianController::class, 'updateRtm'])->name('pengendalian.rtm.update');
 });

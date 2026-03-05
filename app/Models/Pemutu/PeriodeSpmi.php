@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\Pemutu;
 
+use App\Models\Event\Rapat;
+use App\Models\Event\RapatEntitas;
 use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,4 +54,38 @@ class PeriodeSpmi extends Model
         'peningkatan_awal'   => 'date',
         'peningkatan_akhir'  => 'date',
     ];
+
+    /**
+     * Get all RTM rapats linked to this periode via event_rapat_entitas.
+     */
+    public function rapatEntitas()
+    {
+        return RapatEntitas::where('model', 'PeriodeSpmi')
+            ->where('model_id', $this->periodespmi_id);
+    }
+
+    /**
+     * Get the latest (current) RTM rapat for this periode.
+     */
+    public function getLatestRtmAttribute(): ?Rapat
+    {
+        $entitas = RapatEntitas::where('model', 'PeriodeSpmi')
+            ->where('model_id', $this->periodespmi_id)
+            ->latest('created_at')
+            ->first();
+
+        return $entitas ? Rapat::find($entitas->rapat_id) : null;
+    }
+
+    /**
+     * Get all RTM rapats for this periode.
+     */
+    public function getRtmRapatsAttribute()
+    {
+        $rapatIds = RapatEntitas::where('model', 'PeriodeSpmi')
+            ->where('model_id', $this->periodespmi_id)
+            ->pluck('rapat_id');
+
+        return Rapat::whereIn('rapat_id', $rapatIds)->orderByDesc('tgl_rapat')->get();
+    }
 }
