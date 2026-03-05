@@ -53,7 +53,7 @@
                     @elseif($type === 'poin')
                         @if(!$isRenopPoint)
                             {{-- <x-tabler.button class="btn-primary btn-sm ajax-modal-btn"
-                                data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->dok_id]) }}"
+                                data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
                                 data-modal-title="Tambah Dokumen Turunan" icon="ti ti-plus" text="Tambah Turunan Dokumen" /> --}}
                         @endif
 
@@ -165,7 +165,7 @@
                                 <h2 class="card-title">Poin ini memiliki beberapa Dokumen Turunan:</h2>
                                 <x-tabler.button class="ajax-modal-btn"
                                     text="Tambah Dokumen Turunan" icon="ti ti-plus"
-                                    data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->dok_id]) }}"
+                                    data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
                                     data-modal-title="Tambah Dokumen Turunan" size="sm" />
                             </div>
                             <x-tabler.datatable

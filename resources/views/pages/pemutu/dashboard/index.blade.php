@@ -141,7 +141,7 @@
                     <x-tabler.form-select name="unit_id" class="form-select-sm" onchange="document.getElementById('filter-form').submit()">
                         <option value="">All</option>
                         @foreach($units as $u)
-                            <option value="{{ $u->orgunit_id }}" {{ $currentUnit == $u->orgunit_id ? 'selected' : '' }}>{{ $u->name }}</option>
+                            <option value="{{ $u->encrypted_org_unit_id }}" {{ $currentUnit == $u->encrypted_org_unit_id ? 'selected' : '' }}>{{ $u->name }}</option>
                         @endforeach
                     </x-tabler.form-select>
                 </div>

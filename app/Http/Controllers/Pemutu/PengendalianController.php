@@ -35,7 +35,7 @@ class PengendalianController extends Controller
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
-        $unitId = $request->input('unit_id');
+        $unitId = decryptIdIfEncrypted($request->input('unit_id'));
 
         // Load the latest RTM rapat (if exists) with its relations
         $rapat = $periode->latest_rtm_pengendalian;
@@ -53,7 +53,7 @@ class PengendalianController extends Controller
      */
     public function data(PeriodeSpmi $periode, Request $request)
     {
-        $unitId = $request->input('unit_id') ? (int) $request->input('unit_id') : null;
+        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
         $query  = $this->PengendalianService->getIndikatorQuery($periode, $unitId);
 
         return datatables()->of($query)

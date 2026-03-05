@@ -29,7 +29,7 @@ class DashboardController extends Controller
         }
         $lastYear = (int) $currentYear - 1;
 
-        $currentUnit     = $request->get('unit_id');
+        $currentUnit     = decryptIdIfEncrypted($request->get('unit_id'));
         $currentKriteria = $request->get('kriteria');
 
         // Base Query Builder for Current Year

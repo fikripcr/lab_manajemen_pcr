@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
@@ -32,7 +31,7 @@ class AmiController extends Controller
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
-        $unitId = $request->input('unit_id');
+        $unitId = decryptIdIfEncrypted($request->input('unit_id'));
 
         return view('pages.pemutu.ami.show', compact('periode', 'unitId'));
     }
@@ -43,7 +42,7 @@ class AmiController extends Controller
      */
     public function data(PeriodeSpmi $periode, Request $request)
     {
-        $unitId = $request->input('unit_id') ? (int) $request->input('unit_id') : null;
+        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
         $query  = $this->AmiService->getIndikatorQuery($periode, $unitId);
 
         return datatables()->of($query)
@@ -51,7 +50,7 @@ class AmiController extends Controller
             ->addColumn('indikator_info', function ($row) {
                 $kode   = $row->no_indikator ?? '-';
                 $nama   = $row->indikator ?? '-';
-                $labels = $row->labels->map(fn ($l) => '<span class="badge bg-' . ($l->color ?? 'secondary') . '-lt text-' . ($l->color ?? 'secondary') . '">' . e($l->name) . '</span>')->implode(' ');
+                $labels = $row->labels->map(fn($l) => '<span class="badge bg-' . ($l->color ?? 'secondary') . '-lt text-' . ($l->color ?? 'secondary') . '">' . e($l->name) . '</span>')->implode(' ');
 
                 return '<div>
                     <div class="fw-bold text-primary">' . e($kode) . '</div>
@@ -95,7 +94,7 @@ class AmiController extends Controller
             ->filterColumn('indikator_info', function ($query, $keyword) {
                 $query->where(function ($q) use ($keyword) {
                     $q->where('indikator', 'like', "%{$keyword}%")
-                      ->orWhere('no_indikator', 'like', "%{$keyword}%");
+                        ->orWhere('no_indikator', 'like', "%{$keyword}%");
                 });
             })
             ->rawColumns(['indikator_info', 'status_ed', 'status_ami', 'action'])

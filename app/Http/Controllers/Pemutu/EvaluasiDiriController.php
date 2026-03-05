@@ -47,7 +47,7 @@ class EvaluasiDiriController extends Controller
             ->pluck('orgUnit')
             ->filter();
 
-        $selectedUnitId = request('unit_id');
+        $selectedUnitId = decryptIdIfEncrypted(request('unit_id'));
         // Supaya tampilan table render (tidak masuk ke block empty state)
         $unit = true;
 
@@ -56,7 +56,7 @@ class EvaluasiDiriController extends Controller
 
     public function data(Request $request, PeriodeSpmi $periode)
     {
-        $unitId = $request->input('unit_id') ? (int) $request->input('unit_id') : null;
+        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
 
         // Tampilkan semua indikator sesuai unit dan periode yang dipilih
         $filters = [
@@ -146,7 +146,7 @@ class EvaluasiDiriController extends Controller
         $user = auth()->user();
 
         if ($request->filled('unit_id')) {
-            $targetUnitId = $request->input('unit_id');
+            $targetUnitId = decryptIdIfEncrypted($request->input('unit_id'));
         } else {
             $userUnitIds = [];
             if ($user->pegawai) {
@@ -214,7 +214,7 @@ class EvaluasiDiriController extends Controller
         $validated = $request->validated();
 
         if ($request->filled('target_unit_id')) {
-            $targetUnitId = $request->target_unit_id;
+            $targetUnitId = decryptIdIfEncrypted($request->target_unit_id);
         } else {
             $user = auth()->user();
             if ($user->pegawai && $timMutu = TimMutu::where('pegawai_id', $user->pegawai->pegawai_id)->first()) {

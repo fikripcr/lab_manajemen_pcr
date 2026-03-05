@@ -23,7 +23,7 @@
             <div>
                 <x-tabler.datatable-filter :dataTableId="'table-ed'">
                     <div>
-                        <x-tabler.form-select name="unit_id" id="unit-filter" placeholder="Filter Area / Unit" :options="$userUnits->pluck('name', 'orgunit_id')" :selected="$selectedUnitId" type="select2" />
+                        <x-tabler.form-select name="unit_id" id="unit-filter" placeholder="Filter Area / Unit" :options="$userUnits->pluck('name', 'encrypted_org_unit_id')" :selected="$selectedUnitId" type="select2" />
                     </div>
                 </x-tabler.datatable-filter>
             </div>

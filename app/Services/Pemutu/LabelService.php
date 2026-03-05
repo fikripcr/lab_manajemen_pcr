@@ -15,7 +15,7 @@ class LabelService
         $query = Label::with('type')->select('*');
 
         if (! empty($filters['type_id'])) {
-            $typeId = decryptId($filters['type_id']);
+            $typeId = decryptIdIfEncrypted($filters['type_id']);
             $query->where('type_id', $typeId);
         }
 
