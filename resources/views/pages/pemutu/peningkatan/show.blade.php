@@ -376,7 +376,7 @@
                                         <h4 class="card-title mb-0"><i class="ti ti-history me-2"></i>STANDAR SEBELUMNYA</h4>
                                         <div class="ms-auto d-flex gap-2">
                                             <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Aksi Ceklis</button>
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Aksi</button>
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     <a href="javascript:void(0)" class="dropdown-item" id="btn-check-all-lama"><i class="ti ti-check me-2"></i>Pilih Semua</a>
                                                     <a href="javascript:void(0)" class="dropdown-item" id="btn-uncheck-all-lama"><i class="ti ti-square me-2"></i>Bersihkan Pilihan</a>
@@ -408,7 +408,7 @@
                                         <span class="badge bg-green ms-2" id="badge-new-periode">{{ $periode->periode + 1 }}</span>
                                         <div class="ms-auto d-flex gap-2">
                                             <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">Aksi Ceklis</button>
+                                                <button class="btn btn-sm btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">Aksi</button>
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     <a href="javascript:void(0)" class="dropdown-item" id="btn-check-all-baru"><i class="ti ti-check me-2"></i>Pilih Semua</a>
                                                     <a href="javascript:void(0)" class="dropdown-item" id="btn-uncheck-all-baru"><i class="ti ti-square me-2"></i>Bersihkan Pilihan</a>

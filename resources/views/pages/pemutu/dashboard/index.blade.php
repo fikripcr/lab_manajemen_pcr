@@ -1,448 +1,404 @@
 @extends('layouts.tabler.app')
 @section('title', $pageTitle)
 
+@push('styles')
+<style>
+    /* PowerBI Inspired Custom Utilities */
+    .metric-card {
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border: 1px solid #eef2f6;
+        height: 100%;
+    }
+    .metric-card .card-body {
+        padding: 1rem;
+    }
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1e293b;
+    }
+    .metric-title {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    .metric-trend {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    .eisenhower-box {
+        color: white;
+        text-align: center;
+        padding: 1rem 0.5rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .eisenhower-box .title {
+        font-size: 0.75rem;
+        opacity: 0.9;
+    }
+    .eisenhower-box .value {
+        font-size: 1.75rem;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+    .eisenhower-box .subtitle {
+        font-size: 0.65rem;
+        opacity: 0.8;
+    }
+    .form-col-filter label {
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: #1e293b;
+    }
+    /* Horizontal Bar Row */
+    .hbar-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.25rem;
+        font-size: 0.7rem;
+    }
+    .hbar-label {
+        width: 40px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 0.5rem;
+        font-weight: 500;
+    }
+    .hbar-wrapper {
+        flex: 1;
+        display: flex;
+        height: 14px;
+        background-color: #f1f5f9;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .hbar-fill {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 4px;
+        color: white;
+        font-size: 0.65rem;
+        font-weight: bold;
+        line-height: 1;
+    }
+</style>
+@endpush
+
 @section('header')
-<x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu"/>
+<div class="container-xl mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-0">
+        <h2 class="page-title text-primary fw-bold" style="font-size: 1.5rem; letter-spacing: -0.5px;">
+            <span class="fst-italic me-2" style="color:#0f3f61;">SPMI</span> 
+            <span class="text-secondary fw-normal">| Dashboard - Overview</span>
+        </h2>
+        <div class="btn-list">
+            <button type="button" class="btn btn-primary d-none d-sm-inline-block">Overview</button>
+            <button type="button" class="btn btn-outline-secondary">Penetapan</button>
+            <button type="button" class="btn btn-outline-secondary">Pelaksanaan</button>
+            <button type="button" class="btn btn-outline-secondary">Evaluasi</button>
+            <button type="button" class="btn btn-outline-secondary">Pengendalian</button>
+            <button type="button" class="btn btn-outline-secondary">Peningkatan</button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('content')
-{{-- Metrics Row --}}
-<div class="row row-cards bg-white">
-    <div class="col-sm-6 col-lg-3">
-        <div class="card card-sm border-0 shadow-sm bg-primary-lt">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-primary">Total Dokumen</div>
-                </div>
-                <div class="h1 mb-0 fw-bold text-primary">{{ $totalDokumen }}</div>
-                <div class="text-primary opacity-50 small mt-2">Arsip Penjaminan Mutu</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="card card-sm border-0 shadow-sm bg-success-lt">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-success">Total Indikator</div>
-                </div>
-                <div class="h1 mb-0 fw-bold text-success">{{ $totalIndikator }}</div>
-                <div class="text-success opacity-50 small mt-2">Standar Mutu Internal</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="card card-sm border-0 shadow-sm bg-warning-lt">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-warning">Total KPI</div>
-                </div>
-                <div class="h1 mb-0 fw-bold text-warning">{{ $totalKpi }}</div>
-                <div class="text-warning fw-bold small mt-2">{{ $kpiAchievementRate }}% Submitted</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="card card-sm border-0 shadow-sm bg-purple-lt">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="subheader text-purple">Total Pegawai</div>
-                </div>
-                <div class="h1 mb-0 fw-bold text-purple">{{ $totalPegawai }}</div>
-                <div class="text-purple opacity-50 small mt-2">Tim Penjaminan Mutu</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Dashboard Charts (Phase 7) --}}
-<div class="row row-cards mt-3">
-    {{-- ED per Unit --}}
-    <div class="col-lg-6">
-        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-            <div class="card-header bg-transparent border-0 py-3">
-                <h3 class="card-title fw-bold"><i class="ti ti-chart-bar me-2 text-primary"></i> Rata-rata ED per Prodi</h3>
-            </div>
-            <div class="card-body">
-                <div id="chart-ed-unit" style="min-height: 300px;"></div>
-            </div>
-        </div>
-    </div>
+<div class="container-xl">
     
-    {{-- AMI per Unit --}}
-    <div class="col-lg-6">
-        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-            <div class="card-header bg-transparent border-0 py-3">
-                <h3 class="card-title fw-bold"><i class="ti ti-chart-pie-2 me-2 text-warning"></i> Hasil AMI per Prodi</h3>
-            </div>
-            <div class="card-body">
-                <div id="chart-ami-unit" style="min-height: 300px;"></div>
-            </div>
+    {{-- FILTERS ROW --}}
+    <div class="card mb-3 metric-card">
+        <div class="card-body py-2">
+            <h5 class="card-title mb-2 text-dark fs-5 fw-bold">Filters</h5>
+            <form method="GET" action="{{ route('pemutu.dashboard') }}" class="row g-3" id="filter-form">
+                <div class="col-md-3 form-col-filter">
+                    <label class="form-label mb-1">Tahun</label>
+                    <x-tabler.form-select name="year" class="form-select-sm" onchange="document.getElementById('filter-form').submit()">
+                        <option value="">Semua Tahun</option>
+                        @foreach($years as $yr)
+                            <option value="{{ $yr }}" {{ $currentYear == $yr ? 'selected' : '' }}>{{ $yr }}</option>
+                        @endforeach
+                    </x-tabler.form-select>
+                </div>
+                <div class="col-md-3 form-col-filter">
+                    <label class="form-label mb-1">Bidang, Unit/Prodi</label>
+                    <x-tabler.form-select name="unit_id" class="form-select-sm" onchange="document.getElementById('filter-form').submit()">
+                        <option value="">All</option>
+                        @foreach($units as $u)
+                            <option value="{{ $u->orgunit_id }}" {{ $currentUnit == $u->orgunit_id ? 'selected' : '' }}>{{ $u->name }}</option>
+                        @endforeach
+                    </x-tabler.form-select>
+                </div>
+                <div class="col-md-3 form-col-filter">
+                    <label class="form-label mb-1">Kriteria Standar</label>
+                    <x-tabler.form-select name="kriteria" class="form-select-sm" onchange="document.getElementById('filter-form').submit()">
+                        <option value="">All</option>
+                        @foreach($kriterias as $k)
+                            <option value="{{ $k }}" {{ $currentKriteria == $k ? 'selected' : '' }}>{{ $k }}</option>
+                        @endforeach
+                    </x-tabler.form-select>
+                </div>
+                <div class="col-md-3 form-col-filter d-flex align-items-end">
+                    <a href="{{ route('pemutu.dashboard') }}" class="btn btn-sm btn-light w-100">Reset Filters</a>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
-<div class="row row-cards mt-3">
-    {{-- Eisenhower Matrix --}}
-    <div class="col-lg-6">
-        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-            <div class="card-header bg-transparent border-0 py-3">
-                <h3 class="card-title fw-bold"><i class="ti ti-chart-scatter me-2 text-danger"></i> Matriks Pengendalian (Eisenhower)</h3>
-            </div>
-            <div class="card-body">
-                <div id="chart-eisenhower" style="min-height: 300px;"></div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Status Pengendalian --}}
-    <div class="col-lg-6">
-        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-            <div class="card-header bg-transparent border-0 py-3">
-                <h3 class="card-title fw-bold"><i class="ti ti-chart-donut me-2 text-success"></i> Sebaran Status Pengendalian</h3>
-            </div>
-            <div class="card-body">
-                <div id="chart-pengendalian" style="min-height: 300px;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Timeline & Detailed Metrics --}}
-<div class="row row-cards mt-3">
-    <div class="col-lg-6">
-        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-            <div class="card-header bg-transparent border-0 py-3">
-                <h3 class="card-title fw-bold"><i class="ti ti-history me-2 text-primary"></i> Timeline Periode SPMI</h3>
-            </div>
-            <div class="card-body">
-                @if($activePeriodeSpmi)
-                    <div class="mb-4 text-center p-3 bg-light rounded-3">
-                        <div class="fw-bold fs-2 text-primary">{{ $activePeriodeSpmi->nama }}</div>
-                        <div class="text-muted small">Periode: {{ $activePeriodeSpmi->periode }}</div>
+    <div class="row g-3">
+        {{-- LEFT COLUMN: 6 KPI Cards --}}
+        <div class="col-lg-4">
+            <div class="row g-3">
+                @php
+                    $cards = [
+                        ['id' => 'tercapai', 'title' => 'Indikator Tercapai (1 Tahun)'],
+                        ['id' => 'tidak_tercapai', 'title' => 'Indikator Tidak Tercapai (1 Tahun)'],
+                        ['id' => 'tingkatkan', 'title' => 'Status Tingkatkan'],
+                        ['id' => 'penyesuaian', 'title' => 'Status Penyesuaian'],
+                        ['id' => 'tetap', 'title' => 'Status Tetap'],
+                        ['id' => 'nonaktif', 'title' => 'Status Nonaktif'],
+                    ];
+                @endphp
+                @foreach($cards as $c)
+                @php $m = $metrics[$c['id']]; @endphp
+                <div class="col-6">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <div class="metric-title">{{ $c['title'] }}</div>
+                            <div class="metric-value">{{ number_format($m['val']) }}</div>
+                            <div class="metric-trend text-{{ $m['color'] }}">
+                                @if($m['trend'] == 'up') <i class="ti ti-arrow-up"></i>
+                                @elseif($m['trend'] == 'down') <i class="ti ti-arrow-down"></i>
+                                @endif
+                                {{ $m['pct'] }}% <span class="text-muted ms-1">From Last Year</span>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <ul class="timeline">
-                        @php
-                            $phases = [
-                                ['label' => 'Penetapan', 'date' => $activePeriodeSpmi->penetapan_awal, 'end' => $activePeriodeSpmi->penetapan_akhir, 'icon' => 'ti ti-gavel', 'color' => 'primary'],
-                                ['label' => 'Pelaksanaan', 'date' => $activePeriodeSpmi->penetapan_akhir, 'end' => $activePeriodeSpmi->ami_awal, 'icon' => 'ti ti-player-play', 'color' => 'secondary'],
-                                ['label' => 'Evaluasi (AMI)', 'date' => $activePeriodeSpmi->ami_awal, 'end' => $activePeriodeSpmi->ami_akhir, 'icon' => 'ti ti-clipboard-check', 'color' => 'warning'],
-                                ['label' => 'Pengendalian', 'date' => $activePeriodeSpmi->pengendalian_awal, 'end' => $activePeriodeSpmi->pengendalian_akhir, 'icon' => 'ti ti-settings-exclamation', 'color' => 'danger'],
-                                ['label' => 'Peningkatan', 'date' => $activePeriodeSpmi->peningkatan_awal, 'end' => $activePeriodeSpmi->peningkatan_akhir, 'icon' => 'ti ti-trending-up', 'color' => 'success'],
-                            ];
-                            $now = now();
-                        @endphp
-                        
-                        @foreach($phases as $phase)
-                            @php
-                                $start = \Carbon\Carbon::parse($phase['date']);
-                                $end = $phase['end'] ? \Carbon\Carbon::parse($phase['end']) : null;
-                                $isActive = $now->between($start, $end ?? $start->copy()->addDay());
-                                $isPast = $now->gt($end ?? $start);
-                            @endphp
-                            <li class="timeline-event">
-                                <div class="timeline-event-icon bg-{{ $phase['color'] }}">
-                                    <i class="{{ $phase['icon'] }}"></i>
-                                </div>
-                                <div class="card timeline-event-card {{ $isActive ? 'border-primary shadow-sm' : 'border-0 shadow-none' }}">
-                                    <div class="card-body p-2">
-                                        <div class="fw-bold {{ $isActive ? 'text-primary' : '' }}">{{ $phase['label'] }}</div>
-                                        <div class="text-secondary small">
-                                            {{ $start->translatedFormat('d M Y') }} 
-                                            @if($end) - {{ $end->translatedFormat('d M Y') }} @endif
-                                        </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- MIDDLE COLUMN: Sparklines & Donut --}}
+        <div class="col-lg-4">
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <div class="card metric-card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="metric-title">Total Indikator</div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="metric-value me-3">{{ end($trendData['indikator']) }}</div>
+                            </div>
+                            <div class="mt-auto">
+                                <div id="sparkline-indikator" style="min-height: 40px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card metric-card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="metric-title">Total Standar SPMI</div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="metric-value me-3">{{ end($trendData['standar']) }}</div>
+                            </div>
+                            <div class="mt-auto">
+                                <div id="sparkline-standar" style="min-height: 40px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card metric-card">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Penetapan Jenis Kriteria</h5>
+                    <div id="chart-kriteria" style="min-height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+
+        {{-- RIGHT COLUMN: Top/Bottom Bars & Eisenhower --}}
+        <div class="col-lg-4">
+            <div class="card metric-card mb-3">
+                <div class="card-body p-2">
+                    <div class="row g-2">
+                        {{-- Top/Bottom Units --}}
+                        <div class="col-6">
+                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Unit/Prodi Tertinggi</h6>
+                            @foreach($top3Units as $u)
+                                <div class="hbar-row">
+                                    <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
+                                    <div class="hbar-wrapper">
+                                        <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($u->avg_skala, 1) }}</div>
                                     </div>
                                 </div>
-                            </li>
-                        @endforeach
-                    </ul>
-                @else
-                    <div class="text-muted text-center py-5">
-                        <i class="ti ti-calendar-off fs-1 opacity-25 d-block mb-3"></i>
-                        Tidak ada periode SPMI yang aktif saat ini.
+                            @endforeach
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Unit/Prodi Terendah</h6>
+                            @foreach($bottom3Units as $u)
+                                <div class="hbar-row">
+                                    <div class="hbar-label" title="{{ $u->unit_name }}">{{ $u->unit_name }}</div>
+                                    <div class="hbar-wrapper">
+                                        <div class="hbar-fill" style="width: {{ ($u->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($u->avg_skala, 1) }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-6">
-        <div class="card shadow-sm border-0" style="border-radius: 12px;">
-            <div class="card-header bg-transparent border-0 py-3">
-                <h3 class="card-title fw-bold"><i class="ti ti-file-description me-2 text-primary"></i> Rincian Dokumen & Indikator</h3>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-sm table-vcenter table-nowrap card-table">
-                        <thead>
-                            <tr>
-                                <th>Kategori</th>
-                                <th>Jenis</th>
-                                <th class="text-end">Jumlah</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{-- Kebijakan --}}
-                            <tr>
-                                <td rowspan="5" class="bg-light fw-bold text-dark">Kebijakan</td>
-                                <td>{{ pemutuJenisLabel('visi') }}</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['visi'] }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>{{ pemutuJenisLabel('misi') }}</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['misi'] }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>{{ pemutuJenisLabel('rjp') }}</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['rjp'] }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>{{ pemutuJenisLabel('renstra') }}</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['renstra'] }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>{{ pemutuJenisLabel('renop') }}</td>
-                                <td class="text-end"><span class="badge bg-secondary-lt fw-bold">{{ $dokumenKebijakan['renop'] }}</span></td>
-                            </tr>
-
-                            {{-- Standar --}}
-                            <tr>
-                                <td rowspan="3" class="bg-blue-lt fw-bold text-primary">Standar</td>
-                                <td>Standar SPMI</td>
-                                <td class="text-end"><span class="badge bg-primary-lt fw-bold">{{ $dokumenStandar['standar'] }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>Manual Prosedur</td>
-                                <td class="text-end"><span class="badge bg-primary-lt fw-bold">{{ $dokumenStandar['manual_prosedur'] }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>Formulir</td>
-                                <td class="text-end"><span class="badge bg-primary-lt fw-bold">{{ $dokumenStandar['formulir'] }}</span></td>
-                            </tr>
-
-                            {{-- Indikator --}}
-                            <tr>
-                                <td rowspan="3" class="bg-green-lt fw-bold text-success">Indikator</td>
-                                <td>Indikator Standar</td>
-                                <td class="text-end"><span class="badge bg-success-lt fw-bold">{{ $standarCount }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>Indikator Renop</td>
-                                <td class="text-end"><span class="badge bg-success-lt fw-bold">{{ $renopCount }}</span></td>
-                            </tr>
-                            <tr>
-                                <td>Indikator Performa</td>
-                                <td class="text-end"><span class="badge bg-success-lt fw-bold">{{ $performaCount }}</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    
+                    <hr class="my-2">
+                    
+                    <div class="row g-2">
+                        {{-- Top/Bottom Standar --}}
+                        <div class="col-6">
+                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Standar Tertinggi</h6>
+                            @foreach($top3Standar as $s)
+                                <div class="hbar-row">
+                                    <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 7) }}..</div>
+                                    <div class="hbar-wrapper">
+                                        <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #0ca678;">{{ round($s->avg_skala, 1) }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-center fw-bold mb-2 pb-1 border-bottom" style="font-size:0.75rem;">Top 3 Standar Terendah</h6>
+                            @foreach($bottom3Standar as $s)
+                                <div class="hbar-row">
+                                    <div class="hbar-label" title="{{ $s->dokumen_name }}">{{ substr($s->dokumen_name, 0, 7) }}..</div>
+                                    <div class="hbar-wrapper">
+                                        <div class="hbar-fill" style="width: {{ ($s->avg_skala / 5) * 100 }}%; background-color: #d63939;">{{ round($s->avg_skala, 1) }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-{{-- Recent KPI Submissions --}}
-@if($recentKpi->count() > 0)
-<div class="row row-cards mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Pengajuan KPI Terbaru</h3>
+            {{-- Eisenhower Matrix --}}
+            <div class="card metric-card">
+                <div class="card-body p-2">
+                    <div class="row g-1 text-center border-bottom pb-1 mb-1" style="font-size: 0.7rem; font-weight: bold;">
+                        <div class="col-3"></div>
+                        <div class="col-4">Important</div>
+                        <div class="col-5">Not Important</div>
+                    </div>
+                    <div class="row g-1 text-center" style="font-size: 0.7rem; font-weight: bold;">
+                        <div class="col-3 d-flex flex-column">
+                            <div class="flex-grow-1 border-end border-bottom d-flex align-items-center justify-content-center">Urgent</div>
+                            <div class="flex-grow-1 border-end d-flex align-items-center justify-content-center">Not Urgent</div>
+                        </div>
+                        <div class="col-9">
+                            <div class="row g-1 mb-1">
+                                <div class="col-6">
+                                    <div class="eisenhower-box" style="background-color: #e63946;">
+                                        <div class="title">Important / Urgent</div>
+                                        <div class="value">{{ number_format($eisenhowerCount['important_urgent']) }}</div>
+                                        <div class="subtitle">Indikator</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="eisenhower-box" style="background-color: #457b9d;">
+                                        <div class="title">Important / Not...</div>
+                                        <div class="value">{{ number_format($eisenhowerCount['important_not_urgent']) }}</div>
+                                        <div class="subtitle">Indikator</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-1">
+                                <div class="col-6">
+                                    <div class="eisenhower-box" style="background-color: #fca311;">
+                                        <div class="title">Not Important /...</div>
+                                        <div class="value">{{ number_format($eisenhowerCount['not_important_urgent']) }}</div>
+                                        <div class="subtitle">Indikator</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="eisenhower-box" style="background-color: #a8dadc; color: #1d3557;">
+                                        <div class="title">Not Important /...</div>
+                                        <div class="value">{{ number_format($eisenhowerCount['not_important_not_urgent']) }}</div>
+                                        <div class="subtitle">Indikator</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <x-tabler.datatable-client
-                id="table-recent-kpi"
-                :columns="[
-                    ['name' => 'Pegawai'],
-                    ['name' => 'Indikator'],
-                    ['name' => 'Periode'],
-                    ['name' => 'Status']
-                ]"
-            >
-                @foreach($recentKpi as $kpi)
-                <tr>
-                    <td>{{ $kpi->pegawai->nama ?? '-' }}</td>
-                    <td class="text-truncate" style="max-width: 300px;">{{ $kpi->indikator->indikator ?? '-' }}</td>
-                    <td>{{ $kpi->semester }} {{ $kpi->year }}</td>
-                    <td>
-                        <span class="badge bg-{{ $kpi->status === 'approved' ? 'success' : 'info' }}-lt">
-                            {{ ucfirst($kpi->status) }}
-                        </span>
-                    </td>
-                </tr>
-                @endforeach
-            </x-tabler.datatable-client>
+
         </div>
     </div>
 </div>
-@endif
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. ED per Unit Chart
-    var edPerUnitData = @json($edPerUnit);
-    var optionsEd = {
-        chart: { type: 'bar', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
-        series: [{ name: 'Rata-rata Skala ED', data: edPerUnitData.data }],
-        xaxis: { categories: edPerUnitData.categories, tooltip: { enabled: false } },
-        colors: ['#206bc4'],
-        plotOptions: { bar: { borderRadius: 4, dataLabels: { position: 'top' } } },
-        dataLabels: { enabled: true, formatter: function (val) { return val; }, offsetY: -20, style: { fontSize: '12px', colors: ["#304758"] } }
-    };
-    if (edPerUnitData.data.length > 0) {
-        new ApexCharts(document.getElementById('chart-ed-unit'), optionsEd).render();
-    } else {
-        document.getElementById('chart-ed-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data skoring ED</div>';
+    // Sparkline Indikator
+    var trendData = @json($trendData);
+    if(trendData.years.length > 0) {
+        new ApexCharts(document.getElementById('sparkline-indikator'), {
+            chart: { type: 'area', height: 80, sparkline: { enabled: true } },
+            stroke: { curve: 'smooth', width: 2 },
+            fill: { opacity: 0.3 },
+            series: [{ name: 'Total Indikator', data: trendData.indikator }],
+            labels: trendData.years,
+            colors: ['#a55eea']
+        }).render();
+
+        new ApexCharts(document.getElementById('sparkline-standar'), {
+            chart: { type: 'area', height: 80, sparkline: { enabled: true } },
+            stroke: { curve: 'step', width: 2 },
+            fill: { opacity: 0.3 },
+            series: [{ name: 'Total Standar SPMI', data: trendData.standar }],
+            labels: trendData.years,
+            colors: ['#457b9d']
+        }).render();
     }
 
-    // 2. AMI per Unit Chart
-    var amiPerUnitData = @json($amiPerUnit);
-    var optionsAmi = {
-        chart: { type: 'bar', height: 300, stacked: true, fontFamily: 'inherit', toolbar: { show: false } },
-        series: amiPerUnitData.series,
-        xaxis: { categories: amiPerUnitData.categories },
-        colors: ['#d63939', '#2fb344', '#17a2b8'], // KTS, Terpenuhi, Terlampaui
-        plotOptions: { bar: { horizontal: false, borderRadius: 2 } },
-        legend: { position: 'top', horizontalAlign: 'right' },
-        fill: { opacity: 1 }
-    };
-    if (amiPerUnitData.categories.length > 0) {
-        new ApexCharts(document.getElementById('chart-ami-unit'), optionsAmi).render();
+    // Donut Chart Penetapan Jenis Kriteria
+    var kriteriaRaw = @json($jenisKriteriaRaw);
+    if(kriteriaRaw.length > 0) {
+        var labels = kriteriaRaw.map(v => v.label);
+        var series = kriteriaRaw.map(v => parseInt(v.total));
+        new ApexCharts(document.getElementById('chart-kriteria'), {
+            chart: { type: 'donut', height: 260 },
+            series: series,
+            labels: labels,
+            plotOptions: {
+                pie: {
+                    donut: { size: '55%' }
+                }
+            },
+            dataLabels: { 
+                enabled: true,
+                formatter: function (val) {
+                    return val.toFixed(2) + "%"
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center',
+                show: true,
+                fontSize: '11px',
+                markers: { width: 8, height: 8 }
+            }
+        }).render();
     } else {
-        document.getElementById('chart-ami-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data AMI terisi</div>';
-    }
-
-    // 3. Eisenhower Chart
-    var eisenhowerSeries = @json($eisenhowerSeries);
-    var optionsEisenhower = {
-        chart: { type: 'bubble', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
-        series: [{ name: 'Frekuensi Indikator', data: eisenhowerSeries }],
-        xaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
-        yaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
-        fill: { opacity: 0.8 },
-        colors: ['#f59f00'],
-        dataLabels: { enabled: false },
-        tooltip: { z: { title: 'Jumlah Indikator: ' } },
-        annotations: {
-            xaxis: [
-                { x: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Urgensi →', style: { color: '#666' } } }
-            ],
-            yaxis: [
-                { y: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Kepentingan →', style: { color: '#666' } } }
-            ]
-        }
-    };
-    if (eisenhowerSeries.length > 0) {
-        new ApexCharts(document.getElementById('chart-eisenhower'), optionsEisenhower).render();
-    } else {
-        document.getElementById('chart-eisenhower').innerHTML = '<div class="text-center text-muted py-5">Belum ada skor prioritas pengendalian</div>';
-    }
-
-    // 4. Pengendalian Status Chart
-    var pengendStatus = @json($pengendStatus);
-    var optionsPengend = {
-        chart: { type: 'donut', height: 300, fontFamily: 'inherit' },
-        series: pengendStatus.series,
-        labels: pengendStatus.labels,
-        colors: ['#206bc4', '#f59f00', '#2fb344', '#d63939', '#6c757d'],
-        legend: { position: 'bottom' },
-        dataLabels: { enabled: true, formatter: function (val, opts) {
-            return opts.w.config.series[opts.seriesIndex]
-        }}
-    };
-    
-    if(pengendStatus.series.length > 0) {
-        new ApexCharts(document.getElementById('chart-pengendalian'), optionsPengend).render();
-    } else {
-        document.getElementById('chart-pengendalian').innerHTML = '<div class="text-center text-muted py-5">Belum ada tindak lanjut pengendalian</div>';
-    }
-});
-</script>
-@endpush
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // 1. ED per Unit Chart
-    var edPerUnitData = @json($edPerUnit);
-    var optionsEd = {
-        chart: { type: 'bar', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
-        series: [{ name: 'Rata-rata Skala ED', data: edPerUnitData.data }],
-        xaxis: { categories: edPerUnitData.categories, tooltip: { enabled: false } },
-        colors: ['#206bc4'],
-        plotOptions: { bar: { borderRadius: 4, dataLabels: { position: 'top' } } },
-        dataLabels: { enabled: true, formatter: function (val) { return val; }, offsetY: -20, style: { fontSize: '12px', colors: ["#304758"] } }
-    };
-    if (edPerUnitData.data.length > 0) {
-        new ApexCharts(document.getElementById('chart-ed-unit'), optionsEd).render();
-    } else {
-        document.getElementById('chart-ed-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data skoring ED</div>';
-    }
-
-    // 2. AMI per Unit Chart
-    var amiPerUnitData = @json($amiPerUnit);
-    var optionsAmi = {
-        chart: { type: 'bar', height: 300, stacked: true, fontFamily: 'inherit', toolbar: { show: false } },
-        series: amiPerUnitData.series,
-        xaxis: { categories: amiPerUnitData.categories },
-        colors: ['#d63939', '#2fb344', '#17a2b8'], // KTS, Terpenuhi, Terlampaui
-        plotOptions: { bar: { horizontal: false, borderRadius: 2 } },
-        legend: { position: 'top', horizontalAlign: 'right' },
-        fill: { opacity: 1 }
-    };
-    if (amiPerUnitData.categories.length > 0) {
-        new ApexCharts(document.getElementById('chart-ami-unit'), optionsAmi).render();
-    } else {
-        document.getElementById('chart-ami-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data AMI terisi</div>';
-    }
-
-    // 3. Eisenhower Chart
-    var eisenhowerSeries = @json($eisenhowerSeries);
-    var optionsEisenhower = {
-        chart: { type: 'bubble', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
-        series: [{ name: 'Frekuensi Indikator', data: eisenhowerSeries }],
-        xaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
-        yaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
-        fill: { opacity: 0.8 },
-        colors: ['#f59f00'],
-        dataLabels: { enabled: false },
-        tooltip: { z: { title: 'Jumlah Indikator: ' } },
-        annotations: {
-            xaxis: [
-                { x: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Urgensi →', style: { color: '#666' } } }
-            ],
-            yaxis: [
-                { y: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Kepentingan →', style: { color: '#666' } } }
-            ]
-        }
-    };
-    if (eisenhowerSeries.length > 0) {
-        new ApexCharts(document.getElementById('chart-eisenhower'), optionsEisenhower).render();
-    } else {
-        document.getElementById('chart-eisenhower').innerHTML = '<div class="text-center text-muted py-5">Belum ada skor prioritas pengendalian</div>';
-    }
-
-    // 4. Pengendalian Status Chart
-    var pengendStatus = @json($pengendStatus);
-    var optionsPengend = {
-        chart: { type: 'donut', height: 300, fontFamily: 'inherit' },
-        series: pengendStatus.series,
-        labels: pengendStatus.labels,
-        colors: ['#206bc4', '#f59f00', '#2fb344', '#d63939', '#6c757d'],
-        legend: { position: 'bottom' },
-        dataLabels: { enabled: true, formatter: function (val, opts) {
-            return opts.w.config.series[opts.seriesIndex]
-        }}
-    };
-    
-    if(pengendStatus.series.length > 0) {
-        new ApexCharts(document.getElementById('chart-pengendalian'), optionsPengend).render();
-    } else {
-        document.getElementById('chart-pengendalian').innerHTML = '<div class="text-center text-muted py-5">Belum ada tindak lanjut pengendalian</div>';
+        document.getElementById('chart-kriteria').innerHTML = '<div class="text-center text-muted py-5">Belum ada data kriteria</div>';
     }
 });
 </script>
