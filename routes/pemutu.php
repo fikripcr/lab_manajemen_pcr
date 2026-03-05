@@ -156,4 +156,11 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('peningkatan/{periode}/rtm', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'storeRtm'])->name('peningkatan.rtm.store');
     Route::get('peningkatan/{periode}/rtm/{rapat}/edit', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'editRtm'])->name('peningkatan.rtm.edit');
     Route::put('peningkatan/{periode}/rtm/{rapat}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'updateRtm'])->name('peningkatan.rtm.update');
+
+    // Peningkatan Duplikasi & Review
+    Route::get('peningkatan/{periode}/standar-list', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'standarList'])->name('peningkatan.standar-list');
+    Route::post('peningkatan/{periode}/duplikasi', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'duplicateStandar'])->name('peningkatan.duplikasi');
+    Route::delete('peningkatan/{periode}/standar/{dok_id}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'deleteStandarTarget'])->name('peningkatan.delete-standar');
+    Route::delete('peningkatan/{periode}/standar-bulk', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'deleteStandarTargetBulk'])->name('peningkatan.delete-standar-bulk');
+    Route::get('peningkatan/{periode}/review-data', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'reviewData'])->name('peningkatan.review-data');
 });

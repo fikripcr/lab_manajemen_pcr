@@ -53,6 +53,30 @@
             </div>
         </div>
 
+        {{-- Penyesuaian Fields (muncul jika status = penyesuaian) --}}
+        <div id="penyesuaian-fields" class="{{ old('pengend_status', $indOrg->pengend_status) === 'penyesuaian' ? '' : 'd-none' }}">
+            <div class="alert alert-warning p-2 mb-3">
+                <i class="ti ti-edit me-1"></i> Sesuaikan target atau berikan keterangan perubahan untuk indikator ini.
+            </div>
+            <div class="mb-3">
+                <x-tabler.form-input
+                    name="pengend_target"
+                    label="Target Penyesuaian"
+                    placeholder="Contoh: 85% atau deskripsi target baru"
+                    :value="$indOrg->pengend_target ?? ''"
+                />
+            </div>
+            <div class="mb-3">
+                <x-tabler.form-textarea
+                    name="pengend_penyesuaian"
+                    label="Keterangan Penyesuaian"
+                    rows="3"
+                    placeholder="Jelaskan alasan dan detail penyesuaian..."
+                    :value="$indOrg->pengend_penyesuaian ?? ''"
+                />
+            </div>
+        </div>
+
         {{-- Eisenhower Matrix --}}
         <div class="mb-3">
             <label class="form-label fw-semibold">Eisenhower Matrix</label>
@@ -109,3 +133,21 @@
             />
         </div>
 </x-tabler.form-modal>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle penyesuaian fields based on status radio
+    const statusRadios = document.querySelectorAll('input[name="pengend_status"]');
+    const penyesuaianFields = document.getElementById('penyesuaian-fields');
+
+    if (statusRadios.length && penyesuaianFields) {
+        statusRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                penyesuaianFields.classList.toggle('d-none', this.value !== 'penyesuaian');
+            });
+        });
+    }
+});
+</script>
+@endpush

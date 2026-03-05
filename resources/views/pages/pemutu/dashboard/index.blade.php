@@ -54,6 +54,59 @@
     </div>
 </div>
 
+{{-- Dashboard Charts (Phase 7) --}}
+<div class="row row-cards mt-3">
+    {{-- ED per Unit --}}
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h3 class="card-title fw-bold"><i class="ti ti-chart-bar me-2 text-primary"></i> Rata-rata ED per Prodi</h3>
+            </div>
+            <div class="card-body">
+                <div id="chart-ed-unit" style="min-height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    {{-- AMI per Unit --}}
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h3 class="card-title fw-bold"><i class="ti ti-chart-pie-2 me-2 text-warning"></i> Hasil AMI per Prodi</h3>
+            </div>
+            <div class="card-body">
+                <div id="chart-ami-unit" style="min-height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cards mt-3">
+    {{-- Eisenhower Matrix --}}
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h3 class="card-title fw-bold"><i class="ti ti-chart-scatter me-2 text-danger"></i> Matriks Pengendalian (Eisenhower)</h3>
+            </div>
+            <div class="card-body">
+                <div id="chart-eisenhower" style="min-height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Status Pengendalian --}}
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h3 class="card-title fw-bold"><i class="ti ti-chart-donut me-2 text-success"></i> Sebaran Status Pengendalian</h3>
+            </div>
+            <div class="card-body">
+                <div id="chart-pengendalian" style="min-height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- Timeline & Detailed Metrics --}}
 <div class="row row-cards mt-3">
     <div class="col-lg-6">
@@ -224,3 +277,173 @@
 </div>
 @endif
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. ED per Unit Chart
+    var edPerUnitData = @json($edPerUnit);
+    var optionsEd = {
+        chart: { type: 'bar', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
+        series: [{ name: 'Rata-rata Skala ED', data: edPerUnitData.data }],
+        xaxis: { categories: edPerUnitData.categories, tooltip: { enabled: false } },
+        colors: ['#206bc4'],
+        plotOptions: { bar: { borderRadius: 4, dataLabels: { position: 'top' } } },
+        dataLabels: { enabled: true, formatter: function (val) { return val; }, offsetY: -20, style: { fontSize: '12px', colors: ["#304758"] } }
+    };
+    if (edPerUnitData.data.length > 0) {
+        new ApexCharts(document.getElementById('chart-ed-unit'), optionsEd).render();
+    } else {
+        document.getElementById('chart-ed-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data skoring ED</div>';
+    }
+
+    // 2. AMI per Unit Chart
+    var amiPerUnitData = @json($amiPerUnit);
+    var optionsAmi = {
+        chart: { type: 'bar', height: 300, stacked: true, fontFamily: 'inherit', toolbar: { show: false } },
+        series: amiPerUnitData.series,
+        xaxis: { categories: amiPerUnitData.categories },
+        colors: ['#d63939', '#2fb344', '#17a2b8'], // KTS, Terpenuhi, Terlampaui
+        plotOptions: { bar: { horizontal: false, borderRadius: 2 } },
+        legend: { position: 'top', horizontalAlign: 'right' },
+        fill: { opacity: 1 }
+    };
+    if (amiPerUnitData.categories.length > 0) {
+        new ApexCharts(document.getElementById('chart-ami-unit'), optionsAmi).render();
+    } else {
+        document.getElementById('chart-ami-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data AMI terisi</div>';
+    }
+
+    // 3. Eisenhower Chart
+    var eisenhowerSeries = @json($eisenhowerSeries);
+    var optionsEisenhower = {
+        chart: { type: 'bubble', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
+        series: [{ name: 'Frekuensi Indikator', data: eisenhowerSeries }],
+        xaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
+        yaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
+        fill: { opacity: 0.8 },
+        colors: ['#f59f00'],
+        dataLabels: { enabled: false },
+        tooltip: { z: { title: 'Jumlah Indikator: ' } },
+        annotations: {
+            xaxis: [
+                { x: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Urgensi →', style: { color: '#666' } } }
+            ],
+            yaxis: [
+                { y: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Kepentingan →', style: { color: '#666' } } }
+            ]
+        }
+    };
+    if (eisenhowerSeries.length > 0) {
+        new ApexCharts(document.getElementById('chart-eisenhower'), optionsEisenhower).render();
+    } else {
+        document.getElementById('chart-eisenhower').innerHTML = '<div class="text-center text-muted py-5">Belum ada skor prioritas pengendalian</div>';
+    }
+
+    // 4. Pengendalian Status Chart
+    var pengendStatus = @json($pengendStatus);
+    var optionsPengend = {
+        chart: { type: 'donut', height: 300, fontFamily: 'inherit' },
+        series: pengendStatus.series,
+        labels: pengendStatus.labels,
+        colors: ['#206bc4', '#f59f00', '#2fb344', '#d63939', '#6c757d'],
+        legend: { position: 'bottom' },
+        dataLabels: { enabled: true, formatter: function (val, opts) {
+            return opts.w.config.series[opts.seriesIndex]
+        }}
+    };
+    
+    if(pengendStatus.series.length > 0) {
+        new ApexCharts(document.getElementById('chart-pengendalian'), optionsPengend).render();
+    } else {
+        document.getElementById('chart-pengendalian').innerHTML = '<div class="text-center text-muted py-5">Belum ada tindak lanjut pengendalian</div>';
+    }
+});
+</script>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. ED per Unit Chart
+    var edPerUnitData = @json($edPerUnit);
+    var optionsEd = {
+        chart: { type: 'bar', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
+        series: [{ name: 'Rata-rata Skala ED', data: edPerUnitData.data }],
+        xaxis: { categories: edPerUnitData.categories, tooltip: { enabled: false } },
+        colors: ['#206bc4'],
+        plotOptions: { bar: { borderRadius: 4, dataLabels: { position: 'top' } } },
+        dataLabels: { enabled: true, formatter: function (val) { return val; }, offsetY: -20, style: { fontSize: '12px', colors: ["#304758"] } }
+    };
+    if (edPerUnitData.data.length > 0) {
+        new ApexCharts(document.getElementById('chart-ed-unit'), optionsEd).render();
+    } else {
+        document.getElementById('chart-ed-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data skoring ED</div>';
+    }
+
+    // 2. AMI per Unit Chart
+    var amiPerUnitData = @json($amiPerUnit);
+    var optionsAmi = {
+        chart: { type: 'bar', height: 300, stacked: true, fontFamily: 'inherit', toolbar: { show: false } },
+        series: amiPerUnitData.series,
+        xaxis: { categories: amiPerUnitData.categories },
+        colors: ['#d63939', '#2fb344', '#17a2b8'], // KTS, Terpenuhi, Terlampaui
+        plotOptions: { bar: { horizontal: false, borderRadius: 2 } },
+        legend: { position: 'top', horizontalAlign: 'right' },
+        fill: { opacity: 1 }
+    };
+    if (amiPerUnitData.categories.length > 0) {
+        new ApexCharts(document.getElementById('chart-ami-unit'), optionsAmi).render();
+    } else {
+        document.getElementById('chart-ami-unit').innerHTML = '<div class="text-center text-muted py-5">Belum ada data AMI terisi</div>';
+    }
+
+    // 3. Eisenhower Chart
+    var eisenhowerSeries = @json($eisenhowerSeries);
+    var optionsEisenhower = {
+        chart: { type: 'bubble', height: 300, fontFamily: 'inherit', toolbar: { show: false } },
+        series: [{ name: 'Frekuensi Indikator', data: eisenhowerSeries }],
+        xaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
+        yaxis: { title: { text: '' }, min: 0, max: 10, tickAmount: 10, labels: { formatter: (val) => val.toFixed(0) } },
+        fill: { opacity: 0.8 },
+        colors: ['#f59f00'],
+        dataLabels: { enabled: false },
+        tooltip: { z: { title: 'Jumlah Indikator: ' } },
+        annotations: {
+            xaxis: [
+                { x: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Urgensi →', style: { color: '#666' } } }
+            ],
+            yaxis: [
+                { y: 5, strokeDashArray: 0, borderColor: '#ccc', label: { text: 'Kepentingan →', style: { color: '#666' } } }
+            ]
+        }
+    };
+    if (eisenhowerSeries.length > 0) {
+        new ApexCharts(document.getElementById('chart-eisenhower'), optionsEisenhower).render();
+    } else {
+        document.getElementById('chart-eisenhower').innerHTML = '<div class="text-center text-muted py-5">Belum ada skor prioritas pengendalian</div>';
+    }
+
+    // 4. Pengendalian Status Chart
+    var pengendStatus = @json($pengendStatus);
+    var optionsPengend = {
+        chart: { type: 'donut', height: 300, fontFamily: 'inherit' },
+        series: pengendStatus.series,
+        labels: pengendStatus.labels,
+        colors: ['#206bc4', '#f59f00', '#2fb344', '#d63939', '#6c757d'],
+        legend: { position: 'bottom' },
+        dataLabels: { enabled: true, formatter: function (val, opts) {
+            return opts.w.config.series[opts.seriesIndex]
+        }}
+    };
+    
+    if(pengendStatus.series.length > 0) {
+        new ApexCharts(document.getElementById('chart-pengendalian'), optionsPengend).render();
+    } else {
+        document.getElementById('chart-pengendalian').innerHTML = '<div class="text-center text-muted py-5">Belum ada tindak lanjut pengendalian</div>';
+    }
+});
+</script>
+@endpush

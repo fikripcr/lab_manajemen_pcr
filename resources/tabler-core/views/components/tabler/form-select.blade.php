@@ -22,7 +22,7 @@
 <div {{ $attributes->only('class') }} {{ $class }}>
     @if($label)
         <label for="{{ $id }}" class="form-label">
-            {{ $label }} @if($required)<span class="text-danger">*</span>@endif
+            {!! $label !!} @if($required)<span class="text-danger">*</span>@endif
         </label>
     @endif
     

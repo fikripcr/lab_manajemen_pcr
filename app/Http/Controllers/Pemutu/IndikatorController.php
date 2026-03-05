@@ -25,7 +25,15 @@ class IndikatorController extends Controller
         $labelTypes = LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
         $types      = ['standar' => 'Standar', 'renop' => 'Renop', 'performa' => 'Performa'];
 
-        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelTypes', 'types'));
+        // Year filter from Dokumen.periode
+        $periodes = Dokumen::select('periode')
+            ->distinct()
+            ->whereNotNull('periode')
+            ->orderBy('periode', 'desc')
+            ->pluck('periode', 'periode')
+            ->toArray();
+
+        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelTypes', 'types', 'periodes'));
     }
 
     public function data(Request $request)

@@ -25,6 +25,13 @@ class IndikatorService
             $query->where('parent_id', $filters['parent_id']);
         }
 
+        // Filter by year (Dokumen.periode)
+        if (! empty($filters['periode'])) {
+            $query->whereHas('dokSubs.dokumen', function ($q) use ($filters) {
+                $q->where('periode', $filters['periode']);
+            });
+        }
+
         return $query->orderBy('no_indikator', 'asc');
     }
 
@@ -48,25 +55,25 @@ class IndikatorService
                 $q->where('pemutu_indikator_orgunit.org_unit_id', $unitId);
             }
             $q->withPivot([
-                  'indikorgunit_id',
-                  'target',
-                  'ed_capaian',
-                  'ed_analisis',
-                  'ed_attachment',
-                  'ed_links',
-                  'ed_skala',
-                  'ami_hasil_akhir',
-                  'ami_hasil_temuan',
-                  'ami_hasil_temuan_sebab',
-                  'ami_hasil_temuan_akibat',
-                  'ami_hasil_temuan_rekom',
-                  'pengend_status',
-                  'pengend_target',
-                  'pengend_analisis',
-                  'pengend_penyesuaian',
-                  'pengend_important_matrix',
-                  'pengend_urgent_matrix',
-              ]);
+                'indikorgunit_id',
+                'target',
+                'ed_capaian',
+                'ed_analisis',
+                'ed_attachment',
+                'ed_links',
+                'ed_skala',
+                'ami_hasil_akhir',
+                'ami_hasil_temuan',
+                'ami_hasil_temuan_sebab',
+                'ami_hasil_temuan_akibat',
+                'ami_hasil_temuan_rekom',
+                'pengend_status',
+                'pengend_target',
+                'pengend_analisis',
+                'pengend_penyesuaian',
+                'pengend_important_matrix',
+                'pengend_urgent_matrix',
+            ]);
         }, 'labels', 'parent']);
 
         $query->whereHas('orgUnits', function ($q) use ($unitId) {
@@ -76,11 +83,11 @@ class IndikatorService
         });
 
         // Terapkan filter tambahan jika ada
-        if (!empty($filters['kelompok_indikator'])) {
+        if (! empty($filters['kelompok_indikator'])) {
             $query->where('kelompok_indikator', $filters['kelompok_indikator']);
         }
-        
-        if (!empty($filters['tahun_dokumen'])) {
+
+        if (! empty($filters['tahun_dokumen'])) {
             $query->whereHas('dokSubs.dokumen', function ($q) use ($filters) {
                 $q->where('periode', $filters['tahun_dokumen']);
             });
@@ -93,9 +100,9 @@ class IndikatorService
     {
         return DB::transaction(function () use ($data) {
             // Handle skala: filter null, encode ke JSON
-            if (!empty($data['skala'])) {
-                $filteredSkala = array_filter($data['skala'], fn($v) => !is_null($v) && $v !== '');
-                $data['skala'] = !empty($filteredSkala) ? $filteredSkala : null;
+            if (! empty($data['skala'])) {
+                $filteredSkala = array_filter($data['skala'], fn($v) => ! is_null($v) && $v !== '');
+                $data['skala'] = ! empty($filteredSkala) ? $filteredSkala : null;
             }
 
             $indikator = Indikator::create($data);
@@ -140,8 +147,8 @@ class IndikatorService
 
             // Handle skala: filter null, encode ke JSON
             if (isset($data['skala'])) {
-                $filteredSkala = array_filter($data['skala'], fn($v) => !is_null($v) && $v !== '');
-                $data['skala'] = !empty($filteredSkala) ? $filteredSkala : null;
+                $filteredSkala = array_filter($data['skala'], fn($v) => ! is_null($v) && $v !== '');
+                $data['skala'] = ! empty($filteredSkala) ? $filteredSkala : null;
             }
 
             $indikator->update($data);

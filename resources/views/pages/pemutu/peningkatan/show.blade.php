@@ -22,25 +22,32 @@
     <div class="col-12 mb-3">
         <div class="card">
             <div class="card-body p-2">
-                <div class="nav nav-pills">
-                    <a href="#section-rtm" class="nav-link active" data-section="rtm">
-                        <i class="ti ti-calendar-event me-2"></i> Data Umum & Agenda
-                    </a>
-                    <a href="#section-duplikasi" class="nav-link" data-section="duplikasi">
-                        <i class="ti ti-copy me-2"></i> Tahap 1-Duplikasi Standar
-                    </a>
-                    <a href="#section-manage" class="nav-link" data-section="manage">
-                        <i class="ti ti-settings-2 me-2"></i> Tahap 2-Manage Indikator
-                    </a>
-                </div>
+                <ul class="nav nav-pills" id="peningkatan-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="#section-rtm" class="nav-link active" data-bs-toggle="tab" role="tab">
+                            <i class="ti ti-calendar-event me-2"></i> Data Umum & Agenda
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#section-duplikasi" class="nav-link" data-bs-toggle="tab" role="tab">
+                            <i class="ti ti-copy me-2"></i> Tahap 1-Duplikasi Standar
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#section-manage" class="nav-link" data-bs-toggle="tab" role="tab">
+                            <i class="ti ti-settings-2 me-2"></i> Tahap 2-Manage Indikator
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 
     <div class="col-12">
+        <div class="tab-content" id="peningkatan-tab-content">
 
         {{-- ===== SECTION: RTM (Data Umum & Agenda) ===== --}}
-        <div id="section-rtm" class="content-section">
+        <div id="section-rtm" class="tab-pane fade show active" role="tabpanel">
 
             @if(!$rapat)
                 {{-- RTM Belum Ada --}}
@@ -325,35 +332,153 @@
         </div>{{-- /#section-rtm --}}
 
         {{-- ===== SECTION: TAHAP 1 — DUPLIKASI STANDAR ===== --}}
-        <div id="section-duplikasi" class="content-section">
+        <div id="section-duplikasi" class="tab-pane fade" role="tabpanel">
             <div class="card">
-                <div class="card-body text-center py-5">
-                    <div class="mb-3">
-                        <span class="avatar avatar-xl rounded bg-cyan-lt">
-                            <i class="ti ti-copy fs-1"></i>
-                        </span>
+                <div class="card-header">
+                    <h3 class="card-title"><i class="ti ti-copy me-2"></i>Tahap 1 — Duplikasi Standar</h3>
+                </div>
+                <div class="card-body">
+                    {{-- Info Banner --}}
+                    <div class="alert alert-info mb-3">
+                        <ul class="mb-0">
+                            <li>Standar yang muncul sesuai dengan kelompok periode ini: <strong>{{ $periode->jenis_periode }}</strong></li>
+                            <li>Silahkan checklist standar pada bagian <strong>"STANDAR SEBELUMNYA"</strong> lalu klik <strong>"DUPLIKASI STANDAR"</strong> untuk duplikasi ke periode selanjutnya</li>
+                            <li>Klik pada judul standar untuk menampilkan isi standar</li>
+                        </ul>
                     </div>
-                    <h3>Tahap 1 — Duplikasi Standar</h3>
-                    <p class="text-muted">Fitur duplikasi standar akan tersedia di sini. <br>Saat ini sedang dalam pengembangan.</p>
+
+                    {{-- Kontrol: Target Periode --}}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="ti ti-calendar"></i></span>
+                                <input type="number" id="input-target-periode" class="form-control"
+                                       value="{{ $periode->periode + 1 }}" placeholder="Tahun tujuan"
+                                       min="2020" max="2099">
+                                <x-tabler.button type="button" class="btn-outline-primary" id="btn-load-standar"
+                                    icon="ti ti-refresh" text="Muat Standar" />
+                            </div>
+                        </div>
+                        <div class="col-md-8 text-end d-flex align-items-center justify-content-end gap-2">
+                            <span id="duplikasi-status" class="text-muted small"></span>
+                            <x-tabler.button type="button" class="btn-primary" id="btn-duplikasi"
+                                icon="ti ti-copy" text="Duplikasi Terpilih" disabled="true" />
+                        </div>
+                    </div>
+
+                    {{-- Dua Panel: Standar Sebelumnya (kiri) + Standar Baru (kanan) --}}
+                    <div class="row" id="panel-standar">
+                        {{-- Panel Kiri: STANDAR SEBELUMNYA --}}
+                        <div class="col-md-6">
+                            <div class="card border-2 border-secondary">
+                                <div class="card-header bg-secondary-lt">
+                                    <div class="d-flex w-100 align-items-center">
+                                        <h4 class="card-title mb-0"><i class="ti ti-history me-2"></i>STANDAR SEBELUMNYA</h4>
+                                        <div class="ms-auto d-flex gap-2">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Aksi Ceklis</button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a href="javascript:void(0)" class="dropdown-item" id="btn-check-all-lama"><i class="ti ti-check me-2"></i>Pilih Semua</a>
+                                                    <a href="javascript:void(0)" class="dropdown-item" id="btn-uncheck-all-lama"><i class="ti ti-square me-2"></i>Bersihkan Pilihan</a>
+                                                </div>
+                                            </div>
+                                            <input type="text" id="search-standar-lama" class="form-control form-control-sm"
+                                                   placeholder="Search..." style="width: 150px">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0" id="list-standar-lama">
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="ti ti-loader ti-spin fs-2 d-block mb-2"></i>
+                                        Memuat data standar...
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-light" id="footer-standar-lama">
+                                    <small class="text-muted">Standar ke <span id="count-lama-from">0</span> hingga <span id="count-lama-to">0</span> dari <span id="count-lama-total">0</span> Standar</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Panel Kanan: STANDAR BARU --}}
+                        <div class="col-md-6">
+                            <div class="card border-2 border-success">
+                                <div class="card-header bg-green-lt">
+                                    <div class="d-flex w-100 align-items-center">
+                                        <h4 class="card-title mb-0"><i class="ti ti-sparkles me-2"></i>STANDAR BARU</h4>
+                                        <span class="badge bg-green ms-2" id="badge-new-periode">{{ $periode->periode + 1 }}</span>
+                                        <div class="ms-auto d-flex gap-2">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">Aksi Ceklis</button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a href="javascript:void(0)" class="dropdown-item" id="btn-check-all-baru"><i class="ti ti-check me-2"></i>Pilih Semua</a>
+                                                    <a href="javascript:void(0)" class="dropdown-item" id="btn-uncheck-all-baru"><i class="ti ti-square me-2"></i>Bersihkan Pilihan</a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a href="javascript:void(0)" class="dropdown-item text-danger disabled" id="btn-hapus-bulk"><i class="ti ti-trash me-2 text-red"></i>Hapus Terpilih <span id="hapus-count-badge" class="badge bg-red ms-auto d-none">0</span></a>
+                                                </div>
+                                            </div>
+                                            <input type="text" id="search-standar-baru" class="form-control form-control-sm"
+                                                   placeholder="Search..." style="width: 150px">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0" id="list-standar-baru">
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="ti ti-loader ti-spin fs-2 d-block mb-2"></i>
+                                        Memuat data standar...
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-light" id="footer-standar-baru">
+                                    <small class="text-muted">Standar ke <span id="count-baru-from">0</span> hingga <span id="count-baru-to">0</span> dari <span id="count-baru-total">0</span> Standar</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- ===== SECTION: TAHAP 2 — MANAGE INDIKATOR ===== --}}
-        <div id="section-manage" class="content-section">
+        {{-- ===== SECTION: TAHAP 2 — REVIEW INDIKATOR ===== --}}
+        <div id="section-manage" class="tab-pane fade" role="tabpanel">
             <div class="card">
-                <div class="card-body text-center py-5">
-                    <div class="mb-3">
-                        <span class="avatar avatar-xl rounded bg-purple-lt">
-                            <i class="ti ti-settings-2 fs-1"></i>
-                        </span>
-                    </div>
-                    <h3>Tahap 2 — Manage Indikator</h3>
-                    <p class="text-muted">Fitur manajemen indikator akan tersedia di sini. <br>Saat ini sedang dalam pengembangan.</p>
+                <div class="card-header">
+                    <h3 class="card-title"><i class="ti ti-settings-2 me-2"></i>Tahap 2 — Review Indikator</h3>
+                </div>
+                <div class="card-body">
+                    @if(!$hasDuplicated)
+                        <div class="text-center py-4">
+                            <span class="avatar avatar-xl rounded bg-yellow-lt mb-3">
+                                <i class="ti ti-alert-triangle fs-1"></i>
+                            </span>
+                            <h3>Duplikasi Belum Dilakukan</h3>
+                            <p class="text-muted">Lakukan duplikasi standar terlebih dahulu di <strong>Tahap 1</strong> sebelum melakukan review.</p>
+                            <x-tabler.button type="button" class="btn-outline-primary" onclick="switchSection('#section-duplikasi')" icon="ti ti-arrow-left" text="Ke Tahap 1" />
+                        </div>
+                    @else
+                        <div class="alert alert-info mb-3">
+                            <i class="ti ti-info-circle me-1"></i>
+                            Tabel di bawah menampilkan indikator yang sudah diduplikasi beserta <strong>status pengendalian tahun lalu</strong> untuk setiap prodi.
+                        </div>
+                        <div class="table-responsive">
+                            <x-tabler.datatable
+                                id="table-review"
+                                route="{{ route('pemutu.peningkatan.review-data', $periode->encrypted_periodespmi_id) }}"
+                                :columns="[
+                                    ['data' => 'no_indikator', 'name' => 'pemutu_indikator.no_indikator', 'title' => 'No.', 'width' => '5%'],
+                                    ['data' => 'nama_indikator', 'name' => 'pemutu_indikator.indikator', 'title' => 'Nama Indikator'],
+                                    ['data' => 'dokumen_standar', 'name' => 'd.judul', 'title' => 'Standar / Dokumen'],
+                                    ['data' => 'nama_prodi', 'name' => 'org.nama', 'title' => 'Prodi/Unit', 'width' => '10%'],
+                                    ['data' => 'target_baru', 'name' => 'pemutu_indikator_orgunit.target', 'title' => 'Target Baru', 'width' => '5%', 'class' => 'text-center'],
+                                    ['data' => 'status_badge', 'name' => 'status_badge', 'title' => 'Status Thn Lalu', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                    ['data' => 'keterangan_perubahan', 'name' => 'keterangan_perubahan', 'title' => 'Keterangan Perubahan', 'orderable' => false, 'searchable' => false]
+                                ]"
+                            />
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
+        </div>{{-- /tab-content --}}
     </div>{{-- /col-12 --}}
 </div>{{-- /row --}}
 
@@ -363,25 +488,35 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ─── Segmented Control ──────────────────────────────────────
-    function switchSection(targetId) {
-        document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
-        const t = document.querySelector(targetId);
-        if (t) t.style.display = 'block';
-        document.querySelectorAll('.nav-pills .nav-link').forEach(l =>
-            l.classList.toggle('active', l.getAttribute('href') === targetId));
+    // ─── Native Bootstrap Tab Persistence ───────────────────────
+    const urlHash = window.location.hash;
+    if (urlHash && urlHash.startsWith('#section-')) {
+        const triggerEl = document.querySelector(`.nav-pills a[href="${urlHash}"]`);
+        if (triggerEl) {
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+        }
     }
-    document.querySelectorAll('.nav-pills .nav-link').forEach(link => {
-        link.addEventListener('click', function (e) {
-            if (this.getAttribute('href').startsWith('#section-')) {
-                e.preventDefault();
-                switchSection(this.getAttribute('href'));
-                history.pushState(null, null, this.getAttribute('href'));
+
+    // Update hash on tab change
+    document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(el) {
+        el.addEventListener('shown.bs.tab', function (e) {
+            if(history.pushState) {
+                history.pushState(null, null, e.target.hash);
+            }
+            else {
+                window.location.hash = e.target.hash;
             }
         });
     });
-    const hash = window.location.hash;
-    switchSection(hash && hash.startsWith('#section-') && document.querySelector(hash) ? hash : '#section-rtm');
+
+    window.switchSection = function(targetId) {
+        const triggerEl = document.querySelector(`.nav-pills a[href="${targetId}"]`);
+        if (triggerEl) {
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+        }
+    };
 
     // ─── Attendance Switch Toggle ─────────────────────────────
     document.querySelectorAll('.attendance-switch').forEach(sw => {
@@ -498,6 +633,316 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('ajax-form:success', function () {
         setTimeout(() => location.reload(), 500);
     });
+
+    // ─── TAHAP 1: Dua Panel Duplikasi ─────────────────────────
+    const btnLoadStandar = document.getElementById('btn-load-standar');
+    const inputTargetPeriode = document.getElementById('input-target-periode');
+    const badgeNewPeriode = document.getElementById('badge-new-periode');
+    const btnDuplikasi = document.getElementById('btn-duplikasi');
+    const btnHapusBulk = document.getElementById('btn-hapus-bulk');
+    const hapusCountBadge = document.getElementById('hapus-count-badge');
+    const panelStandar = document.getElementById('panel-standar');
+    const statusText = document.getElementById('duplikasi-status');
+
+    let allStandarLama = [];
+    let allStandarBaru = [];
+    let selectedDokIdsLama = new Set();
+    let selectedDokIdsBaru = new Set();
+
+    if (btnLoadStandar && panelStandar) {
+        // Render helper
+        const renderList = (data, containerId, isLama, searchTerm = '') => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            let filtered = data;
+            if (searchTerm) {
+                const s = searchTerm.toLowerCase();
+                filtered = data.filter(d => d.judul.toLowerCase().includes(s) || (d.kode && d.kode.toLowerCase().includes(s)));
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted fst-italic">Tidak ada standar ditemukan</div>';
+            } else {
+                const list = document.createElement('div');
+                list.className = 'list-group list-group-flush';
+
+                filtered.forEach(d => {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item px-3 py-2 d-flex align-items-center';
+
+                    // Kiri: Checkbox
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'form-check-input me-3 check-standar';
+                    checkbox.value = d.dok_id;
+                    
+                    if (isLama) {
+                        checkbox.checked = selectedDokIdsLama.has(d.dok_id);
+
+                        // Disable jika sudah diduplikasi
+                        if (d.already_duplicated) {
+                            checkbox.disabled = true;
+                            item.classList.add('bg-light', 'text-muted');
+                            checkbox.title = 'Sudah diduplikasi';
+                        } else {
+                            checkbox.addEventListener('change', (e) => {
+                                if (e.target.checked) selectedDokIdsLama.add(d.dok_id);
+                                else selectedDokIdsLama.delete(d.dok_id);
+                                updateBtnStates();
+                            });
+                        }
+                    } else {
+                        // Untuk Panel Standar Baru (Hapus)
+                        checkbox.checked = selectedDokIdsBaru.has(d.dok_id);
+                        checkbox.addEventListener('change', (e) => {
+                            if (e.target.checked) selectedDokIdsBaru.add(d.dok_id);
+                            else selectedDokIdsBaru.delete(d.dok_id);
+                            updateBtnStates();
+                        });
+                    }
+                    item.appendChild(checkbox);
+
+                    // Judul + Kode
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'flex-fill';
+                    let textHtml = `<div class="fw-medium">${d.judul}</div>`;
+                    if (d.kode) textHtml += `<div class="text-muted small">${d.kode}</div>`;
+                    textDiv.innerHTML = textHtml;
+                    item.appendChild(textDiv);
+
+                    // Kanan: Tags/Info
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'ms-auto text-end';
+
+                    if (isLama) {
+                        if (d.indikator_count > 0) {
+                            infoDiv.innerHTML += `<span class="badge bg-blue-lt ms-2" title="${d.indikator_count} Indikator target">${d.indikator_count} Ind.</span>`;
+                        }
+                        if (d.already_duplicated) {
+                             infoDiv.innerHTML += `<span class="badge bg-green-lt ms-2"><i class="ti ti-check me-1"></i>Ada di Target</span>`;
+                        }
+                    } else {
+                        // Di panel baru
+                        if (d.indikator_count > 0) {
+                           infoDiv.innerHTML += `<span class="badge bg-green-lt ms-2" title="${d.indikator_count} Indikator">${d.indikator_count} Ind.</span>`;
+                        } else {
+                           infoDiv.innerHTML += `<span class="badge bg-secondary-lt ms-2" title="Belum ada indikator kelompok ini diduplikasi ke dokumen ini">0 Ind.</span>`;
+                        }
+                    }
+
+                    item.appendChild(infoDiv);
+                    list.appendChild(item);
+                });
+                container.appendChild(list);
+            }
+
+            // Update footer counts
+            const total = data.length;
+            const shows = filtered.length;
+            const prefix = isLama ? 'lama' : 'baru';
+            document.getElementById(`count-${prefix}-from`).textContent = shows > 0 ? 1 : 0;
+            document.getElementById(`count-${prefix}-to`).textContent = shows;
+            document.getElementById(`count-${prefix}-total`).textContent = total;
+        };
+
+        const updateBtnStates = () => {
+            const countLama = selectedDokIdsLama.size;
+            btnDuplikasi.disabled = countLama === 0;
+            btnDuplikasi.innerText = countLama > 0 ? `Duplikasi ${countLama} Standar` : 'Duplikasi Terpilih';
+            statusText.innerText = countLama > 0 ? `${countLama} dichecklist` : '';
+
+            const countBaru = selectedDokIdsBaru.size;
+            if (countBaru > 0) {
+                btnHapusBulk.classList.remove('disabled');
+                hapusCountBadge.classList.remove('d-none');
+                hapusCountBadge.textContent = countBaru;
+            } else {
+                btnHapusBulk.classList.add('disabled');
+                hapusCountBadge.classList.add('d-none');
+                hapusCountBadge.textContent = '0';
+            }
+        };
+
+        const loadStandar = () => {
+            const tPeriode = inputTargetPeriode.value;
+            if (!tPeriode || tPeriode < 2020) return;
+
+            badgeNewPeriode.innerText = tPeriode;
+            document.getElementById('list-standar-lama').innerHTML = '<div class="text-center py-5 text-muted"><i class="ti ti-loader ti-spin fs-2 d-block mb-2"></i>Memuat...</div>';
+            document.getElementById('list-standar-baru').innerHTML = '<div class="text-center py-5 text-muted"><i class="ti ti-loader ti-spin fs-2 d-block mb-2"></i>Memuat...</div>';
+
+            axios.get('{{ route('pemutu.peningkatan.standar-list', $periode->encrypted_periodespmi_id) }}', {
+                params: { target_periode: tPeriode }
+            })
+            .then(res => {
+                if (res.data.success) {
+                    allStandarLama = res.data.data.standar_lama;
+                    allStandarBaru = res.data.data.standar_baru;
+
+                    // Auto-select yang belum diduplikasi
+                    selectedDokIdsLama.clear();
+                    allStandarLama.forEach(d => {
+                        if (!d.already_duplicated) selectedDokIdsLama.add(d.dok_id);
+                    });
+                    
+                    selectedDokIdsBaru.clear(); // Reset hapus bulk
+
+                    renderList(allStandarLama, 'list-standar-lama', true);
+                    renderList(allStandarBaru, 'list-standar-baru', false);
+                    updateBtnStates();
+                } else {
+                    toastError('Gagal memuat daftar standar');
+                }
+            })
+            .catch(err => toastError('Terjadi kesalahan server saat memuat standar'));
+        };
+
+        // Event listeners
+        btnLoadStandar.addEventListener('click', loadStandar);
+        inputTargetPeriode.addEventListener('change', loadStandar);
+
+        document.getElementById('search-standar-lama').addEventListener('input', (e) => {
+            renderList(allStandarLama, 'list-standar-lama', true, e.target.value);
+        });
+        document.getElementById('search-standar-baru').addEventListener('input', (e) => {
+            renderList(allStandarBaru, 'list-standar-baru', false, e.target.value);
+        });
+
+        // --- Action Ceklis LAMA ---
+        document.getElementById('btn-check-all-lama').addEventListener('click', () => {
+            allStandarLama.forEach(d => {
+                if (!d.already_duplicated) selectedDokIdsLama.add(d.dok_id);
+            });
+            renderList(allStandarLama, 'list-standar-lama', true, document.getElementById('search-standar-lama').value);
+            updateBtnStates();
+        });
+        document.getElementById('btn-uncheck-all-lama').addEventListener('click', () => {
+            selectedDokIdsLama.clear();
+            renderList(allStandarLama, 'list-standar-lama', true, document.getElementById('search-standar-lama').value);
+            updateBtnStates();
+        });
+
+        // --- Action Ceklis BARU ---
+        document.getElementById('btn-check-all-baru').addEventListener('click', () => {
+            allStandarBaru.forEach(d => selectedDokIdsBaru.add(d.dok_id));
+            renderList(allStandarBaru, 'list-standar-baru', false, document.getElementById('search-standar-baru').value);
+            updateBtnStates();
+        });
+        document.getElementById('btn-uncheck-all-baru').addEventListener('click', () => {
+            selectedDokIdsBaru.clear();
+            renderList(allStandarBaru, 'list-standar-baru', false, document.getElementById('search-standar-baru').value);
+            updateBtnStates();
+        });
+
+        btnDuplikasi.addEventListener('click', () => {
+            if (selectedDokIdsLama.size === 0) return;
+
+            Swal.fire({
+                title: 'Duplikasi Standar',
+                text: `Anda yakin ingin menduplikasi ${selectedDokIdsLama.size} standar beserta indikatornya ke periode ${inputTargetPeriode.value}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#206bc4',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Duplikasi!',
+                cancelButtonText: 'Batal',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !Swal.isLoading(),
+                preConfirm: () => {
+                    return axios.post('{{ route('pemutu.peningkatan.duplikasi', $periode->encrypted_periodespmi_id) }}', {
+                        target_periode: inputTargetPeriode.value,
+                        selected_dok_ids: Array.from(selectedDokIdsLama)
+                    })
+                    .then(res => {
+                        if (!res.data.success) {
+                            throw new Error(res.data.message || 'Terjadi kesalahan saat duplikasi.');
+                        }
+                        return res.data;
+                    })
+                    .catch(err => {
+                        let errorMessage = 'Gagal terhubung ke server.';
+                        if (err.response && err.response.data && err.response.data.message) {
+                            errorMessage = err.response.data.message;
+                        } else if (err.message) {
+                            errorMessage = err.message;
+                        }
+                        Swal.showValidationMessage(`Gagal: ${errorMessage}`);
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: result.value.message,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        loadStandar(); // Reload lists without refreshing page
+                    });
+                }
+            });
+        });
+
+        // Bulk Delete Button Logic
+        btnHapusBulk.addEventListener('click', () => {
+            if (selectedDokIdsBaru.size === 0) return;
+
+            const tPeriode = inputTargetPeriode.value;
+
+            Swal.fire({
+                title: 'Hapus Standar Terpilih?',
+                html: `Anda yakin ingin menghapus <b>${selectedDokIdsBaru.size} Standar</b> dari periode <b>${tPeriode}</b>?<br><br><small class="text-danger">Aksi ini akan menghapus dokumen rujukan beserta semua indikator hasil duplikasinya di periode ini. Hal ini tidak dapat dibatalkan!</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus Terpilih!',
+                cancelButtonText: 'Batal',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !Swal.isLoading(),
+                preConfirm: () => {
+                    return axios.delete('{{ route('pemutu.peningkatan.delete-standar-bulk', $periode->encrypted_periodespmi_id) }}', {
+                        data: {
+                            target_periode: tPeriode,
+                            selected_dok_ids: Array.from(selectedDokIdsBaru)
+                        }
+                    })
+                    .then(res => {
+                        if (!res.data.success) {
+                            throw new Error(res.data.message || 'Terjadi kesalahan saat menghapus.');
+                        }
+                        return res.data;
+                    })
+                    .catch(err => {
+                        let errorMessage = 'Gagal terhubung ke server.';
+                        if (err.response && err.response.data && err.response.data.message) {
+                            errorMessage = err.response.data.message;
+                        } else if (err.message) {
+                            errorMessage = err.message;
+                        }
+                        Swal.showValidationMessage(`Gagal: ${errorMessage}`);
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: result.value.message,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        loadStandar();
+                    });
+                }
+            });
+        });
+
+        // Load awal
+        setTimeout(loadStandar, 500);
+    }
 });
 </script>
 @endpush

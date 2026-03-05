@@ -22,22 +22,27 @@
     <div class="col-12 mb-3">
         <div class="card">
             <div class="card-body p-2">
-                <div class="nav nav-pills">
-                    <a href="#section-rtm" class="nav-link active" data-section="rtm">
-                        <i class="ti ti-calendar-event me-2"></i> Data Umum & Agenda
-                    </a>
-                    <a href="#section-pengendalian" class="nav-link" data-section="pengendalian">
-                        <i class="ti ti-settings-check me-2"></i> Pengendalian Standar
-                    </a>
-                </div>
+                <ul class="nav nav-pills" id="pengendalian-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="#section-rtm" class="nav-link active" data-bs-toggle="tab" role="tab">
+                            <i class="ti ti-calendar-event me-2"></i> Data Umum & Agenda
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#section-pengendalian" class="nav-link" data-bs-toggle="tab" role="tab">
+                            <i class="ti ti-settings-check me-2"></i> Pengendalian Standar
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 
     <div class="col-12">
+        <div class="tab-content" id="pengendalian-tab-content">
 
         {{-- ===== SECTION: RTM (Data Umum & Agenda) ===== --}}
-        <div id="section-rtm" class="content-section">
+        <div id="section-rtm" class="tab-pane fade show active" role="tabpanel">
 
             @if(!$rapat)
                 {{-- RTM Belum Ada --}}
@@ -322,7 +327,7 @@
         </div>{{-- /#section-rtm --}}
 
         {{-- ===== SECTION: PENGENDALIAN STANDAR ===== --}}
-        <div id="section-pengendalian" class="content-section">
+        <div id="section-pengendalian" class="tab-pane fade" role="tabpanel">
             <div class="card">
                 <div class="card-header border-bottom py-3">
                     <h3 class="card-title">Daftar Indikator</h3>
@@ -345,6 +350,7 @@
             </div>
         </div>
 
+        </div>{{-- /tab-content --}}
     </div>{{-- /col-12 --}}
 </div>{{-- /row --}}
 
@@ -354,25 +360,35 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ─── Segmented Control ──────────────────────────────────────
-    function switchSection(targetId) {
-        document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
-        const t = document.querySelector(targetId);
-        if (t) t.style.display = 'block';
-        document.querySelectorAll('.nav-pills .nav-link').forEach(l =>
-            l.classList.toggle('active', l.getAttribute('href') === targetId));
+    // ─── Native Bootstrap Tab Persistence ───────────────────────
+    const urlHash = window.location.hash;
+    if (urlHash && urlHash.startsWith('#section-')) {
+        const triggerEl = document.querySelector(`.nav-pills a[href="${urlHash}"]`);
+        if (triggerEl) {
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+        }
     }
-    document.querySelectorAll('.nav-pills .nav-link').forEach(link => {
-        link.addEventListener('click', function (e) {
-            if (this.getAttribute('href').startsWith('#section-')) {
-                e.preventDefault();
-                switchSection(this.getAttribute('href'));
-                history.pushState(null, null, this.getAttribute('href'));
+
+    // Update hash on tab change
+    document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(el) {
+        el.addEventListener('shown.bs.tab', function (e) {
+            if(history.pushState) {
+                history.pushState(null, null, e.target.hash);
+            }
+            else {
+                window.location.hash = e.target.hash;
             }
         });
     });
-    const hash = window.location.hash;
-    switchSection(hash && hash.startsWith('#section-') && document.querySelector(hash) ? hash : '#section-rtm');
+
+    window.switchSection = function(targetId) {
+        const triggerEl = document.querySelector(`.nav-pills a[href="${targetId}"]`);
+        if (triggerEl) {
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+        }
+    };
 
     // ─── Attendance Switch Toggle ─────────────────────────────
     document.querySelectorAll('.attendance-switch').forEach(sw => {

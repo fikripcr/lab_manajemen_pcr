@@ -1,9 +1,7 @@
 <?php
-
 namespace App\Models\Pemutu;
 
 use App\Models\Shared\StrukturOrganisasi;
-use App\Traits\Blameable;
 use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +16,7 @@ class IndikatorOrgUnit extends Model
     protected $fillable = [
         'indikator_id',
         'org_unit_id',
+        'prev_indikorgunit_id',
         'target',
         'ed_capaian',
         'ed_analisis',
@@ -38,8 +37,8 @@ class IndikatorOrgUnit extends Model
     ];
 
     protected $casts = [
-        'ed_links'       => 'array',
-        'ed_skala'       => 'integer',
+        'ed_links'        => 'array',
+        'ed_skala'        => 'integer',
         'ami_hasil_akhir' => 'integer',
     ];
 
@@ -69,5 +68,21 @@ class IndikatorOrgUnit extends Model
     public function diskusi()
     {
         return $this->morphMany(Diskusi::class, 'model')->orderBy('created_at', 'asc');
+    }
+
+    /**
+     * Record dari tahun/periode sebelumnya (cross-year per-prodi linkage).
+     */
+    public function prev()
+    {
+        return $this->belongsTo(IndikatorOrgUnit::class, 'prev_indikorgunit_id', 'indikorgunit_id');
+    }
+
+    /**
+     * Records yang merupakan duplikat di tahun berikutnya.
+     */
+    public function nextOrgUnits()
+    {
+        return $this->hasMany(IndikatorOrgUnit::class, 'prev_indikorgunit_id', 'indikorgunit_id');
     }
 }

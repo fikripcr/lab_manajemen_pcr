@@ -19,7 +19,7 @@
 <div {{ $attributes->merge(['class' => 'mb-3']) }}>
     @if($label)
         <label for="{{ $id }}" class="form-label">
-            {{ $label }} @if($required)<span class="text-danger">*</span>@endif
+            {!! $label !!} @if($required)<span class="text-danger">*</span>@endif
         </label>
     @endif
     

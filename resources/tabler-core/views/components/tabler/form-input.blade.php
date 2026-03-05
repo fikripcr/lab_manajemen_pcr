@@ -38,7 +38,7 @@
 <div class="mb-3 {{ $class }}">
     @if($label)
         <label for="{{ $inputId }}" class="form-label">
-            {{ $label }} @if($required) <span class="text-danger">*</span> @endif
+            {!! $label !!} @if($required) <span class="text-danger">*</span> @endif
         </label>
     @endif
 

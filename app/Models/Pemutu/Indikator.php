@@ -24,6 +24,7 @@ class Indikator extends Model
         'type',
         'kelompok_indikator',
         'parent_id',
+        'prev_indikator_id',
         'no_indikator',
         'indikator',
         'target',
@@ -84,6 +85,22 @@ class Indikator extends Model
     public function children()
     {
         return $this->hasMany(Indikator::class, 'parent_id', 'indikator_id')->orderBy('seq');
+    }
+
+    /**
+     * Indikator dari tahun/periode sebelumnya (cross-year linkage).
+     */
+    public function prevIndikator()
+    {
+        return $this->belongsTo(Indikator::class, 'prev_indikator_id', 'indikator_id');
+    }
+
+    /**
+     * Indikator-indikator yang merupakan duplikat di tahun berikutnya.
+     */
+    public function nextIndikators()
+    {
+        return $this->hasMany(Indikator::class, 'prev_indikator_id', 'indikator_id');
     }
 
     public function pegawai()

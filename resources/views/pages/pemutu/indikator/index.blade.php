@@ -22,6 +22,9 @@
             <div>
                 <x-tabler.datatable-filter :dataTableId="'indikator-table'">
                     <div>
+                        <x-tabler.form-select name="periode" placeholder="Filter Tahun" :options="$periodes" />
+                    </div>
+                    <div>
                         <x-tabler.form-select name="dokumen_id" placeholder="Filter Dokumen" :options="$dokumens" type="select2" />
                     </div>
                     <div>
