@@ -33,17 +33,17 @@
                                 <i class="ti ti-dots-vertical"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('pemutu.periode-kpi.edit', $periode->encrypted_period_id) }}">
+                                <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('pemutu.periode-kpi.edit', $periode->encrypted_periode_kpi_id) }}">
                                     <i class="ti ti-pencil me-2"></i> Edit
                                 </a>
                                 @if(!$periode->is_active)
-                                    <a class="dropdown-item text-success activate-periode" href="#" data-url="{{ route('pemutu.periode-kpis.activate', $periode->encrypted_periode_kpi_id) }}">
+                                    <a class="dropdown-item text-success activate-periode" href="#" data-url="{{ route('pemutu.periode-kpi.activate', $periode->encrypted_periode_kpi_id) }}">
                                         <i class="ti ti-check me-2"></i> Aktifkan
                                     </a>
                                 @endif
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item text-danger ajax-delete" href="#" 
-                                   data-url="{{ route('pemutu.periode-kpis.destroy', $periode->encrypted_periode_kpi_id) }}"
+                                   data-url="{{ route('pemutu.periode-kpi.destroy', $periode->encrypted_periode_kpi_id) }}"
                                    data-title="Hapus Periode?"
                                    data-text="Data periode dan seluruh data KPI terkait mungkin akan terpengaruh.">
                                     <i class="ti ti-trash me-2"></i> Hapus
@@ -84,7 +84,7 @@
             text="Silakan tambahkan periode baru untuk memulai siklus penilaian kinerja."
             icon="ti ti-calendar-stats"
             actionClass="btn-primary ajax-modal-btn"
-            :actionRoute="route('pemutu.periode-kpis.create')"
+            :actionRoute="route('pemutu.periode-kpi.create')"
             actionText="Tambah Periode"
         />
     @endforelse

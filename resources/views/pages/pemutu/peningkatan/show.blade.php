@@ -290,8 +290,27 @@
                                                     data-bs-target="#ac-{{ $agenda->encrypted_rapatagenda_id }}"
                                                     aria-expanded="{{ $index === 0 ? 'true' : 'false' }}">
                                                     <span class="badge bg-blue-lt me-2">{{ $loop->iteration }}</span>
-                                                    {{ $agenda->judul_agenda }}
+                                                    <span class="flex-fill">{{ $agenda->judul_agenda }}</span>
                                                     <span class="ms-2 badge save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none bg-blue-lt">Saving...</span>
+                                                    <div class="dropdown ms-2" onclick="event.stopPropagation()">
+                                                        <a href="#" class="btn btn-ghost-secondary btn-icon btn-sm dropdown-toggle no-caret" data-bs-toggle="dropdown">
+                                                            <i class="ti ti-dots-vertical"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <a href="javascript:void(0)" class="dropdown-item ajax-modal-btn" 
+                                                                data-url="{{ route('Kegiatan.rapat.agenda.edit', $agenda->encrypted_rapatagenda_id) }}"
+                                                                data-modal-title="Edit Judul Agenda">
+                                                                <i class="ti ti-edit me-2"></i> Edit Judul
+                                                            </a>
+                                                            <a href="javascript:void(0)" class="dropdown-item text-danger ajax-confirm"
+                                                                data-url="{{ route('Kegiatan.rapat.agenda.destroy', $agenda->encrypted_rapatagenda_id) }}"
+                                                                data-method="DELETE"
+                                                                data-title="Hapus Agenda"
+                                                                data-text="Apakah Anda yakin ingin menghapus agenda ini?">
+                                                                <i class="ti ti-trash me-2"></i> Hapus Agenda
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 </button>
                                             </h2>
                                             <div id="ac-{{ $agenda->encrypted_rapatagenda_id }}"

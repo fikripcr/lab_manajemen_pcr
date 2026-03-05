@@ -192,7 +192,8 @@ class IndikatorSummaryController extends Controller
 
         // For dynamic summary count, we need the search applied to the query.
         if ($request->filled('search')) {
-            $search = $request->input('search.value') ?? $request->input('search');
+            $searchValue = $request->input('search.value') ?? $request->input('search');
+            $search      = is_array($searchValue) ? ($searchValue['value'] ?? '') : (string) $searchValue;
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('v.no_indikator', 'LIKE', "%{$search}%")

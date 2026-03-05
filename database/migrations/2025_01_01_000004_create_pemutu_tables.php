@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('pemutu_label_types', function (Blueprint $table) {
+        Schema::create('pemutu_label_type', function (Blueprint $table) {
             $table->id('labeltype_id');
             $table->string('name', 100);
             $table->text('description')->nullable();
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->string('deleted_by')->nullable();
             $table->softDeletes();
 
-            $table->foreign('type_id')->references('labeltype_id')->on('pemutu_label_types')->cascadeOnDelete();
+            $table->foreign('type_id')->references('labeltype_id')->on('pemutu_label_type')->cascadeOnDelete();
         });
 
         // NOTE: pemutu_org_unit moved to shared migration as 'struktur_organisasi'
@@ -374,7 +374,7 @@ return new class extends Migration
         Schema::dropIfExists('pemutu_dok_sub');
         Schema::dropIfExists('pemutu_dokumen');
         Schema::dropIfExists('pemutu_label');
-        Schema::dropIfExists('pemutu_label_types');
+        Schema::dropIfExists('pemutu_label_type');
         Schema::dropIfExists('pemutu_tim_mutu');
 
         Schema::enableForeignKeyConstraints();

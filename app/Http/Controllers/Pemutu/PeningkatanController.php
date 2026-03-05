@@ -43,6 +43,15 @@ class PeningkatanController extends Controller
             $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
         }
 
+        // Check if within SPMI period dates
+        if ($periode->peningkatan_awal && $periode->peningkatan_akhir) {
+            $today = now()->startOfDay();
+            if ($today->lt($periode->peningkatan_awal) || $today->gt($periode->peningkatan_akhir)) {
+                return redirect()->route('pemutu.peningkatan.index')
+                    ->with('error', 'Akses Peningkatan ditutup. Jadwal: ' . $periode->peningkatan_awal->format('d/m/Y') . ' s/d ' . $periode->peningkatan_akhir->format('d/m/Y'));
+            }
+        }
+
         $users = User::with('pegawai.latestDataDiri')->get();
 
         // Cek apakah sudah pernah diduplikasi
@@ -234,7 +243,7 @@ class PeningkatanController extends Controller
             ->select([
                 'pemutu_indikator_orgunit.indikorgunit_id',
                 'pemutu_indikator.no_indikator',
-                'pemutu_indikator.indikator as nama_indikator',
+                \DB::raw('CONCAT("<div class=\"overflow-auto\" style=\"max-height: 100px; min-width: 250px;\">", pemutu_indikator.indikator, "</div>") as nama_indikator'),
                 'pemutu_indikator.type',
                 'org.name as nama_prodi',
                 'pemutu_indikator_orgunit.target as target_baru',
