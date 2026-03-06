@@ -42,7 +42,8 @@
                     @if($type === 'dokumen')
                         <x-tabler.button type="success" class="btn-sm ajax-modal-btn" text="Approval" icon="ti ti-users"
                             data-url="{{ route('pemutu.dokumen.approve.create', $item->encrypted_dok_id) }}"
-                            data-modal-title="Form Approval Dokumen" />
+                            data-modal-title="Form Approval Dokumen"
+                            data-approval="true" />
                         <x-tabler.button type="primary" class="btn-sm btn-secondary ajax-modal-btn me-0" text="" icon="ti ti-edit"
                             data-url="{{ route('pemutu.dokumen-spmi.edit', ['type' => 'dokumen', 'id' => $item->encrypted_dok_id]) }}"
                             data-modal-title="Ubah Dokumen" />
@@ -63,9 +64,9 @@
                                     href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
                                     text="Tambah Indikator" />
                             @else
-                                <x-tabler.button type="create" class="btn-success ajax-modal-btn"
-                                    data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id, 'is_renop_context' => 0]) }}"
-                                    data-modal-title="Tambah Indikator" text="Tambah Indikator" />
+                                <x-tabler.button type="create" class="btn-success"
+                                    href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'spmi', 'is_renop_context' => 0, 'redirect_to' => url()->current()]) }}"
+                                    text="Tambah Indikator" />
                             @endif
                         @endif
                     @endif
@@ -144,10 +145,10 @@
                                         href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
                                         text="Tambah Indikator" size="sm" />
                                 @else
-                                    <x-tabler.button type="create" class="ajax-modal-btn"
+                                    <x-tabler.button type="create"
                                         text="Tambah Indikator"
-                                        data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id, 'is_renop_context' => 0]) }}"
-                                        data-modal-title="Tambah Indikator" size="sm" />
+                                        href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'spmi', 'is_renop_context' => 0, 'redirect_to' => url()->current()]) }}"
+                                        size="sm" />
                                 @endif
                             </div>
                             <x-tabler.datatable

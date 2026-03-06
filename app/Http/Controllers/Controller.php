@@ -19,12 +19,12 @@ class Controller extends BaseController
      */
     protected function authorizeResourcePermissions(string $prefix)
     {
-        $this->middleware("permission:{$prefix}.view")->only(['index', 'show']);
-        $this->middleware("permission:{$prefix}.data")->only(['data']);
-        $this->middleware("permission:{$prefix}.create")->only(['create', 'store']);
-        $this->middleware("permission:{$prefix}.update")->only(['edit', 'update']);
-        $this->middleware("permission:{$prefix}.delete")->only(['destroy']);
-        $this->middleware("permission:{$prefix}.export")->only(['export']);
-        $this->middleware("permission:{$prefix}.import")->only(['import']);
+        // $this->middleware("permission:{$prefix}.view")->only(['index', 'show']);
+        // $this->middleware("permission:{$prefix}.data")->only(['data']);
+        // $this->middleware("permission:{$prefix}.create")->only(['create', 'store']);
+        // $this->middleware("permission:{$prefix}.update")->only(['edit', 'update']);
+        // $this->middleware("permission:{$prefix}.delete")->only(['destroy']);
+        // $this->middleware("permission:{$prefix}.export")->only(['export']);
+        // $this->middleware("permission:{$prefix}.import")->only(['import']);
     }
 }

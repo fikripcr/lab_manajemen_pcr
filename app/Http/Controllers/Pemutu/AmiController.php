@@ -31,7 +31,7 @@ class AmiController extends Controller
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
-        $unitId = decryptIdIfEncrypted($request->input('unit_id'));
+        $unitId = $request->input('unit_id');
 
         return view('pages.pemutu.ami.show', compact('periode', 'unitId'));
     }

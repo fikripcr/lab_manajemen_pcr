@@ -35,7 +35,7 @@ class PengendalianController extends Controller
      */
     public function show(PeriodeSpmi $periode, Request $request)
     {
-        $unitId = decryptIdIfEncrypted($request->input('unit_id'));
+        $unitId = $request->input('unit_id');
 
         // Load the latest RTM rapat (if exists) with its relations
         $rapat = $periode->latest_rtm_pengendalian;
@@ -134,7 +134,7 @@ class PengendalianController extends Controller
 
                 return $indikorgunit
                     ? '<a href="#" class="btn btn-sm btn-primary ajax-modal-btn"
-                         data-modal-target="#modalAction"
+                         data-modal-target="#pengendalian-modal"
                          data-modal-size="modal-lg"
                          data-url="' . route('pemutu.pengendalian.edit-modal', encryptId($indikorgunit)) . '">
                          <i class="ti ti-pencil me-1"></i>Isi</a>'

@@ -79,22 +79,22 @@ function pemutuLoadDetail(url, docJenis, pushState = true) {
         params: { ajax: 1 },
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
-    .then(function (response) {
-        $('#document-detail-panel').html(response.data);
+        .then(function (response) {
+            $('#document-detail-panel').html(response.data);
 
-        if (pushState) {
-            const idMatch = url.match(/\/([a-zA-Z0-9]+)$/);
-            if (idMatch) {
-                const params = new URLSearchParams(window.location.search);
-                params.set('id', idMatch[1]);
-                params.set('type', docJenis);
-                window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+            if (pushState) {
+                const idMatch = url.match(/\/([a-zA-Z0-9]+)$/);
+                if (idMatch) {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set('id', idMatch[1]);
+                    params.set('type', docJenis);
+                    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+                }
             }
-        }
-    })
-    .catch(function () {
-        $('#document-detail-panel').html('<div class="card-body text-center text-danger">Gagal memuat detail data.</div>');
-    });
+        })
+        .catch(function () {
+            $('#document-detail-panel').html('<div class="card-body text-center text-danger">Gagal memuat detail data.</div>');
+        });
 }
 
 // --- UI Refresh (after AJAX insert/delete) ---
@@ -200,7 +200,18 @@ window.initPemutuWorkspace = function (config) {
 
         // 5. AJAX events
         $(document).off('ajax-form:success.pemutuWorkspace').on('ajax-form:success.pemutuWorkspace', '.ajax-form', function () {
-            pemutuRefreshWorkspaceUI(reorderUrl);
+            const $form = $(this);
+            if ($form.attr('id') === 'approval-form') {
+                // If it's an approval, only reload the detail panel
+                // This naturally reverts the active tab in the detail panel back to the first one (Poin/Information)
+                // because the response from pemutuLoadDetail contains the whole detail panel HTML with default active tab
+                const currentLink = $('.active-tree-node .tree-item-link');
+                if (currentLink.length) {
+                    pemutuLoadDetail(currentLink.data('url'), currentLink.data('jenis'), false);
+                }
+            } else {
+                pemutuRefreshWorkspaceUI(reorderUrl);
+            }
         });
         $(document).off('ajax-delete:success.pemutuWorkspace').on('ajax-delete:success.pemutuWorkspace', '.ajax-delete', function () {
             pemutuRefreshWorkspaceUI(reorderUrl);
@@ -226,10 +237,10 @@ window.initPemutuWorkspace = function (config) {
             const link = $(this).find('.tree-item-link');
             if (link.length) pemutuLoadDetail(link.data('url'), link.data('jenis'));
         });
-        
+
         // Ensure tree-item-link text/span clicks bubble properly
-        $(document).on('click', '.tree-item-link', function(e) {
-            e.preventDefault(); 
+        $(document).on('click', '.tree-item-link', function (e) {
+            e.preventDefault();
             // the parent .tree-node-row will handle the logic
         });
 

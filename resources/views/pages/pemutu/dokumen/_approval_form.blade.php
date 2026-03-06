@@ -1,4 +1,5 @@
 <x-tabler.form-modal
+    id_form="approval-form"
     title="Persetujuan Dokumen"
     route="{{ route('pemutu.dokumen.approve', $dokumen) }}"
     method="POST"

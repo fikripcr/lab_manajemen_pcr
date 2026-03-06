@@ -47,7 +47,7 @@ class EvaluasiDiriController extends Controller
             ->pluck('orgUnit')
             ->filter();
 
-        $selectedUnitId = decryptIdIfEncrypted(request('unit_id'));
+        $selectedUnitId = request('unit_id');
         // Supaya tampilan table render (tidak masuk ke block empty state)
         $unit = true;
 
