@@ -55,7 +55,7 @@
                         <div class="tab-pane {{ !request('jenis') || request('jenis') == 'visi-misi' ? 'active show' : '' }}" id="tab-visi-misi">
                            <ul class="list-unstyled nested-sortable mb-0">
                                @foreach($dokumentByJenis['visi'] ?? [] as $dok)
-                                   @include('pages.pemutu.dokumens._tree_item', ['dok' => $dok, 'level' => 0])
+                                   @include('pages.pemutu.dokumen._tree_item', ['dok' => $dok, 'level' => 0])
                                @endforeach
                                @if(empty($dokumentByJenis['visi']))
                                    <li class="text-muted text-center py-3">Tidak ada dokumen VISI.</li>
@@ -94,7 +94,7 @@
                         <div class="tab-pane {{ $isInitialActive ? 'active show' : '' }}" id="std-{{ $stType }}">
                             <ul class="list-unstyled nested-sortable mb-0">
                                 @forelse($dokumentByJenis[$stType] ?? [] as $dok)
-                                    @include('pages.pemutu.dokumens._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
+                                    @include('pages.pemutu.dokumen._tree_item', ['dok' => $dok, 'level' => 0, 'collapsed' => true])
                                 @empty
                                     <li class="text-muted text-center py-3">Tidak ada dokumen {{ $labelStandar }}.</li>
                                 @endforelse

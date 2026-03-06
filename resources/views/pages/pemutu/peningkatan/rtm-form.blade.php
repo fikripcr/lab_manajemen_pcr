@@ -58,8 +58,8 @@
                 placeholder="Pilih Ketua Rapat"
                 :value="old('ketua_user_id', $rapat->ketua_user_id ?? '')">
                 @foreach($users as $user)
-                    <option value="{{ $user->id }}"
-                        {{ old('ketua_user_id', $rapat->ketua_user_id ?? '') == $user->id ? 'selected' : '' }}>
+                    <option value="{{ $user->encrypted_id }}"
+                        {{ old('ketua_user_id', $rapat->ketua_user_id ?? '') == $user->id || old('ketua_user_id', $rapat->ketua_user_id ?? '') == $user->encrypted_id ? 'selected' : '' }}>
                         {{ $user->name }}
                         @if($user->pegawai?->latestDataDiri)
                             — {{ $user->pegawai->latestDataDiri->jabatan ?? '' }}
@@ -77,8 +77,8 @@
                 placeholder="Pilih Notulen"
                 :value="old('notulen_user_id', $rapat->notulen_user_id ?? '')">
                 @foreach($users as $user)
-                    <option value="{{ $user->id }}"
-                        {{ old('notulen_user_id', $rapat->notulen_user_id ?? '') == $user->id ? 'selected' : '' }}>
+                    <option value="{{ $user->encrypted_id }}"
+                        {{ old('notulen_user_id', $rapat->notulen_user_id ?? '') == $user->id || old('notulen_user_id', $rapat->notulen_user_id ?? '') == $user->encrypted_id ? 'selected' : '' }}>
                         {{ $user->name }}
                         @if($user->pegawai?->latestDataDiri)
                             — {{ $user->pegawai->latestDataDiri->jabatan ?? '' }}

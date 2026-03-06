@@ -169,8 +169,8 @@
                                                                 placeholder="— Pilih Pegawai —"
                                                                 required="true"
                                                                 class="mb-0">
-                                                                @foreach($users as $user)
-                                                                    <option value="{{ $user->id }}">{{ $user->name }}
+                                                                 @foreach($users as $user)
+                                                                    <option value="{{ $user->encrypted_id }}">{{ $user->name }}
                                                                         @if($user->pegawai?->latestDataDiri) — {{ $user->pegawai->latestDataDiri->jabatan ?? '' }}@endif
                                                                     </option>
                                                                 @endforeach

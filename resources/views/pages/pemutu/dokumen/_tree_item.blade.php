@@ -80,7 +80,7 @@
                     @if($hasSubChildren)
                         <ul class="list-unstyled ms-2 ps-2 nested-sortable d-none">
                             @foreach($sub->childDokumens as $childDocOfSub)
-                                 @include('pages.pemutu.dokumens._tree_item', ['dok' => $childDocOfSub, 'level' => $level + 1, 'collapsed' => true])
+                                 @include('pages.pemutu.dokumen._tree_item', ['dok' => $childDocOfSub, 'level' => $level + 1, 'collapsed' => true])
                             @endforeach
                         </ul>
                     @endif

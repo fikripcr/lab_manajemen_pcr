@@ -332,9 +332,9 @@ class DokumenController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('pemutu.dokumens.edit', $row->encrypted_dok_id),
+                        'editUrl'   => route('pemutu.dokumen.edit', $row->encrypted_dok_id),
                         'editModal' => false,
-                        'deleteUrl' => route('pemutu.dokumens.destroy', $row->encrypted_dok_id),
+                        'deleteUrl' => route('pemutu.dokumen.destroy', $row->encrypted_dok_id),
                     ])->render();
                 })
                 ->rawColumns(['judul', 'jumlah_turunan', 'action'])

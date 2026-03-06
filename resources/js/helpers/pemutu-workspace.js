@@ -155,7 +155,7 @@ function pemutuRestoreExpandedNodes() {
  * Initialize the Pemutu SPMI Document workspace.
  *
  * @param {object} config
- * @param {string} config.reorderUrl  - Route for saving hierarchy (pemutu.dokumens.reorder)
+ * @param {string} config.reorderUrl  - Route for saving hierarchy (pemutu.dokumen.reorder)
  */
 window.initPemutuWorkspace = function (config) {
     const { reorderUrl } = config;
