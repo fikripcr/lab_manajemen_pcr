@@ -71,7 +71,7 @@
             </div>
         </div>
         <div class="mt-3">
-            <x-tabler.button type="submit" class="btn-primary" icon="ti ti-plus" text="Tambah Struktural" />
+            <x-tabler.button type="create" text="Tambah Struktural" />
         </div>
     </form>
 </div>

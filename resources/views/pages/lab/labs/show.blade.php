@@ -218,9 +218,8 @@
                     <div class="card-header">
                         <h3 class="card-title">Inventaris Terbaru</h3>
                         <div class="card-actions btn-group">
-                            <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn" 
-                                data-url="{{ route('lab.labs.inventaris.create', $lab->encrypted_lab_id) }}" 
-                                icon="ti ti-plus" />
+                            <x-tabler.button type="create" class="btn-sm ajax-modal-btn" 
+                                data-url="{{ route('lab.labs.inventaris.create', $lab->encrypted_lab_id) }}" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush">
@@ -288,9 +287,8 @@
                     <div class="card-header">
                         <h3 class="card-title">Tim Lab</h3>
                         <div class="card-actions btn-group">
-                            <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn" 
-                                data-url="{{ route('lab.labs.teams.create', $lab->encrypted_lab_id) }}" 
-                                icon="ti ti-plus" />
+                            <x-tabler.button type="create" class="btn-sm ajax-modal-btn" 
+                                data-url="{{ route('lab.labs.teams.create', $lab->encrypted_lab_id) }}" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush">

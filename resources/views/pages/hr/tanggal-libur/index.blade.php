@@ -11,12 +11,11 @@
             </x-tabler.form-select>
         </form>
         <x-tabler.button 
-            type="button" 
-            class="ajax-modal-btn btn-primary d-none d-sm-inline-block" 
+            type="create" 
+            class="ajax-modal-btn d-none d-sm-inline-block" 
             data-url="{{ route('hr.tanggal-libur.create') }}" 
             data-modal-title="Tambah Tanggal Libur"
             data-modal-size="modal-lg" 
-            icon="ti ti-plus" 
             text="Tambah Tanggal" 
         />
     </x-slot:actions>

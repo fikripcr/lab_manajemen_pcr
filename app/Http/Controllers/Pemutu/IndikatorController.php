@@ -44,16 +44,16 @@ class IndikatorController extends Controller
             ->addIndexColumn()
             ->addColumn('dokumen_judul', function ($row) {
                 return $row->dokSubs->map(function ($ds) {
-                    return $ds->dokumen->judul ?? '-';
+                    return $ds->dokumen?->judul ?? '-';
                 })->unique()->implode(', ') ?: '-';
             })
             ->addColumn('tipe', function ($row) {
                 $typeInfo = pemutuIndikatorTypeInfo($row->type);
-                $html     = '<span class="badge bg-' . $typeInfo['color'] . '-lt" title="' . $typeInfo['label'] . '">' . $typeInfo['short-label'] . '</span>';
+                $html     = '<span class="badge bg-' . ($typeInfo['color'] ?? 'secondary') . '-lt" title="' . ($typeInfo['label'] ?? '-') . '">' . ($typeInfo['short-label'] ?? 'IND') . '</span>';
 
                 // If Performa, show Parent Code
                 if ($row->type === 'performa' && $row->parent) {
-                    $html .= '<div class="mt-1"><span class="badge bg-primary-lt" title="Indikator Induk">Ref: ' . e($row->parent->kode ?? '-') . '</span></div>';
+                    $html .= '<div class="mt-1"><span class="badge bg-primary-lt" title="Indikator Induk">Ref: ' . e($row->parent?->no_indikator ?? '-') . '</span></div>';
                 }
 
                 return $html;
@@ -63,7 +63,7 @@ class IndikatorController extends Controller
             })
             ->addColumn('labels', function ($row) {
                 return '<div class="d-flex flex-wrap gap-1">' . $row->labels->map(function ($label) {
-                    $color = $label->type->color ?? 'blue';
+                    $color = $label->type?->color ?? 'blue';
                     return '<span class="badge bg-' . $color . '-lt text-' . $color . '">' . e($label->name) . '</span>';
                 })->implode('') . '</div>';
             })

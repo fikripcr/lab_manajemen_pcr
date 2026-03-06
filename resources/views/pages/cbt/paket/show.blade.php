@@ -157,7 +157,7 @@
 
                 {{-- Submit --}}
                 <div class="card-footer">
-                    <x-tabler.button type="submit" class="btn-primary w-100" id="btn-tambahkan" icon="ti ti-plus" text="Tambahkan ke Paket" />
+                    <x-tabler.button type="create" class="w-100" id="btn-tambahkan" text="Tambahkan ke Paket" />
                 </div>
 
             </form>

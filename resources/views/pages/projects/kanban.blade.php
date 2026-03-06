@@ -12,11 +12,11 @@
                 type="back"
             />
             <x-tabler.button
+                type="create"
                 href="javascript:void(0)"
-                class="btn-primary ajax-modal-btn"
+                class="ajax-modal-btn"
                 data-url="{{ route('projects.tasks.create-modal', $project) }}"
                 data-modal-title="Create New Task"
-                icon="ti ti-plus"
                 text="Add Task"
             />
         </div>

@@ -55,10 +55,10 @@
                         </div>
                         <h3>Belum Ada RTM</h3>
                         <p class="text-muted">Buat Rapat Tinjauan Manajemen untuk memulai proses pengendalian periode ini.</p>
-                        <x-tabler.button type="button" class="btn-primary ajax-modal-btn"
+                        <x-tabler.button type="create" class="ajax-modal-btn"
                             data-url="{{ route('pemutu.pengendalian.rtm.create', $periode->encrypted_periodespmi_id) }}"
                             data-modal-title="Buat RTM Pengendalian"
-                            icon="ti ti-plus" text="Buat RTM" />
+                            text="Buat RTM" />
                     </div>
                 </div>
             @else
@@ -190,7 +190,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="d-flex gap-2 mt-2">
-                                                    <x-tabler.button type="button" id="btn-add-peserta-row" class="btn-outline-secondary btn-sm" icon="ti ti-plus" text="Tambah Baris" />
+                                                    <x-tabler.button type="create" id="btn-add-peserta-row" class="btn-outline-secondary btn-sm" text="Tambah Baris" />
                                                     <x-tabler.button type="submit" class="btn-sm ms-auto" text="Simpan Peserta" />
                                                 </div>
                                             </form>
@@ -266,10 +266,10 @@
                             <div class="card-header">
                                 <h3 class="card-title"><i class="ti ti-checklist me-2"></i>Agenda & Pembahasan</h3>
                                 <div class="card-actions">
-                                    <x-tabler.button type="button" class="btn-success btn-sm ajax-modal-btn"
+                                    <x-tabler.button type="create" class="btn-success btn-sm ajax-modal-btn"
                                         data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}"
                                         data-modal-title="Tambah Agenda"
-                                        icon="ti ti-plus" text="Tambah Agenda" />
+                                        text="Tambah Agenda" />
                                     <span class="badge bg-teal-lt ms-1">{{ $rapat->agendas->count() }}</span>
                                 </div>
                             </div>

@@ -4,11 +4,10 @@
 <x-tabler.page-header title="Manajemen Slideshow" pretitle="Info Publik">
     <x-slot:actions>
         <x-tabler.button 
-            type="button" 
-            class="ajax-modal-btn btn-primary d-none d-sm-inline-block" 
+            type="create" 
+            class="ajax-modal-btn d-none d-sm-inline-block" 
             data-url="{{ route('shared.slideshow.create') }}" 
             data-modal-title="Tambah Slideshow"
-            icon="ti ti-plus" 
             text="Tambah Slideshow" 
         />
     </x-slot:actions>
@@ -25,11 +24,10 @@
         >
             <x-slot:action>
                 <x-tabler.button 
-                    type="button" 
-                    class="ajax-modal-btn btn-primary" 
+                    type="create" 
+                    class="ajax-modal-btn" 
                     data-url="{{ route('shared.slideshow.create') }}" 
                     data-modal-title="Tambah Slideshow"
-                    icon="ti ti-plus" 
                     text="Tambah Slideshow" 
                 />
             </x-slot:action>

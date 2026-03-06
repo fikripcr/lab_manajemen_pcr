@@ -6,7 +6,7 @@
 <x-tabler.page-header title="Data Lembur" pretitle="HR & Kepegawaian">
     <x-slot:actions>
         <div class="btn-list">
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Lembur" class="ajax-modal-btn" data-url="{{ route('hr.lembur.create') }}" data-modal-title="Form Tambah Lembur" />
+            <x-tabler.button type="create" text="Tambah Lembur" class="ajax-modal-btn" data-url="{{ route('hr.lembur.create') }}" data-modal-title="Form Tambah Lembur" />
         </div>
     </x-slot:actions>
 </x-tabler.page-header>

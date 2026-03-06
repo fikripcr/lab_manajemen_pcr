@@ -14,13 +14,13 @@
         data-modal-title="Edit Dokumen" icon="ti ti-pencil" text="Edit" />
 
     @if($isDokSubBased)
-        <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn"
+        <x-tabler.button type="create" href="#" class="btn-outline-primary ajax-modal-btn"
             data-url="{{ route('pemutu.dok-subs.create', ['dok_id' => $dokumen->encrypted_dok_id]) }}"
-            data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus" text="{{ $childLabel }}" />
+            data-modal-title="Tambah {{ $childLabel }}" text="{{ $childLabel }}" />
     @else
-        <x-tabler.button href="#" class="btn-outline-primary ajax-modal-btn"
+        <x-tabler.button type="create" href="#" class="btn-outline-primary ajax-modal-btn"
             data-url="{{ route('pemutu.dokumen.create', ['parent_id' => $dokumen->encrypted_dok_id]) }}"
-            data-modal-title="Tambah {{ $childLabel }}" icon="ti ti-plus" text="{{ $childLabel }}" />
+            data-modal-title="Tambah {{ $childLabel }}" text="{{ $childLabel }}" />
     @endif
 
     <x-tabler.button type="delete" class="btn-outline-danger ajax-delete"

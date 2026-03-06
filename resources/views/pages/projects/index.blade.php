@@ -7,9 +7,8 @@
 <x-tabler.page-header title="Projects" pretitle="Dashboard">
     <x-slot:actions>
         <x-tabler.button 
+            type="create"
             href="{{ route('projects.create') }}" 
-            class="btn-primary" 
-            icon="ti ti-plus" 
             text="New Project" 
         />
     </x-slot:actions>

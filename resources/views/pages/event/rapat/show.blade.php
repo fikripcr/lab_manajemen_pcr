@@ -214,10 +214,10 @@
                 <div>
                     <h3 class="mb-0"><i class="ti ti-checklist me-2"></i>Agenda & Pembahasan</h3>
                 </div>
-                <x-tabler.button type="button" class="btn-success btn-sm ajax-modal-btn"
+                <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                     data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}"
                     data-modal-title="Tambah Agenda"
-                    icon="ti ti-plus" text="Tambah Agenda" />
+                    text="Tambah Agenda" />
             </div>
 
             <form id="form-agenda" action="{{ route('Kegiatan.rapat.update-agenda', $rapat->encrypted_rapat_id) }}" method="POST">
@@ -271,10 +271,10 @@
                 <div class="card-header">
                     <h3 class="card-title"><i class="ti ti-link me-2 text-cyan"></i>Entitas Terkait</h3>
                     <div class="card-actions">
-                        <x-tabler.button type="button" class="btn-sm ajax-modal-btn"
+                        <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                             data-url="{{ route('Kegiatan.rapat.entitas.create', $rapat->encrypted_rapat_id) }}"
                             data-modal-title="Tambah Entitas Terkait"
-                            icon="ti ti-plus" text="Tambah Entitas" />
+                            text="Tambah Entitas" />
                     </div>
                 </div>
                 <div class="card-body">

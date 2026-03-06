@@ -118,7 +118,7 @@
                                 </div>
                             @endforeach
                         </div>
-                        <x-tabler.button class="btn-ghost-primary" onclick="addOpsi('{{ $pertanyaan->encrypted_pertanyaan_id }}')" icon="ti ti-plus" text="Tambah Opsi" />
+                        <x-tabler.button type="create" class="btn-ghost-primary" onclick="addOpsi('{{ $pertanyaan->encrypted_pertanyaan_id }}')" text="Tambah Opsi" />
                     </div>
                     @endif
 

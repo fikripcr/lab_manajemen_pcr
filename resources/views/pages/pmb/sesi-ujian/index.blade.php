@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Sesi Ujian (CBT)" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Tambah Sesi"
+        <x-tabler.button type="create" class="ajax-modal-btn" text="Tambah Sesi"
             data-modal-target="#modalAction" data-modal-title="Tambah Sesi Ujian" data-url="{{ route('pmb.sesi-ujian.create') }}" />
     </x-slot:actions>
 </x-tabler.page-header>

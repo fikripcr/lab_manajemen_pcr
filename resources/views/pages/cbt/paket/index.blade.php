@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Paket Ujian" pretitle="CBT">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Paket Ujian" data-url="{{ route('cbt.paket.create') }}" icon="ti ti-plus" text="Tambah Paket" />
+        <x-tabler.button type="create" class="ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Paket Ujian" data-url="{{ route('cbt.paket.create') }}" text="Tambah Paket" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

@@ -6,11 +6,10 @@
                 <x-tabler.datatable-page-length dataTableId="pengembangan-table" />
                 <x-tabler.datatable-search dataTableId="pengembangan-table" />
                 <x-tabler.button 
-                    style="primary" 
+                    type="create"
                     class="ajax-modal-btn" 
                     data-url="{{ route('hr.pegawai.pengembangan.create', $pegawai->encrypted_pegawai_id) }}" 
                     data-modal-title="Tambah Pengembangan Diri"
-                    icon="ti ti-plus"
                     text="Tambah" />
             </div>
         </div>

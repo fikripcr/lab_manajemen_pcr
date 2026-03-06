@@ -247,18 +247,18 @@ class IndikatorSummaryController extends Controller
                 return $this->renderTruncatedText($row->ed_analisis, 'text-info');
             })
             ->addColumn('ami_detail', function ($row) {
-                if (! $row->ami_hasil_label) {
+                if (! $row->ami_hasil_akhir) {
                     return '<span class="text-muted fst-italic small">Belum dinilai</span>';
                 }
 
-                $statusColor = match ($row->ami_hasil_label) {
+                $statusColor = match ($row->ami_hasil_akhir) {
                     'KTS'        => 'danger',
                     'Terpenuhi'  => 'success',
                     'Terlampaui' => 'info',
                     default      => 'secondary',
                 };
 
-                $html = '<div class="mb-2"><span class="status status-' . $statusColor . '">' . e($row->ami_hasil_label) . '</span></div>';
+                $html = '<div class="mb-2"><span class="status status-' . $statusColor . '">' . e($row->ami_hasil_akhir) . '</span></div>';
                 if ($row->ami_hasil_temuan && $row->ami_hasil_temuan !== '-') {
                     $html .= $this->renderTruncatedText($row->ami_hasil_temuan, 'text-muted small');
                 }

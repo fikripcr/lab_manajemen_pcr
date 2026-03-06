@@ -4,7 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Data Indikator" pretitle="SPMI / Monitoring">
     <x-slot:actions>
-        <x-tabler.button href="#" class="btn-primary ajax-modal-btn" data-url="{{ route('pemutu.indikator.create') }}" data-modal-title="Tambah Indikator" data-modal-size="modal-xl" icon="ti ti-plus" text="Tambah Indikator" />
+        <x-tabler.button href="#" class="ajax-modal-btn" data-url="{{ route('pemutu.indikator.create') }}" data-modal-title="Tambah Indikator" data-modal-size="modal-xl" text="Tambah Indikator" type="create" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -44,7 +44,6 @@
                 ['data' => 'indikator', 'name' => 'indikator', 'title' => 'Indikator'],
                 ['data' => 'target', 'name' => 'target', 'title' => 'Target', 'width' => '10%'],
                 ['data' => 'dokumen_judul', 'name' => 'dokSubs.dokumen.judul', 'title' => 'Dokumen Induk', 'searchable' => false, 'orderable' => false],
-                ['data' => 'doksub_judul', 'name' => 'dokSubs.judul', 'title' => 'Poin / Sub-Dok', 'searchable' => false, 'orderable' => false],
                 ['data' => 'labels', 'name' => 'labels', 'title' => 'Labels', 'orderable' => false, 'searchable' => false],
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
             ]"

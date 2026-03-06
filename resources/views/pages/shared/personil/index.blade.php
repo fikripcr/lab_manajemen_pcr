@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header title="Manajemen Personil" pretitle="Master Data">
         <x-slot:actions>
-            <x-tabler.button :href="route('shared.personil.create')" class="d-none d-sm-inline-block ajax-modal-btn" icon="ti ti-plus" text="Tambah Personil" />
+            <x-tabler.button type="create" :href="route('shared.personil.create')" class="d-none d-sm-inline-block ajax-modal-btn" text="Tambah Personil" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

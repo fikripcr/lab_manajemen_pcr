@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Kegiatan" pretitle="Kegiatan">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('Kegiatan.Kegiatans.create') }}" class="btn-primary d-none d-sm-inline-block" icon="ti ti-plus" text="Tambah Kegiatan" />
+        <x-tabler.button type="create" href="{{ route('Kegiatan.Kegiatans.create') }}" class="d-none d-sm-inline-block" text="Tambah Kegiatan" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

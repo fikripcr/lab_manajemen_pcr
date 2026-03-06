@@ -18,7 +18,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Halaman</h3>
                         <div class="card-actions">
-                            <x-tabler.button type="button" class="btn-icon py-1 px-1 bg-primary-lt" id="btn-add-halaman" title="Tambah Halaman" icon="ti ti-plus" />
+                            <x-tabler.button type="create" class="btn-icon py-1 px-1 bg-primary-lt" id="btn-add-halaman" title="Tambah Halaman" />
                         </div>
                     </div>
                     <div class="list-group list-group-flush" id="list-halaman">
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="card-actions">
                                     <div class="dropdown">
-                                        <x-tabler.button type="button" class="bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text="Tambah" />
+                                        <x-tabler.button type="create" class="bg-primary-lt text-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" text="Tambah" />
                                         <div class="dropdown-menu dropdown-menu-end">
                                             @foreach(['Teks_Singkat' => 'ti-text-size', 'Esai' => 'ti-align-left', 'Angka' => 'ti-123', 'Pilihan_Ganda' => 'ti-circle-dot', 'Kotak_Centang' => 'ti-checkbox', 'Dropdown' => 'ti-select', 'Skala_Linear' => 'ti-adjustments-horizontal', 'Tanggal' => 'ti-calendar', 'Upload_File' => 'ti-upload'] as $tipe => $icon)
                                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); addPertanyaan('{{ $halaman->encrypted_halaman_id }}', '{{ $tipe }}')">

@@ -12,8 +12,9 @@ class IndikatorService
         $query = Indikator::with(['dokSubs.dokumen', 'labels.type', 'parent', 'orgUnits']);
 
         if (! empty($filters['dokumen_id'])) {
-            $query->whereHas('dokSubs.dokumen', function ($q) use ($filters) {
-                $q->where('dok_id', $filters['dokumen_id']);
+            $dokId = decryptIdIfEncrypted($filters['dokumen_id']);
+            $query->whereHas('dokSubs.dokumen', function ($q) use ($dokId) {
+                $q->where('dok_id', $dokId);
             });
         }
 
@@ -22,7 +23,7 @@ class IndikatorService
         }
 
         if (! empty($filters['parent_id'])) {
-            $query->where('parent_id', $filters['parent_id']);
+            $query->where('parent_id', decryptIdIfEncrypted($filters['parent_id']));
         }
 
         // Filter by year (Dokumen.periode)

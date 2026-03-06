@@ -17,7 +17,7 @@
             <div class="card-header">
                 <h3 class="card-title">Tipe Label</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" icon="ti ti-plus" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-type.create') }}" data-modal-title="Tambah Tipe Label" />
+                    <x-tabler.button type="create" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-type.create') }}" data-modal-title="Tambah Tipe Label" />
                 </div>
             </div>
             <div class="list-group list-group-flush" id="label-type-list">
@@ -57,7 +57,7 @@
             <div class="card-header">
                 <h3 class="card-title" id="labels-title">Daftar Label</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Label" class="btn-primary ajax-modal-btn" id="btn-add-label" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
+                    <x-tabler.button type="create" text="Tambah Label" class="ajax-modal-btn" id="btn-add-label" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
                 </div>
             </div>
             <div class="card-body p-0">

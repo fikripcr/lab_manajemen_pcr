@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Penjadwalan Ujian (CBT)" pretitle="CBT">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Jadwal Ujian" data-url="{{ route('cbt.jadwal.create') }}" icon="ti ti-plus" text="Tambah Jadwal" />
+        <x-tabler.button type="create" class="ajax-modal-btn" data-modal-target="#modalAction" data-modal-title="Tambah Jadwal Ujian" data-url="{{ route('cbt.jadwal.create') }}" text="Tambah Jadwal" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

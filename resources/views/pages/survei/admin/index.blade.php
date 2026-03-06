@@ -2,7 +2,7 @@
 @section('header')
 <x-tabler.page-header title="Manajemen Survei" pretitle="Feedback Module">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Buat Survei"
+        <x-tabler.button type="create" class="ajax-modal-btn" text="Buat Survei"
             data-modal-target="#modalAction" data-modal-title="Buat Survei Baru" data-url="{{ route('survei.create') }}" />
     </x-slot:actions>
 </x-tabler.page-header>

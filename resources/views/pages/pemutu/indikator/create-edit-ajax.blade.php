@@ -268,7 +268,7 @@
                                     </table>
                                 </div>
 
-                                <x-tabler.button type="button" id="btn-add-kpi" class="btn-outline-danger btn-sm w-100" icon="ti ti-plus" text="Tambah Sasaran" />
+                                <x-tabler.button type="create" id="btn-add-kpi" class="btn-outline-danger btn-sm w-100" text="Tambah Sasaran" />
                             </div>
                         </div>
                     </div>

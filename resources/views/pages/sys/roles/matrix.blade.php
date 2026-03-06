@@ -8,7 +8,7 @@
             <x-tabler.button href="{{ route('sys.roles.index') }}" type="back" />
 
             <div class="dropdown d-none d-sm-inline-block">
-                <x-tabler.button type="button" class="btn-primary dropdown-toggle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text="Aksi Tambah" />
+                <x-tabler.button type="create" class="dropdown-toggle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false" text="Aksi Tambah" />
                 <div class="dropdown-menu dropdown-menu-end shadow-lg" style="border-radius: 12px; border: none;">
                     <a class="dropdown-item ajax-modal-btn py-2" href="javascript:void(0)" data-url="{{ route('sys.roles.create') }}" data-title="Tambah Peran Baru">
                         <i class="ti ti-shield-plus me-2 text-primary"></i> Tambah Role

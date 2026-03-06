@@ -4,17 +4,17 @@
 <x-tabler.page-header title="Master Data HR" pretitle="HR & Kepegawaian">
     <x-slot:actions>
         @if($activeTab == 'status-pegawai')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Status Pegawai" class="ajax-modal-btn" data-url="{{ route('hr.status-pegawai.create') }}" data-modal-title="Tambah Status Pegawai" />
+            <x-tabler.button type="create" text="Tambah Status Pegawai" class="ajax-modal-btn" data-url="{{ route('hr.status-pegawai.create') }}" data-modal-title="Tambah Status Pegawai" />
         @elseif($activeTab == 'status-aktifitas')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Status Aktifitas" class="ajax-modal-btn" data-url="{{ route('hr.status-aktifitas.create') }}" data-modal-title="Tambah Status Aktifitas" />
+            <x-tabler.button type="create" text="Tambah Status Aktifitas" class="ajax-modal-btn" data-url="{{ route('hr.status-aktifitas.create') }}" data-modal-title="Tambah Status Aktifitas" />
         @elseif($activeTab == 'jabatan-fungsional')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Jabatan Fungsional" class="ajax-modal-btn" data-url="{{ route('hr.jabatan-fungsional.create') }}" data-modal-title="Tambah Jabatan Fungsional" />
+            <x-tabler.button type="create" text="Tambah Jabatan Fungsional" class="ajax-modal-btn" data-url="{{ route('hr.jabatan-fungsional.create') }}" data-modal-title="Tambah Jabatan Fungsional" />
         @elseif($activeTab == 'jenis-izin')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Jenis Izin" class="ajax-modal-btn" data-url="{{ route('hr.jenis-izin.create') }}" data-modal-title="Tambah Jenis Izin" />
+            <x-tabler.button type="create" text="Tambah Jenis Izin" class="ajax-modal-btn" data-url="{{ route('hr.jenis-izin.create') }}" data-modal-title="Tambah Jenis Izin" />
         @elseif($activeTab == 'jenis-indisipliner')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Jenis Indisipliner" class="ajax-modal-btn" data-url="{{ route('hr.jenis-indisipliner.create') }}" data-modal-title="Tambah Jenis Indisipliner" />
+            <x-tabler.button type="create" text="Tambah Jenis Indisipliner" class="ajax-modal-btn" data-url="{{ route('hr.jenis-indisipliner.create') }}" data-modal-title="Tambah Jenis Indisipliner" />
         @elseif($activeTab == 'jenis-shift')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Jenis Shift" class="ajax-modal-btn" data-url="{{ route('hr.jenis-shift.create') }}" data-modal-title="Tambah Jenis Shift" />
+            <x-tabler.button type="create" text="Tambah Jenis Shift" class="ajax-modal-btn" data-url="{{ route('hr.jenis-shift.create') }}" data-modal-title="Tambah Jenis Shift" />
         @endif
     </x-slot:actions>
 </x-tabler.page-header>

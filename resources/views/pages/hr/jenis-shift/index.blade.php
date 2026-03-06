@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Data Jenis Shift" pretitle="Master Data HR">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Data" class="ajax-modal-btn" data-url="{{ route('hr.jenis-shift.create') }}" data-modal-title="Tambah Jenis Shift" />
+        <x-tabler.button type="create" text="Tambah Data" class="ajax-modal-btn" data-url="{{ route('hr.jenis-shift.create') }}" data-modal-title="Tambah Jenis Shift" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

@@ -4,9 +4,9 @@
 <x-tabler.page-header title="Master Data E-Office" pretitle="Manajemen Data Layanan">
     <x-slot:actions>
         @if($activeTab == 'jenis-layanan')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Jenis Layanan" class="ajax-modal-btn" data-url="{{ route('eoffice.jenis-layanan.create') }}" data-modal-title="Tambah Jenis Layanan" />
+            <x-tabler.button type="create" text="Tambah Jenis Layanan" class="ajax-modal-btn" data-url="{{ route('eoffice.jenis-layanan.create') }}" data-modal-title="Tambah Jenis Layanan" />
         @elseif($activeTab == 'kategori-isian')
-            <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Kategori Isian" class="ajax-modal-btn" data-url="{{ route('eoffice.kategori-isian.create') }}" data-modal-title="Tambah Kategori Isian" />
+            <x-tabler.button type="create" text="Tambah Kategori Isian" class="ajax-modal-btn" data-url="{{ route('eoffice.kategori-isian.create') }}" data-modal-title="Tambah Kategori Isian" />
         @endif
     </x-slot:actions>
 </x-tabler.page-header>

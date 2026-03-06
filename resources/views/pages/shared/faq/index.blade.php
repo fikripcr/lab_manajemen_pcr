@@ -4,11 +4,10 @@
 <x-tabler.page-header title="Manajemen FAQ" pretitle="Info Publik">
     <x-slot:actions>
         <x-tabler.button 
-            type="button" 
-            class="ajax-modal-btn btn-primary d-none d-sm-inline-block" 
+            type="create" 
+            class="ajax-modal-btn d-none d-sm-inline-block" 
             data-url="{{ route('shared.faq.create') }}" 
             data-modal-title="Tambah FAQ" 
-            icon="ti ti-plus" 
             text="Tambah FAQ" 
         />
     </x-slot:actions>

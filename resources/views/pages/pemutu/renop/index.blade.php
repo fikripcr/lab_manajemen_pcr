@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Indikator Rencana Operasional (Renop)" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('pemutu.renop.create') }}" class="btn-primary ajax-modal-btn" icon="ti ti-plus" text="Tambah Renop" />
+        <x-tabler.button type="create" href="{{ route('pemutu.renop.create') }}" class="ajax-modal-btn" text="Tambah Renop" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

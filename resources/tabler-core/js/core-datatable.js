@@ -146,6 +146,8 @@ export default class CustomDataTables {
     }
 
     saveState(data, filterFormSelector) {
+        if (!this.table) return;
+
         const filterForm = document.querySelector(filterFormSelector);
         if (filterForm && filterForm instanceof HTMLFormElement) {
             const formData = new FormData(filterForm);

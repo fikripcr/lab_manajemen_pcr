@@ -50,7 +50,7 @@
                 </div>
             @endif
         </div>
-        <x-tabler.button type="button" class="btn-outline-primary btn-sm mt-2" onclick="addOptionAjax()" icon="ti ti-plus" text="Tambah Opsi" />
+        <x-tabler.button type="create" class="btn-sm mt-2" onclick="addOptionAjax()" text="Tambah Opsi" />
     </div>
 
     <x-tabler.form-textarea name="keterangan_isian" label="Keterangan" rows="2" value="{{ $kategori->keterangan_isian ?? '' }}" placeholder="Keterangan tambahan untuk pengusul" />

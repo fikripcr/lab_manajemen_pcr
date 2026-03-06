@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Data Pegawai" pretitle="Dashboard > Pegawai">
     <x-slot:actions>
-        <x-tabler.button href="{{ route('hr.pegawai.create') }}" class="btn-success d-none d-sm-inline-block" icon="ti ti-plus" text="Data Baru" />
+        <x-tabler.button type="create" href="{{ route('hr.pegawai.create') }}" class="d-none d-sm-inline-block" text="Data Baru" />
         <x-tabler.button href="#" class="btn-primary d-none d-sm-inline-block ms-2" icon="ti ti-arrow-right" text="Set Penyelia" />
     </x-slot:actions>
 </x-tabler.page-header>

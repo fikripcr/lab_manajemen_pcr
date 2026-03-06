@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Bank Soal" pretitle="CBT">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary ajax-modal-btn" data-modal-title="Tambah Mata Uji" data-url="{{ route('cbt.mata-uji.create') }}" icon="ti ti-plus" text="Tambah Mata Uji" />
+        <x-tabler.button type="create" class="ajax-modal-btn" data-modal-title="Tambah Mata Uji" data-url="{{ route('cbt.mata-uji.create') }}" text="Tambah Mata Uji" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

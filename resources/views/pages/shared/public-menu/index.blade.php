@@ -4,13 +4,11 @@
 <x-tabler.page-header title="Manajemen Halaman & Menu" pretitle="CMS">
     <x-slot:actions>
         <div class="d-flex gap-2">
-            <a href="{{ route('shared.public-page.create') }}" class="btn btn-primary" id="btn-add-page">
-                <i class="ti ti-plus"></i> Buat Halaman Baru
-            </a>
+            <x-tabler.button href="{{ route('shared.public-page.create') }}" type="create" id="btn-add-page" text="Buat Halaman Baru" />
             <x-tabler.button
+                type="create"
                 href="#"
-                icon="ti ti-plus"
-                class="btn-primary ajax-modal-btn d-none"
+                class="ajax-modal-btn d-none"
                 data-url="{{ route('shared.public-menu.create') }}"
                 id="btn-add-menu"
                 text="Tambah Menu"

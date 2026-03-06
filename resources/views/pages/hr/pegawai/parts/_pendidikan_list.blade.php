@@ -6,11 +6,10 @@
                 <x-tabler.datatable-page-length dataTableId="pendidikan-table" />
                 <x-tabler.datatable-search dataTableId="pendidikan-table" />
                 <x-tabler.button 
-                    style="primary" 
+                    type="create"
                     class="ajax-modal-btn" 
                     data-url="{{ route('hr.pegawai.pendidikan.create', $pegawai->encrypted_pegawai_id) }}" 
                     data-modal-title="Tambah Pendidikan"
-                    icon="ti ti-plus"
                     text="Tambah" />
             </div>
         </div>

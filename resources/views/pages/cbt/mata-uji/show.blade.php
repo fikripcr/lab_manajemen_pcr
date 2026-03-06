@@ -5,7 +5,7 @@
     <x-slot:actions>
         <x-tabler.button type="back" />
         <div class="dropdown">
-            <x-tabler.button type="button" class="btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" icon="ti ti-plus" text=" Tambah Soal" />
+            <x-tabler.button type="create" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" text=" Tambah Soal" />
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', $mu->encrypted_mata_uji_id) }}?tipe_soal=Pilihan_Ganda" data-modal-size="modal-lg"><i class="ti ti-list-check me-2"></i> Pilihan Ganda</a></li>
                 <li><a class="dropdown-item ajax-modal-btn" href="{{ route('cbt.soal.create', $mu->encrypted_mata_uji_id) }}?tipe_soal=Esai" data-modal-size="modal-lg"><i class="ti ti-file-description me-2"></i> Esai</a></li>

@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header :title="ucfirst($type)" pretitle="Management">
     <x-slot:actions>
-        <x-tabler.button :href="route('lab.'.$type . '.create', ['type' => $type])" class="btn-primary" icon="ti ti-plus" :text="'Tambah ' . ucfirst($type)" />
+        <x-tabler.button type="create" :href="route('lab.'.$type . '.create', ['type' => $type])" :text="'Tambah ' . ucfirst($type)" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

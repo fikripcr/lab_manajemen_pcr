@@ -16,7 +16,7 @@
                     </x-tabler.form-select>
                 </div>
             </x-tabler.datatable-filter>
-            <x-tabler.button class="ajax-modal-btn" data-url="{{ route('hr.indisipliner.create') }}" modal-title="Tambah Data Indisipliner" icon="ti ti-plus" text="Tambah Data" />
+            <x-tabler.button type="create" class="ajax-modal-btn" data-url="{{ route('hr.indisipliner.create') }}" modal-title="Tambah Data Indisipliner" text="Tambah Data" />
         </div>
     </x-slot:actions>
 </x-tabler.page-header>

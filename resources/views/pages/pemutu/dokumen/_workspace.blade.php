@@ -54,18 +54,18 @@
                         @if(!$isRenopPoint)
                             {{-- <x-tabler.button class="btn-primary btn-sm ajax-modal-btn"
                                 data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
-                                data-modal-title="Tambah Dokumen Turunan" icon="ti ti-plus" text="Tambah Turunan Dokumen" /> --}}
+                                data-modal-title="Tambah Dokumen Turunan" text="Tambah Turunan Dokumen" type="create" /> --}}
                         @endif
 
                         @if($showIndikatorSection)
                             @if($isRenopPoint)
-                                <x-tabler.button class="btn-success"
+                                <x-tabler.button type="create" class="btn-success"
                                     href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
-                                    icon="ti ti-plus" text="Tambah Indikator" />
+                                    text="Tambah Indikator" />
                             @else
-                                <x-tabler.button class="btn-success ajax-modal-btn"
+                                <x-tabler.button type="create" class="btn-success ajax-modal-btn"
                                     data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id, 'is_renop_context' => 0]) }}"
-                                    data-modal-title="Tambah Indikator" icon="ti ti-plus" text="Tambah Indikator" />
+                                    data-modal-title="Tambah Indikator" text="Tambah Indikator" />
                             @endif
                         @endif
                     @endif
@@ -117,9 +117,8 @@
                     <div class="card bg-transparent shadow-none border">
                         <div class="card-header border-0 d-flex justify-content-between align-items-center">
                             <h2 class="card-title">Daftar {{ $childLabel ?? 'Turunan' }}</h2>
-                            <x-tabler.button class="ajax-modal-btn"
+                            <x-tabler.button type="create" class="ajax-modal-btn"
                                 text="Tambah {{ $childLabel ?? 'Turunan' }}"
-                                icon="ti ti-plus"
                                 data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => $isDokSubBased ? 'poin' : 'dokumen', 'parent_id' => $item->encrypted_dok_id]) }}"
                                 data-modal-title="Tambah {{ $childLabel ?? 'Turunan' }}"
                                 size="sm" />
@@ -141,12 +140,12 @@
                                     <span class="badge bg-muted-lt ms-2">{{ $item->indikators->count() }}</span>
                                 </h2>
                                 @if($isRenopPoint)
-                                    <x-tabler.button class="btn-success"
+                                    <x-tabler.button type="create" class="btn-success"
                                         href="{{ route('pemutu.indikator.create', ['parent_dok_id' => $item->encrypted_dok_id, 'parent_doksub_id' => $item->encrypted_doksub_id, 'type' => 'renop', 'is_renop_context' => 1, 'redirect_to' => url()->current()]) }}"
-                                        icon="ti ti-plus" text="Tambah Indikator" size="sm" />
+                                        text="Tambah Indikator" size="sm" />
                                 @else
-                                    <x-tabler.button class="ajax-modal-btn"
-                                        text="Tambah Indikator" icon="ti ti-plus"
+                                    <x-tabler.button type="create" class="ajax-modal-btn"
+                                        text="Tambah Indikator"
                                         data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'indikator', 'parent_doksub_id' => $item->encrypted_doksub_id, 'is_renop_context' => 0]) }}"
                                         data-modal-title="Tambah Indikator" size="sm" />
                                 @endif
@@ -163,8 +162,8 @@
                         <div class="card bg-transparent shadow-none border">
                             <div class="card-header border-0 d-flex justify-content-between align-items-center">
                                 <h2 class="card-title">Poin ini memiliki beberapa Dokumen Turunan:</h2>
-                                <x-tabler.button class="ajax-modal-btn"
-                                    text="Tambah Dokumen Turunan" icon="ti ti-plus"
+                                <x-tabler.button type="create" class="ajax-modal-btn"
+                                    text="Tambah Dokumen Turunan"
                                     data-url="{{ route('pemutu.dokumen-spmi.create', ['type' => 'dokumen', 'parent_doksub_id' => $item->encrypted_doksub_id, 'parent_id' => $item->encrypted_dok_id]) }}"
                                     data-modal-title="Tambah Dokumen Turunan" size="sm" />
                             </div>

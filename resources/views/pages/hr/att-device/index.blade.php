@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header title="Data Mesin Presensi">
         <x-slot:actions>
-             <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Data" class="ajax-modal-btn" data-url="{{ route('hr.att-device.create') }}" data-modal-title="Tambah Mesin Presensi" />
+             <x-tabler.button type="create" text="Tambah Data" class="ajax-modal-btn" data-url="{{ route('hr.att-device.create') }}" data-modal-title="Tambah Mesin Presensi" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

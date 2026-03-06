@@ -16,9 +16,9 @@
             <div class="card-header">
                 <h3 class="card-title">Manajemen PIC (Petugas)</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn"
+                    <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.create-pic', $layanan->hashid) }}"
-                        icon="ti ti-plus" text="Tambah PIC" />
+                        text="Tambah PIC" />
                 </div>
             </div>
             <div class="card-table">
@@ -64,9 +64,9 @@
             <div class="card-header">
                 <h3 class="card-title">Form Isian (Fields)</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn"
+                    <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.create-isian', $layanan->hashid) }}"
-                        icon="ti ti-plus" text="Tambah Field" />
+                        text="Tambah Field" />
                 </div>
             </div>
             <div class="table-responsive">
@@ -138,9 +138,9 @@
             <div class="card-header">
                 <h3 class="card-title">Alur Disposisi</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn"
+                    <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.disposisi.create', $layanan->hashid) }}"
-                        icon="ti ti-plus" text="Tambah Disposisi" />
+                        text="Tambah Disposisi" />
                 </div>
             </div>
             <div class="table-responsive">
@@ -199,9 +199,9 @@
             <div class="card-header">
                 <h3 class="card-title">Periode Pengajuan</h3>
                 <div class="card-actions">
-                    <x-tabler.button type="button" class="btn-primary btn-sm ajax-modal-btn"
+                    <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                         data-url="{{ route('eoffice.jenis-layanan.periode.create', $layanan->hashid) }}"
-                        icon="ti ti-plus" text="Tambah Periode" />
+                        text="Tambah Periode" />
                 </div>
             </div>
             <div class="card-table">

@@ -41,7 +41,7 @@
     </div>
 
     <div class="mt-3 text-end">
-        <x-tabler.button type="button" class="btn-secondary btn-sm" id="add-entry" icon="ti ti-plus" text="Tambah Baris" />
+        <x-tabler.button type="create" class="btn-sm" id="add-entry" text="Tambah Baris" />
     </div>
 
 </x-tabler.form-modal>

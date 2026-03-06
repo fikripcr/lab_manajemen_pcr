@@ -259,11 +259,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="mb-0">Project Team</h4>
                     <x-tabler.button 
+                        type="create"
                         href="javascript:void(0)" 
-                        class="btn-primary btn-sm ajax-modal-btn" 
+                        class="btn-sm ajax-modal-btn" 
                         data-url="{{ route('projects.members.create-modal', $project) }}"
                         data-modal-title="Add Team Member"
-                        icon="ti ti-plus" 
                         text="Add Member" 
                     />
                 </div>
@@ -321,11 +321,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="mb-0">Project Costs</h4>
                     <x-tabler.button 
+                        type="create"
                         href="javascript:void(0)" 
-                        class="btn-primary btn-sm ajax-modal-btn" 
+                        class="btn-sm ajax-modal-btn" 
                         data-url="{{ route('projects.costs.create-modal', $project) }}"
                         data-modal-title="Record New Cost"
-                        icon="ti ti-plus" 
                         text="Add Cost" 
                     />
                 </div>

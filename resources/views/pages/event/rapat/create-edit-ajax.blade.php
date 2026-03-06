@@ -168,7 +168,7 @@
                                 @endif
                             </div>
 
-                            <x-tabler.button type="button" id="add-agenda-btn" class="btn-secondary mt-2" icon="ti ti-plus" text="Tambah Agenda" />
+                            <x-tabler.button type="create" id="add-agenda-btn" class="mt-2" text="Tambah Agenda" />
                         </div>
                     </div>
 

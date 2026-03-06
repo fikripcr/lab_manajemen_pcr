@@ -13,11 +13,10 @@
                         icon="ti ti-sitemap"
                         text="Struktural Massal" />
                     <x-tabler.button
-                        style="primary"
+                        type="create"
                         class="ajax-modal-btn"
                         data-url="{{ route('hr.pegawai.struktural.create', $pegawai->encrypted_pegawai_id) }}"
                         data-modal-title="Tambah Struktural"
-                        icon="ti ti-plus"
                         text="Tambah" />
                 @endif
             </div>

@@ -6,11 +6,10 @@
                 <x-tabler.datatable-page-length dataTableId="inpassing-table" />
                 <x-tabler.datatable-search dataTableId="inpassing-table" />
                 <x-tabler.button 
-                    style="primary" 
+                    type="create"
                     class="ajax-modal-btn" 
                     data-url="{{ route('hr.pegawai.inpassing.create', $pegawai->encrypted_pegawai_id) }}" 
                     data-modal-title="Tambah Inpassing"
-                    icon="ti ti-plus"
                     text="Ubah Inpassing" />
             </div>
         </div>

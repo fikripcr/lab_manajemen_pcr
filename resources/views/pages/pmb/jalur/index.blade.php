@@ -3,7 +3,7 @@
 @section('header')
 <x-tabler.page-header title="Master Jalur PMB" pretitle="PMB">
     <x-slot:actions>
-        <x-tabler.button type="button" class="btn-primary d-none d-sm-inline-block ajax-modal-btn" icon="ti ti-plus" text="Tambah Jalur"
+        <x-tabler.button type="create" class="d-none d-sm-inline-block ajax-modal-btn" text="Tambah Jalur"
             data-modal-target="#modalAction" data-modal-title="Tambah Jalur" data-url="{{ route('pmb.jalur.create') }}" />
     </x-slot:actions>
 </x-tabler.page-header>

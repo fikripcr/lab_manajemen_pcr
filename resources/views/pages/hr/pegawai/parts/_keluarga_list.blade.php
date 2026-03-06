@@ -6,11 +6,10 @@
                 <x-tabler.datatable-page-length dataTableId="keluarga-table" />
                 <x-tabler.datatable-search dataTableId="keluarga-table" />
                 <x-tabler.button 
-                    style="primary" 
+                    type="create"
                     class="ajax-modal-btn" 
                     data-url="{{ route('hr.pegawai.keluarga.create', $pegawai->encrypted_pegawai_id) }}" 
                     data-modal-title="Tambah Keluarga"
-                    icon="ti ti-plus"
                     text="Tambah" />
             </div>
         </div>

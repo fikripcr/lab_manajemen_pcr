@@ -4,7 +4,7 @@
 <x-tabler.page-header title="Data Pegawai" pretitle="Manajemen Data Pegawai">
     <x-slot:actions>
         <x-tabler.button href="{{ route('hr.pegawai.upload-photo') }}" class="btn-outline-primary d-none d-sm-inline-block me-2" icon="ti ti-upload" text="Upload Foto Pegawai" />
-        <x-tabler.button href="{{ route('hr.pegawai.create') }}" class="btn-primary d-none d-sm-inline-block" icon="ti ti-plus" text="Tambah Pegawai" />
+        <x-tabler.button type="create" href="{{ route('hr.pegawai.create') }}" class="d-none d-sm-inline-block" text="Tambah Pegawai" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection

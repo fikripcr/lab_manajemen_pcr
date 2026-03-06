@@ -4,7 +4,7 @@
 @section('header')
 <x-tabler.page-header :title="$pageTitle" pretitle="Penjaminan Mutu">
     <x-slot:actions>
-        <x-tabler.button href="#" class="ajax-modal-btn btn-primary" data-url="{{ route('pemutu.periode-kpi.create') }}" data-modal-title="Tambah Periode KPI" icon="ti ti-plus" text="Tambah Periode" />
+        <x-tabler.button type="create" href="#" class="ajax-modal-btn" data-url="{{ route('pemutu.periode-kpi.create') }}" data-modal-title="Tambah Periode KPI" text="Tambah Periode" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
@@ -13,32 +13,26 @@
 <div class="row row-cards">
     @forelse($periodes as $periode)
         <div class="col-md-6 col-lg-4">
-            <div class="card card-stacked">
-                @if($periode->is_active)
-                    <div class="card-status-top bg-success"></div>
-                @else
-                    <div class="card-status-top bg-secondary"></div>
-                @endif
-
-                <div class="card-header">
-                    <h3 class="card-title">
-                        {{ $periode->nama }}
-                        @if($periode->is_active)
-                            <span class="badge bg-success-lt ms-2">Aktif</span>
-                        @endif
-                    </h3>
+            <div class="card card-md shadow-sm border-0 border-top border-3 @if($periode->is_active) border-success @else border-secondary @endif overflow-hidden h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <div>
+                        <div class="text-uppercase text-muted font-weight-bold tracking-widest small mb-1">Semester {{ $periode->semester }}</div>
+                        <h2 class="card-title h2 mb-0 @if($periode->is_active) text-success @endif">
+                            {{ $periode->nama }}
+                        </h2>
+                    </div>
                     <div class="card-actions">
                         <div class="dropdown">
-                            <a href="#" class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="btn btn-icon btn-ghost-secondary rounded-circle dropdown-toggle no-caret" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="ti ti-dots-vertical"></i>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end">
+                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0">
                                 <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('pemutu.periode-kpi.edit', $periode->encrypted_periode_kpi_id) }}">
-                                    <i class="ti ti-pencil me-2"></i> Edit
+                                    <i class="ti ti-pencil me-2 text-muted"></i> Edit Periode
                                 </a>
                                 @if(!$periode->is_active)
                                     <a class="dropdown-item text-success activate-periode" href="#" data-url="{{ route('pemutu.periode-kpi.activate', $periode->encrypted_periode_kpi_id) }}">
-                                        <i class="ti ti-check me-2"></i> Aktifkan
+                                        <i class="ti ti-check-double me-2"></i> Aktifkan Sekarang
                                     </a>
                                 @endif
                                 <div class="dropdown-divider"></div>
@@ -54,23 +48,30 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="datagrid">
-                        <div class="datagrid-item">
-                            <div class="datagrid-title">Tahun Akademik</div>
-                            <div class="datagrid-content">{{ $periode->tahun_akademik }}</div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 text-center">
+                            <div class="h3 mb-0">{{ $periode->tahun_akademik }}</div>
+                            <div class="text-muted small text-uppercase">Tahun Akademik</div>
                         </div>
-                        <div class="datagrid-item">
-                            <div class="datagrid-title">Semester</div>
-                            <div class="datagrid-content">{{ $periode->semester }}</div>
+                        <div class="col-6 text-center border-start">
+                            <div class="h3 mb-0">{{ $periode->tahun }}</div>
+                            <div class="text-muted small text-uppercase">Tahun</div>
                         </div>
-                        <div class="datagrid-item">
-                            <div class="datagrid-title">Tahun</div>
-                            <div class="datagrid-content">{{ $periode->tahun }}</div>
+                    </div>
+
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-muted small"><i class="ti ti-calendar-time me-1"></i> Durasi Periode</span>
+                            @if($periode->is_active && now()->between($periode->tanggal_mulai, $periode->tanggal_selesai))
+                                <span class="badge badge-outline text-success border-success badge-pill">Sedang Berlangsung</span>
+                            @elseif($periode->is_active && now()->isAfter($periode->tanggal_selesai))
+                                <span class="badge badge-outline text-danger border-danger badge-pill">Selesai (Aktif)</span>
+                            @endif
                         </div>
-                        <div class="datagrid-item">
-                            <div class="datagrid-title">Durasi</div>
-                            <div class="datagrid-content">
-                                {{ $periode->tanggal_mulai->translatedFormat('d M Y') }} - 
+                        <div class="p-3 rounded bg-light border border-dashed text-center">
+                            <div class="font-weight-bold">
+                                {{ $periode->tanggal_mulai->translatedFormat('d M Y') }} 
+                                <span class="text-muted mx-2">&mdash;</span>
                                 {{ $periode->tanggal_selesai->translatedFormat('d M Y') }}
                             </div>
                         </div>

@@ -136,7 +136,7 @@
                                 <x-tabler.form-input type="url" name="kpi_links_url[]" placeholder="https://..." value="{{ $link['url'] }}" />
                             </div>
                             <div class="col-auto">
-                                <x-tabler.button type="button" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" icon="ti ti-trash" />
+                                <x-tabler.button type="delete" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" />
                             </div>
                         </div>
                     @empty
@@ -148,13 +148,13 @@
                                 <x-tabler.form-input type="url" name="kpi_links_url[]" placeholder="https://..." />
                             </div>
                             <div class="col-auto">
-                                <x-tabler.button type="button" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" icon="ti ti-trash" />
+                                <x-tabler.button type="delete" class="btn-outline-danger remove-link-btn" title="Hapus baris ini" tabindex="-1" iconOnly="true" />
                             </div>
                         </div>
                     @endforelse
                 </div>
                 
-                <x-tabler.button type="button" id="add-kpi-link-btn" class="btn-outline-primary btn-sm mt-2" icon="ti ti-plus" text="Tambah Link" />
+                <x-tabler.button type="create" id="add-kpi-link-btn" class="btn-outline-primary btn-sm mt-2" text="Tambah Link" />
             </div>
         </div>
     </div>

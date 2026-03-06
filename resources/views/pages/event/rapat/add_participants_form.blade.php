@@ -46,7 +46,7 @@
                     </div>
                 </div>
             </div>
-            <x-tabler.button type="button" id="btn-add-luar" class="btn-outline-secondary btn-sm mt-1" icon="ti ti-plus" text="Tambah Baris" />
+            <x-tabler.button type="create" id="btn-add-luar" class="btn-sm mt-1" text="Tambah Baris" />
         </div>
     </div>
 

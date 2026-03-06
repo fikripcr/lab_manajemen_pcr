@@ -51,7 +51,7 @@ if (! function_exists('pemutuChildLabel')) {
     {
         return match (strtolower(trim($jenis))) {
             'visi', 'misi', 'rjp', 'renstra', 'renop' => 'Poin', 'standar' => 'Poin',
-            default   => 'Turunan'
+            default => 'Turunan'
         };
     }
 }
@@ -64,7 +64,7 @@ if (! function_exists('pemutuIsDokSubBased')) {
     {
         return in_array(strtolower(trim($jenis)), [
             'standar', 'formulir', 'manual_prosedur', 'renop',
-            'visi', 'misi', 'rjp', 'renstra'
+            'visi', 'misi', 'rjp', 'renstra',
         ]);
     }
 }
@@ -104,10 +104,10 @@ if (! function_exists('pemutuIndikatorTypeInfo')) {
     {
         $data = [
             'standar'  => ['color' => 'primary', 'label' => 'Indikator Standar', 'short-label' => 'ISTD'],
-            'renop'    => ['color' => 'purple',  'label' => 'Indikator Renop', 'short-label' => 'IRNP'],
+            'renop'    => ['color' => 'purple', 'label' => 'Indikator Renop', 'short-label' => 'IRNP'],
             'performa' => ['color' => 'success', 'label' => 'Indikator Performa', 'short-label' => 'IPRF'],
         ];
 
-        return $data[strtolower(trim($type))] ?? ['color' => 'secondary', 'label' => ucfirst($type ?? '-')];
+        return $data[strtolower(trim($type))] ?? ['color' => 'secondary', 'label' => ucfirst($type ?? '-'), 'short-label' => 'IND'];
     }
 }

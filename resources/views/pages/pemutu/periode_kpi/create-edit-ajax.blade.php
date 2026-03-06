@@ -1,10 +1,11 @@
 @php
     $item = $periodeKpi ?? new \App\Models\Pemutu\PeriodeKpi();
+    $isEdit = $item->exists;
     $route  = $isEdit 
-        ? route('pemutu.periode-kpi.update', $periodeKpi->encrypted_period_id) 
+        ? route('pemutu.periode-kpi.update', $item->encrypted_period_id) 
         : route('pemutu.periode-kpi.store');
-    $method = $item->exists ? 'PUT' : 'POST';
-    $title = $item->exists ? 'Edit Periode KPI' : 'Tambah Periode KPI';
+    $method = $isEdit ? 'PUT' : 'POST';
+    $title = $isEdit ? 'Edit Periode KPI' : 'Tambah Periode KPI';
 @endphp
 
 <x-tabler.form-modal

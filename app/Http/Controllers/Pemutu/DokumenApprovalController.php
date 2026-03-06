@@ -30,7 +30,7 @@ class DokumenApprovalController extends Controller
 
         $status = $statusMapping[$request->status] ?? 'Pending';
 
-        $personil = Personil::findOrFail(decryptId($request->personil_id));
+        $personil = Personil::findOrFail(decryptIdIfEncrypted($request->personil_id));
 
         $approval = RiwayatApproval::create([
             'model'    => Dokumen::class,

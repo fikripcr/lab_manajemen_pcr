@@ -4,7 +4,7 @@
 @section('header')
 <x-tabler.page-header title="Struktur Organisasi" pretitle="Shared Master Data">
     <x-slot:actions>
-        <x-tabler.button type="button" icon="ti ti-plus" text="Tambah Unit" class="ajax-modal-btn" data-url="{{ route('shared.struktur-organisasi.create') }}" data-modal-title="Tambah Unit" />
+        <x-tabler.button type="create" text="Tambah Unit" class="ajax-modal-btn" data-url="{{ route('shared.struktur-organisasi.create') }}" data-modal-title="Tambah Unit" />
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
