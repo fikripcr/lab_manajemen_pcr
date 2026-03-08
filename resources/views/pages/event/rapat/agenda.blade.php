@@ -3,7 +3,7 @@
 @section('header')
     <x-tabler.page-header title="Agenda Rapat" pretitle="Kegiatan / Meeting / Agenda">
         <x-slot:actions>
-            <x-tabler.button type="create" href="{{ route('Kegiatan.rapat.show', $rapat) }}" text="Tambah Agenda" class="d-none d-sm-inline-block" />
+            <x-tabler.button type="create" href="{{ route('Kegiatan.rapat.show', $rapat) }}" class="d-none d-sm-inline-block" />
         </x-slot:actions>
     </x-tabler.page-header>
 @endsection

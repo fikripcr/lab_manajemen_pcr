@@ -5,10 +5,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\RapatEntitasRequest;
 use App\Models\Event\Rapat;
 use App\Models\Event\RapatEntitas;
+use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\IndikatorOrgUnit;
+use App\Models\Shared\StrukturOrganisasi;
 use App\Services\Event\RapatEntitasService;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use Yajra\DataTables\Facades\DataTables;
 
 class RapatEntitasController extends Controller
 {
@@ -28,19 +31,93 @@ class RapatEntitasController extends Controller
         return datatables()->of($query)
             ->addIndexColumn()
             ->addColumn('model_info', function ($row) {
-                return class_basename($row->model) . ' - ID: ' . $row->model_id;
+                $modelName = class_basename($row->model);
+
+                if ($row->model === IndikatorOrgUnit::class) {
+                    $item = IndikatorOrgUnit::with('indikator')->find($row->model_id);
+                    if ($item && $item->indikator) {
+                        return '[Indikator Unit] ' . $item->indikator->no_indikator . ' - ' . Str::limit($item->indikator->indikator, 30);
+                    }
+                }
+
+                if ($row->model === StrukturOrganisasi::class) {
+                    $item = StrukturOrganisasi::find($row->model_id);
+                    return $item ? '[Unit Kerja] ' . $item->name : $modelName . ' - ID: ' . $row->model_id;
+                }
+
+                if ($row->model === Indikator::class) {
+                    $item = Indikator::find($row->model_id);
+                    return $item ? '[Indikator Mutu] ' . $item->no_indikator . ' - ' . Str::limit($item->indikator, 30) : $modelName . ' - ID: ' . $row->model_id;
+                }
+
+                return $modelName . ' - ID: ' . $row->model_id;
             })
             ->addColumn('keterangan', function ($row) {
                 return Str::limit($row->keterangan, 50);
             })
-            ->addColumn('action', function ($row) {
+            ->addColumn('action', function ($row) use ($rapat) {
                 return view('components.tabler.datatables-actions', [
-                    'editUrl'   => route('Kegiatan.rapat.entitas.edit', $row->encrypted_rapatentitas_id),
-                    'deleteUrl' => route('Kegiatan.rapat.entitas.destroy', $row->encrypted_rapatentitas_id),
+                    'editUrl'   => route('Kegiatan.rapat.entitas.edit', [$rapat->encrypted_rapat_id, $row->encrypted_rapatentitas_id]),
+                    'deleteUrl' => route('Kegiatan.rapat.entitas.destroy', [$rapat->encrypted_rapat_id, $row->encrypted_rapatentitas_id]),
                 ])->render();
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+
+    public function search(Rapat $rapat, Request $request)
+    {
+        $q = $request->input('q');
+
+        $results = collect();
+
+        // 1. IndikatorOrgUnit
+        $indikatorOrgUnits = IndikatorOrgUnit::query()
+            ->join('pemutu_indikator', 'pemutu_indikator_orgunit.indikator_id', '=', 'pemutu_indikator.indikator_id')
+            ->where(function ($query) use ($q) {
+                $query->where('pemutu_indikator.no_indikator', 'like', "%{$q}%")
+                    ->orWhere('pemutu_indikator.indikator', 'like', "%{$q}%");
+            })
+            ->select('pemutu_indikator_orgunit.*', 'pemutu_indikator.no_indikator', 'pemutu_indikator.indikator')
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id'   => 'IndikatorOrgUnit:' . $item->indikorgunit_id,
+                    'text' => '[Indikator Unit] ' . $item->no_indikator . ' - ' . $item->indikator,
+                ];
+            });
+        $results = $results->concat($indikatorOrgUnits);
+
+        // 2. StrukturOrganisasi (Unit Kerja)
+        $units = StrukturOrganisasi::query()
+            ->where('name', 'like', "%{$q}%")
+            ->orWhere('code', 'like', "%{$q}%")
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id'   => 'StrukturOrganisasi:' . $item->orgunit_id,
+                    'text' => '[Unit Kerja] ' . $item->name . ($item->code ? " ({$item->code})" : ""),
+                ];
+            });
+        $results = $results->concat($units);
+
+        // 3. Indikator (General)
+        $indikators = Indikator::query()
+            ->where('no_indikator', 'like', "%{$q}%")
+            ->orWhere('indikator', 'like', "%{$q}%")
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id'   => 'Indikator:' . $item->indikator_id,
+                    'text' => '[Indikator Mutu] ' . $item->no_indikator . ' - ' . $item->indikator,
+                ];
+            });
+        $results = $results->concat($indikators);
+
+        return response()->json(['results' => $results->take(30)]);
     }
 
     public function create(Rapat $rapat)
@@ -56,7 +133,7 @@ class RapatEntitasController extends Controller
 
     public function store(RapatEntitasRequest $request, Rapat $rapat)
     {
-        $data = $request->validated();
+        $data             = $request->validated();
         $data['rapat_id'] = $rapat->rapat_id;
         $this->service->store($data);
         return jsonSuccess('Entitas berhasil ditambahkan');
@@ -71,6 +148,6 @@ class RapatEntitasController extends Controller
     public function destroy(Rapat $rapat, RapatEntitas $entitas)
     {
         $this->service->destroy($entitas);
-        return jsonSuccess('Entitas berhasil dihapus');
+        return jsonSuccess('Entitas berhasil dihapus', route('Kegiatan.rapat.show', $rapat->encrypted_rapat_id) . '#section-entitas');
     }
 }

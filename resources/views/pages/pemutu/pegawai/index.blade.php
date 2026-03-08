@@ -13,8 +13,8 @@
 @endsection
 
 @section('content')
-    <div class="card overflow-hidden">
-        <div class="card-header">
+    <x-tabler.card>
+        <x-tabler.card-header>
             <div class="d-flex flex-wrap gap-2">
                 <div>
                     <x-tabler.datatable-page-length dataTableId="pegawai-table" />
@@ -23,8 +23,8 @@
                     <x-tabler.datatable-search dataTableId="pegawai-table" />
                 </div>
             </div>
-        </div>
-        <div class="card-body p-0">
+        </x-tabler.card-header>
+        <x-tabler.card-body class="p-0">
             <x-tabler.flash-message />
             <x-tabler.datatable
                 id="pegawai-table"
@@ -40,6 +40,6 @@
                 ]"
                 :order="[[1, 'asc']]"
             />
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 @endsection

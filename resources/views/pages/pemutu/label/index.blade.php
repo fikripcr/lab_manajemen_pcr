@@ -2,24 +2,19 @@
 @section('title', 'Master Label')
 
 @section('header')
-<x-tabler.page-header title="Master Label" pretitle="Data Master">
-    <x-slot:actions>
-        {{-- Global Add Label Button (Optional, or rely on sidebar/table actions) --}}
-    </x-slot:actions>
-</x-tabler.page-header>
+<x-tabler.page-header title="Master Label" pretitle="Data Master"/>
 @endsection
 
 @section('content')
 <div class="row row-cards">
     <!-- Sidebar: Label Types -->
     <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Tipe Label</h3>
-                <div class="card-actions">
+        <x-tabler.card>
+            <x-tabler.card-header title="Tipe Label">
+                <x-slot:actions>
                     <x-tabler.button type="create" class="btn-sm me-0 ajax-modal-btn" data-url="{{ route('pemutu.label-type.create') }}" data-modal-title="Tambah Tipe Label" />
-                </div>
-            </div>
+                </x-slot:actions>
+            </x-tabler.card-header>
             <div class="list-group list-group-flush" id="label-type-list">
                 <a href="#" class="list-group-item list-group-item-action active d-flex align-items-center" data-type-id="" onclick="filterLabels(this, '')">
                     All Labels
@@ -48,19 +43,18 @@
                     </div>
                 @endforeach
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 
     <!-- Content: Labels -->
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title" id="labels-title">Daftar Label</h3>
-                <div class="card-actions">
-                    <x-tabler.button type="create" text="Tambah Label" class="ajax-modal-btn" id="btn-add-label" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
-                </div>
-            </div>
-            <div class="card-body p-0">
+        <x-tabler.card>
+            <x-tabler.card-header title="Daftar Label">
+                <x-slot:actions>
+                    <x-tabler.button type="create" class="btn-sm ajax-modal-btn" id="btn-add-label" data-url="{{ route('pemutu.label.create') }}" data-modal-title="Tambah Label Baru" />
+                </x-slot:actions>
+            </x-tabler.card-header>
+            <x-tabler.card-body class="p-0 table-responsive">
                 <x-tabler.datatable
                     id="table-labels"
                     route="{{ route('pemutu.label.data') }}"
@@ -71,8 +65,8 @@
                         ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '15%']
                     ]"
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

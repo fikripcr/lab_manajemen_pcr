@@ -20,8 +20,8 @@
 
     {{-- Tab Navigation --}}
     <div class="col-12 mb-3">
-        <div class="card">
-            <div class="card-body p-2">
+        <x-tabler.card>
+            <x-tabler.card-body class="p-2">
                 <ul class="nav nav-pills" id="peningkatan-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a href="#section-rtm" class="nav-link active" data-bs-toggle="tab" role="tab">
@@ -39,8 +39,8 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 
     <div class="col-12">
@@ -51,8 +51,8 @@
 
             @if(!$rapat)
                 {{-- RTM Belum Ada --}}
-                <div class="card">
-                    <div class="card-body text-center py-5">
+                <x-tabler.card>
+                    <x-tabler.card-body class="text-center py-5">
                         <div class="mb-3">
                             <span class="avatar avatar-xl rounded bg-blue-lt">
                                 <i class="ti ti-calendar-plus fs-1"></i>
@@ -64,16 +64,16 @@
                             data-url="{{ route('pemutu.peningkatan.rtm.create', $periode->encrypted_periodespmi_id) }}"
                             data-modal-title="Buat RTM Peningkatan"
                             text="Buat RTM" />
-                    </div>
-                </div>
+                    </x-tabler.card-body>
+                </x-tabler.card>
             @else
                 {{-- RTM Sudah Ada — Two-column layout --}}
                 <div class="row row-cards">
 
                     {{-- ══ KIRI: Tabs Data Umum + Peserta ══ --}}
                     <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
+                        <x-tabler.card>
+                            <x-tabler.card-header>
                                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                                     <li class="nav-item">
                                         <a href="#rtm-tab-umum" class="nav-link active" data-bs-toggle="tab">
@@ -87,8 +87,8 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </div>
-                            <div class="card-body">
+                            </x-tabler.card-header>
+                            <x-tabler.card-body>
                                 <div class="tab-content">
 
                                     {{-- ── TAB: Data Umum ── --}}
@@ -261,24 +261,22 @@
                                     </div>
 
                                 </div>{{-- /tab-content --}}
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
 
                     {{-- ══ KANAN: Agenda (selalu tampil) ══ --}}
                     <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"><i class="ti ti-checklist me-2"></i>Agenda & Pembahasan</h3>
-                                <div class="card-actions">
+                        <x-tabler.card>
+                            <x-tabler.card-header title='<i class="ti ti-checklist me-2"></i>Agenda & Pembahasan'>
+                                <x-slot:actions>
                                     <x-tabler.button type="create" class="btn-success btn-sm ajax-modal-btn"
                                         data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}"
-                                        data-modal-title="Tambah Agenda"
-                                        text="Tambah Agenda" />
+                                        data-modal-title="Tambah Agenda"/>
                                     <span class="badge bg-blue-lt ms-1">{{ $rapat->agendas->count() }}</span>
-                                </div>
-                            </div>
-                            <div class="card-body">
+                                </x-slot:actions>
+                            </x-tabler.card-header>
+                            <x-tabler.card-body>
                                 <form id="form-agenda" action="{{ route('Kegiatan.rapat.update-agenda', $rapat->encrypted_rapat_id) }}" method="POST">
                                     @csrf
                                     <div class="accordion" id="accordion-agenda">
@@ -341,8 +339,8 @@
                                     </div>
                                     @endif
                                 </form>
-                            </div>
-                        </div>
+                            </x-tabler.card-body>
+                        </x-tabler.card>
                     </div>
 
                 </div>{{-- /row --}}
@@ -458,12 +456,10 @@
 
         {{-- ===== SECTION: TAHAP 2 — REVIEW INDIKATOR ===== --}}
         <div id="section-manage" class="tab-pane fade" role="tabpanel">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="ti ti-settings-2 me-2"></i>Tahap 2 — Review Indikator</h3>
-                </div>
-                <div class="card-body">
-                    @if(!$hasDuplicated)
+            <x-tabler.card>
+                <x-tabler.card-header title='<i class="ti ti-settings-2 me-2"></i>Tahap 2 — Review Indikator' />
+                @if(!$hasDuplicated)
+                    <x-tabler.card-body>
                         <div class="text-center py-4">
                             <span class="avatar avatar-xl rounded bg-yellow-lt mb-3">
                                 <i class="ti ti-alert-triangle fs-1"></i>
@@ -472,29 +468,31 @@
                             <p class="text-muted">Lakukan duplikasi standar terlebih dahulu di <strong>Tahap 1</strong> sebelum melakukan review.</p>
                             <x-tabler.button type="button" class="btn-outline-primary" onclick="switchSection('#section-duplikasi')" icon="ti ti-arrow-left" text="Ke Tahap 1" />
                         </div>
-                    @else
+                    </x-tabler.card-body>
+                @else
+                    <x-tabler.card-body class="border-bottom pb-3">
                         <div class="alert alert-info mb-3">
                             <i class="ti ti-info-circle me-1"></i>
                             Tabel di bawah menampilkan indikator yang sudah diduplikasi beserta <strong>status pengendalian tahun lalu</strong> untuk setiap prodi.
                         </div>
-                        <div class="table-responsive">
-                            <x-tabler.datatable
-                                id="table-review"
-                                route="{{ route('pemutu.peningkatan.review-data', $periode->encrypted_periodespmi_id) }}"
-                                :columns="[
-                                    ['data' => 'no_indikator', 'name' => 'pemutu_indikator.no_indikator', 'title' => 'No.', 'width' => '5%'],
-                                    ['data' => 'nama_indikator', 'name' => 'pemutu_indikator.indikator', 'title' => 'Nama Indikator'],
-                                    ['data' => 'dokumen_standar', 'name' => 'd.judul', 'title' => 'Standar / Dokumen'],
-                                    ['data' => 'nama_prodi', 'name' => 'org.nama', 'title' => 'Prodi/Unit', 'width' => '10%'],
-                                    ['data' => 'target_baru', 'name' => 'pemutu_indikator_orgunit.target', 'title' => 'Target Baru', 'width' => '5%', 'class' => 'text-center'],
-                                    ['data' => 'status_badge', 'name' => 'status_badge', 'title' => 'Status Thn Lalu', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
-                                    ['data' => 'keterangan_perubahan', 'name' => 'keterangan_perubahan', 'title' => 'Keterangan Perubahan', 'orderable' => false, 'searchable' => false]
-                                ]"
-                            />
-                        </div>
-                    @endif
-                </div>
-            </div>
+                    </x-tabler.card-body>
+                    <x-tabler.card-body class="p-0 table-responsive">
+                        <x-tabler.datatable
+                            id="table-review"
+                            route="{{ route('pemutu.peningkatan.review-data', $periode->encrypted_periodespmi_id) }}"
+                            :columns="[
+                                ['data' => 'no_indikator', 'name' => 'pemutu_indikator.no_indikator', 'title' => 'No.', 'width' => '5%'],
+                                ['data' => 'nama_indikator', 'name' => 'pemutu_indikator.indikator', 'title' => 'Nama Indikator'],
+                                ['data' => 'dokumen_standar', 'name' => 'd.judul', 'title' => 'Standar / Dokumen'],
+                                ['data' => 'nama_prodi', 'name' => 'org.nama', 'title' => 'Prodi/Unit', 'width' => '10%'],
+                                ['data' => 'target_baru', 'name' => 'pemutu_indikator_orgunit.target', 'title' => 'Target Baru', 'width' => '5%', 'class' => 'text-center'],
+                                ['data' => 'status_badge', 'name' => 'status_badge', 'title' => 'Status Thn Lalu', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
+                                ['data' => 'keterangan_perubahan', 'name' => 'keterangan_perubahan', 'title' => 'Keterangan Perubahan', 'orderable' => false, 'searchable' => false]
+                            ]"
+                        />
+                    </x-tabler.card-body>
+                @endif
+            </x-tabler.card>
         </div>
 
         </div>{{-- /tab-content --}}

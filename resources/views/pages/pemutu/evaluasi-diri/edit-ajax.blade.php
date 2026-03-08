@@ -18,6 +18,11 @@
             <div class="mb-3">
                 <span class="text-muted text-uppercase fw-bold fs-5">Pernyataan Standar / Indikator</span>
                 <p class="mt-1 mb-0 fs-3">{{ $indikator->indikator }}</p>
+                @if($indikator->keterangan)
+                    <div class="mt-2 text-muted bg-light p-2 rounded small border-start border-3 border-info">
+                        {!! $indikator->keterangan !!}
+                    </div>
+                @endif
             </div>
 
             <div class="mb-3 bg-blue-lt p-3 rounded">
@@ -250,7 +255,12 @@
             window.loadHugeRTE('#ed_analisis', {
                 height: 250, menubar: false, statusbar: false,
                 plugins: 'lists link table',
-                toolbar: 'bold italic underline | bullist numlist | link table'
+                toolbar: 'bold italic underline | bullist numlist | link table',
+                setup: function (editor) {
+                    editor.on('change', function () {
+                        editor.save();
+                    });
+                }
             });
         }
     }, 100);

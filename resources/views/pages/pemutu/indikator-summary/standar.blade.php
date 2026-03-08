@@ -5,8 +5,8 @@
 <div class="row">
     {{-- Summary Cards --}}
     <div class="col-12">
-        <div class="card overflow-hidden">
-            <div class="card-header border-bottom">
+        <x-tabler.card>
+            <x-tabler.card-header class="border-bottom">
                 <div class="d-flex flex-wrap gap-2 w-100 align-items-center">
                     <h3 class="card-title mb-0">List Indikator Standar</h3>
                     <div class="ms-auto d-flex flex-wrap gap-2">
@@ -59,8 +59,8 @@
                         <x-tabler.button type="button" class="btn-success" onclick="exportExcel()" icon="ti ti-file-export" text="Export" />
                     </div>
                 </div>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 {{-- Summary Cards --}}
                 <div class="row mb-4">
                     <div class="col-sm-6 col-lg-3">
@@ -144,8 +144,8 @@
                     ]"
                     ajax-load
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

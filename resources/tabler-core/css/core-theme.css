@@ -527,4 +527,27 @@
     /* .modal-backdrop {
         --tblr-backdrop-zindex: 1 !important;
     } */
+
+    /* ==========================================================================
+       7. PREMIUM GRADIENT UTILITIES
+       ========================================================================== */
+    .bg-gradient-cyan {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+    }
+
+    .bg-gradient-indigo {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    }
+
+    .bg-gradient-emerald {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    }
+
+    .bg-gradient-azure {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    }
+
+    .opacity-05 {
+        opacity: 0.05 !important;
+    }
 }

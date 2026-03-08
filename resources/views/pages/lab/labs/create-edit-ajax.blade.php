@@ -36,13 +36,15 @@
                     required 
                 />
 
-                <x-tabler.form-textarea 
-                    id="{{ $lab->exists ? 'description_edit_modal' : 'description_modal' }}" 
-                    name="description" 
-                    label="Deskripsi" 
-                    :value="old('description', $lab->description)" 
-                    height="300" 
-                />
+                <div>
+                    <x-tabler.form-textarea 
+                        id="{{ $lab->exists ? 'description_edit_modal' : 'description_modal' }}" 
+                        name="description" 
+                        label="Deskripsi" 
+                        :value="old('description', $lab->description)" 
+                        height="300" 
+                    />
+                </div>
             </div>
         </div>
 
@@ -101,7 +103,14 @@
 @push('js')
 <script>
     if (window.loadHugeRTE) {
-        window.loadHugeRTE('#{{ $lab->exists ? "description_edit_modal" : "description_modal" }}', { height: 300 });
+        window.loadHugeRTE('#{{ $lab->exists ? "description_edit_modal" : "description_modal" }}', { 
+            height: 300,
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
     }
 </script>
 @endpush

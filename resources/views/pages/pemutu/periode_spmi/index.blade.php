@@ -1,171 +1,130 @@
 @extends('layouts.tabler.app')
 
 @section('header')
-<x-tabler.page-header title="{{ $pageTitle }}" pretitle="Penjaminan Mutu">
+<x-tabler.page-header title="{{ $pageTitle }}" pretitle="Manajemen">
     <x-slot:actions>
-        <x-tabler.button type="create" href="#" class="ajax-modal-btn" data-url="{{ route('pemutu.periode-spmi.create') }}" data-modal-title="Tambah Periode SPMI" text="Tambah Periode" />
+        <div class="d-flex align-items-center gap-3">
+            <div>
+                <x-tabler.form-select name="year" id="year-filter">
+                    @foreach($years as $year)
+                        <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                            Tahun {{ $year }}
+                        </option>
+                    @endforeach
+                </x-tabler.form-select>
+            </div>
+            <x-tabler.button type="create" class="btn-primary" :modalUrl="route('pemutu.periode-spmi.create')" modalTitle="Tambah Periode" />
+        </div>
     </x-slot:actions>
 </x-tabler.page-header>
 @endsection
 
 @section('content')
-<div class="row row-cards">
+<div class="row">
     @forelse($periodes as $periode)
         <div class="col-md-6">
-            <div class="card card-md shadow-sm border-0 overflow-hidden h-100 position-relative">
-                {{-- Decorative Background Gradient --}}
-                <div class="position-absolute top-0 start-0 w-100 h-100 opacity-05 pointer-events-none bg-gradient-{{ $periode->jenis_periode === 'Akademik' ? 'cyan' : 'indigo' }}"></div>
-                
-                {{-- Card Header --}}
-                <div class="card-header bg-transparent border-0 pb-0">
-                    <div>
-                        <div class="text-uppercase text-muted font-weight-bold tracking-widest small mb-1">Periode {{ $periode->jenis_periode }}</div>
-                        <h2 class="card-title h1 mb-0 text-primary">Periode {{ $periode->periode }}</h2>
-                    </div>
-                    <div class="card-actions">
-                        <div class="dropdown">
-                            <a href="#" class="btn btn-icon btn-ghost-secondary rounded-circle dropdown-toggle no-caret" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ti ti-dots-vertical"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0">
-                                <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('pemutu.periode-spmi.edit', $periode->encrypted_periodespmi_id) }}">
-                                    <i class="ti ti-pencil me-2 text-muted"></i> Edit Periode
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger ajax-delete" href="#" 
-                                   data-url="{{ route('pemutu.periode-spmi.destroy', $periode->encrypted_periodespmi_id) }}"
-                                   data-title="Hapus Periode?"
-                                   data-text="Data periode dan seluruh data terkait mungkin akan terpengaruh.">
-                                    <i class="ti ti-trash me-2"></i> Hapus
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <x-tabler.card>
+                <x-tabler.card-header title="Periode {{ $periode->periode }}">
+                    <span class="ms-3 status status-{{$periode->jenis_periode == 'Akademik' ? 'primary' : 'secondary'}}"> {{ $periode->jenis_periode }}</span>
+                    <x-slot:actions>
+                        <x-tabler.dropdown>
+                            <x-tabler.dropdown-item  type="edit" url="{{ route('pemutu.periode-spmi.edit', $periode->encrypted_periodespmi_id) }}" />
+                            <x-tabler.dropdown-divider />
+                            <x-tabler.dropdown-item type="delete" url="{{ route('pemutu.periode-spmi.destroy', $periode->encrypted_periodespmi_id) }}" />
+                        </x-tabler.dropdown>
+                    </x-slot:actions>
+                </x-tabler.card-header>
 
-                <div class="card-body">
-                    <div class="steps steps-vertical">
+                <x-tabler.card-body>
+                    <ul class="timeline">
                         {{-- 1. PENETAPAN --}}
-                        <div class="step-item active">
-                            <div class="row align-items-center g-3">
-                                <div class="col-auto">
-                                    <span class="avatar avatar-sm rounded-circle bg-primary-lt shadow-sm">
-                                        <i class="ti ti-gavel"></i>
-                                    </span>
-                                </div>
-                                <div class="col">
-                                    <div class="font-weight-bold">Penetapan</div>
+                        <li class="timeline-event">
+                            <div class="timeline-event-icon bg-primary-lt">
+                                <i class="ti ti-gavel"></i>
+                            </div>
+                            <div class="timeline-event-card shadow-none border">
+                                <div class="card-body p-2">
+                                    <div class="fw-bold">Penetapan</div>
                                     <div class="text-muted small">
-                                        <i class="ti ti-calendar-event me-1"></i>
-                                        {{ $periode->penetapan_awal ? \Carbon\Carbon::parse($periode->penetapan_awal)->translatedFormat('d M Y') : '-' }} 
-                                        &mdash; 
-                                        {{ $periode->penetapan_akhir ? \Carbon\Carbon::parse($periode->penetapan_akhir)->translatedFormat('d M Y') : '-' }}
+                                        {{ formatTanggalIndo($periode->penetapan_awal) }} 
+                                        s/d 
+                                        {{ formatTanggalIndo($periode->penetapan_akhir) }}
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </li>
 
                         {{-- 2. PELAKSANAAN --}}
-                        <div class="step-item active">
-                            <div class="row align-items-center g-3">
-                                <div class="col-auto">
-                                    <span class="avatar avatar-sm rounded-circle bg-teal-lt shadow-sm">
-                                        <i class="ti ti-player-play"></i>
-                                    </span>
-                                </div>
-                                <div class="col">
-                                    <div class="font-weight-bold">Pelaksanaan</div>
-                                    <div class="text-muted small">Berjalan sepanjang Tahun {{ $periode->periode }}</div>
+                        <li class="timeline-event">
+                            <div class="timeline-event-icon bg-teal-lt">
+                                <i class="ti ti-player-play"></i>
+                            </div>
+                            <div class="timeline-event-card shadow-none border">
+                                <div class="card-body p-2">
+                                    <div class="fw-bold">Pelaksanaan</div>
+                                    <div class="text-muted small">
+                                        Sepanjang Periode {{ $periode->periode }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </li>
 
                         {{-- 3. EVALUASI --}}
-                        <div class="step-item @if($periode->ed_awal || $periode->ami_awal) active @endif">
-                            <div class="row g-3">
-                                <div class="col-auto">
-                                    <span class="avatar avatar-sm rounded-circle @if($periode->ed_awal || $periode->ami_awal) bg-warning-lt shadow-sm @else bg-light text-muted @endif">
-                                        <i class="ti ti-clipboard-check"></i>
-                                    </span>
-                                </div>
-                                <div class="col">
-                                    <div class="font-weight-bold">Evaluasi (ED & AMI)</div>
-                                    <div class="row mt-2 g-2">
-                                        <div class="col-sm-6">
-                                            <div class="p-2 rounded bg-light-subtle border border-dashed border-warning">
-                                                <div class="small font-weight-bold text-warning-emphasis text-uppercase tracking-wider">Evaluasi Diri</div>
-                                                <div class="small text-muted">
-                                                    @if($periode->ed_awal)
-                                                        {{ \Carbon\Carbon::parse($periode->ed_awal)->format('d M') }} - {{ \Carbon\Carbon::parse($periode->ed_akhir)->format('d M') }}
-                                                    @else
-                                                        <span class="fst-italic">Not scheduled</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="p-2 rounded bg-light-subtle border border-dashed border-warning">
-                                                <div class="small font-weight-bold text-warning-emphasis text-uppercase tracking-wider">AMI</div>
-                                                <div class="small text-muted">
-                                                    @if($periode->ami_awal)
-                                                        {{ \Carbon\Carbon::parse($periode->ami_awal)->format('d M') }} - {{ \Carbon\Carbon::parse($periode->ami_akhir)->format('d M') }}
-                                                    @else
-                                                        <span class="fst-italic">Not scheduled</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
+                        <li class="timeline-event">
+                            <div class="timeline-event-icon bg-warning-lt">
+                                <i class="ti ti-clipboard-check"></i>
+                            </div>
+                            <div class="timeline-event-card shadow-none border">
+                                <div class="card-body p-2">
+                                    <div class="fw-bold">Evaluasi (ED & AMI)</div>
+                                    <div class="text-muted small">
+                                        @if($periode->ed_awal)
+                                            <div><span class="text-warning">ED:</span> {{ formatTanggalIndo($periode->ed_awal) }} - {{ formatTanggalIndo($periode->ed_akhir) }}</div>
+                                        @endif
+                                        @if($periode->ami_awal)
+                                            <div><span class="text-warning">AMI:</span> {{ formatTanggalIndo($periode->ami_awal) }} - {{ formatTanggalIndo($periode->ami_akhir) }}</div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </li>
 
                         {{-- 4. PENGENDALIAN --}}
-                        <div class="step-item @if($periode->pengendalian_awal) active @endif">
-                            <div class="row align-items-center g-3">
-                                <div class="col-auto">
-                                    <span class="avatar avatar-sm rounded-circle @if($periode->pengendalian_awal) bg-danger-lt shadow-sm @else bg-light text-muted @endif">
-                                        <i class="ti ti-settings-exclamation"></i>
-                                    </span>
-                                </div>
-                                <div class="col">
-                                    <div class="font-weight-bold">Pengendalian (RTM)</div>
+                        <li class="timeline-event">
+                            <div class="timeline-event-icon bg-danger-lt">
+                                <i class="ti ti-settings-exclamation"></i>
+                            </div>
+                            <div class="timeline-event-card shadow-none border">
+                                <div class="card-body p-2">
+                                    <div class="fw-bold">Pengendalian</div>
                                     <div class="text-muted small">
-                                        @if($periode->pengendalian_awal)
-                                            <i class="ti ti-calendar-event me-1"></i>
-                                            {{ \Carbon\Carbon::parse($periode->pengendalian_awal)->translatedFormat('d M Y') }} &mdash; {{ \Carbon\Carbon::parse($periode->pengendalian_akhir)->translatedFormat('d M Y') }}
-                                        @else
-                                            <span class="fst-italic">Schedule pending</span>
-                                        @endif
+                                        {{ formatTanggalIndo($periode->pengendalian_awal) }}
+                                        s/d
+                                        {{ formatTanggalIndo($periode->pengendalian_akhir) }}
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </li>
 
                         {{-- 5. PENINGKATAN --}}
-                        <div class="step-item @if($periode->peningkatan_awal) active @endif">
-                            <div class="row align-items-center g-3">
-                                <div class="col-auto">
-                                    <span class="avatar avatar-sm rounded-circle @if($periode->peningkatan_awal) bg-success-lt shadow-sm @else bg-light text-muted @endif">
-                                        <i class="ti ti-trending-up"></i>
-                                    </span>
-                                </div>
-                                <div class="col">
-                                    <div class="font-weight-bold">Peningkatan</div>
+                        <li class="timeline-event">
+                            <div class="timeline-event-icon bg-success-lt">
+                                <i class="ti ti-trending-up"></i>
+                            </div>
+                            <div class="timeline-event-card shadow-none border">
+                                <div class="card-body p-2">
+                                    <div class="fw-bold">Peningkatan</div>
                                     <div class="text-muted small">
-                                        @if($periode->peningkatan_awal)
-                                            <i class="ti ti-calendar-event me-1"></i>
-                                            {{ \Carbon\Carbon::parse($periode->peningkatan_awal)->translatedFormat('d M Y') }} &mdash; {{ \Carbon\Carbon::parse($periode->peningkatan_akhir)->translatedFormat('d M Y') }}
-                                        @else
-                                            <span class="fst-italic">Schedule pending</span>
-                                        @endif
+                                        {{ formatTanggalIndo($periode->peningkatan_awal) }}
+                                        s/d
+                                        {{ formatTanggalIndo($periode->peningkatan_akhir) }}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        </li>
+                    </ul>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     @empty
         <x-tabler.empty-state
@@ -176,3 +135,14 @@
     @endforelse
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('year-filter').addEventListener('change', function() {
+        const year = this.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('year', year);
+        window.location.href = url.toString();
+    });
+</script>
+@endpush

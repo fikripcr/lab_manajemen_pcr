@@ -34,6 +34,10 @@ class IndikatorOrgUnit extends Model
         'pengend_penyesuaian',
         'pengend_important_matrix',
         'pengend_urgent_matrix',
+        'ami_rtp_isi',
+        'ami_rtp_tgl_pelaksanaan',
+        'ed_ptp_isi',
+        'ami_te_isi',
     ];
 
     protected $casts = [

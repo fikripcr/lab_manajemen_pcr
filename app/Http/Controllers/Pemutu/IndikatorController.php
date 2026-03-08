@@ -9,21 +9,32 @@ use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\LabelType;
 use App\Models\Pemutu\OrgUnit;
 use App\Models\Shared\Pegawai;
+use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\PelaksanaanService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class IndikatorController extends Controller
 {
-    public function __construct(protected IndikatorService $indikatorService)
-    {}
+    public function __construct(
+        protected IndikatorService $indikatorService,
+        protected PelaksanaanService $PelaksanaanService,
+        protected DokumenService $dokumenService
+    ) {}
 
-    public function index()
+    public function index(Request $request)
     {
+        // Allowed types
+        $types      = ['standar' => 'Standar', 'renop' => 'Renop', 'performa' => 'Performa'];
+        $activeType = $request->query('type', 'standar');
+        if (! array_key_exists($activeType, $types)) {
+            $activeType = 'standar';
+        }
+
         // Filters data
         $dokumens   = Dokumen::whereNull('parent_id')->orderBy('judul')->pluck('judul', 'dok_id')->toArray();
         $labelTypes = LabelType::orderBy('name')->pluck('name', 'labeltype_id')->toArray();
-        $types      = ['standar' => 'Standar', 'renop' => 'Renop', 'performa' => 'Performa'];
 
         // Year filter from Dokumen.periode
         $periodes = Dokumen::select('periode')
@@ -33,7 +44,11 @@ class IndikatorController extends Controller
             ->pluck('periode', 'periode')
             ->toArray();
 
-        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelTypes', 'types', 'periodes'));
+        if (empty($periodes)) {
+            $periodes[date('Y')] = date('Y');
+        }
+
+        return view('pages.pemutu.indikator.index', compact('dokumens', 'labelTypes', 'types', 'periodes', 'activeType'));
     }
 
     public function data(Request $request)
@@ -86,14 +101,8 @@ class IndikatorController extends Controller
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
-        $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
-
-        $dokumens = Dokumen::with('dokSubs')
-            ->whereIn('jenis', ['renstra', 'renop', 'standar'])
-            ->orderBy('judul')
-            ->get();
-
-        $parents = Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
+        $orgUnits = OrgUnit::with('descendants')->where('level', 1)->orderBy('seq')->get();
+        $parents  = Indikator::where('type', 'standar')->orderBy('no_indikator')->get();
 
         $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
 
@@ -106,11 +115,11 @@ class IndikatorController extends Controller
             $parentDok   = $parentDokId ? Dokumen::with('dokSubs')->find($parentDokId) : null;
 
             if ($request->has('parent_doksub_id')) {
-                $selectedDokSubs = [$request->get('parent_doksub_id')];
                 $doksubId        = decryptIdIfEncrypted($request->get('parent_doksub_id'));
+                $selectedDokSubs = DokSub::with('dokumen')->where('doksub_id', $doksubId)->get();
 
                 if (! $parentDok) {
-                    $ds        = DokSub::find($doksubId);
+                    $ds        = $selectedDokSubs->first();
                     $parentDok = $ds ? $ds->dokumen : null;
                 }
             } elseif ($parentDok) {
@@ -118,7 +127,7 @@ class IndikatorController extends Controller
                 // For renop, dokSubs are NOT auto-selected at document level —
                 // the user must enter from a specific Poin (which passes parent_doksub_id).
                 if (strtolower(trim($parentDok->jenis)) !== 'renop') {
-                    $selectedDokSubs = $parentDok->dokSubs->map(fn($ds) => $ds->encrypted_doksub_id)->toArray();
+                    $selectedDokSubs = $parentDok->dokSubs;
                 }
             }
 
@@ -127,7 +136,7 @@ class IndikatorController extends Controller
 
                 $request->merge([
                     'type'       => $request->get('type', $suggestedType),
-                    'doksub_ids' => $request->get('doksub_ids', $selectedDokSubs),
+                    'doksub_ids' => $request->get('doksub_ids', $selectedDokSubs->pluck('encrypted_doksub_id')->toArray()),
                 ]);
 
                 // Ensure is_renop_context is set if the parent is renop
@@ -139,7 +148,7 @@ class IndikatorController extends Controller
 
         $indikator = new Indikator(); // Empty for create
         return view('pages.pemutu.indikator.create-edit-ajax', compact(
-            'labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais',
+            'labelTypes', 'orgUnits', 'parents', 'pegawais',
             'parentDok', 'selectedDokSubs', 'indikator', 'isRenopContext'
         ));
     }
@@ -203,7 +212,18 @@ class IndikatorController extends Controller
 
     public function show(Indikator $indikator)
     {
-        return view('pages.pemutu.indikator.show', compact('indikator'));
+        // Fetch monitorings for related org units
+        $monitorings = collect();
+        foreach ($indikator->orgUnits as $orgUnit) {
+            $indOrg = \App\Models\Pemutu\IndikatorOrgUnit::find($orgUnit->pivot->indikorgunit_id);
+            if ($indOrg) {
+                $mon         = $this->PelaksanaanService->getMonitoringForIndikator($indOrg);
+                $monitorings = $monitorings->merge($mon);
+            }
+        }
+        $monitorings = $monitorings->unique('rapat_id');
+
+        return view('pages.pemutu.indikator.show', compact('indikator', 'monitorings'));
     }
 
     public function edit(Indikator $indikator)
@@ -212,12 +232,7 @@ class IndikatorController extends Controller
             $q->orderBy('name');
         }])->orderBy('name')->get();
 
-        $orgUnits = OrgUnit::with('children')->where('level', 1)->orderBy('seq')->get();
-
-        $dokumens = Dokumen::with('dokSubs')
-            ->whereIn('jenis', ['renstra', 'renop', 'standar'])
-            ->orderBy('judul')
-            ->get();
+        $orgUnits = OrgUnit::with('descendants')->where('level', 1)->orderBy('seq')->get();
 
         $parents = Indikator::where('type', 'standar')
             ->where('indikator_id', '!=', $indikator->indikator_id)
@@ -225,8 +240,9 @@ class IndikatorController extends Controller
             ->get();
 
         $pegawais = Pegawai::with('latestDataDiri')->get()->sortBy('nama');
-
-        return view('pages.pemutu.indikator.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'dokumens', 'parents', 'pegawais'));
+        // Fetch only and only currently assigned DokSubs to avoid memory heavy eager loading
+        $selectedDokSubs = $indikator->dokSubs()->with('dokumen')->get();
+        return view('pages.pemutu.indikator.create-edit-ajax', compact('indikator', 'labelTypes', 'orgUnits', 'parents', 'pegawais', 'selectedDokSubs'));
     }
 
     public function update(IndikatorRequest $request, Indikator $indikator)
@@ -290,5 +306,17 @@ class IndikatorController extends Controller
         logActivity('pemutu', "Menghapus indikator: {$noIndikator}");
 
         return jsonSuccess('Indikator deleted successfully.', route('pemutu.indikator.index'));
+    }
+
+    /**
+     * Search DokSub for Select2 AJAX
+     */
+    public function searchDoksub(Request $request)
+    {
+        $query   = $request->get('q');
+        $items   = $this->dokumenService->searchDokSub($query);
+        $results = $this->dokumenService->formatForSelect2($items);
+
+        return response()->json($results);
     }
 }

@@ -223,10 +223,17 @@
 </script>
 @endif
 
-@push('js')
 <script>
-    if (window.loadHugeRTE) {
-        window.loadHugeRTE('#isi', { height: 400 });
-    }
+    setTimeout(function() {
+        if (window.loadHugeRTE) {
+            window.loadHugeRTE('#isi', { 
+                height: 400,
+                setup: function (editor) {
+                    editor.on('change', function () {
+                        editor.save();
+                    });
+                }
+            });
+        }
+    }, 300); // Wait for Bootstrap modal transition to finish
 </script>
-@endpush

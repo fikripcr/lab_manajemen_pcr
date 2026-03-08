@@ -23,19 +23,25 @@
     <div class="col-12 mb-3">
         <div class="card">
             <div class="card-body p-2">
-                <div class="nav nav-pills">
-                    <a href="#section-info" class="nav-link active" data-section="info">
-                        <i class="ti ti-info-circle me-2"></i> Info & Peserta
-                        <span class="badge bg-blue-lt ms-1">{{ $rapat->pesertas->count() }}</span>
-                    </a>
-                    <a href="#section-agenda" class="nav-link" data-section="agenda">
-                        <i class="ti ti-checklist me-2"></i> Agenda & Notulen
-                        <span class="badge bg-blue-lt ms-1">{{ $rapat->agendas->count() }}</span>
-                    </a>
-                    <a href="#section-entitas" class="nav-link" data-section="entitas">
-                        <i class="ti ti-link me-2"></i> Entitas Terkait
-                    </a>
-                </div>
+                <ul class="nav nav-tabs bg-transparent border-bottom px-3 persist-tabs" id="rapat_tabs" data-bs-toggle="tabs">
+                    <li class="nav-item">
+                        <a href="#section-info" class="nav-link active rounded-top" data-bs-toggle="tab">
+                            <i class="ti ti-info-circle me-2"></i> Info & Peserta
+                            <span class="badge bg-blue-lt ms-1">{{ $rapat->pesertas->count() }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#section-agenda" class="nav-link" data-bs-toggle="tab">
+                            <i class="ti ti-checklist me-2"></i> Agenda & Notulen
+                            <span class="badge bg-blue-lt ms-1">{{ $rapat->agendas->count() }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#section-entitas" class="nav-link" data-bs-toggle="tab">
+                            <i class="ti ti-link me-2"></i> Entitas Terkait
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -211,34 +217,48 @@
         <div id="section-agenda" class="content-section">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h3 class="mb-0"><i class="ti ti-checklist me-2"></i>Agenda & Pembahasan</h3>
-                </div>
                 <x-tabler.button type="create" class="btn-sm ajax-modal-btn"
                     data-url="{{ route('Kegiatan.rapat.agenda.create', $rapat->encrypted_rapat_id) }}"
-                    data-modal-title="Tambah Agenda"
-                    text="Tambah Agenda" />
+                    data-modal-title="Tambah Agenda" />
             </div>
-
-            <form id="form-agenda" action="{{ route('Kegiatan.rapat.update-agenda', $rapat->encrypted_rapat_id) }}" method="POST">
-                @csrf
-                <div class="accordion" id="accordion-agenda">
+            <div class="accordion" id="accordion-agenda">
+                <div class="card">
                     @forelse($rapat->agendas as $index => $agenda)
-                    <div class="accordion-item bg-white">
+                    <div class="accordion-item">
                         <h2 class="accordion-header" id="ah-{{ $agenda->encrypted_rapatagenda_id }}">
+                            
                             <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button"
                                 data-bs-toggle="collapse"
                                 data-bs-target="#ac-{{ $agenda->encrypted_rapatagenda_id }}"
                                 aria-expanded="{{ $index === 0 ? 'true' : 'false' }}">
-                                <span class="badge bg-purple-lt me-2">{{ $loop->iteration }}</span>
-                                {{ $agenda->judul_agenda }}
-                                <span class="ms-2 badge save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none bg-blue-lt">Saving...</span>
+                                
+                                <span class="text-truncate fw-medium">{{ $agenda->judul_agenda }}</span>
+                                <span class="badge save-status-{{ $agenda->encrypted_rapatagenda_id }} d-none bg-blue-lt ms-3">Saving...</span>
+                                
                             </button>
+
+                            <div class="btn-group me-4">
+                                <x-tabler.button type="button" class="btn-primary btn-sm px-2 py-1" 
+                                    data-url="{{ route('Kegiatan.rapat.agenda.edit', $agenda->encrypted_rapatagenda_id) }}"
+                                    data-modal-title="Edit Judul Agenda"
+                                    icon="ti ti-edit" 
+                                    title="Edit Judul"
+                                />
+                                <x-tabler.button type="button" class="btn-danger btn-sm ajax-delete px-2 py-1" 
+                                    data-url="{{ route('Kegiatan.rapat.agenda.destroy', $agenda->encrypted_rapatagenda_id) }}"
+                                    data-title="Hapus Agenda?"
+                                    data-text="Agenda ini dan notulen di dalamnya akan dihapus."
+                                    icon="ti ti-trash" 
+                                    title="Hapus Agenda"
+                                />
+                            </div>
+
                         </h2>
+                        
                         <div id="ac-{{ $agenda->encrypted_rapatagenda_id }}"
                             class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}"
                             data-bs-parent="#accordion-agenda">
-                            <div class="accordion-body">
+                            <div class="accordion-body pt-3">
                                 <x-tabler.form-textarea
                                     name="agendas[{{ $agenda->encrypted_rapatagenda_id }}][isi]"
                                     data-agenda-id="{{ $agenda->encrypted_rapatagenda_id }}"
@@ -256,13 +276,8 @@
                         icon="ti ti-checklist" />
                     @endforelse
                 </div>
-
-                @if($rapat->agendas->count() > 0)
-                <div class="mt-3 text-end">
-                    <x-tabler.button type="submit" class="btn-primary" text="Simpan Manual" />
-                </div>
-                @endif
-            </form>
+            </div>
+            
         </div>
 
         {{-- ===== SECTION: ENTITAS TERKAIT ===== --}}
@@ -279,14 +294,45 @@
                 </div>
                 <div class="card-body">
                     @forelse($rapat->entitas as $entitas)
-                    <div class="d-flex align-items-start mb-3 p-2 border rounded">
-                        <span class="avatar bg-cyan-lt me-3"><i class="ti ti-database"></i></span>
-                        <div>
-                            <div class="fw-bold small">{{ $entitas->model }}</div>
-                            <div class="text-muted small">ID: {{ $entitas->model_id }}</div>
-                            @if($entitas->keterangan)
-                                <div class="text-muted x-small">{{ Str::limit($entitas->keterangan, 80) }}</div>
-                            @endif
+                    <div class="d-flex align-items-md-center flex-column flex-md-row mb-3 p-3 border rounded">
+                        <div class="d-flex align-items-center flex-grow-1 min-w-0">
+                            <span class="avatar bg-cyan-lt me-3 flex-shrink-0"><i class="ti ti-database"></i></span>
+                            <div class="flex-grow-1 text-truncate">
+                                @php $raw = $entitas->raw_json; @endphp
+                                @if($raw && isset($raw['type']))
+                                    <div class="fw-bold small d-flex align-items-center mb-1">
+                                        <span class="badge bg-cyan-lt me-2">{{ $raw['type'] }}</span>
+                                        <span class="text-truncate">
+                                            @if(isset($raw['no_indikator']) && isset($raw['indikator']))
+                                                {{ $raw['no_indikator'] }} - {{ $raw['indikator'] }}
+                                            @elseif(isset($raw['name']))
+                                                {{ $raw['name'] }} @if(isset($raw['code'])) ({{ $raw['code'] }}) @endif
+                                            @endif
+                                        </span>
+                                    </div>
+                                    @if(isset($raw['unit_kerja']))
+                                        <div class="text-muted small mb-1 text-truncate"><i class="ti ti-building me-1"></i>{{ $raw['unit_kerja'] }}</div>
+                                    @endif
+                                    <div class="text-muted x-small">ID Entitas: {{ $entitas->model_id }}</div>
+                                @else
+                                    <div class="fw-bold small">{{ class_basename($entitas->model) }}</div>
+                                    <div class="text-muted small">ID: {{ $entitas->model_id }}</div>
+                                @endif
+
+                                @if($entitas->keterangan)
+                                    <div class="text-muted x-small mt-1 text-truncate"><i class="ti ti-info-circle me-1"></i>{{ Str::limit($entitas->keterangan, 80) }}</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="mt-2 mt-md-0 ms-md-auto ps-md-3 align-self-end align-self-md-center flex-shrink-0">
+                            <x-tabler.button type="delete" 
+                                class="btn-ghost-danger btn-sm ajax-delete" 
+                                data-url="{{ route('Kegiatan.rapat.entitas.destroy', [$rapat->encrypted_rapat_id, $entitas->encrypted_rapatentitas_id]) }}"
+                                data-title="Hapus Entitas?"
+                                data-text="Entitas terkait ini akan dihapus dari daftar."
+                                title="Hapus"
+                                iconOnly="true"
+                            />
                         </div>
                     </div>
                     @empty
@@ -312,10 +358,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
         const t = document.querySelector(targetId);
         if (t) t.style.display = 'block';
-        document.querySelectorAll('.nav-pills .nav-link').forEach(l =>
+        document.querySelectorAll('#rapat_tabs .nav-link').forEach(l =>
             l.classList.toggle('active', l.getAttribute('href') === targetId));
     }
-    document.querySelectorAll('.nav-pills .nav-link').forEach(link => {
+    document.querySelectorAll('#rapat_tabs .nav-link').forEach(link => {
         link.addEventListener('click', function (e) {
             if (this.getAttribute('href').startsWith('#section-')) {
                 e.preventDefault();

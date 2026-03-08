@@ -20,6 +20,37 @@ class RapatEntitasRequest extends BaseRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('rapat_id')) {
+            $this->merge([
+                'rapat_id' => decryptIdIfEncrypted($this->rapat_id),
+            ]);
+        }
+
+        if ($this->has('entity') && ! empty($this->entity)) {
+            $parts = explode(':', $this->entity);
+            if (count($parts) === 2) {
+                $modelShortName = $parts[0];
+                $modelId        = $parts[1];
+
+                // Mapping short name to full class name
+                $modelMap = [
+                    'IndikatorOrgUnit'   => \App\Models\Pemutu\IndikatorOrgUnit::class,
+                    'StrukturOrganisasi' => \App\Models\Shared\StrukturOrganisasi::class,
+                    'Indikator'          => \App\Models\Pemutu\Indikator::class,
+                ];
+
+                $modelClass = $modelMap[$modelShortName] ?? $modelShortName;
+
+                $this->merge([
+                    'model'    => $modelClass,
+                    'model_id' => $modelId,
+                ]);
+            }
+        }
+    }
+
     public function attributes(): array
     {
         return [

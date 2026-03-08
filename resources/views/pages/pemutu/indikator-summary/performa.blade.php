@@ -5,8 +5,8 @@
 <div class="row">
     {{-- Summary Cards --}}
     <div class="col-12">
-        <div class="card">
-            <div class="card-body">
+        <x-tabler.card>
+            <x-tabler.card-body>
                 {{-- Summary Cards --}}
                 <div class="row mb-3">
                     <div class="col-sm-6 col-lg-4">
@@ -113,8 +113,8 @@
                     ]"
                     ajax-load
                 />
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

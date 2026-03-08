@@ -49,8 +49,8 @@ Route::middleware(['auth', 'check.expired'])->group(function () {
         // Struktur Organisasi
         Route::get('/struktur-organisasi/data', [StrukturOrganisasiController::class, 'data'])->name('struktur-organisasi.data');
         Route::post('/struktur-organisasi/reorder', [StrukturOrganisasiController::class, 'reorder'])->name('struktur-organisasi.reorder');
-        Route::post('/struktur-organisasi/{id}/toggle-status', [StrukturOrganisasiController::class, 'toggleStatus'])->name('struktur-organisasi.toggle-status');
-        Route::post('/struktur-organisasi/{id}/set-auditee', [StrukturOrganisasiController::class, 'setAuditee'])->name('struktur-organisasi.set-auditee');
+        Route::post('/struktur-organisasi/{struktur_organisasi}/toggle-status', [StrukturOrganisasiController::class, 'toggleStatus'])->name('struktur-organisasi.toggle-status');
+        Route::post('/struktur-organisasi/{struktur_organisasi}/set-auditee', [StrukturOrganisasiController::class, 'setAuditee'])->name('struktur-organisasi.set-auditee');
         Route::resource('struktur-organisasi', StrukturOrganisasiController::class);
 
         // Info Publik CMS

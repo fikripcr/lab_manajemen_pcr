@@ -12,72 +12,74 @@
 @section('content')
 <div class="row row-cards">
     @forelse($periodes as $periode)
+        @php
+            $isGanjil = str_contains($periode->nama, 'Ganjil');
+            $themeColor = $isGanjil ? 'emerald' : 'primary';
+            $isOngoing = $periode->is_active && now()->between($periode->tanggal_mulai, $periode->tanggal_selesai);
+        @endphp
         <div class="col-md-6 col-lg-4">
-            <div class="card card-md shadow-sm border-0 border-top border-3 @if($periode->is_active) border-success @else border-secondary @endif overflow-hidden h-100">
-                <div class="card-header bg-transparent border-0 pb-0">
-                    <div>
-                        <div class="text-uppercase text-muted font-weight-bold tracking-widest small mb-1">Semester {{ $periode->semester }}</div>
-                        <h2 class="card-title h2 mb-0 @if($periode->is_active) text-success @endif">
-                            {{ $periode->nama }}
-                        </h2>
-                    </div>
-                    <div class="card-actions">
-                        <div class="dropdown">
-                            <a href="#" class="btn btn-icon btn-ghost-secondary rounded-circle dropdown-toggle no-caret" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ti ti-dots-vertical"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0">
-                                <a class="dropdown-item ajax-modal-btn" href="#" data-url="{{ route('pemutu.periode-kpi.edit', $periode->encrypted_periode_kpi_id) }}">
-                                    <i class="ti ti-pencil me-2 text-muted"></i> Edit Periode
-                                </a>
-                                @if(!$periode->is_active)
-                                    <a class="dropdown-item text-success activate-periode" href="#" data-url="{{ route('pemutu.periode-kpi.activate', $periode->encrypted_periode_kpi_id) }}">
-                                        <i class="ti ti-check-double me-2"></i> Aktifkan Sekarang
-                                    </a>
-                                @endif
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger ajax-delete" href="#" 
-                                   data-url="{{ route('pemutu.periode-kpi.destroy', $periode->encrypted_periode_kpi_id) }}"
-                                   data-title="Hapus Periode?"
-                                   data-text="Data periode dan seluruh data KPI terkait mungkin akan terpengaruh.">
-                                    <i class="ti ti-trash me-2"></i> Hapus
-                                </a>
-                            </div>
-                        </div>
+            <x-tabler.card class="card-stacked shadow-sm border-0 h-100 position-relative">
+                {{-- Modern Accent Border --}}
+                <div class="position-absolute top-0 start-0 h-100 border-start border-4 border-{{ $themeColor }}"></div>
+                
+                {{-- Card Stamp for Depth --}}
+                <div class="card-stamp card-stamp-lg z-0">
+                    <div class="card-stamp-icon bg-{{ $themeColor }} opacity-10">
+                        <i class="ti ti-{{ $isGanjil ? 'leaf' : 'snowflake' }}"></i>
                     </div>
                 </div>
 
-                <div class="card-body">
-                    <div class="row g-3 mb-4">
-                        <div class="col-6 text-center">
-                            <div class="h3 mb-0">{{ $periode->tahun_akademik }}</div>
-                            <div class="text-muted small text-uppercase">Tahun Akademik</div>
-                        </div>
-                        <div class="col-6 text-center border-start">
-                            <div class="h3 mb-0">{{ $periode->tahun }}</div>
-                            <div class="text-muted small text-uppercase">Tahun</div>
-                        </div>
-                    </div>
-
-                    <div class="mb-0">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-muted small"><i class="ti ti-calendar-time me-1"></i> Durasi Periode</span>
-                            @if($periode->is_active && now()->between($periode->tanggal_mulai, $periode->tanggal_selesai))
-                                <span class="badge badge-outline text-success border-success badge-pill">Sedang Berlangsung</span>
-                            @elseif($periode->is_active && now()->isAfter($periode->tanggal_selesai))
-                                <span class="badge badge-outline text-danger border-danger badge-pill">Selesai (Aktif)</span>
+                <x-tabler.card-header title="{{ $periode->nama }}" class="border-0 pb-0 z-1">
+                    <span class="ms-3 d-flex align-items-center gap-2">
+                         @if($isOngoing)
+                            <span class="status-dot status-dot-animated status-{{ $themeColor }}"></span>
+                            <span class="badge bg-{{ $themeColor }}-lt px-2">LIVE</span>
+                        @elseif($periode->is_active)
+                            <span class="badge bg-secondary-lt px-2">AKTIF</span>
+                        @endif
+                    </span>
+                    <x-slot:actions>
+                        <x-tabler.dropdown>
+                            <x-tabler.dropdown-item type="edit" url="{{ route('pemutu.periode-kpi.edit', $periode->encrypted_periode_kpi_id) }}" />
+                            @if(!$periode->is_active)
+                                <x-tabler.dropdown-item 
+                                    type="button" 
+                                    class="text-success activate-periode border-top" 
+                                    icon="ti ti-check-double"
+                                    label="Aktifkan Sekarang"
+                                    url="{{ route('pemutu.periode-kpi.activate', $periode->encrypted_periode_kpi_id) }}" 
+                                    data-url="{{ route('pemutu.periode-kpi.activate', $periode->encrypted_periode_kpi_id) }}"
+                                />
                             @endif
-                        </div>
-                        <div class="p-3 rounded bg-light border border-dashed text-center">
-                            <div class="font-weight-bold">
-                                {{ $periode->tanggal_mulai->translatedFormat('d M Y') }} 
-                                <span class="text-muted mx-2">&mdash;</span>
-                                {{ $periode->tanggal_selesai->translatedFormat('d M Y') }}
-                            </div>
+                            <x-tabler.dropdown-divider />
+                            <x-tabler.dropdown-item 
+                                type="delete" 
+                                url="{{ route('pemutu.periode-kpi.destroy', $periode->encrypted_periode_kpi_id) }}"
+                                title="Hapus Periode?"
+                                text="Data periode dan seluruh data KPI terkait mungkin akan terpengaruh."
+                            />
+                        </x-tabler.dropdown>
+                    </x-slot:actions>
+                </x-tabler.card-header>
+
+                <x-tabler.card-body class="p-4 pt-3 z-1">
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2 text-muted">
+                            <i class="ti ti-calendar-event fs-2"></i>
+                            <span class="fw-medium">Tahun Akademik {{ $periode->tahun_akademik }}</span>
                         </div>
                     </div>
-                </div>
-            </div>
+
+                    <div class="p-3 rounded-3 bg-{{ $themeColor }}-lt border border-{{ $themeColor }} border-opacity-10">
+                        <div class="text-{{ $themeColor }} small fw-bold text-uppercase mb-2 tracking-wider">Durasi Periode</div>
+                        <div class="h4 mb-0 d-flex align-items-center gap-3">
+                            <span class="fw-bold">{{ formatTanggalIndo($periode->tanggal_mulai) }}</span>
+                            <span class="text-muted fw-normal opacity-50">/</span>
+                            <span class="fw-bold">{{ formatTanggalIndo($periode->tanggal_selesai) }}</span>
+                        </div>
+                    </div>
+                </x-tabler.card-body>
+            </x-tabler.card>
         </div>
     @empty
         <x-tabler.empty-state

@@ -3,11 +3,14 @@ namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pemutu\EvaluasiDiriRequest;
+use App\Http\Requests\Pemutu\PtpRequest;
 use App\Models\Pemutu\Indikator;
+use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
 use App\Models\Shared\StrukturOrganisasi;
 use App\Services\Pemutu\IndikatorService;
+use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -15,10 +18,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiDiriController extends Controller
 {
+    public function __construct(
+        protected PeriodeSpmiService $PeriodeSpmiService,
+        protected IndikatorService $IndikatorService,
+    ) {}
+
     public function index()
     {
         $pageTitle = 'Evaluasi Diri';
-        $periodes  = PeriodeSpmi::orderBy('periode', 'desc')->paginate(12);
+        $periodes  = $this->PeriodeSpmiService->getPeriodes();
 
         // Global counts (not per-period, as orgunit pivot has no period FK)
         $edTotal  = DB::table('pemutu_indikator_orgunit')->count();
@@ -63,7 +71,7 @@ class EvaluasiDiriController extends Controller
             'kelompok_indikator' => $periode->jenis,
             'tahun_dokumen'      => $periode->tahun,
         ];
-        $query = app(IndikatorService::class)->getByOrgUnit($unitId, $filters);
+        $query = $this->IndikatorService->getByOrgUnit($unitId, $filters);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -134,7 +142,7 @@ class EvaluasiDiriController extends Controller
                     data-url="' . $url . '"
                     data-modal-title="Isi Evaluasi Diri"
                     data-modal-size="modal-xl">
-                    Isi ED
+                    Isi
                     </button>';
             })
             ->rawColumns(['indikator_full', 'target', 'capaian', 'file', 'action', 'analisis'])
@@ -287,5 +295,76 @@ class EvaluasiDiriController extends Controller
             ->first();
 
         return downloadStorageFile($pivot->ed_attachment ?? null, logActivity: true);
+    }
+
+    /**
+     * Data untuk tab Pelaksanaan Perbaikan (KTS Tahun Lalu).
+     */
+    public function ptpData(Request $request, PeriodeSpmi $periode)
+    {
+        $unitId = $request->input('unit_id') ? decryptIdIfEncrypted($request->input('unit_id')) : null;
+
+        // Cari periode tahun lalu dengan jenis yang sama
+        $prevYear   = (int) $periode->periode - 1;
+        $prevPeriod = PeriodeSpmi::where('periode', $prevYear)
+            ->where('jenis_periode', $periode->jenis_periode)
+            ->first();
+
+        if (! $prevPeriod) {
+            return DataTables::of(collect([]))->make(true);
+        }
+
+        // Ambil indikator KTS dari periode tahun lalu
+        $query = $this->IndikatorService->getByOrgUnit($unitId, [
+            'kelompok_indikator' => $prevPeriod->jenis_periode,
+            'tahun_dokumen'      => $prevPeriod->periode,
+            'ami_hasil_akhir'    => 0, // KTS
+        ]);
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('indikator_full', function ($row) {
+                return '<strong>' . ($row->no_indikator ?? '-') . '</strong><br>' . $row->indikator;
+            })
+            ->addColumn('rtp_isi', function ($row) {
+                return $row->orgUnits->first()->pivot->ami_rtp_isi ?? '<span class="text-muted fst-italic">Tidak ada RTP</span>';
+            })
+            ->addColumn('ptp_isi', function ($row) {
+                return $row->orgUnits->first()->pivot->ed_ptp_isi ?? '<span class="text-muted fst-italic">Belum diisi</span>';
+            })
+            ->addColumn('action', function ($row) {
+                $indOrgId = $row->orgUnits->first()->pivot->indikorgunit_id;
+
+                return '<button type="button" class="btn btn-sm btn-warning ajax-modal-btn"
+                    data-url="' . route('pemutu.evaluasi-diri.ptp-edit', encryptId($indOrgId)) . '"
+                    data-modal-title="Isi Pelaksanaan Tindakan Perbaikan (PTP)"
+                    data-modal-size="modal-lg">
+                    Isi PTP
+                    </button>';
+            })
+            ->rawColumns(['indikator_full', 'rtp_isi', 'ptp_isi', 'action'])
+            ->make(true);
+    }
+
+    /**
+     * Modal Form: Isi Pelaksanaan Tindakan Perbaikan (PTP).
+     */
+    public function editPtp(IndikatorOrgUnit $indOrg)
+    {
+        return view('pages.pemutu.evaluasi-diri._ptp_form', compact('indOrg'));
+    }
+
+    /**
+     * Simpan Pelaksanaan Tindakan Perbaikan (PTP).
+     */
+    public function updatePtp(PtpRequest $request, IndikatorOrgUnit $indOrg)
+    {
+        $indOrg->update([
+            'ed_ptp_isi' => $request->ed_ptp_isi,
+        ]);
+
+        logActivity('pemutu', "Mengisi Pelaksanaan Tindakan Perbaikan (PTP) untuk indikorgunit ID: {$indOrg->indikorgunit_id}");
+
+        return jsonSuccess('Pelaksanaan Tindakan Perbaikan (PTP) berhasil disimpan.');
     }
 }

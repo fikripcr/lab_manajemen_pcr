@@ -25,11 +25,16 @@ class RapatEntitas extends Model
         return encryptId($this->rapatentitas_id);
     }
 
+    protected $casts = [
+        'raw_json' => 'array',
+    ];
+
     protected $fillable = [
         'rapat_id',
         'model',
         'model_id',
         'keterangan',
+        'raw_json',
     ];
 
     /**

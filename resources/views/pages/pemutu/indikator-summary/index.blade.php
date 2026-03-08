@@ -5,8 +5,8 @@
 <div class="row">
     {{-- Summary Cards --}}
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
+        <x-tabler.card>
+            <x-tabler.card-header>
                 <ul class="nav nav-tabs card-header-tabs" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" data-bs-toggle="tab" href="#tab-standar" role="tab">
@@ -19,8 +19,8 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <div class="card-body">
+            </x-tabler.card-header>
+            <x-tabler.card-body>
                 <div class="tab-content">
                     {{-- Tab Indikator Standar --}}
                     <div class="tab-pane fade show active" id="tab-standar" role="tabpanel">
@@ -32,8 +32,8 @@
                         @include('pages.pemutu.indikator-summary._tab-performa')
                     </div>
                 </div>
-            </div>
-        </div>
+            </x-tabler.card-body>
+        </x-tabler.card>
     </div>
 </div>
 

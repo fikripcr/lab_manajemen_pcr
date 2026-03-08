@@ -19,6 +19,21 @@ class RapatAttendanceRequest extends BaseRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('attendance') && is_array($this->attendance)) {
+            $decryptedAttendance = [];
+            foreach ($this->attendance as $id => $data) {
+                $decryptedId                       = decryptIdIfEncrypted($id);
+                $decryptedAttendance[$decryptedId] = $data;
+            }
+
+            $this->merge([
+                'attendance' => $decryptedAttendance,
+            ]);
+        }
+    }
+
     public function attributes(): array
     {
         return [

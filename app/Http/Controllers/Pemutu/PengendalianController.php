@@ -8,7 +8,7 @@ use App\Http\Requests\Pemutu\UpdateMatrixRequest;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
-use App\Models\User;
+use App\Services\Pemutu\PelaksanaanService;
 use App\Services\Pemutu\PengendalianService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
@@ -18,6 +18,7 @@ class PengendalianController extends Controller
     public function __construct(
         protected PengendalianService $PengendalianService,
         protected PeriodeSpmiService $PeriodeSpmiService,
+        protected PelaksanaanService $PelaksanaanService,
     ) {}
 
     /**
@@ -43,7 +44,7 @@ class PengendalianController extends Controller
             $rapat->load(['agendas', 'pesertas.user', 'ketua_user', 'notulen_user', 'author_user']);
         }
 
-        $users = User::with('pegawai.latestDataDiri')->get();
+        $users = $this->PelaksanaanService->getUsersForSelect();
 
         return view('pages.pemutu.pengendalian.show', compact('periode', 'unitId', 'rapat', 'users'));
     }
@@ -188,7 +189,7 @@ class PengendalianController extends Controller
      */
     public function createRtm(PeriodeSpmi $periode)
     {
-        $users = User::with('pegawai.latestDataDiri')->get();
+        $users = $this->PelaksanaanService->getUsersForSelect();
 
         return view('pages.pemutu.pengendalian.rtm-form', compact('periode', 'users'));
     }
@@ -208,7 +209,7 @@ class PengendalianController extends Controller
      */
     public function editRtm(PeriodeSpmi $periode, Rapat $rapat)
     {
-        $users = User::with('pegawai.latestDataDiri')->get();
+        $users = $this->PelaksanaanService->getUsersForSelect();
 
         return view('pages.pemutu.pengendalian.rtm-form', compact('periode', 'rapat', 'users'));
     }

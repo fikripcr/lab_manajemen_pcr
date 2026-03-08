@@ -2,14 +2,15 @@
 namespace App\Http\Controllers\Pemutu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pemutu\DuplikasiRequest;
 use App\Http\Requests\Pemutu\PeningkatanRtmRequest;
 use App\Models\Event\Rapat;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
-use App\Models\User;
 use App\Services\Pemutu\DuplikasiService;
+use App\Services\Pemutu\PelaksanaanService;
 use App\Services\Pemutu\PeningkatanService;
 use App\Services\Pemutu\PeriodeSpmiService;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class PeningkatanController extends Controller
         protected PeningkatanService $PeningkatanService,
         protected PeriodeSpmiService $PeriodeSpmiService,
         protected DuplikasiService $DuplikasiService,
+        protected PelaksanaanService $PelaksanaanService,
     ) {}
 
     /**
@@ -52,7 +54,7 @@ class PeningkatanController extends Controller
             }
         }
 
-        $users = User::with('pegawai.latestDataDiri')->get();
+        $users = $this->PelaksanaanService->getUsersForSelect();
 
         // Cek apakah sudah pernah diduplikasi
         $hasDuplicated = Indikator::where('origin_from', 'peningkatan_' . $periode->periode)->exists();
@@ -64,7 +66,7 @@ class PeningkatanController extends Controller
 
     public function createRtm(PeriodeSpmi $periode)
     {
-        $users = User::with('pegawai.latestDataDiri')->get();
+        $users = $this->PelaksanaanService->getUsersForSelect();
 
         return view('pages.pemutu.peningkatan.rtm-form', compact('periode', 'users'));
     }
@@ -78,7 +80,7 @@ class PeningkatanController extends Controller
 
     public function editRtm(PeriodeSpmi $periode, Rapat $rapat)
     {
-        $users = User::with('pegawai.latestDataDiri')->get();
+        $users = $this->PelaksanaanService->getUsersForSelect();
 
         return view('pages.pemutu.peningkatan.rtm-form', compact('periode', 'rapat', 'users'));
     }
@@ -204,16 +206,11 @@ class PeningkatanController extends Controller
     /**
      * Jalankan proses duplikasi standar tertentu ke periode baru.
      */
-    public function duplicateStandar(Request $request, PeriodeSpmi $periode)
+    public function duplicateStandar(DuplikasiRequest $request, PeriodeSpmi $periode)
     {
-        $request->validate([
-            'target_periode'     => 'required|integer|min:2020|max:2099',
-            'selected_dok_ids'   => 'required|array|min:1',
-            'selected_dok_ids.*' => 'required|integer|exists:pemutu_dokumen,dok_id',
-        ]);
-
-        $targetPeriode  = (int) $request->target_periode;
-        $selectedDokIds = $request->selected_dok_ids;
+        $validated      = $request->validated();
+        $targetPeriode  = (int) $validated['target_periode'];
+        $selectedDokIds = $validated['selected_dok_ids'];
 
         $stats = $this->DuplikasiService->duplicateSelected($selectedDokIds, $periode->periode, $targetPeriode);
 
@@ -243,7 +240,7 @@ class PeningkatanController extends Controller
             ->select([
                 'pemutu_indikator_orgunit.indikorgunit_id',
                 'pemutu_indikator.no_indikator',
-                \DB::raw('CONCAT("<div class=\"overflow-auto\" style=\"max-height: 100px; min-width: 250px;\">", pemutu_indikator.indikator, "</div>") as nama_indikator'),
+                \DB::raw('CONCAT("<div class=\"indicator-scroll\">", pemutu_indikator.indikator, "</div>") as nama_indikator'),
                 'pemutu_indikator.type',
                 'org.name as nama_prodi',
                 'pemutu_indikator_orgunit.target as target_baru',
@@ -299,14 +296,12 @@ class PeningkatanController extends Controller
 
                 return $parts ? implode('<br>', $parts) : '<span class="text-muted">—</span>';
             })
-            ->rawColumns(['status_badge', 'keterangan_perubahan', 'dokumen_standar'])
+            ->rawColumns(['status_badge', 'keterangan_perubahan', 'dokumen_standar', 'nama_indikator'])
             ->make(true);
     }
 
-    public function deleteStandarTarget(Request $request, PeriodeSpmi $periode, $dokId)
+    public function deleteStandarTarget(Request $request, PeriodeSpmi $periode, Dokumen $dokumen)
     {
-        $dokumen = Dokumen::findOrFail($dokId);
-
         // Hanya boleh hapus jika dokumen ini benar-benar di periode target saat ini
         if ($dokumen->periode != $request->target_periode) {
             return response()->json(['success' => false, 'message' => 'Dokumen ini tidak berada di periode target yang diminta.']);

@@ -1,20 +1,16 @@
 <?php
-
 namespace App\Services\Pemutu;
 
-use App\Models\Pemutu\Indikator;
 use App\Models\Pemutu\IndikatorOrgUnit;
 use App\Models\Pemutu\PeriodeSpmi;
 use App\Models\Pemutu\TimMutu;
-use App\Models\Shared\StrukturOrganisasi;
+use App\Services\Pemutu\PelaksanaanService;
 
 class AmiService
 {
-    /**
-     * Ambil query Indikator siap AMI untuk periode & unit tertentu.
-     * Menggunakan IndikatorService agar DRY dengan fitur ED.
-     * Mengembalikan query Builder untuk DataTable.
-     */
+    public function __construct(
+        protected PelaksanaanService $PelaksanaanService,
+    ) {}
     public function getIndikatorQuery(PeriodeSpmi $periode, ?int $unitId = null)
     {
         $filters = [
@@ -66,8 +62,9 @@ class AmiService
         }
 
         $hasilAkhirLabels = IndikatorOrgUnit::$hasilAkhirLabels;
+        $monitorings      = $this->PelaksanaanService->getMonitoringForIndikator($indOrg);
 
-        return compact('indOrg', 'indikator', 'skala', 'breadcrumbs', 'hasilAkhirLabels');
+        return compact('indOrg', 'indikator', 'skala', 'breadcrumbs', 'hasilAkhirLabels', 'monitorings');
     }
 
     /**
@@ -76,16 +73,44 @@ class AmiService
     public function submitPenilaian(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
     {
         $indOrg->update([
-            'ami_hasil_akhir'          => $data['ami_hasil_akhir'],
-            'ami_hasil_temuan'         => $data['ami_hasil_temuan'] ?? null,
-            'ami_hasil_temuan_sebab'   => $data['ami_hasil_temuan_sebab'] ?? null,
-            'ami_hasil_temuan_akibat'  => $data['ami_hasil_temuan_akibat'] ?? null,
-            'ami_hasil_temuan_rekom'   => $data['ami_hasil_temuan_rekom'] ?? null,
+            'ami_hasil_akhir'         => $data['ami_hasil_akhir'],
+            'ami_hasil_temuan'        => $data['ami_hasil_temuan'] ?? null,
+            'ami_hasil_temuan_sebab'  => $data['ami_hasil_temuan_sebab'] ?? null,
+            'ami_hasil_temuan_akibat' => $data['ami_hasil_temuan_akibat'] ?? null,
+            'ami_hasil_temuan_rekom'  => $data['ami_hasil_temuan_rekom'] ?? null,
         ]);
 
         logActivity('pemutu', 'Submit penilaian AMI: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
 
         return $indOrg;
     }
-}
 
+    /**
+     * Update Rencana Tindakan Perbaikan (RTP).
+     */
+    public function updateRtp(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
+    {
+        $indOrg->update([
+            'ami_rtp_isi'             => $data['ami_rtp_isi'],
+            'ami_rtp_tgl_pelaksanaan' => $data['ami_rtp_tgl_pelaksanaan'],
+        ]);
+
+        logActivity('pemutu', 'Update RTP AMI: indikator #' . $indOrg->indikator_id . ' unit #' . $indOrg->org_unit_id, $indOrg);
+
+        return $indOrg;
+    }
+
+    /**
+     * Update Tinjauan Efektivitas (TE).
+     */
+    public function updateTe(IndikatorOrgUnit $indOrg, array $data): IndikatorOrgUnit
+    {
+        $indOrg->update([
+            'ami_te_isi' => $data['ami_te_isi'],
+        ]);
+
+        logActivity('pemutu', "Mengisi Tinjauan Efektivitas (TE) untuk indikorgunit ID: {$indOrg->indikorgunit_id}");
+
+        return $indOrg;
+    }
+}

@@ -76,19 +76,24 @@ class StrukturOrganisasiService
     /**
      * Get flattened hierarchical list for dropdowns (e.g. parent selection)
      */
-    public function getHierarchicalList($parentId = null, $prefix = '')
+    public function getHierarchicalList($parentId = null, $prefix = '', $excludeId = null)
     {
-        $units = StrukturOrganisasi::where('parent_id', $parentId)
+        $query = StrukturOrganisasi::where('parent_id', $parentId)
             ->orderBy('sort_order')
             ->orderBy('seq')
-            ->orderBy('name')
-            ->get();
+            ->orderBy('name');
+
+        if ($excludeId) {
+            $query->where('orgunit_id', '!=', $excludeId);
+        }
+
+        $units = $query->get();
 
         $result = [];
         foreach ($units as $unit) {
             $unit->name_display = $prefix . ' ' . $unit->name;
             $result[]           = $unit;
-            $result             = array_merge($result, $this->getHierarchicalList($unit->orgunit_id, $prefix . '--'));
+            $result             = array_merge($result, $this->getHierarchicalList($unit->orgunit_id, $prefix . '--', $excludeId));
         }
         return $result;
     }
@@ -243,7 +248,8 @@ class StrukturOrganisasiService
     protected function updateHierarchy(array $items, $parentId = null, int $level = 1): void
     {
         foreach ($items as $index => $item) {
-            $orgUnit = StrukturOrganisasi::find($item['id']);
+            $id      = decryptId($item['id']);
+            $orgUnit = StrukturOrganisasi::find($id);
             if ($orgUnit) {
                 $orgUnit->parent_id = $parentId;
                 $orgUnit->level     = $level;
@@ -288,19 +294,20 @@ class StrukturOrganisasiService
     public function getTypes(): array
     {
         return [
-            'institusi'          => 'Institusi',
-            'direktorat'         => 'Direktorat',
-            'fakultas'           => 'Fakultas',
-            'bagian'             => 'Bagian',
-            'jurusan'            => 'Jurusan',
-            'prodi'              => 'Prodi',
-            'laboratorium'       => 'Laboratorium',
-            'unit'               => 'Unit',
-            'senat'              => 'Senat',
-            'sekretariat'        => 'Sekretariat',
-            'pimpinan'           => 'Pimpinan',
-            'jabatan_struktural' => 'Jabatan Struktural',
-            'posisi'             => 'Posisi',
+            'badan_penyelenggara' => 'Badan Penyelenggara',
+            'institusi'           => 'Institusi',
+            'direktorat'          => 'Direktorat',
+            'fakultas'            => 'Fakultas',
+            'bagian'              => 'Bagian',
+            'jurusan'             => 'Jurusan',
+            'prodi'               => 'Prodi',
+            'laboratorium'        => 'Laboratorium',
+            'unit'                => 'Unit',
+            'senat'               => 'Senat',
+            'sekretariat'         => 'Sekretariat',
+            'pimpinan'            => 'Pimpinan',
+            'jabatan_struktural'  => 'Jabatan Struktural',
+            'posisi'              => 'Posisi',
         ];
     }
 }

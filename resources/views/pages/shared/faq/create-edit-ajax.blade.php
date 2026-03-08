@@ -12,13 +12,15 @@
         required="true"
     />
 
-    <x-tabler.form-textarea 
-        name="answer" 
-        id="answer"
-        label="Jawaban" 
-        height="300"
-        required="true"
-    >{{ $faq->answer }}</x-tabler.form-textarea>
+    <div class="mb-3">
+        <x-tabler.form-textarea 
+            name="answer" 
+            id="answer"
+            label="Jawaban" 
+            height="300"
+            required="true"
+        >{{ $faq->answer }}</x-tabler.form-textarea>
+    </div>
 
     <div class="mb-3">
         <x-tabler.form-input 
@@ -39,7 +41,14 @@
 @push('js')
 <script>
     if (window.loadHugeRTE) {
-        window.loadHugeRTE('#answer', { height: 300 });
+        window.loadHugeRTE('#answer', { 
+            height: 300,
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
     }
 </script>
 @endpush

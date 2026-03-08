@@ -112,7 +112,14 @@
 @push('scripts')
 <script>
     if (window.loadHugeRTE) {
-        window.loadHugeRTE('#content', { height: 600 });
+        window.loadHugeRTE('#content', { 
+            height: 600,
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
     }
 </script>
 @endpush

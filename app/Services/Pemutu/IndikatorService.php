@@ -100,6 +100,33 @@ class IndikatorService
     public function createIndikator(array $data)
     {
         return DB::transaction(function () use ($data) {
+            // Handle automatic no_indikator generation if empty
+            if (empty($data['no_indikator'])) {
+                $year = null;
+
+                // 1. Try to get year from Linked DokSub
+                if (! empty($data['doksub_ids'])) {
+                    $firstDokSub = \App\Models\Pemutu\DokSub::with('dokumen')->find($data['doksub_ids'][0]);
+                    if ($firstDokSub && $firstDokSub->dokumen && $firstDokSub->dokumen->periode) {
+                        if (preg_match('/\b(20\d{2})\b/', $firstDokSub->dokumen->periode, $matches)) {
+                            $year = $matches[1];
+                        }
+                    }
+                }
+
+                // 2. Try to get year from Parent Indikator (YY prefix)
+                if (! $year && ! empty($data['parent_id'])) {
+                    $parent = Indikator::find($data['parent_id']);
+                    if ($parent && $parent->no_indikator && strlen($parent->no_indikator) >= 2) {
+                        $year = '20' . substr($parent->no_indikator, 0, 2);
+                    }
+                }
+
+                if ($year) {
+                    $data['no_indikator'] = $this->generateNoIndikator((int) $year);
+                }
+            }
+
             // Handle skala: filter null, encode ke JSON
             if (! empty($data['skala'])) {
                 $filteredSkala = array_filter($data['skala'], fn($v) => ! is_null($v) && $v !== '');
@@ -241,5 +268,27 @@ class IndikatorService
             'periode_kpi_id' => $periodeId,
             'year'           => $kpiYear ?: date('Y'),
         ];
+    }
+
+    /**
+     * Generate automatic Indikator number in YYXXXX format.
+     */
+    public function generateNoIndikator(int $year): string
+    {
+        $prefix = substr((string) $year, -2); // E.g., "24" for 2024
+
+        // Find the maximum sequence for the given year prefix
+        $maxNo = Indikator::where('no_indikator', 'like', $prefix . '%')
+            ->whereRaw('LENGTH(no_indikator) = 6')
+            ->max('no_indikator');
+
+        if (! $maxNo) {
+            return $prefix . '0001';
+        }
+
+        $sequence     = (int) substr($maxNo, 2);
+        $nextSequence = str_pad($sequence + 1, 4, '0', STR_PAD_LEFT);
+
+        return $prefix . $nextSequence;
     }
 }

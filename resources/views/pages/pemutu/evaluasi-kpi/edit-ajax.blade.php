@@ -196,7 +196,12 @@
             window.loadHugeRTE('#kpi_analisis', {
                 height: 250, menubar: false, statusbar: false,
                 plugins: 'lists link table',
-                toolbar: 'bold italic underline | bullist numlist | link table'
+                toolbar: 'bold italic underline | bullist numlist | link table',
+                setup: function (editor) {
+                    editor.on('change', function () {
+                        editor.save();
+                    });
+                }
             });
         }
     }, 100);

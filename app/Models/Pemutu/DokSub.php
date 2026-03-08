@@ -62,4 +62,32 @@ class DokSub extends Model
     {
         return $this->hasMany(Dokumen::class, 'parent_doksub_id', 'doksub_id')->orderBy('seq');
     }
+
+    /**
+     * Poin-poin yang menjadi tujuan mapping dari poin ini.
+     * Misal: M1.mappedTo() → [V1]  (Misi poin M1 dipetakan ke Visi poin V1)
+     */
+    public function mappedTo()
+    {
+        return $this->belongsToMany(
+            DokSub::class,
+            'pemutu_doksub_mapping',
+            'doksub_id',
+            'mapped_doksub_id'
+        )->withTimestamps();
+    }
+
+    /**
+     * Poin-poin yang memetakan ke poin ini (inverse).
+     * Misal: V1.mappedFrom() → [M1, M2]  (Visi poin V1 dipetakan oleh M1 dan M2)
+     */
+    public function mappedFrom()
+    {
+        return $this->belongsToMany(
+            DokSub::class,
+            'pemutu_doksub_mapping',
+            'mapped_doksub_id',
+            'doksub_id'
+        )->withTimestamps();
+    }
 }

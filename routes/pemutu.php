@@ -9,6 +9,7 @@ use App\Http\Controllers\Pemutu\IndikatorSummaryController;
 use App\Http\Controllers\Pemutu\LabelController;
 use App\Http\Controllers\Pemutu\LabelTypeController;
 use App\Http\Controllers\Pemutu\PegawaiController;
+use App\Http\Controllers\Pemutu\PelaksanaanController;
 use App\Http\Controllers\Pemutu\PeriodeKpiController;
 use App\Http\Controllers\Pemutu\PeriodeSpmiController;
 use App\Http\Controllers\Pemutu\RenopController;
@@ -50,6 +51,9 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::put('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'update'])->name('dokumen-spmi.update');
     Route::delete('dokumen-spmi/{type}/{id}', [DokumenSpmiController::class, 'destroy'])->name('dokumen-spmi.destroy');
     Route::get('dokumen-spmi/{type}/{id}/children', [DokumenSpmiController::class, 'childrenData'])->name('dokumen-spmi.children-data');
+    Route::post('dokumen-spmi/mapping-sync', [DokumenSpmiController::class, 'mappingSync'])->name('dokumen-spmi.mapping-sync');
+    Route::post('dokumen-spmi/dokumen/{id}/upload-file', [DokumenSpmiController::class, 'uploadFile'])->name('dokumen-spmi.upload-file');
+    Route::delete('dokumen-spmi/dokumen/{id}/file/{mediaId}', [DokumenSpmiController::class, 'deleteFile'])->name('dokumen-spmi.delete-file');
 
     // Sub-Documents (DokSub) - Handled dynamically by DokumenSpmiController now
     // Route::get('dok-subs/{dokumen}/data', [DokSubController::class, 'data'])->name('dok-subs.data');
@@ -57,6 +61,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
 
     // Indikator
     Route::get('api/indikator', [IndikatorController::class, 'data'])->name('indikator.data');
+    Route::get('api/indikator/search-doksub', [IndikatorController::class, 'searchDoksub'])->name('indikator.search-doksub');
     Route::resource('indikator', IndikatorController::class);
 
     // Indikator Summary (NEW - with separate routes for Standar and Performa)
@@ -106,13 +111,26 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::post('renop', [RenopController::class, 'store'])->name('renop.store');
     Route::get('renop', [RenopController::class, 'index'])->name('renop.index');
 
+    // Pelaksanaan (NEW)
+    Route::prefix('pelaksanaan')->name('pelaksanaan.')->group(function () {
+        Route::get('pemantauan', [PelaksanaanController::class, 'pemantauanIndex'])->name('pemantauan.index');
+        Route::get('pemantauan/data', [PelaksanaanController::class, 'pemantauanData'])->name('pemantauan.data');
+        Route::get('pemantauan/create', [PelaksanaanController::class, 'pemantauanCreate'])->name('pemantauan.create');
+        Route::post('pemantauan', [PelaksanaanController::class, 'pemantauanStore'])->name('pemantauan.store');
+        Route::get('pemantauan/{rapat}/edit', [PelaksanaanController::class, 'pemantauanEdit'])->name('pemantauan.edit');
+        Route::put('pemantauan/{rapat}', [PelaksanaanController::class, 'pemantauanUpdate'])->name('pemantauan.update');
+    });
+
     // Evaluasi Diri
     Route::get('evaluasi-diri', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'index'])->name('evaluasi-diri.index');
     Route::get('evaluasi-diri/{periode}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'show'])->name('evaluasi-diri.show');
     Route::get('evaluasi-diri/{periode}/data', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'data'])->name('evaluasi-diri.data');
+    Route::get('evaluasi-diri/{periode}/ptp-data', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'ptpData'])->name('evaluasi-diri.ptp-data');
     Route::get('evaluasi-diri/download/{id}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'downloadAttachment'])->name('evaluasi-diri.download');
     Route::get('evaluasi-diri/{indikator}/edit', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'edit'])->name('evaluasi-diri.edit');
     Route::post('evaluasi-diri/{indikator}', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'update'])->name('evaluasi-diri.update');
+    Route::get('evaluasi-diri/ptp/{indOrg}/edit', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'editPtp'])->name('evaluasi-diri.ptp-edit');
+    Route::post('evaluasi-diri/ptp/{indOrg}/update', [App\Http\Controllers\Pemutu\EvaluasiDiriController::class, 'updatePtp'])->name('evaluasi-diri.ptp-update');
 
     // Evaluasi KPI
     Route::get('evaluasi-kpi', [App\Http\Controllers\Pemutu\EvaluasiKpiController::class, 'index'])->name('evaluasi-kpi.index');
@@ -126,8 +144,13 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     Route::get('ami', [App\Http\Controllers\Pemutu\AmiController::class, 'index'])->name('ami.index');
     Route::get('ami/{periode}', [App\Http\Controllers\Pemutu\AmiController::class, 'show'])->name('ami.show');
     Route::get('ami/{periode}/data', [App\Http\Controllers\Pemutu\AmiController::class, 'data'])->name('ami.data');
+    Route::get('ami/{periode}/te-data', [App\Http\Controllers\Pemutu\AmiController::class, 'teData'])->name('ami.te-data');
     Route::get('ami/detail/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'detail'])->name('ami.detail');
     Route::post('ami/detail/{indOrg}/nilai', [App\Http\Controllers\Pemutu\AmiController::class, 'submitNilai'])->name('ami.submit-nilai');
+    Route::get('ami/rtp/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'editRtp'])->name('ami.rtp-edit');
+    Route::post('ami/rtp/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'updateRtp'])->name('ami.rtp-update');
+    Route::get('ami/te/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'editTe'])->name('ami.te-edit');
+    Route::post('ami/te/{indOrg}', [App\Http\Controllers\Pemutu\AmiController::class, 'updateTe'])->name('ami.te-update');
 
     // Diskusi
     Route::post('diskusi/ami/{indOrg}', [App\Http\Controllers\Pemutu\DiskusiController::class, 'storeAmi'])->name('diskusi.store-ami');
@@ -160,7 +183,7 @@ Route::middleware(['auth', 'check.expired'])->prefix('pemutu')->name('pemutu.')-
     // Peningkatan Duplikasi & Review
     Route::get('peningkatan/{periode}/standar-list', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'standarList'])->name('peningkatan.standar-list');
     Route::post('peningkatan/{periode}/duplikasi', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'duplicateStandar'])->name('peningkatan.duplikasi');
-    Route::delete('peningkatan/{periode}/standar/{dok_id}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'deleteStandarTarget'])->name('peningkatan.delete-standar');
+    Route::delete('peningkatan/{periode}/standar/{dokumen}', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'deleteStandarTarget'])->name('peningkatan.delete-standar');
     Route::delete('peningkatan/{periode}/standar-bulk', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'deleteStandarTargetBulk'])->name('peningkatan.delete-standar-bulk');
     Route::get('peningkatan/{periode}/review-data', [App\Http\Controllers\Pemutu\PeningkatanController::class, 'reviewData'])->name('peningkatan.review-data');
 });

@@ -13,6 +13,12 @@ class RapatAgendaController extends Controller
         protected RapatAgendaService $rapatAgendaService
     ) {}
 
+    public function edit(RapatAgenda $agenda)
+    {
+        $rapat = $agenda->rapat;
+        return view('pages.event.rapat.agenda.create-edit-ajax', compact('rapat', 'agenda'));
+    }
+
     public function create(Rapat $rapat)
     {
         $agenda = new RapatAgenda(['rapat_id' => $rapat->rapat_id]);
@@ -21,7 +27,7 @@ class RapatAgendaController extends Controller
 
     public function store(RapatAgendaRequest $request, Rapat $rapat)
     {
-        $data = $request->validated();
+        $data             = $request->validated();
         $data['rapat_id'] = $rapat->rapat_id;
         $this->rapatAgendaService->store($data);
         return jsonSuccess('Agenda berhasil ditambahkan');
@@ -35,7 +41,8 @@ class RapatAgendaController extends Controller
 
     public function destroy(RapatAgenda $agenda)
     {
+        $rapat = $agenda->rapat;
         $this->rapatAgendaService->destroy($agenda);
-        return jsonSuccess('Agenda berhasil dihapus');
+        return jsonSuccess('Agenda berhasil dihapus', route('Kegiatan.rapat.show', $rapat->encrypted_rapat_id) . '#section-agenda');
     }
 }

@@ -19,6 +19,20 @@ class RapatPesertaRequest extends BaseRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('rapat_id')) {
+            $this->merge([
+                'rapat_id' => decryptIdIfEncrypted($this->rapat_id),
+            ]);
+        }
+        if ($this->has('user_id')) {
+            $this->merge([
+                'user_id' => decryptIdIfEncrypted($this->user_id),
+            ]);
+        }
+    }
+
     public function attributes(): array
     {
         return [

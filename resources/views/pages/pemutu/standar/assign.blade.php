@@ -10,24 +10,23 @@
 
 @section('content')
 <div class="mb-3">
-    <div class="card card-stacked">
-        <div class="card-body">
+    <x-tabler.card class="card-stacked">
+        <x-tabler.card-body>
             <div class="fw-bold">Indikator:</div>
             <div class="h3">{{ $indikator->indikator }}</div>
             <div class="text-muted small">Tipe: {{ ucfirst($indikator->type) }}</div>
-        </div>
-    </div>
+        </x-tabler.card-body>
+    </x-tabler.card>
 </div>
 
 <div class="row row-cards">
     <div class="col-md-5">
-        <form method="POST" action="{{ route('pemutu.standar.assign.store', $indikator->encrypted_indikator_id) }}" class="card ajax-form">
+        <form method="POST" action="{{ route('pemutu.standar.assign.store', $indikator->encrypted_indikator_id) }}" class="ajax-form">
             @csrf
-            <div class="card-header">
-                <h3 class="card-title">Penugasan Unit Kerja & Target</h3>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive border-bottom" style="max-height: 500px; overflow-y: auto;">
+            <x-tabler.card>
+                <x-tabler.card-header title="Penugasan Unit Kerja & Target" />
+                <x-tabler.card-body class="p-0">
+                    <div class="table-responsive border-bottom" style="max-height: 500px; overflow-y: auto;">
                     <table class="table table-vcenter table-striped">
                         <thead>
                             <tr>
@@ -75,17 +74,16 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </x-tabler.card-body>
             <div class="card-footer text-end">
                 <x-tabler.button type="submit" text="Simpan Penugasan" />
             </div>
+            </x-tabler.card>
         </form>
     </div>
     <div class="col-md-7">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Unit yang Ditugaskan</h3>
-            </div>
+        <x-tabler.card>
+            <x-tabler.card-header title="Unit yang Ditugaskan" />
              <div class="table-responsive">
                 <table class="table table-vcenter card-table">
                     <thead>
@@ -117,7 +115,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </x-tabler.card>
     </div>
 </div>
 @endsection

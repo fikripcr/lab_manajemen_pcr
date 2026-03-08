@@ -42,8 +42,10 @@ Route::middleware(['auth', 'check.expired'])->prefix('event')->name('Kegiatan.')
         ]);
 
     // Rapat Entitas (Nested Resource)
+    Route::get('rapat/{rapat}/entitas/search', [RapatEntitasController::class, 'search'])->name('rapat.entitas.search');
     Route::resource('rapat/{rapat}/entitas', RapatEntitasController::class)
         ->names('rapat.entitas')
+        ->parameters(['entitas' => 'entitas'])
         ->except(['index', 'show']);
     Route::get('rapat/{rapat}/entitas', [RapatEntitasController::class, 'index'])->name('rapat.entitas.index');
     Route::get('rapat/{rapat}/entitas/data', [RapatEntitasController::class, 'data'])->name('rapat.entitas.data');

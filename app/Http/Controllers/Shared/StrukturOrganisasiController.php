@@ -76,7 +76,7 @@ class StrukturOrganisasiController extends Controller
 
     public function edit(StrukturOrganisasi $struktur_organisasi)
     {
-        $parents = $this->strukturOrganisasiService->getHierarchicalList();
+        $parents = $this->strukturOrganisasiService->getHierarchicalList(excludeId: $struktur_organisasi->orgunit_id);
         $types   = $this->strukturOrganisasiService->getTypes();
 
         return view('pages.shared.struktur-organisasi.create-edit-ajax', ['orgUnit' => $struktur_organisasi, 'parents' => $parents, 'types' => $types]);

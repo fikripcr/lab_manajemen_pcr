@@ -17,7 +17,7 @@ class DokumenController extends Controller
     public function index(Request $request)
     {
         $pageTitle = 'Dokumen SPMI';
-        $activeTab = $request->query('tabs', 'kebijakan'); // 'kebijakan' or 'standar'
+        $jenis     = $request->query('jenis', 'visi'); // Default to 'visi' as it's the first tab
 
         $periods = Dokumen::select('periode')
             ->whereNotNull('periode')
@@ -25,18 +25,30 @@ class DokumenController extends Controller
             ->orderBy('periode', 'desc')
             ->pluck('periode');
 
-        // Define jenis types based on active tab
-        if ($activeTab === 'standar') {
-            $jenisTypes = ['standar', 'formulir', 'manual_prosedur'];
-        } else {
-            $jenisTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
-        }
-        $dokumentByJenis = [];
-        foreach ($jenisTypes as $jenis) {
-            $dokumentByJenis[$jenis] = $this->dokumenService->getDokumenByJenis($jenis, $request->periode);
+        if ($periods->isEmpty()) {
+            $periods->push(date('Y'));
         }
 
-        return view('pages.pemutu.dokumen.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
+        // All possible types
+        $jenisTypes = ['visi', 'misi', 'rjp', 'renstra', 'renop', 'standar', 'formulir', 'manual_prosedur'];
+
+        $dokumentByJenis = [];
+        foreach ($jenisTypes as $jt) {
+            // We only need the data for the active jenis to be complete,
+            // but for simple trees we can load what's needed.
+            if ($jt === $jenis) {
+                $dokumentByJenis[$jt] = $this->dokumenService->getDokumenByJenis($jt, $request->periode);
+            } else {
+                // If it's a small list, we can load it, or just leave it empty for AJAX if needed.
+                // For now, let's load current requested one.
+                $dokumentByJenis[$jt] = $jt === $jenis ? $this->dokumenService->getDokumenByJenis($jt, $request->periode) : collect();
+            }
+        }
+
+        // Overwrite active one ensuring it's loaded
+        $dokumentByJenis[$jenis] = $this->dokumenService->getDokumenByJenis($jenis, $request->periode);
+
+        return view('pages.pemutu.dokumen.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'jenis'));
     }
 
     public function create(Request $request)

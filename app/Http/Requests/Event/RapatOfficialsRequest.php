@@ -18,6 +18,14 @@ class RapatOfficialsRequest extends BaseRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'ketua_user_id'   => decryptIdIfEncrypted($this->ketua_user_id),
+            'notulen_user_id' => decryptIdIfEncrypted($this->notulen_user_id),
+        ]);
+    }
+
     public function attributes(): array
     {
         return [

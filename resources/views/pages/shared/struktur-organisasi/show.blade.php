@@ -1,6 +1,26 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">{{ $orgUnit->name }}</h3>
+        <div class="card-actions">
+            <div class="dropdown">
+                <a href="#" class="btn-action dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ti ti-dots-vertical fs-3"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item ajax-modal-btn" href="#" 
+                       data-url="{{ route('shared.struktur-organisasi.edit', $orgUnit->encrypted_org_unit_id) }}"
+                       data-modal-title="Edit Unit: {{ $orgUnit->name }}">
+                        <i class="ti ti-edit me-2"></i> Edit
+                    </a>
+                    <a class="dropdown-item text-danger ajax-delete" href="javascript:void(0)"
+                       data-url="{{ route('shared.struktur-organisasi.destroy', $orgUnit->encrypted_org_unit_id) }}"
+                       data-title="Hapus Unit"
+                       data-text="Apakah Anda yakin ingin menghapus unit '{{ $orgUnit->name }}'? Pekerjaan ini tidak dapat dibatalkan.">
+                        <i class="ti ti-trash me-2"></i> Hapus
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="card-body">
         <div class="datagrid">

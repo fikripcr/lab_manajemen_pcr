@@ -56,7 +56,7 @@ class DuplikasiService
             }
 
             // 2. Clone Indikator + pivot + orgunit for selected dokumens
-            $this->cloneIndikators($oldPeriode);
+            $this->cloneIndikators($oldPeriode, $newPeriode);
 
             logActivity('pemutu', "Duplikasi standar dari periode {$oldPeriode} ke {$newPeriode}. "
                 . "Dok baru: {$this->stats['dokumen_cloned']}, Dok reuse: {$this->stats['dokumen_reused']}, "
@@ -172,7 +172,7 @@ class DuplikasiService
      * Clone semua Indikator yang terhubung ke DokSub yang sudah dimapped.
      * Skip KPI (type=performa) dan nonaktif.
      */
-    protected function cloneIndikators(int $oldPeriode): void
+    protected function cloneIndikators(int $oldPeriode, int $newPeriode): void
     {
         $oldDoksubIds = array_keys($this->doksubMap);
 
@@ -215,12 +215,19 @@ class DuplikasiService
                 continue;
             }
 
+            $oldNo = $oldIndik->no_indikator;
+            $newNo = $oldNo;
+            if ($oldNo && strlen($oldNo) == 6 && is_numeric($oldNo)) {
+                $newPrefix = substr((string) $newPeriode, -2);
+                $newNo     = $newPrefix . substr($oldNo, 2);
+            }
+
             $newIndik = Indikator::create([
                 'type'                     => $oldIndik->type,
                 'kelompok_indikator'       => $oldIndik->kelompok_indikator,
                 'parent_id'                => null,
                 'prev_indikator_id'        => $oldIndik->indikator_id,
-                'no_indikator'             => $oldIndik->no_indikator,
+                'no_indikator'             => $newNo,
                 'indikator'                => $oldIndik->indikator,
                 'target'                   => $oldIndik->target,
                 'unit_ukuran'              => $oldIndik->unit_ukuran,

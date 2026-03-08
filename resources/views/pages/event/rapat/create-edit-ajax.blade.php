@@ -19,9 +19,9 @@
                 @method('PUT')
             @endif
 
-            <div class="row">
+            <div class="row justify-content-center">
                 {{-- KOLOM KIRI: DATA UMUM --}}
-                <div class="col-lg-5">
+                <div class="{{ $rapat->exists ? 'col-lg-6' : 'col-lg-5' }}">
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -113,6 +113,7 @@
                     </div>
                 </div>
 
+                @if(!$rapat->exists)
                 {{-- KOLOM KANAN: AGENDA & PESERTA --}}
                 <div class="col-lg-7">
                     {{-- AGENDA CARD --}}
@@ -168,7 +169,7 @@
                                 @endif
                             </div>
 
-                            <x-tabler.button type="create" id="add-agenda-btn" class="mt-2" text="Tambah Agenda" />
+                            <x-tabler.button type="create" id="add-agenda-btn" class="mt-2" />
                         </div>
                     </div>
 
@@ -269,6 +270,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
         </form>
     </div>

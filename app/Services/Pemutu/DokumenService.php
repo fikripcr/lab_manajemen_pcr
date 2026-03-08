@@ -1,197 +1,64 @@
 <?php
 namespace App\Services\Pemutu;
 
-use App\Models\Pemutu\Dokumen;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use App\Models\Pemutu\DokSub;
+use Illuminate\Database\Eloquent\Builder;
 
 class DokumenService
 {
     /**
-     * Get filtered query for DataTables or list
+     * Search for document sub-items (DokSub) based on query string.
+     *
+     * @param string|null $query
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getFilteredQuery(array $filters = [])
+    public function searchDokSub(?string $query, int $perPage = 30)
     {
-        return $this->applyFilters(Dokumen::query(), $filters);
-    }
+        $search = DokSub::with('dokumen');
 
-    public function getChildrenQuery(int $dokumenId)
-    {
-        // Eager load related Indikators for badges (especially for Renop indicators)
-        return Dokumen::where('parent_id', $dokumenId)
-            ->withCount('children')
-            ->with(['dokSubs.indikators' => function ($q) {
-                // We mainly care about Renop indicators linked to the DokSub
-                $q->where('type', 'renop');
-            }])
-            ->orderBy('seq');
+        if (! empty($query)) {
+            $search->where(function (Builder $q) use ($query) {
+                $q->where('judul', 'like', "%{$query}%")
+                    ->orWhere('kode', 'like', "%{$query}%")
+                    ->orWhereHas('dokumen', function (Builder $qq) use ($query) {
+                        $qq->where('judul', 'like', "%{$query}%")
+                            ->orWhere('kode', 'like', "%{$query}%");
+                    });
+            });
+        }
+
+        return $search->limit($perPage)->get();
     }
 
     /**
-     * Get list of documents by type
+     * Format DokSub items for Select2 AJAX response with grouping.
+     *
+     * @param \Illuminate\Support\Collection $items
+     * @return array
      */
-    public function getDokumenByJenis(string $jenis, ?int $periode = null): Collection
+    public function formatForSelect2($items)
     {
-        return Dokumen::where('jenis', $jenis)
-            ->when($periode, function ($q) use ($periode) {
-                return $q->where('periode', $periode);
-            })
-            ->with(['children', 'dokSubs']) // Eager load children and dokSubs for tree view
-            ->orderBy('seq')
-            ->get();
-    }
+        $grouped = [];
 
-    /**
-     * Get hierarchical documents (parent-child)
-     */
-    public function getHierarchicalDokumens(?int $periode = null, ?string $jenis = null): Collection
-    {
-        $query = Dokumen::with('children')
-            ->whereNull('parent_id')
-            ->orderBy('seq');
+        foreach ($items as $item) {
+            $groupName = '[' . strtoupper($item->dokumen->jenis ?? 'DOC') . '] ' . \Str::limit($item->dokumen->judul ?? '-', 60);
 
-        if ($periode) {
-            $query->where('periode', $periode);
-        }
-
-        if ($jenis) {
-            $query->where('jenis', $jenis);
-        }
-
-        return $query->get();
-    }
-
-    public function getDokumenById(int $id): ?Dokumen
-    {
-        return Dokumen::with(['children', 'parent'])->find($id);
-    }
-
-    public function createDokumen(array $data): Dokumen
-    {
-        return DB::transaction(function () use ($data) {
-            // Default Periode
-            if (empty($data['periode'])) {
-                $data['periode'] = date('Y');
+            if (! isset($grouped[$groupName])) {
+                $grouped[$groupName] = [
+                    'text'     => $groupName,
+                    'children' => [],
+                ];
             }
 
-            // Calculate Level & Seq if not provided
-            if (empty($data['seq']) || empty($data['level'])) {
-                if (! empty($data['parent_id'])) {
-                    $parent        = Dokumen::find($data['parent_id']);
-                    $data['level'] = $parent ? $parent->level + 1 : 1;
-                    $data['seq']   = Dokumen::where('parent_id', $data['parent_id'])->max('seq') + 1;
-                } else {
-                    $data['level'] = 1;
-                    $data['seq']   = Dokumen::whereNull('parent_id')->max('seq') + 1;
-                }
-            }
-
-            $dokumen = Dokumen::create($data);
-
-            logActivity(
-                'dokumen_management',
-                "Membuat dokumen baru: {$dokumen->judul}"
-            );
-
-            return $dokumen;
-        });
-    }
-
-    public function updateDokumen(int $id, array $data): bool
-    {
-        return DB::transaction(function () use ($id, $data) {
-            $dokumen  = $this->findOrFail($id);
-            $oldJudul = $dokumen->judul;
-
-            $dokumen->update($data);
-
-            logActivity(
-                'dokumen_management',
-                "Memperbarui dokumen: {$oldJudul}" . ($oldJudul !== $dokumen->judul ? " menjadi {$dokumen->judul}" : "")
-            );
-
-            return true;
-        });
-    }
-
-    public function deleteDokumen(int $id): bool
-    {
-        return DB::transaction(function () use ($id) {
-            $dokumen = $this->findOrFail($id);
-            $judul   = $dokumen->judul;
-
-            // Check specific logic constraint if any (e.g. has critical relations)
-            // Cascade delete is usually handled by DB, but safety check is good.
-            if ($dokumen->children()->count() > 0) {
-                // Option: recursive delete or block?
-                // Usually block or warn.
-                // For now, let's allow recursive delete if configured, or throw error.
-                // Given tree structure, usually we delete children too.
-                // But let's throw error for safety unless requested otherwise.
-                // Or implement recursive delete here.
-                // Let's implement recursive delete for user convenience or just simple delete call (Model handles cascade?)
-                // If not set in DB migration, need to do it here.
-                // Let's assume standard delete.
-            }
-
-            $dokumen->delete();
-
-            logActivity(
-                'dokumen_management',
-                "Menghapus dokumen: {$judul}"
-            );
-
-            return true;
-        });
-    }
-
-    public function reorderDokumens(array $hierarchy, ?int $parentId = null)
-    {
-        return DB::transaction(function () use ($hierarchy, $parentId) {
-            foreach ($hierarchy as $index => $item) {
-                $dokumen = Dokumen::find($item['id']);
-                if ($dokumen) {
-                    $dokumen->seq       = $index + 1;
-                    $dokumen->parent_id = $parentId;
-
-                    // Update Level
-                    if ($parentId) {
-                        $parent         = Dokumen::find($parentId);
-                        $dokumen->level = $parent ? $parent->level + 1 : 1;
-                    } else {
-                        $dokumen->level = 1;
-                    }
-
-                    $dokumen->save();
-
-                    if (! empty($item['children'])) {
-                        $this->reorderDokumens($item['children'], $dokumen->dok_id);
-                    }
-                }
-            }
-            logActivity('dokumen_management', 'Memperbarui urutan dokumen (Reorder)');
-            return true;
-        });
-    }
-
-    protected function applyFilters($query, array $filters)
-    {
-        // Add filters logic
-        if (! empty($filters['jenis'])) {
-            $query->where('jenis', $filters['jenis']);
+            $grouped[$groupName]['children'][] = [
+                'id'   => $item->encrypted_doksub_id,
+                'text' => $item->judul . ($item->kode ? " ({$item->kode})" : ''),
+            ];
         }
-        if (! empty($filters['periode'])) {
-            $query->where('periode', $filters['periode']);
-        }
-        return $query;
-    }
 
-    protected function findOrFail(int $id): Dokumen
-    {
-        $model = $this->getDokumenById($id);
-        if (! $model) {
-            throw new \Exception("Dokumen dengan ID {$id} tidak ditemukan.");
-        }
-        return $model;
+        return [
+            'results' => array_values($grouped),
+        ];
     }
 }

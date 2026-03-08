@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<div class="card">
+<x-tabler.card>
     <x-tabler.datatable-client
         id="table-renop"
         :columns="[
@@ -49,5 +49,5 @@
         {{ $renops->links() }}
     </div>
     @endif
-</div>
+</x-tabler.card>
 @endsection

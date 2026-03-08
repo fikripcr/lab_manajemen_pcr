@@ -15,7 +15,7 @@
 window.initPemutuIndikatorForm = function (config) {
     const { kpiInitialIndex = 0, pegawaiOptionsHtml = '' } = config;
 
-    document.addEventListener('DOMContentLoaded', function () {
+    const runInit = function () {
         const typeSelector = document.getElementById('type-selector');
         const cardPerforma = document.getElementById('card-performa');
         const cardTarget = document.getElementById('card-target');
@@ -30,6 +30,26 @@ window.initPemutuIndikatorForm = function (config) {
         function toggleTabs() {
             const type = getCurrentType();
             if (!cardPerforma || !cardTarget || !parentIdSelector) return;
+
+            // Restrict Penilaian Skala visibility
+            const tabSkalaContainer = document.getElementById('tab-link-skala-container');
+            const tabSkalaLink = document.getElementById('tab-link-skala');
+            const tabInfoLink = document.querySelector('a[href="#tab-informasi-umum"]');
+
+            if (tabSkalaContainer) {
+                if (type === 'renop') {
+                    tabSkalaContainer.style.display = 'none';
+                    // If Scale tab is active, switch to Information tab
+                    if (tabSkalaLink && tabSkalaLink.classList.contains('active')) {
+                        if (tabInfoLink) {
+                            const tab = new bootstrap.Tab(tabInfoLink);
+                            tab.show();
+                        }
+                    }
+                } else {
+                    tabSkalaContainer.style.display = 'block';
+                }
+            }
 
             if (type === 'performa') {
                 cardPerforma.style.display = 'block';
@@ -46,8 +66,52 @@ window.initPemutuIndikatorForm = function (config) {
             }
         }
 
+        function initSelect2Ajax() {
+            $('.select2-ajax').each(function () {
+                const $container = $(this);
+                const $el = $container.is('select') ? $container : $container.find('select');
+
+                if ($el.length === 0 || $el.hasClass('select2-hidden-accessible')) return;
+
+                const url = $container.data('ajax-url') || $el.data('ajax-url');
+                const placeholder = $container.data('placeholder') || $el.data('placeholder') || 'Pilih...';
+                const isMultiple = $el.attr('multiple') === 'multiple' || $el.prop('multiple');
+
+                $el.select2({
+                    theme: 'bootstrap-5',
+                    placeholder: placeholder,
+                    allowClear: true,
+                    closeOnSelect: !isMultiple,
+                    dropdownParent: $el.closest('.modal').length ? $el.closest('.modal') : $(document.body),
+                    ajax: {
+                        url: url,
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                q: params.term, // search term
+                                page: params.page
+                            };
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
+                            return {
+                                results: data.results,
+                                pagination: {
+                                    more: (params.page * 30) < (data.total_count || 0)
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 0,
+                });
+            });
+        }
+
         if (typeSelector) typeSelector.addEventListener('change', toggleTabs);
         toggleTabs();
+        initSelect2Ajax();
 
         // --- KPI Assignments Repeater ---
         const kpiBody = document.getElementById('kpi-repeater-body');
@@ -78,6 +142,9 @@ window.initPemutuIndikatorForm = function (config) {
                 if (typeof window.initOfflineSelect2 === 'function') {
                     window.initOfflineSelect2();
                 }
+
+                initSelect2Ajax();
+
                 kpiIndex++;
             });
 
@@ -88,18 +155,80 @@ window.initPemutuIndikatorForm = function (config) {
             });
         }
 
-        // --- Unit Kerja Checkbox → Target Input Toggle ---
+        // --- Unit Selection Filtering ---
+        const unitSearch = document.getElementById('unit-search');
+        const unitFilters = document.querySelectorAll('.btn-unit-filter');
+        const unitRows = document.querySelectorAll('.unit-row');
+        let currentFilter = 'all'; // 'all' or 'selected'
+
+        function applyUnitFilters() {
+            const searchTerm = unitSearch ? unitSearch.value.toLowerCase() : '';
+
+            unitRows.forEach(row => {
+                const title = row.getAttribute('data-title') || '';
+                const code = row.getAttribute('data-code') || '';
+                const isSelected = row.classList.contains('is-assigned');
+
+                let visible = true;
+
+                // Filter by type
+                if (currentFilter === 'selected' && !isSelected) {
+                    visible = false;
+                }
+
+                // Filter by search
+                if (visible && searchTerm) {
+                    if (!title.includes(searchTerm) && !code.includes(searchTerm)) {
+                        visible = false;
+                    }
+                }
+
+                row.style.display = visible ? '' : 'none';
+            });
+        }
+
+        if (unitSearch) {
+            unitSearch.addEventListener('input', applyUnitFilters);
+        }
+
+        unitFilters.forEach(btn => {
+            btn.addEventListener('click', function () {
+                unitFilters.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.getAttribute('data-filter');
+                applyUnitFilters();
+            });
+        });
+
+        // --- Unit Kerja Checkbox → Target Input Toggle & Filtering ---
         document.querySelectorAll('.unit-checkbox').forEach(function (checkbox) {
+            const row = checkbox.closest('.unit-row');
             checkbox.addEventListener('change', function () {
-                const targetInput = document.getElementById('target-' + this.dataset.id);
-                if (!targetInput) return;
+                const targetId = this.dataset.id;
+                const targetInput = document.getElementById('target-' + targetId);
+
                 if (this.checked) {
-                    targetInput.removeAttribute('disabled');
+                    if (targetInput) targetInput.removeAttribute('disabled');
+                    if (row) row.classList.add('is-assigned');
                 } else {
-                    targetInput.setAttribute('disabled', 'disabled');
-                    targetInput.value = '';
+                    if (targetInput) {
+                        targetInput.setAttribute('disabled', 'disabled');
+                        targetInput.value = '';
+                    }
+                    if (row) row.classList.remove('is-assigned');
+                }
+
+                // If currently filtering by selected, Hide if unchecked
+                if (currentFilter === 'selected') {
+                    applyUnitFilters();
                 }
             });
         });
-    });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runInit);
+    } else {
+        runInit();
+    }
 };

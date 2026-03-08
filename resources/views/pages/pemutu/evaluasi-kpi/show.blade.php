@@ -10,16 +10,14 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header border-bottom py-3">
-        <h3 class="card-title">Daftar Indikator Kinerja Saya</h3>
-    </div>
-    <div class="card-body border-bottom py-3">
+<x-tabler.card>
+    <x-tabler.card-header title="Daftar Indikator Kinerja Saya" class="border-bottom py-3" />
+    <x-tabler.card-body class="border-bottom py-3">
         <div class="text-muted">
             Berikut adalah daftar indikator kinerja yang ditargetkan untuk Anda pada periode <strong>{{ $periode->nama }}</strong>. Silakan isi capaian dan analisis untuk setiap indikator.
         </div>
-    </div>
-    <div class="table-responsive">
+    </x-tabler.card-body>
+    <x-tabler.card-body class="p-0 table-responsive">
         <x-tabler.datatable 
             id="table-ekpi"
             route="{{ route('pemutu.evaluasi-kpi.data', $periode->encrypted_periode_kpi_id) }}"
@@ -33,6 +31,6 @@
                 ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'width' => '10%', 'class' => 'text-center', 'orderable' => false, 'searchable' => false],
             ]"
         />
-    </div>
-</div>
+    </x-tabler.card-body>
+</x-tabler.card>
 @endsection

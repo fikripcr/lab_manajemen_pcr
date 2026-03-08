@@ -19,6 +19,19 @@ class RapatBulkPesertaRequest extends BaseRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('user_ids') && is_array($this->user_ids)) {
+            $decryptedIds = array_map(function ($id) {
+                return decryptIdIfEncrypted($id);
+            }, $this->user_ids);
+
+            $this->merge([
+                'user_ids' => $decryptedIds,
+            ]);
+        }
+    }
+
     public function attributes(): array
     {
         return [

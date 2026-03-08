@@ -75,7 +75,14 @@
 @push('js')
 <script>
     if (window.loadHugeRTE) {
-        window.loadHugeRTE('#{{ $pengumuman->exists ? "isi_edit_modal" : "isi_modal" }}', { height: 400 });
+        window.loadHugeRTE('#{{ $pengumuman->exists ? "isi_edit_modal" : "isi_modal" }}', { 
+            height: 400,
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
     }
 </script>
 @endpush

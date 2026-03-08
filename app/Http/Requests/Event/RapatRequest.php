@@ -26,6 +26,15 @@ class RapatRequest extends BaseRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'ketua_user_id'   => decryptIdIfEncrypted($this->ketua_user_id),
+            'notulen_user_id' => decryptIdIfEncrypted($this->notulen_user_id),
+            'author_user_id'  => decryptIdIfEncrypted($this->author_user_id),
+        ]);
+    }
+
     public function messages(): array
     {
         return array_merge(parent::messages(), [

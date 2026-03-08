@@ -3,7 +3,6 @@ namespace App\Services\Pemutu;
 
 use App\Models\Pemutu\PeriodeSpmi;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PeriodeSpmiService
@@ -19,22 +18,30 @@ class PeriodeSpmiService
     }
 
     /**
-     * Ambil periode SPMI yang sedang aktif.
-     * Digunakan bersama oleh ED, AMI, dan modul lain.
+     * Ambil semua periode sebagai Collection — untuk dropdown/select.
      */
-    public function getPeriodeAktif(): ?PeriodeSpmi
+    public function getAll(?int $year = null)
     {
-        return PeriodeSpmi::where('is_active', true)->first();
+        $query = PeriodeSpmi::query();
+
+        if ($year) {
+            $query->where('periode', $year);
+        }
+
+        return $query->orderBy('periode', 'desc')
+            ->orderBy('jenis_periode', 'asc')
+            ->get();
     }
 
     /**
-     * Ambil semua periode sebagai Collection — untuk dropdown/select.
+     * Ambil daftar tahun yang tersedia di sistem.
      */
-    public function getAll()
+    public function getAvailableYears()
     {
-        return PeriodeSpmi::orderBy('periode', 'desc')
-            ->orderBy('jenis_periode', 'asc')
-            ->get();
+        return PeriodeSpmi::select('periode')
+            ->distinct()
+            ->orderBy('periode', 'desc')
+            ->pluck('periode');
     }
 
     /**

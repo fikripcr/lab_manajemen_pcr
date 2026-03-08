@@ -70,21 +70,30 @@
         </div>
     </div>
 
-    <x-tabler.form-textarea 
-        name="deskripsi" 
-        id="{{ $softwareRequest->exists ? 'deskripsi_edit_modal' : 'deskripsi_modal' }}" 
-        label="Keterangan / Deskripsi" 
-        required="true" 
-        height="200"
-        :value="old('deskripsi', $softwareRequest->deskripsi)"
-    />
+    <div>
+        <x-tabler.form-textarea 
+            name="deskripsi" 
+            id="{{ $softwareRequest->exists ? 'deskripsi_edit_modal' : 'deskripsi_modal' }}" 
+            label="Keterangan / Deskripsi" 
+            required="true" 
+            height="200"
+            :value="old('deskripsi', $softwareRequest->deskripsi)"
+        />
+    </div>
 
     @push('js')
     <script>
         $(document).ready(function() {
             window.loadSelect2();
             if (window.loadHugeRTE) {
-                window.loadHugeRTE('#{{ $softwareRequest->exists ? "deskripsi_edit_modal" : "deskripsi_modal" }}', { height: 200 });
+                window.loadHugeRTE('#{{ $softwareRequest->exists ? "deskripsi_edit_modal" : "deskripsi_modal" }}', { 
+                    height: 200,
+                    setup: function (editor) {
+                        editor.on('change', function () {
+                            editor.save();
+                        });
+                    }
+                });
             }
         });
     </script>

@@ -1,4 +1,4 @@
-<li data-id="{{ $unit->orgunit_id }}" class="mb-1">
+<li data-id="{{ $unit->encrypted_org_unit_id }}" class="mb-1">
     <div class="d-flex align-items-center py-1">
         @if($unit->children && $unit->children->count() > 0)
             <span class="tree-toggle me-1">
@@ -7,7 +7,7 @@
         @else
             <span class="me-1" style="width: 20px;"></span>
         @endif
-        <a href="#" class="tree-item-link" data-id="{{ $unit->orgunit_id }}" data-url="{{ route('shared.struktur-organisasi.show', $unit) }}">
+        <a href="#" class="tree-item-link" data-id="{{ $unit->encrypted_org_unit_id }}" data-url="{{ route('shared.struktur-organisasi.show', $unit) }}">
             {{ $unit->name }}
             <span class="badge bg-secondary-lt ms-1" style="font-size: 0.7em;">{{ $unit->type }}</span>
             @if($unit->code)

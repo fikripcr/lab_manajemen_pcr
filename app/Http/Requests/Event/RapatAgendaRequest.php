@@ -20,6 +20,15 @@ class RapatAgendaRequest extends BaseRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('rapat_id')) {
+            $this->merge([
+                'rapat_id' => decryptIdIfEncrypted($this->rapat_id),
+            ]);
+        }
+    }
+
     public function attributes(): array
     {
         return [

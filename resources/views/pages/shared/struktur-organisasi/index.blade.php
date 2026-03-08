@@ -11,110 +11,40 @@
 
 @section('content')
 <div class="card">
-    <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
-            <li class="nav-item">
-                <a href="#tabs-tree" class="nav-link active" data-bs-toggle="tab">
-                    <i class="ti ti-hierarchy-2 me-2"></i> Hierarki
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#tabs-manage" class="nav-link" data-bs-toggle="tab">
-                    <i class="ti ti-settings me-2"></i> Manage
-                </a>
-            </li>
-        </ul>
-    </div>
     <div class="card-body">
-        <div class="tab-content">
-            <!-- TAB 1: HIERARCHY TREE -->
-            <div class="tab-pane active show" id="tabs-tree">
-                <div class="row row-cards">
-                    <!-- Tree View -->
-                    <div class="col-lg-8">
-
-                            <div class="overflow-auto" style="max-height: 70vh;">
-                                @if($treeUnits->isEmpty())
-                                    <x-tabler.empty-state
-                                        title="Belum ada Unit"
-                                        text="Silakan tambahkan unit organisasi baru."
-                                        icon="ti ti-sitemap"
-                                    />
-                                @else
-                                    @include('pages.shared.struktur-organisasi.tree', ['orgUnits' => $treeUnits])
-                                @endif
-                            </div>
-                    </div>
-                    <!-- Legend / Detail Panel -->
-                    <div class="col-lg-4">
-                        <div id="detail-panel-container">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">Legenda Tipe Unit</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        @foreach($types as $key => $label)
-                                        <div class="col-md-4 mb-2">
-                                            <span class="badge bg-secondary-lt">{{ $label }}</span>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                    <hr>
-                                    <p class="text-muted mb-0">
-                                        <small>Klik pada unit di panel kiri untuk melihat detail.</small>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="row row-cards">
+            <!-- Tree View -->
+            <div class="col-lg-7">
+                <div class="overflow-auto" style="max-height: 75vh;">
+                    @if($treeUnits->isEmpty())
+                        <x-tabler.empty-state
+                            title="Belum ada Unit"
+                            text="Silakan tambahkan unit organisasi baru."
+                            icon="ti ti-sitemap"
+                        />
+                    @else
+                        @include('pages.shared.struktur-organisasi.tree', ['orgUnits' => $treeUnits])
+                    @endif
                 </div>
             </div>
+            <!-- Detail Panel -->
+            <div class="col-lg-5">
+                <div id="detail-panel-container">
+                    <div class="card shadow-none border">
+                        <div class="card-body py-5 text-center">
+                            <div class="text-center py-5">
+                                <i class="ti ti-click fs-1 text-muted opacity-25"></i>
+                                <p class="text-muted mt-2">Pilih unit di sebelah kiri untuk melihat detail informasi.</p>
+                            </div>
 
-            <!-- TAB 2: MANAGE (DATATABLE) -->
-            <div class="tab-pane" id="tabs-manage">
-                <div class="card border-0 shadow-none mb-0">
-                    <div class="card-header border-0 pb-0">
-                        <div class="d-flex flex-wrap gap-2">
-                            <div>
-                                <x-tabler.datatable-page-length :dataTableId="'table-org-units'" />
-                            </div>
-                            <div>
-                                <x-tabler.datatable-search :dataTableId="'table-org-units'" />
-                            </div>
-                            <div>
-                                <x-tabler.datatable-filter :dataTableId="'table-org-units'">
-                                    <div class="d-flex gap-2">
-                                        <x-tabler.form-select id="filter-type" name="type" placeholder="Filter Tipe" class="form-select-sm mb-0" style="width: 180px;">
-                                            <option value="">Semua Tipe</option>
-                                            @foreach($types as $key => $label)
-                                                <option value="{{ $key }}">{{ $label }}</option>
-                                            @endforeach
-                                        </x-tabler.form-select>
-                                        <x-tabler.form-select id="filter-status" name="status" placeholder="Filter Status" class="form-select-sm mb-0" style="width: 150px;">
-                                            <option value="">Semua Status</option>
-                                            <option value="active">Aktif</option>
-                                            <option value="inactive">Nonaktif</option>
-                                        </x-tabler.form-select>
-                                    </div>
-                                </x-tabler.datatable-filter>
+                            <hr class="my-3">
+                            <div class="text-uppercase text-muted small fw-bold mb-3">Legenda Tipe</div>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                @foreach($types as $key => $label)
+                                    <span class="badge bg-secondary-lt">{{ $label }}</span>
+                                @endforeach
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body p-0 mt-3">
-                        <x-tabler.datatable
-                            id="table-org-units"
-                            route="{{ route('shared.struktur-organisasi.data') }}"
-                            :columns="[
-                                ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '5%', 'class' => 'text-center'],
-                                ['data' => 'name', 'name' => 'name', 'title' => 'Nama Unit'],
-                                ['data' => 'type', 'name' => 'type', 'title' => 'Tipe'],
-                                ['data' => 'parent_id', 'name' => 'parent_id', 'title' => 'Parent'],
-                                ['data' => 'level', 'name' => 'level', 'title' => 'Level', 'width' => '8%', 'class' => 'text-center'],
-                                ['data' => 'is_active', 'name' => 'is_active', 'title' => 'Status', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '8%'],
-                                ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false, 'class' => 'text-center', 'width' => '10%']
-                            ]"
-                        />
                     </div>
                 </div>
             </div>
@@ -208,7 +138,6 @@
     });
 </script>
 <style>
-    .nav-tabs .nav-link.active { font-weight: bold; }
 
     ul#org-tree, ul.nested-sortable { list-style: none; padding-left: 20px; }
     ul.nested-sortable { margin-left: 5px; border-left: 1px dashed #e6e7e9; min-height: 10px; }

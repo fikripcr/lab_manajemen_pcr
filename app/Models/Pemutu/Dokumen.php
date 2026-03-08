@@ -6,10 +6,12 @@ use App\Traits\HashidBinding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Dokumen extends Model
+class Dokumen extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Blameable, HashidBinding;
+    use HasFactory, SoftDeletes, Blameable, HashidBinding, InteractsWithMedia;
 
     protected $table      = 'pemutu_dokumen';
     protected $primaryKey = 'dok_id';
@@ -75,7 +77,16 @@ class Dokumen extends Model
     public function approvals()
     {
         return $this->hasMany(\App\Models\Pemutu\RiwayatApproval::class, 'model_id', 'dok_id')
-                    ->where('model', self::class)
-                    ->orderBy('created_at', 'desc');
+            ->where('model', self::class)
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Spatie Media Library: Register collections.
+     * Collection 'dokumen_pendukung' — allows multiple files per document.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('dokumen_pendukung');
     }
 }

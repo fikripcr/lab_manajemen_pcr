@@ -19,7 +19,7 @@
     />
 
     {{-- Clear Button (Positioned left of the icon) --}}
-    <span class="input-icon-addon p-0" style="right: 3rem; pointer-events: auto;">
+    <span class="input-icon-addon p-0" style="pointer-events: auto;">
          <button type="button"
             class="btn-close d-none"
             id="{{ $dataTableId . '-clear-search' }}"

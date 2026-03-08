@@ -160,18 +160,11 @@
                     'active_routes' => ['pemutu.dokumen.*', 'pemutu.dokumen-spmi.*', 'pemutu.standar.*', 'pemutu.indikator.*', 'pemutu.renop.*'],
                     'children'      => [
                         [
-                            'title'         => 'Kebijakan',
+                            'title'         => 'Dokumen',
                             'route'         => 'pemutu.dokumen.index',
+                            'query'         => ['jenis' => 'visi'],
                             'active_routes' => ['pemutu.dokumen.*', 'pemutu.dokumen-spmi.*'],
-                            'icon'          => 'ti ti-file-certificate',
-                            'query'         => ['tabs' => 'kebijakan'],
-                        ],
-                        [
-                            'title'         => 'Standar',
-                            'route'         => 'pemutu.dokumen.index',
-                            'active_routes' => ['pemutu.dokumen.*', 'pemutu.dokumen-spmi.*'],
-                            'icon'          => 'ti ti-book',
-                            'query'         => ['tabs' => 'standar'],
+                            'icon'          => 'ti ti-file-text',
                         ],
                         [
                             'title'         => 'Indikator',

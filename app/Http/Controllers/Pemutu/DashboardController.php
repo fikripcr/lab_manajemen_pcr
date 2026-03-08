@@ -14,8 +14,10 @@ class DashboardController extends Controller
     {
         $pageTitle = 'Dashboard SPMI - Overview';
 
-        // Filters options
-        $years     = PeriodeSpmi::orderBy('periode', 'desc')->pluck('periode')->unique()->toArray();
+        $years = PeriodeSpmi::orderBy('periode', 'desc')->pluck('periode')->unique()->toArray();
+        if (empty($years)) {
+            $years[] = date('Y');
+        }
         $units     = StrukturOrganisasi::orderBy('name', 'asc')->get();
         $kriterias = Indikator::whereNotNull('kelompok_indikator')->distinct('kelompok_indikator')->pluck('kelompok_indikator');
 
@@ -25,7 +27,7 @@ class DashboardController extends Controller
             $activePeriodeSpmi = PeriodeSpmi::whereDate('penetapan_awal', '<<=', now())
                 ->whereDate('peningkatan_akhir', '>=', now())
                 ->first();
-            $currentYear = $activePeriodeSpmi ? $activePeriodeSpmi->periode : (count($years) > 0 ? $years[0] : date('Y'));
+            $currentYear = $activePeriodeSpmi ? $activePeriodeSpmi->periode : $years[0];
         }
         $lastYear = (int) $currentYear - 1;
 
@@ -39,14 +41,15 @@ class DashboardController extends Controller
                 ->whereNull('pemutu_indikator.deleted_at');
 
             // Year logic (check parent document periode)
-            $q->whereExists(function ($query) use ($year) {
-                $query->select(\DB::raw(1))
-                    ->from('pemutu_indikator_doksub')
-                    ->join('pemutu_dok_sub', 'pemutu_indikator_doksub.doksub_id', '=', 'pemutu_dok_sub.doksub_id')
-                    ->join('pemutu_dokumen', 'pemutu_dok_sub.dok_id', '=', 'pemutu_dokumen.dok_id')
-                    ->whereColumn('pemutu_indikator_doksub.indikator_id', 'pemutu_indikator.indikator_id')
-                    ->where('pemutu_dokumen.periode', $year);
-            });
+            // Commented out temporarily: Users expect to see ALL indicators assigned
+            // $q->whereExists(function ($query) use ($year) {
+            //     $query->select(\DB::raw(1))
+            //         ->from('pemutu_indikator_doksub')
+            //         ->join('pemutu_dok_sub', 'pemutu_indikator_doksub.doksub_id', '=', 'pemutu_dok_sub.doksub_id')
+            //         ->join('pemutu_dokumen', 'pemutu_dok_sub.dok_id', '=', 'pemutu_dokumen.dok_id')
+            //         ->whereColumn('pemutu_indikator_doksub.indikator_id', 'pemutu_indikator.indikator_id')
+            //         ->where('pemutu_dokumen.periode', $year);
+            // });
 
             if ($currentUnit) {
                 $q->where('pemutu_indikator_orgunit.org_unit_id', $currentUnit);

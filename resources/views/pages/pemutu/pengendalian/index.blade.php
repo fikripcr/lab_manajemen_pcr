@@ -24,9 +24,9 @@
 <div class="row row-cards">
     @foreach($periodes as $periode)
         <div class="col-12">
-            <div class="card card-link card-link-pop">
+            <x-tabler.card class="card-link card-link-pop">
                 <a href="{{ route('pemutu.pengendalian.show', $periode->encrypted_periodespmi_id) }}" class="d-block w-100 text-reset text-decoration-none">
-                    <div class="card-body">
+                    <x-tabler.card-body>
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <span class="avatar avatar-md rounded bg-teal-lt"><i class="ti ti-settings-check fs-2"></i></span>
@@ -47,9 +47,9 @@
                                 <i class="ti ti-chevron-right ms-3 text-muted"></i>
                             </div>
                         </div>
-                    </div>
+                    </x-tabler.card-body>
                 </a>
-            </div>
+            </x-tabler.card>
         </div>
     @endforeach
 

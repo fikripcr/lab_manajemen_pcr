@@ -16,11 +16,27 @@ class PeriodeSpmiController extends Controller
         $this->authorizeResourcePermissions('pemutu.periode');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $pageTitle = 'Periode SPMI';
-        $periodes  = $this->periodeSpmiService->getAll();
-        return view('pages.pemutu.periode_spmi.index', compact('pageTitle', 'periodes'));
+
+        $years       = $this->periodeSpmiService->getAvailableYears();
+        $defaultYear = date('Y');
+
+        // Ensure we always have at least the default year in the list
+        if ($years->isEmpty()) {
+            $years->push($defaultYear);
+        }
+
+        // If current year not in available years, pick the latest one if available
+        if (! $years->contains($defaultYear) && $years->isNotEmpty()) {
+            $defaultYear = $years->first();
+        }
+
+        $selectedYear = $request->get('year', $defaultYear);
+        $periodes     = $this->periodeSpmiService->getAll($selectedYear);
+
+        return view('pages.pemutu.periode_spmi.index', compact('pageTitle', 'periodes', 'years', 'selectedYear'));
     }
 
     public function data(Request $request)

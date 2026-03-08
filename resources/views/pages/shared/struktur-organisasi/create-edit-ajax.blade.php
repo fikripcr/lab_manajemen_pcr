@@ -1,7 +1,7 @@
 @php
     $item = $orgUnit ?? new \stdClass();
     $method = isset($orgUnit) ? 'PUT' : 'POST';
-    $route = isset($orgUnit) ? route('shared.struktur-organisasi.update', $orgUnit->orgunit_id) : route('shared.struktur-organisasi.store');
+    $route = isset($orgUnit) ? route('shared.struktur-organisasi.update', $orgUnit) : route('shared.struktur-organisasi.store');
     $title = isset($orgUnit) ? 'Edit Unit Organisasi' : 'Tambah Unit Organisasi';
     $submitText = isset($orgUnit) ? 'Update' : 'Simpan';
 @endphp
@@ -16,7 +16,7 @@
         <x-tabler.form-select id="parent_id" name="parent_id" label="Parent Unit" type="select2" data-dropdown-parent="#modalAction">
             <option value="">No Parent (Root)</option>
             @foreach($parents as $u)
-                <option value="{{ $u->orgunit_id }}" {{ (old('parent_id', $item->parent_id ?? '') == $u->orgunit_id) ? 'selected' : '' }}>
+                <option value="{{ $u->encrypted_org_unit_id }}" {{ (old('parent_id', $item->parent_id ?? '') == $u->orgunit_id || old('parent_id') == $u->encrypted_org_unit_id) ? 'selected' : '' }}>
                     {{ $u->name_display ?? $u->name }}
                 </option>
             @endforeach

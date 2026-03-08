@@ -5,14 +5,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Pemutu\DokSub;
 use App\Models\Pemutu\Dokumen;
 use App\Models\Pemutu\Indikator;
+use App\Services\Pemutu\DokumenService;
 use App\Services\Pemutu\DokumenSpmiService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class DokumenSpmiController extends Controller
 {
-    public function __construct(protected DokumenSpmiService $dokumenSpmiService)
-    {
+    public function __construct(
+        protected DokumenSpmiService $dokumenSpmiService,
+        protected DokumenService $dokumenService
+    ) {
         $this->authorizeResourcePermissions('pemutu.dokumen');
         $this->middleware('permission:pemutu.dokumen.view')->only(['childrenData']);
     }
@@ -22,8 +25,8 @@ class DokumenSpmiController extends Controller
      */
     public function index(Request $request)
     {
-        $pageTitle = 'Workspace Dokumen SPMI';
-        $activeTab = $request->query('tabs', 'kebijakan');
+        $pageTitle   = 'Workspace Dokumen SPMI';
+        $activeJenis = $request->query('jenis', 'visi');
 
         $periods = Dokumen::select('periode')
             ->whereNotNull('periode')
@@ -31,18 +34,33 @@ class DokumenSpmiController extends Controller
             ->orderBy('periode', 'desc')
             ->pluck('periode');
 
-        if ($activeTab === 'standar') {
-            $jenisTypes = ['standar', 'formulir', 'manual_prosedur'];
+        if ($periods->isEmpty()) {
+            $periods->push(date('Y'));
+        }
+
+        // Default to the latest period if none provided
+        $selectedPeriode = $request->periode ?: $periods->first();
+
+        if (in_array($activeJenis, ['standar', 'formulir', 'manual_prosedur'])) {
+            $activeTab       = 'standar';
+            $dokumentByJenis = [];
+            foreach (['standar', 'formulir', 'manual_prosedur'] as $j) {
+                $dokumentByJenis[$j] = $this->dokumenSpmiService->getDokumenByJenis($j, $selectedPeriode);
+            }
         } else {
-            $jenisTypes = ['kebijakan', 'visi', 'misi', 'rjp', 'renstra', 'renop'];
+            $activeTab = 'kebijakan';
+            // Kebijakan: flat 5-document architecture
+            // getKebijakanByPeriode returns array<string, Dokumen>, let's wrap values in collections for consistency if needed,
+            // but the view expects $dokumentByJenis[$activeJenis]->first() or similar for specialized view.
+            $docsArr         = $this->dokumenService->getKebijakanByPeriode($selectedPeriode);
+            $dokumentByJenis = [];
+            foreach ($docsArr as $j => $doc) {
+                // Ensure it's a collection so ->first() works in the specialized view
+                $dokumentByJenis[$j] = collect([$doc]);
+            }
         }
 
-        $dokumentByJenis = [];
-        foreach ($jenisTypes as $jenis) {
-            $dokumentByJenis[$jenis] = $this->dokumenSpmiService->getDokumenByJenis($jenis, $request->periode);
-        }
-
-        return view('pages.pemutu.dokumen.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab'));
+        return view('pages.pemutu.dokumen.index', compact('pageTitle', 'dokumentByJenis', 'periods', 'activeTab', 'selectedPeriode', 'activeJenis'));
     }
 
     /**
@@ -55,10 +73,23 @@ class DokumenSpmiController extends Controller
             $parentJenis   = strtolower(trim($item->jenis));
             $childLabel    = pemutuChildLabel($parentJenis);
             $isDokSubBased = pemutuIsDokSubBased($parentJenis);
-            return view('pages.pemutu.dokumen._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased'));
+            $isKebijakan   = in_array($parentJenis, pemutuKebijakanJenisList());
+            return view('pages.pemutu.dokumen._workspace', compact('type', 'item', 'childLabel', 'isDokSubBased', 'isKebijakan'));
         } elseif ($type === 'poin') {
-            $item = DokSub::with('dokumen')->findOrFail(decryptIdIfEncrypted($id));
-            return view('pages.pemutu.dokumen._workspace', compact('type', 'item'));
+            $item        = DokSub::with('dokumen', 'mappedTo.dokumen', 'mappedFrom.dokumen')->findOrFail(decryptIdIfEncrypted($id));
+            $parentJenis = strtolower(trim($item->dokumen->jenis ?? ''));
+            $isKebijakan = in_array($parentJenis, pemutuKebijakanJenisList());
+
+            // For kebijakan poin: load available mapping options
+            $mappableOptions = collect();
+            if ($isKebijakan && pemutuMappableJenis($parentJenis)) {
+                $mappableOptions = $this->dokumenService->getMappablePoinOptions(
+                    $parentJenis,
+                    $item->dokumen->periode ?? (int) date('Y')
+                );
+            }
+
+            return view('pages.pemutu.dokumen._workspace', compact('type', 'item', 'isKebijakan', 'mappableOptions'));
         }
 
         return abort(404, 'Invalid type');
@@ -305,15 +336,114 @@ class DokumenSpmiController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     return view('components.tabler.datatables-actions', [
-                        'editUrl'   => route('pemutu.dokumen-spmi.edit', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]),
-                        'editModal' => true,
+                        'editUrl'   => route('pemutu.indikator.edit', ['indikator' => $row->encrypted_indikator_id, 'redirect_to' => url()->current()]),
+                        'editModal' => false,
                         'deleteUrl' => route('pemutu.dokumen-spmi.destroy', ['type' => 'indikator', 'id' => $row->encrypted_indikator_id]),
                     ])->render();
                 })
                 ->rawColumns(['indikator', 'unit_target', 'action'])
                 ->make(true);
+        } elseif ($type === 'poin_mapping') {
+            // Get mapped poin (from the level above) for a given DokSub
+            $doksub = DokSub::with('dokumen')->findOrFail($decryptedId);
+            $query  = $doksub->mappedTo()->with('dokumen');
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('judul', function ($row) {
+                    $html = '<div class="fw-bold">' . e($row->judul) . '</div>';
+                    if ($row->dokumen) {
+                        $html .= '<small class="text-muted">' . pemutuJenisLabel($row->dokumen->jenis) . '</small>';
+                    }
+                    return $html;
+                })
+                ->addColumn('kode', fn($row) => $row->kode ? '<span class="badge bg-secondary-lt">' . e($row->kode) . '</span>' : '-')
+                ->addColumn('action', function ($row) use ($doksub) {
+                    return '<button class="btn btn-sm btn-outline-danger btn-remove-mapping" '
+                    . 'data-doksub-id="' . $doksub->encrypted_doksub_id . '" '
+                    . 'data-mapped-id="' . $row->encrypted_doksub_id . '"'
+                        . '><i class="ti ti-unlink"></i> Lepas</button>';
+                })
+                ->rawColumns(['judul', 'kode', 'action'])
+                ->make(true);
         }
 
         return abort(404);
+    }
+
+    /**
+     * MAPPING SYNC (AJAX) — Attach or detach poin mapping
+     */
+    public function mappingSync(Request $request)
+    {
+        $request->validate([
+            'doksub_id'        => 'required',
+            'mapped_doksub_id' => 'required',
+            'action'           => 'required|in:attach,detach',
+        ]);
+
+        $doksubId       = decryptIdIfEncrypted($request->doksub_id);
+        $mappedDoksubId = decryptIdIfEncrypted($request->mapped_doksub_id);
+
+        $doksub = DokSub::with('dokumen')->findOrFail($doksubId);
+        $mapped = DokSub::with('dokumen')->findOrFail($mappedDoksubId);
+
+        // Validate: mapping must be to the correct level above
+        $sourceJenis    = strtolower(trim($doksub->dokumen->jenis ?? ''));
+        $targetJenis    = strtolower(trim($mapped->dokumen->jenis ?? ''));
+        $expectedTarget = pemutuMappableJenis($sourceJenis);
+
+        if ($expectedTarget !== $targetJenis) {
+            return jsonError("Poin {$sourceJenis} hanya bisa dipetakan ke poin " . pemutuJenisLabel($expectedTarget) . '.');
+        }
+
+        if ($request->action === 'attach') {
+            $doksub->mappedTo()->syncWithoutDetaching([$mappedDoksubId]);
+            return jsonSuccess('Mapping berhasil ditambahkan.');
+        } else {
+            $doksub->mappedTo()->detach($mappedDoksubId);
+            return jsonSuccess('Mapping berhasil dihapus.');
+        }
+    }
+
+    /**
+     * UPLOAD FILE PENDUKUNG (AJAX) — Spatie Media Library
+     * Supports multiple file uploads to 'dokumen_pendukung' collection.
+     */
+    public function uploadFile(Request $request, $id)
+    {
+        $request->validate([
+            'files'   => 'required|array',
+            'files.*' => 'file|max:20480', // max 20MB per file
+        ]);
+
+        $dokumen = Dokumen::findOrFail(decryptIdIfEncrypted($id));
+
+        foreach ($request->file('files') as $file) {
+            $dokumen->addMedia($file)
+                ->toMediaCollection('dokumen_pendukung');
+        }
+
+        logActivity('dokumen_management', "Mengunggah " . count($request->file('files')) . " file ke dokumen: {$dokumen->judul}");
+
+        return jsonSuccess('File berhasil diunggah.');
+    }
+
+    /**
+     * DELETE FILE PENDUKUNG (AJAX) — Spatie Media Library
+     */
+    public function deleteFile(Request $request, $id, $mediaId)
+    {
+        $dokumen = Dokumen::findOrFail(decryptIdIfEncrypted($id));
+        $media   = $dokumen->getMedia('dokumen_pendukung')->firstWhere('id', $mediaId);
+
+        if (! $media) {
+            return jsonError('File tidak ditemukan.');
+        }
+
+        $media->delete();
+        logActivity('dokumen_management', "Menghapus file dari dokumen: {$dokumen->judul}");
+
+        return jsonSuccess('File berhasil dihapus.');
     }
 }

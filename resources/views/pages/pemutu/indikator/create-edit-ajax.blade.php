@@ -4,13 +4,6 @@
     $route = $isEdit ? route('pemutu.indikator.update', $indikator) : route('pemutu.indikator.store');
     $method = $isEdit ? 'PUT' : 'POST';
 
-    // Determine context for pre-selection (Create case)
-    if (!$isEdit && isset($parentDok)) {
-        $selectedDokSubs = $selectedDokSubs ?? [];
-    } else {
-        $selectedDokSubs = $indikator->dokSubs->pluck('encrypted_doksub_id')->toArray();
-    }
-
     $assignedMap = $isEdit ? $indikator->orgUnits->keyBy('orgunit_id') : collect([]);
 @endphp
 
@@ -31,6 +24,13 @@
         @if($isEdit) @method('PUT') @endif
         <input type="hidden" name="redirect_to" value="{{ old('redirect_to', request('redirect_to', url()->previous())) }}">
 
+        @php
+            $type = old('type', $indikator->type ?? request('type', 'standar'));
+            $isRenop = $type === 'renop';
+            $isStandar = $type === 'standar';
+            $isPerforma = $type === 'performa';
+        @endphp
+
         <div class="row row-cards">
             <!-- INFORMASI UMUM & SKALA (KIRI) -->
             <div class="col-lg-7">
@@ -42,11 +42,13 @@
                                     <i class="ti ti-info-circle me-2"></i>Informasi Umum
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="#tab-penilaian-skala" class="nav-link" data-bs-toggle="tab">
+                            @if(!$isRenop)
+                            <li class="nav-item tab-link-skala-container" id="tab-link-skala-container">
+                                <a href="#tab-penilaian-skala" class="nav-link" data-bs-toggle="tab" id="tab-link-skala">
                                     <i class="ti ti-list-numbers me-2"></i>Penilaian Skala
                                 </a>
                             </li>
+                            @endif
                         </ul>
                     </div>
                     
@@ -54,38 +56,31 @@
                         <div class="tab-content">
                             <!-- TAB: INFORMASI UMUM -->
                             <div class="tab-pane active show" id="tab-informasi-umum">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
-                                    </div>
-                                </div>
-
+                                <input type="hidden" name="type" value="{{ $type }}">
+                                
+                                <input type="hidden" name="type" value="{{ $type }}">
+                                
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
-                                        {{-- Tipe Indikator Field --}}
-                                        @if(isset($parentDok) && !$isEdit && ($isRenopContext ?? false))
-                                            <input type="hidden" name="type" value="renop">
-                                            <label class="form-label">Tipe Indikator</label>
-                                            <div class="form-control-plaintext fw-bold text-primary"><i class="ti ti-lock me-2"></i>Indikator Renop</div>
-                                            <div class="form-hint text-muted small">Tipe dikunci karena menambah dari context Poin Renop.</div>
-                                        @else
-                                            <x-tabler.form-select
-                                                id="type-selector"
-                                                name="type"
-                                                label="Tipe Indikator"
-                                                :options="[
-                                                    'renop' => 'Indikator Renop',
-                                                    'standar' => 'Indikator Standar',
-                                                    'performa' => 'Indikator Performa (KPI)'
-                                                ]"
-                                                :selected="old('type', $indikator->type ?? request('type'))"
-                                                :readonly="isset($parentDok) && !$isEdit"
-                                            />
-                                            @if(isset($parentDok) && !$isEdit)
-                                                <input type="hidden" name="type" value="{{ request('type') }}">
-                                                <div class="form-hint text-success small">Tipe dikunci karena menambah dari context dokumen.</div>
+                                        <label class="form-label text-muted small">Tipe Indikator</label>
+                                        <div class="form-control-plaintext fw-bold text-primary">
+                                            <i class="ti ti-tag me-1"></i> 
+                                            @if($isRenop) Indikator Renop 
+                                            @elseif($isStandar) Indikator Standar 
+                                            @elseif($isPerforma) Indikator Performa 
                                             @endif
-                                        @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label text-muted small">No Indikator</label>
+                                        <div class="form-control-plaintext">
+                                            @if($isEdit)
+                                                <span class="badge bg-blue-lt">{{ $indikator->no_indikator }}</span>
+                                            @else
+                                                <span class="text-muted"><i class="ti ti-wand me-1"></i> Auto</span>
+                                            @endif
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4 mb-3">
@@ -100,30 +95,26 @@
                                             :selected="old('kelompok_indikator', $indikator->kelompok_indikator)"
                                         />
                                     </div>
+                                </div>
 
-                                    <div class="col-md-4 mb-3">
-                                        <x-tabler.form-input
-                                            name="no_indikator"
-                                            label="No Indikator"
-                                            type="text"
-                                            value="{{ old('no_indikator', $indikator->no_indikator) }}"
-                                            placeholder="cth: IND.01"
-                                        />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <x-tabler.form-textarea name="indikator" label="Nama Indikator" rows="2" placeholder="Masukkan nama indikator..." value="{{ old('indikator', $indikator->indikator) }}" />
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <x-tabler.form-select name="doksub_ids" label="Dokumen Penjaminan Mutu Terkait" type="select2" multiple="true" data-placeholder="Pilih satu atau lebih dokumen...">
-                                            @foreach($dokumens as $doc)
-                                                @if($doc->dokSubs->count() > 0)
-                                                    <optgroup label="[{{ strtoupper($doc->jenis) }}] {{ $doc->judul }}">
-                                                        @foreach($doc->dokSubs as $ds)
-                                                            <option value="{{ $ds->encrypted_doksub_id }}" {{ in_array($ds->encrypted_doksub_id, $selectedDokSubs ?? []) ? 'selected' : '' }}>{{ $ds->judul }}</option>
-                                                        @endforeach
-                                                    </optgroup>
-                                                @endif
-                                            @endforeach
+                                        <x-tabler.form-select name="doksub_ids" label="Dokumen Terkait" class="select2-ajax" multiple="true" data-placeholder="Cari & pilih dokumen penjaminan mutu..." data-ajax-url="{{ route('pemutu.indikator.search-doksub') }}">
+                                            @if(isset($selectedDokSubs))
+                                                @foreach($selectedDokSubs as $ds)
+                                                    @if($ds instanceof \App\Models\Pemutu\DokSub)
+                                                        <option value="{{ $ds->encrypted_doksub_id }}" selected>
+                                                            [{{ strtoupper($ds->dokumen?->jenis ?? 'DOC') }}] {{ $ds->dokumen?->judul ?? '-' }} &raquo; {{ $ds->judul }}
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            @endif
                                         </x-tabler.form-select>
                                     </div>
                                 </div>
@@ -206,15 +197,16 @@
 
             <!-- ASSIGNMENTS (KANAN) -->
             <div class="col-lg-5">
+                @if($isPerforma)
                 <!-- CARD: KPI ASSIGN -->
-                <div class="card" id="card-performa" style="{{ $indikator->type === 'performa' && $isEdit ? '' : 'display: none;' }}">
+                <div class="card" id="card-performa">
                     <div class="card-header">
                         <h3 class="card-title"><i class="ti ti-users me-2"></i>Penugasan KPI (Performa)</h3>
                     </div>
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-12">
-                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Standar Terkait (Induk)" type="select2">
+                                <x-tabler.form-select name="parent_id" id="parent-id-selector" label="Indikator Standar Terkait (Induk)" type="select2" :required="true" required="required">
                                     <option value="">-- Pilih Indikator Standar --</option>
                                     @foreach($parents as $p)
                                         <option value="{{ $p->encrypted_indikator_id }}" {{ $p->indikator_id == $indikator->parent_id ? 'selected' : '' }}>
@@ -273,9 +265,11 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
+                @if($isStandar)
                 <!-- CARD: TARGET & UNIT -->
-                <div class="card" id="card-target" style="{{ $indikator->type === 'standar' && $isEdit ? '' : 'display: none;' }}">
+                <div class="card" id="card-target">
                     <div class="card-header">
                         <h3 class="card-title"><i class="ti ti-target me-2"></i>Target & Unit Kerja</h3>
                     </div>
@@ -283,8 +277,21 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label required">Unit Kerja Penanggung Jawab & Target</label>
+                                
+                                <div class="d-flex align-items-center mb-2 gap-2">
+                                    <div class="input-icon flex-fill">
+                                        <span class="input-icon-addon"><i class="ti ti-search"></i></span>
+                                        <input type="text" id="unit-search" class="form-control" placeholder="Cari unit atau kode...">
+                                    </div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-primary active btn-unit-filter" data-filter="all">Semua</button>
+                                        <button type="button" class="btn btn-outline-primary btn-unit-filter" data-filter="selected">Terpilih</button>
+                                    </div>
+                                </div>
+
+
                                 <div class="table-responsive border rounded" style="max-height: 500px; overflow-y: auto;">
-                                    <table class="table table-vcenter card-table table-striped">
+                                    <table class="table table-vcenter card-table table-striped" id="unit-selection-table">
                                         <thead>
                                             <tr>
                                                 <th width="50%">Unit</th>
@@ -294,7 +301,10 @@
                                         <tbody>
                                             @php
                                                 if(!function_exists('renderUnitRow')){
-                                                    function renderUnitRow($unit, $level = 0, $assignedMap) {
+                                                    function renderUnitRow($unit, $level = 0, $assignedMap, &$visited = []) {
+                                                        if (isset($visited[$unit->orgunit_id])) return; // Circuit breaker for circular dependencies
+                                                        $visited[$unit->orgunit_id] = true;
+
                                                         $padding = $level * 20;
                                                         $isBold = $level < 2 ? 'fw-bold' : '';
                                                         $bg = '';
@@ -303,7 +313,9 @@
                                                         $targetVal = $isChecked ? $assignedMap->get($unit->orgunit_id)->pivot->target : '';
                                                         $isDisabled = !$isChecked ? 'disabled' : '';
 
-                                                        echo '<tr class="'.$bg.'">';
+                                                         $rowClasses = "unit-row " . ($isChecked ? "is-assigned" : "");
+                                                         $rowAttributes = "data-title='".strtolower($unit->name)."' data-code='".strtolower($unit->code)."'";
+                                                         echo "<tr class='$rowClasses' $rowAttributes>";
                                                         echo '<td>';
                                                         echo '<div style="padding-left: '.$padding.'px">';
                                                         echo '<label class="form-check form-check-inline mb-0">';
@@ -319,15 +331,17 @@
 
                                                         if ($unit->children && $unit->children->count()) {
                                                             foreach($unit->children as $child) {
-                                                                renderUnitRow($child, $level + 1, $assignedMap);
+                                                                renderUnitRow($child, $level + 1, $assignedMap, $visited);
                                                             }
                                                         }
                                                     }
                                                 }
+
+                                                $visited = [];
                                             @endphp
 
                                             @foreach($orgUnits as $rootUnit)
-                                                {{ renderUnitRow($rootUnit, 0, $assignedMap) }}
+                                                {{ renderUnitRow($rootUnit, 0, $assignedMap, $visited) }}
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -336,6 +350,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <!-- Submit Button moved to bottom of right col or as a separate card -->
                 <div class="card mt-3">
@@ -361,14 +376,24 @@
             menubar: false,
             statusbar: false,
             plugins: 'lists',
-            toolbar: 'bold italic | outdent indent | bullist numlist'
+            toolbar: 'bold italic | outdent indent | bullist numlist',
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
         });
         window.loadHugeRTE('textarea.form-control[id^="skala-"]', { 
             height: 180,
             menubar: false,
             statusbar: false,
             plugins: 'lists',
-            toolbar: 'bold italic | outdent indent | bullist numlist'
+            toolbar: 'bold italic | outdent indent | bullist numlist',
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
         });
     }
 

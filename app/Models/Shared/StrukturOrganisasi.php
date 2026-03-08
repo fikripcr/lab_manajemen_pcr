@@ -69,6 +69,11 @@ class StrukturOrganisasi extends Model
         return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id');
     }
 
+    public function descendants()
+    {
+        return $this->children()->with('descendants');
+    }
+
     public function activeChildren()
     {
         return $this->hasMany(StrukturOrganisasi::class, 'parent_id', 'orgunit_id')->where('is_active', true);

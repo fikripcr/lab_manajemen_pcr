@@ -12,17 +12,30 @@
 @section('content')
 <div class="row row-cards">
 
-    {{-- ===== KOLOM KIRI ===== --}}
-    <div class="col-lg-8">
+    {{-- ===== SINGLE FULL-WIDTH COLUMN ===== --}}
+    <div class="col-lg-12">
 
         {{-- SECTION A: Informasi Indikator --}}
-        <div class="card mb-4">
-            <div class="card-header py-3">
-                <h3 class="card-title mb-0">
-                    <i class="ti ti-info-circle me-2"></i>A. Informasi Indikator
-                </h3>
-            </div>
-            <div class="card-body">
+        <x-tabler.card class="mb-4">
+            <x-tabler.card-header title='<i class="ti ti-info-circle me-2"></i>A. Informasi Indikator' class="py-3" />
+                {{-- Monitoring Alert --}}
+                @if(isset($monitorings) && $monitorings->isNotEmpty())
+                    @foreach($monitorings as $mon)
+                        <div class="alert alert-important alert-info mb-3 d-flex align-items-center justify-content-between p-2 px-3">
+                            <div class="d-flex align-items-center">
+                                <i class="ti ti-broadcast fs-3 me-2"></i>
+                                <div>
+                                    <span class="fw-bold">Indikator ini dalam Pemantauan:</span> 
+                                    {{ $mon->tgl_rapat->format('d M Y') }} — {{ $mon->judul_kegiatan }}
+                                </div>
+                            </div>
+                            <a href="{{ route('Kegiatan.rapat.show', $mon->encrypted_rapat_id) }}" class="btn btn-sm btn-white text-info fw-bold">
+                                <i class="ti ti-eye me-1"></i>Detail Rapat
+                            </a>
+                        </div>
+                    @endforeach
+                @endif
+
                 <div class="row g-3">
                     <div class="col-md-3">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Kode Indikator</div>
@@ -31,6 +44,11 @@
                     <div class="col-md-9">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Pernyataan Standar / Indikator</div>
                         <div class="fs-4">{{ $indikator->indikator }}</div>
+                        @if($indikator->keterangan)
+                            <div class="mt-2 text-muted bg-light p-3 rounded small border-start border-3 border-info">
+                                {!! $indikator->keterangan !!}
+                            </div>
+                        @endif
                     </div>
                     <div class="col-md-4">
                         <div class="text-uppercase text-muted small fw-bold mb-1">Unit Kerja</div>
@@ -62,24 +80,32 @@
                     @endif
                 </div>
             </div>
-        </div>
+        </x-tabler.card>
 
-        {{-- SECTION B: Tab Hasil Evaluasi Diri & Hasil AMI --}}
-        <div class="card mb-4">
-            <div class="card-header">
+        {{-- SECTION B: Tab Hasil Evaluasi Diri, Audit & Diskusi --}}
+        <x-tabler.card class="mb-4">
+            <x-tabler.card-header>
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a href="#tabs-ed" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">
-                            <i class="ti ti-clipboard-data me-2"></i>B1. Hasil Evaluasi Diri
+                            <i class="ti ti-clipboard-data me-2"></i>B1. Evaluasi Diri
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a href="#tabs-hasil-ami" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
-                            <i class="ti ti-file-check me-2"></i>B2. Hasil AMI
+                        <a href="#tabs-audit" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                            <i class="ti ti-gavel me-2"></i>B2. Audit
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#tabs-diskusi" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                            <i class="ti ti-messages me-2"></i>B3. Diskusi
+                            @if($indOrg->diskusi->count() > 0)
+                                <span class="badge bg-azure-lt ms-2">{{ $indOrg->diskusi->count() }}</span>
+                            @endif
                         </a>
                     </li>
                 </ul>
-            </div>
+            </x-tabler.card-header>
             <div class="tab-content">
                 {{-- TAB: Hasil Evaluasi Diri --}}
                 <div class="tab-pane active show" id="tabs-ed" role="tabpanel">
@@ -110,7 +136,7 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="text-uppercase text-muted small fw-bold mb-1">Analisis</div>
-                                <div style="max-height: 10em; overflow-y:scroll">{{ $indOrg->ed_analisis ?? '—' }}</div>
+                                <div class="indicator-scroll">{!! $indOrg->ed_analisis ?? '—' !!}</div>
                             </div>
                         </div>
 
@@ -159,262 +185,155 @@
                     </div>
                 </div>
 
-                {{-- TAB: Hasil AMI --}}
-                <div class="tab-pane" id="tabs-hasil-ami" role="tabpanel">
-                    <div class="card-body">
-                        @php
-                            $hasilSaatIni = $indOrg->ami_hasil_akhir !== null ? ($hasilAkhirLabels[$indOrg->ami_hasil_akhir] ?? null) : null;
-                        @endphp
-
-                        @if($hasilSaatIni)
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <div class="text-uppercase text-muted small fw-bold mb-1">Hasil Akhir AMI</div>
-                                    <div class="fs-3 fw-bold text-{{ $hasilSaatIni['color'] }} mb-1">
-                                        <span class="badge bg-{{ $hasilSaatIni['color'] }}-lt fs-4">{{ $hasilSaatIni['label'] }}</span>
-                                    </div>
-                                    <div class="small text-muted">{{ $hasilSaatIni['desc'] }}</div>
-                                </div>
-
-                                <div class="col-md-8">
-                                    <div class="text-uppercase text-muted small fw-bold mb-1">Temuan Umum</div>
-                                    <div class="fs-4">{{ $indOrg->ami_hasil_temuan ?? '—' }}</div>
-                                </div>
-
-                                {{-- Jika KTS --}}
-                                @if($indOrg->ami_hasil_akhir === 0)
-                                    <div class="col-12 mt-4">
-                                        <div class="mt-2">
-                                            <div class="mb-2">
-                                                <strong class="text-danger">Sebab:</strong>
-                                                <div class="mt-1 bg-white p-2 border rounded small text-break">{!! $indOrg->ami_hasil_temuan_sebab ?: '—' !!}</div>
-                                            </div>
-                                            <div class="mb-2">
-                                                <strong class="text-danger">Akibat:</strong>
-                                                <div class="mt-1 bg-white p-2 border rounded small text-break">{!! $indOrg->ami_hasil_temuan_akibat ?: '—' !!}</div>
-                                            </div>
-                                            <div class="mb-2">
-                                                <strong class="text-danger">Rekomendasi Tindak Lanjut:</strong>
-                                                <div class="mt-1 bg-white p-2 border rounded small text-break">{!! $indOrg->ami_hasil_temuan_rekom ?: '—' !!}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        @else
-                            <x-tabler.empty-state
-                                title="Belum Ada Hasil AMI"
-                                message="Auditor belum menyimpan penilaian untuk indikator ini."
-                                icon="ti-clipboard-x"
-                            />
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>{{-- end kolom kiri --}}
-
-    {{-- ===== KOLOM KANAN ===== --}}
-    <div class="col-lg-4">
-
-        {{-- Status AMI saat ini --}}
-        @php
-            $hasilSaatIni = $indOrg->ami_hasil_akhir !== null ? ($hasilAkhirLabels[$indOrg->ami_hasil_akhir] ?? null) : null;
-        @endphp
-        {{-- @if($hasilSaatIni)
-        <div class="card mb-4 border-{{ $hasilSaatIni['color'] }}">
-            <div class="card-body text-center py-3">
-                <div class="text-uppercase text-muted small fw-bold mb-1">Hasil AMI Saat Ini</div>
-                <div class="display-5 fw-bold text-{{ $hasilSaatIni['color'] }}">{{ $hasilSaatIni['label'] }}</div>
-                <div class="text-muted small">{{ $hasilSaatIni['desc'] }}</div>
-                @if($indOrg->ami_hasil_temuan)
-                <hr>
-                <div class="text-start small text-muted">
-                    <strong>Temuan:</strong><br>{{ $indOrg->ami_hasil_temuan }}
-                </div>
-                @endif
-            </div>
-        </div>
-        @endif --}}
-
-        {{-- SECTION C & D: Diskusi & Penilaian Auditor --}}
-        <div class="card mb-4 sticky-top" style="top: 80px;">
-            <div class="card-header p-0">
-                <ul class="nav nav-tabs card-header-tabs w-100 m-0" data-bs-toggle="tabs" role="tablist">
-                    <li class="nav-item flex-fill text-center" role="presentation">
-                        <a href="#tabs-diskusi" class="nav-link active justify-content-center" data-bs-toggle="tab" aria-selected="true" role="tab" style="border-top-left-radius: 4px;">
-                            <i class="ti ti-messages me-2"></i>Diskusi
-                            @if($indOrg->diskusi->count() > 0)
-                                <span class="status status-secondary ms-2">{{ $indOrg->diskusi->count() }}</span>
-                            @endif
-                        </a>
-                    </li>
-                    <li class="nav-item flex-fill text-center" role="presentation">
-                        <a href="#tabs-penilaian" class="nav-link justify-content-center" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1" style="border-top-right-radius: 4px;">
-                            <i class="ti ti-gavel me-2"></i>Penilaian
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="tab-content">
-                {{-- TAB: DISKUSI --}}
-                <div class="tab-pane active show" id="tabs-diskusi" role="tabpanel">
-                    {{-- Chat Messages --}}
-                    <div class="card-body" style="max-height: 400px; overflow-y: auto;" id="chat-container">
-                        @forelse($indOrg->diskusi as $msg)
-                        @php
-                            $isSelf = $msg->pengirim_user_id === auth()->id();
-                            $align  = $isSelf ? 'end' : 'start';
-                            $color  = $msg->jenis_pengirim === 'auditor' ? 'primary' : 'azure';
-                        @endphp
-                        <div class="d-flex align-items-start mb-3 {{ $isSelf ? 'flex-row-reverse' : '' }}">
-                            <div class="avatar avatar-sm bg-{{ $color }}-lt text-{{ $color }} me-2 {{ $isSelf ? 'ms-2 me-0' : '' }}">
-                                <i class="ti ti-user"></i>
-                            </div>
-                            <div style="max-width: 90%;">
-                                <div class="d-flex align-items-center gap-2 mb-1 {{ $isSelf ? 'flex-row-reverse' : '' }}">
-                                    <span class="fw-bold small">{{ $msg->pengirim->name ?? 'Unknown' }}</span>
-                                    <span class="badge bg-{{ $color }}-lt text-{{ $color }} py-0 px-1 small">{{ ucfirst($msg->jenis_pengirim) }}</span>
-                                    <span class="text-muted smaller">{{ $msg->created_at->format('H:i') }}</span>
-                                </div>
-                                <div class="card mb-0 {{ $isSelf ? 'bg-primary-lt' : 'bg-gray-100' }}" style="border-radius: 12px;">
-                                    <div class="card-body py-2 px-3">
-                                        <div class="small text-rjustify">{!! nl2br(e($msg->isi)) !!}</div>
-                                        @if($msg->attachment_file)
-                                        <div class="mt-2 text-{{ $isSelf ? 'end' : 'start' }}">
-                                            <a href="{{ route('pemutu.diskusi.download', encryptId($msg->diskusi_id)) }}" target="_blank" class="btn btn-ghost-secondary btn-sm py-0">
-                                                <i class="ti ti-paperclip me-1"></i> Lampiran
-                                            </a>
-                                        </div>
-                                        @endif
-                                        @if(!empty($msg->attachment_link))
-                                        <div class="mt-1 text-{{ $isSelf ? 'end' : 'start' }}">
-                                            @foreach($msg->attachment_link as $link)
-                                                <a href="{{ $link['url'] ?? '#' }}" target="_blank" class="btn btn-ghost-primary btn-sm py-0 me-1">
-                                                    <i class="ti ti-external-link me-1"></i>{{ $link['name'] ?? 'Link' }}
-                                                </a>
-                                            @endforeach
-                                        </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="text-center py-5 text-muted">
-                            <i class="ti ti-message-off fs-1"></i>
-                            <p class="mt-2 small">Belum ada diskusi.</p>
-                        </div>
-                        @endforelse
-                    </div>
-
-                    {{-- Form Kirim Diskusi --}}
-                    <div class="card-footer bg-light p-2 border-top">
-                        <form action="{{ route('pemutu.diskusi.store-ami', $indOrg->encrypted_indorgunit_id) }}" method="POST" enctype="multipart/form-data" class="ajax-form" data-redirect="true">
-                            @csrf
-                            <input type="hidden" name="jenis_diskusi" value="ami">
-                            <x-tabler.form-textarea name="isi" rows="2" placeholder="Tuliskan pesan..." required="true" />
-
-                            <div class="mt-2 mb-2">
-                                <x-tabler.form-input type="file" name="attachment_file" accept=".pdf,.doc,.docx,.jpg,.png" title="Lampirkan File" class="filepond" />
-                            </div>
-
-                            <div class="row g-2 align-items-center">
-                                <div class="col-8">
-                                    <x-tabler.form-select name="jenis_pengirim" class="form-select-sm w-auto" required="true">
-                                        <option value="auditor" selected>Kirim sebagai: Auditor</option>
-                                        <option value="auditee">Kirim sebagai: Auditee</option>
-                                    </x-tabler.form-select>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <x-tabler.button type="submit" class="w-100" icon="ti ti-send" text="Kirim" />
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                {{-- TAB: PENILAIAN --}}
-                <div class="tab-pane" id="tabs-penilaian" role="tabpanel">
+                {{-- TAB: AUDIT (PENILAIAN) --}}
+                <div class="tab-pane" id="tabs-audit" role="tabpanel">
                     <div class="card-body">
                         <form action="{{ route('pemutu.ami.submit-nilai', $indOrg->encrypted_indorgunit_id) }}" method="POST" class="ajax-form" data-redirect="true">
                             @csrf
 
-                            {{-- Pilih status --}}
-                            <div class="mb-3">
-                                <label class="form-label required fw-semibold">Hasil Akhir AMI</label>
-                                <div class="row g-2">
-                                    @foreach($hasilAkhirLabels as $value => $meta)
-                                    <div class="col-12">
-                                        <label class="form-check border rounded p-2 ms-4 cursor-pointer
-                                            {{ $indOrg->ami_hasil_akhir === $value ? 'border-' . $meta['color'] . ' bg-' . $meta['color'] . '-lt' : '' }}">
-                                            <input class="form-check-input mt-1" type="radio" name="ami_hasil_akhir" value="{{ $value }}"
-                                                id="radio_hasil_{{ $value }}"
-                                                {{ $indOrg->ami_hasil_akhir === $value ? 'checked' : '' }} required>
-                                            <span class="form-check-label lh-base">
-                                                <span class="badge bg-{{ $meta['color'] }}-lt text-{{ $meta['color'] }} me-1">{{ $meta['label'] }}</span>
-                                                <span class="text-muted d-block small lh-sm mt-1">{{ $meta['desc'] }}</span>
-                                            </span>
-                                        </label>
+                            <div class="row">
+                                <div class="col-md-5 border-end">
+                                    <div class="mb-3">
+                                        <label class="form-label required fw-semibold">Pilih Hasil Akhir AMI</label>
+                                        <div class="row g-2">
+                                            @foreach($hasilAkhirLabels as $value => $meta)
+                                            <div class="col-12">
+                                                <label class="form-check border rounded p-2 ms-4 cursor-pointer
+                                                    {{ $indOrg->ami_hasil_akhir === $value ? 'border-' . $meta['color'] . ' bg-' . $meta['color'] . '-lt' : '' }}">
+                                                    <input class="form-check-input mt-1" type="radio" name="ami_hasil_akhir" value="{{ $value }}"
+                                                        id="radio_hasil_{{ $value }}"
+                                                        {{ $indOrg->ami_hasil_akhir === $value ? 'checked' : '' }} required>
+                                                    <span class="form-check-label lh-base">
+                                                        <span class="badge bg-{{ $meta['color'] }}-lt text-{{ $meta['color'] }} me-1">{{ $meta['label'] }}</span>
+                                                        <span class="text-muted d-block small lh-sm mt-1">{{ $meta['desc'] }}</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                    @endforeach
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="mb-3">
+                                        <x-tabler.form-textarea
+                                            name="ami_hasil_temuan"
+                                            label="Temuan Umum"
+                                            placeholder="Tuliskan temuan audit secara umum..."
+                                            rows="3"
+                                            :value="$indOrg->ami_hasil_temuan ?? ''"
+                                        />
+                                    </div>
+
+                                    {{-- KTS Conditional Fields --}}
+                                    <div id="kts-fields" class="{{ $indOrg->ami_hasil_akhir === 0 ? '' : 'd-none' }}">
+                                        <div class="alert alert-important alert-danger p-2 mb-3 small">
+                                            <i class="ti ti-alert-triangle me-1"></i> Mode KTS Aktif: Lengkapi detail sebab, akibat, dan rekomendasi.
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <x-tabler.form-textarea name="ami_hasil_temuan_sebab" label="Sebab" :value="$indOrg->ami_hasil_temuan_sebab ?? ''" rows="3" required="true" id="ami_sebab" />
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <x-tabler.form-textarea name="ami_hasil_temuan_akibat" label="Akibat" :value="$indOrg->ami_hasil_temuan_akibat ?? ''" rows="3" required="true" id="ami_akibat" />
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <x-tabler.form-textarea name="ami_hasil_temuan_rekom" label="Rekomendasi Tindak Lanjut" :value="$indOrg->ami_hasil_temuan_rekom ?? ''" rows="3" required="true" id="ami_rekom" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-end">
+                                        <x-tabler.button type="submit" size="lg" icon="ti ti-device-floppy" text="Simpan Penilaian Audit" />
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <x-tabler.form-textarea
-                                    name="ami_hasil_temuan"
-                                    label="Catatan Temuan Umum"
-                                    placeholder="Catatan singkat temuan auditor..."
-                                    rows="2"
-                                    :value="$indOrg->ami_hasil_temuan ?? ''"
-                                />
-                            </div>
-
-                            {{-- KTS Conditional Fields --}}
-                            <div id="kts-fields" class="{{ $indOrg->ami_hasil_akhir === 0 ? '' : 'd-none' }}">
-                                <div class="alert alert-danger p-2 mb-3 align-items-center d-flex small">
-                                    <strong><i class="ti ti-alert-triangle me-1"></i> Wajib diisi (KTS).</strong>
-                                </div>
-
-                                <x-tabler.form-textarea 
-                                    name="ami_hasil_temuan_sebab" 
-                                    label="Sebab Ketidaksesuaian" 
-                                    :value="$indOrg->ami_hasil_temuan_sebab ?? ''" 
-                                    rows="2" 
-                                    required="true"
-                                    class="fw-semibold small"
-                                />
-                                <x-tabler.form-textarea 
-                                    name="ami_hasil_temuan_akibat" 
-                                    label="Akibat Ketidaksesuaian" 
-                                    :value="$indOrg->ami_hasil_temuan_akibat ?? ''" 
-                                    rows="2" 
-                                    required="true"
-                                    class="fw-semibold small"
-                                />
-                                <x-tabler.form-textarea 
-                                    name="ami_hasil_temuan_rekom" 
-                                    label="Rekomendasi Tindak Lanjut" 
-                                    :value="$indOrg->ami_hasil_temuan_rekom ?? ''" 
-                                    rows="2" 
-                                    required="true"
-                                    class="fw-semibold small"
-                                />
-                            </div>
-
-                            <x-tabler.button
-                                type="submit"
-                                class="w-100"
-                            />
                         </form>
                     </div>
                 </div>
-            </div>
-        </div>
 
-    </div>{{-- end kolom kanan --}}
+                {{-- TAB: DISKUSI --}}
+                <div class="tab-pane" id="tabs-diskusi" role="tabpanel">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-7 border-end">
+                                {{-- Chat Messages --}}
+                                <div class="chat-wrapper" style="max-height: 500px; overflow-y: auto;" id="chat-container">
+                                    @forelse($indOrg->diskusi as $msg)
+                                    @php
+                                        $isSelf = $msg->pengirim_user_id === auth()->id();
+                                        $color  = $msg->jenis_pengirim === 'auditor' ? 'primary' : 'azure';
+                                    @endphp
+                                    <div class="d-flex align-items-start mb-3 {{ $isSelf ? 'flex-row-reverse' : '' }}">
+                                        <div class="avatar avatar-sm bg-{{ $color }}-lt text-{{ $color }} me-2 {{ $isSelf ? 'ms-2 me-0' : '' }}">
+                                            <i class="ti ti-user"></i>
+                                        </div>
+                                        <div style="max-width: 85%;">
+                                            <div class="d-flex align-items-center gap-2 mb-1 {{ $isSelf ? 'flex-row-reverse' : '' }}">
+                                                <span class="fw-bold small">{{ $msg->pengirim->name ?? 'Unknown' }}</span>
+                                                <span class="badge bg-{{ $color }}-lt text-{{ $color }} py-0 px-1 smaller">{{ ucfirst($msg->jenis_pengirim) }}</span>
+                                                <span class="text-muted smaller">{{ $msg->created_at->diffForHumans() }}</span>
+                                            </div>
+                                            <div class="card mb-0 {{ $isSelf ? 'bg-primary-lt' : 'bg-secondary-lt' }} border-0" style="border-radius: 12px;">
+                                                <div class="card-body py-2 px-3">
+                                                    <div class="small">{!! nl2br(e($msg->isi)) !!}</div>
+                                                    @if($msg->attachment_file)
+                                                    <div class="mt-2 border-top pt-1 text-{{ $isSelf ? 'end' : 'start' }}">
+                                                        <a href="{{ route('pemutu.diskusi.download', encryptId($msg->diskusi_id)) }}" target="_blank" class="badge bg-white text-dark border py-1">
+                                                            <i class="ti ti-paperclip me-1"></i> Lampiran File
+                                                        </a>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @empty
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="ti ti-message-off fs-1"></i>
+                                        <p class="mt-2">Belum ada diskusi untuk indikator ini.</p>
+                                    </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                {{-- Form Kirim Diskusi --}}
+                                <div class="p-2">
+                                    <h4 class="mb-3"><i class="ti ti-send me-1"></i>Kirim Pesan Baru</h4>
+                                    <form action="{{ route('pemutu.diskusi.store-ami', $indOrg->encrypted_indorgunit_id) }}" method="POST" enctype="multipart/form-data" class="ajax-form" data-redirect="true">
+                                        @csrf
+                                        <input type="hidden" name="jenis_diskusi" value="ami">
+                                        <div class="mb-3">
+                                            <x-tabler.form-textarea name="isi" rows="4" placeholder="Tuliskan pesan..." required="true" label="Pesan" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Lampiran (Opsional)</label>
+                                            <input type="file" name="attachment_file" class="filepond" />
+                                        </div>
+
+                                        <div class="row g-2 align-items-center">
+                                            <div class="col-sm-7">
+                                                <x-tabler.form-select name="jenis_pengirim" required="true">
+                                                    <option value="auditor" selected>Kirim sebagai: Auditor</option>
+                                                    <option value="auditee">Kirim sebagai: Auditee</option>
+                                                </x-tabler.form-select>
+                                            </div>
+                                            <div class="col-sm-5 text-end">
+                                                <x-tabler.button type="submit" class="w-100" icon="ti ti-send" text="Kirim Pesan" />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-tabler.card>
+
+    </div>{{-- end single full-width column --}}
+
 
 </div>
 
@@ -427,7 +346,12 @@ if (window.loadHugeRTE) {
     const ktsConfig = {
         height: 180, menubar: false, statusbar: false,
         plugins: 'lists',
-        toolbar: 'bold italic | bullist numlist'
+        toolbar: 'bold italic | bullist numlist',
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save();
+            });
+        }
     };
     window.loadHugeRTE('#ami_sebab', ktsConfig);
     window.loadHugeRTE('#ami_akibat', ktsConfig);
@@ -455,28 +379,22 @@ const chat = document.getElementById('chat-container');
 if (chat) chat.scrollTop = chat.scrollHeight;
 
 // Simpan state Tab Aktif menggunakan sessionStorage
-const tabGroups = [
-    { key: 'ami_left_tab', selector: 'a[data-bs-toggle="tab"][href^="#tabs-ed"], a[data-bs-toggle="tab"][href^="#tabs-hasil-ami"]' },
-    { key: 'ami_right_tab', selector: 'a[data-bs-toggle="tab"][href^="#tabs-diskusi"], a[data-bs-toggle="tab"][href^="#tabs-penilaian"]' }
-];
+const tabKey = 'ami_detail_active_tab';
 
-tabGroups.forEach(group => {
-    // Restore active tab
-    const savedHref = sessionStorage.getItem(group.key);
-    if (savedHref) {
-        const targetTab = document.querySelector(`a[data-bs-toggle="tab"][href="${savedHref}"]`);
-        if (targetTab) {
-            // Trigger Tabler bootstrap Tab show
-            const tabEl = new bootstrap.Tab(targetTab);
-            tabEl.show();
-        }
+// Restore active tab
+const savedHref = sessionStorage.getItem(tabKey);
+if (savedHref) {
+    const targetTab = document.querySelector(`a[data-bs-toggle="tab"][href="${savedHref}"]`);
+    if (targetTab) {
+        const tabEl = new bootstrap.Tab(targetTab);
+        tabEl.show();
     }
+}
 
-    // Save on tab change
-    document.querySelectorAll(group.selector).forEach(tab => {
-        tab.addEventListener('shown.bs.tab', function (e) {
-            sessionStorage.setItem(group.key, e.target.getAttribute('href'));
-        });
+// Save on tab change
+document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
+    tab.addEventListener('shown.bs.tab', function (e) {
+        sessionStorage.setItem(tabKey, e.target.getAttribute('href'));
     });
 });
 </script>

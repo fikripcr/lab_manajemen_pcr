@@ -9,9 +9,9 @@
 <div class="row row-cards">
     @forelse($periodes as $periode)
         <div class="col-12">
-            <div class="card card-link card-link-pop">
+            <x-tabler.card class="card-link card-link-pop">
                 <a href="{{ route('pemutu.evaluasi-diri.show', $periode->encrypted_periodespmi_id) }}" class="d-block w-100 text-reset text-decoration-none">
-                    <div class="card-body">
+                    <x-tabler.card-body>
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <span class="avatar avatar-md rounded bg-blue-lt"><i class="ti ti-calendar-stats fs-2"></i></span>
@@ -22,23 +22,23 @@
                             </div>
                             <div class="col-auto">
                                 @if($periode->ed_awal && $periode->ed_akhir)
-                                    <span class="badge bg-green-lt">
+                                    <span class="status bg-green-lt">
                                         <i class="ti ti-calendar me-1"></i>
                                         {{ $periode->ed_awal->format('d M') }} - {{ $periode->ed_akhir->format('d M Y') }}
                                     </span>
                                 @else
-                                    <span class="badge bg-secondary-lt">Jadwal Belum Diatur</span>
+                                    <span class="status bg-secondary-lt">Jadwal Belum Diatur</span>
                                 @endif
                                 @php $edPct = $edTotal > 0 ? round(($edFilled / $edTotal) * 100) : 0; @endphp
-                                <span class="badge ms-2 {{ $edPct == 100 ? 'bg-green' : 'bg-secondary-lt' }}">
+                                <span class="status ms-2 {{ $edPct == 100 ? 'bg-green-lt' : 'bg-secondary-lt' }}">
                                     <i class="ti ti-checklist me-1"></i>{{ $edFilled }}/{{ $edTotal }} Terisi
                                 </span>
                                 <i class="ti ti-chevron-right ms-3 text-muted"></i>
                             </div>
                         </div>
-                    </div>
+                    </x-tabler.card-body>
                 </a>
-            </div>
+            </x-tabler.card>
         </div>
     @empty
         <div class="col-12">
