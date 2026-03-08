@@ -8,7 +8,6 @@
     'readonly' => false,
     'disabled' => false,
     'placeholder' => '',
-    'placeholder' => '',
 ])
 
 @php
@@ -16,7 +15,7 @@
     $value = old($name, $value);
 @endphp
 
-<div {{ $attributes->merge(['class' => 'mb-3']) }}>
+<div {{ $attributes->except(['id', 'name', 'value', 'rows', 'placeholder', 'required', 'readonly', 'disabled'])->merge(['class' => 'mb-3']) }}>
     @if($label)
         <label for="{{ $id }}" class="form-label">
             {!! $label !!} @if($required)<span class="text-danger">*</span>@endif
@@ -31,8 +30,8 @@
         placeholder="{{ $placeholder }}"
         @if($disabled) disabled="true"@endif
         @if($readonly) readonly="true"@endif
-        {{ $attributes->except(['class', 'value', 'rows']) }}
-    >{{ $value ?? $slot }}</textarea>
+        {{ $attributes->whereStartsWith('data-') }}
+    >{!! $value ?? $slot !!}</textarea>
     
     @if($help)
         <div class="form-text">{{ $help }}</div>

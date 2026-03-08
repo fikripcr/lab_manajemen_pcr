@@ -63,10 +63,10 @@ function initAjaxFormHandler() {
         }
 
         // Disable submit button
-        $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
+        $submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Memproses...');
 
         // Show loading
-        showLoadingMessage('Processing...', 'Please wait');
+        showLoadingMessage('Memproses...', 'Mohon tunggu');
 
         // Send request
         axios({
@@ -100,7 +100,7 @@ function initAjaxFormHandler() {
                 $form.find('.invalid-feedback').remove();
 
                 // Success (Toast)
-                showSuccessMessage(response.data.message || 'Success');
+                showSuccessMessage(response.data.message || 'Berhasil');
 
                 // Fire custom event
                 // Fire custom event
@@ -140,7 +140,7 @@ function initAjaxFormHandler() {
                     errorMessage = error.message;
                 }
 
-                showErrorMessage('Error!', errorMessage);
+                showErrorMessage('Kesalahan!', errorMessage);
             })
             .finally(function () {
                 // Re-enable submit button
@@ -159,14 +159,14 @@ function initAjaxFormHandler() {
 
         const $btn = $(this);
         const url = $btn.data('url');
-        const title = $btn.data('title') || 'Are you sure?';
-        const text = $btn.data('text') || 'This action cannot be undone!';
+        const title = $btn.data('title') || 'Apakah Anda yakin?';
+        const text = $btn.data('text') || 'Tindakan ini tidak dapat dibatalkan!';
 
         showDeleteConfirmation(title, text)
             .then((result) => {
                 if (result.isConfirmed) {
                     // Show loading while deleting
-                    showLoadingMessage('Deleting...', 'Please wait');
+                    showLoadingMessage('Menghapus...', 'Mohon tunggu');
 
                     axios.delete(url, {
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -186,7 +186,7 @@ function initAjaxFormHandler() {
                                 if (error.response && error.response.data && error.response.data.message) {
                                     errorMessage = error.response.data.message;
                                 }
-                                showErrorMessage('Error!', errorMessage);
+                                showErrorMessage('Kesalahan!', errorMessage);
                                 return;
                             }
 
@@ -199,7 +199,7 @@ function initAjaxFormHandler() {
                             }
 
                             // Show Success Toast
-                            showSuccessMessage(response.data.message || 'Deleted!');
+                            showSuccessMessage(response.data.message || 'Terhapus!');
 
                             // Redirect if specified (Immediate)
                             if (response.data.redirect) {
@@ -234,7 +234,7 @@ function initAjaxFormHandler() {
                 focus: false
             });
         }
-        
+
         // Remove tabindex to prevent focus stealing by the modal wrapper
         $modal.removeAttr('tabindex');
 
@@ -251,7 +251,7 @@ function initAjaxFormHandler() {
             </div>
             <div class="modal-body text-center py-5">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">Memuat...</span>
                 </div>
             </div>
         `);
@@ -301,7 +301,7 @@ function initAjaxFormHandler() {
 
                 $modalContent.html(`
                     <div class="modal-header">
-                        <h5 class="modal-title">Error</h5>
+                        <h5 class="modal-title">Kesalahan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center py-5">
@@ -320,7 +320,7 @@ function initAjaxFormHandler() {
     $(document).on('hidden.bs.modal', '.modal', function () {
         const $modal = $(this);
         const $form = $modal.find('.ajax-form');
-        
+
         // Clean up HugeRTE/TinyMCE instances to prevent initialization issues on reopen
         if (typeof window.hugerte !== 'undefined') {
             $modal.find('textarea.form-control').each(function () {
@@ -330,7 +330,7 @@ function initAjaxFormHandler() {
                 }
             });
         }
-        
+
         if ($form.length) {
             $form[0].reset();
             $form.find('.is-invalid').removeClass('is-invalid');

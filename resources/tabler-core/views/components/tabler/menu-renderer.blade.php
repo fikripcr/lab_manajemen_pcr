@@ -182,6 +182,20 @@
                     ],
                 ],
                 [
+                    'title'         => 'Pelaksanaan',
+                    'id'            => 'navbar-pelaksanaan',
+                    'icon'          => 'ti ti-broadcast',
+                    'active_routes' => ['pemutu.pelaksanaan.*'],
+                    'children'      => [
+                        [
+                            'title'         => 'Pemantauan',
+                            'route'         => 'pemutu.pelaksanaan.pemantauan.index',
+                            'active_routes' => ['pemutu.pelaksanaan.pemantauan.*'],
+                            'icon'          => 'ti ti-device-heart-monitor',
+                        ],
+                    ],
+                ],
+                [
                     'title'         => 'Evaluasi',
                     'id'            => 'navbar-evaluasi',
                     'icon'          => 'ti ti-chart-bar',

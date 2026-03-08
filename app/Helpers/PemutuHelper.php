@@ -111,3 +111,31 @@ if (! function_exists('pemutuIndikatorTypeInfo')) {
         return $data[strtolower(trim($type))] ?? ['color' => 'secondary', 'label' => ucfirst($type ?? '-'), 'short-label' => 'IND'];
     }
 }
+
+if (! function_exists('pemutuMappableJenis')) {
+    /**
+     * Get the valid target document type for point-to-point mapping.
+     * Returns which document type's points a given type can map to.
+     * E.g. misi points can map to visi points, rpjp to misi, etc.
+     */
+    function pemutuMappableJenis($jenis)
+    {
+        return match (strtolower(trim($jenis))) {
+            'misi'    => 'visi',
+            'rjp'     => 'misi',
+            'renstra' => 'rjp',
+            'renop'   => 'renstra',
+            default   => null, // visi: top level, no mapping target
+        };
+    }
+}
+
+if (! function_exists('pemutuKebijakanJenisList')) {
+    /**
+     * Get the ordered list of 5 kebijakan document types.
+     */
+    function pemutuKebijakanJenisList(): array
+    {
+        return ['visi', 'misi', 'rjp', 'renstra', 'renop'];
+    }
+}

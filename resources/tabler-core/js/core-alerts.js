@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
     window.axios = axios;
 }
 // Delete Confirmation Alert
-function showDeleteConfirmation(title = 'Are you sure?', text = 'This action cannot be undone!', confirmButtonText = 'Yes, delete it!') {
+function showDeleteConfirmation(title = 'Apakah Anda yakin?', text = 'Tindakan ini tidak dapat dibatalkan!', confirmButtonText = 'Ya, hapus!') {
     return Swal.fire({
         title: title,
         text: text,
@@ -22,12 +22,12 @@ function showDeleteConfirmation(title = 'Are you sure?', text = 'This action can
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: confirmButtonText,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Batal'
     });
 }
 
 // General Confirmation Alert
-function showConfirmation(title = 'Are you sure?', text = '', confirmButtonText = 'Yes') {
+function showConfirmation(title = 'Apakah Anda yakin?', text = '', confirmButtonText = 'Ya') {
     return Swal.fire({
         title: title,
         text: text,
@@ -36,7 +36,7 @@ function showConfirmation(title = 'Are you sure?', text = '', confirmButtonText 
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#6c757d',
         confirmButtonText: confirmButtonText,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Batal'
     });
 }
 
@@ -54,7 +54,7 @@ const Toast = Swal.mixin({
 });
 
 // Success Message (Toast Mode)
-function showSuccessMessage(title = 'Success!', text = '') {
+function showSuccessMessage(title = 'Berhasil!', text = '') {
     return Toast.fire({
         icon: 'success',
         title: title,
@@ -63,7 +63,7 @@ function showSuccessMessage(title = 'Success!', text = '') {
 }
 
 // Error Message
-function showErrorMessage(title = 'Error!', text = '') {
+function showErrorMessage(title = 'Kesalahan!', text = '') {
     return Swal.fire({
         title: title,
         text: text,
@@ -87,7 +87,7 @@ function showInfoMessage(title = 'Info', text = '') {
 }
 
 // Warning Message
-function showWarningMessage(title = 'Warning!', text = '') {
+function showWarningMessage(title = 'Peringatan!', text = '') {
     return Swal.fire({
         title: title,
         text: text,
@@ -99,7 +99,7 @@ function showWarningMessage(title = 'Warning!', text = '') {
 }
 
 // Loading Message (not auto-closing)
-function showLoadingMessage(title = 'Processing...', text = 'Please wait') {
+function showLoadingMessage(title = 'Memproses...', text = 'Mohon tunggu') {
     return Swal.fire({
         title: title,
         html: text,
@@ -123,11 +123,11 @@ function showFormErrors(errors) {
     } else if (typeof errors === 'object') {
         errorText = Object.values(errors).flat().join('<br>');
     } else {
-        errorText = 'An error occurred while processing your request.';
+        errorText = 'Terjadi kesalahan saat memproses permintaan Anda.';
     }
 
     return Swal.fire({
-        title: 'Validation Error!',
+        title: 'Kesalahan Validasi!',
         html: errorText,
         icon: 'error',
         timer: 5000,
@@ -138,12 +138,12 @@ function showFormErrors(errors) {
 // AJAX response handler
 function handleAjaxResponse(response, successCallback = null, errorCallback = null) {
     if (response.success) {
-        showSuccessMessage(response.title || 'Success!', response.message || '');
+        showSuccessMessage(response.title || 'Berhasil!', response.message || '');
         if (successCallback && typeof successCallback === 'function') {
             successCallback(response);
         }
     } else {
-        showErrorMessage(response.title || 'Error!', response.message || response.error || '');
+        showErrorMessage(response.title || 'Kesalahan!', response.message || response.error || '');
         if (errorCallback && typeof errorCallback === 'function') {
             errorCallback(response);
         }
@@ -153,14 +153,14 @@ function handleAjaxResponse(response, successCallback = null, errorCallback = nu
 // Bulk action confirmation
 function showBulkActionConfirmation(actionName, count, itemType = 'item') {
     return Swal.fire({
-        title: `Confirm Bulk ${actionName}`,
-        text: `Are you sure you want to ${actionName.toLowerCase()} ${count} ${itemType}${count > 1 ? 's' : ''}?`,
+        title: `Konfirmasi ${actionName} Massal`,
+        text: `Apakah Anda yakin ingin ${actionName.toLowerCase()} ${count} ${itemType}${count > 1 ? '' : ''}?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: `Yes, ${actionName.toLowerCase()} them!`,
-        cancelButtonText: 'Cancel'
+        confirmButtonText: `Ya, ${actionName.toLowerCase()}!`,
+        cancelButtonText: 'Batal'
     });
 }
 
@@ -174,7 +174,7 @@ function confirmAction(title, text, confirmText = 'Yes', callback) {
 }
 
 // Delete confirmation with AJAX (for use with controller-generated links)
-function confirmDelete(url, tableId = null, title = 'Delete this item??', text = 'Are you sure you want to delete this item? This action cannot be undone.') {
+function confirmDelete(url, tableId = null, title = 'Hapus item ini?', text = 'Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.') {
     showDeleteConfirmation(title, text).then((result) => {
         if (result.isConfirmed) {
             axios({
@@ -185,7 +185,7 @@ function confirmDelete(url, tableId = null, title = 'Delete this item??', text =
                 }
             })
                 .then(function (response) {
-                    showSuccessMessage('Deleted!', response.data.message || 'Item deleted successfully!');
+                    showSuccessMessage('Terhapus!', response.data.message || 'Item berhasil dihapus!');
 
                     if (tableId) {
                         // Coba berbagai format nama tabel untuk kompatibilitas
@@ -208,11 +208,11 @@ function confirmDelete(url, tableId = null, title = 'Delete this item??', text =
                     }
                 })
                 .catch(function (error) {
-                    let errorMessage = 'An error occurred while deleting the item.';
+                    let errorMessage = 'Terjadi kesalahan saat menghapus item.';
                     if (error.response && error.response.data && error.response.data.message) {
                         errorMessage = error.response.data.message;
                     }
-                    showErrorMessage('Error!', errorMessage);
+                    showErrorMessage('Kesalahan!', errorMessage);
                 });
         }
     });
